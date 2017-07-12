@@ -75,7 +75,7 @@ class Tools
 
 
         if (empty($earningsData)) {
-            $ret = ["<font color='red'>No Earnings data found!</font>"];
+            $ret[] = "<font color='red'>No Earnings data found!</font>";
         }
         else {
             $cHistory = [];
