@@ -41,6 +41,7 @@ class CheckStuff extends Command
         if (!env('ENABLE_CHECK_STUFF', false)) {
             return;
         }
+        $recipients = ["to" => env('CHECK_STUFF_EMAILS', [])];
 
         // Check Duplicate PO's
         $orders = \DB::select("SELECT po_number,COUNT(id) AS no_of_time_repeat,date_ordered FROM orders WHERE date_ordered >= '2017-06-01' GROUP BY po_number HAVING no_of_time_repeat > 1");
@@ -51,11 +52,11 @@ class CheckStuff extends Command
             }
             $msgText .= '</table>';
 
-            $recipients =  \FEGHelp::getSystemEmailRecipients('DUPLICATE PO ALERT');
             FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                 'subject' => 'Danger: Duplicate PO Found',
                 'message' => $msgText,
                 'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                'configName' => 'DUPLICATE PO FOUND ALERT'
             )));
             //dd($msgText);
         }
@@ -69,11 +70,11 @@ class CheckStuff extends Command
             }
             $msgText .= '</table>';
 
-            $recipients =  \FEGHelp::getSystemEmailRecipients('TEST DATA FOUND ALERT');
             FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                 'subject' => 'Critical: Test Data Found In User Module',
                 'message' => $msgText,
                 'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                'configName' => 'TEST DATA FOUND ALERT'
             )));
             //dd($msgText);
         }
@@ -87,7 +88,6 @@ class CheckStuff extends Command
             }
             $msgText .= '</table>';
 
-            $recipients =  \FEGHelp::getSystemEmailRecipients('TEST DATA FOUND ALERT');
             FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                 'subject' => 'Critical: Test Data Found In Vendor Module',
                 'message' => $msgText,
