@@ -64,5 +64,10 @@ class ModulesController extends Controller
 	{
 		return view('feg.system.utils.modules.hyperlinks',$this->data);
 	}
-
+	public function downgame($params = null)
+	{
+        $this->data['data'] = \App\Library\FEG\Utils\Fix\Tools::gameIdAnalyzer($params);
+        $this->data['title'] = "Down Game Details";
+		return view('feg.system.utils.modules.show',$this->data);
+	}
 }
