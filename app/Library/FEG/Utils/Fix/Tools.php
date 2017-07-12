@@ -94,7 +94,34 @@ class Tools
         }
 
 
-        //$ret[] = "<hr/>";
+        $ret[] = "<h3>Helpers</h3>";
+        $ret[] = "<strong>SQL TO INSERT GAME HISTORY</strong>";
+        $ret[] = "<pre>INSERT INTO `game_move_history` SET
+    game_id=?,
+    from_loc=?,
+    from_by=238,
+    from_date='? 23:59:59',
+    to_loc=?,
+    to_by=238,
+    to_date='? 00:00:00'</pre>";
+
+    $ret[] = "<strong>SQL TO UPDATE GAME</strong>";
+    $ret[] = "<pre>UPDATE game SET
+        location_id=?,
+        prev_location_id=?,
+        date_last_move='? 00:00:00',
+        game_move_id=?
+
+    WHERE id=?'</pre>";
+
+    $ret[] = "<strong>SQL TO UPDATE GAME PLAY REPORT SUMMARY</strong>";
+    $ret[] = "<pre>UPDATE report_game_plays SET
+        location_id=?
+    WHERE
+            game_id=20002118
+        AND date_played >='?'
+        AND date_played <='?'
+        AND location_id != 2031'</pre>";
 
         return $ret;
 
