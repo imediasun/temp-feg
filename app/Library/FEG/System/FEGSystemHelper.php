@@ -164,7 +164,9 @@ class FEGSystemHelper
     public static function tableFromArray($array = array(), $options = array()) {
 
         extract(array_merge(array(
+            'humanifyTitle' => false,
             'skipUnderscoreHeaders' => true,
+            'skip' => [],
             'cellArrayJoinDelimiter' => ',<br/>',
 
             'tableClass' => '',
@@ -199,6 +201,9 @@ class FEGSystemHelper
                 $htmlArr[] = "<thead>";
                 $htmlArr[] = "<tr class='' style='$TRStyles $headTRStyles'>";
                 foreach ($item as $title => $col) {
+                    if (!empty($skip) && in_array($title, $skip))  {
+                        continue;
+                    }
                     if ($skipUnderscoreHeaders) {
                         if (strpos($title, '_') === 0) {
                             continue;
@@ -218,6 +223,9 @@ class FEGSystemHelper
                         $htmlArr[] = "<{$th}>#</th>";
                     }
                     else {
+                        if (!empty($humanifyTitle)) {
+                            $title = self::desanitizeTitleId($title);
+                        }
                         $htmlArr[] = "<{$th}>{$title}</th>";
                     }
                 }
@@ -231,6 +239,10 @@ class FEGSystemHelper
 
             $rowHTML = array();
             foreach ($item as $title => $val) {
+                if (!empty($skip) && in_array($title, $skip))  {
+                    continue;
+                }
+
                 if ($skipUnderscoreHeaders) {
                     if (strpos($title, '_') === 0) {
                         continue;
@@ -274,6 +286,10 @@ class FEGSystemHelper
 
     public static function sanitizeTitleToId($title) {
         $sTitle = preg_replace('/\W/', '', strtolower($title));
+        return $sTitle;
+    }
+    public static function desanitizeTitleId($title) {
+        $sTitle = ucwords(str_replace('_', ' ', $title));
         return $sTitle;
     }
 
