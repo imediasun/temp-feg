@@ -45,7 +45,8 @@ class Tools
         $ret[] = "<h3>Move History</h3>";
         if (!empty($moveHistory)) {
             $move = json_decode(json_encode($moveHistory), true);
-            $skip = ['skip'=> ['from_first_name','from_last_name','to_first_name','to_last_name','from_by','to_by','from_loc','to_loc']];
+            //'to_first_name','to_last_name',
+            $skip = ['skip'=> ['from_first_name','from_last_name','from_by','to_by','from_loc','to_loc']];
             $ret[] = FEGHelp::tableFromArray($move, array_merge($skip, $tableOptions));
         }
         else {
