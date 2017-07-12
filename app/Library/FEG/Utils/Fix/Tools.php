@@ -33,7 +33,7 @@ class Tools
         // show history
         // show current location, prev_location, from game table
         // show from game_earnings last data received, generate move history
-        $tableOptions = ["tableClass" => "table table-striped  datagrid", "humanifyTitle" => true];
+        $tableOptions = ["tableClass" => "table table-striped datagrid", "humanifyTitle" => true, "tableStyles" => "font-size: 14px;"];
 
         $ret = [];
         if (empty($gameId)) {
@@ -70,15 +70,19 @@ class Tools
             $ret = ["<font color='red'>No data in game table!</font>"];
         }
         else {
-            $ret[] = implode('', ["Status: ", $gameData->status_id == "3" ? "Transit" : ($gameData->status_id == "2" ? "Repair" : "Up")]);
-            $ret[] = implode('', ["Location: ", $gameData->location_id]);
-            $ret[] = implode('', ["Prev Location: ", $gameData->prev_location_id]);
-            $ret[] = implode('', ["Inception Date: ", \DateHelpers::formatDate($gameData->date_in_service)]);
-            $ret[] = implode('', ["Not Debit?: ", $gameData->not_debit == 1 ? "Yes" : "No"]);
-            $ret[] = implode('', ["Is Test?: ", $gameData->test_piece == 1 ? "Yes" : "No"]);
-            $ret[] = implode('', ["Last Moved on: ", \DateHelpers::formatDate($gameData->date_last_move)]);
-            $ret[] = implode('', ["Last Move ID: ", $gameData->game_move_id]);
-            $ret[] = implode('', ["Sold?: ", $gameData->sold == 1 ? "Yes" : "No"]);
+            $gameDetails = [
+                ["Field" => "Status", "Value" => $gameData->status_id == "3" ? "Transit" : ($gameData->status_id == "2" ? "Repair" : "Up")],
+                ["Field" => "Location", "Value" => $gameData->location_id],
+                ["Field" => "Prev Location", "Value" => $gameData->prev_location_id],
+                ["Field" => "Inception Date", "Value" => \DateHelpers::formatDate($gameData->date_in_service)],
+                ["Field" => "Not Debit?", "Value" => $gameData->not_debit == 1 ? "Yes" : "No"],
+                ["Field" => "Is Test?", "Value" => $gameData->test_piece == 1 ? "Yes" : "No"],
+                ["Field" => "Last Moved on", "Value" => \DateHelpers::formatDate($gameData->date_last_move)],
+                ["Field" => "Last Move ID", "Value" => $gameData->game_move_id],
+                ["Field" => "Sold?", "Value" => $gameData->sold == 1 ? "Yes" : "No"],
+            ];
+            $tConfig = ["cellWidths" => ["Field" => "150"]];
+            $ret[] = FEGHelp::tableFromArray($gameDetails, array_merge($tConfig, $tableOptions));
         }
 
 
@@ -139,7 +143,7 @@ class Tools
             game_id=$gameId
         AND date_played >='?'
         AND date_played <='?'
-        AND location_id != 2031</pre>";
+        AND location_id != ?</pre>";
 
         return $ret;
 
