@@ -69,6 +69,7 @@ class TicketMailer
 //            'preferGoogleOAuthMail' => true, // DO NOT UNCOMMENT 
             'isTest' => env('SEND_TICKET_EMAIL_TO_TEST_RECIPIENT', false),
             'configNamePrefix' => 'Ticket-Notification-'.$ticketId,
+            'preferGoogleOAuthMail' => true
         ];
         
         if (!empty($data['_base_file_path'])) {
