@@ -81,10 +81,18 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Claimed By', (isset($fields['user_claim']['language'])? $fields['user_claim']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('User Claim', (isset($fields['user_claim']['language'])? $fields['user_claim']['language'] : array())) }}
 						</td>
 						<td>{{ \DateHelpers::formatStringValue($row->user_claim) }} </td>
 						
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Claimed By User', (isset($fields['claimed_by']['language'])? $fields['claimed_by']['language'] : array())) }}
+						</td>
+						<td>{!! SiteHelpers::gridDisplayView($row->claimed_by,'claimed_by','1:users:id:first_name|last_name',$nodata['claimed_by'])!!}</td>
+
 					</tr>
 
 					<tr>
