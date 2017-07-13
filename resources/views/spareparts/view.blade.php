@@ -91,7 +91,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Claimed By User', (isset($fields['claimed_by']['language'])? $fields['claimed_by']['language'] : array())) }}
 						</td>
-						<td>{!! SiteHelpers::gridDisplayView($row->claimed_by,'claimed_by','1:users:id:first_name|last_name',$nodata['claimed_by'])!!}</td>
+						<td>{!! SiteHelpers::gridDisplayView($row->claimed_by,'claimed_by','1:users:id:first_name | last_name',$nodata['claimed_by'])!!}</td>
 
 					</tr>
 
