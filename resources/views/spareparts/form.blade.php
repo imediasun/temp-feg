@@ -130,12 +130,42 @@
                         </div>
                     </div>
                     <div class="form-group  ">
+                        <label for="Claimed Location" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Claimed Location', (isset($fields['claimed_location_id']['language'])?
+                            $fields['claimed_location_id']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <select name="claimed_location_id" id="claimed_location_id" class="select4" />
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    @if(!empty($row['claimed_by']))
+                        <div class="form-group  ">
+                            <label for="Claimed By User" class=" control-label col-md-4 text-left">
+                                {!! SiteHelpers::activeLang('Claimed By User', (isset($fields['claimed_by']['language'])?
+                                $fields['claimed_by']['language'] : array())) !!}
+                            </label>
+                            <div class="col-md-6">
+                                {!! SiteHelpers::gridDisplayView($row->claimed_by,'claimed_by','1:users:id:first_name|last_name',$nodata['claimed_by'])!!}
+                            </div>
+                            <div class="col-md-2">
+                            </div>
+                        </div>
+                    @else
+                        <input type="hidden" name="claimed_by" value="{{Auth::user()->id}}">
+                    @endif
+                    <div class="form-group  ">
                         <label for="User" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Submitted By', (isset($fields['user']['language'])?
                             $fields['user']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
+                            @if(empty($row['id']))
                             <input type="hidden" name="user" value="{{Auth::user()->first_name .' '. Auth::user()->last_name}}">
+                            @endif
                             @if(!empty($row['user']))
                                 {{$row['user']}}
                             @else
@@ -145,6 +175,8 @@
                         <div class="col-md-2">
                         </div>
                     </div>
+
+
 
                 </fieldset>
             </div>
@@ -172,6 +204,8 @@
         $(document).ready(function () {
             $("#status_id").jCombo("{{ URL::to('spareparts/comboselect?filter=spare_status:id:status') }}",
                     {selected_value: '{{ $row['status_id'] }}', initial_text: 'Select Status'});
+            $("#claimed_location_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
+                {selected_value: '{{ $row['claimed_location_id'] }}', initial_text: 'Select Location'});
             $("#loc_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
                     {selected_value: '{{ $row['loc_id'] }}', initial_text: 'Select Location' ,
                         <?php $row["loc_id"] == '' ? '': print_r("onLoad:addInactiveItem('#loc_id', ".$row['loc_id']." , 'Location', 'active' , 'location_name' )") ?>

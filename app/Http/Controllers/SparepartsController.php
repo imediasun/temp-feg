@@ -203,10 +203,15 @@ class SparepartsController extends Controller
             $row = $this->model->getRow($id);
             if($row->status_id != 2)
             {
+                $request->claimed_by = $row->claimed_by;
                 $rules = array('loc_id' => 'required', 'status_id' => 'required');
             }
             else
             {
+                if($request->claimed_by == 1)
+                {
+                    $request->claimed_by = null;
+                }
                 $rules = array('description' => "required",  'qty' => "required", 'value' => 'required', 'loc_id' => 'required', 'user' => 'required','status_id' => 'required');
             }
         }
@@ -218,8 +223,18 @@ class SparepartsController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('spare_parts');
-
-            $id = $this->model->insertRow($data, $id);
+            if($id)
+            {
+                $id = $this->model->insertRow($data, $id);
+            }
+            else
+            {
+                $numberOfSpareparts = $request->qty;
+                for($i=0; $i<$numberOfSpareparts; $i++)
+                {
+                    $this->model->insertRow($data);
+                }
+            }
 
             return response()->json(array(
                 'status' => 'success',
