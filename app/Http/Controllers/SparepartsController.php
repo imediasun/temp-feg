@@ -240,6 +240,7 @@ class SparepartsController extends Controller
                 $numberOfSpareparts = $request->qty;
                 for($i=0; $i<$numberOfSpareparts; $i++)
                 {
+                    $data['qty'] = 1;
                     $this->model->insertRow($data);
                 }
             }
