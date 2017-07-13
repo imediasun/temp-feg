@@ -1146,13 +1146,14 @@ class FEGSystemHelper
 
         if ($isTest) {
             $attachments = isset($attach) ? $attach : '';
-            if(is_array($attachments))
+            // this code will store attachments name in $attachments instead of path
+            /*if(is_array($attachments))
             {
                 foreach ($attachments as $key => $file)
                 {
                     $attachments[$key] = substr($file, strrpos($file, '/') + 1);
                 }
-            }
+            }*/
 
             $message =  "
 *************** EMAIL START --- DEBUG INFO *******************<br>
@@ -1164,7 +1165,7 @@ class FEGSystemHelper
 
 ***************** DEBUG INFO END *****************************<br><br>
 $message" .
-(isset($attach) ?   "<br><br> ================ ATTACHMENTS ===================================<br><ul><li>".(implode("<li>", $attachments)).'</ul>' : '') .
+(isset($attach) ?   "<br><br> ================ ATTACHMENTS ===================================<br><ul><li>".(implode("<li>", $attach)).'</ul>' : '') .
 "<br><br>******************************************* EMAIL END ********************************<br><br/>";
 
             $options['message'] = $message;
