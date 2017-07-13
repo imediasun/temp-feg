@@ -473,7 +473,7 @@ class FEGSystemHelper
 
             $mail->addReplyTo($userDetail->email);
             if(isset($options['attach']))
-            {
+            {dd($options);
                 $mail->addAttachment($options['attach'], $options['filename'], isset($options['encoding'])?$options['encoding']:'base64', $options['type']);
             }
             if ($mail->Send()) {
