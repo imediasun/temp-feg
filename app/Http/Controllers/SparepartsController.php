@@ -198,21 +198,19 @@ class SparepartsController extends Controller
 
     function postSave(Request $request, $id = null)
     {
+        //status_id 1 means claimed and 2 means available
         if($id)
         {
             $row = $this->model->getRow($id);
-            if($row->status_id != 2)
+            if($request->status_id == 2)
             {
-                if($request->status_id == 2)
-                {
-                    $request->claimed_by = null;
-                    $request->claimed_location_id = null;
-                    $request->user_claim = null;
-                }
-                else
-                {
-                    $request->claimed_by = $row->claimed_by;
-                }
+                $request->claimed_by = null;
+                $request->claimed_location_id = null;
+                $request->user_claim = null;
+            }
+            if($row->status_id == 1)
+            {
+                $request->claimed_by = $row->claimed_by;
 
                 $rules = array('loc_id' => 'required', 'status_id' => 'required');
             }
