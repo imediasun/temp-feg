@@ -86,6 +86,14 @@
 						<td>{{ \DateHelpers::formatStringValue($row->user_claim) }} </td>
 						
 					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Claimed Location', (isset($fields['claimed_location_id']['language'])? $fields['claimed_location_id']['language'] : array())) }}
+						</td>
+						<td>{!! SiteHelpers::gridDisplayView($row->claimed_location_id,'claimed_location_id','1:location:id:location_name',$nodata['claimed_location_id'])!!} </td>
+
+					</tr>
 				
 			</tbody>	
 		</table>  

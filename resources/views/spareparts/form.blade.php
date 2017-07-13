@@ -146,6 +146,20 @@
                         </div>
                     </div>
 
+                    <div class="form-group  ">
+                        <label for="Claimed Location" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Claimed Location', (isset($fields['claimed_location_id']['language'])?
+                            $fields['claimed_location_id']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <select name="claimed_location_id" id="claimed_location_id" class="select4" required />
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+
                 </fieldset>
             </div>
 
@@ -172,6 +186,8 @@
         $(document).ready(function () {
             $("#status_id").jCombo("{{ URL::to('spareparts/comboselect?filter=spare_status:id:status') }}",
                     {selected_value: '{{ $row['status_id'] }}', initial_text: 'Select Status'});
+            $("#claimed_location_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
+                {selected_value: '{{ $row['claimed_location_id'] }}', initial_text: 'Select Location'});
             $("#loc_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
                     {selected_value: '{{ $row['loc_id'] }}', initial_text: 'Select Location' ,
                         <?php $row["loc_id"] == '' ? '': print_r("onLoad:addInactiveItem('#loc_id', ".$row['loc_id']." , 'Location', 'active' , 'location_name' )") ?>

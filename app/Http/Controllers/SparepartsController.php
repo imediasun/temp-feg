@@ -218,8 +218,18 @@ class SparepartsController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('spare_parts');
-
-            $id = $this->model->insertRow($data, $id);
+            if($id)
+            {
+                $id = $this->model->insertRow($data, $id);
+            }
+            else
+            {
+                $numberOfSpareparts = $request->qty;
+                for($i=0; $i<$numberOfSpareparts; $i++)
+                {
+                    $this->model->insertRow($data);
+                }
+            }
 
             return response()->json(array(
                 'status' => 'success',
