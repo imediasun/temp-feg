@@ -476,13 +476,13 @@ class FEGSystemHelper
             {
                 if(isset($options['filename']) && !is_array($options['attach']))
                 {
-                    $mail->addAttachment($options['attach'], $options['filename'], isset($options['encoding'])?$options['encoding']:'base64', $options['type']);
+                    $mail->addAttachment($options['attach'], $options['filename'], isset($options['encoding'])?$options['encoding']:'base64', isset($options['type'])?$options['type']:'');
                 }
                 if(is_array($options['attach']))
                 {
                     foreach ($options['attach'] as $file)
                     {
-                        $mail->addAttachment($file, substr($file, strrpos($file, '/') + 1), isset($options['encoding'])?$options['encoding']:'base64', $options['type']);
+                        $mail->addAttachment($file, substr($file, strrpos($file, '/') + 1), isset($options['encoding'])?$options['encoding']:'base64', isset($options['type'])?$options['type']:'');
                     }
                 }
             }
