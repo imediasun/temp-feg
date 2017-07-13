@@ -41,8 +41,6 @@ class CheckStuff extends Command
         if (!env('ENABLE_CHECK_STUFF', false)) {
             return;
         }
-        die('here');
-
         $recipients = ["to" => env('CHECK_STUFF_EMAILS', [])];
 
         // Check Duplicate PO's
