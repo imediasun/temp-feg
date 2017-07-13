@@ -470,8 +470,16 @@ class FEGSystemHelper
                     $mail->addBCC($bc);
                 }
             }
+            if(isset($options['replyTo']))
+            {
+                $mail->addReplyTo($options['replyTo']);
+            }
+            else
+            {
+                $mail->addReplyTo($userDetail->email);
 
-            $mail->addReplyTo($userDetail->email);
+            }
+
             if(isset($options['attach']))
             {
                 if(isset($options['filename']) && !is_array($options['attach']))
