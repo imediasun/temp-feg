@@ -149,7 +149,7 @@
                                 $fields['claimed_by']['language'] : array())) !!}
                             </label>
                             <div class="col-md-6">
-                                {!! SiteHelpers::gridDisplayView($row->claimed_by,'claimed_by','1:users:id:first_name|last_name',$nodata['claimed_by'])!!}
+                                {!! SiteHelpers::gridDisplayView($row->claimed_by,'claimed_by','1:users:id:first_name | last_name')!!}
                             </div>
                             <div class="col-md-2">
                             </div>
