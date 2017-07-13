@@ -203,7 +203,17 @@ class SparepartsController extends Controller
             $row = $this->model->getRow($id);
             if($row->status_id != 2)
             {
-                $request->claimed_by = $row->claimed_by;
+                if($request->status_id == 2)
+                {
+                    $request->claimed_by = null;
+                    $request->claimed_location_id = null;
+                    $request->user_claim = null;
+                }
+                else
+                {
+                    $request->claimed_by = $row->claimed_by;
+                }
+
                 $rules = array('loc_id' => 'required', 'status_id' => 'required');
             }
             else
