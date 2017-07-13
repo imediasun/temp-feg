@@ -198,29 +198,24 @@ class SparepartsController extends Controller
 
     function postSave(Request $request, $id = null)
     {
+        $row = '';
         //status_id 1 means claimed and 2 means available
         if($id)
         {
             $row = $this->model->getRow($id);
-            if($request->status_id == 2)
-            {
-                $request->claimed_by = null;
-                $request->claimed_location_id = null;
-                $request->user_claim = null;
-            }
+
             if($row->status_id == 1)
             {
-                $request->claimed_by = $row->claimed_by;
-
+                $request->merge(['claimed_by' => $row->claimed_by]);
                 $rules = array('loc_id' => 'required', 'status_id' => 'required');
             }
             else
             {
                 if($request->status_id == 1)
                 {
-                    $request->claimed_by = null;
+                    $request->merge(['claimed_by' => null]);
                 }
-                $rules = array('description' => "required",  'qty' => "required", 'value' => 'required', 'loc_id' => 'required', 'status_id' => 'required');
+                $rules = array('description' => "required", 'value' => 'required', 'loc_id' => 'required', 'status_id' => 'required');
             }
         }
         else
@@ -233,6 +228,25 @@ class SparepartsController extends Controller
             $data = $this->validatePost('spare_parts');
             if($id)
             {
+
+                if($request->status_id == 2)
+                {
+                    $data['claimed_by'] = null;
+                    $data['claimed_location_id'] = null;
+                    $data['user_claim'] = null;
+                }
+                if($row->status_id == 1)
+                {
+                    $data['claimed_by'] =$row->claimed_by;
+                }
+                else
+                {
+                    if($request->status_id == 1)
+                    {
+                        $data['claimed_by'] = null;
+                    }
+                }
+
                 $id = $this->model->insertRow($data, $id);
             }
             else
