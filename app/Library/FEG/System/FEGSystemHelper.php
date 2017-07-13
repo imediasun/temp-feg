@@ -627,6 +627,10 @@ class FEGSystemHelper
                 }
             }
         }
+        else
+        {
+            return 'Email Could not be sent because prevented';
+        }
     }
 
     public static function getHumanDate($date = "") {
@@ -1169,6 +1173,7 @@ $message" .
         self::logit("Sending Email", $lf, $lp);
         self::logit($options, $lf, $lp);
         $status = self::sendEmail($to, $subject, $message, $from, $options);
+        self::logit("Email sent Status = " . $status, $lf, $lp);
         self::logit("Email sent", $lf, $lp);
         return $status;
     }
