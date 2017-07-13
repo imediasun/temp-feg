@@ -58,7 +58,7 @@
                             $fields['qty']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            @if($row['status_id']==2)
+                            @if(empty($row['id']))
                                 {!! Form::text('qty', $row['qty'],array('class'=>'form-control', 'placeholder'=>'','required'=>'true', 'parsley-type'=>'number' , 'parsley-min'=>1  )) !!}
                             @else
                                 {{$row['qty']}}
