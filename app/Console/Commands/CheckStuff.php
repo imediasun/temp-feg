@@ -38,6 +38,7 @@ class CheckStuff extends Command
      */
     public function handle()
     {
+        die('here');
         if (!env('ENABLE_CHECK_STUFF', false)) {
             return;
         }
