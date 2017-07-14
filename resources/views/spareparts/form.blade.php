@@ -121,7 +121,7 @@
                             <div class="col-md-6">
                                 @if($row['status_id']==2)
                                     {!! Form::text('user_claim', $row['user_claim'],array('class'=>'form-control',
-                                    'placeholder'=>'', )) !!}
+                                    'placeholder'=>'','id'=> 'user_claim')) !!}
                                     @else
                                     {{$row['user_claim']}}
                                 @endif
@@ -155,8 +155,6 @@
                                 <div class="col-md-2">
                                 </div>
                             </div>
-                        @else
-                            <input type="hidden" name="claimed_by" value="{{Auth::user()->id}}">
                         @endif
                     </div>
                     <div class="form-group  ">
@@ -252,7 +250,7 @@
                     form.parsley().destroy();
                     $('#claimed_location_id').removeAttr('required');
                     $('#user_claim').removeAttr('required');
-                    $('#claim_fields').hide(600);
+                    $('#claim_fields').hide(300);
                     form.parsley();
                 }
             });

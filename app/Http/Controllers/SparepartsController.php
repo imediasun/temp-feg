@@ -5,6 +5,7 @@ use App\Models\Spareparts;
 use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\Auth;
 use Validator, Input, Redirect;
 
 class SparepartsController extends Controller
@@ -233,12 +234,16 @@ class SparepartsController extends Controller
                 if($row->status_id == 1)
                 {
                     $data['claimed_by'] =$row->claimed_by;
+                    if($request->status_id == 2)
+                    {
+                        $data['claimed_by'] = null;
+                    }
                 }
                 else
                 {
                     if($request->status_id == 1)
                     {
-                        $data['claimed_by'] = null;
+                        $data['claimed_by'] = \Session::get('uid');
                     }
                 }
 
@@ -251,6 +256,10 @@ class SparepartsController extends Controller
                     $data['claimed_by'] = null;
                     $data['claimed_location_id'] = null;
                     $data['user_claim'] = null;
+                }
+                else
+                {
+                    $data['claimed_by'] =\Session::get('uid');
                 }
                 $numberOfSpareparts = $request->qty;
                 for($i=0; $i<$numberOfSpareparts; $i++)
