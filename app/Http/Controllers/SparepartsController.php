@@ -227,17 +227,16 @@ class SparepartsController extends Controller
 
                 if($request->status_id == Spareparts::$AVAILABLE)
                 {
-                    $data['claimed_by'] = null;
                     $data['claimed_location_id'] = null;
                     $data['user_claim'] = null;
                 }
                 if($row->status_id == Spareparts::$CLAIMED)
                 {
                     $data['description'] = $request->has('description')?$request->get('description'):$row->description;
-                    $data['qty'] = $request->has('qty')?$request->get('qty'):$row->qty;
+
                     $data['value'] = $request->has('value')?$request->get('value'):$row->value;
 
-                    $data['claimed_by'] =$row->claimed_by ? $row->claimed_by : \Session::get('uid');
+                    $data['claimed_by'] = ($request->status_id == Spareparts::$AVAILABLE) ?  null : \Session::get('uid');
                 }
                 else
                 {
@@ -247,7 +246,8 @@ class SparepartsController extends Controller
                         $data['claimed_by'] = \Session::get('uid');
                     }
                 }
-
+                $data['qty'] = 1;
+                $data['user'] = $row->user;
                 $id = $this->model->insertRow($data, $id);
             }
             else
