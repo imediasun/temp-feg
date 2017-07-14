@@ -233,7 +233,7 @@ class SparepartsController extends Controller
                 }
                 if($row->status_id == 1)
                 {
-                    $data['claimed_by'] =$row->claimed_by;
+                    $data['claimed_by'] =$row->claimed_by ? $row->claimed_by : \Session::get('uid');
                     if($request->status_id == 2)
                     {
                         $data['claimed_by'] = null;
