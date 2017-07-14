@@ -161,7 +161,7 @@
             $('.claim_fields').toggle(300);
         });
         $('#save_status').on('click',function () {
-            if($('#status_id').val() == 1)
+            if($('#status_id').val() == {{App\Models\spareparts::$CLAIMED}})
             {
                 form.parsley().destroy();
                 $('#claimed_location_id').attr('required','required');

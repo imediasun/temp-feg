@@ -7,7 +7,8 @@ class spareparts extends Sximo  {
 	
 	protected $table = 'spare_parts';
 	protected $primaryKey = 'id';
-
+	public static $AVAILABLE = 2;
+	public static $CLAIMED = 1;
 	public function __construct() {
 		parent::__construct();
 		
