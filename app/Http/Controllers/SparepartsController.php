@@ -233,14 +233,15 @@ class SparepartsController extends Controller
                 }
                 if($row->status_id == 1)
                 {
+                    $data['description'] = $request->has('description')?$request->get('description'):$row->description;
+                    $data['qty'] = $request->has('qty')?$request->get('qty'):$row->qty;
+                    $data['value'] = $request->has('value')?$request->get('value'):$row->value;
+
                     $data['claimed_by'] =$row->claimed_by ? $row->claimed_by : \Session::get('uid');
-                    if($request->status_id == 2)
-                    {
-                        $data['claimed_by'] = null;
-                    }
                 }
                 else
                 {
+
                     if($request->status_id == 1)
                     {
                         $data['claimed_by'] = \Session::get('uid');
