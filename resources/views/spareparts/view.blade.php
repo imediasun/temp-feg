@@ -116,7 +116,7 @@
                     </tr>
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('User Claim', (isset($fields['user_claim']['language'])? $fields['user_claim']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Claim Reason', (isset($fields['user_claim']['language'])? $fields['user_claim']['language'] : array())) }}
 						</td>
 						<td>{{ \DateHelpers::formatStringValue($row->user_claim) }} </td>
 						
