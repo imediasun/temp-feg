@@ -17,6 +17,7 @@
 			<input type="hidden" name="description" value="{{$row->description}}">
 			<input type="hidden" name="value" value="{{$row->value}}">
 			<input type="hidden" name="qty" value="{{$row->qty}}">
+			<input type="hidden" name="user" value="{{$row->user}}">
 			<input type="hidden" name="game_title_id" value="{{$row->game_title_id}}">
 			<input type="hidden" name="loc_id" value="{{$row->loc_id}}">
 			<input type="hidden" name="user_claim" value="{{$row->user_claim}}">
