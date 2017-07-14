@@ -113,8 +113,8 @@
                     <div id="claim_fields">
                         <input type="hidden" id="is_edit" value="@if(!empty($row['id'])) 1 @else 0 @endif">
                         <div class="form-group  ">
-                            <label for="User Claim" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('User Claim', (isset($fields['user_claim']['language'])?
+                            <label for="Claim Reason" class=" control-label col-md-4 text-left">
+                                {!! SiteHelpers::activeLang('Claim Reason', (isset($fields['user_claim']['language'])?
                                 $fields['user_claim']['language'] : array())) !!}
                             </label>
 
