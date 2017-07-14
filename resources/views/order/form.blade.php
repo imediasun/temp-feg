@@ -14,7 +14,7 @@
         <div class="sbox-title">
             <h4>
                 @if($id)
-                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Order
+                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;@if($data['prefill_type'] == 'clone') Clone @else Edit @endif Order
                 @else
                     <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Order
                 @endif
@@ -72,7 +72,7 @@
                                    value="1" @if(!empty($data['alt_address'])) checked @endif/></div>
 
                     </div>
-                    @if($id)
+                    @if($id && $data['prefill_type'] != 'clone')
                         <div class="form-group netSuiteStatus"><br/><br/>
                         
                         <p class="text-info netSuiteStatusSuccess @if(!Order::isApified($id, $row)) hidden @endif">
@@ -400,7 +400,7 @@
                 <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>                    
-                    @if($id && Order::isApiable($id, $row) && !Order::isApified($id, $row))
+                    @if($id && Order::isApiable($id, $row) && !Order::isApified($id, $row) && $data['prefill_type'] != 'clone')
                         <button type="button" class="btn btn-success btn-sm exposeAPI">
                         {{ Lang::get('core.order_api_expose_button_label') }} </button>
                     @endif
