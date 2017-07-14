@@ -101,7 +101,18 @@
                         </td>
 						
 					</tr>
-				
+                    <tr>
+                        <td width='30%' class='label-view text-right'>
+                            {{ SiteHelpers::activeLang('Claimed Location', (isset($fields['claimed_location_id']['language'])? $fields['claimed_location_id']['language'] : array())) }}
+                        </td>
+                        <td>
+                            <div class="label_fields col-md-4" style="padding : 0">{!! SiteHelpers::gridDisplayView($row->claimed_location_id,'claimed_location_id','1:location:id:location_name',$nodata['claimed_location_id'])!!}</div>
+                            <div class="claim_fields col-md-5" style="padding : 0">
+                                <select name="claimed_location_id" id="claimed_location_id" class="select4" />
+                            </div>
+                        </td>
+
+                    </tr>
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('User Claim', (isset($fields['user_claim']['language'])? $fields['user_claim']['language'] : array())) }}
@@ -118,18 +129,7 @@
 
 					</tr>
 
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Claimed Location', (isset($fields['claimed_location_id']['language'])? $fields['claimed_location_id']['language'] : array())) }}
-						</td>
-						<td>
-							<div class="label_fields col-md-4" style="padding : 0">{!! SiteHelpers::gridDisplayView($row->claimed_location_id,'claimed_location_id','1:location:id:location_name',$nodata['claimed_location_id'])!!}</div>
-							<div class="claim_fields col-md-5" style="padding : 0">
-								<select name="claimed_location_id" id="claimed_location_id" class="select4" />
-							</div>
-						</td>
 
-					</tr>
 				
 			</tbody>	
 		</table>
