@@ -110,53 +110,55 @@
 
                         </div>
                     </div>
-
-                    <div class="form-group  ">
-                        <label for="User Claim" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('User Claim', (isset($fields['user_claim']['language'])?
-                            $fields['user_claim']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            @if($row['status_id']==2)
-                                {!! Form::text('user_claim', $row['user_claim'],array('class'=>'form-control',
-                                'placeholder'=>'', )) !!}
-                                @else
-                                {{$row['user_claim']}}
-                            @endif
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-                    <div class="form-group  ">
-                        <label for="Claimed Location" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Claimed Location', (isset($fields['claimed_location_id']['language'])?
-                            $fields['claimed_location_id']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            <select name="claimed_location_id" id="claimed_location_id" class="select4" />
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-                    @if(!empty($row['claimed_by']))
+                    <div id="claim_fields">
+                        <input type="hidden" id="is_edit" value="@if(!empty($row['id'])) 1 @else 0 @endif">
                         <div class="form-group  ">
-                            <label for="Claimed By User" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('Claimed By User', (isset($fields['claimed_by']['language'])?
-                                $fields['claimed_by']['language'] : array())) !!}
+                            <label for="User Claim" class=" control-label col-md-4 text-left">
+                                {!! SiteHelpers::activeLang('User Claim', (isset($fields['user_claim']['language'])?
+                                $fields['user_claim']['language'] : array())) !!}
                             </label>
+
                             <div class="col-md-6">
-                                {!! SiteHelpers::gridDisplayView($row['claimed_by'],'claimed_by','1:users:id:first_name|last_name')!!}
+                                @if($row['status_id']==2)
+                                    {!! Form::text('user_claim', $row['user_claim'],array('class'=>'form-control',
+                                    'placeholder'=>'', )) !!}
+                                    @else
+                                    {{$row['user_claim']}}
+                                @endif
                             </div>
                             <div class="col-md-2">
+
                             </div>
                         </div>
-                    @else
-                        <input type="hidden" name="claimed_by" value="{{Auth::user()->id}}">
-                    @endif
+                        <div class="form-group  ">
+                            <label for="Claimed Location" class=" control-label col-md-4 text-left">
+                                {!! SiteHelpers::activeLang('Claimed Location', (isset($fields['claimed_location_id']['language'])?
+                                $fields['claimed_location_id']['language'] : array())) !!}
+                            </label>
+
+                            <div class="col-md-6">
+                                <select name="claimed_location_id" id="claimed_location_id" class="select4" />
+                            </div>
+                            <div class="col-md-2">
+
+                            </div>
+                        </div>
+                        @if(!empty($row['claimed_by']))
+                            <div class="form-group  ">
+                                <label for="Claimed By User" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Claimed By User', (isset($fields['claimed_by']['language'])?
+                                    $fields['claimed_by']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    {!! SiteHelpers::gridDisplayView($row['claimed_by'],'claimed_by','1:users:id:first_name|last_name')!!}
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                            </div>
+                        @else
+                            <input type="hidden" name="claimed_by" value="{{Auth::user()->id}}">
+                        @endif
+                    </div>
                     <div class="form-group  ">
                         <label for="User" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Submitted By', (isset($fields['user']['language'])?
@@ -216,11 +218,33 @@
             $('.previewImage').fancybox();
             $('.tips').tooltip();
             renderDropdown($(".select4 "), { width:"100%"});
-            $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
+            $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true});
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('input[type="checkbox"],input[type="radio"]').iCheck({
                 checkboxClass: 'icheckbox_square-blue',
                 radioClass: 'iradio_square_green'
+            });
+            if($('#is_edit').val() == 1)
+            {
+                if($('#status_id').val() == 2)
+                {
+                    $('#claim_fields').hide();
+                }
+            }
+            else
+            {
+                $('#claim_fields').hide();
+            }
+
+            $('#status_id').on('change',function () {
+                if($(this).val() == 1)
+                {
+                    $('#claim_fields').show(600);
+                }
+                else
+                {
+                    $('#claim_fields').hide(600);
+                }
             });
             $('.removeCurrentFiles').on('click', function () {
                 var removeUrl = $(this).attr('href');
