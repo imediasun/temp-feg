@@ -145,8 +145,8 @@
                         </div>
                         @if(!empty($row['claimed_by']))
                             <div class="form-group  ">
-                                <label for="Claimed By User" class=" control-label col-md-4 text-left">
-                                    {!! SiteHelpers::activeLang('Claimed By User', (isset($fields['claimed_by']['language'])?
+                                <label for="Claimed By" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Claimed By', (isset($fields['claimed_by']['language'])?
                                     $fields['claimed_by']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-6">
@@ -235,15 +235,25 @@
             {
                 $('#claim_fields').hide();
             }
+            var form = $('#sparepartsFormAjax');
+            form.parsley();
 
             $('#status_id').on('change',function () {
                 if($(this).val() == 1)
                 {
+                    form.parsley().destroy();
+                    $('#claimed_location_id').attr('required','required');
+                    $('#user_claim').attr('required','required');
                     $('#claim_fields').show(600);
+                    form.parsley();
                 }
                 else
                 {
+                    form.parsley().destroy();
+                    $('#claimed_location_id').removeAttr('required');
+                    $('#user_claim').removeAttr('required');
                     $('#claim_fields').hide(600);
+                    form.parsley();
                 }
             });
             $('.removeCurrentFiles').on('click', function () {
@@ -253,8 +263,7 @@
                 $(this).parent('div').empty();
                 return false;
             });
-            var form = $('#sparepartsFormAjax');
-            form.parsley();
+
             form.submit(function () {
 
                 if (form.parsley('isValid') == true) {
