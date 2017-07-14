@@ -26,7 +26,7 @@
                             $fields['description']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            @if($row['status_id']==2)
+                            @if($row['status_id']== App\Models\spareparts::$AVAILABLE)
                             {!! Form::text('description', $row['description'],array('class'=>'form-control',
                             'placeholder'=>'', 'required'=>'true' )) !!}
                             @else
@@ -42,7 +42,7 @@
                             $fields['game_title_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            @if($row['status_id']==2)
+                            @if($row['status_id']== App\Models\spareparts::$AVAILABLE)
                                 <select name="game_title_id" id="game_title_id" class="select4"></select>
                             @else
                                 {!! SiteHelpers::gridDisplayView($row['game_title_id'],'game_title_id','1:game_title:id:game_title')!!}
@@ -73,7 +73,7 @@
                             $fields['value']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            @if($row['status_id']==2)
+                            @if($row['status_id']== App\Models\spareparts::$AVAILABLE)
                             {!! Form::text('value', $row['value'],array('class'=>'form-control', 'placeholder'=>'','required'=>'true', 'parsley-type'=>'number' , 'parsley-min'=>0))
                             !!}
                             @else
@@ -119,7 +119,7 @@
                             </label>
 
                             <div class="col-md-6">
-                                @if($row['status_id']==2)
+                                @if($row['status_id']== App\Models\spareparts::$AVAILABLE)
                                     {!! Form::text('user_claim', $row['user_claim'],array('class'=>'form-control',
                                     'placeholder'=>'','id'=> 'user_claim')) !!}
                                     @else
@@ -222,9 +222,9 @@
                 checkboxClass: 'icheckbox_square-blue',
                 radioClass: 'iradio_square_green'
             });
-            if($('#is_edit').val() == 1)
+            if($('#is_edit').val() == {{ App\Models\spareparts::$CLAIMED}})
             {
-                if($('#status_id').val() == 2)
+                if($('#status_id').val() == {{ App\Models\spareparts::$AVAILABLE}})
                 {
                     $('#claim_fields').hide();
                 }
@@ -237,7 +237,7 @@
             form.parsley();
 
             $('#status_id').on('change',function () {
-                if($(this).val() == 1)
+                if($(this).val() == {{ App\Models\spareparts::$CLAIMED}})
                 {
                     form.parsley().destroy();
                     $('#claimed_location_id').attr('required','required');

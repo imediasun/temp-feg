@@ -205,7 +205,7 @@ class SparepartsController extends Controller
         {
             $row = $this->model->getRow($id);
 
-            if($row->status_id == 1)
+            if($row->status_id == Spareparts::$CLAIMED)
             {
                 $rules = array('loc_id' => 'required', 'status_id' => 'required');
             }
@@ -225,13 +225,13 @@ class SparepartsController extends Controller
             if($id)
             {
 
-                if($request->status_id == 2)
+                if($request->status_id == Spareparts::$AVAILABLE)
                 {
                     $data['claimed_by'] = null;
                     $data['claimed_location_id'] = null;
                     $data['user_claim'] = null;
                 }
-                if($row->status_id == 1)
+                if($row->status_id == Spareparts::$CLAIMED)
                 {
                     $data['description'] = $request->has('description')?$request->get('description'):$row->description;
                     $data['qty'] = $request->has('qty')?$request->get('qty'):$row->qty;
@@ -242,7 +242,7 @@ class SparepartsController extends Controller
                 else
                 {
 
-                    if($request->status_id == 1)
+                    if($request->status_id == Spareparts::$CLAIMED)
                     {
                         $data['claimed_by'] = \Session::get('uid');
                     }
@@ -252,7 +252,7 @@ class SparepartsController extends Controller
             }
             else
             {
-                if($request->status_id == 2)
+                if($request->status_id == Spareparts::$AVAILABLE)
                 {
                     $data['claimed_by'] = null;
                     $data['claimed_location_id'] = null;
