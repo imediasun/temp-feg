@@ -206,15 +206,10 @@ class SparepartsController extends Controller
 
             if($row->status_id == 1)
             {
-                $request->merge(['claimed_by' => $row->claimed_by]);
                 $rules = array('loc_id' => 'required', 'status_id' => 'required');
             }
             else
             {
-                if($request->status_id == 1)
-                {
-                    $request->merge(['claimed_by' => null]);
-                }
                 $rules = array('description' => "required", 'value' => 'required', 'loc_id' => 'required', 'status_id' => 'required');
             }
         }
