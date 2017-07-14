@@ -246,6 +246,12 @@ class SparepartsController extends Controller
             }
             else
             {
+                if($request->status_id == 2)
+                {
+                    $data['claimed_by'] = null;
+                    $data['claimed_location_id'] = null;
+                    $data['user_claim'] = null;
+                }
                 $numberOfSpareparts = $request->qty;
                 for($i=0; $i<$numberOfSpareparts; $i++)
                 {
