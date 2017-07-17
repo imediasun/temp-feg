@@ -93,10 +93,11 @@
 							</div>
 
 							<div class="col-sm-2 text-center" style="padding : 0">
-								<button type="submit" id="save_status" class="btn btn-primary claim_fields"><i
-											class="fa  fa-save "></i></button>
-								<button type="button" id="change_status" class="btn btn-success">
-									<i class="fa  fa-pencil "></i></button>
+                                <button type="submit" id="save_status" class="btn btn-primary claim_fields"><i
+                                            class="fa  fa-save "></i></button>
+                                <button type="button" id="change_status" data-action="{{($row->status_id == App\Models\spareparts::$AVAILABLE)?'Claim':'Avail'}}" class="btn btn-success">{{($row->status_id == App\Models\spareparts::$AVAILABLE)?'Claim':'Avail'}} this Part</button>
+
+
 							</div>
 
                         </td>
@@ -159,6 +160,9 @@
         $('#change_status').on('click',function () {
             $('.label_fields').toggle(300);
             $('.claim_fields').toggle(300);
+            console.log($(this).text());
+            $(this).text(
+                ($(this).text() == $(this).attr('data-action')+" this Part") ? "Cancel" : $(this).attr('data-action')+" this Part");
         });
         $('#save_status').on('click',function () {
             if($('#status_id').val() == {{App\Models\spareparts::$CLAIMED}})
