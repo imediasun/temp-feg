@@ -112,6 +112,20 @@
                     </div>
                     <div id="claim_fields">
                         <input type="hidden" id="is_edit" value="@if(!empty($row['id'])) 1 @else 0 @endif">
+
+                        <div class="form-group  ">
+                            <label for="Claimed Location" class=" control-label col-md-4 text-left">
+                                {!! SiteHelpers::activeLang('Claimed Location', (isset($fields['claimed_location_id']['language'])?
+                                $fields['claimed_location_id']['language'] : array())) !!}
+                            </label>
+
+                            <div class="col-md-6">
+                                <select name="claimed_location_id" id="claimed_location_id" class="select4" />
+                            </div>
+                            <div class="col-md-2">
+
+                            </div>
+                        </div>
                         <div class="form-group  ">
                             <label for="Claim Reason" class=" control-label col-md-4 text-left">
                                 {!! SiteHelpers::activeLang('Claim Reason', (isset($fields['user_claim']['language'])?
@@ -122,22 +136,9 @@
                                 @if($row['status_id']== App\Models\spareparts::$AVAILABLE)
                                     {!! Form::text('user_claim', $row['user_claim'],array('class'=>'form-control',
                                     'placeholder'=>'','id'=> 'user_claim')) !!}
-                                    @else
-                                    {{$row['user_claim']}}
+                                @else
+                                    {{ \DateHelpers::formatStringValue($row['user_claim']) }}
                                 @endif
-                            </div>
-                            <div class="col-md-2">
-
-                            </div>
-                        </div>
-                        <div class="form-group  ">
-                            <label for="Claimed Location" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('Claimed Location', (isset($fields['claimed_location_id']['language'])?
-                                $fields['claimed_location_id']['language'] : array())) !!}
-                            </label>
-
-                            <div class="col-md-6">
-                                <select name="claimed_location_id" id="claimed_location_id" class="select4" />
                             </div>
                             <div class="col-md-2">
 
