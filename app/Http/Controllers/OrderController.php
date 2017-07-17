@@ -1355,6 +1355,11 @@ class OrderController extends Controller
             {
                 $partial = 1;
             }
+            $orderNotes = \DB::table('orders')->where('id', $request->get('order_id'))->pluck('notes');
+            if(!empty($orderNotes))
+            {
+                $notes = $orderNotes."<br>----------------------<br>".$notes;
+            }
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
