@@ -3454,3 +3454,7 @@ span.order_custom_error ~ ul.parsley-error-list
     word-wrap: break-word;
     word-break: break-all;
 }
+.table-striped tbody td
+{
+  word-wrap: break-word;
+}
