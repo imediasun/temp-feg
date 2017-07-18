@@ -118,7 +118,8 @@
         type = $("#active_inactive").val();
         order_type = $("#order_type").val();
         product_type = $("#product_type").val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?&type=store'+ getFooterFilters()+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
+        console.log(getFooterFilters({'page': true}));
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?&type=store'+ getFooterFilters({'page': true})+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
     });
 
     /* todo refactor code
