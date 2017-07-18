@@ -538,8 +538,27 @@
                 rid = rIdInput.val(),
                 i, j, newIds = [], newSids = [];
     
-            App.ajax.submit(siteUrl+'/managefegrequeststore/deny',
-                    {data:{request_id: rid}, blockUI:true, method: 'POST'});
+            /*App.ajax.submit(siteUrl+'/managefegrequeststore/deny',
+                    {data:{request_id: rid}, blockUI:true, method: 'POST'});*/
+            console.log('request id to remove = '+rid);
+            if(rid != '' && rid != undefined && rid != ' ')
+            {
+                console.log('removing request id from blocked list = '+rid);
+                $.ajax({
+                    method: "Get",
+                    url:"{{route('remove_blocked_check')}}",
+                    data:{
+                        requestIds : rid
+                    }
+                })
+                    .success(function (data) {
+                        console.log(data);
+                    })
+                    .error(function (data) {
+                        console.log(data);
+                    });
+            }
+
 
             for(i in ids) {
                 j = ids[i];
