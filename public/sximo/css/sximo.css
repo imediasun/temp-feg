@@ -3454,7 +3454,7 @@ span.order_custom_error ~ ul.parsley-error-list
     word-wrap: break-word;
     word-break: break-all;
 }
-.table-striped tbody td:not(.number):not([data-field="id"]):not([data-field="po_number"])
+.table-striped tbody td:not(.number):not([data-field="id"]):not([data-field="po_number"]):not([data-field="active"])
 {
   word-wrap: break-word;
 }
