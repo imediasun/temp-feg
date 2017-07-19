@@ -321,8 +321,8 @@
 
         $('.add_meter').on('click', function (e) {
             var id = $(this).attr('id');
-            $(this).after('<a style="margin-top: 2px;" href="javascript:void(0)" class="btn btn-xs btn-danger"' +
-                    'onclick="removeMe($(this), ' + id + ');  return false">-</a><br/>');
+            $(this).after('<br/><a style="margin-top: 2px;" href="javascript:void(0)" class="btn btn-xs btn-danger"' +
+                    'onclick="removeMe($(this), ' + id + ');  return false">-</a>');
             $('#meter_start-' + id).parent('td').append('<input style="display: block; width:55px; margin-top: 4px;" type="text" name="meter_start[]" value="" class="changed"/>');
             $('#meter_end-' + id).parent('td').append('<input style="display: block; width:55px; margin-top: 3px;" type="text" name="meter_end[]" value="" class="changed"/>');
             inlineChanges();
