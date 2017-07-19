@@ -445,8 +445,8 @@ class ReportGenerator
         
         $task =$_task;
         $isTest = $task->is_test_mode;
-        
-        if ($hasDailyReport) {
+        // all location reports are being sent irrespective of whether there's issue to report
+        if (true || $hasDailyReport) {
             $configName = 'Daily games summary for each location';
             $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $location);
             self::sendEmailReport(array_merge($emailRecipients, array(
