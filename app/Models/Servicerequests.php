@@ -20,7 +20,7 @@ class Servicerequests extends Observerable  {
     public static function querySelect(  ){
         $date = date("Y-m-d");
         $sql = "SELECT
-                    IF (sbc.UserID=0, sbc.USERNAME, CONCAT(U.first_name, ' ', U.last_name)) AS last_user,
+                        IF (sbc.UserID=0, sbc.USERNAME, CONCAT(U.first_name, ' ', U.last_name)) AS last_user,
                     IF(ISNULL(sbc.Posted),
                         DATEDIFF('$date', sb_tickets.Created),
                         DATEDIFF('$date', sbc.Posted)) AS last_updated_elapsed_days,
