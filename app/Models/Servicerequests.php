@@ -24,7 +24,7 @@ class Servicerequests extends Observerable  {
                     IF(ISNULL(sbc.Posted),
                         DATEDIFF('$date', sb_tickets.Created),
                         DATEDIFF('$date', sbc.Posted)) AS last_updated_elapsed_days,
-                    sb_tickets.*
+                    sb_tickets.*, D.company as debit_type
 
                 FROM sb_tickets
 
@@ -36,7 +36,10 @@ class Servicerequests extends Observerable  {
 				WHERE tcm.max_posted = sb_ticketcomments.Posted
     ) sbc ON sbc.TicketID = sb_tickets.TicketID
 
-	LEFT JOIN users U ON U.id = sbc.UserID";
+	LEFT JOIN users U ON U.id = sbc.UserID
+	INNER JOIN location L ON ( sb_tickets.location_id = L.id )
+    INNER JOIN debit_type D ON (L.debit_type_id = D.id)
+	";
 
         return $sql;
     }
