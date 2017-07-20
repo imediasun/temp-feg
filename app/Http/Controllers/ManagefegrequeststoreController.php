@@ -387,8 +387,16 @@ class ManagefegrequeststoreController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $vendor = $request->get('vendor_id');
-            $query = \DB::select('SELECT R.* FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . $location . '"  AND P.vendor_id = "' . $vendor . '" AND R.status_id = 1 AND R.blocked_at IS NULL');
+            $cond = array('view' => $request->get('type'), 'order_type_id' => $request->get('order_type'), 'location_id' => $request->get('location_id'), 'vendor_id' => $request->get('vendor_id'));
+            $results = $this->model->getRows([], $cond);
+            $query = [];
+            if(isset($results['rows']) && !empty($results['rows'])){
+                $query = $results['rows'];
+            }
+
+            //$query = \DB::select('SELECT R.* FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . $location . '"  AND P.vendor_id = "' . $vendor . '" AND R.status_id = 1 AND R.blocked_at IS NULL');
             //$query = \DB::select('select id from requests where location_id = "' . $location . '" AND status_id = 1 AND product_id IN (Select id from products where id IN (select product_id from requests where location_id = "' . $location . '" AND status_id = 1) And vendor_id = "' . $vendor . '")');
+
             if (count($query) > 0) {
                 $SID = 'SID';
                 $requestIds = '';
