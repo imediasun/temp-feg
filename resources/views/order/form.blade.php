@@ -818,11 +818,14 @@
             vendor = $(this);
             if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
             {
+                console.log('vendorChangeCount > 1');
                 if($('#item_name').val()) {
+                    $('#submit_btn').attr('disabled','disabled');
                     App.notyConfirm({
                         message: "Are you sure you want to change Vendor <br> <b>***WARNING***</b><br>if you change vendor all of your items will be removed and you will have to add them again",
                         confirmButtonText: 'Yes',
                         confirm: function () {
+                            $('#submit_btn').removeAttr('disabled');
                             $('.itemstable .clonedInput:not(:first-child)').remove();
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
@@ -846,12 +849,21 @@
                                 $('#vendor_id option[value = '+vendor.attr('lastSelected')+']').attr('selected', true);
                                 vendorChangeCount = 1;
                                 vendor.trigger("change");
+                                $('#submit_btn').removeAttr('disabled');
+                            }
+                            else
+                            {
+                                console.log('no previous vendor selected');
+                                $('#vendor_id option').removeAttr('selected');
+                                vendor.trigger("change");
+                                $('#submit_btn').removeAttr('disabled');
                             }
                         }
                     });
                 }
                 else
                 {
+                    console.log('in else vendorChangeCount');
                     $.ajax({
                         type: "GET",
                         url: "{{ url() }}/order/bill-account",
