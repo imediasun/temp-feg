@@ -107,8 +107,8 @@ class productusagereport extends Sximo  {
 									 P.num_items,
 									 ROUND(P.case_price / P.num_items,2) AS Unit_Price,
 									 SUM(requests.qty) AS Cases_Ordered,
-									 P.case_price AS Case_Price,
-									 SUM(requests.qty * P.case_price) AS Total_Spent,
+									 O.case_price AS Case_Price,
+									 SUM(O.qty * O.case_price) AS Total_Spent,
 									 T.order_type AS Order_Type,
 									 D.type_description AS Product_Type,
 									 requests.location_id,
@@ -125,7 +125,9 @@ class productusagereport extends Sximo  {
 						   LEFT JOIN vendor V ON V.id = P.vendor_id
 						   LEFT JOIN order_type T ON T.id = P.prod_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
-						   LEFT JOIN users U ON U.id = requests.process_user_id ";
+						   LEFT JOIN users U ON U.id = requests.process_user_id 
+						   LEFT JOIN order_contents O ON O.request_id = requests.id
+						   ";
             
             $whereQuery = " WHERE requests.status_id = 2
                             AND requests.process_date >= '$date_start'
