@@ -855,7 +855,9 @@
                             {
                                 console.log('no previous vendor selected');
                                 $('#vendor_id option').removeAttr('selected');
+                                vendorChangeCount = 1;
                                 vendor.trigger("change");
+
                                 $('#submit_btn').removeAttr('disabled');
                             }
                         }
