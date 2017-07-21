@@ -22,7 +22,8 @@
         initiateInlineFormFields,
         saveInlineForm,
         showFloatingCancelSave,
-        saveAllInlineForm;
+        saveAllInlineForm,
+        saveSilentInlineForm;
    
     inlineEdit.init = function (options, data) {    
         options = options || {};
@@ -383,7 +384,8 @@
                 row.removeClass('inline_edit_applied');
                 if (!options.isBulk) {
                     notyMessage(data.message);
-                    ajaxFilter('#' + moduleName, pageUrl + '/data');
+                    saveSilentInlineForm(rowDomId, event, element,0);
+                    //ajaxFilter('#' + moduleName, pageUrl + '/data');
                 }                
             } 
             else {
@@ -399,6 +401,79 @@
         
         return saveConfig.xhr;
    };
+
+    window.saveSilentInlineForm = saveSilentInlineForm = function (rowDomId, event, element,actionColumnHidden) {
+        if (event && event.preventDefault && typeof event.preventDefault == 'function') {
+            event.preventDefault();
+        }
+
+        var row = container.find("#"+rowDomId),
+            cells = row.find('td[data-edit=1]'),
+            rowHookParams = {'row': row, count: editingRowsCount, cells: cells};
+
+        App.autoCallbacks.runCallback('inline.row.cancel.before', rowHookParams);
+
+        cells.each(function() {
+            var cellHookParams = $.extend({}, rowHookParams, {cells: null, config: {}}),
+                config = cellHookParams.config,
+                cell = cellHookParams.cell = $(this),
+
+            //cellOriginalValue = config.originalValue = cell.data('values'),
+                cellOriginalValue = config.originalValue = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val(),//cell.data('values'),
+                cellFormattedValue = config.formattedValue = cell.data('format'),
+            //cellOriginalHTML = config.originalHtmlValue = cell.data('original-value-html'),
+                cellOriginalHTML = config.originalHtmlValue = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val(),//cell.data('original-value-html'),
+                cellOriginalDomElements = config.cellOriginalValue = cell.data('original-value-elments');
+
+            cell.data('values', cell.find("[name='"+cell.data('field')+"']").val());
+            if(cellOriginalValue !== undefined && cellOriginalValue !== 'action' )
+            {
+                App.autoCallbacks.runCallback('inline.cell.cancel.before', cellHookParams);
+                $(this).html(config.originalHtmlValue);
+                App.autoCallbacks.runCallback('inline.cell.cancel.after', cellHookParams);
+            }
+            cell.attr('data-edit', null);
+            cell.css('height','auto');
+
+
+        });
+        if(actionColumnHidden == 0)
+        {
+            var actionBtns= $(row).children('td[data-values="action"]').children('.action');
+            actionBtns.css('padding-bottom',"0px");
+            if(actionBtns.siblings('a').length > 0)
+            {
+                actionBtns.siblings('a').last().css('margin-bottom',"0px");
+            }
+            row.removeClass('inline_edit_applied');
+            row.nextAll('.inline_edit_applied').each(function(){
+                var id=$(this).data('id');
+                var height=$(this).offset().top+38;
+                if($(this).children('td[data-values="action"]').children('.action').siblings('a').length > 0)
+                {
+                    height=$(this).children('td[data-values="action"]').children('.action').siblings('a').last().offset().top+25;
+                }
+                $('#divOverlay_'+id).css('top',height +"px");
+            });
+        }
+        else {
+            var actionBtns= $(row).children('td').last();
+            actionBtns.children().css('margin-bottom',"0");
+            row.removeClass('inline_edit_applied');
+            row.nextAll('.inline_edit_applied').each(function(){
+                var id=$(this).data('id');
+                var height=$(this).offset().top+38;
+                $('#divOverlay_'+id).css('top',height +"px");
+            });
+        }
+        rowHookParams.count = --editingRowsCount;
+        displayInlineEditButtons(rowDomId, true);
+
+        App.autoCallbacks.runCallback('inline.row.cancel.after', rowHookParams);
+
+        return false;
+
+    };
     window.saveAllInlineForm = saveAllInlineForm = function (event, element) {
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {
             event.preventDefault();
