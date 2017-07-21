@@ -1278,6 +1278,14 @@ class OrderController extends Controller
         $user_id = $request->get('user_id');
         $order_type_id = $request->get('order_type_id');
         $added = 0;
+
+        if (!empty($request->get('receivedInParts')) && $order_status == '2') {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.partial_close_restrict')
+            ));
+        }
+
         if (!empty($request->get('receivedInParts'))) {
             $received_part_ids = $request->get('receivedInParts');
         } else {
