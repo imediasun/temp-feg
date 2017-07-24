@@ -68,8 +68,8 @@ class Sximo extends Model {
 
             /*$cronTask ? $L->log('--------------------End CronJobActions logging------------------') : */
             $L->log('--------------------End UserActions logging------------------');
-            $id = \DB::table($table)->insertGetId($data);
-            return $id;
+            //$id = \DB::table($table)->insertGetId($data);
+            return 1;
         }
         return 0;
     }
