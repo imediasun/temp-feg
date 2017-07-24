@@ -187,6 +187,7 @@
         var anyImageUploaded = false;
         var myDropzone = new Dropzone("div#dropzoneFileUpload", {
             addRemoveLinks: true,
+            acceptedFiles: "image/jpeg,image/png,image/gif",
             url: siteUrl + "/shopfegrequeststore/uploadfiles",
             params: {
                 _token: token
