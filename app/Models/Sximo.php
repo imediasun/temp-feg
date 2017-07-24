@@ -36,10 +36,10 @@ class Sximo extends Model {
             $impersonatedUser = array_pop($impersonatedUserIdPath);
         }
         $cronTask = (Request::ip() == "127.0.0.1");
-        if($cronTask)
+        /*if($cronTask)
         {
             $user = "System";
-        }
+        }*/
         $data = array(
             'auditID' => '',
             'note' => $note,
@@ -54,9 +54,10 @@ class Sximo extends Model {
 
         $l = '';
         $L =  FEGSystemHelper::setLogger($l, "user-action-logs.log", "FEGUserActions", "USER_ACTIONS");
-
-        $cronTask ? $L->log('--------------------Start CronJobActions logging------------------') : $L->log('--------------------Start UserActions logging------------------');
-        Log::info("Log generation start");
+        if(!$cronTask)
+        {
+            /*$cronTask ? $L->log('--------------------Start CronJobActions logging------------------') : */
+            $L->log('--------------------Start UserActions logging------------------');
 
         $L->log("User ID ",$user);
         $L->log("Impersonated User ID " , $impersonatedUser);
@@ -67,11 +68,12 @@ class Sximo extends Model {
         $L->log("Conditions : ".json_encode($conditions));
         $L->log("Parameters : " . json_encode($params));
 
-        Log::info("Log generation end");
-
-        $cronTask ? $L->log('--------------------End CronJobActions logging------------------') : $L->log('--------------------End UserActions logging------------------');
-        $id = \DB::table($table)->insertGetId($data);
-        return $id;
+            /*$cronTask ? $L->log('--------------------End CronJobActions logging------------------') : */
+            $L->log('--------------------End UserActions logging------------------');
+            //$id = \DB::table($table)->insertGetId($data);
+            return 1;
+        }
+        return 0;
     }
 
 
@@ -1363,7 +1365,7 @@ class Sximo extends Model {
         {
             $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id)," | ",IF(G.test_piece = 1,CONCAT("**TEST** ",T.game_title),T.game_title)," | ",G.id)';
             $where = '';
-            $orderBy = 'G.status_id DESC,T.game_title';
+            $orderBy = 'G.status_id DESC,G.location_id,T.game_title';
         }
         else
         {
@@ -1379,7 +1381,7 @@ class Sximo extends Model {
 
                 $where = 'AND G.location_id in (0,'.$location.')';
             }
-            $orderBy = 'G.status_id DESC,L.id,T.game_title';
+            $orderBy = 'G.status_id DESC,G.location_id,T.game_title';
         }
         $query = \DB::select('SELECT G.id AS id,
 									  '.$concat.' AS text
