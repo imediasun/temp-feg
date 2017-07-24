@@ -231,6 +231,7 @@ return array(
     "order_voided_receipt_alert"  => "This Purchase Order has been voided and is not receivable any more.",
     "order_voided_receipt_alert"  => "This Purchase Order has been voided and is not receivable any more.",
     "cart_invalid_quantity"  => "Invalid cart quantity",
+    "partial_close_restrict"  => "You can't close a partial order",
 
     "templates" => array(
         "order_replaces" => "This Purchase Order replaces voided Purchase Order #{0} as of {1}",
