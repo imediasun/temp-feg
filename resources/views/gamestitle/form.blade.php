@@ -46,6 +46,7 @@
 					</label>
 					<div class="col-md-6">
                         <input type="hidden" name="mfg_id" id="mfg_id" class="" style="width:100%" value="{{ $row['mfg_id'] }}"/>
+                        <input type="hidden" name="mfg_old" value="{{ $row['mfg_id'] }}"/>
                     </div>
 					 <div class="col-md-2">
 
