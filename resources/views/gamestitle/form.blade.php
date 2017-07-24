@@ -195,7 +195,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
 
-
+console.log(<?php echo json_encode($vendor_options)?>);
     renderDropdown($("#mfg_id"), {
         data: <?php echo json_encode($vendor_options)?>,
         placeholder: "Select Manufacturer"
