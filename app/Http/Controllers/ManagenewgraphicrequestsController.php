@@ -256,36 +256,7 @@ class ManagenewgraphicrequestsController extends Controller
             }
             $id = $this->model->insertRow($data, $id);
 
-            //////File uploads////////////////////////////
-            $new_graphics_request = \DB::table('new_graphics_request')->select('img')->where('id',$id)->get();
-            $images = explode(',', $new_graphics_request[0]->img);
-
-            $input = \Input::all();
-            foreach ($images as $index => $image) {
-                if (Input::hasFile('img_'.($index+1).'')) {
-
-                   /* $rules['img_'.($index+1).''] = 'mimes:jpeg,gif,png';
-                    $validation = Validator::make($input, $rules);
-
-                    if ($validation->fails()) {
-                        return response()->json(array(
-                            'status' => 'error',
-                            'message' => implode(' ', $validation->errors()->all())
-                        ));
-                    }*/
-
-                    $destinationPath = public_path() . '/uploads/newGraphic'; // upload path
-
-                    $extension = \Input::file('img_'.($index+1).'')->getClientOriginalExtension(); // getting file extension
-                    $fileName = $id . "_" . rand(111, 999) . '.' . $extension;
-                    $upload_success = \Input::file('img_'.($index+1).'')->move($destinationPath, $fileName); // uploading file to given path
-
-                    $images[$index] = $fileName;
-                }
-            }
-
-            \DB::table('new_graphics_request')->where('id',$id) ->update(['img' => implode(',', $images)]);
-            //////End File uploads////////////////////////////
+            //$this->editImages($id);
 
             return response()->json(array(
                 'status' => 'success',
@@ -301,6 +272,37 @@ class ManagenewgraphicrequestsController extends Controller
             ));
         }
 
+    }
+
+    public function editImages($id){
+        $new_graphics_request = \DB::table('new_graphics_request')->select('img')->where('id',$id)->get();
+        $images = explode(',', $new_graphics_request[0]->img);
+
+        $input = \Input::all();
+        foreach ($images as $index => $image) {
+            if (Input::hasFile('img_'.($index+1).'')) {
+
+                /* $rules['img_'.($index+1).''] = 'mimes:jpeg,gif,png';
+                 $validation = Validator::make($input, $rules);
+
+                 if ($validation->fails()) {
+                     return response()->json(array(
+                         'status' => 'error',
+                         'message' => implode(' ', $validation->errors()->all())
+                     ));
+                 }*/
+
+                $destinationPath = public_path() . '/uploads/newGraphic'; // upload path
+
+                $extension = \Input::file('img_'.($index+1).'')->getClientOriginalExtension(); // getting file extension
+                $fileName = $id . "_" . rand(111, 999) . '.' . $extension;
+                $upload_success = \Input::file('img_'.($index+1).'')->move($destinationPath, $fileName); // uploading file to given path
+
+                $images[$index] = $fileName;
+            }
+        }
+
+        \DB::table('new_graphics_request')->where('id',$id) ->update(['img' => implode(',', $images)]);
     }
 
     public function postDeletegraphic(Request $request){
