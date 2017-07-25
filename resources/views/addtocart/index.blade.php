@@ -107,7 +107,14 @@
                     }
                     else {
                         //   alert('{{ $pageModule }}/submit-requests');
-                        window.location.href = '{{ $pageModule }}/submit-requests';
+                        var inputs = document.getElementsByClassName('cartProductsItems'),
+                        products  = [].map.call(inputs, function( input ) {
+                            return input.value;
+                        }).join( '&products[]=' );
+
+                        var redirectString = '{{ $pageModule }}/submit-requests?products[]='+products;
+                        //alert(redirectString); return;
+                        window.location.href = redirectString;
                         $("#update_text_to_add_cart").text('0');
                     }
                 }

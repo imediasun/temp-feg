@@ -102,6 +102,7 @@
                     $id = $row->id;
                     ?>
                     <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
+                        <input type="hidden" class="cartProductsItems" value="{{$row->product_id}}"/>
                         <td class="number"> <?php echo ++$i;?>  </td>
                         @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                         <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>" onkeypress="disableEnter(event)"/></td>
@@ -125,15 +126,14 @@
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
-
-
-
                                 @if($field['field']=='qty')
-
                                     <input type="number" value="{{ $value }}" min="1" step="1" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeydown="changeTotal(this.value,this.id,event)"/>
+                                @elseif($field['field']=='already_order_qty' && $row->already_order_qty > 0)
+                                    <span class="cart_already_ordered">{{$row->already_order_qty}}</span>
                                 @else
-{!! $value !!}
+                                    {!! $value !!}
                                 @endif
+
                             </td>
                         @endif
                         <?php

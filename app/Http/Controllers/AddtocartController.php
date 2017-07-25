@@ -294,7 +294,7 @@ class AddtocartController extends Controller
 
         $check = \DB::select("SELECT * FROM requests WHERE location_id = $location_id AND status_id = 1 AND product_id IN (".implode(',',$products).")");
         if(!empty($check)){
-            return redirect('/addtocart')->with('messagetext', '1 or more products in your order has already been requested (see the Already Ordered QTY field). Please contact the head of the department relevant to Order Type to make any further quantity adjustments for this product.')->with('msgstatus', 'error');
+            return redirect('/addtocart')->with('messagetext', 'You are requesting a product which already has been requested(See already order qty column). For adjustment contact Merchandise Office Team.')->with('msgstatus', 'error');
         }
 
         $update = array('status_id' => 1,
