@@ -3458,3 +3458,9 @@ span.order_custom_error ~ ul.parsley-error-list
 {
   word-wrap: break-word;
 }
+
+.cart_already_ordered{
+  color:red;
+  font-weight: bold;
+}
+

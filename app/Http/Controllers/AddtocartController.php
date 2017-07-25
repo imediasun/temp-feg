@@ -261,7 +261,8 @@ class AddtocartController extends Controller
     {
 
         $now = date('Y-m-d');
-
+        $inputs = \Input::all();
+        $products = $inputs['products'];
         $location_id = \Session::get('selected_location');
         $data['user_level'] = \Session::get('gid');
         /*if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
@@ -290,6 +291,12 @@ class AddtocartController extends Controller
                 \DB::table('requests')->insert($insert);
             }
         }*/
+
+        $check = \DB::select("SELECT * FROM requests WHERE location_id = $location_id AND status_id = 1 AND product_id IN (".implode(',',$products).")");
+        if(!empty($check)){
+            return redirect('/addtocart')->with('messagetext', 'You are requesting a product which already has been requested(See already order qty column). For adjustment contact Merchandise Office Team.')->with('msgstatus', 'error');
+        }
+
         $update = array('status_id' => 1,
             'request_user_id' => \Session::get('uid'),
             'request_date' => $now);
