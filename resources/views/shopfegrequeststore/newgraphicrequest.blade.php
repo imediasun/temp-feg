@@ -205,6 +205,13 @@
                     console.log(file.xhr.response);
                     if (!file.serverId) { return; } // The file hasn't been uploaded
                 });
+                this.on("addedfile", function(file) {
+                   $("#submitbtn").attr("disabled", true);
+
+                });
+                this.on("queuecomplete", function (file) {
+                    $("#submitbtn").attr("disabled", false);
+                });
             }
         });
         function addInput(value,file){
