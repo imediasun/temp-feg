@@ -194,7 +194,7 @@
             },autoProcessQueue:true,
 
             init:function(){
-                this.options.parallelUploads = 5,
+                this.options.parallelUploads = 15,
                 this.on("success", function(file,response) {
                     addInput(response,file);
                     anyImageUploaded = true;
