@@ -72,27 +72,6 @@
                     </div>
 
 
-                    <div class="form-group  ">
-                        <label for="status" class=" control-label col-md-4 text-left">
-                            Images:
-                        </label>
-                        <div class="col-md-6">
-                            <?php $images = explode(',',$row['img']) ?>
-                            @foreach($images as $index => $img)
-                                <div id="{{str_replace('.','',$img)}}">
-                                <img src="{{asset('uploads/newGraphic')}}/{{$img}}" width="50" border="0" style="box-shadow:1px 1px 5px gray;margin-bottom: 5px;" accept="image/x-png,image/gif,image/jpeg">
-                                    <a href="javascript:void(0)" class="collapse-close btn btn-xs btn-danger" onclick="deleteGraphic({{$row['id']}}, '{{$img}}')" style="margin-left: 15px;"><i class="fa fa fa-trash"></i></a>
-                                    <input type="file" name="img_{{$index+1}}"/>
-                                    <br>
-                                </div>
-
-                            @endforeach
-                        </div>
-                        <div class="col-md-2">
-                        </div>
-                    </div>
-
-
                 </fieldset>
             </div>
 
