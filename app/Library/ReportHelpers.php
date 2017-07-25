@@ -505,6 +505,10 @@ class ReportHelpers
             if ($onTest == "notest") {
                 $Q .= " AND E.game_on_test IN (0)";
             }
+            else if($onTest == "all")
+            {
+                $Q .= " AND E.game_on_test IN (0,1)";
+            }
             else {
                 $Q .= " AND E.game_on_test IN (1)";
             }            
@@ -607,6 +611,10 @@ class ReportHelpers
         }
         if (empty($onTest) || $onTest == "notest") {
             $Q .= " AND E.game_on_test IN (0)";
+        }
+        else if($onTest == "all")
+        {
+            $Q .= " AND E.game_on_test IN (0,1)";
         }
         else {
             $Q .= " AND E.game_on_test IN (1)";
@@ -723,6 +731,10 @@ class ReportHelpers
             if ($onTest == "notest") {
                 $Q .= " AND G.test_piece IN (0)";
             }
+            else if($onTest == "all")
+            {
+                $Q .= " AND G.test_piece IN (0,1)";
+            }
             else {
                 $Q .= " AND G.test_piece IN (1)";
             }            
@@ -831,6 +843,10 @@ class ReportHelpers
         if (!empty($onTest)) {
             if ($onTest == "notest") {
                 $Q .= " AND E.game_on_test IN (0)";
+            }
+            else if($onTest == "all")
+            {
+                $Q .= " AND E.game_on_test IN (0,1)";
             }
             else {
                 $Q .= " AND E.game_on_test IN (1)";
@@ -1553,6 +1569,10 @@ class ReportHelpers
         if (!empty($onTest)) {
             if ($onTest == "notest") {
                 $Q .= " AND G.test_piece IN (0)";
+            }
+            else if($onTest == "all")
+            {
+                $Q .= " AND G.test_piece IN (0,1)";
             }
             else {
                 $Q .= " AND G.test_piece IN (1)";
