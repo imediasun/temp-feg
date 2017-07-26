@@ -14,7 +14,7 @@
         <div class="sbox-title">
             <h4>
                 @if($id)
-                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Order
+                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;@if($data['prefill_type'] == 'clone') Clone @else Edit @endif Order
                 @else
                     <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Order
                 @endif
@@ -72,7 +72,7 @@
                                    value="1" @if(!empty($data['alt_address'])) checked @endif/></div>
 
                     </div>
-                    @if($id)
+                    @if($id && $data['prefill_type'] != 'clone')
                         <div class="form-group netSuiteStatus"><br/><br/>
                         
                         <p class="text-info netSuiteStatusSuccess @if(!Order::isApified($id, $row)) hidden @endif">
@@ -400,7 +400,7 @@
                 <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>                    
-                    @if($id && Order::isApiable($id, $row) && !Order::isApified($id, $row))
+                    @if($id && Order::isApiable($id, $row) && !Order::isApified($id, $row) && $data['prefill_type'] != 'clone')
                         <button type="button" class="btn btn-success btn-sm exposeAPI">
                         {{ Lang::get('core.order_api_expose_button_label') }} </button>
                     @endif
@@ -538,8 +538,27 @@
                 rid = rIdInput.val(),
                 i, j, newIds = [], newSids = [];
     
-            App.ajax.submit(siteUrl+'/managefegrequeststore/deny',
-                    {data:{request_id: rid}, blockUI:true, method: 'POST'});
+            /*App.ajax.submit(siteUrl+'/managefegrequeststore/deny',
+                    {data:{request_id: rid}, blockUI:true, method: 'POST'});*/
+            console.log('request id to remove = '+rid);
+            if(rid != '' && rid != undefined && rid != ' ')
+            {
+                console.log('removing request id from blocked list = '+rid);
+                $.ajax({
+                    method: "Get",
+                    url:"{{route('remove_blocked_check')}}",
+                    data:{
+                        requestIds : rid
+                    }
+                })
+                    .success(function (data) {
+                        console.log(data);
+                    })
+                    .error(function (data) {
+                        console.log(data);
+                    });
+            }
+
 
             for(i in ids) {
                 j = ids[i];
@@ -818,11 +837,14 @@
             vendor = $(this);
             if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
             {
+                console.log('vendorChangeCount > 1');
                 if($('#item_name').val()) {
+                    $('#submit_btn').attr('disabled','disabled');
                     App.notyConfirm({
                         message: "Are you sure you want to change Vendor <br> <b>***WARNING***</b><br>if you change vendor all of your items will be removed and you will have to add them again",
                         confirmButtonText: 'Yes',
                         confirm: function () {
+                            $('#submit_btn').removeAttr('disabled');
                             $('.itemstable .clonedInput:not(:first-child)').remove();
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
@@ -846,12 +868,23 @@
                                 $('#vendor_id option[value = '+vendor.attr('lastSelected')+']').attr('selected', true);
                                 vendorChangeCount = 1;
                                 vendor.trigger("change");
+                                $('#submit_btn').removeAttr('disabled');
+                            }
+                            else
+                            {
+                                console.log('no previous vendor selected');
+                                $('#vendor_id option').removeAttr('selected');
+                                vendorChangeCount = 1;
+                                vendor.trigger("change");
+
+                                $('#submit_btn').removeAttr('disabled');
                             }
                         }
                     });
                 }
                 else
                 {
+                    console.log('in else vendorChangeCount');
                     $.ajax({
                         type: "GET",
                         url: "{{ url() }}/order/bill-account",

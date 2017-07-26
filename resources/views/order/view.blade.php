@@ -225,7 +225,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ \DateHelpers::formatStringValue($row->notes) }}
+                            {!! \DateHelpers::formatStringValue($row->notes) !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>

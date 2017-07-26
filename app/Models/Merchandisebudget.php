@@ -68,7 +68,8 @@ class merchandisebudget extends Sximo
                 $current_year = date('Y');
             }
             }
-        return " WHERE location.id=location_budget.location_id AND YEAR(location_budget.budget_date)=$current_year AND location_budget.id IS NOT NULL";
+        $selectedLocations = \SiteHelpers::getCurrentUserLocationsFromSession();
+        return " WHERE location.id=location_budget.location_id AND YEAR(location_budget.budget_date)=$current_year AND location_budget.id IS NOT NULL AND location.id IN ($selectedLocations)";
     }
 
     public static function queryGroup()

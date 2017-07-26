@@ -1,4 +1,12 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<style>
+    table .btn.btn-xs {
+        height: 23px;
+        line-height: 18px;
+        margin: 0;
+        float: none;
+    }
+</style>
 <div class="sbox">
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>

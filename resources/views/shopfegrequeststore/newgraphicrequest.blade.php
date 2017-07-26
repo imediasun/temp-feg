@@ -187,13 +187,14 @@
         var anyImageUploaded = false;
         var myDropzone = new Dropzone("div#dropzoneFileUpload", {
             addRemoveLinks: true,
+            acceptedFiles: "image/jpeg,image/png,image/gif",
             url: siteUrl + "/shopfegrequeststore/uploadfiles",
             params: {
                 _token: token
             },autoProcessQueue:true,
 
             init:function(){
-                this.options.parallelUploads = 5,
+                //this.options.parallelUploads = 15;
                 this.on("success", function(file,response) {
                     addInput(response,file);
                     anyImageUploaded = true;
@@ -203,6 +204,13 @@
                     $('input[id="'+file.xhr.response+'"]').remove();
                     console.log(file.xhr.response);
                     if (!file.serverId) { return; } // The file hasn't been uploaded
+                });
+                this.on("addedfile", function(file) {
+                   $("#submitbtn").attr("disabled", true);
+
+                });
+                this.on("queuecomplete", function (file) {
+                    $("#submitbtn").attr("disabled", false);
                 });
             }
         });

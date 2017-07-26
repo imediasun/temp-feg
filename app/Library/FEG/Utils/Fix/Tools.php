@@ -33,7 +33,7 @@ class Tools
         // show history
         // show current location, prev_location, from game table
         // show from game_earnings last data received, generate move history
-        $tableOptions = ["tableClass" => "table table-striped  datagrid", "humanifyTitle" => true];
+        $tableOptions = ["tableClass" => "table table-striped datagrid", "humanifyTitle" => true, "tableStyles" => "font-size: 14px;"];
 
         $ret = [];
         if (empty($gameId)) {
@@ -45,7 +45,8 @@ class Tools
         $ret[] = "<h3>Move History</h3>";
         if (!empty($moveHistory)) {
             $move = json_decode(json_encode($moveHistory), true);
-            $skip = ['skip'=> ['from_first_name','from_last_name','to_first_name','to_last_name','from_by','to_by','from_loc','to_loc']];
+            //'to_first_name','to_last_name',
+            $skip = ['skip'=> ['from_first_name','from_last_name','from_by','to_by','from_loc','to_loc']];
             $ret[] = FEGHelp::tableFromArray($move, array_merge($skip, $tableOptions));
         }
         else {
@@ -54,13 +55,35 @@ class Tools
 
         $ret[] = "<hr/>";
         $ret[] = "<h3>Game Table's Data</h3>";
-        $gameData = DB::table('game')->select('location_id', 'prev_location_id')->where('id', $gameId)->first();
+        $gameData = DB::table('game')->select(
+                'location_id',
+                'prev_location_id',
+                'date_in_service', 
+                'game_move_id',
+                'date_last_move',
+                'status_id', 
+                'sold', 
+                'not_debit',
+                'test_piece'
+                
+                )->where('id', $gameId)->first();
         if (empty($gameData)) {
             $ret = ["<font color='red'>No data in game table!</font>"];
         }
         else {
-            $ret[] = implode('', ["Location: ", $gameData->location_id]);
-            $ret[] = implode('', ["Prev Location: ", $gameData->prev_location_id]);
+            $gameDetails = [
+                ["Field" => "Status", "Value" => $gameData->status_id == "3" ? "Transit" : ($gameData->status_id == "2" ? "Repair" : "Up")],
+                ["Field" => "Location", "Value" => $gameData->location_id],
+                ["Field" => "Prev Location", "Value" => $gameData->prev_location_id],
+                ["Field" => "Inception Date", "Value" => \DateHelpers::formatDate($gameData->date_in_service)],
+                ["Field" => "Not Debit?", "Value" => $gameData->not_debit == 1 ? "Yes" : "No"],
+                ["Field" => "Is Test?", "Value" => $gameData->test_piece == 1 ? "Yes" : "No"],
+                ["Field" => "Last Moved on", "Value" => \DateHelpers::formatDate($gameData->date_last_move)],
+                ["Field" => "Last Move ID", "Value" => $gameData->game_move_id],
+                ["Field" => "Sold?", "Value" => $gameData->sold == 1 ? "Yes" : "No"],
+            ];
+            $tConfig = ["cellWidths" => ["Field" => "150"]];
+            $ret[] = FEGHelp::tableFromArray($gameDetails, array_merge($tConfig, $tableOptions));
         }
 
 
@@ -109,10 +132,10 @@ class Tools
     $ret[] = "<br/><pre>UPDATE game SET
         location_id=?,
         prev_location_id=?,
-        date_last_move='? 00:00:00',
+        date_last_move='?',
         game_move_id=?
 
-    WHERE id=$gameId'</pre>";
+    WHERE id=$gameId</pre>";
 
     $ret[] = "<br/><strong>SQL TO UPDATE GAME PLAY REPORT SUMMARY</strong>";
     $ret[] = "<br/><pre>UPDATE report_game_plays SET
@@ -121,7 +144,7 @@ class Tools
             game_id=$gameId
         AND date_played >='?'
         AND date_played <='?'
-        AND location_id != 2031'</pre>";
+        AND location_id != ?</pre>";
 
         return $ret;
 

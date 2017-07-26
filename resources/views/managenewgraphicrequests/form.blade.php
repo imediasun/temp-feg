@@ -160,4 +160,23 @@
         }
     }
 
+
+    function deleteGraphic(id, img) {
+        $('.ajaxLoading').show();
+        $.ajax({
+            type: "POST",
+            url:'{{url()}}/managenewgraphicrequests/deletegraphic',
+            dataType:'json',
+            data: {img:img, id:id},
+            success:function(data){
+                $('.ajaxLoading').hide();
+                $('#'+img.replace(".", "")).hide(300);
+            },
+            error: function(){
+                $('.ajaxLoading').hide();
+            },
+
+        });
+    }
+
 </script>		 

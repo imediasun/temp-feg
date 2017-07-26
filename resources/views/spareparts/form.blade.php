@@ -26,7 +26,7 @@
                             $fields['description']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            @if($row['status_id']==2)
+                            @if($row['status_id']== App\Models\spareparts::$AVAILABLE)
                             {!! Form::text('description', $row['description'],array('class'=>'form-control',
                             'placeholder'=>'', 'required'=>'true' )) !!}
                             @else
@@ -42,7 +42,7 @@
                             $fields['game_title_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            @if($row['status_id']==2)
+                            @if($row['status_id']== App\Models\spareparts::$AVAILABLE)
                                 <select name="game_title_id" id="game_title_id" class="select4"></select>
                             @else
                                 {!! SiteHelpers::gridDisplayView($row['game_title_id'],'game_title_id','1:game_title:id:game_title')!!}
@@ -58,7 +58,7 @@
                             $fields['qty']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            @if($row['status_id']==2)
+                            @if(empty($row['id']))
                                 {!! Form::text('qty', $row['qty'],array('class'=>'form-control', 'placeholder'=>'','required'=>'true', 'parsley-type'=>'number' , 'parsley-min'=>1  )) !!}
                             @else
                                 {{$row['qty']}}
@@ -73,7 +73,7 @@
                             $fields['value']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            @if($row['status_id']==2)
+                            @if($row['status_id']== App\Models\spareparts::$AVAILABLE)
                             {!! Form::text('value', $row['value'],array('class'=>'form-control', 'placeholder'=>'','required'=>'true', 'parsley-type'=>'number' , 'parsley-min'=>0))
                             !!}
                             @else
@@ -110,24 +110,53 @@
 
                         </div>
                     </div>
+                    <div id="claim_fields">
+                        <input type="hidden" id="is_edit" value="@if(!empty($row['id'])) 1 @else 0 @endif">
 
-                    <div class="form-group  ">
-                        <label for="User Claim" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('User Claim', (isset($fields['user_claim']['language'])?
-                            $fields['user_claim']['language'] : array())) !!}
-                        </label>
+                        <div class="form-group  ">
+                            <label for="Claimed Location" class=" control-label col-md-4 text-left">
+                                {!! SiteHelpers::activeLang('Claimed Location', (isset($fields['claimed_location_id']['language'])?
+                                $fields['claimed_location_id']['language'] : array())) !!}
+                            </label>
 
-                        <div class="col-md-6">
-                            @if($row['status_id']==2)
-                                {!! Form::text('user_claim', $row['user_claim'],array('class'=>'form-control',
-                                'placeholder'=>'', )) !!}
+                            <div class="col-md-6">
+                                <select name="claimed_location_id" id="claimed_location_id" class="select4" />
+                            </div>
+                            <div class="col-md-2">
+
+                            </div>
+                        </div>
+                        <div class="form-group  ">
+                            <label for="Claim Reason" class=" control-label col-md-4 text-left">
+                                {!! SiteHelpers::activeLang('Claim Reason', (isset($fields['user_claim']['language'])?
+                                $fields['user_claim']['language'] : array())) !!}
+                            </label>
+
+                            <div class="col-md-6">
+                                @if($row['status_id']== App\Models\spareparts::$AVAILABLE)
+                                    {!! Form::text('user_claim', $row['user_claim'],array('class'=>'form-control',
+                                    'placeholder'=>'','id'=> 'user_claim')) !!}
                                 @else
-                                {{$row['user_claim']}}
-                            @endif
-                        </div>
-                        <div class="col-md-2">
+                                    {{ \DateHelpers::formatStringValue($row['user_claim']) }}
+                                @endif
+                            </div>
+                            <div class="col-md-2">
 
+                            </div>
                         </div>
+                        @if(!empty($row['claimed_by']))
+                            <div class="form-group  ">
+                                <label for="Claimed By" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Claimed By', (isset($fields['claimed_by']['language'])?
+                                    $fields['claimed_by']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    {!! SiteHelpers::gridDisplayView($row['claimed_by'],'claimed_by','1:users:id:first_name|last_name')!!}
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                            </div>
+                        @endif
                     </div>
                     <div class="form-group  ">
                         <label for="User" class=" control-label col-md-4 text-left">
@@ -135,7 +164,9 @@
                             $fields['user']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
+                            @if(empty($row['id']))
                             <input type="hidden" name="user" value="{{Auth::user()->first_name .' '. Auth::user()->last_name}}">
+                            @endif
                             @if(!empty($row['user']))
                                 {{$row['user']}}
                             @else
@@ -145,6 +176,8 @@
                         <div class="col-md-2">
                         </div>
                     </div>
+
+
 
                 </fieldset>
             </div>
@@ -172,6 +205,8 @@
         $(document).ready(function () {
             $("#status_id").jCombo("{{ URL::to('spareparts/comboselect?filter=spare_status:id:status') }}",
                     {selected_value: '{{ $row['status_id'] }}', initial_text: 'Select Status'});
+            $("#claimed_location_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
+                {selected_value: '{{ $row['claimed_location_id'] }}', initial_text: 'Select Location'});
             $("#loc_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
                     {selected_value: '{{ $row['loc_id'] }}', initial_text: 'Select Location' ,
                         <?php $row["loc_id"] == '' ? '': print_r("onLoad:addInactiveItem('#loc_id', ".$row['loc_id']." , 'Location', 'active' , 'location_name' )") ?>
@@ -182,11 +217,43 @@
             $('.previewImage').fancybox();
             $('.tips').tooltip();
             renderDropdown($(".select4 "), { width:"100%"});
-            $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
+            $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true});
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('input[type="checkbox"],input[type="radio"]').iCheck({
                 checkboxClass: 'icheckbox_square-blue',
                 radioClass: 'iradio_square_green'
+            });
+            if($('#is_edit').val() == {{ App\Models\spareparts::$CLAIMED}})
+            {
+                if($('#status_id').val() == {{ App\Models\spareparts::$AVAILABLE}})
+                {
+                    $('#claim_fields').hide();
+                }
+            }
+            else
+            {
+                $('#claim_fields').hide();
+            }
+            var form = $('#sparepartsFormAjax');
+            form.parsley();
+
+            $('#status_id').on('change',function () {
+                if($(this).val() == {{ App\Models\spareparts::$CLAIMED}})
+                {
+                    form.parsley().destroy();
+                    $('#claimed_location_id').attr('required','required');
+                    $('#user_claim').attr('required','required');
+                    $('#claim_fields').show(600);
+                    form.parsley();
+                }
+                else
+                {
+                    form.parsley().destroy();
+                    $('#claimed_location_id').removeAttr('required');
+                    $('#user_claim').removeAttr('required');
+                    $('#claim_fields').hide(300);
+                    form.parsley();
+                }
             });
             $('.removeCurrentFiles').on('click', function () {
                 var removeUrl = $(this).attr('href');
@@ -195,8 +262,7 @@
                 $(this).parent('div').empty();
                 return false;
             });
-            var form = $('#sparepartsFormAjax');
-            form.parsley();
+
             form.submit(function () {
 
                 if (form.parsley('isValid') == true) {

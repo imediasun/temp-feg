@@ -405,6 +405,10 @@ class VendorController extends Controller
     }
     public function getItemcheck(Request $request)
     {
+        if($request->id == 'NONE' || empty($request->id))
+        {
+            return 0;
+        }
         $module = str_replace(' ', '', "\App\Models\ ".$request->module);
         $columns = explode('|', $request->column);
         $result = '';

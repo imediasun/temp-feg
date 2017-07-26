@@ -1680,7 +1680,7 @@ class SiteHelpers
                 $row = $Q[0];
                 $fields = explode("|", $arr['3']);
                 $v = '';
-                $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] : '');
+                $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
                 if (isset($fields[1]) && empty($row->$fields[1])) {
                     $v = "No Data";
                 } else {
