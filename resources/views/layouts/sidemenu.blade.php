@@ -50,7 +50,7 @@ $selected_loc=\Session::get('selected_location');?>
                         @elseif ($orderData['user_group'] == 'distmgr')
                             All {{ SiteHelpers::getRegionName($orderData['reg_id']) }} Locations - Expense Summary
                         @else
-                            Expense Summary <span class="sub-heading">(All Locations)</span>
+                           Location <span class="sub-heading"> {{ SiteHelpers::getLocationName($orderData['selected_location']) }} - Expense Summary  </span>)
                         @endif
                         <span class="sub-heading">Month : {{ $orderData['curMonthFull'] }}</span>
                     </h5>
