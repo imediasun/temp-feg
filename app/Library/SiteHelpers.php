@@ -2449,21 +2449,21 @@ class SiteHelpers
 										  AND location.region_id=' . $reg_id . ')
 										   AS last_month_merch_budget,
 									  (SELECT SUM(O.order_total) FROM orders O, location L
-										WHERE O.location_id = L.id
+										WHERE O.location_id = ' . $loc1 . '
 										  AND order_type_id IN(7,8)
 										  AND MONTH(O.date_ordered)=' . $curMonthNumber . '
 										  AND YEAR(O.date_ordered)=' . $curYear . '
 										  AND L.region_id=' . $reg_id . ')
 											AS monthly_merch_order_total,
 									   (SELECT SUM(O.order_total) FROM orders O, location L
-										WHERE O.location_id = L.id
+										WHERE O.location_id = ' . $loc1 . '
 										  AND order_type_id IN(7,8)
 										  AND MONTH(O.date_ordered)=' . $prevMonthNumber . '
 										  AND YEAR(O.date_ordered)=' . $prevMonthYear . '
 										  AND L.region_id=' . $reg_id . ')
 											AS last_month_merch_order_total,
 									   (SELECT SUM(O.order_total) FROM orders O, location L
-									   	 WHERE O.location_id = L.id
+									   	 WHERE O.location_id = ' . $loc1 . '
 									 	   AND order_type_id NOT IN(7,8,18)
 										   AND MONTH(O.date_ordered)=' . $curMonthNumber . '
 										   AND YEAR(O.date_ordered)=' . $curYear . '
@@ -2471,32 +2471,36 @@ class SiteHelpers
 											AS monthly_else_order_total,
 									   (SELECT SUM(O.order_total) FROM orders O, location L
 										 WHERE YEAR(O.date_ordered)=' . $curYear . '
-									   	   AND O.location_id = L.id
+									   	   AND O.location_id = ' . $loc1 . '
 										   AND L.region_id=' . $reg_id . ')
 										    AS annual_order_total');
             $data['user_group'] = "distmgr";
         } else {
-            $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget where MONTH(budget_date) =' . $curMonthNumber . ' AND YEAR(budget_date)=' . $curYear . ' )
+            $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget where location_id=' . $loc1 . ' AND MONTH(budget_date) =' . $curMonthNumber . ' AND YEAR(budget_date)=' . $curYear . ' )
 										   AS monthly_merch_budget,
-									  (SELECT SUM(budget_value) FROM location_budget where MONTH(budget_date) =' . $prevMonthNumber . ' AND YEAR(budget_date)=' . $prevMonthYear . ')
+									  (SELECT SUM(budget_value) FROM location_budget where location_id=' . $loc1 . ' AND MONTH(budget_date) =' . $prevMonthNumber . ' AND YEAR(budget_date)=' . $prevMonthYear . ')
 										   AS last_month_merch_budget,
 									  (SELECT SUM(order_total) FROM orders
 										WHERE MONTH(date_ordered)=' . $curMonthNumber . '
 										  AND YEAR(date_ordered)=' . $curYear . '
+										  AND location_id=' . $loc1 . '
 										  AND order_type_id IN(7,8))
 										   AS monthly_merch_order_total,
 									  (SELECT SUM(order_total) FROM orders
 										WHERE MONTH(date_ordered)=' . $prevMonthNumber . '
 										  AND YEAR(date_ordered)=' . $prevMonthYear . '
+										  AND location_id=' . $loc1 . '
 										  AND order_type_id IN(7,8))
 										   AS last_month_merch_order_total,
 									  (SELECT SUM(order_total) FROM orders
 										WHERE MONTH(date_ordered)=' . $curMonthNumber . '
 										  AND YEAR(date_ordered)=' . $curYear . '
+										  AND location_id=' . $loc1 . '
 										  AND order_type_id NOT IN(7,8))
 										   AS monthly_else_order_total,
 									  (SELECT SUM(order_total) FROM orders
-										WHERE YEAR(date_ordered)=' . $curYear . ')
+										WHERE YEAR(date_ordered)=' . $curYear . '
+										AND location_id=' . $loc1 . ')
 										   AS annual_order_total');
             $data['user_group'] = "";
         }
@@ -2521,7 +2525,13 @@ class SiteHelpers
     static function getRegionName($id = null)
     {
         $region_name = \DB::select('select region from region where id=' . $id);
-        return $region_name;
+        return $region_name[0]->region;
+    }
+
+    static function getLocationName($id = null)
+    {
+        $location_name = \DB::select('select location_name from location where id=' . $id);
+        return $location_name[0]->location_name;
     }
 
     static function configureSimpleSearchForm($data)
