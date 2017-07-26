@@ -8,46 +8,46 @@ use App\Library\DBHelpers;
 
 class productusagereport extends Sximo  {
 
-    protected $table = 'requests';
-    protected $primaryKey = 'id';
+	protected $table = 'requests';
+	protected $primaryKey = 'id';
 
-    public function __construct() {
-        parent::__construct();
+	public function __construct() {
+		parent::__construct();
 
-    }
+	}
 
-    public static function querySelect(  ){
+	public static function querySelect(  ){
 
-        return "  SELECT requests.* FROM requests  ";
-    }
+		return "  SELECT requests.* FROM requests  ";
+	}
 
-    public static function queryWhere(  ){
+	public static function queryWhere(  ){
 
-        return "  WHERE requests.id IS NOT NULL ";
-    }
+		return "  WHERE requests.id IS NOT NULL ";
+	}
 
-    public static function queryGroup(){
-        return "  ";
-    }
+	public static function queryGroup(){
+		return "  ";
+	}
 
-    public static function getRows( $args,$cond=null )
-    {
-        $table = with(new static)->table;
-        $key = with(new static)->primaryKey;
+	public static function getRows( $args,$cond=null )
+	{
+		$table = with(new static)->table;
+		$key = with(new static)->primaryKey;
         $topMessage = "";
         $bottomMessage = "";
         $message = "";
 
-        extract( array_merge( array(
-            'page' 		=> '0' ,
-            'limit'  	=> '0' ,
-            'sort' 		=> '' ,
-            'order' 	=> '' ,
-            'params' 	=> '' ,
-            'global'	=> 1
-        ), $args ));
+		extract( array_merge( array(
+			'page' 		=> '0' ,
+			'limit'  	=> '0' ,
+			'sort' 		=> '' ,
+			'order' 	=> '' ,
+			'params' 	=> '' ,
+			'global'	=> 1
+		), $args ));
 
-        $rows = array();
+		$rows = array();
         $total = 0;
 
         $filters = self::getSearchFilters();
@@ -119,14 +119,15 @@ class productusagereport extends Sximo  {
 									 requests.process_date as end_date ";
             $totalQuery = "SELECT count(*) as total ";
 
-            $fromQuery = " FROM order_contents O
-                           LEFT JOIN requests ON O.request_id = requests.id
+            $fromQuery = " FROM requests 
 						   LEFT JOIN location L ON L.id = requests.location_id
 						   LEFT JOIN products P ON P.id = requests.product_id
 						   LEFT JOIN vendor V ON V.id = P.vendor_id
 						   LEFT JOIN order_type T ON T.id = P.prod_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
-						   LEFT JOIN users U ON U.id = requests.process_user_id";
+						   LEFT JOIN users U ON U.id = requests.process_user_id 
+						   JOIN order_contents O ON O.request_id = requests.id
+						   ";
 
             $whereQuery = " WHERE requests.status_id = 2
                             AND requests.process_date >= '$date_start'
@@ -147,7 +148,7 @@ class productusagereport extends Sximo  {
             }
             $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
 
-            $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
+    		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
                 ' ORDER BY V.vendor_name, P.prod_type_id, P.vendor_description ';
 
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
@@ -158,7 +159,7 @@ class productusagereport extends Sximo  {
             $topMessage = "Products usage $humanDateRange";
         }
 
-        return $results = array(
+		return $results = array(
             'topMessage' => $topMessage,
             'bottomMessage' => $bottomMessage,
             'message' => $message,
@@ -167,9 +168,9 @@ class productusagereport extends Sximo  {
         );
 
 
-    }
+	}
 
-    public static function processRows( $rows ){
+	public static function processRows( $rows ){
         $newRows = array();
         foreach($rows as $row) {
 
@@ -178,6 +179,6 @@ class productusagereport extends Sximo  {
 
             $newRows[] = $row;
         }
-        return $newRows;
-    }
+		return $newRows;
+	}
 }
