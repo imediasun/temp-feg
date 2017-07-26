@@ -1571,7 +1571,6 @@ class OrderController extends Controller
             $voided = Order::isVoided($id, $orderData);
             $closed = Order::isClosed($id, $orderData);
             $partial = Order::isPartiallyReceived($id);
-
             $status = true;
 
             if ($freeHand) {
@@ -1600,7 +1599,7 @@ class OrderController extends Controller
             $response['status'] = $status === false ? 'error' : 'success';
             $response['message'] = $status === false ? $message : 'Ready for edit';
 
-            $isClone = $apified && (!$partial && !$voided && !$closed);
+            $isClone = $apified && (!$partial && !$voided);
 
             if ($isClone) {
                 $response['url'] = url('/order/insta-clone/'.\SiteHelpers::encryptID($id).'/voided');
