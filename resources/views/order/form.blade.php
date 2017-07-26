@@ -401,8 +401,8 @@
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>                    
                     @if($id && Order::isApiable($id, $row) && !Order::isApified($id, $row) && $data['prefill_type'] != 'clone')
-                        <button type="button" class="btn btn-success btn-sm exposeAPI">
-                        {{ Lang::get('core.order_api_expose_button_label') }} </button>
+                       {{-- <button type="button" class="btn btn-success btn-sm exposeAPI">
+                        {{ Lang::get('core.order_api_expose_button_label') }} </button>--}}
                     @endif
                     <button type="button" onclick="reloadOrder()" class="btn btn-success btn-sm cancelButton">
                         <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
@@ -1516,6 +1516,8 @@
     $(document).ready(function () {
         
         $(".exposeAPI").on('click', function() {
+            return false; //Functionality removed!
+
             var btn = $(this);
             btn.prop('disabled', true);
             blockUI();

@@ -51,11 +51,11 @@
                     </div>
                     
                     @if($order_id && Order::isApiable($order_id) && !Order::isApified($order_id))
-                    <div class="form-group" style="margin-top:10px;">
+                    {{--<div class="form-group" style="margin-top:10px;">
                         <button type="button" class="btn btn-info btn-lg exposeAPIFromSaveOrSend"
                                 style="width:33%">
                         {{ Lang::get('core.order_api_expose_button_label') }} </button>
-                    </div>
+                    </div>--}}
                     @endif
                     {!! Form::close() !!}
                 </div>
@@ -211,6 +211,8 @@
                 {url: siteUrl+'/order/email-history'});
 
             $(".exposeAPIFromSaveOrSend").click(function(e){
+                return false; //Functionality removed!
+
                 var btn = $(this);
                 btn.prop('disabled', true);
                 blockUI();
