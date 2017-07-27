@@ -119,14 +119,15 @@ class productusagereport extends Sximo  {
 									 requests.process_date as end_date ";
             $totalQuery = "SELECT count(*) as total ";
 
-            $fromQuery = " FROM requests 
+            $fromQuery = " FROM order_contents O
+                           LEFT JOIN requests ON O.request_id = requests.id
 						   LEFT JOIN location L ON L.id = requests.location_id
 						   JOIN products P ON P.id = requests.product_id
 						   LEFT JOIN vendor V ON V.id = P.vendor_id
 						   LEFT JOIN order_type T ON T.id = P.prod_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
 						   LEFT JOIN users U ON U.id = requests.process_user_id 
-						   JOIN order_contents O ON O.request_id = requests.id
+						   
 						   ";
 
             $whereQuery = " WHERE requests.status_id = 2
