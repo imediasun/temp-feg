@@ -183,7 +183,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                            title="Clone Order">
                             <i class=" fa fa-random" aria-hidden="true"></i>
                         </a>
-                        @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
+                        @if($row->status_id=='Open' || $row->status_id=='Open (Partial)'  || $row->status_id=='Close Order (Partial)')
                             @if($row->is_freehand=='1' || Order::isApified($id, $row) || !Order::isApiable($id, $row, true))
                                 <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
                                    data-id="{{$eid}}"
