@@ -1292,6 +1292,7 @@ class OrderController extends Controller
             // close order
             $order_status = 2;
         }
+
         $received_qtys = $request->get('receivedQty');
         $item_ids = $request->get('itemsID');
         $received_item_qty = $request->get('receivedItemsQty');
@@ -1368,6 +1369,12 @@ class OrderController extends Controller
             {
                 $notes = $orderNotes."<br>----------------------<br>".$notes;
             }
+
+            //check if all items received (on partial order) then close order
+            if(Order::canPostToNetSuit($order_id)){
+                $order_status = 2;
+            }
+
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
@@ -1615,10 +1622,10 @@ class OrderController extends Controller
             $orderData = Order::find($id)->toArray();
             $freeHand = Order::isFreehand($id, $orderData);
             $apiable = Order::isApiable($id, $orderData);
-            $apified = Order::isApified($id, $orderData);
+            //$apified = Order::isApified($id, $orderData);
             $voided = Order::isVoided($id, $orderData);
             $closed = Order::isClosed($id, $orderData);
-            $status = !$voided && !$closed && ($freeHand || $apiable);
+            $status = !$voided && !$closed;
 
             /*if (!$apified) {
                 $message = \Lang::get('core.order_receive_error_api_not_exposed');
