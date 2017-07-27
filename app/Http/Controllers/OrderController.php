@@ -1590,10 +1590,13 @@ class OrderController extends Controller
                 $message = \Lang::get('core.order_api_exposed_edit_restrict_alert');
                 $status = false;
             }
-            if ($apified && $partial) {
+            //commented this check on [27-july-2017]
+            /*if ($apified && $partial) {
                 $message = \Lang::get('core.order_api_edit_partial_alert');
                 $status = false;
-            }
+            }*/
+
+
             /*if ($closed) {
                 $message = \Lang::get('core.order_closed_edit_alert');
                 $status = false;
