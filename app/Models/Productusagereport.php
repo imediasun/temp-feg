@@ -153,7 +153,6 @@ class productusagereport extends Sximo  {
 
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
             $rawRows = \DB::select($finalDataQuery);
-            dd($rawRows);
             $rows = self::processRows($rawRows);
 
             $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
