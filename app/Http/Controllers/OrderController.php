@@ -1290,7 +1290,7 @@ class OrderController extends Controller
             $received_part_ids = $request->get('receivedInParts');
         } else {
             // close order
-            $order_status = 2;
+            //$order_status = 2;
         }
 
         $received_qtys = $request->get('receivedQty');
@@ -1372,7 +1372,7 @@ class OrderController extends Controller
 
             //check if all items received (on partial order) then close order
             if(Order::canPostToNetSuit($order_id)){
-                $order_status = 2;
+                //$order_status = 2;
             }
 
             $data = array('date_received' => $date_received,
@@ -1587,17 +1587,17 @@ class OrderController extends Controller
             }
 
             if ($apified) {
-                $message = \Lang::get('core.order_api_exposed_edit_alert');
+                $message = \Lang::get('core.order_api_exposed_edit_restrict_alert');
                 $status = false;
             }
             if ($apified && $partial) {
                 $message = \Lang::get('core.order_api_edit_partial_alert');
                 $status = false;
             }
-            if ($closed) {
-                //$message = \Lang::get('core.order_closed_edit_alert');
-                //$status = false;
-            }
+            /*if ($closed) {
+                $message = \Lang::get('core.order_closed_edit_alert');
+                $status = false;
+            }*/
             if ($voided) {
                 $message = \Lang::get('core.order_voided_edit_alert');
                 $status = false;
@@ -1606,12 +1606,13 @@ class OrderController extends Controller
             $response['status'] = $status === false ? 'error' : 'success';
             $response['message'] = $status === false ? $message : 'Ready for edit';
 
-            $isClone = $apified && (!$partial && !$voided);
+            ///Void order and make clone functionality commented.
+            /*$isClone = $apified && (!$partial && !$voided);
 
             if ($isClone) {
                 $response['url'] = url('/order/insta-clone/'.\SiteHelpers::encryptID($id).'/voided');
                 $response['action'] = 'clone';
-            }
+            }*/
         }
         return response()->json($response);
     }

@@ -222,6 +222,7 @@ return array(
     "order_closed_edit_alert"  => "This Purchase Order has been closed and is not editable any more.",
     "order_api_edit_partial_alert"  => "This Purchase Order has already been received partially and is not editable any more.",
     "order_api_exposed_edit_alert"  => "This Purchase Order has already been submitted to Netsuite. If you continue, then this Purchase Order will be voided and a new Purchase Order created. Do you wish to continue?",
+    "order_api_exposed_edit_restrict_alert"  => "This Purchase Order has already been submitted to Netsuite and is not editable any more.",
     "order_voided_receipt_alert"  => "This Purchase Order has been voided and is not receivable any more.",
     "order_closed_receipt_alert"  => "This Purchase Order has been closed and is not receivable any more.",
     "order_receive_error_api_not_exposed"  => "This Purchase Order has not yet been submitted to Netsuite. Please contact the Merchandise team to be able to receive this order.",
