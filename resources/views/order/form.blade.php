@@ -671,6 +671,7 @@
             var order_description_array = <?php echo json_encode($data['orderDescriptionArray']) ?>;
             var order_price_array = <?php echo json_encode($data['orderPriceArray']) ?>;
             var order_qty_array = <?php echo json_encode($data['orderQtyArray']) ?>;
+            var order_qty_received_array = <?php echo json_encode($data['receivedItemsArray']) ?>;
             var order_product_id_array = <?php echo json_encode($data['orderProductIdArray']) ?>;
             var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
             var item_name_array =<?php echo json_encode($data['itemNameArray']) ?>;
@@ -710,7 +711,7 @@
                     $('input[name^=qty]').eq(i).val(00);
                 }
                 else {
-                    $('input[name^=qty]').eq(i).val(order_qty_array[i]);
+                    $('input[name^=qty]').eq(i).val(order_qty_array[i]-order_qty_received_array[i]);
 
                 }
 
