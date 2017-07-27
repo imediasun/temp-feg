@@ -121,7 +121,7 @@ class productusagereport extends Sximo  {
 
             $fromQuery = " FROM requests 
 						   LEFT JOIN location L ON L.id = requests.location_id
-						   LEFT JOIN products P ON P.id = requests.product_id
+						   JOIN products P ON P.id = requests.product_id
 						   LEFT JOIN vendor V ON V.id = P.vendor_id
 						   LEFT JOIN order_type T ON T.id = P.prod_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
