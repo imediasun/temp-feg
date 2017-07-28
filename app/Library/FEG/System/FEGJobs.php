@@ -516,8 +516,8 @@ class FEGJobs
         $params['_logger'] = $__logger = $L;  
         $__logger = $L;
         
-        $max = !empty($dateEnd);
-        $min = !empty($dateStart);
+        $max = empty($dateEnd) ? null : $dateEnd;
+        $min = empty($dateStart) ? null : $dateStart;
         if (empty($max) || empty($min)) {
             $L->log("NO date range given. ENDING.");
             return;            
@@ -528,7 +528,8 @@ class FEGJobs
         
         $dateStartTimestamp = strtotime($min);
         $dateEndTimestamp = strtotime($max);
-        $currentDate = $dateStartTimestamp;
+        $currentDate = min($dateStartTimestamp, $dateEndTimestamp);
+        $dateEndTimestamp = max($dateStartTimestamp, $dateEndTimestamp);
         $date = $min; 
         $dateCount = 1;
 
