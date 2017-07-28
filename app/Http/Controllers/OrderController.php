@@ -207,7 +207,7 @@ class OrderController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
-        
+
         $isRedirected=\Session::get('filter_before_redirect');
         \Session::put('order_selected',$order_selected);
 
@@ -642,7 +642,7 @@ class OrderController extends Controller
 							 SET status_id = 2,
 							 	 process_user_id = ' . \Session::get('uid') . ',
 								 process_date = "' . $now . '",
-								 blocked_at = null 
+								 blocked_at = null
 						   WHERE id IN(' . $where_in . ')');
                     //// SUBTRACT QTY OF RESERVED AMT ITEMS
                     $item_count = substr_count($SID_string, '-') - 1;
@@ -1066,7 +1066,7 @@ class OrderController extends Controller
                 $data[0]['company_name_long'] = 'Family Entertainment Group';
 
                 $data[0]['relationships'] = implode("<br/>", $this->model->getOrderRelationships($order_id));
-                
+
                 //$item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
             $data['pass'] = $this->data['pass'];
@@ -1213,7 +1213,7 @@ class OrderController extends Controller
         $response['viewUrl'] = url('/order/show/'.$newID);
         $response['poUrl'] = url('/order/po/'.$newID);
         $response['receiptUrl'] = url('/order/orderreceipt/'.$newID);
-        
+
         $response['message'] = \Lang::get('core.order_clone_successful');
         if (strtolower($voidify) == 'voided') {
             Order::voidify($id);
@@ -1290,9 +1290,8 @@ class OrderController extends Controller
             $received_part_ids = $request->get('receivedInParts');
         } else {
             // close order
-            //$order_status = 2;
+            $order_status = 2;
         }
-
         $received_qtys = $request->get('receivedQty');
         $item_ids = $request->get('itemsID');
         $received_item_qty = $request->get('receivedItemsQty');
@@ -1369,12 +1368,6 @@ class OrderController extends Controller
             {
                 $notes = $orderNotes."<br>----------------------<br>".$notes;
             }
-
-            //check if all items received (on partial order) then close order
-            if(Order::canPostToNetSuit($order_id)){
-                //$order_status = 2;
-            }
-
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
@@ -1424,7 +1417,7 @@ class OrderController extends Controller
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
         }
         $results = array();
-        $term = addslashes($term); 
+        $term = addslashes($term);
         //fixing for https://www.screencast.com/t/vwFYE3AlF
         $queries = \DB::select("SELECT *,LOCATE('$term',vendor_description) AS pos
                                 FROM products
@@ -1450,10 +1443,10 @@ class OrderController extends Controller
         if (!empty($row)) {
             $row = Order::hydrate($row);
             $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
-        }        
+        }
         echo json_encode($json);
     }
-    
+
     function updateRequestAndProducts($item_count, $SID_new)
     {
 
@@ -1578,6 +1571,7 @@ class OrderController extends Controller
             $voided = Order::isVoided($id, $orderData);
             $closed = Order::isClosed($id, $orderData);
             $partial = Order::isPartiallyReceived($id);
+
             $status = true;
 
             if ($freeHand) {
@@ -1585,19 +1579,17 @@ class OrderController extends Controller
                 $response['message'] = 'Ready for edit';
                 return response()->json($response);
             }
-
+            /*
             if ($apified) {
-                $message = \Lang::get('core.order_api_exposed_edit_restrict_alert');
+                $message = \Lang::get('core.order_api_exposed_edit_alert');
                 $status = false;
-            }
-            //commented this check on [27-july-2017]
+            }*/
             /*if ($apified && $partial) {
                 $message = \Lang::get('core.order_api_edit_partial_alert');
                 $status = false;
             }*/
-
-
-            /*if ($closed) {
+            /*
+            if ($closed) {
                 $message = \Lang::get('core.order_closed_edit_alert');
                 $status = false;
             }*/
@@ -1609,13 +1601,12 @@ class OrderController extends Controller
             $response['status'] = $status === false ? 'error' : 'success';
             $response['message'] = $status === false ? $message : 'Ready for edit';
 
-            ///Void order and make clone functionality commented.
-            /*$isClone = $apified && (!$partial && !$voided);
+            $isClone = $apified && (!$partial && !$voided && !$closed);
 
             if ($isClone) {
                 $response['url'] = url('/order/insta-clone/'.\SiteHelpers::encryptID($id).'/voided');
                 $response['action'] = 'clone';
-            }*/
+            }
         }
         return response()->json($response);
     }
@@ -1626,18 +1617,26 @@ class OrderController extends Controller
             $orderData = Order::find($id)->toArray();
             $freeHand = Order::isFreehand($id, $orderData);
             $apiable = Order::isApiable($id, $orderData);
-            //$apified = Order::isApified($id, $orderData);
+            $apified = Order::isApified($id, $orderData);
             $voided = Order::isVoided($id, $orderData);
             $closed = Order::isClosed($id, $orderData);
-            $status = !$voided && !$closed;
-
-            /*if (!$apified) {
-                $message = \Lang::get('core.order_receive_error_api_not_exposed');
-            }*/
+            $partiallyReceived = Order::isPartiallyReceived($id, $orderData);
+            //$status = !$voided && !$closed && ($freeHand || !$apiable || $apified);
+            /**
+             * All checks removed because
+             * partial closed orders were not receiveable
+             * logic changed. orders are receive able before posting to netsuite
+             */
             $message = '';
-            if ($closed) {
-                $message = \Lang::get('core.order_closed_receipt_alert');
+            $status = !$voided;
+            /*
+            if (!$apified) {
+                $message = \Lang::get('core.order_receive_error_api_not_exposed');
             }
+
+            if ($closed && !$partiallyReceived) {
+                $message = \Lang::get('core.order_closed_receipt_alert');
+            }*/
             if ($voided) {
                 $message = \Lang::get('core.order_voided_receipt_alert');
             }
@@ -1657,17 +1656,17 @@ class OrderController extends Controller
     }
 
     public function getEmailHistory(Request $request) {
-        
+
         $returnSelf = !empty($request->input('returnSelf'));
 
         $searchFor = !is_null($request->input('search')) ? trim($request->input('search')) : '';
         $searchFor = empty($searchFor) || $searchFor == '@' ? '' : $searchFor;
-        
+
         $startAt = !is_null($request->input('start')) ? trim($request->input('start')) : '';
         $endAt = !is_null($request->input('end')) ? trim($request->input('end')) : '';
 
         $query = OrderSendDetails::distinct();
-        
+
         if (!empty($searchFor)) {
             $query->where('email', 'LIKE', "%$searchFor%");
         }
@@ -1682,11 +1681,11 @@ class OrderController extends Controller
         if (!empty($searchFor) || !empty($startAt) || !empty($endAt)) {
             $dataList = $query->lists('email');
         }
-        
+
         if($returnSelf && !empty($searchFor)) {
             $dataList[] = $searchFor;
         }
-        
+
         return response()->json($dataList);
     }
 
