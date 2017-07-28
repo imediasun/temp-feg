@@ -531,21 +531,22 @@ class FEGJobs
         $currentDate = $dateStartTimestamp;
         $date = $min; 
         $dateCount = 1;
-        
-        if ($skipAdjustmentMeta != 1) {
-        $L->log("Sync and Clean earnings adjustment meta");
-        $aParams = array_merge($params, array("date" => $min));
-        $result = \App\Library\SyncFromOldLiveHelpers::syncGameEarningsAdjMetaFromLive($aParams);
-        if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
-            $errorMessage = "User Terminated befor transfer of $date";
-            \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
-            \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
-            \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
-            \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
-            FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
-            exit();
-        }                
-        }
+
+        // Comminting code related to syncing data from old admin to new admin
+//        if ($skipAdjustmentMeta != 1) {
+//            $L->log("Sync and Clean earnings adjustment meta");
+//            $aParams = array_merge($params, array("date" => $min));
+//            $result = \App\Library\SyncFromOldLiveHelpers::syncGameEarningsAdjMetaFromLive($aParams);
+//            if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+//                $errorMessage = "User Terminated befor transfer of $date";
+//                \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+//                \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+//                \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+//                \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+//                FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
+//                exit();
+//            }
+//        }
 
         while($currentDate <= $dateEndTimestamp) {
             
