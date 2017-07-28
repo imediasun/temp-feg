@@ -230,6 +230,7 @@
             $('#itemTable .yourBox').on('ifUnchecked',function(){
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).attr('readonly', 'readonly');
+                $('#receivedItemText'+itemId).val($('#receivedItemText'+itemId).attr('max'));
             });
             var isAdvaceReplacement=0;
 
