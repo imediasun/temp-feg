@@ -1619,12 +1619,13 @@ class OrderController extends Controller
             $apified = Order::isApified($id, $orderData);
             $voided = Order::isVoided($id, $orderData);
             $closed = Order::isClosed($id, $orderData);
+            $partiallyReceived = Order::isPartiallyReceived($id, $orderData);
             $status = !$voided && !$closed && ($freeHand || !$apiable || $apified);
 
             if (!$apified) {
                 $message = \Lang::get('core.order_receive_error_api_not_exposed');
             }
-            if ($closed) {
+            if ($closed && !$partiallyReceived) {
                 $message = \Lang::get('core.order_closed_receipt_alert');
             }
             if ($voided) {
