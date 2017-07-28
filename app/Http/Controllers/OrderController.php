@@ -1620,14 +1620,22 @@ class OrderController extends Controller
             $voided = Order::isVoided($id, $orderData);
             $closed = Order::isClosed($id, $orderData);
             $partiallyReceived = Order::isPartiallyReceived($id, $orderData);
-            $status = !$voided && !$closed && ($freeHand || !$apiable || $apified);
-
+            //$status = !$voided && !$closed && ($freeHand || !$apiable || $apified);
+            /**
+             * All checks removed because
+             * partial closed orders were not receiveable
+             * logic changed. orders are receive able before posting to netsuite
+             */
+            $message = '';
+            $status = !$voided;
+            /*
             if (!$apified) {
                 $message = \Lang::get('core.order_receive_error_api_not_exposed');
             }
+
             if ($closed && !$partiallyReceived) {
                 $message = \Lang::get('core.order_closed_receipt_alert');
-            }
+            }*/
             if ($voided) {
                 $message = \Lang::get('core.order_voided_receipt_alert');
             }
