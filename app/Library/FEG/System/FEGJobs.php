@@ -505,8 +505,8 @@ class FEGJobs
         $lf = 'BulkDailyTransfer.log';
         $lp = 'FEGCronTasks/BulkDailyTransfer';        
         extract(array_merge(array(
-            'startDate' => null,
-            'endDate' => null,           
+            'dateStart' => null,
+            'dateEnd' => null,
             'skipAdjustmentMeta' => 0,
             'chunkSize' => 500,
             '_task' => array(),
