@@ -1579,19 +1579,20 @@ class OrderController extends Controller
                 $response['message'] = 'Ready for edit';
                 return response()->json($response);
             }
-
+            /*
             if ($apified) {
                 $message = \Lang::get('core.order_api_exposed_edit_alert');
                 $status = false;
-            }
+            }*/
             /*if ($apified && $partial) {
                 $message = \Lang::get('core.order_api_edit_partial_alert');
                 $status = false;
             }*/
+            /*
             if ($closed) {
-                //$message = \Lang::get('core.order_closed_edit_alert');
-                //$status = false;
-            }
+                $message = \Lang::get('core.order_closed_edit_alert');
+                $status = false;
+            }*/
             if ($voided) {
                 $message = \Lang::get('core.order_voided_edit_alert');
                 $status = false;
