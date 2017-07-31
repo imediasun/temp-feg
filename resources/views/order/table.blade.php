@@ -203,9 +203,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-trash-o " aria-hidden="true"></i>
                             </a>
                         @endif
-
-                        Hello{{Order::canPostToNetSuit($row->id) && !Order::isApified($id, $row) && Order::isApiable($id, $row, true)}}
-                        @if(Order::canPostToNetSuit($row->id))
+                        @if(Order::canPostToNetSuit($row->id)  && !Order::isApified($id, $row) && Order::isApiable($id, $row, true))
                             <a href="javascript:void(0)"
                                data-id="{{$eid}}"
                                data-action="post"
