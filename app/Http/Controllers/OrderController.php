@@ -1272,7 +1272,7 @@ class OrderController extends Controller
         $received_part_ids = array();
         $order_id = $request->get('order_id');
         $item_count = $request->get('item_count');
-        $notes = $request->get('notes');
+        $notes = addslashes($request->get('notes'));
         $order_status = $request->get('order_status');
         $added_to_inventory = $request->get('added_to_inventory');
         $user_id = $request->get('user_id');
@@ -1302,7 +1302,7 @@ class OrderController extends Controller
 
                 $status = 2;
             \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
-							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . addslashes($notes) . '" )');
+							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . $notes . '" )');
             \DB::update('UPDATE order_contents
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
