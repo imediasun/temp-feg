@@ -20,7 +20,7 @@ class ReportGenerator
             'date' => date('Y-m-d', strtotime('-1 day')),
             'today' => date('Y-m-d'),
             'location' => null,
-            'sleepFor' => 60,
+            'sleepFor' => 10,
             'noTransferStatus' => 0,
              
             'noTransferSummary' => 0,
