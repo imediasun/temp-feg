@@ -715,7 +715,9 @@
                     $('input[name^=qty]').eq(i).val(00);
                 }
                 else {
-                    $('input[name^=qty]').eq(i).val(order_qty_array[i]-order_qty_received_array[i]);
+                    //$('input[name^=qty]').eq(i).val(order_qty_array[i]-order_qty_received_array[i]);
+                    //while editing order show original quantities as per gabe on 8/01/2017
+                    $('input[name^=qty]').eq(i).val(order_qty_array[i]);
 
                 }
 
