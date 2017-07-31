@@ -661,6 +661,8 @@
                         beforeSubmit: showRequest,
                         success: showResponse
                     }
+                    reAssignSubmit(); //Release items.
+                    prepareSubmit();
                     $(this).ajaxSubmit(options);
                     return false;
 
@@ -1561,5 +1563,34 @@
         }
         //$("#SID_string").val(currURI);
         console.log(sid_uri);
+    }
+
+    function reAssignSubmit() {
+        var requestIds = $('#where_in_expression').val();
+        if(requestIds)
+        {
+            $.ajax({
+                method: "Get",
+                url:"{{route('remove_blocked_check')}}",
+                data:{
+                    requestIds:requestIds
+                }
+            })
+            .success(function (data) {
+                console.log(data);
+            })
+            .error(function (data) {
+                console.log(data);
+            })
+        }
+    }
+
+    function prepareSubmit(){
+        var currURI= window.location.href;
+        var sid_uri= currURI.substring(currURI.lastIndexOf('/') + 1);
+        $("#SID_string").val(sid_uri);
+        var where_in = sid_uri.split('-');
+        where_in.shift();where_in.pop();
+        $("#where_in_expression").val(where_in);
     }
 </script>
