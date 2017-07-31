@@ -544,23 +544,25 @@
             if(rid != '' && rid != undefined && rid != ' ')
             {
                 console.log('removing request id from blocked list = '+rid);
-                $.ajax({
+                removeItemURL(rid);
+
+                /*$.ajax({
                     method: "Get",
                     url:"{{route('remove_blocked_check')}}",
                     data:{
                         requestIds : rid
                     }
                 })
-                    .success(function (data) {
-                        console.log(data);
-                    })
-                    .error(function (data) {
-                        console.log(data);
-                    });
+                .success(function (data) {
+                    console.log(data);
+                })
+                .error(function (data) {
+                    console.log(data);
+                });*/
             }
 
 
-            for(i in ids) {
+           /* for(i in ids) {
                 j = ids[i];
                 if (j!=rid) {
                     newIds.push(j);
@@ -573,7 +575,7 @@
                 }
             }
             $("#where_in_expression").val(newIds.join(','));
-            $("#SID_string").val(newSids.join('-'));
+            $("#SID_string").val(newSids.join('-'));*/
 
         }
         $(document).ready(function () {
@@ -1547,4 +1549,17 @@
             });
         });
     });
+    
+    function removeItemURL(id) {
+        var currURI= $("#SID_string").val();
+        var sid_uri= currURI.substring(currURI.lastIndexOf('/') + 1);
+        sid_uri = sid_uri.replace(id+'-', '');
+        if(window.history != undefined && window.history.pushState != undefined) {
+            window.history.pushState({}, document.title, sid_uri);
+        }else{
+            window.location.href = url+'/'+sid_uri;
+        }
+        //$("#SID_string").val(currURI);
+        console.log(sid_uri);
+    }
 </script>
