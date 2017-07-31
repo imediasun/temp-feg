@@ -203,6 +203,17 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-trash-o " aria-hidden="true"></i>
                             </a>
                         @endif
+
+                        Hello{{Order::canPostToNetSuit($row->id) && !Order::isApified($id, $row) && Order::isApiable($id, $row, true)}}
+                        @if(Order::canPostToNetSuit($row->id))
+                            <a href="javascript:void(0)"
+                               data-id="{{$eid}}"
+                               data-action="post"
+                               class="tips btn btn-xs btn-white postToNetSuitAction"
+                               title="Post To NetSuit">
+                                <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                            </a>
+                        @endif
 					</td>
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -311,6 +322,29 @@ usort($tableGrid, "SiteHelpers::_sort");
                 }
             }
         });
+    });
+
+    $(".postToNetSuitAction").on('click', function() {
+        var btn = $(this);
+        btn.prop('disabled', true);
+        var id = $(this).data('id');
+        blockUI();
+        $.ajax({
+            type: "GET",
+            url: "{{ url() }}/order/expose-api/"+id,
+            success: function (data) {
+                unblockUI();
+                if(data.status === 'success'){
+                    notyMessage(data.message);
+                    btn.remove();
+                }
+                else {
+                    btn.prop('disabled', false);
+                    notyMessageError(data.message);
+                }
+            }
+        });
+        $('.tooltip').hide();
     });
 
 });

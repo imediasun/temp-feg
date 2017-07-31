@@ -345,6 +345,8 @@
                         </td>
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
+                        <input type='hidden' name='item_received[]'>
+
                         <td><br/><input type="text" name="total" value="" placeholder="0.000" readonly
                                         class="form-control"/></td>
                         <td align="center" class="remove-container"><br/>
@@ -718,6 +720,7 @@
                     //$('input[name^=qty]').eq(i).val(order_qty_array[i]-order_qty_received_array[i]);
                     //while editing order show original quantities as per gabe on 8/01/2017
                     $('input[name^=qty]').eq(i).val(order_qty_array[i]);
+                    $('input[name^=item_received]').eq(i).val(order_qty_received_array[i]);
 
                 }
 
