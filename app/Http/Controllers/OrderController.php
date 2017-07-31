@@ -1302,7 +1302,7 @@ class OrderController extends Controller
 
                 $status = 2;
             \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
-							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . $notes . '" )');
+							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . addslashes($notes) . '" )');
             \DB::update('UPDATE order_contents
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
