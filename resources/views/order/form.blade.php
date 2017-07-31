@@ -1551,7 +1551,7 @@
     });
     
     function removeItemURL(id) {
-        var currURI= $("#SID_string").val();
+        var currURI= window.location.href;
         var sid_uri= currURI.substring(currURI.lastIndexOf('/') + 1);
         sid_uri = sid_uri.replace(id+'-', '');
         if(window.history != undefined && window.history.pushState != undefined) {
