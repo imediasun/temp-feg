@@ -108,7 +108,7 @@ class productusagereport extends Sximo  {
 				   ROUND(P.case_price / P.num_items,2) AS Unit_Price,
 				   SUM(OC.qty) AS Cases_Ordered,
 				   OC.case_price AS Case_Price,
-				   SUM(OC.total) AS Total_Spent,
+				   SUM(OC.qty * OC.case_price) AS Total_Spent,
 				    T1.order_type AS Order_Type,
 				   D.type_description AS Product_Type,
 				   O.location_id,
