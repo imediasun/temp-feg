@@ -536,6 +536,7 @@
                                 forceRemoveOrderContentIds.push(value);
                                 $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
                                 $("#" + id).parents('.clonedInput').remove();
+                                decreaseCounter();
                                 $('.custom_overlay').slideUp(500);
                             },
                             cancel:function(){
@@ -543,17 +544,20 @@
                             }
                         });
                     }else{
-                        if (counter > 1) {
-                            $("#" + id).parents('.clonedInput').remove();
-                        }else {
-                            notyMessageError('For order there must be 1 minimum item available');
-                        }
+                        $("#" + id).parents('.clonedInput').remove();
+                        decreaseCounter();
                     }
                 }
             });
         }
 
         function removeRow(id) {
+
+            if (counter <= 1) {
+                notyMessageError('For order there must be 1 minimum item available');
+                return false;
+            }
+
             if(mode == 'edit'){
                 forceRemoveOrderContent(id);
             }else{
@@ -561,12 +565,7 @@
                     removeIdFromSIDList(id);
                 }
                 decreaseCounter();
-                if (counter > 1) {
-                    $("#" + id).parents('.clonedInput').remove();
-                }
-                else {
-                    notyMessageError('For order there must be 1 minimum item available');
-                }
+                $("#" + id).parents('.clonedInput').remove();
                 calculateSum();
                 decreaseCounter();
                 return false;
