@@ -28,6 +28,7 @@
             @endif
             {!! Form::open(array('url'=>'order/save/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'ordersubmitFormAjax')) !!}
+            <input type='hidden' name='force_remove_items' id="force_remove_items">
             <input type="hidden" id="is_freehand" name="is_freehand" value="{{ $isFreeHand  }}">
             <input type="hidden" id="can_select_product_list" value="1">
             <div class="row">
@@ -346,15 +347,15 @@
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
                         <input type='hidden' name='item_received[]'>
-                        <input type='hidden' name='order_content_id[]'>
+                        <input type='hidden' name='order_content_id[]' class="order_content">
 
                         <td><br/><input type="text" name="total" value="" placeholder="0.000" readonly
                                         class="form-control"/></td>
                         <td align="center" class="remove-container"><br/>
 
-                            <p id="hide-button"
+                            <p id="hide-button" data-id=""
                                onclick="removeRow(this.id);"
-                               class="remove btn btn-xs btn-danger">-
+                               class="remove btn btn-xs btn-danger hide-button">-
                             </p>
                             <input type="hidden" name="counter[]">
                         </td>
@@ -451,6 +452,8 @@
         case_price_categories = case_price_categories.split(",").map(Number);
 
         var show_freehand = <?php echo $show_freehand  ; ?>;
+
+        var forceRemoveOrderContentIds = [];
         console.log(type_permissions);
         console.log('Createing order '+show_freehand);
         $(document).ready(function () {
@@ -517,20 +520,54 @@
         games_options_js = games_options_js.replace(/&#039;/g, "'");
         games_options_js = games_options_js.replace(/\\/g, "\\\\");
         games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
+
+        function forceRemoveOrderContent(id){
+            var value = $("#"+id).parent().siblings(':input.order_content').val();
+            $.ajax({
+                url: '{{url("")}}/order/checkreceived/'+value,
+                success: function(data){
+                    if(data.available == 'true'){
+                        App.notyConfirm({
+                            message: "<b>***WARNING***</b><br> Are you sure to remove already received item.<br>",
+                            confirmButtonText: 'Yes',
+                            confirm: function () {
+                                forceRemoveOrderContentIds.push(value);
+                                $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
+                                $("#" + id).parents('.clonedInput').remove();
+                            },
+                            cancel:function(){
+                                ///
+                            }
+                        });
+                    }else{
+                        if (counter > 1) {
+                            $("#" + id).parents('.clonedInput').remove();
+                        }else {
+                            notyMessageError('For order there must be 1 minimum item available');
+                        }
+                    }
+                }
+            });
+        }
+
         function removeRow(id) {
-            if (isRequestApprovalProcess) {
-                removeIdFromSIDList(id);
+            if(mode == 'edit'){
+                forceRemoveOrderContent(id);
+            }else{
+                if (isRequestApprovalProcess) {
+                    removeIdFromSIDList(id);
+                }
+                decreaseCounter();
+                if (counter > 1) {
+                    $("#" + id).parents('.clonedInput').remove();
+                }
+                else {
+                    notyMessageError('For order there must be 1 minimum item available');
+                }
+                calculateSum();
+                decreaseCounter();
+                return false;
             }
-            decreaseCounter();
-            if (counter > 1) {
-                $("#" + id).parents('.clonedInput').remove();
-            }
-            else {
-                notyMessageError('For order there must be 1 minimum item available');
-            }
-            calculateSum();
-            decreaseCounter();
-            return false;
         }
         function removeIdFromSIDList(id) {
             var ids = ($("#where_in_expression").val() || '').split(','),
@@ -724,6 +761,7 @@
                     $('input[name^=qty]').eq(i).val(order_qty_array[i]);
                     $('input[name^=item_received]').eq(i).val(order_qty_received_array[i]);
                     $('input[name^=order_content_id]').eq(i).val(order_content_id_array[i]);
+                    //$('.hide-button').eq(i).data(order_content_id_array[i]);
 
                 }
 
