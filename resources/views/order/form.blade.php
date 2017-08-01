@@ -1643,15 +1643,16 @@
 
         if($(this).val()<=$(this).attr('min') && mode == "edit"){
             $(this).css({'border': '1px solid red'});
-            var element = $(this)
+            var element = $(this);
+            element.val(element.attr('min'));
+            element.val(element.attr('min'));
+
             App.notyConfirm({
                 message: "<b>***WARNING***</b></b></b><br>You can not set quantity equal or lower than it already been received.<br></b>",
                 confirm: function () {
-                    element.val(element.attr('min'));
                     element.css({'border': '1px solid #e5e6e7'});
                 },
                 cancel:function(){
-                    element.val(element.attr('min'));
                     element.css({'border': '1px solid #e5e6e7'});
                 }
             });
