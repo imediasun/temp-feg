@@ -527,16 +527,19 @@
                 url: '{{url("")}}/order/checkreceived/'+value,
                 success: function(data){
                     if(data.available == 'true'){
+                        $('.custom_overlay').show();
                         App.notyConfirm({
                             message: "<b>***WARNING***</b><br> Are you sure to remove already received item.<br>",
                             confirmButtonText: 'Yes',
+                            container: '.custom-container',
                             confirm: function () {
                                 forceRemoveOrderContentIds.push(value);
                                 $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
                                 $("#" + id).parents('.clonedInput').remove();
+                                $('.custom_overlay').slideUp(500);
                             },
                             cancel:function(){
-                                ///
+                                $('.custom_overlay').slideUp(500);
                             }
                         });
                     }else{
@@ -1641,18 +1644,21 @@
 
     $('.qty').change(function () {
 
-        if($(this).val()<=$(this).attr('min') && mode == "edit"){
+        if(parseInt($(this).attr('min')) >= parseInt($(this).val()) && mode == "edit"){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
             element.val(element.attr('min'));
-            element.val(element.attr('min'));
 
+            $('.custom_overlay').show();
             App.notyConfirm({
+                container: '.custom-container',
                 message: "<b>***WARNING***</b></b></b><br>You can not set quantity equal or lower than it already been received.<br></b>",
                 confirm: function () {
+                    $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
                 },
                 cancel:function(){
+                    $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
                 }
             });
