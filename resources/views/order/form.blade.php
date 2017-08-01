@@ -1639,8 +1639,9 @@
         $("#where_in_expression").val(where_in);
     }
 
-    $('.qty').change(function (e) {
-        if($(this).val()<=$(this).attr('min')){
+    $('.qty').change(function () {
+
+        if($(this).val()<=$(this).attr('min') && mode == "edit"){
             $(this).css({'border': '1px solid red'});
             var element = $(this)
             App.notyConfirm({
@@ -1655,5 +1656,6 @@
                 }
             });
         }
+
     });
 </script>
