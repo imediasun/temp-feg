@@ -1352,7 +1352,7 @@ class OrderController extends Controller
             $rules['tracking_number'] = "required|min:3";
             $tracking_number = $request->get('tracking_number');
         }
-        $rules['tracking_number'] = "alpha_num|min:3";
+        $rules['tracking_number'] = "min:3";
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             if (!empty($item_count) && $added_to_inventory == 0) {
