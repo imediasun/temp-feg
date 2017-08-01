@@ -9,7 +9,7 @@ usort($tableGrid, "SiteHelpers::_sort");
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips orderTableClearSearch" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','order/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips orderTableReload" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','order/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
-			<a href="{{ url('feg/module/config/'.$pageModule) }}" 
+			<a href="{{ url('feg/module/config/'.$pageModule) }}"
                class="btn btn-xs btn-white tips openModuleConfig"
                title=" {{ Lang::get('core.btn_config') }}"
                ><i class="fa fa-cog"></i></a>
@@ -183,8 +183,8 @@ usort($tableGrid, "SiteHelpers::_sort");
                            title="Clone Order">
                             <i class=" fa fa-random" aria-hidden="true"></i>
                         </a>
-                        @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
-                            @if($row->is_freehand=='1' || !Order::isApified($id, $row))
+                        @if($row->status_id=='Open' || $row->status_id=='Open (Partial)'  || $row->status_id=='Close Order (Partial)')
+                            {{--@if($row->is_freehand=='1' || Order::isApified($id, $row) || !Order::isApiable($id, $row, true))--}}
                                 <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
                                    data-id="{{$eid}}"
                                    data-action="receipt"
@@ -192,7 +192,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                    title="Receive Order">
                                     <i class="fa fa fa-truck" aria-hidden="true"></i>
                                 </a>
-                            @endif
+                            {{--@endif--}}
                         @endif
                         @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
                             <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
@@ -203,8 +203,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-trash-o " aria-hidden="true"></i>
                             </a>
                         @endif
-
-                        @if(Order::canPostToNetSuit($row->id) && !Order::isApified($id, $row) && Order::isApiable($id, $row, true))
+                        @if(Order::canPostToNetSuit($row->id)  && !Order::isApified($id, $row) && Order::isApiable($id, $row, true))
                             <a href="javascript:void(0)"
                                data-id="{{$eid}}"
                                data-action="post"
@@ -323,29 +322,29 @@ usort($tableGrid, "SiteHelpers::_sort");
         });
     });
 
-
     $(".postToNetSuitAction").on('click', function() {
-            var btn = $(this);
-            btn.prop('disabled', true);
-            var id = $(this).data('id');
-            blockUI();
-            $.ajax({
-                type: "GET",
-                url: "{{ url() }}/order/expose-api/"+id,
-                success: function (data) {
-                    unblockUI();
-                    if(data.status === 'success'){
-                        notyMessage(data.message);
-                        btn.remove();
-                    }
-                    else {
-                        btn.prop('disabled', false);
-                        notyMessageError(data.message);
-                    }
+        var btn = $(this);
+        btn.prop('disabled', true);
+        var id = $(this).data('id');
+        blockUI();
+        $.ajax({
+            type: "GET",
+            url: "{{ url() }}/order/expose-api/"+id,
+            success: function (data) {
+                unblockUI();
+                if(data.status === 'success'){
+                    notyMessage(data.message);
+                    btn.remove();
                 }
-            });
-        $('.tooltip').hide();
+                else {
+                    btn.prop('disabled', false);
+                    notyMessageError(data.message);
+                }
+            }
         });
+        $('.tooltip').hide();
+    });
+
 });
 </script>
 

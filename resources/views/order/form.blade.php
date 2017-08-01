@@ -345,6 +345,9 @@
                         </td>
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
+                        <input type='hidden' name='item_received[]'>
+                        <input type='hidden' name='order_content_id[]'>
+
                         <td><br/><input type="text" name="total" value="" placeholder="0.000" readonly
                                         class="form-control"/></td>
                         <td align="center" class="remove-container"><br/>
@@ -544,23 +547,25 @@
             if(rid != '' && rid != undefined && rid != ' ')
             {
                 console.log('removing request id from blocked list = '+rid);
-                $.ajax({
+                removeItemURL(rid);
+
+                /*$.ajax({
                     method: "Get",
                     url:"{{route('remove_blocked_check')}}",
                     data:{
                         requestIds : rid
                     }
                 })
-                    .success(function (data) {
-                        console.log(data);
-                    })
-                    .error(function (data) {
-                        console.log(data);
-                    });
+                .success(function (data) {
+                    console.log(data);
+                })
+                .error(function (data) {
+                    console.log(data);
+                });*/
             }
 
 
-            for(i in ids) {
+           /* for(i in ids) {
                 j = ids[i];
                 if (j!=rid) {
                     newIds.push(j);
@@ -573,7 +578,7 @@
                 }
             }
             $("#where_in_expression").val(newIds.join(','));
-            $("#SID_string").val(newSids.join('-'));
+            $("#SID_string").val(newSids.join('-'));*/
 
         }
         $(document).ready(function () {
@@ -659,6 +664,8 @@
                         beforeSubmit: showRequest,
                         success: showResponse
                     }
+                    reAssignSubmit(); //Release items.
+                    prepareSubmit();
                     $(this).ajaxSubmit(options);
                     return false;
 
@@ -671,6 +678,7 @@
             var order_description_array = <?php echo json_encode($data['orderDescriptionArray']) ?>;
             var order_price_array = <?php echo json_encode($data['orderPriceArray']) ?>;
             var order_qty_array = <?php echo json_encode($data['orderQtyArray']) ?>;
+            var order_content_id_array = <?php echo json_encode($data['order_content_id']) ?>;
             var order_qty_received_array = <?php echo json_encode($data['receivedItemsArray']) ?>;
             var order_product_id_array = <?php echo json_encode($data['orderProductIdArray']) ?>;
             var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
@@ -711,7 +719,11 @@
                     $('input[name^=qty]').eq(i).val(00);
                 }
                 else {
-                    $('input[name^=qty]').eq(i).val(order_qty_array[i]-order_qty_received_array[i]);
+                    //$('input[name^=qty]').eq(i).val(order_qty_array[i]-order_qty_received_array[i]);
+                    //while editing order show original quantities as per gabe on 8/01/2017
+                    $('input[name^=qty]').eq(i).val(order_qty_array[i]);
+                    $('input[name^=item_received]').eq(i).val(order_qty_received_array[i]);
+                    $('input[name^=order_content_id]').eq(i).val(order_content_id_array[i]);
 
                 }
 
@@ -1547,4 +1559,46 @@
             });
         });
     });
+    
+    function removeItemURL(id) {
+        var currURI= window.location.href;
+        var sid_uri= currURI.substring(currURI.lastIndexOf('/') + 1);
+        sid_uri = sid_uri.replace(id+'-', '');
+        if(window.history != undefined && window.history.pushState != undefined) {
+            window.history.pushState({}, document.title, sid_uri);
+        }else{
+            window.location.href = url+'/'+sid_uri;
+        }
+        //$("#SID_string").val(currURI);
+        console.log(sid_uri);
+    }
+
+    function reAssignSubmit() {
+        var requestIds = $('#where_in_expression').val();
+        if(requestIds)
+        {
+            $.ajax({
+                method: "Get",
+                url:"{{route('remove_blocked_check')}}",
+                data:{
+                    requestIds:requestIds
+                }
+            })
+            .success(function (data) {
+                console.log(data);
+            })
+            .error(function (data) {
+                console.log(data);
+            })
+        }
+    }
+
+    function prepareSubmit(){
+        var currURI= window.location.href;
+        var sid_uri= currURI.substring(currURI.lastIndexOf('/') + 1);
+        $("#SID_string").val(sid_uri);
+        var where_in = sid_uri.split('-');
+        where_in.shift();where_in.pop();
+        $("#where_in_expression").val(where_in);
+    }
 </script>
