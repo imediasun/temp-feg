@@ -35,7 +35,7 @@
             $isPrint = isset($access['is_print'])  ? ($access['is_print'] == 1) : $isExcel;
             $isExport = $isExcel || $isCSV || $isPDF || $isWord || $isPrint;
         ?>
-		@if($isExport)
+		@if($isExport && count($rowData)>=1)
 		<div class="pull-right">
             @if($isExcel)
 			<a href="{{ URL::to( $pageUrl .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
