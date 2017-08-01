@@ -80,6 +80,7 @@ class mylocationgame extends Sximo  {
 									  G.game_move_id,
 									  G.game_service_id,
 									  G.test_piece,
+									  G.exclude_from_reports,
 									  IF(G.test_piece =1,CONCAT("**TEST** ",T.game_title),T.game_title) AS game_title,
 									  T.id AS game_title_id,
 									  Y.game_type,
