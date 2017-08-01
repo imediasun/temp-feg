@@ -67,8 +67,11 @@
                        counter++;
                         newid = $(clone).attr('id') + (++counter);
                     }
-                    console.log("new id => "+newid);
 					$(clone).attr('id', newid);
+					/*
+					if($(clone).attr('min') && $(clone).attr('min') != 0){
+						$(clone).attr('min',0);
+					}*/
 				};
 
 				// Increment Clone Children IDs
@@ -83,6 +86,10 @@
 
                     }
 					$(this).attr('id', newid);
+					if($(this).attr('min')){
+						$(this).attr('min',0);
+					}
+
 				});
 
 				//Clear Inputs/Textarea
@@ -102,6 +109,7 @@
 								break;
 							default:
 							  $(this).val("");
+
 						}
 					});
 				};
