@@ -1323,7 +1323,7 @@ class OrderController extends Controller
             $received_part_ids = $request->get('receivedInParts');
         } else {
             // close order
-            $order_status = 2;
+            //$order_status = 2;
         }
         $received_qtys = $request->get('receivedQty');
         $item_ids = $request->get('itemsID');

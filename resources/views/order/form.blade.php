@@ -759,10 +759,9 @@
                     //$('input[name^=qty]').eq(i).val(order_qty_array[i]-order_qty_received_array[i]);
                     //while editing order show original quantities as per gabe on 8/01/2017
                     $('input[name^=qty]').eq(i).val(order_qty_array[i]);
+                    $('input[name^=qty]').eq(i).attr('min', order_qty_received_array[i]);
                     $('input[name^=item_received]').eq(i).val(order_qty_received_array[i]);
                     $('input[name^=order_content_id]').eq(i).val(order_content_id_array[i]);
-                    //$('.hide-button').eq(i).data(order_content_id_array[i]);
-
                 }
 
 
@@ -1639,4 +1638,22 @@
         where_in.shift();where_in.pop();
         $("#where_in_expression").val(where_in);
     }
+
+    $('.qty').change(function (e) {
+        if($(this).val()<=$(this).attr('min')){
+            $(this).css({'border': '1px solid red'});
+            var element = $(this)
+            App.notyConfirm({
+                message: "<b>***WARNING***</b></b></b><br>You can not set quantity equal or lower than it already been received.<br></b>",
+                confirm: function () {
+                    element.val(element.attr('min'));
+                    element.css({'border': '1px solid #e5e6e7'});
+                },
+                cancel:function(){
+                    element.val(element.attr('min'));
+                    element.css({'border': '1px solid #e5e6e7'});
+                }
+            });
+        }
+    });
 </script>
