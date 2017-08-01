@@ -433,6 +433,20 @@ class OrderController extends Controller
         ));
     }
   */
+    public function getCheckreceived($id){
+        $ds = \DB::table('order_received')->where('order_line_item_id', $id)->get();
+        if(!empty($ds)){
+            return response()->json(array(
+                'available' => 'true'
+            ));
+        }else{
+            return response()->json(array(
+                'available' => 'false'
+            ));
+        }
+
+    }
+
     function postSave(Request $request, $id = 0)
     {
         $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
@@ -521,7 +535,10 @@ class OrderController extends Controller
             $qtyArray = $request->get('qty');
             $productIdArray = $request->get('product_id');
             $requestIdArray = $request->get('request_id');
+            $order_content_id = $request->get('order_content_id');
+            $force_remove_items = $request->get('force_remove_items');
             $games = $request->get('game');
+            $item_received = $request->get('item_received');
             $num_items_in_array = count($itemsArray);
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
@@ -556,7 +573,10 @@ class OrderController extends Controller
                 );
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
-                \DB::table('order_contents')->where('order_id', $last_insert_id)->delete();
+                $force_remove_items = explode(',',$force_remove_items);
+                \DB::table('order_contents')->where('order_id', $last_insert_id)->where('item_received', '0')->delete();
+                \DB::table('order_contents')->whereIn('id', $force_remove_items)->delete();
+                \DB::table('order_received')->whereIn('order_line_item_id', $force_remove_items)->delete();
             } else {
                 $orderData = array(
                     'user_id' => \Session::get('uid'),
@@ -607,6 +627,13 @@ class OrderController extends Controller
                 } else {
                     $game_id = '0';
                 }
+
+                if (empty($item_received[$i])) {
+                    $items_received_qty = '0';
+                } else {
+                    $items_received_qty = $item_received[$i];
+                }
+
                 $contentsData = array(
                     'order_id' => $order_id,
                     'request_id' => $request_id,
@@ -617,11 +644,17 @@ class OrderController extends Controller
                     'game_id' => $game_id,
                     'item_name' => $itemNamesArray[$i],
                     'case_price' => $casePriceArray[$i],
+                    'item_received' => $items_received_qty,
                     'sku' => $sku_num,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
 
-                \DB::table('order_contents')->insert($contentsData);
+                if($items_received_qty == '0'){
+                    \DB::table('order_contents')->insert($contentsData);
+                }else{
+                    \DB::table('order_contents')->where('id', $order_content_id[$i])->update($contentsData);
+                }
+
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
                 {
                     $productData = array(
@@ -1290,7 +1323,7 @@ class OrderController extends Controller
             $received_part_ids = $request->get('receivedInParts');
         } else {
             // close order
-            $order_status = 2;
+            //$order_status = 2;
         }
         $received_qtys = $request->get('receivedQty');
         $item_ids = $request->get('itemsID');
