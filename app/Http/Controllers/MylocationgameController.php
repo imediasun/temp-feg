@@ -417,6 +417,7 @@ class MylocationgameController extends Controller
             if (isset($data['_sale_pending'])) unset($data['_sale_pending']);
             if (isset($data['_for_sale'])) unset($data['_for_sale']);
             if (isset($data['_not_debit'])) unset($data['_not_debit']);
+            if (isset($data['_exclude_from_reports'])) unset($data['_exclude_from_reports']);
             if (isset($data['_sold'])) unset($data['_sold']);
 
             $id = $this->model->insertRow($data, $id);
