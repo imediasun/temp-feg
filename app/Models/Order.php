@@ -195,6 +195,7 @@ class order extends Sximo
         {
             $case_price_if_no_unit_categories = explode(',',$pass['use case price if unit price is 0.00']->data_options);
         }
+        $data['order_content_id'] = 0;
         $data['requests_item_count'] = 0;
         $data['receivedItemsArray']=0;
         $data['order_loc_id'] = '0';
@@ -245,7 +246,7 @@ class order extends Sximo
                 $data['alt_address'] = $order_query[0]->alt_address;
             }
             $data['prefill_type'] = 'clone';
-            $content_query = \DB::select('SELECT  g.game_name , O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku
+            $content_query = \DB::select('SELECT  O.id as order_content_id,g.game_name , O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku
 												,O.item_received as item_received,O.game_id FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
 												  LEFT JOIN game g ON g.id = O.game_id
 												  WHERE O.order_id = ' . $order_id);
@@ -276,6 +277,8 @@ class order extends Sximo
                     $orderretailpriceArray[]= $row->retail_price;
                     $ordergameidsArray[] = $row->game_id;
                     $ordergamenameArray[] = $row->game_name;
+
+                    $orderContentIdArray[] = $row->order_content_id;
                     
 
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
@@ -307,6 +310,9 @@ class order extends Sximo
                 $data['gameIdsArray']=$ordergameidsArray;
                 $data['receivedItemsArray']=$receivedItemsArray;
                 $data['orderItemsPriceArray'] = isset($orderItemsPriceArray)?$orderItemsPriceArray:"";
+
+                $data['order_content_id'] = $orderContentIdArray;
+
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);

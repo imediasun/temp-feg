@@ -346,6 +346,7 @@
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
                         <input type='hidden' name='item_received[]'>
+                        <input type='hidden' name='order_content_id[]'>
 
                         <td><br/><input type="text" name="total" value="" placeholder="0.000" readonly
                                         class="form-control"/></td>
@@ -677,6 +678,7 @@
             var order_description_array = <?php echo json_encode($data['orderDescriptionArray']) ?>;
             var order_price_array = <?php echo json_encode($data['orderPriceArray']) ?>;
             var order_qty_array = <?php echo json_encode($data['orderQtyArray']) ?>;
+            var order_content_id_array = <?php echo json_encode($data['order_content_id']) ?>;
             var order_qty_received_array = <?php echo json_encode($data['receivedItemsArray']) ?>;
             var order_product_id_array = <?php echo json_encode($data['orderProductIdArray']) ?>;
             var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
@@ -721,6 +723,7 @@
                     //while editing order show original quantities as per gabe on 8/01/2017
                     $('input[name^=qty]').eq(i).val(order_qty_array[i]);
                     $('input[name^=item_received]').eq(i).val(order_qty_received_array[i]);
+                    $('input[name^=order_content_id]').eq(i).val(order_content_id_array[i]);
 
                 }
 
