@@ -226,6 +226,23 @@
 					</div>
 
 					<div class="form-group  " >
+						<label for="Exclude From Reports" class=" control-label col-md-4 text-left">
+							{!! SiteHelpers::activeLang('Exclude From Reports', (isset($fields['exclude_from_reports']['language'])? $fields['exclude_from_reports']['language'] : array())) !!}
+						</label>
+						<div class="col-md-6">
+							<input type="hidden" name="exclude_from_reports" value="{{ $row['exclude_from_reports'] }}"/>
+							<input type='checkbox'
+								   data-proxy-input='exclude_from_reports' name='_exclude_from_reports'
+								   value="{{ $row['exclude_from_reports'] }}"
+								   @if($row['exclude_from_reports']==1) checked @endif
+							/>
+						</div>
+						<div class="col-md-2">
+
+						</div>
+					</div>
+
+					<div class="form-group  " >
 						<label for="not_debit_reason" class=" control-label col-md-4 text-left">
 							{!! SiteHelpers::activeLang('Not Debit Reason', (isset($fields['not_debit_reason']['language'])? $fields['not_debit_reason']['language'] : array())) !!}
 						</label>

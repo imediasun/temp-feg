@@ -160,7 +160,7 @@
                                 <label for="date_received" class=" control-label col-md-4 text-right">
                                     Tracking Number: </label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control" name="tracking_number" id="tracking_number" value="{{ $data['tracking_number'] }}" required/>
+                                    <textarea class="form-control" name="tracking_number" id="tracking_number" required>{{ $data['tracking_number'] }}</textarea>
                                 </div>
                             </div>
                         @endif
