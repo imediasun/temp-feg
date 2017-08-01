@@ -1407,7 +1407,7 @@ class OrderController extends Controller
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
-                'tracking_number' => $tracking_number,
+                'tracking_number' => trim($request->get('tracking_number')),
                 'received_by' => $request->get('user_id'),
                 'is_partial' => $partial,
                 'added_to_inventory' => $added);
