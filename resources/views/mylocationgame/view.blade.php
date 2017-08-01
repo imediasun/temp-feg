@@ -365,6 +365,12 @@
             </label>
             <div class="col-md-8">{!! \DateHelpers::formatStringValue($serviceBulletinDetails) !!}</div>
         </div>
+        <div class="form-group clearfix" >
+            <label class="col-md-4">
+                {!! SiteHelpers::activeLang('Exclude From Reports', (isset($fields['exclude_from_reports']['language'])? $fields['exclude_from_reports']['language'] : array())) !!}:
+            </label>
+            <div class="col-md-8">{{$game->exclude_from_reports == 1 ? 'Yes' : 'No'}}</div>
+        </div>
     </div>
 
     <div class="col-md-6 text-center nogallary gameImageContainer">
