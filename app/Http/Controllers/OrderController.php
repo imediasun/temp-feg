@@ -1269,6 +1269,14 @@ class OrderController extends Controller
 
     function postReceiveorder(Request $request, $id = null)
     {
+        \Input::merge(array_map(function ($value) {
+            if (is_string($value)) {
+                return trim($value);
+            } else {
+                return $value;
+            }
+        }, \Input::all()));
+
         $received_part_ids = array();
         $order_id = $request->get('order_id');
         $item_count = $request->get('item_count');
@@ -1316,7 +1324,7 @@ class OrderController extends Controller
             $rules['tracking_number'] = "required|min:3";
             $tracking_number = $request->get('tracking_number');
         }
-        $rules['tracking_number'] = "alpha_num|min:3";
+        $rules['tracking_number'] = "min:3";
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             if (!empty($item_count) && $added_to_inventory == 0) {
@@ -1371,7 +1379,7 @@ class OrderController extends Controller
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
-                'tracking_number' => $request->get('tracking_number'),
+                'tracking_number' => trim($request->get('tracking_number')),
                 'received_by' => $request->get('user_id'),
                 'is_partial' => $partial,
                 'added_to_inventory' => $added);
