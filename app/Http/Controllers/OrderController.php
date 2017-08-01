@@ -1302,7 +1302,14 @@ class OrderController extends Controller
 
     function postReceiveorder(Request $request, $id = null)
     {
-        \Input::merge(array_map('trim', \Input::all()));
+        \Input::merge(array_map(function ($value) {
+            if (is_string($value)) {
+                return trim($value);
+            } else {
+                return $value;
+            }
+        }, \Input::all()));
+
         $received_part_ids = array();
         $order_id = $request->get('order_id');
         $item_count = $request->get('item_count');
