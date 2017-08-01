@@ -523,9 +523,11 @@
 
         function forceRemoveOrderContent(id){
             var value = $("#"+id).parent().siblings(':input.order_content').val();
+            $('.ajaxLoading').show();
             $.ajax({
                 url: '{{url("")}}/order/checkreceived/'+value,
                 success: function(data){
+                    $('.ajaxLoading').hide();
                     if(data.available == 'true'){
                         $('.custom_overlay').show();
                         App.notyConfirm({
