@@ -1330,9 +1330,12 @@ class OrderController extends Controller
         $received_item_qty = $request->get('receivedItemsQty');
         $date_received = date("Y-m-d", strtotime($request->get('date_received')));
         for ($i = 0; $i < count($item_ids); $i++) {
+            $receivedQuantity = $received_qtys[$i];
+            if(empty($receivedQuantity)){
+                continue;
+            }
             $status = 1;
             if (in_array($item_ids[$i], $received_part_ids))
-
                 $status = 2;
             \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
 							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . $notes . '" )');
