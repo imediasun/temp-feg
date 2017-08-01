@@ -67,7 +67,7 @@
                        counter++;
                         newid = $(clone).attr('id') + (++counter);
                     }
-
+                    console.log("new id => "+newid);
 					$(clone).attr('id', newid);
 				};
 
@@ -77,6 +77,10 @@
                     if($("#" + newid).length != 0) {
                         counter++;
                         newid = $(this).attr('id') + (++counter);
+						if($(this).attr('min') != 0){
+							$(this).attr('min',0);
+						}
+
                     }
 					$(this).attr('id', newid);
 				});
