@@ -21,3 +21,4 @@ public/orders/
 storage/framework/
 setting.php
 public/upload/pageCmsPDF/
+resources/views/pages/

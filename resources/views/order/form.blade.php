@@ -1601,7 +1601,7 @@
             });
         });
     });
-    
+
     function removeItemURL(id) {
         var currURI= window.location.href;
         var sid_uri= currURI.substring(currURI.lastIndexOf('/') + 1);
