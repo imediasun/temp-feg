@@ -1643,9 +1643,9 @@
         where_in.shift();where_in.pop();
         $("#where_in_expression").val(where_in);
     }
+    var preserveValue;
+    $('.qty').focus(function(){ preserveValue = $(this).val(); }).change(function () {
 
-    $('.qty').change(function () {
-        var preserverValue = $(this).val();
         if(parseInt($(this).attr('min')) > parseInt($(this).val()) && mode == "edit"){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
@@ -1658,12 +1658,12 @@
                 confirm: function () {
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
-                    element.val(preserverValue);
+                    element.val(preserveValue);
                 },
                 cancel:function(){
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
-                    element.val(preserverValue);
+                    element.val(preserveValue);
                 }
             });
         }
