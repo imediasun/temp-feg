@@ -67,8 +67,11 @@
                        counter++;
                         newid = $(clone).attr('id') + (++counter);
                     }
-
 					$(clone).attr('id', newid);
+					/*
+					if($(clone).attr('min') && $(clone).attr('min') != 0){
+						$(clone).attr('min',0);
+					}*/
 				};
 
 				// Increment Clone Children IDs
@@ -77,8 +80,16 @@
                     if($("#" + newid).length != 0) {
                         counter++;
                         newid = $(this).attr('id') + (++counter);
+						if($(this).attr('min') != 0){
+							$(this).attr('min',0);
+						}
+
                     }
 					$(this).attr('id', newid);
+					if($(this).attr('min')){
+						$(this).attr('min',0);
+					}
+
 				});
 
 				//Clear Inputs/Textarea
@@ -98,6 +109,7 @@
 								break;
 							default:
 							  $(this).val("");
+
 						}
 					});
 				};
