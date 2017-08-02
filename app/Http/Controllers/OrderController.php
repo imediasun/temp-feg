@@ -1313,7 +1313,7 @@ class OrderController extends Controller
         $received_part_ids = array();
         $order_id = $request->get('order_id');
         $item_count = $request->get('item_count');
-        $notes = $request->get('notes');
+        $notes = addslashes($request->get('notes'));
         $order_status = $request->get('order_status');
         $added_to_inventory = $request->get('added_to_inventory');
         $user_id = $request->get('user_id');
