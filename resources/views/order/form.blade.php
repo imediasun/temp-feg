@@ -1658,13 +1658,13 @@
                 confirm: function () {
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
-                    $(this).val(preserverValue);
-                }/*,
+                    element.val(preserverValue);
+                },
                 cancel:function(){
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
-                    $(this).val(preserverValue);
-                }*/
+                    element.val(preserverValue);
+                }
             });
         }
 
