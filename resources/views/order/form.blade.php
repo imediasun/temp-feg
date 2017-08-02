@@ -1649,8 +1649,6 @@
         if(parseInt($(this).attr('min')) > parseInt($(this).val()) && mode == "edit"){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
-            element.val(element.attr('min'));
-
             $('.custom_overlay').show();
             App.notyConfirm({
                 container: '.custom-container',
