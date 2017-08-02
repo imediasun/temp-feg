@@ -38,7 +38,7 @@ class Servicerequests extends Observerable  {
 
 	LEFT JOIN users U ON U.id = sbc.UserID
 	INNER JOIN location L ON ( sb_tickets.location_id = L.id )
-    INNER JOIN debit_type D ON (L.debit_type_id = D.id)
+    LEFT JOIN debit_type D ON (L.debit_type_id = D.id)
 	";
 
         return $sql;
@@ -64,7 +64,10 @@ class Servicerequests extends Observerable  {
             else {
                 $q = "  WHERE $controlField IS NULL";
             }
-        }            
+        }
+
+        $q .= ' AND (D.company IS NOT NULL OR location_id = 6001)';
+
         return $q;
     }
 
