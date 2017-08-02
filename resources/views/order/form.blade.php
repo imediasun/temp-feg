@@ -1645,8 +1645,8 @@
     }
 
     $('.qty').change(function () {
-
-        if(parseInt($(this).attr('min')) >= parseInt($(this).val()) && mode == "edit"){
+        var preserverValue = $(this).val();
+        if(parseInt($(this).attr('min')) > parseInt($(this).val()) && mode == "edit"){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
             element.val(element.attr('min'));
@@ -1658,11 +1658,13 @@
                 confirm: function () {
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
-                },
+                    $(this).val(preserverValue);
+                }/*,
                 cancel:function(){
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
-                }
+                    $(this).val(preserverValue);
+                }*/
             });
         }
 
