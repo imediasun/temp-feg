@@ -103,7 +103,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="190"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="215"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
