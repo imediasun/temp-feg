@@ -538,8 +538,12 @@
                             confirm: function () {
                                 forceRemoveOrderContentIds.push(value);
                                 $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
-                                $("#" + id).parents('.clonedInput').remove();
-                                decreaseCounter();
+                                if (counter <= 1) {
+                                    beforeLastRemove(id);
+                                }else{
+                                    $("#" + id).parents('.clonedInput').remove();
+                                    decreaseCounter();
+                                }
                                 $('.custom_overlay').slideUp(500);
                             },
                             cancel:function(){
@@ -547,8 +551,13 @@
                             }
                         });
                     }else{
-                        $("#" + id).parents('.clonedInput').remove();
-                        decreaseCounter();
+                        if (counter <= 1) {
+                            beforeLastRemove(id);
+                        }else{
+                            $("#" + id).parents('.clonedInput').remove();
+                            decreaseCounter();
+                        }
+
                     }
                 }
             });
@@ -556,21 +565,19 @@
 
         function removeRow(id) {
 
-            if (counter <= 1) {
-                notyMessageError('For order there must be 1 minimum item available');
-                return false;
-            }
-
             if(mode == 'edit'){
                 forceRemoveOrderContent(id);
             }else{
                 if (isRequestApprovalProcess) {
                     removeIdFromSIDList(id);
                 }
-                decreaseCounter();
-                $("#" + id).parents('.clonedInput').remove();
+                if (counter <= 1) {
+                    beforeLastRemove(id);
+                }else{
+                    decreaseCounter();
+                    $("#" + id).parents('.clonedInput').remove();
+                }
                 calculateSum();
-                decreaseCounter();
                 return false;
             }
         }
@@ -699,7 +706,12 @@
             var form = $('#ordersubmitFormAjax');
             form.parsley();
             form.submit(function () {
-
+                if (counter <= 1) {
+                    notyMessageError('For order there must be 1 minimum item available');
+                    return false;
+                }
+                $('.hiddenClone').remove();
+                reInitParcley();
                 if (form.parsley('isValid') == true) {
                     var options = {
                         dataType: 'json',
@@ -1646,7 +1658,7 @@
     var preserveValue;
     $('.qty').focus(function(){ preserveValue = $(this).val(); }).change(function () {
 
-        if(parseInt($(this).attr('min')) > parseInt($(this).val()) && mode == "edit"){
+        if(parseInt($(this).attr('min')) >= parseInt($(this).val()) && mode == "edit"){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
             $('.custom_overlay').show();
@@ -1667,4 +1679,10 @@
         }
 
     });
+
+    function beforeLastRemove(id){
+        $('#'+id).parents('.clonedInput').find('input').each(function(){$(this).removeAttr('value');});
+        $('#'+id).parents('.clonedInput').addClass('hiddenClone');
+        $('#'+id).parents('.clonedInput').hide();
+    }
 </script>
