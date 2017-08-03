@@ -538,8 +538,12 @@
                             confirm: function () {
                                 forceRemoveOrderContentIds.push(value);
                                 $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
-                                $("#" + id).parents('.clonedInput').remove();
-                                decreaseCounter();
+                                if (counter <= 1) {
+                                    beforeLastRemove(id);
+                                }else{
+                                    $("#" + id).parents('.clonedInput').remove();
+                                    decreaseCounter();
+                                }
                                 $('.custom_overlay').slideUp(500);
                             },
                             cancel:function(){
@@ -547,8 +551,13 @@
                             }
                         });
                     }else{
-                        $("#" + id).parents('.clonedInput').remove();
-                        decreaseCounter();
+                        if (counter <= 1) {
+                            beforeLastRemove(id);
+                        }else{
+                            $("#" + id).parents('.clonedInput').remove();
+                            decreaseCounter();
+                        }
+
                     }
                 }
             });
@@ -556,22 +565,19 @@
 
         function removeRow(id) {
 
-            if (counter <= 1) {
-                //notyMessageError('For order there must be 1 minimum item available');
-                beforeLastRemove(id);
-                return false;
-            }
-
             if(mode == 'edit'){
                 forceRemoveOrderContent(id);
             }else{
                 if (isRequestApprovalProcess) {
                     removeIdFromSIDList(id);
                 }
-                decreaseCounter();
-                $("#" + id).parents('.clonedInput').remove();
+                if (counter <= 1) {
+                    beforeLastRemove(id);
+                }else{
+                    decreaseCounter();
+                    $("#" + id).parents('.clonedInput').remove();
+                }
                 calculateSum();
-                decreaseCounter();
                 return false;
             }
         }
