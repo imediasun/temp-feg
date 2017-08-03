@@ -28,7 +28,8 @@ class ReportGenerator
             'noClosed' => 0,
             'noDownGames' => 0,
             'noMissingAssetIds' => 0,
-             
+            'noMissingDataReport' => 0,
+
             'noLocationwise' => 0,
              
             'noOverReporting' => 0,
@@ -98,9 +99,13 @@ class ReportGenerator
         if ($noDownGames != 1) {   
             $gamesNotPlayed = self::getGamesNotPlayedReport($params);
         }
+        // Missing Data Report:
+        if ($noMissingDataReport != 1) {
+            $missingDataReport = self::missingDataReport($params,0);
+        }
         
         $__logger->log("        End processing Game Earnings DB Transfer Report for $date");
-        
+
         if ($noTransferSummary != 1) {
             $message = $dailyTransferStatusReport .
                     "<br><br><b><u>Locations Not Reporting:</u></b><em>(Either Closed or Error in Data Transfer)</em><br>" .
@@ -108,7 +113,9 @@ class ReportGenerator
                     "<br><b><u>Readers Missing Asset Ids:</u></b><br>" .
                     @$readersMissingAssetIds .
                     "<br><b><u>Games Not Played:</u></b><br>" .
-                    @$gamesNotPlayed;
+                    @$gamesNotPlayed .
+                    "<br>".
+                    @$missingDataReport;
 
             $configName = 'Daily Game Earnings DB Transfer Report';
             $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
@@ -751,7 +758,7 @@ class ReportGenerator
         
         return $report;
     }
-    public static function missingDataReport ($params = array()) {
+    public static function missingDataReport ($params = array(),$sendEmail = 1) {
         $timeStart = microtime(true);        
         global $__logger;
         $lf = 'MissingDataReports.log';
@@ -934,25 +941,32 @@ class ReportGenerator
         }
         $messages[] = "</div>";
         $message = implode('<br>', $messages);
-        
-        FEGSystemHelper::logit("    Start sending email", $lf, $lp);
-        $configName = 'Daily Missing Asset ID Reader ID Unknown Asset ID Report';
-        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName); 
-        self::sendEmailReport(array_merge($emailRecipients, array(
-            'subject' => "FEG Missing Data (Asset ID, Reader ID, Unknown Asset ID) Report for $humanDateRange", 
-            'message' => $message, 
-            'isTest' => $isTest,
-            'configName' => $configName,
-            'configNamePrefix' => $reportPrefix,
-            'configNameSuffix' => $reportSuffix,
-        ))); 
-        FEGSystemHelper::logit("    End sending email", $lf, $lp);
-        FEGSystemHelper::logit("End Processing Missing data for - $logInfo", $lf, $lp);
-        $timeEnd = microtime(true);
-        $timeDiff = round($timeEnd - $timeStart);
-        $timeDiffHuman = FEGSystemHelper::secondsToHumanTime($timeDiff);
-        $timeTaken = "Time taken: $timeDiffHuman ";
-        return $timeTaken;
+        if($sendEmail == 1)
+        {
+            FEGSystemHelper::logit("    Start sending email", $lf, $lp);
+            $configName = 'Daily Missing Asset ID Reader ID Unknown Asset ID Report';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
+            self::sendEmailReport(array_merge($emailRecipients, array(
+                'subject' => "FEG Missing Data (Asset ID, Reader ID, Unknown Asset ID) Report for $humanDateRange",
+                'message' => $message,
+                'isTest' => $isTest,
+                'configName' => $configName,
+                'configNamePrefix' => $reportPrefix,
+                'configNameSuffix' => $reportSuffix,
+            )));
+            FEGSystemHelper::logit("    End sending email", $lf, $lp);
+            FEGSystemHelper::logit("End Processing Missing data for - $logInfo", $lf, $lp);
+            $timeEnd = microtime(true);
+            $timeDiff = round($timeEnd - $timeStart);
+            $timeDiffHuman = FEGSystemHelper::secondsToHumanTime($timeDiff);
+            $timeTaken = "Time taken: $timeDiffHuman ";
+            return $timeTaken;
+        }
+        else
+        {
+            return $message;
+        }
+
     }
 
     public static function getReadersMissingAssetIdsReport($params = array()) {
