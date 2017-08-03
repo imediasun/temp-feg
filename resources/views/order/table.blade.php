@@ -333,6 +333,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                 if(data.status === 'success'){
                     notyMessage(data.message);
                     btn.remove();
+                    reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
                 }
                 else {
                     btn.prop('disabled', false);
