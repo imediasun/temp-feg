@@ -648,7 +648,9 @@ class OrderController extends Controller
                     'sku' => $sku_num,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
-
+                if ($editmode == "clone") {
+                    $items_received_qty = 0;
+                }
                 if($items_received_qty == '0'){
                     \DB::table('order_contents')->insert($contentsData);
                 }else{
