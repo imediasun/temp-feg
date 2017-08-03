@@ -1658,7 +1658,7 @@
     var preserveValue;
     $('.qty').focus(function(){ preserveValue = $(this).val(); }).change(function () {
 
-        if(parseInt($(this).attr('min')) > parseInt($(this).val()) && mode == "edit"){
+        if(parseInt($(this).attr('min')) >= parseInt($(this).val()) && mode == "edit"){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
             $('.custom_overlay').show();
