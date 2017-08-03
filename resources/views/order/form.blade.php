@@ -708,7 +708,7 @@
             var form = $('#ordersubmitFormAjax');
             form.parsley();
             form.submit(function () {
-                if (counter < 1) {
+                if (counter <= 1 && $('#rowid').hasClass('hiddenClone')) {
                     notyMessageError('For order there must be 1 minimum item available');
                     return false;
                 }
