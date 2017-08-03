@@ -540,6 +540,7 @@
                                 $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
                                 if (counter <= 1) {
                                     beforeLastRemove(id);
+                                    decreaseCounter();
                                 }else{
                                     $("#" + id).parents('.clonedInput').remove();
                                     decreaseCounter();
@@ -573,9 +574,10 @@
                 }
                 if (counter <= 1) {
                     beforeLastRemove(id);
-                }else{
                     decreaseCounter();
+                }else{
                     $("#" + id).parents('.clonedInput').remove();
+                    decreaseCounter();
                 }
                 calculateSum();
                 return false;
@@ -1684,5 +1686,10 @@
         $('#'+id).parents('.clonedInput').find('input').each(function(){$(this).removeAttr('value');});
         $('#'+id).parents('.clonedInput').addClass('hiddenClone');
         $('#'+id).parents('.clonedInput').hide();
+        decreaseCounter('');
     }
+
+    $('#add_new_item').click(function () {
+
+    });
 </script>
