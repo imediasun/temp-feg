@@ -557,7 +557,8 @@
         function removeRow(id) {
 
             if (counter <= 1) {
-                notyMessageError('For order there must be 1 minimum item available');
+                //notyMessageError('For order there must be 1 minimum item available');
+                beforeLastRemove(id);
                 return false;
             }
 
@@ -699,7 +700,12 @@
             var form = $('#ordersubmitFormAjax');
             form.parsley();
             form.submit(function () {
-
+                if (counter <= 1) {
+                    notyMessageError('For order there must be 1 minimum item available');
+                    return false;
+                }
+                $('.hiddenClone').remove();
+                reInitParcley();
                 if (form.parsley('isValid') == true) {
                     var options = {
                         dataType: 'json',
@@ -1667,4 +1673,10 @@
         }
 
     });
+
+    function beforeLastRemove(id){
+        $('#'+id).parents('.clonedInput').find('input').each(function(){$(this).removeAttr('value');});
+        $('#'+id).parents('.clonedInput').addClass('hiddenClone');
+        $('#'+id).parents('.clonedInput').hide();
+    }
 </script>

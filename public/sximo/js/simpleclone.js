@@ -68,6 +68,9 @@
                         newid = $(clone).attr('id') + (++counter);
                     }
 					$(clone).attr('id', newid);
+					$(clone).removeAttr('style');
+					$(clone).removeClass('hiddenClone');
+
 					/*
 					if($(clone).attr('min') && $(clone).attr('min') != 0){
 						$(clone).attr('min',0);
