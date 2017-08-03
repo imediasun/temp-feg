@@ -708,7 +708,7 @@
             var form = $('#ordersubmitFormAjax');
             form.parsley();
             form.submit(function () {
-                if (counter <= 1 && $('#rowid').hasClass('hiddenClone')) {
+                if (counter <= 1 && $('.hiddenClone').length) {
                     notyMessageError('For order there must be 1 minimum item available');
                     return false;
                 }
@@ -779,7 +779,9 @@
                     //while editing order show original quantities as per gabe on 8/01/2017
                     $('input[name^=qty]').eq(i).val(order_qty_array[i]);
                     //$('input[name^=qty]').eq(i).attr('min', order_qty_received_array[i]);
-                    $('input[name^=item_received]').eq(i).val(order_qty_received_array[i]);
+                    if(mode=='edit'){ ///Don't set item received when making clone order.
+                        $('input[name^=item_received]').eq(i).val(order_qty_received_array[i]);
+                    }
                     $('input[name^=order_content_id]').eq(i).val(order_content_id_array[i]);
                 }
 
