@@ -1601,7 +1601,7 @@
             });
         });
     });
-    
+
     function removeItemURL(id) {
         var currURI= window.location.href;
         var sid_uri= currURI.substring(currURI.lastIndexOf('/') + 1);
@@ -1643,14 +1643,12 @@
         where_in.shift();where_in.pop();
         $("#where_in_expression").val(where_in);
     }
+    var preserveValue;
+    $('.qty').focus(function(){ preserveValue = $(this).val(); }).change(function () {
 
-    $('.qty').change(function () {
-
-        if(parseInt($(this).attr('min')) >= parseInt($(this).val()) && mode == "edit"){
+        if(parseInt($(this).attr('min')) > parseInt($(this).val()) && mode == "edit"){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
-            element.val(element.attr('min'));
-
             $('.custom_overlay').show();
             App.notyConfirm({
                 container: '.custom-container',
@@ -1658,10 +1656,12 @@
                 confirm: function () {
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
+                    element.val(preserveValue);
                 },
                 cancel:function(){
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
+                    element.val(preserveValue);
                 }
             });
         }

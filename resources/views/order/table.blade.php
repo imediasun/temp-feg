@@ -208,7 +208,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                data-id="{{$eid}}"
                                data-action="post"
                                class="tips btn btn-xs btn-white postToNetSuitAction"
-                               title="Post To NetSuit">
+                               title="{{ Lang::get('core.order_api_expose_button_label') }}">
                                 <i class="fa fa-paper-plane" aria-hidden="true"></i>
                             </a>
                         @endif

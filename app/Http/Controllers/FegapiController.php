@@ -21,6 +21,16 @@ class FegapiController extends Controller
 
     public function index()
     {
+        if(env('DISABLE_API',false) === true){
+            $jsonData = array(
+                'total' => 0,
+                'records' => 0,
+                'rows' => [],
+                'control' => '',
+                'key' => ''
+            );
+            return \Response::json($jsonData, 200);
+        }
 
         $class = ucwords(Input::get('module'));
         if (!empty($class)) {

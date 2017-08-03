@@ -20,7 +20,7 @@ class ReportGenerator
             'date' => date('Y-m-d', strtotime('-1 day')),
             'today' => date('Y-m-d'),
             'location' => null,
-             
+            'sleepFor' => 10,
             'noTransferStatus' => 0,
              
             'noTransferSummary' => 0,
@@ -58,6 +58,7 @@ class ReportGenerator
         $params['isTestMode'] = $isTest;
         $params['humanDate'] = $humanDate = FEGSystemHelper::getHumanDate($date);
         $params['humanDateToday'] = $humanDateToday = FEGSystemHelper::getHumanDate($today);
+        $sleepFor = intval($sleepFor);
         
         // Transfer Basic Status
         $dailyTransferStatusReport = '';
@@ -69,6 +70,7 @@ class ReportGenerator
             if (!$dailyTransferStatus['1'] || !$dailyTransferStatus['2']) {
                 if ($noTransferStatus != 1) {
                     self::dailyTransferFailReportEmail($params);
+                    sleep($sleepFor);
                 }
                 
             }            
@@ -117,7 +119,7 @@ class ReportGenerator
                 'configName' => $configName,
                 'configNameSuffix' => $date,
             )));
-
+            sleep($sleepFor);
             $__logger->log("        End Email Game Earnings DB Transfer Report for $date");
             $__logger->log("End Game Earnings DB Transfer Report for $date");
         }
@@ -150,6 +152,7 @@ class ReportGenerator
                 self::sendLocationWiseDailyReportEmail($locationParams);
                 $__logger->log("    End sending email Report for Location $locationId for $date");
                 $__logger->log("    End Report for Location $locationId for $date");
+                sleep($sleepFor);
             }
             //$__logger->log("    ** Start Locationwise Report for data adjusted on $today");
             // TODO: send location email for all sync adjustments
@@ -164,6 +167,7 @@ class ReportGenerator
             $params['overReporting'] = $potentialOverreportingErrorReport;        
             $__logger->log("  End processing of over reporting error Report $date");
             self::sendOverreportingReportEmail($params);
+            sleep($sleepFor);
             unset($params['overReporting']);
             $__logger->log("  End Email of over reporting error Report $date");
 
@@ -181,6 +185,7 @@ class ReportGenerator
             $params['retryReports'] = $retrySyncReportData;
             $__logger->log("    End processing retry sync report as of $today");
             self::sendRetrySyncReportEmail($params);
+            sleep($sleepFor);
             $__logger->log("    End sending retry sync report  as of $today");
             unset($params['retryReports']);
             $__logger->log("End retry sync report  as of $today");
@@ -192,6 +197,7 @@ class ReportGenerator
             $__logger->log("    END processing Final Games Summary Report for $date");        
             $params['finalGameSummaryReport'] = $finalGameSummaryReport;
             self::sendDailyGameSummaryReportEmail($params);
+            sleep($sleepFor);
             unset($params['finalGameSummaryReport']);
             $__logger->log("    END sending EMAIL of Final Games Summary Report for $date");        
             $__logger->log("END Final Games Summary Report for $date");

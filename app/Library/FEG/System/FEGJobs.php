@@ -505,8 +505,8 @@ class FEGJobs
         $lf = 'BulkDailyTransfer.log';
         $lp = 'FEGCronTasks/BulkDailyTransfer';        
         extract(array_merge(array(
-            'startDate' => null,
-            'endDate' => null,           
+            'dateStart' => null,
+            'dateEnd' => null,
             'skipAdjustmentMeta' => 0,
             'chunkSize' => 500,
             '_task' => array(),
@@ -516,8 +516,8 @@ class FEGJobs
         $params['_logger'] = $__logger = $L;  
         $__logger = $L;
         
-        $max = !empty($dateEnd);
-        $min = !empty($dateStart);
+        $max = empty($dateEnd) ? null : $dateEnd;
+        $min = empty($dateStart) ? null : $dateStart;
         if (empty($max) || empty($min)) {
             $L->log("NO date range given. ENDING.");
             return;            
@@ -528,24 +528,26 @@ class FEGJobs
         
         $dateStartTimestamp = strtotime($min);
         $dateEndTimestamp = strtotime($max);
-        $currentDate = $dateStartTimestamp;
+        $currentDate = min($dateStartTimestamp, $dateEndTimestamp);
+        $dateEndTimestamp = max($dateStartTimestamp, $dateEndTimestamp);
         $date = $min; 
         $dateCount = 1;
-        
-        if ($skipAdjustmentMeta != 1) {
-        $L->log("Sync and Clean earnings adjustment meta");
-        $aParams = array_merge($params, array("date" => $min));
-        $result = \App\Library\SyncFromOldLiveHelpers::syncGameEarningsAdjMetaFromLive($aParams);
-        if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
-            $errorMessage = "User Terminated befor transfer of $date";
-            \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
-            \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
-            \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
-            \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
-            FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
-            exit();
-        }                
-        }
+
+        // Comminting code related to syncing data from old admin to new admin
+//        if ($skipAdjustmentMeta != 1) {
+//            $L->log("Sync and Clean earnings adjustment meta");
+//            $aParams = array_merge($params, array("date" => $min));
+//            $result = \App\Library\SyncFromOldLiveHelpers::syncGameEarningsAdjMetaFromLive($aParams);
+//            if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+//                $errorMessage = "User Terminated befor transfer of $date";
+//                \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+//                \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+//                \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+//                \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+//                FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
+//                exit();
+//            }
+//        }
 
         while($currentDate <= $dateEndTimestamp) {
             

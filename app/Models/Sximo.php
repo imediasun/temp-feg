@@ -26,6 +26,7 @@ class Sximo extends Model {
     }
     public static function insertLog($module, $task ,$note = '', $conditions = '',$params = null)
     {
+        Log::info("starting in insert Log");
         $table = 'tb_logs';
         $user = (is_object(\Auth::user()) ? \Auth::user()->id : 'User Not Logged In');
         $impersonatedUserIdPath = Session::has('return_id') ? Session::get('return_id') : [];
@@ -49,6 +50,7 @@ class Sximo extends Model {
             'params' => $params,
             'conditions' => $conditions
         );
+        Log::info("Before log file creation");
 
         $l = '';
         $L =  FEGSystemHelper::setLogger($l, "user-action-logs.log", "FEGUserActions", "USER_ACTIONS");

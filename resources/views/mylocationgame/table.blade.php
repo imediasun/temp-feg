@@ -218,6 +218,8 @@ $(document).ready(function() {
 		return false ;
 	});
 
+	$('select[name=location_id]').append('<option value="0"> In-Transit </option>');
+
 	<?php if($setting['view-method'] =='expand') :
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
