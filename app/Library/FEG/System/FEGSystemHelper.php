@@ -1197,12 +1197,30 @@ $message" .
             self::logit($messageLog, "{$lf}.html", $lpd, true);
         }
 
-        self::logit("Sending Email", $lf, $lp);
-        self::logit($options, $lf, $lp);
-        $status = self::sendEmail($to, $subject, $message, $from, $options);
-        self::logit("Email sent Status = " . $status, $lf, $lp);
-        self::logit("Email sent", $lf, $lp);
-        return $status;
+
+        if(env('APP_ENV', 'LOCAL') != 'LOCAL')
+        {
+            self::logit("Sending Email", $lf, $lp);
+            self::logit($options, $lf, $lp);
+            $status = self::sendEmail($to, $subject, $message, $from, $options);
+            self::logit("Email sent Status = " . $status, $lf, $lp);
+            self::logit("Email sent", $lf, $lp);
+            return $status;
+        }
+        else
+        {
+            self::logit("***************Not Sending Email LOCAL Environment*****************", $lf, $lp);
+            self::logit($to, $lf, $lp);
+            self::logit($subject, $lf, $lp);
+            self::logit($message, $lf, $lp);
+            self::logit($from, $lf, $lp);
+            self::logit($options, $lf, $lp);
+            self::logit("***************Not Sending Email LOCAL Environment End*****************", $lf, $lp);
+            return true;
+        }
+
+
+
     }
 
     public static function getOption($optionName, $default = '', $all = false, $skipInactive = false, $details = false) {

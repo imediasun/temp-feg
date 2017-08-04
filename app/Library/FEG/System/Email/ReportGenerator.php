@@ -101,6 +101,7 @@ class ReportGenerator
         }
         // Missing Data Report:
         if ($noMissingDataReport != 1) {
+            $params['flatData'] = 1;
             $missingDataReport = self::missingDataReport($params,0);
         }
         
