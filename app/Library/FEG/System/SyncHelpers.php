@@ -247,14 +247,16 @@ class SyncHelpers
                         SUM(std_plays) AS games_total_std_plays,
                         COUNT(DISTINCT game_id) AS games_played_count
                     FROM game_earnings 
+                    left join game on game.id = game_earnings.game_id
                     WHERE date_start>='$date' 
+                        AND game.exclude_from_reports = 0 
                         AND date_start < DATE_ADD('$date', INTERVAL 1 DAY) 
                         " . (!!$skipZeroAssetIds ? " AND game_id <> 0 ":"") . "
                     GROUP BY loc_id
                 ) E ON L.id = E.loc_id 
 
                 LEFT JOIN  (
-                    SELECT location_id, COUNT(*) AS games_count FROM game GROUP BY location_id
+                    SELECT location_id, COUNT(*) AS games_count FROM game where exclude_from_reports = 0 GROUP BY location_id
                 ) G ON G.location_id = L.id 
 
                 WHERE " . (empty($location) ? "L.reporting = 1" : "L.id IN ($location)");
@@ -664,6 +666,7 @@ class SyncHelpers
                                 IF(game.date_sold <> '0000-00-00' AND game.date_sold IS NOT NULL AND game.date_sold <= '$date', 1, 0) as game_is_sold,
                                 game.test_piece as game_on_test,
                                 game.not_debit as game_not_debit,
+                                game.exclude_from_reports,
                                 '$today' as report_date,
                                 1 as record_status,
                                 '' as notes"))
@@ -1106,13 +1109,13 @@ class SyncHelpers
     
     public static function getReaderExclude($debit_type_id = null, $location = null, $encapsulateQuotes = true) {
         $excluded = array();
-        $q = "SELECT reader_id FROM reader_exclude WHERE id IS NOT NULL " .
+        $q = "SELECT concat(reader_id, '@', loc_id) as loc_reader_id FROM reader_exclude WHERE id IS NOT NULL " .
                 (!empty($debit_type_id) ?  " AND debit_type_id IN ($debit_type_id)" : "") .
                 (!empty($location) ?  " AND loc_id IN ($location)" : "");
                 
         $items = DB::select($q);
         foreach ($items as $exclude_row) {
-            $readerId = $exclude_row->reader_id;
+            $readerId = $exclude_row->loc_reader_id;
             if ($encapsulateQuotes) {
                 $readerId = "'".$readerId."'";
             }
@@ -1152,6 +1155,7 @@ class SyncHelpers
                         loc_id,
                         game_id,
                         trim(both '\t' from trim(both ' ' from reader_id)) as reader_id,
+                        concat(trim(both '\t' from trim(both ' ' from reader_id), '@', loc_id) as loc_reader_id,
                         play_value,
                         total_notional_value,
                         std_plays,
@@ -1203,7 +1207,7 @@ class SyncHelpers
             $query->whereIn('loc_id', $locations);
         }
         if (!empty($readerExclude)) {
-            $query->whereNotIn('reader_id', $readerExclude);
+            $query->whereNotIn('loc_reader_id', $readerExclude);
         }
          
         $rowcount = 0;
@@ -1220,6 +1224,7 @@ class SyncHelpers
                              $rowcount += $dataSize;
                              $__logger->log("Data received chunk #$chunkCount of size $dataSize. Total items received so far: $rowcount");        
                              $__logger->log("Adding data to local");
+                             unset($data['loc_reader_id']);
                              DB::table($table)->insert($data);
                          }
                          else {

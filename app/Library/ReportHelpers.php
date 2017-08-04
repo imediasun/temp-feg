@@ -484,7 +484,11 @@ class ReportHelpers
    LEFT JOIN debit_type D ON D.id = L.debit_type_id   
    LEFT JOIN game_title T ON T.id = G.game_title_id
    LEFT JOIN game_type Y ON Y.id = T.game_type_id
-	   WHERE E.game_id <> 0 AND E.record_status = 1 AND E.report_status = 1 ";
+	   WHERE E.game_id <> 0 
+	   AND E.record_status = 1 
+	   AND E.report_status = 1 
+	   AND G.exclude_from_reports = 0
+	   ";
                      
         if (!empty($gameId)) {
             $Q .= " AND E.game_id IN ($gameId) ";
@@ -600,6 +604,7 @@ class ReportHelpers
 
         L.reporting = 1 AND
         E.game_id <> 0 AND 
+        G.exclude_from_reports = 0 AND
         E.record_status = 1 AND
         E.date_played >= '$dateStart' and E.date_played <= '$dateEnd'";
 
@@ -703,8 +708,8 @@ class ReportHelpers
             LEFT JOIN game_type Y ON Y.id = T.game_type_id
             LEFT JOIN location L ON L.id = E.location_id
             LEFT JOIN debit_type D ON D.id = E.debit_type_id   
-                WHERE E.game_id <> 0 AND G.not_debit = 0 
-
+                WHERE E.game_id <> 0 
+                AND G.exclude_from_reports = 0 
                 AND E.record_status = 1
                 ";
                      
@@ -817,8 +822,9 @@ class ReportHelpers
             LEFT JOIN debit_type D ON D.id = L.debit_type_id   
             LEFT JOIN game_title T ON T.id = E.game_title_id
             LEFT JOIN game_type Y ON Y.id = E.game_type_id
-                WHERE E.game_id <> 0  AND E.game_not_debit = 0 
+                WHERE E.game_id <> 0  
                 AND G.sold != 1
+                AND E.exclude_from_reports = 0 
                 AND E.report_status = 0 AND E.record_status = 1 ";
                      
         if (!empty($gameTitleId)) {
@@ -987,6 +993,7 @@ class ReportHelpers
                 
                 WHERE E.game_id <> 0 
                 AND E.game_on_test = 1
+                AND E.exclude_from_reports = 0
                 AND E.report_status = 1 
                 AND E.record_status = 1
                 AND E.date_played >= '$dateStart' 
