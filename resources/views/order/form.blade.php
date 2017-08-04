@@ -540,7 +540,6 @@
                                 $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
                                 if (counter <= 1) {
                                     beforeLastRemove(id);
-                                    decreaseCounter();
                                 }else{
                                     $("#" + id).parents('.clonedInput').remove();
                                     decreaseCounter();
@@ -564,17 +563,16 @@
             });
         }
 
+        //Remove product item
         function removeRow(id) {
-
             if(mode == 'edit'){
                 forceRemoveOrderContent(id);
             }else{
                 if (isRequestApprovalProcess) {
                     removeIdFromSIDList(id);
                 }
-                if (counter <= 1) {
+                if (counter <= 1 || $('.clone').length == 1) {
                     beforeLastRemove(id);
-                    decreaseCounter();
                 }else{
                     $("#" + id).parents('.clonedInput').remove();
                     decreaseCounter();
@@ -708,7 +706,7 @@
             var form = $('#ordersubmitFormAjax');
             form.parsley();
             form.submit(function () {
-                if (counter <= 1 && $('.hiddenClone').length) {
+                if (counter <= 1 && $('.hiddenClone').length ) {
                     notyMessageError('For order there must be 1 minimum item available');
                     return false;
                 }
@@ -1177,6 +1175,7 @@
             }
             $("[name^=qty]").keypress(isNumeric);
             reInitParcley();
+
         });
         function isNumeric(ev) {
             var keyCode = window.event ? ev.keyCode : ev.which;
@@ -1663,7 +1662,7 @@
     var preserveValue;
     $('.qty').focus(function(){ preserveValue = $(this).val(); }).change(function () {
 
-        if(parseInt($(this).attr('receive')) >= parseInt($(this).val()) && mode == "edit"){
+        if(parseInt($(this).attr('receive')) >= parseInt($(this).val()) && mode == "edit" && $(this).attr('receive')!=0){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
             $('.custom_overlay').show();
@@ -1689,10 +1688,7 @@
         $('#'+id).parents('.clonedInput').find('input').each(function(){$(this).removeAttr('value');});
         $('#'+id).parents('.clonedInput').addClass('hiddenClone');
         $('#'+id).parents('.clonedInput').hide();
-        decreaseCounter('');
+        decreaseCounter();
     }
 
-    $('#add_new_item').click(function () {
-
-    });
 </script>
