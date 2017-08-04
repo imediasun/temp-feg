@@ -339,7 +339,7 @@
                                          required></td>
                         <td><br/> <input type='number' name='qty[]' placeholder='0' autocomplete="off"
 
-                                         class='calculate form-control qty' min="1" step="1" id="qty" placeholder="00"
+                                         class='calculate form-control qty' receive="0" min="1" step="1" id="qty" orderqty="0" placeholder="00"
                                          required></td>
                         <td class="game" style="display:none">
                             <br/> <input type='hidden' name='game[]' id='game_0'>
@@ -778,8 +778,9 @@
                     //$('input[name^=qty]').eq(i).val(order_qty_array[i]-order_qty_received_array[i]);
                     //while editing order show original quantities as per gabe on 8/01/2017
                     $('input[name^=qty]').eq(i).val(order_qty_array[i]);
+                    $('input[name^=qty]').eq(i).attr('orderqty', order_qty_array[i]);
                     if(mode=='edit'){ ///Don't set item received when making clone/create order.
-                        $('input[name^=qty]').eq(i).attr('min', order_qty_received_array[i]);
+                        $('input[name^=qty]').eq(i).attr('receive', order_qty_received_array[i]);
                         $('input[name^=item_received]').eq(i).val(order_qty_received_array[i]);
                     }
                     $('input[name^=order_content_id]').eq(i).val(order_content_id_array[i]);
@@ -1662,7 +1663,7 @@
     var preserveValue;
     $('.qty').focus(function(){ preserveValue = $(this).val(); }).change(function () {
 
-        if(parseInt($(this).attr('min')) >= parseInt($(this).val()) && mode == "edit"){
+        if(parseInt($(this).attr('receive')) >= parseInt($(this).val()) && mode == "edit"){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
             $('.custom_overlay').show();
@@ -1672,12 +1673,12 @@
                 confirm: function () {
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
-                    element.val(preserveValue);
+                    element.val(element.attr('orderqty'));
                 },
                 cancel:function(){
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
-                    element.val(preserveValue);
+                    element.val(element.attr('orderqty'));
                 }
             });
         }
