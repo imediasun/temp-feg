@@ -681,12 +681,27 @@ class OrderController extends Controller
                     //// UPDATE STATUS TO APPROVED AND PROCESSED
                     $now = $this->model->get_local_time('date');
 
-                    \DB::update('UPDATE requests
-							 SET status_id = 2,
-							 	 process_user_id = ' . \Session::get('uid') . ',
-								 process_date = "' . $now . '",
-								 blocked_at = null
-						   WHERE id IN(' . $where_in . ')');
+                    $request_qty = \DB::select('SELECT qty FROM requests WHERE id='.$request_id);
+                    empty($request_qty)? $request_qty=0 : $request_qty=$request_qty[0]->qty;
+                    $restore_qty = $request_qty - $qtyArray[$i];
+
+                    if($restore_qty > 0){
+                        \DB::update('UPDATE requests
+                         SET status_id = 1,
+                             qty = '.$restore_qty.',
+                             process_user_id = ' . \Session::get('uid') . ',
+                             process_date = "' . $now . '",
+                             blocked_at = null
+                       WHERE id='.$request_id);
+                    }else{
+                        \DB::update('UPDATE requests
+                         SET status_id = 2,
+                             process_user_id = ' . \Session::get('uid') . ',
+                             process_date = "' . $now . '",
+                             blocked_at = null
+                       WHERE id='.$request_id);
+                    }
+
                     //// SUBTRACT QTY OF RESERVED AMT ITEMS
                     $item_count = substr_count($SID_string, '-') - 1;
                     $SID_new = $SID_string;

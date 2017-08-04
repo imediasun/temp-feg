@@ -183,16 +183,14 @@ usort($tableGrid, "SiteHelpers::_sort");
                            title="Clone Order">
                             <i class=" fa fa-random" aria-hidden="true"></i>
                         </a>
-                        @if($row->status_id=='Open' || $row->status_id=='Open (Partial)'  || $row->status_id=='Close Order (Partial)')
-                            {{--@if($row->is_freehand=='1' || Order::isApified($id, $row) || !Order::isApiable($id, $row, true))--}}
-                                <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
-                                   data-id="{{$eid}}"
-                                   data-action="receipt"
-                                   class="tips btn btn-xs btn-white orderReceiptAction"
-                                   title="Receive Order">
-                                    <i class="fa fa fa-truck" aria-hidden="true"></i>
-                                </a>
-                            {{--@endif--}}
+                        @if($row->is_freehand=='1' || !Order::isApified($id, $row))
+                            <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
+                               data-id="{{$eid}}"
+                               data-action="receipt"
+                               class="tips btn btn-xs btn-white orderReceiptAction"
+                               title="Receive Order">
+                                <i class="fa fa fa-truck" aria-hidden="true"></i>
+                            </a>
                         @endif
                         @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
                             <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
@@ -335,6 +333,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                 if(data.status === 'success'){
                     notyMessage(data.message);
                     btn.remove();
+                    reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
                 }
                 else {
                     btn.prop('disabled', false);
