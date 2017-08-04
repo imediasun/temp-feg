@@ -247,14 +247,16 @@ class SyncHelpers
                         SUM(std_plays) AS games_total_std_plays,
                         COUNT(DISTINCT game_id) AS games_played_count
                     FROM game_earnings 
+                    left join game on game.id = game_earnings.game_id
                     WHERE date_start>='$date' 
+                        AND game.exclude_from_reports = 0 
                         AND date_start < DATE_ADD('$date', INTERVAL 1 DAY) 
                         " . (!!$skipZeroAssetIds ? " AND game_id <> 0 ":"") . "
                     GROUP BY loc_id
                 ) E ON L.id = E.loc_id 
 
                 LEFT JOIN  (
-                    SELECT location_id, COUNT(*) AS games_count FROM game GROUP BY location_id
+                    SELECT location_id, COUNT(*) AS games_count FROM game where exclude_from_reports = 0 GROUP BY location_id
                 ) G ON G.location_id = L.id 
 
                 WHERE " . (empty($location) ? "L.reporting = 1" : "L.id IN ($location)");
@@ -664,6 +666,7 @@ class SyncHelpers
                                 IF(game.date_sold <> '0000-00-00' AND game.date_sold IS NOT NULL AND game.date_sold <= '$date', 1, 0) as game_is_sold,
                                 game.test_piece as game_on_test,
                                 game.not_debit as game_not_debit,
+                                game.exclude_from_reports,
                                 '$today' as report_date,
                                 1 as record_status,
                                 '' as notes"))
