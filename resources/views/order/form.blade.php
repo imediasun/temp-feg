@@ -786,7 +786,6 @@
                     //$('input[name^=qty]').eq(i).val(order_qty_array[i]-order_qty_received_array[i]);
                     //while editing order show original quantities as per gabe on 8/01/2017
                     $('input[name^=qty]').eq(i).val(order_qty_array[i]);
-                    $('input[name^=qty]').eq(i).attr('orderqty', order_qty_array[i]);
                     if(mode=='edit'){ ///Don't set item received when making clone/create order.
                         $('input[name^=qty]').eq(i).attr('receive', order_qty_received_array[i]);
                         $('input[name^=item_received]').eq(i).val(order_qty_received_array[i]);
@@ -1185,7 +1184,6 @@
             }
             $("[name^=qty]").keypress(isNumeric);
             reInitParcley();
-
         });
         function isNumeric(ev) {
             var keyCode = window.event ? ev.keyCode : ev.which;

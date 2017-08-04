@@ -69,6 +69,13 @@
                     }
 
 					$(clone).attr('id', newid);
+					$(clone).removeAttr('style');
+					$(clone).removeClass('hiddenClone');
+
+					/*
+					if($(clone).attr('min') && $(clone).attr('min') != 0){
+						$(clone).attr('min',0);
+					}*/
 				};
 
 				// Increment Clone Children IDs
@@ -77,8 +84,16 @@
                     if($("#" + newid).length != 0) {
                         counter++;
                         newid = $(this).attr('id') + (++counter);
+						if($(this).attr('receive') != 0){
+							$(this).attr('receive',0);
+						}
+
                     }
 					$(this).attr('id', newid);
+					if($(this).attr('receive')){
+						$(this).attr('receive',0);
+					}
+
 				});
 
 				//Clear Inputs/Textarea
