@@ -1193,9 +1193,13 @@ $message" .
 
             //$messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);
             //$messageLog = nl2br($message);
-            $messageLog = $message;
-            self::logit($messageLog, "{$lf}.html", $lpd, true);
+            //$messageLog = $message;
+            //self::logit($messageLog, "{$lf}.html", $lpd, true);
         }
+
+        $messageLog = $message;
+        self::logit($messageLog, "{$lf}.html", $lpd, true);
+
 
         self::logit("Sending Email", $lf, $lp);
         self::logit($options, $lf, $lp);
@@ -1203,7 +1207,6 @@ $message" .
         self::logit("Email sent Status = " . $status, $lf, $lp);
         self::logit("Email sent", $lf, $lp);
         return $status;
-
     }
 
     public static function getOption($optionName, $default = '', $all = false, $skipInactive = false, $details = false) {

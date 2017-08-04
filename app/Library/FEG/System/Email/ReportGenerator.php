@@ -54,8 +54,8 @@ class ReportGenerator
         $__logger = $_logger;
         $__logger->log("Start Generate Daily Email Reports $date");
         $__logger->log("PARAMS:", $params);
-        
-        $task = $_task;
+
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = $task->is_test_mode;
         $params['isTestMode'] = $isTest;
         $params['humanDate'] = $humanDate = FEGSystemHelper::getHumanDate($date);
@@ -301,8 +301,8 @@ class ReportGenerator
         $statusReport = self::$reportCache['syncStatusReport'];
         
         $_logger->log("Failed Sync on $date", $statusReport);
-        
-        $task =$_task;
+
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = $task->is_test_mode;
         
         $configName = 'Daily Transfer Bulk Fail';
@@ -462,8 +462,8 @@ class ReportGenerator
                $_logger = $__logger;
             }            
         }
-        
-        $task =$_task;
+
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = $task->is_test_mode;
         // all location reports are being sent irrespective of whether there's issue to report
         if (true || $hasDailyReport) {
@@ -810,8 +810,8 @@ class ReportGenerator
         $dEnd  = new \DateTime($date_end);
         $dDiff = $dStart->diff($dEnd);   
         $days = $dDiff->days + 1;
-   
-        $isTest = $_task->is_test_mode;
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
+        $isTest = $task->is_test_mode;
         $humanDate = FEGSystemHelper::getHumanDate($date);
         $humanDateToday = FEGSystemHelper::getHumanDate($today);
         $humanDateStart = FEGSystemHelper::getHumanDate($date_start);
@@ -1269,8 +1269,8 @@ class ReportGenerator
             '_logger' => null,
         ), $params));
 
-        $task =$_task;
-        $isTest = $task->is_test_mode;        
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
+        $isTest = $task->is_test_mode;
         
         //"Daily Potential Over-reporting Errors Report"
         if (!empty($overReporting) && $overReporting != "None") {
@@ -1382,7 +1382,7 @@ class ReportGenerator
             '_logger' => null,
         ), $params));
 
-        $task =$_task;
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = $task->is_test_mode;
         
         $retryReportAll = $retryReports['all'];
@@ -1588,7 +1588,7 @@ class ReportGenerator
             '_logger' => null,
         ), $params));
 
-        $task =$_task;
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = $task->is_test_mode;        
         
         if (!empty($finalGameSummaryReport)) {
@@ -1638,8 +1638,8 @@ class ReportGenerator
         $dEnd  = new \DateTime($date_end);
         $dDiff = $dStart->diff($dEnd);   
         $days = $dDiff->days + 1;
-   
-        $task = $_task;
+
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $logInfo = " $date_start - $date_end ($days days)";
         $isTest = $task->is_test_mode;
         $params['isTestMode'] = $isTest;
