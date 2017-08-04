@@ -1193,9 +1193,13 @@ $message" .
 
             //$messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);
             //$messageLog = nl2br($message);
-            $messageLog = $message;
-            self::logit($messageLog, "{$lf}.html", $lpd, true);
+            //$messageLog = $message;
+            //self::logit($messageLog, "{$lf}.html", $lpd, true);
         }
+
+        $messageLog = $message;
+        self::logit($messageLog, "{$lf}.html", $lpd, true);
+
 
         self::logit("Sending Email", $lf, $lp);
         self::logit($options, $lf, $lp);

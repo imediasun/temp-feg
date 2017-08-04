@@ -138,6 +138,14 @@ class OrderController extends Controller
 
     public function getIndex()
     {
+        /*
+        \App\Library\FEG\System\Sync::transferEarnings();
+        \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
+        \App\Library\FEG\System\Sync::generateDailySummary();
+        \App\Library\FEG\System\Email\Report::daily();
+        \App\Library\FEG\System\Email\Report::missingDataReport();
+        echo "done transfer";
+        exit;*/
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $this->data['sid'] = "";
