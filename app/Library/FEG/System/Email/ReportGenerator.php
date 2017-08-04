@@ -1048,7 +1048,10 @@ class ReportGenerator
             $gameTotalOriginal = $row->game_total;
             $gameTotal = number_format(floatval($gameTotalOriginal), 2);
             $rowNumber = $index + 1;
-
+            if(empty($readerId))
+            {
+                $readerId = 'MISSING';
+            }
             $missingAssetId = array(
                 "location_id" => $locationId,
                 "location_name" => $locationName,
@@ -1061,7 +1064,7 @@ class ReportGenerator
             );
             $missingAssetIdFlatData[] = $missingAssetId;
             $missingAssetIdData[$locationId][] = $missingAssetId;
-            $report[] = "$rowNumber.) $locationId - $locationName - <b> $readerId</b> - <b>Asset ID: $gameId</b>" .
+            $report[] = "$rowNumber.) $locationId - $locationName - <b> $readerId </b> - <b>Asset ID: $gameId</b>" .
                 "<span  style='color:black'> [Game Title: $locationGameName".
                 " - <em>Earnings: \${$gameTotal}</em>]</span><br>";
         }
