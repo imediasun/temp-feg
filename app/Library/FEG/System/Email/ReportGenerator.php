@@ -28,7 +28,8 @@ class ReportGenerator
             'noClosed' => 0,
             'noDownGames' => 0,
             'noMissingAssetIds' => 0,
-            'noMissingDataReport' => 0,
+            'noMissingReaders' => 0,
+            'noUnknownAssetIds' => 0,
 
             'noLocationwise' => 0,
              
@@ -99,12 +100,15 @@ class ReportGenerator
         if ($noDownGames != 1) {   
             $gamesNotPlayed = self::getGamesNotPlayedReport($params);
         }
-        // Missing Data Report:
-        if ($noMissingDataReport != 1) {
-            $params['flatData'] = 1;
-            $missingDataReport = self::missingDataReport($params,0);
+        // Missing Readers Report:
+        if ($noMissingReaders != 1) {
+            $missingReadersReport = self::getMissingReadersReport($params);
         }
-        
+        // Unknown Asset Ids Report:
+        if ($noUnknownAssetIds != 1) {
+            $unknownAssetIdReport = self::getUnknownAssetIdReport($params);
+        }
+
         $__logger->log("        End processing Game Earnings DB Transfer Report for $date");
 
         if ($noTransferSummary != 1) {
@@ -115,8 +119,10 @@ class ReportGenerator
                     @$readersMissingAssetIds .
                     "<br><b><u>Games Not Played:</u></b><br>" .
                     @$gamesNotPlayed .
-                    "<br>".
-                    @$missingDataReport;
+                    "<br><b><u style='color:red;'>Missing or Incorrect Reader IDs:</u></b><br>" .
+                    @$missingReadersReport.
+                    "<br><b><u style='color:red;'>Unknown Asset IDs:</u></b><br>" .
+                    @$unknownAssetIdReport;
 
             $configName = 'Daily Game Earnings DB Transfer Report';
             $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
@@ -1017,6 +1023,111 @@ class ReportGenerator
             $reportString = implode("", $report);
         }
         return $reportString;        
+    }
+
+    public static function getMissingReadersReport($params = array()) {
+        extract(array_merge(array(
+            'date' => date('Y-m-d', strtotime('-1 day')),
+            'location' => null,
+            '_task' => array(),
+            '_logger' => null,
+        ), $params));
+
+        $q = ReportHelpers::getMissingReadersQuery($date, $date);
+        $data = DB::select($q);
+        $report = array();
+        $missingAssetIdData = array();
+        $missingAssetIdFlatData = array();
+        foreach($data as $index => $row) {
+            $locationId = $row->location_id;
+            $locationName = $row->location_name_short;
+            $locationGameName = $row->loc_game_title;
+            $readerIdOriginal = $row->reader_id;
+            $gameId = $row->game_id;
+            $readerId = preg_replace('/^.*\_/', "", $readerIdOriginal);
+            $gameTotalOriginal = $row->game_total;
+            $gameTotal = number_format(floatval($gameTotalOriginal), 2);
+            $rowNumber = $index + 1;
+            if(empty($readerId))
+            {
+                $readerId = 'MISSING';
+            }
+            $missingAssetId = array(
+                "location_id" => $locationId,
+                "location_name" => $locationName,
+                "loc_game_title" => $locationGameName,
+                "reader_id" => $readerId,
+                "Asset ID" => $gameId,
+                "reader_id_original" => $readerIdOriginal,
+                "game_total_original" => $gameTotalOriginal,
+                "game_total" => $gameTotal,
+            );
+            $missingAssetIdFlatData[] = $missingAssetId;
+            $missingAssetIdData[$locationId][] = $missingAssetId;
+            $report[] = "$rowNumber.) $locationId - $locationName - <b> $readerId </b> - <b>Asset ID: $gameId</b>" .
+                "<span  style='color:black'> [Game Title: $locationGameName".
+                " - <em>Earnings: \${$gameTotal}</em>]</span><br>";
+        }
+
+        self::$reportCache['missingAssetIdsPerLocation'] = $missingAssetIdData;
+        self::$reportCache['missingAssetIds'] = $missingAssetIdFlatData;
+
+        $reportString = '<br>';
+        if (!empty($report)) {
+            $reportString = implode("", $report);
+        }
+        return $reportString;
+    }
+
+    public static function getUnknownAssetIdReport($params = array()) {
+        extract(array_merge(array(
+            'date' => date('Y-m-d', strtotime('-1 day')),
+            'location' => null,
+            '_task' => array(),
+            '_logger' => null,
+        ), $params));
+
+        $q = ReportHelpers::getUnknownAssetIdQuery($date, $date);
+        $data = DB::select($q);
+        $report = array();
+        $missingAssetIdData = array();
+        $missingAssetIdFlatData = array();
+        foreach($data as $index => $row) {
+            $locationId = $row->location_id;
+            $locationName = $row->location_name_short;
+            $locationGameName = $row->loc_game_title;
+            $readerIdOriginal = $row->reader_id;
+            $gameId = $row->game_id;
+            $readerId = preg_replace('/^.*\_/', "", $readerIdOriginal);
+            $gameTotalOriginal = $row->game_total;
+            $gameTotal = number_format(floatval($gameTotalOriginal), 2);
+            $rowNumber = $index + 1;
+
+            $missingAssetId = array(
+                "location_id" => $locationId,
+                "location_name" => $locationName,
+                "loc_game_title" => $locationGameName,
+                "reader_id" => $readerId,
+                "Asset ID" => $gameId,
+                "reader_id_original" => $readerIdOriginal,
+                "game_total_original" => $gameTotalOriginal,
+                "game_total" => $gameTotal,
+            );
+            $missingAssetIdFlatData[] = $missingAssetId;
+            $missingAssetIdData[$locationId][] = $missingAssetId;
+            $report[] = "$rowNumber.) $locationId - $locationName - <b> $readerId</b> - <b>Asset ID: $gameId</b>" .
+                "<span  style='color:black'> [Game Title: $locationGameName".
+                " - <em>Earnings: \${$gameTotal}</em>]</span><br>";
+        }
+
+        self::$reportCache['missingAssetIdsPerLocation'] = $missingAssetIdData;
+        self::$reportCache['missingAssetIds'] = $missingAssetIdFlatData;
+
+        $reportString = '<br>';
+        if (!empty($report)) {
+            $reportString = implode("", $report);
+        }
+        return $reportString;
     }
     
     public static function getGamesNotPlayedReport($params = array()) {
