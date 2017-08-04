@@ -83,14 +83,14 @@
                     if($("#" + newid).length != 0) {
                         counter++;
                         newid = $(this).attr('id') + (++counter);
-						if($(this).attr('min') != 0){
-							$(this).attr('min',0);
+						if($(this).attr('receive') != 0){
+							$(this).attr('receive',0);
 						}
 
                     }
 					$(this).attr('id', newid);
-					if($(this).attr('min')){
-						$(this).attr('min',0);
+					if($(this).attr('receive')){
+						$(this).attr('receive',0);
 					}
 
 				});
