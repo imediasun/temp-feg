@@ -218,8 +218,6 @@ $(document).ready(function() {
 		return false ;
 	});
 
-	$('select[name=location_id]').append('<option value="0"> In-Transit </option>');
-
 	<?php if($setting['view-method'] =='expand') :
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
@@ -238,8 +236,9 @@ $(document).ready(function() {
     }
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
-
-	$('select[name=location_id]').append('<option value="0"> In-Transit </option>');
+    @if(Session::get('gid') == 10 || Session::get('gid') == 11 || Session::get('gid') == 12)
+        $('select[name=location_id]').append('<option value="0"> In-Transit </option>');
+    @endif
 });
 </script>
 <style>
