@@ -64,10 +64,12 @@ class MylocationgameController extends Controller
 
         // Get assigned locations list as sql query (part)
         $locationFilter = \SiteHelpers::getQueryStringForLocation('game','location_id',[],'',$canSeeAllLocations);
-
-        //Injecting In-transit location(0) to location filter.
-        $locationFilter = substr_replace($locationFilter, "'0',", strpos($locationFilter ,'game.location_id IN (')+21, 0);
-
+        $group = \Session::get('gid');
+        if($group == 10 || $group == 11 || $group == 12)
+        {
+            //Injecting In-transit location(0) to location filter.
+            $locationFilter = substr_replace($locationFilter, "'0',", strpos($locationFilter ,'game.location_id IN (')+21, 0);
+        }
         // if search filter does not have location_id filter
         // add default location filter
         $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));
