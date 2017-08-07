@@ -31,6 +31,8 @@
             <input type='hidden' name='force_remove_items' id="force_remove_items">
             <input type="hidden" id="is_freehand" name="is_freehand" value="{{ $isFreeHand  }}">
             <input type="hidden" id="can_select_product_list" value="1">
+            <input type="hidden" id="denied_SIDs" name="denied_SIDs">
+
             <div class="row">
             <div class="col-md-6">
                 <div class="box-white">
@@ -1627,7 +1629,7 @@
         }else{
             window.location.href = url+'/'+sid_uri;
         }
-        //$("#SID_string").val(currURI);
+        $("#denied_SIDs").val($("#denied_SIDs").val()+','+id);
         console.log(sid_uri);
     }
 
