@@ -1648,11 +1648,12 @@ class OrderController extends Controller
                 $response['message'] = 'Ready for edit';
                 return response()->json($response);
             }
-            /*
+
             if ($apified) {
-                $message = \Lang::get('core.order_api_exposed_edit_alert');
+                //$message = \Lang::get('core.order_api_exposed_edit_alert');
+                $message = \Lang::get('core.order_api_exposed_edit_restrict_alert');
                 $status = false;
-            }*/
+            }
             /*if ($apified && $partial) {
                 $message = \Lang::get('core.order_api_edit_partial_alert');
                 $status = false;
@@ -1670,12 +1671,12 @@ class OrderController extends Controller
             $response['status'] = $status === false ? 'error' : 'success';
             $response['message'] = $status === false ? $message : 'Ready for edit';
 
-            $isClone = $apified && (!$partial && !$voided && !$closed);
+            /*$isClone = $apified && (!$partial && !$voided && !$closed);
 
             if ($isClone) {
                 $response['url'] = url('/order/insta-clone/'.\SiteHelpers::encryptID($id).'/voided');
                 $response['action'] = 'clone';
-            }
+            }*/
         }
         return response()->json($response);
     }
