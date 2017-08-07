@@ -1,6 +1,6 @@
 <div class="sbox">
 	<div class="sbox-title">
-		<h4> <i class="fa fa-table"></i> {{ $row->location_name }} <small><?php echo \Session::get('budget_year') ?></small>
+		<h4> <i class="fa fa-eye"></i> {{ $row->location_name }} <small><?php echo \Session::get('budget_year') ?></small>
 			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
 			<i class="fa fa fa-times"></i></a>
 		</h4>
@@ -79,8 +79,8 @@
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>
-                            Octuber</td>
-                        <td>{{ $row->Octuber }} </td>
+                            October</td>
+                        <td>{{ $row->October }} </td>
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>

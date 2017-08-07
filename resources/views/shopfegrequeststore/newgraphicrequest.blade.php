@@ -2,8 +2,7 @@
 @section('content')
     <div class="sbox">
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> {{ $pageTitle }}
-                <small>{{ $pageNote }}</small>
+            <h4><i class="fa fa-plus"></i> New Graphics Request
             </h4>
         </div>
         <div class="sbox-content">
@@ -11,10 +10,10 @@
                 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>
                 'newgraphicrequest')) !!}
             <div class="col-md-8 col-md-offset-2" style="background: #FFF;box-shadow:1px 1px 5px lightgray;padding:10px">
-            <fieldset><legend> New Graphics Request </legend>
+            <fieldset>
                 <div class="form-group  " >
                     <label  for="game_info" class=" control-label col-md-4 text-left">
-                        For Game [or game type]:
+                        Request Title:
                     </label>
                     <div class="col-md-6">
                        <input type="text" name="game_info" id="game_info" class="form-control" required="required"/>
@@ -25,10 +24,13 @@
                 </div>
                 <div class="form-group  " >
                     <label for="date_needed" class=" control-label col-md-4 text-left">
-                        Date Needed
+                        Date Needed:
                     </label>
                     <div class="col-md-6">
-                        <input type="text" class="date form-control" id="date_needed" name="date_needed" required="required"/>
+                        <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+                            <i class="fa fa-calendar" id="icon"></i>
+                        </span>
+                        <input type="text" class="date form-control" id="date_needed" name="date_needed" required="required" style="width:150px !important;" />
                     </div>
                     <div class="col-md-2">
 
@@ -36,7 +38,7 @@
                 </div>
                 <div class="form-group  " >
                     <label for="graphics_description" class=" control-label col-md-4 text-left">
-                       Detailed description of color, art, location and/or game colors, size requirements, etc.
+                       Detailed description of color, art, location and/or game colors, size requirements, etc:
                     </label>
                     <div class="col-md-6">
                         <textarea required="required" class="form-control "id="graphics_description" name="graphics_description" rows="8" cols="45"></textarea>
@@ -46,7 +48,7 @@
                     </div>
                 </div>   <div class="form-group  " >
                     <label for="qty" class=" control-label col-md-4 text-left">
-                        Quantity
+                        Quantity:
                     </label>
                     <div class="col-md-6">
                     <input type="text" id="qty" name="qty" value="" class="form-control" required="required"/>
@@ -56,7 +58,7 @@
                     </div>
                 </div>     <div class="form-group  " >
                     <label for="Id" class=" control-label col-md-4 text-left">
-                       For Location:
+                       For Locations:
                     </label>
                     <div class="col-md-6">
                     <select name="location_name" id="location_name" class="select2" required="required"></select>
@@ -67,7 +69,7 @@
                 </div>
                 <div class="form-group  " id ="testdiv" >
                     <label for="Add Image" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Add Image', (isset($fields['add_image']['language'])? $fields['add_image']['language'] : array())) !!}
+                        {!! SiteHelpers::activeLang('Add Image', (isset($fields['add_image']['language'])? $fields['add_image']['language'] : array())) !!}:
                     </label>
                     <div class="col-md-6">
                         <div class="add_imageUpl">
@@ -76,12 +78,23 @@
 
 
                         </div>
+                        <span id="img_error"></span>
 
                         <div class="col-md-2">
 
                         </div>
                     </div>
-                </div> </fieldset>
+                </div>
+                <div class="clearfix"></div>
+                <div class="form-group">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-6">
+                        <p class="bg-info" style="padding: 5px">You may upload multiple images by pressing and holding down the CTRL button on your keyboard while you are selecting images to upload</p>
+
+                    </div>
+                </div>
+            </fieldset>
 
 
                 <div class="form-group" style="padding-left: 24px;margin-bottom:50px">
@@ -106,11 +119,10 @@
         </div>
 
     </div>
-
-    <div class="ajaxLoading"></div>
     
     <script>
         $("document").ready(function(){
+
           //  $('.ajaxLoading').show();
             $("#location_name").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=location:id:id|location_name') }}",
                     {selected_value: '', initial_text: 'Select Location'});
@@ -118,7 +130,7 @@
             form.parsley();
             form.submit(function () {
 
-                if (form.parsley('isValid') == true) {
+                if (form.parsley('isValid') == true && anyImageUploaded == true) {
                     var options = {
                         dataType: 'json',
                         beforeSubmit: showRequest,
@@ -127,7 +139,13 @@
                     $(this).ajaxSubmit(options);
                     return false;
 
-                } else {
+                }
+                else
+                {
+                    if(!anyImageUploaded){
+                        displayMissingImagesError();
+                    }
+
                     return false;
                 }
             });
@@ -136,6 +154,17 @@
             $('.ajaxLoading').show();
            // myDropzone.processQueue();
         }
+
+        function displayMissingImagesError(){
+            $('#dropzoneFileUpload').css('border-color', '#c00');
+            $('#img_error').html('<ul class="parsley-error-list"><li class="required" style="display: list-item;">This value is required.</li></ul>');
+        }
+
+        function clearErrorMessage(){
+            $('#dropzoneFileUpload').css('border-color', 'rgba(0, 0, 0, 0.3)');
+            $('#img_error').html('');
+        }
+
         function showResponse(data) {
 
             if (data.status == 'success') {
@@ -146,41 +175,55 @@
                 window.location="{{ url() }}/shopfegrequeststore";
             } else {
                 notyMessageError(data.message);
+                if(data.message=="The following errors occurred !<hr /> <ul><li>Image field is required.</li></li>"){
+                    displayMissingImagesError();
+                }
                 $('.ajaxLoading').hide();
                 return false;
             }
         }
-    </script>
-    <script type="text/javascript">
-        var baseUrl = "{{ url('/') }}";
         var token = "{{ Session::getToken() }}";
         Dropzone.autoDiscover = false;
+        var anyImageUploaded = false;
         var myDropzone = new Dropzone("div#dropzoneFileUpload", {
-            url: baseUrl + "/shopfegrequeststore/uploadfiles",
+            addRemoveLinks: true,
+            acceptedFiles: "image/jpeg,image/png,image/gif",
+            url: siteUrl + "/shopfegrequeststore/uploadfiles",
             params: {
                 _token: token
             },autoProcessQueue:true,
 
             init:function(){
-                this.options.parallelUploads = 5,
-                        this.on("success", function(file,response) {
-                                                       addInput(response);
-                        });
+                //this.options.parallelUploads = 15;
+                this.on("success", function(file,response) {
+                    addInput(response,file);
+                    anyImageUploaded = true;
+                    clearErrorMessage();
+                });
+                this.on("removedfile", function(file) {
+                    $('input[id="'+file.xhr.response+'"]').remove();
+                    console.log(file.xhr.response);
+                    if (!file.serverId) { return; } // The file hasn't been uploaded
+                });
+                this.on("addedfile", function(file) {
+                   $("#submitbtn").attr("disabled", true);
 
+                });
+                this.on("queuecomplete", function (file) {
+                    $("#submitbtn").attr("disabled", false);
+                });
             }
         });
-        function addInput(value){
+        function addInput(value,file){
             var newdiv = document.createElement('div');
-            newdiv.innerHTML = " <br><input style="+ "display:none"+" type='text' name='myInputs[]' value='"+value+"'>";
+            newdiv.innerHTML = " <br><input id="+value+" style="+ "display:none"+" type='text' name='myInputs[]' value='"+value+"'>";
             document.getElementById("testdiv").appendChild(newdiv);
-
-
         }
 
         Dropzone.options.myAwesomeDropzone = {
             paramName: "file", // The name that will be used to transfer the file
             maxFilesize: 2, // MB
-            addRemoveLinks: true,
+            //addRemoveLinks: true,
             acceptedFiles: "image/jpeg,image/png,image/gif",
 
             accept: function(file, done) {
@@ -192,5 +235,8 @@
 
     <style>
         .ajaxLoading { background:#fff url( {{ url() }}/loading.gif) no-repeat center center; display:none; height:200px; position:absolute; width:100%; opacity: 0.5; left:0; top:0; height: 100%; z-index:9999;}
+        #s2id_location_name{width: 100% !important;}
+
+
     </style>
 @endsection

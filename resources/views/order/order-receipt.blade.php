@@ -15,20 +15,21 @@
     <div class="sbox">
 
         <div class="sbox-content">
-<div class="ajaxLoading"></div>
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
             <div class="col-sm-12 ">
-                <fieldset>
-                    <legend>Order Receipt</legend>
+               
+                    <h3>Order Receipt</h3>
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
                         <table class="table">
                             <tr><td  style="border: none;" ><b>PO #</b></td><td  style="border: none;" >{{ $data['po_number'] }}</td></tr>
-                            <tr><td><b>Ordered By</b></td><td>{{ $data['order_user_name'] }}</td></tr>
-                            <tr><td><b>Location </b></td><td>{{ $data['location_id'] }}</td></tr>
-                            <tr><td><b>Vendor</b></td><td>{{ $data['vendor_name'] }}</td></tr>
-                            <tr><td><b>Description</b></td><td>{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
-                            <tr><td><b>Total Cost</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
+                            <tr><td><b>Ordered By:</b></td><td>{{ $data['order_user_name'] }}</td></tr>
+                            <tr><td><b>Location: </b></td><td>{{ $data['location_id'] ." |" }} {!!
+                                    SiteHelpers::gridDisplayView($data['location_id'],'location_id','1:location:id:location_name')
+                                    !!}</td></tr>
+                            <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
+                            <tr><td><b>Description:</b></td><td>{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
+                            <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
@@ -77,7 +78,7 @@
                                 <th>Name</th>
                                 <th>Item Description</th>
                                 @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)<th>Game</th>@endif
-                                <th>Price Unit</th>
+                                <th>Unit Price</th>
                                 <th>Case Price</th>
                                 <th>Qty</th>
                                 <th>Received Qty</th>
@@ -127,12 +128,13 @@
                     </div>
 
                     <div class="clearfix"></div>
+                <div class="row">
+                 <div class="col-md-8 col-md-offset-4 col-xs-12">
+                    <div class="row">
+                        <div class="form-group clearfix">
 
-                 <div class="col-md-8 col-md-offset-2" style="margin-left: 36.66666667% !important">
-                        <div class="form-group  ">
-                            <br/><br/>
                             <label for="date_received" class=" control-label col-md-4 text-right">
-                                Date Received </label>
+                                Date Received: </label>
                             <div class="col-md-8">
                                 <?php if(isset($data['date_received']) && ($data['date_received']!='0000-00-00'))
                                   $date_received = DateHelpers::formatDate($data['date_received']);
@@ -142,35 +144,46 @@
                                 <input type="text" class="date form-control" name="date_received" value="{{ $date_received }}" required/>
                             </div>
                         </div>
-                        <div class="form-group  ">
-                            <br/><br/>
+                        <div class="form-group clearfix">
+                            
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
-                                Order Status
+                                Order Status:
                             </label>
                             <div class="col-md-8">
                                 <select name='order_status' rows='5' id='order_status_id' class='select3' required onchange="removeBorder('order_status_id')");></select>
                             </div>
 
                         </div>
-                        <div class="form-group " id="tracking_numberdiv" style="display:none">
-                            <br/><br/>
+
+                        @if($data['order_type']=='2')
+                            <div class="form-group clearfix">
+                                <label for="date_received" class=" control-label col-md-4 text-right">
+                                    Tracking Number: </label>
+                                <div class="col-md-8">
+                                    <textarea class="form-control" name="tracking_number" id="tracking_number" required>{{ $data['tracking_number'] }}</textarea>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{--<div class="form-group clearfix" id="tracking_numberdiv" style="displaynone">
+                            
                             <label id ="tracking_number_lbl" for="vendor_id" class=" control-label col-md-4 text-left">
-                                Tracking Number
+                                Tracking Number:
                             </label>
                             <div class="col-md-8">
                                 <input type="text"  class="form-control" name="tracking_number" id="tracking_number"/>
                             </div>
 
-                        </div>
-                        <div class="form-group  ">
-                            <br/><br/>
+                        </div>--}}
+                        <div class="form-group clearfix">
+                            
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
-                                Notes </label>
+                                Notes: </label>
                             <div class="col-md-8">
-                                <textarea name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" ></textarea>
+                                <textarea class="form-control" name="notes" rows="7" cols="48" id="notes" ></textarea>
                             </div>
                         </div>
-                        <div class="form-group" >
+                        <div class="form-group clearfix">
                             <input type="hidden" name='item_count' value="{{ $data['item_count'] }}" id='item_count'/>
                             <input type="hidden" name='order_id' value="{{ $data['order_id'] }}" id='order_id'/>
                             <input type="hidden" name='order_type_id' value="{{ $data['order_type'] }}" id='order_type_id'/>
@@ -185,9 +198,10 @@
                                     <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
                             </div>
                         </div>
+                     </div>
                     </div>
-
-                </fieldset>
+                </div>
+               
             </div>
 
             <hr/>
@@ -216,23 +230,19 @@
             $('#itemTable .yourBox').on('ifUnchecked',function(){
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).attr('readonly', 'readonly');
+                $('#receivedItemText'+itemId).val($('#receivedItemText'+itemId).attr('max'));
             });
             var isAdvaceReplacement=0;
 
-            if("{{ $data['order_type'] }}" != 2) {
-                $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status:order_type_id:1') }}",
-                        {selected_value: '{{ $data["order_status_id"] }}'});
-            }
-            else
-            {
-                $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status:order_type_id:0') }}",
-                        {selected_value: '{{ $data["order_status_id"] }}', initial_text: 'Select Order Status'});
-            }
+            $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status:order_type_id:1') }}",
+                    {selected_value: '{{ $data["order_status_id"] }}'});
+
+
 
 
             $('.previewImage').fancybox();
             $('.tips').tooltip();
-            renderDropdown($(".select3 "), { width:"98%"});
+            renderDropdown($(".select3 "), { width:"100%"});
             $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {
@@ -287,7 +297,7 @@
             if(selected)
             {
                 $("#"+type).css("border","");
-                if(selected == 5) /* Advanced Replacement Returned.. add tracking number */
+                if(selected == 2) /* Advanced Replacement Returned.. add tracking number */
                 {
                     $("#tracking_numberdiv").show();
                 }
@@ -301,6 +311,40 @@
                 $("#"+type).css("border" , "2px solid #F00")  ;
             }
         }
+
+
+        $('#order_status_id').on('click',function(){
+            $('#orderreceiveFormAjax').parsley('destroy');
+            if($(this).val()==2){
+                $('#tracking_number').attr('required', 'required');
+            }else {
+                $('#tracking_number').removeAttr('required');
+            }
+            $('#orderreceiveFormAjax').parsley();
+        });
+
+
+        $('.yourBox').on('ifChanged',function(){
+            $('#orderreceiveFormAjax').parsley('destroy');
+            if(checkboxCount()>0){
+                $('#tracking_number').removeAttr('required');
+            }else{
+                $('#tracking_number').attr('required', 'required');
+            }
+            $('#orderreceiveFormAjax').parsley();
+        });
+
+        function checkboxCount() {
+            var count = 0;
+            $('.yourBox:checked').each(function(){
+                count++;
+            });
+            return count;
+        }
+
+        $('input[name^="receivedQty"]').change(function () {
+            $('#orderreceiveFormAjax').parsley( 'validate' );
+        });
 
     </script>
 

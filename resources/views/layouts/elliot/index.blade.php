@@ -63,7 +63,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> My Account <span class="caret"></span></a>
             <ul class="dropdown-menu">
             @if(!Auth::check())
-              <li><a href="{{ url('user/login')}}">Sign In</a></li>
+              <li><a href="{{ url('/')}}">Sign In</a></li>
 
             @else  
              

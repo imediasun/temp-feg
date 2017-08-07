@@ -13,7 +13,7 @@
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','addtocart/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
+            @if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
@@ -45,7 +45,9 @@
                     <thead>
                     <tr>
                         <th width="30"> No</th>
+                        @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                         <th width="50"><input type="checkbox" class="checkall"/></th>
+                        @endif
                         <th width="100">Image</th>
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
@@ -53,7 +55,7 @@
                             if ($t['view'] == '1'):
                                 $limited = isset($t['limited']) ? $t['limited'] : '';
                                 if (SiteHelpers::filterColumn($limited)) {
-                                    echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
+                                    echo '<th style=text-align:'.$t['align'].' width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
 
                                 }
                             endif;
@@ -74,7 +76,9 @@
                     @if($access['is_add'] =='1' && $setting['inline']=='true')
                         <tr id="form-0">
                             <td> #</td>
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                             <td></td>
+                            @endif
                             @if($setting['view-method']=='expand')
                                 <td></td> @endif
                             @foreach ($tableGrid as $t)
@@ -97,9 +101,12 @@
                     <?php foreach ($rowData as $row) :
                     $id = $row->id;
                     ?>
-                    <tr class="editable" id="form-{{ $row->id }}">
+                    <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
+                        <input type="hidden" class="cartProductsItems" value="{{$row->product_id}}"/>
                         <td class="number"> <?php echo ++$i;?>  </td>
+                        @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                         <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>" onkeypress="disableEnter(event)"/></td>
+                        @endif
                         <td> <?php
                             echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false);
                             ?></td>
@@ -112,22 +119,21 @@
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
 
 
-                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
+                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
-
-
-
                                 @if($field['field']=='qty')
-
                                     <input type="number" value="{{ $value }}" min="1" step="1" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeydown="changeTotal(this.value,this.id,event)"/>
+                                @elseif($field['field']=='already_order_qty' && $row->already_order_qty > 0)
+                                    <span class="cart_already_ordered">{{$row->already_order_qty}}</span>
                                 @else
-{!! $value !!}
+                                    {!! $value !!}
                                 @endif
+
                             </td>
                         @endif
                         <?php
@@ -143,7 +149,6 @@
                         <td>{{ $row->notes }}</td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('addtocart',$access,$id ,$setting) !!}
-                            {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -160,7 +165,11 @@
                     </tbody>
 
                 </table>
-
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                    @endforeach
+                @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">
@@ -188,14 +197,18 @@
                 </div>
             @endif
         -->
-            <div class="col-md-8 col-md-offset-4">
+            <div class="row" id="cart-footer-btns">
 
-
-                <div class="col-md-10">
-                    <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
+                <div class=" col-md-offset-4 col-sm-offset-2 col-xs-offset-1 col-md-8">
+               <div class="col-md-2 col-sm-3 col-xs-12">
+                   <button  class="btn btn-sm btn-primary" id="update-cart-values" onclick="updateCart();">Update Cart</button>
+               </div>
+                   <div class="col-md-10 col-sm-9 col-xs-12">
+                    <input type="button" style="font-weight: bold;" class="btn btn-sm btn-success"
                            value="Submit Weekly Requests totalling {{CurrencyHelpers::formatPrice($cartData['shopping_cart_total'])}}"
-                           onClick="confirmSubmit();" id = "cartbtn"></button>
+                           onClick="confirmSubmit({{ json_encode($cartData['amt_short_message']) }});" id = "cartbtn"></button>
                 </div>
+            </div>
             </div>
         @include('ajaxfooter')
 
@@ -221,7 +234,7 @@
         $("#new_location").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                 {selected_value: ''});
         -->
-        renderDropdown($(".select3 "), { width:"98%"});
+        renderDropdown($(".select3 "), { width:"100%"});
 
         $('.my_form').on("keypress",(function(e) {
             console.log(e);
@@ -300,78 +313,8 @@
         $('#new_locationdiv').hide();
     });
     -->
-    var timer = null;
 
 
-    function doStuff(value,id,vendor_name) {
-        $.ajax({
-            url:"addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
-            method:'get',
-            dataType:'json',
-            success:function(data){
-                loadCart(vendor_name,data.subtotal);
-            }
-        });
-    }
-    timer=null;
-    function changeTotal(value,id,e)
-    {
-        var vendor_name1=$("#"+id).data('vendor');
-       vendor_name1=vendor_name1.replace(/ /g, '_');
-        if (e.keyCode == 13 && value > 0) {
-            $('.ajaxLoading').show();
-            e.preventDefault();
-            doStuff(value,id,vendor_name1);
-        }
-      
-    }
-    function confirmSubmit() {
-        var shortMessage;
-        if(amt_short_msg == null) {
-            shortMessage = "{{ json_encode($cartData['amt_short_message']) }}";
-}
-        else
-        {
-     shortMessage=amt_short_msg;
-        }
-        shortMessage=shortMessage.replace(/&quot;/g, '');
-            shortMessage=shortMessage.trim();
-        if ( shortMessage && shortMessage.length > 0 ) {
-
-            var text="Please increase order amount in order to proceed."
-            alert(shortMessage +" "+ text);
-
-        }
-        else {
-            if (confirm("Have you confirmed all items and quantities in your shopping cart?")) {
-                var new_location = '';
-                var checked = $("#clone_order").parent('[class*="icheckbox"]').hasClass("checked");
-
-                if (checked) {
-                    if ($('#new_location').val() > 0) {
-                        new_location = '/' + $('#new_location').val();
-                        window.location.href = '{{ $pageModule }}/submit-requests' + new_location;
-                    }
-                    else {
-                        alert("You must pick a location to clone this order to!");
-                    }
-                }
-                else {
-                 //   alert('{{ $pageModule }}/submit-requests');
-                    window.location.href = '{{ $pageModule }}/submit-requests';
-                    $("#update_text_to_add_cart").text('0');
-                }
-            }
-
-        }
-    }
-function loadCart(vendor_name,subtotal)
-{
-
-    getCartData(false,vendor_name,subtotal);
-
-   // return false;
-}
 </script>
 <style>
     .table th.right {
@@ -380,6 +323,19 @@ function loadCart(vendor_name,subtotal)
 
     .table th.center {
         text-align: center !important;
+    }
+
+    /*Edit Buttons Code*/
+    table .btn.btn-xs {
+        height: 25px;
+        line-height: 19px;
+        margin: 0px !important;
+        text-align: center;
+    }
+
+    table .btn.btn-xs {
+        float: inherit;
+        width: 25px;
     }
 
 </style>

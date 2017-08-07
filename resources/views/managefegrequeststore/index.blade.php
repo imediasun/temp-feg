@@ -17,7 +17,6 @@
 	<!-- Begin Content -->
 	<div class="page-content-wrapper m-t">
 		<div class="resultData"></div>
-		<div class="ajaxLoading"></div>
 		<div id="{{ $pageModule }}View"></div>			
 		<div id="{{ $pageModule }}Grid"></div>
 	</div>	
@@ -27,14 +26,14 @@
 $(document).ready(function(){
     var searchParams="{{ \Session::get('searchParams') }}";
     var searchParams = searchParams.replace(/&amp;/g, '&');
-    if("{{ \Session::get('filter_before_redirect') }}" == "redirect") {
+    if("{{ \Session::get('filter_before_redirect') }}" == "redirect" && searchParams!='') {
      <?php
      if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
         {
             \Session::put('filter_before_redirect','no');
         }
      ?>
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
+        reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
     }
     else {
         <?php
@@ -43,6 +42,15 @@ $(document).ready(function(){
          ?>
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
     }
+    <?php
+   if(isset($error))
+       {
+           ?>
+           notyMessageError("{{$error}}");
+    <?php
+    }
+    ?>
+
 });	
 </script>	
 @endsection

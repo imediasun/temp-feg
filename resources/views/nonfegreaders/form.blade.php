@@ -2,7 +2,11 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+			<h4> @if($id)
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Readers used for non FEG Equipments
+				@else
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Readers used for non FEG Equipments
+				@endif
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -11,7 +15,7 @@
 @endif	
 			{!! Form::open(array('url'=>'nonfegreaders/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'nonfegreadersFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Readers used for non FEG Equipments</legend>
+						<fieldset>
 									
 				  <div class="form-group  " > 
 					<label for="Location Id" class=" control-label col-md-4 text-left"> 
@@ -43,8 +47,7 @@
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
-				<div class="col-sm-8">	
+				<div class="col-sm-12 text-center">	
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			
@@ -64,7 +67,9 @@
 $(document).ready(function() { 
 	
         $("#location_id").jCombo("{{ URL::to('nonfegreaders/comboselect?filter=location:id:location_name_short') }}",
-        {  selected_value : '{{ $row["location_id"] }}' });
+        {  selected_value : '{{ $row["location_id"] }}',
+            <?php $row["location_id"] == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$row['location_id']." , 'Location', 'active' , 'location_name_short' )") ?>
+        });
         
         $("#debit_type_id").jCombo("{{ URL::to('nonfegreaders/comboselect?filter=debit_type:id:company') }}",
         {  selected_value : '{{ $row["debit_type_id"] }}' });
@@ -73,7 +78,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	renderDropdown($(".select2 "), { width:"98%"});
+	renderDropdown($(".select2 "), { width:"100%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({

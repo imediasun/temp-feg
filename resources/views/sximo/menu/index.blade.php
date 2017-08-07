@@ -1,3 +1,7 @@
+<?php
+
+    $menuTypes = \App\Library\DBHelpers::getEnumValues('tb_menu', 'position');
+?>
 @extends('layouts.app')
 
 @section('content')
@@ -20,8 +24,12 @@
             <div class="sbox-content">
 
 	<ul class="nav nav-tabs" style="margin:10px 0;">
-		<li @if($active == 'top') class="active" @endif ><a href="{{ URL::to('feg/menu?pos=top')}}"><i class="icon-paragraph-justify2"></i> {{ Lang::get('core.tab_topmenu') }} </a></li>
-		<li @if($active == 'sidebar') class="active" @endif><a href="{{ URL::to('feg/menu?pos=sidebar')}}"><i class="icon-paragraph-justify2"></i> {{ Lang::get('core.tab_sidemenu') }}</a></li>
+        @foreach($menuTypes as $menuType)
+		<li @if($active == $menuType) class="active" @endif
+             ><a href="{{ URL::to('feg/menu?pos='.$menuType)}}"
+            ><i class="icon-paragraph-justify2"></i> {{ Lang::get('core.tab_'.$menuType.'_menu') }} </a>
+        </li>
+        @endforeach
 	</ul>  	
 	
 	
@@ -36,24 +44,27 @@
             <div id="list2" class="dd" style="min-height:350px;">
               <ol class="dd-list">
 			@foreach ($menus as $menu)
-				  <li data-id="{{$menu['menu_id']}}" class="dd-item dd3-item">
-					<div class="dd-handle dd3-handle"></div><div class="dd3-content">{{$menu['menu_name']}}
+				  <li data-id="{{$menu['menu_id']}}" class="dd-item dd3-item {{$menu['menu_type']}} {{$menu['active']}}">
+					<div class="dd-handle dd3-handle"></div><div class="dd3-content">
+                        @if ($menu['menu_type']=='divider') [Divider] @else {{$menu['menu_name']}} @endif
 						<span class="pull-right">
 						<a href="{{ URL::to('feg/menu/index/'.$menu['menu_id'].'?pos='.$active)}}"><i class="icon-cogs"></i></a></span>
 					</div>
 					@if(count($menu['childs']) > 0)
 						<ol class="dd-list" style="">
 							@foreach ($menu['childs'] as $menu2)
-							 <li data-id="{{$menu2['menu_id']}}" class="dd-item dd3-item">
-								<div class="dd-handle dd3-handle"></div><div class="dd3-content">{{$menu2['menu_name']}}
+							 <li data-id="{{$menu2['menu_id']}}" class="dd-item dd3-item {{$menu2['menu_type']}} {{$menu2['active']}}">
+								<div class="dd-handle dd3-handle"></div><div class="dd3-content">
+                                    @if ($menu2['menu_type']=='divider') [Divider] @else {{$menu2['menu_name']}} @endif
 									<span class="pull-right">
 									<a href="{{ URL::to('feg/menu/index/'.$menu2['menu_id'].'?pos='.$active)}}"><i class="icon-cogs"></i></a></span>
 								</div>
 								@if(count($menu2['childs']) > 0)
 								<ol class="dd-list" style="">
 									@foreach($menu2['childs'] as $menu3)
-									 	<li data-id="{{$menu3['menu_id']}}" class="dd-item dd3-item">
-											<div class="dd-handle dd3-handle"></div><div class="dd3-content">{{ $menu3['menu_name'] }}
+									 	<li data-id="{{$menu3['menu_id']}}" class="dd-item dd3-item {{$menu3['menu_type']}} {{$menu3['active']}}">
+											<div class="dd-handle dd3-handle"></div><div class="dd3-content">
+                                                @if ($menu3['menu_type']=='divider') [Divider] @else {{$menu3['menu_name']}} @endif
 												<span class="pull-right">
 												<a href="{{ URL::to('feg/menu/index/'.$menu3['menu_id'].'?pos='.$active)}}"><i class="icon-cogs"></i></a>
 												</span>
@@ -139,17 +150,20 @@
 				  <div class="form-group   " >
 					<label for="ipt" class=" control-label col-md-4 text-right"> {{ Lang::get('core.fr_mtype') }}  </label> 
 					<div class="col-md-8 menutype">
-					<label class="radio-inline  ">
-						
-					<input type="radio" name="menu_type" value="internal" class=""  
-					@if($row['menu_type']=='internal' || $row['menu_type']=='') checked="checked" @endif />
-					
-					Internal
-					</label>
-					<label style="display:none" class="radio-inline">
-					<input  type="radio" name="menu_type" value="external"  class=""
-					@if($row['menu_type']=='external' ) checked="checked" @endif  /> External
-					</label>
+                        <label class="radio-inline  ">
+                            <input type="radio" name="menu_type" value="internal" class=""
+                            @if($row['menu_type']=='internal' || $row['menu_type']=='') checked="checked" @endif />
+                        Internal
+                        </label>
+                        <label style="" class="radio-inline">
+                            <input  type="radio" name="menu_type" value="external"  class=""
+                            @if($row['menu_type']=='external' ) checked="checked" @endif  /> External
+                        </label>
+                        <label style="" class="radio-inline">
+                            <input  type="radio" name="menu_type" value="divider"  class=""
+                            @if($row['menu_type']=='divider' ) checked="checked" @endif  /> Divider
+                        </label>
+
 					 </div>
 				  </div>
 
@@ -195,11 +209,16 @@
 				  <div class="form-group  " >
 					<label for="ipt" class=" control-label col-md-4 text-right"> {{ Lang::get('core.fr_mposition') }}  </label>
 					<div class="col-md-8">
-						<input type="radio" name="position"  value="top" required 
-						@if($row['position']=='top' ) checked="checked" @endif /> {{ Lang::get('core.tab_topmenu') }} 
-						<input type="radio" name="position"  value="sidebar"  required
-						@if($row['position']=='sidebar' ) checked="checked" @endif  /> {{ Lang::get('core.tab_sidemenu') }} 
-					 </div> 
+                        @foreach($menuTypes as $menuType)
+                            <label class="radio-inline  ">
+                                <input type="radio" name="position"  value="{{ $menuType }}"
+                                   required
+                                   @if($row['position']==$menuType)
+                                   checked="checked"
+                                   @endif /> {{ Lang::get('core.tab_'.$menuType.'_menu') }}
+                            </label>
+                        @endforeach
+					 &nbsp;</div>
 				  </div> 	 				
 				  <div class="form-group  " >
 					<label for="ipt" class=" control-label col-md-4 text-right">{{ Lang::get('core.fr_miconclass') }}  </label>
@@ -213,12 +232,14 @@
 				  <div class="form-group  " >
 					<label for="ipt" class=" control-label col-md-4 text-right"> {{ Lang::get('core.fr_mactive') }}  </label>
 					<div class="col-md-8">
-					<input type="radio" name="active"  value="1" 
-					@if($row['active']=='1' ) checked="checked" @endif /> {{ Lang::get('core.fr_mactive') }} 
-					<input type="radio" name="active" value="0" 
-					@if($row['active']=='0' ) checked="checked" @endif  /> {{ Lang::get('core.fr_minactive') }} 
-										
-					 
+                        <label class="radio-inline  ">
+                            <input type="radio" name="active"  value="1"
+                            @if($row['active']=='1' ) checked="checked" @endif /> {{ Lang::get('core.fr_mactive') }}
+                        </label>
+                        <label class="radio-inline  ">
+                            <input type="radio" name="active" value="0"
+                            @if($row['active']=='0' ) checked="checked" @endif  /> {{ Lang::get('core.fr_minactive') }}
+                        </label>
 					 </div> 
 				  </div> 
 
@@ -309,7 +330,12 @@ function mType( val )
 		if(val == 'external') {
 			$('.ext-link').show(); 
 			$('.int-link').hide();
-		} else {
+		}
+		else if(val == 'divider') {
+			$('.ext-link').hide();
+			$('.int-link').hide();
+		}
+        else {
 			$('.ext-link').hide(); 
 			$('.int-link').show();
 		}	

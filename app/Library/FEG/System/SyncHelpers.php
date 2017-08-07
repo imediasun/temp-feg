@@ -225,7 +225,7 @@ class SyncHelpers
                     L.id AS location_id, 
                     '$date' as date_played," . 
                     ($skipLastPlayedDetection == 1 ? "E.date_last_played," : 
-                    "(SELECT max(E.date_played) FROM report_locations E WHERE E.location_id = L.id and E.date_played <= '$date') as date_last_played,").
+                    "IFNULL(E.date_last_played, (SELECT max(E.date_played) FROM report_locations E WHERE E.location_id = L.id and E.date_played <= '$date')) as date_last_played,").
                     "L.debit_type_id,
                     '$today' as report_date,
                     E.sync_record_count, 
@@ -247,14 +247,16 @@ class SyncHelpers
                         SUM(std_plays) AS games_total_std_plays,
                         COUNT(DISTINCT game_id) AS games_played_count
                     FROM game_earnings 
+                    left join game on game.id = game_earnings.game_id
                     WHERE date_start>='$date' 
+                        AND game.exclude_from_reports = 0 
                         AND date_start < DATE_ADD('$date', INTERVAL 1 DAY) 
                         " . (!!$skipZeroAssetIds ? " AND game_id <> 0 ":"") . "
                     GROUP BY loc_id
                 ) E ON L.id = E.loc_id 
 
                 LEFT JOIN  (
-                    SELECT location_id, COUNT(*) AS games_count FROM game GROUP BY location_id
+                    SELECT location_id, COUNT(*) AS games_count FROM game where exclude_from_reports = 0 GROUP BY location_id
                 ) G ON G.location_id = L.id 
 
                 WHERE " . (empty($location) ? "L.reporting = 1" : "L.id IN ($location)");
@@ -572,8 +574,8 @@ class SyncHelpers
                             }   
                             
                             if (!empty($location)) {   
-                                FEGSystemHelper::logit("    FINAL: DB UPDATED [game: $game_id], '$foundLocation'(debit type: $foundDebitType) date: '$foundLastPlayed' \r\n", $lf, $lp);
                                 DB::update($updateSQL, [$foundLastPlayed, $foundLocation, $foundDebitType, $id]);                            
+                                FEGSystemHelper::logit("    FINAL: DB UPDATED [game: $game_id], '$foundLocation'(debit type: $foundDebitType) date: '$foundLastPlayed' \r\n", $lf, $lp);
                             }
                             else {
                                 FEGSystemHelper::logit("    FINAL: [game: $game_id] Location not found hence skipping [DATE: '$foundLastPlayed', LOC: '$foundLocation' ($foundDebitType), DBID: $id]\r\n", $lf, $lp);
@@ -596,7 +598,7 @@ class SyncHelpers
                 }
             );  
                 
-        if (!$result || FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+        if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
             FEGSystemHelper::logit("GLP USER TERMINATED !!!! - rolling back", $lf, $lp);
             DB::rollBack();
             return false;
@@ -664,6 +666,7 @@ class SyncHelpers
                                 IF(game.date_sold <> '0000-00-00' AND game.date_sold IS NOT NULL AND game.date_sold <= '$date', 1, 0) as game_is_sold,
                                 game.test_piece as game_on_test,
                                 game.not_debit as game_not_debit,
+                                game.exclude_from_reports,
                                 '$today' as report_date,
                                 1 as record_status,
                                 '' as notes"))
@@ -861,6 +864,8 @@ class SyncHelpers
             'count' => 0,
             'reverse' => 0,
             'location' => null,
+            'skipGames' => 0,
+            'skipLocations' => 0,
             '_task' => array(),
             '_logger' => null,
         ), $params)); 
@@ -884,12 +889,16 @@ class SyncHelpers
             while($currentDate >= $dateStartTimestamp) {
                 $__logger->log("DATE: $date ($dateCount/$count days)");
                 $cParams = array_merge($params, array("date" => $date));
-                $__logger->log("Start Generate Daily LOCATION Summary");
-                self::report_daily_location_summary($cParams);
-                $__logger->log("END Generate Daily LOCATION Summary");
-                $__logger->log("Start Generate Daily GAME Summary");
-                self::report_daily_game_summary($cParams);
-                $__logger->log("END Generate Daily GAME Summary");            
+                if (empty($skipLocations)) {
+                    $__logger->log("Start Generate Daily LOCATION Summary");
+                    self::report_daily_location_summary($cParams);
+                    $__logger->log("END Generate Daily LOCATION Summary");
+                }
+                if (empty($skipGames)) {
+                    $__logger->log("Start Generate Daily GAME Summary");
+                    self::report_daily_game_summary($cParams);
+                    $__logger->log("END Generate Daily GAME Summary");
+                }
 
                 $currentDate = strtotime($date . " -1 day");
                 $date = date("Y-m-d", $currentDate);
@@ -906,12 +915,16 @@ class SyncHelpers
             while($currentDate <= $dateEndTimestamp) {
                 $__logger->log("DATE: $date ($dateCount/$count days)");
                 $cParams = array_merge($params, array("date" => $date));
-                $__logger->log("Start Generate Daily LOCATION Summary");
-                self::report_daily_location_summary($cParams);
-                $__logger->log("END Generate Daily LOCATION Summary");
-                $__logger->log("Start Generate Daily GAME Summary");
-                self::report_daily_game_summary($cParams);
-                $__logger->log("END Generate Daily GAME Summary");            
+                if (empty($skipLocations)) {
+                    $__logger->log("Start Generate Daily LOCATION Summary");
+                    self::report_daily_location_summary($cParams);
+                    $__logger->log("END Generate Daily LOCATION Summary");
+                }
+                if (empty($skipGames)) {
+                    $__logger->log("Start Generate Daily GAME Summary");
+                    self::report_daily_game_summary($cParams);
+                    $__logger->log("END Generate Daily GAME Summary");
+                }
 
                 $currentDate = strtotime($date . " +1 day");
                 $date = date("Y-m-d", $currentDate);
@@ -1096,13 +1109,13 @@ class SyncHelpers
     
     public static function getReaderExclude($debit_type_id = null, $location = null, $encapsulateQuotes = true) {
         $excluded = array();
-        $q = "SELECT reader_id FROM reader_exclude WHERE id IS NOT NULL " .
+        $q = "SELECT concat(reader_id, '@', loc_id) as loc_reader_id FROM reader_exclude WHERE id IS NOT NULL " .
                 (!empty($debit_type_id) ?  " AND debit_type_id IN ($debit_type_id)" : "") .
                 (!empty($location) ?  " AND loc_id IN ($location)" : "");
                 
         $items = DB::select($q);
         foreach ($items as $exclude_row) {
-            $readerId = $exclude_row->reader_id;
+            $readerId = $exclude_row->loc_reader_id;
             if ($encapsulateQuotes) {
                 $readerId = "'".$readerId."'";
             }
@@ -1142,6 +1155,7 @@ class SyncHelpers
                         loc_id,
                         game_id,
                         trim(both '\t' from trim(both ' ' from reader_id)) as reader_id,
+                        concat(trim(both '\t' from trim(both ' ' from reader_id), '@', loc_id) as loc_reader_id,
                         play_value,
                         total_notional_value,
                         std_plays,
@@ -1193,7 +1207,7 @@ class SyncHelpers
             $query->whereIn('loc_id', $locations);
         }
         if (!empty($readerExclude)) {
-            $query->whereNotIn('reader_id', $readerExclude);
+            $query->whereNotIn('loc_reader_id', $readerExclude);
         }
          
         $rowcount = 0;
@@ -1210,6 +1224,7 @@ class SyncHelpers
                              $rowcount += $dataSize;
                              $__logger->log("Data received chunk #$chunkCount of size $dataSize. Total items received so far: $rowcount");        
                              $__logger->log("Adding data to local");
+                             unset($data['loc_reader_id']);
                              DB::table($table)->insert($data);
                          }
                          else {
@@ -1460,7 +1475,7 @@ class SyncHelpers
     
     public static function migrate($params = array()) {
         $L = new MyLog('database-migration.log', 'GoLiveMigration', 'Data');
-        $L->log("Start Database Migration");
+        $L->log("****** Start Database Migration ********");
 //        $L->log("       game start");
 //        // update game
 //        ////DB::statement('ALTER TABLE `game` CHANGE `product_id` `product_id` TEXT NOT NULL; ');
@@ -1500,7 +1515,7 @@ class SyncHelpers
 //            order by user_id";
 //        DB::insert($q);
         
-        $L->log("       location_budget start");
+        $L->log("-------- location_budget migration starts");
         //From location.[id,<montth_year>] to location_budget.[location_id,budget_date,budget_value]        
         $q = "SELECT id, Jan_2012,Feb_2012,Mar_2012,Apr_2012,May_2012,
             Jun_2012,Jul_2012,Aug_2012,Sep_2012,Oct_2012,Nov_2012,Dec_2012,
@@ -1520,9 +1535,9 @@ class SyncHelpers
             Aug_2019,Sep_2019,Oct_2019,Nov_2019,Dec_2019,
             Jan_2020,Feb_2020,Mar_2020,Apr_2020,May_2020,Jun_2020,Jul_2020,
             Aug_2020,Sep_2020,Oct_2020,Nov_2020,Dec_2020
-            
+
             FROM location";
-        
+
         DB::connection()->setFetchMode(PDO::FETCH_ASSOC);
         DB::table("location_budget")->truncate();
         $data = DB::select($q);
@@ -1530,19 +1545,67 @@ class SyncHelpers
         foreach($data as $row) {
             $id = $row['id'];
             foreach($row as $fieldName => $value) {
-                if ($fieldName != "id") {
+                if ($fieldName != "id" && !empty($value)) {
                     $date = date("Y-m-d", strtotime(str_replace('_', ' ', $fieldName)));
-                    $q = "INSERT INTO location_budget 
+                    $q = "INSERT INTO location_budget
                         (location_id, budget_date, budget_value)
                         VALUES (?, ?, ?)";
-                    DB::insert($q, [$id, $date, $value]);
+                    $c = DB::insert($q, [$id, $date, $value]);
+                    $L->log("-------- ---- $c records added for Loc: $id, Date: $date, Amount: $value");
                 }
             }
         }
         DB::commit();
         DB::connection()->setFetchMode(PDO::FETCH_CLASS);
+        $L->log("-------- location_budget migration ends");
         
-        $L->log("       freight_orders start");
+
+/*
+        
+        $L->log("======== Location User Assignments Starts");
+        DB::connection()->setFetchMode(PDO::FETCH_CLASS);
+        $sql = "DELETE FROM user_locations WHERE group_id IS NOT NULL";
+        DB::delete($sql);
+
+        $templateData = DB::select("SELECT * from location_user_roles_master");
+        $template = [];
+        foreach($templateData as $tItem) {
+            $template[$tItem->role_title] = $tItem;
+        }
+
+        $data = DB::select("SELECT r.dist_mgr_id, l.id, l.location_name, l.region_id FROM location l
+                	LEFT JOIN region r ON r.id=l.region_id
+                    WHERE r.dist_mgr_id IS NOT NULL AND r.dist_mgr_id <> 0
+                    AND l.region_id > 1");
+
+        $runData = array_keys($template);
+
+        if ($data) {
+            DB::beginTransaction();
+            foreach($data as $item) {
+                $assignment = [];
+                $location = $item->id;
+                $assignment['General Manager'] = !empty($item->field_manager) ? $item->field_manager : 0;
+                $assignment['Regional Manager'] = !empty($item->dist_mgr_id) ? $item->dist_mgr_id : 0;
+                $assignment['Contact'] = !empty($item->contact_id) ? $item->contact_id : 0;
+                $assignment['Merchandise Contact'] = !empty($item->merch_contact_id) ? $item->merch_contact_id : 0;
+
+                $assignment['Technical'] = !empty($item->tech_manager_id) ? $item->tech_manager_id : 0;
+                $assignment['VP'] = !empty($item->senior_vp_id) ? $item->senior_vp_id : 0;
+
+                $sql = "INSERT INTO user_locations (location_id, user_id, group_id) VALUES(?,?,?)";
+                foreach($runData as $runField) {
+                    if (!empty($assignment[$runField])) {
+                        DB::insert($sql, [$location, $assignment[$runField], $template[$runField]->group_id]);
+                    }
+                }
+            }
+            DB::commit();
+        }
+        $L->log("======== Location User Assignments ends");
+//        return true;
+*/
+        $L->log("######## freight_orders migration starts");
         //freight_orders => freight_location_to
         //
         //
@@ -1566,11 +1629,12 @@ class SyncHelpers
                 $ship_exception = $row['ship_exception_'.$keyIndex];
                 $new_ship_date = $row['new_ship_date_'.$keyIndex];
                 $new_ship_date_stamp = strtotime($new_ship_date);
+                $new_ship_date_valid = \FEGHelp::isValidDate($new_ship_date);
                 $new_ship_reason = $row['new_ship_reason_'.$keyIndex];
                 
-                if (!empty($description) || !empty($dimensions) || 
-                        !empty($ship_exception) || $new_ship_date_stamp !== false ||
-                        !empty($new_ship_reason)) {
+                if (!empty(trim($description)) || !empty(trim($dimensions)) ||
+                        !empty(trim($ship_exception)) || $new_ship_date_valid ||
+                        !empty(trim($new_ship_reason))) {
                     
                     $q = "INSERT INTO freight_pallet_details 
                         (freight_order_id, description, dimensions, 
@@ -1593,7 +1657,7 @@ class SyncHelpers
 //                    $L->log("Data($keyIndex): ", array($loc_to, $loc_pro, $loc_quote, $loc_trucking_co, $freight_company));
 //                    $L->log("Are Empty? ", array(empty($loc_to), empty($loc_pro), $loc_quote_is_empty, empty($loc_trucking_co), empty($freight_company)));
 //                }
-                if (!empty($loc_to) || !empty($loc_pro) || 
+                if (!empty(trim($loc_to)) || !empty(trim($loc_pro)) ||
                         !$loc_quote_is_empty || !empty($loc_trucking_co) ||
                         !empty($freight_company)) {
                                        
@@ -1624,8 +1688,8 @@ class SyncHelpers
         }
         //DB::commit();
         DB::connection()->setFetchMode(PDO::FETCH_CLASS);
-        
-        $L->log("End Database Migration");
+        $L->log("######## freight_orders migration Ends");
+        $L->log("****** End Database Migration **************");
         
     }
     

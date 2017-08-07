@@ -9,6 +9,7 @@ use App\Models\ticketsetting;
 use App\Models\Core\TicketMailer;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Library\FEG\System\Formatter;  
@@ -60,10 +61,12 @@ class servicerequestsController extends Controller
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
-        
+
         
         // Get custom Ticket Type filter value 
-        $customTicketTypeFilter = $this->model->getSearchFilters(['ticket_custom_type' => '', 'Status' => 'status']);
+        $customTicketTypeFilter = $this->model->getSearchFilters(['ticket_custom_type' => '', 'Status' => 'status','showAll'=>0]);
+        $showAll = $customTicketTypeFilter['showAll'];
+        unset($customTicketTypeFilter['showAll']);
         $skipFilters = ['ticket_custom_type'];
         $mergeFilters = [];
         extract($customTicketTypeFilter); //$ticket_custom_type, $status
@@ -94,9 +97,16 @@ class servicerequestsController extends Controller
         if (!empty($debitType)) {
             $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
         } 
-        if (empty($status)) {
+        if (empty($status) && $showAll == 0) {
             $filter .= " AND sb_tickets.Status != 'closed' ";
-        } 
+        }
+        if($showAll == 0){
+            \Session::put('showAllChecked',false);
+        }
+        else
+        {
+            \Session::put('showAllChecked',true);
+        }
         
         return $filter;
     }
@@ -152,7 +162,8 @@ class servicerequestsController extends Controller
         }
 
 
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('servicerequests/data');
         $rows = $results['rows'];
         
@@ -279,7 +290,7 @@ class servicerequestsController extends Controller
         $this->data['priority']  =  $row['Priority'];
         $this->data['status'] = $row['Status'];
         $this->data['ticketStatusLabel'] = Formatter::getTicketStatus($row['Status'], 'Open');
-        $this->data['needByDate'] = \DateHelpers::formatDate($row['need_by_date']);
+        $this->data['needByDate'] = \DateHelpers::formatDate($row['need_by_date'],1);
         $this->data['filePaths'] = explode(",", $row['file_path']);        
         $this->data['entryBy'] = $isAdd ? $userId : $row['entry_by'];
         $this->data['locationId'] = $isAdd ? \Session::get('selected_location') : $row['location_id'];
@@ -321,6 +332,7 @@ class servicerequestsController extends Controller
         $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
         $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         
         
@@ -350,7 +362,6 @@ class servicerequestsController extends Controller
         
         return view('servicerequests.view', $this->data);
     }
-
     function getSubscribe(Request $request, $id = NULL, $userID = NULL, $unfollow = NULL) {
         
         $unfollowDictionary = ["unfollow", "false", "unsubscribe"];
@@ -451,7 +462,6 @@ class servicerequestsController extends Controller
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
         $isAdd = empty($id);
-        
         $rules = $this->validateForm();
         unset($rules['department_id']);
        //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
@@ -459,7 +469,8 @@ class servicerequestsController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('sb_tickets', !empty($id));
-            $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
+            $data = $this->validateDates($data);
+            //$data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
             $data['Status'] = $request->get('Status');
             $oldStatus = $request->get('oldStatus');
             if (!$isAdd) {
@@ -508,7 +519,12 @@ class servicerequestsController extends Controller
             
             if($isAdd){
                 Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
-                $message = $data['Description'];
+                $message = nl2br($data['Description']);
+                
+                $message .= \View::make('servicerequests.email.commentviewlink', [
+                    'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($id),
+                ])->render();
+
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
                     "ticketId"      => $id,
@@ -633,6 +649,36 @@ class servicerequestsController extends Controller
 
     }
 
+    public function postStatusUpdate(Request $request, $id) {
+        $response = ['status' => 'error',  'message' => 'Not authorized to change status'];
+        if (ticketsetting::canUserChangeStatus()){
+            $id = \SiteHelpers::encryptID($id, true);
+            $date = date("Y-m-d");
+            $status = @$request->input('Status');
+            $oldStatus = @$request->input('oldStatus');
+            $priority = @$request->input('Priority');
+            $ticketsData = [];
+            //$ticketsData['updated'] = date('Y-m-d H:i:s');
+            if (!empty($status)) {
+                $ticketsData['Status'] = $status;
+                $ticketsData['Priority'] = $priority;
+                $ticketsData['closed'] = null;
+                $isStatusClosed = $status == 'closed';
+                if ($isStatusClosed) {
+                    if ($oldStatus != 'closed') {
+                        $ticketsData['closed'] = date('Y-m-d H:i:s');
+                    }
+                }
+
+                $this->model->where('TicketID', $id)->update($ticketsData);
+                $response = ['status' => 'success',  'message' => "Status updated successfully."];
+            }
+            else {
+                $response = ['status' => 'error',  'message' => 'Invalid status'];
+            }
+        }
+        return response()->json($response);
+    }
     public function postComment(Request $request)
     {
         $date = date("Y-m-d");
@@ -676,6 +722,7 @@ class servicerequestsController extends Controller
         unset($ticketsData['file_path']);
         $requestedOn = $ticketsData['Created'];
         unset($ticketsData['Created']);
+        $ticketThreadContent = $this->getTicketThread($ticketId, true, true);
         $commentId = $comment_model->insertRow($commentsData, NULL);
 
         $files = $this->uploadTicketAttachments("/ticket-$ticketId/$date/", "--$ticketId");
@@ -685,7 +732,7 @@ class servicerequestsController extends Controller
         }
 
         $this->model->insertRow($ticketsData, $ticketId);
-        $message = $commentsData['Comments'];
+        $message = nl2br($commentsData['Comments']);
         if (!empty($files['Attachments'])) {
             $ticketsData['_base_file_path'] = $files['_base_Attachments'];
         }
@@ -723,6 +770,12 @@ class servicerequestsController extends Controller
             
         //send email
         $ticketsData['Created'] = $requestedOn;
+
+        $message .= \View::make('servicerequests.email.commentviewlink', [
+            'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($ticketId),
+        ])->render();
+        
+        $message .= $ticketThreadContent;
         $this->model->notifyObserver('AddComment',[
                 'message'       =>$message,
                 'ticketId'      => $ticketId,
@@ -738,6 +791,41 @@ class servicerequestsController extends Controller
 
     }
 
+    public function getTicketThread($ticketId, $includeInitial = true, $renderHtml = false) {
+        $commentsData =  Ticketcomment::getCommentsWithUserData($ticketId);
+        if ($includeInitial) {
+            $initialComment = $this->model->getTicketInitialRequestAsComment($ticketId);
+            if (!empty($initialComment)) {                
+                $commentsData[] = $initialComment;
+            }            
+        }
+        if ($renderHtml) {
+            $commentsCount =  $commentsData->count();
+            $comments = '<div>';
+            $commentsArray = [];
+            $commentsCountIndex = $commentsCount;
+            foreach ($commentsData as $comment) {                
+                $commentsCountIndex--;
+                $commentsArray[] = \View::make('servicerequests.email.commentview', [
+                    'comment' => html_entity_decode(nl2br($comment->Comments)),
+                    'postedOn' => \DateHelpers::formatDateCustom($comment->Posted),
+                    'commentIndex' => $commentsCountIndex,
+                    'commentIndexText' => $commentsCountIndex == 0 ? "INITIAL REQUEST" : ('REPLY #'.$commentsCountIndex),
+                    'userProfile' => FEGSystemHelper::getTicketCommentUserProfile($comment),
+                ])->render();
+            }
+            if (!empty($commentsArray)) {
+                $comments = '';
+                $comments .= \View::make('servicerequests.email.commentviewheader', ['conversationCount' => $commentsCount])->render();;
+                $comments .= implode("<br/>", $commentsArray);
+            }
+        }
+        else {
+            $comments = $commentsData;
+        }
+        return $comments;
+    }
+
     function validateTicketCommentsForm()
     {
        // $rules = array();
@@ -750,19 +838,33 @@ class servicerequestsController extends Controller
 
     public function departmentSendMail($departmentId, $ticketId, $message)
     {
+        die('====THIS CODE IS DEPRECATED, ITS MARKED FOR REMOVE, CONTACT DEVELOPER======');
+
         $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $departmentId . "");
         $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
 
         $subject = 'FEG Ticket #' . $ticketId;
-        $headers = 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+       // $headers = 'MIME-Version: 1.0' . "\r\n";
+       // $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+       // $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
 
         foreach ($department_memebers as $i => $id) {
             $get_user_id_from_employess = \DB::select("Select users.email FROM users  WHERE users.id = " . $id . "");
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
-                mail($to, $subject, $message, $headers);
+                //mail($to, $subject, $message, $headers);
+                if(!empty($to)){
+                    FEGSystemHelper::sendSystemEmail(array(
+                        'to' => $to,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'from' => CNF_REPLY_TO,
+                        //'cc' => $cc,
+                        //'bcc' => $bcc,
+                        'configName' => 'SERVICE REQUEST DEPARTMENT EMAIL'
+                    ));
+                }
             }
         }
     }
@@ -775,10 +877,22 @@ class servicerequestsController extends Controller
                if (isset($assignee->email)) {
                    $to = $assignee->email;
                    $subject = 'FEG Ticket #' . $ticketId;
-                   $headers = 'MIME-Version: 1.0' . "\r\n";
-                   $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                   $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
-                   mail($to, $subject, $message, $headers);
+                   //$headers = 'MIME-Version: 1.0' . "\r\n";
+                   //$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                   //$headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+                   //mail($to, $subject, $message, $headers);
+                   if(!empty($to)){
+                       FEGSystemHelper::sendSystemEmail(array(
+                           'to' => $to,
+                           'subject' => $subject,
+                           'message' => $message,
+                           'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                           'from' => CNF_REPLY_TO,
+                           //'cc' => $cc,
+                           //'bcc' => $bcc,
+                           'configName' => 'SERVICE REQUEST ASSIGN EMAIL'
+                       ));
+                   }
                }
            }
        }

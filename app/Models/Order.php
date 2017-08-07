@@ -1,7 +1,9 @@
 <?php namespace App\Models;
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Ordertyperestrictions;
 use Log;
 
 class order extends Sximo
@@ -12,6 +14,8 @@ class order extends Sximo
     const OPENID1 = 1, OPENID2 = 3, OPENID3 = 4, FIXED_ASSET_ID = 9, CLOSEID1 = 2, CLOSEID2 = 5;
     const ORDER_PERCISION = 3;
     const ORDER_TYPE_PART_GAMES = 1;
+    const ORDER_VOID_STATUS = 9;
+    const ORDER_CLOSED_STATUS = [2,6];
 
     public function __construct()
     {
@@ -24,7 +28,13 @@ class order extends Sximo
     public static function querySelect()
     {
 
-        return "  SELECT orders.* from orders ";
+        return "  SELECT orders.*,L.location_name,V.vendor_name,U.username,OT.order_type,OS.status,YN.yesno FROM orders
+                LEFT OUTER JOIN location L ON orders.location_id=L.id
+                LEFT OUTER JOIN vendor V ON orders.vendor_id=V.id
+                LEFT OUTER JOIN users U ON orders.user_id=U.id
+                LEFT OUTER JOIN order_type OT ON orders.order_type_id=OT.id
+                LEFT OUTER JOIN order_status OS ON orders.status_id=OS.id
+                LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id";
     }
 
     public static function processApiData($json,$param=null)
@@ -53,6 +63,10 @@ class order extends Sximo
                 break;
             default:
                 $return .= " orders.id IS NOT NULL";
+        }
+        if($cond == 'only_api_visible')
+        {
+            $return .= " AND is_api_visible = 1 And api_created_at IS NOT NULL";
         }
 
         return $return;
@@ -169,9 +183,19 @@ class order extends Sximo
         return "GROUP BY orders.id  ";
     }
 
-    public function getOrderQuery($order_id, $mode = null)
+    public function getOrderQuery($order_id, $mode = null,$pass=null)
     {
-
+        $case_price_categories = [];
+        if(isset($pass['calculate price according to case price']))
+        {
+            $case_price_categories = explode(',',$pass['calculate price according to case price']->data_options);
+        }
+        $case_price_if_no_unit_categories = [];
+        if(isset($pass['use case price if unit price is 0.00']))
+        {
+            $case_price_if_no_unit_categories = explode(',',$pass['use case price if unit price is 0.00']->data_options);
+        }
+        $data['order_content_id'] = 0;
         $data['requests_item_count'] = 0;
         $data['receivedItemsArray']=0;
         $data['order_loc_id'] = '0';
@@ -182,7 +206,7 @@ class order extends Sximo
         $data['received_date']="";
         $data['received_by']="";
        // $data['order_location_name'] = '';
-
+        $data['orderItemsPriceArray']="";
         $data['order_freight_id'] = '';
         $data['orderDescriptionArray'] = '';
         $data['orderPriceArray'] = '';
@@ -216,13 +240,13 @@ class order extends Sximo
                 $data['order_type'] = $order_query[0]->order_type_id;
                 $data['order_company_id'] = $order_query[0]->company_id;
                 $data['order_freight_id'] = $order_query[0]->freight_id;
-                $data['today'] = $order_query[0]->date_ordered;
+                $data['today'] = $mode == 'clone' ? $this->get_local_time('date'):$order_query[0]->date_ordered;
                 $data['po_notes'] = $order_query[0]->po_notes;
                 $data['order_total'] = $order_query[0]->order_total;
                 $data['alt_address'] = $order_query[0]->alt_address;
             }
             $data['prefill_type'] = 'clone';
-            $content_query = \DB::select('SELECT  g.game_name , O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku
+            $content_query = \DB::select('SELECT  O.id as order_content_id,g.game_name , O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku
 												,O.item_received as item_received,O.game_id FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
 												  LEFT JOIN game g ON g.id = O.game_id
 												  WHERE O.order_id = ' . $order_id);
@@ -232,15 +256,29 @@ class order extends Sximo
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
                     $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
-                    $orderPriceArray[] = number_format($row->price , self::ORDER_PERCISION);
+                    $orderPriceArray[] = Sximo::parseNumber($row->price);
+                    if(in_array($data['order_type'],$case_price_categories))
+                    {
+                        $orderItemsPriceArray[] = $row->case_price;
+                    }
+                    elseif(in_array($data['order_type'],$case_price_if_no_unit_categories))
+                    {
+                        $orderItemsPriceArray[] = ($row->price == 0.00)?$row->case_price:$row->price;
+                    }
+                    else
+                    {
+                        $orderItemsPriceArray[] = $row->price;
+                    }
                     $orderQtyArray[] = $row->qty;
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
                     $skuNumArray[] = $row->sku;
-                    $orderitemcasepriceArray[] = number_format($row->case_price,self::ORDER_PERCISION) ;
+                    $orderitemcasepriceArray[] = Sximo::parseNumber($row->case_price) ;
                     $orderretailpriceArray[]= $row->retail_price;
                     $ordergameidsArray[] = $row->game_id;
                     $ordergamenameArray[] = $row->game_name;
+
+                    $orderContentIdArray[] = $row->order_content_id;
                     
 
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
@@ -271,6 +309,10 @@ class order extends Sximo
                 $data['itemRetailPrice']=$orderretailpriceArray;
                 $data['gameIdsArray']=$ordergameidsArray;
                 $data['receivedItemsArray']=$receivedItemsArray;
+                $data['orderItemsPriceArray'] = isset($orderItemsPriceArray)?$orderItemsPriceArray:"";
+
+                $data['order_content_id'] = $orderContentIdArray;
+
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);
@@ -300,8 +342,8 @@ class order extends Sximo
 
                 $data['prefill_type'] = 'edit';
             }
-            $data['today'] = ($mode) ? $order_query[0]->date_ordered : $this->get_local_time('date');
-        } elseif (substr($mode, 0, 3) == 'SID') {
+            $data['today'] = ($mode) && $mode != 'clone' ? $order_query[0]->date_ordered : $this->get_local_time('date');
+            } elseif (substr($mode, 0, 3) == 'SID') {
             $item_count = substr_count($mode, '-');
             $SID_string = $mode;
             $data['SID_string'] = $SID_string;
@@ -317,6 +359,7 @@ class order extends Sximo
 
                 $query = \DB::select('SELECT R.qty,
 											  P.case_price,
+											  P.unit_price,
 											  P.sku,
 											  P.retail_price,
 											  P.vendor_id,
@@ -332,7 +375,7 @@ class order extends Sximo
 									LEFT JOIN products P ON P.id = R.product_id
 									LEFT JOIN location L ON L.id = R.location_id
 										WHERE R.id = ' . ${'SID' . $i} . '');
-
+                \DB::table('requests')->where('id', ${'SID' . $i})->update(['blocked_at'=>date('Y-m-d H:i:s')]);
                 if (count($query) == 1) {
 
                     $data['order_loc_id'] = $query[0]->location_id;
@@ -350,8 +393,9 @@ class order extends Sximo
                     $data['order_freight_id'] = "";
 
                     $orderDescriptionArray[] = $query[0]->description;
-                    $orderPriceArray[] = $query[0]->case_price;
+                    $orderPriceArray[] = $query[0]->unit_price;
                     $orderQtyArray[] = $query[0]->qty;
+
                     $skuNumArray[] = $query[0]->sku;
                     $orderProductIdArray[] = $query[0]->product_id;
                  //   $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
@@ -411,8 +455,6 @@ class order extends Sximo
     }
     function isPOAvailable($po_full)
     {
-        //echo $po_full;
-        //die('here..in p');
         $query = \DB::select("SELECT po_number FROM po_track WHERE po_number = '".$po_full."'" );
         if(count($query) > 0 ) {
 
@@ -424,7 +466,8 @@ class order extends Sximo
     }
     function createPOTrack($po_full,$location_id)
     {
-        $data=array('po_number'=>$po_full,'location_id'=>$location_id);
+        $count = explode('-', $po_full);
+        $data=array('po_number'=>$po_full,'location_id'=>$location_id, 'sort' => $count[2]);
         \DB::table('po_track')->insert($data);
     }
     public function get_local_time($type = null)
@@ -451,7 +494,7 @@ class order extends Sximo
         $data['user_id'] = \Session::get('uid');
         if (!empty($order_id)) {
             $query = \DB::select('SELECT  O.order_type_id,O.order_description,O.request_ids,O.po_number,O.location_id,O.order_total,O.status_id,O.date_received,
-                     O.notes,O.added_to_inventory,V.vendor_name,U.username FROM orders O LEFT JOIN vendor V ON V.id = O.vendor_id
+                     O.notes,O.added_to_inventory,O.tracking_number,V.vendor_name,U.username FROM orders O LEFT JOIN vendor V ON V.id = O.vendor_id
                      LEFT JOIN users U ON U.id = O.user_id
                       
                       WHERE O.id = ' . $order_id . '');
@@ -470,6 +513,7 @@ class order extends Sximo
                 $data['vendor_name'] = $query[0]->vendor_name;
                 $data['item_count'] = '';
                 $data['date_received']=$query[0]->date_received;
+                $data['tracking_number']=$query[0]->tracking_number;
             }
             if (!empty($data['requestIds']) && ($data['order_type'] == 7 || $data['order_type'] == 8)) //INSTANT WIN AND REDEMPTION PRIZES
             {
@@ -528,9 +572,9 @@ class order extends Sximo
 
     }
 
-    function increamentPO($location=0,$count=0)
+    function increamentPO_bk($location=0,$count=0, $datemdy = "")
     {
-        $today = date('mdy');
+        $today = empty($datemdy) ? date('mdy'): $datemdy;
         if($location != 0) {
 
             $po = \DB::select("select po_number from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by po_number");
@@ -549,26 +593,70 @@ class order extends Sximo
             if($this->isPOAvailable($po_new))
             {
                 $this->createPOTrack($po_new,$location);
-                echo $count;die();
-                return $count;
+
             }
             else
             {
                 //echo "$location:$count";
                 //die('here...');
-                $this->increamentPO($location,$count);
+                $count = $this->increamentPO($location,$count);
             }
         }
         else
         {
-            return 1;
+            $count=1;;
         }
+        return $count;
+    }
+
+    function increamentPO($location=0,$count=0, $datemdy = ""){
+        $today = empty($datemdy) ? date('mdy'): $datemdy;
+        if($location != 0) {
+
+            $poData = \DB::select("select sort from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by sort");
+
+            $poData = array_map(function ($value) {
+                return $value->sort;
+            }, $poData);
+
+            $total = count($poData);
+            if($count == 0 ) {
+                $count = $total + 1;
+            }
+            else{
+                $count = $count + 1;
+            }
+
+            if ($total != 0) {
+                for ($i = 1; $i <= $total; $i++) {
+                    if (!in_array($i, $poData)) {
+                        $count = $i;
+                        break;
+                    }
+                }
+            }
+
+            $po_new = $location . "-" . $today . "-" . $count;
+            if ($this->isPOAvailable($po_new)) {
+                $this->createPOTrack($po_new, $location);
+            } /*else {
+                $count = $this->increamentPO($location);
+            }*/
+            
+        }else{
+            $count=1;
+        }
+        return $count;
     }
 
     function getVendorEmail($vendor_id)
     {
-        $vendor_email = \DB::select("SELECT email from vendor WHERE id=" . $vendor_id);
-        return $vendor_email[0]->email;
+        $vendor_email = \DB::select("SELECT email, email_2 from vendor WHERE id=" . $vendor_id);
+        if(empty($vendor_email[0]->email_2)){
+            return $vendor_email[0]->email;
+        }else{
+            return $vendor_email[0]->email.','.$vendor_email[0]->email_2;
+        }
     }
 
     function productUnitPriceAndName($prod_id)
@@ -592,11 +680,295 @@ class order extends Sximo
     }
 
     public function getUnitPriceAttribute(){
-        return number_format($this->attributes['unit_price'],3);
+        return Sximo::parseNumber($this->attributes['unit_price']);
+        //return number_format($this->attributes['unit_price'],3); //causing problem with inputs
     }
     public function getCasePriceAttribute(){
-        return number_format($this->attributes['case_price'],3);
+        return Sximo::parseNumber($this->attributes['case_price']);
+        //return number_format($this->attributes['case_price'],3); //causing problem with inputs
+    }
+
+    public static function isClonable($id, $data = null) {
+        
+    }
+    public static function isEditable($id, $data = null) {
+
+    }
+    public static function isReceivable($id, $data = null) {
+
+    }
+    public static function isPartiallyReceived($id, $data = null) {
+        $partial = false;
+        if (self::isVoided($id, $data)){
+            return $partial;
+        }
+        $record = \DB::select('SELECT
+            SUM(qty) as total_items,
+            (SUM(qty)-SUM(item_received)) as remaining_items 
+            FROM order_contents
+            WHERE order_id ='.$id.
+            " GROUP BY order_id");
+        $partial = !empty($record) && 
+                $record[0]->remaining_items > 0 && 
+                $record[0]->remaining_items < $record[0]->total_items;        
+        return $partial;
+    }
+    
+    public static function isClosed($id, $data = null) {
+        if (!empty($data)) {
+            $statusId = is_object($data) ? $data->status_id : $data['status_id'];
+        }
+        else {
+            $statusId = self::where('id', $id)->value('status_id');
+        }
+        $isClosed = in_array($statusId, self::ORDER_CLOSED_STATUS);
+        return $isClosed;
+    }
+    public static function isVoided($id, $data = null) {
+        if (!empty($data)) {
+            $statusId = is_object($data) ? $data->status_id : $data['status_id'];
+        }
+        else {
+            $statusId = self::where('id', $id)->value('status_id');
+        }
+        $isVoided = $statusId == self::ORDER_VOID_STATUS;
+        return $isVoided;
+    }
+    public static function isFreehand($id, $data = null) {
+        if (!empty($data)) {
+            $freehand = is_object($data) ? $data->is_freehand : $data['is_freehand'];
+        }
+        else {
+            $freehand = self::where('id', $id)->value('is_freehand');
+        }
+        $isFreeHand = !empty($freehand);
+        return $isFreeHand;
+    }
+
+    public static function isApiableFromType($id, $data = null) {
+        $data = null;
+        if (!empty($data)) {
+            $oType = is_object($data) ? $data->order_type_id : $data['order_type_id'];
+        }
+        else {
+            $oType = self::where('id', $id)->value('order_type_id');
+        }
+        $isApiable = Ordertyperestrictions::isApiable($oType);
+        return $isApiable;
+    }
+    public static function isApiable($id, $data = null, $ignoreVoid = false) {
+        return !self::isFreehand($id, $data) && self::isApiableFromType($id, $data) &&
+                ($ignoreVoid || !self::isVoided($id, $data));
+    }
+    public static function isApified($id, $data = null) {
+        if (!empty($data)) {
+            $api = is_object($data) ? $data->is_api_visible : $data['is_api_visible'];
+        }
+        else {
+            $api = self::where('id', $id)->value('is_api_visible');
+        }
+        $isApified = !empty($api);
+        return $isApified;
+    }
+    public static function apified($id, $isUnset = false) {
+        if (self::isApiable($id, null, true)) {
+            $now = date("Y-m-d H:i:s");
+            $setValue = $isUnset ? 0 : 1;
+            $updateData = ['is_api_visible' => $setValue];
+            if (self::isApified($id)) {
+                $updateData['api_updated_at'] = $now;
+            }
+            else {
+                $updateData['api_created_at'] = $now;
+            }
+            return self::where('id', $id)->update($updateData);
+        }
+        return false;
+    }
+    public static function voidify($id) {
+        $now = date("Y-m-d H:i:s");
+        $updateData = ['status_id' => self::ORDER_VOID_STATUS];
+        if (self::isApified($id)) {
+            $updateData['api_updated_at'] = $now;
+        }
+        $updateData['updated_at'] = $now;
+        return self::where('id', $id)->update($updateData);
+    }
+
+    public static function canPostToNetSuit($id){
+        $order_qty = \DB::select("SELECT SUM(qty) as qty FROM order_contents WHERE order_id=$id");
+        $received_qty = \DB::select("SELECT SUM(quantity) as qty FROM order_received WHERE order_id=$id");
+        if(!empty($received_qty)){
+            if($received_qty[0]->qty == $order_qty[0]->qty){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    public static function cloneOrder($id, $data = null, $options = array()) {
+
+        $options = array_merge([
+            'skipReceipts' => true,
+            'skipItems' => false,
+            'resetDate' => null,
+            'resetApiable' => true
+        ], $options);
+        
+        $nowTimestamp = strtotime("now");
+        $now = date("Y-m-d", $nowTimestamp);
+        $nowStamp = date("Y-m-d H:i:s", $nowTimestamp);
+        
+        if (empty($data)) {
+            $data = self::find($id)->toArray();
+        }
+        $locationId = $data['location_id'];
+        unset($data['id']);
+        if (!empty($options['resetApiable'])) {
+            unset($data['is_api_visible']);
+            unset($data['api_created_at']);
+            unset($data['api_updated_at']);
+        }
+        unset($data['updated_at']);
+        unset($data['created_at']);
+        unset($data['date_received']);
+        if (!empty($options['resetDate'])) {
+            $nowStamp = $options['resetDate'];
+            $nowTimestamp = strtotime($nowStamp);
+            $now = date('Y-m-d', $nowTimestamp);
+        }
+
+        $data['date_ordered'] = $now;
+        $data['po_number'] = self::generateNewPONumber($locationId, $nowStamp);
+        $obj = with(new self);
+        $newID = $obj->insertRow($data);
+        \Log::info($options);
+        if (empty($options['skipItems'])) {
+            \Log::info("Not skipping items");
+            $itemReceived = empty($options['skipReceipts'])? 'oc.item_received' : '0';
+            $sql = "INSERT INTO order_contents
+                      ( order_id,
+                        request_id,
+                        product_id,
+                        product_description,
+                        price,
+                        qty,
+                        game_id,
+                        item_name,
+                        case_price,
+                        total,
+                        item_received,
+                        sku,
+                        created_at
+                      )
+                    SELECT $newID,
+                        oc.request_id,
+                        oc.product_id,
+                        oc.product_description,
+                        oc.price,
+                        oc.qty,
+                        oc.game_id,
+                        oc.item_name,
+                        oc.case_price,
+                        oc.total,
+                        $itemReceived,
+                        oc.sku,
+                        NOW()
+                    FROM order_contents AS oc
+                    WHERE oc.order_id=$id";
+
+            \Log::info($sql);
+            $affected = \DB::insert($sql);
+        }
+        else {
+            \Log::info("skipping items");
+        }
+        if (empty($options['skipReceipts'])) {
+             \Log::info("NOT skipping receipts");
+            $sql = "INSERT INTO order_received
+                        (order_id,
+                        order_line_item_id,
+                        quantity,
+                        received_by,
+                        date_received,
+                        created_at,
+                        notes,
+                        status)
+                    SELECT $newID,
+                        orc.order_line_item_id,
+                        orc.quantity,
+                        orc.received_by,
+                        orc.date_received,
+                        NOW(),
+                        orc.notes,
+                        orc.status
+                        
+                    FROM order_received AS orc
+                    WHERE orc.order_id=$id";
+
+            $affected = \DB::insert($sql);
+        }
+        else {
+            \Log::info("skipping receipts");
+        }
+
+        return $newID;
+
+    }
+
+    public static function generateNewPONumber($location, $date, $count = 0) {
+        $obj = with(new static);
+        $datemdy = date("mdy", strtotime($date));
+        do {
+            $poCount = $obj->increamentPO($location, $count, $datemdy);
+            $poNumber = "$location-$datemdy-$poCount";
+            $count++;
+        } while(self::where('po_number', $poNumber)->count() > 0);
+
+        return $poNumber;
+    }
+    public static function relateOrder($rType, $originalOrderID, $targetOrderID) {
+        
+        $typeIDs = \FEGHelp::getEnumTable('orders_relation_types', 'relation_name', 'id');
+        $oOrderData = self::find($originalOrderID);
+        $tOrderData = self::find($targetOrderID);
+        $nowDateTime = date("Y-m-d H:i:s");
+        $now = \DateHelpers::formatDate($nowDateTime);
+        $oPO = $oOrderData->po_number;
+        $tPO = $tOrderData->po_number;
+        $now = \DateHelpers::formatDate(date("Y-m-d H:i:s"));
+        if ($rType == 'replace') {
+            // $originalOrderID => new order which replaces the old
+            // $targetOrderID => old order which has been replaced by the $originalOrderID
+            $data =[[
+                'order_id' => $originalOrderID,
+                'related_order_id' => $targetOrderID,
+                'relation_id' => $typeIDs['replaces'],
+                'relation_note' => \FEGHelp::stringBuilder(\Lang::get('core.templates.order_replaces'), [$tPO, $now]),
+            ],[
+                'order_id' => $targetOrderID,
+                'related_order_id' => $originalOrderID,
+                'relation_id' => $typeIDs['replaced by'],
+                'relation_note' => \FEGHelp::stringBuilder(\Lang::get('core.templates.order_replaced_by'), [$oPO, $now]),
+            ]];
+            \DB::table('orders_relations')->insert($data);
+        }        
+    }
+
+    public static function getOrderRelationships($id) {
+        $notes = [];
+        $data = \DB::table('orders_relations')->where("order_id", $id)->get();
+        if (!empty($data)) {
+            foreach($data as $row) {
+                $notes[] = $row->relation_note;
+            }
+        }
+        return $notes;
     }
 }
+
 
 

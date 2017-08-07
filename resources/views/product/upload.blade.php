@@ -5,7 +5,7 @@
         <!-- Page header -->
         <div class="page-header">
             <div class="page-title">
-                <h3> Upload Image <small>Profile Image</small></h3>
+                <h3> Upload Image </h3>
 
             </div>
 
@@ -13,7 +13,7 @@
 
         <div class="page-content-wrapper m-t">
             <div class="sbox animated fadeInRight">
-                <div class="sbox-title"> <h4> <i class="fa fa-table"></i> Upload Image <small>Profile Image</small>
+                <div class="sbox-title"> <h4> <i class="fa fa-table"></i> Upload Image
                         <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#product')"><i class="fa fa fa-times"></i></a>
                     </h4>
                 </div>
@@ -26,19 +26,18 @@
                             **MUST BE jpg, jpeg, gif, png**
                         </p>
                             </div>
-                    <div class="col-md-6" >
+                    <div class="col-md-6 res-img" >
                             {!! SiteHelpers::showUploadedFile($img,'/uploads/products/',400,false) !!}
                     </div>
+                    
                     <div class="col-md-6">
-
-
                         {!! Form::open(array('url'=>'product/upload?return='.$return, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
-
-                    <div class="form-group" style="margin-top:120px;">
+                    <div class="m-xl clearfix hidden-xs"></div>
+                    <div class="form-group" style="margin-top: 20px; margin-left: 0px;">
                                 <input  type='file' name='img' id='img'  required  style='width:150px !important;'     value=""  />
                         <input type="hidden" value="{{ Request::segment(3) }}" name="id"/>
                     </div>
-                        <div class="form-group" style="margin-top:50px;">
+                        <div class="form-group" style="margin-left: 0px; margin-top: 20px;">
 
                                 <button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
 

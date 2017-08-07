@@ -1,8 +1,12 @@
 <?php namespace App\Http\Controllers;
 
+use App\Models\Sximo;
+use App\User;
 use Illuminate\Http\Request;
-
-use Validator, Input, Redirect;
+use PHPMailerOAuth;
+use App\Models\Core\Pages;
+use Validator, Input, Redirect, Auth;
+use App\Models\Core\Groups;
 
 class HomeController extends Controller
 {
@@ -24,12 +28,25 @@ class HomeController extends Controller
         endif;
 
         $page = $request->segment(1);
+        $pageUrl = $request->fullUrl();
+
         if ($page != '') :
-            $content = \DB::table('tb_pages')->where('alias', '=', $page)->where('status', '=', 'enable')->get();
+            $content = \DB::table('tb_pages')
+                ->where('alias', '=', $page)
+                ->where('status', '=', 'enable')->get();
 
             if (count($content) >= 1) {
 
                 $row = $content[0];
+
+                $this->data['editLink'] = '';
+                if (Pages::canIEdit($row->pageID)){
+                    $editUrl = url('core/pages/update/'.$row->pageID.'?return='.$pageUrl);
+                    $editLink = view('core.pages.edit-link', ['page' => $row,
+                                    'url' => $editUrl]);
+                    $this->data['editLink'] = $editLink;
+                }
+
                 $this->data['pageTitle'] = $row->title;
                 $this->data['pageNote'] = $row->note;
                 $this->data['pageMetakey'] = ($row->metakey != '' ? $row->metakey : CNF_METAKEY);
@@ -89,6 +106,23 @@ class HomeController extends Controller
         endif;
 
 
+    }
+
+    public function gMailTest()
+    {
+        return view('pages.gmailtest');
+    }
+    public function saveToken(Request $request)
+    {
+        $user = User::find($request->user_id);
+        $user->oauth_token = $request->access_token;
+        $user->save();
+        return 'Token Saved';
+    }
+    public function gMailCallback()
+    {
+
+        return view('pages.sendmail')->with('token',Input::get('code'))->with('token2',"ya29.GlsqBJsmtUF_G0uYnwosTrbPCOfImLbKHjyTdN3-ISdZ1V3lYJwcBTO46GYLjMGc8U-UIwDP7XkYrHu4bpCCyACzxkIzYGnV5ZTUgeUHWzETYUhgxFx7F9YwaiHm");
     }
 
     public function  getLang($lang = 'en')

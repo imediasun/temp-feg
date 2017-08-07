@@ -20,7 +20,7 @@ class managefegrequeststore extends Sximo
 
         return "SELECT requests.*,u1.username,products.img,IF(product_id = 0, requests.description, products.vendor_description) as description,
                 products.sku,products.case_price,products.retail_price,products.case_price*requests.qty,products.ticket_value,location.location_name_short,
-                merch_request_status.status,products.size,V1.vendor_name,order_type.order_type,If(products.reserved_qty = 0, '' , products.reserved_qty) as reserved_qty,
+                merch_request_status.status,products.size,concat(V1.vendor_name,if(V1.status=0,' (Inactive)','')) as vendor_name,order_type.order_type,If(products.reserved_qty = 0, 'No Data' , products.reserved_qty) as reserved_qty,
                 (products.reserved_qty - requests.qty) as reserved_difference, products.vendor_id,products.prod_type_id  FROM requests
                 LEFT JOIN users u1 ON (requests.request_user_id = u1.id)
 			    LEFT JOIN products ON (requests.product_id = products.id)
@@ -35,7 +35,7 @@ class managefegrequeststore extends Sximo
         $order_type_id = isset($cond['order_type_id']) ? $cond['order_type_id'] : "";
         $location_id = isset($cond['location_id']) ? $cond['location_id'] : "";
         $vendor_id = isset($cond['vendor_id']) ? $cond['vendor_id'] : "";
-        $where = "  WHERE requests.id IS NOT NULL ";
+        $where = "  WHERE requests.id IS NOT NULL AND requests.blocked_at IS NULL ";
         if ($cond['view'] == 'manage') {
             if (!empty($order_type_id)) {
                 if (strpos($order_type_id, '-')) {
@@ -74,8 +74,18 @@ class managefegrequeststore extends Sximo
         return "  ";
     }
 
-    public static function getManageRequestsInfo($v1 = null, $v2 = null, $v3 = null)
+    /**
+     * @param null $v1 => T for Order Type (v1=T6)
+     * @param null $v2 => V for Order Vendor(v2=
+     * @param null $v3 => L for Order Location(v3=V11)
+     * @param null $filter
+     * @return mixed
+     */
+    public static function getManageRequestsInfo($v1 = null, $v2 = null, $v3 = null,$filter=null)
     {
+        /**
+         * Extract type id from v1,v2 or v3 variable
+         */
         if (substr($v1, 0, 1) == 'T') {
             $v1 = substr($v1, 1);
             $TID = $v1;
@@ -88,6 +98,10 @@ class managefegrequeststore extends Sximo
         } else {
             $TID = 0;
         }
+
+        /**
+         * Extract location id from v1,v2 or v3 variable
+         */
         if (substr($v1, 0, 1) == 'L') {
             $v1 = substr($v1, 1);
             $LID = $v1;
@@ -100,6 +114,11 @@ class managefegrequeststore extends Sximo
         } else {
             $LID = 0;
         }
+
+        /**
+         * Extract vendor id from v1,v2 or v3 variable
+         */
+
         if (substr($v1, 0, 1) == 'V') {
             $v1 = substr($v1, 1);
             $VID = $v1;
@@ -112,17 +131,23 @@ class managefegrequeststore extends Sximo
         } else {
             $VID = 0;
         }
-        $order_dropdown_data = self::getOrdersDropDownData();
+
+        $order_dropdown_data = self::getOrdersDropDownData($filter);
         $data['order_dropdown-data'] = $order_dropdown_data;
+
+
+
         if (!empty($TID)) {
             if (strpos($TID, '-')) {
                 $TID_comma_replaced = str_replace('-', ',', $TID);
             } else {
                 $TID_comma_replaced = $TID;
             }
-            $data['loc_options'] = self::getLocationDropDownData('CONCAT(requests.location_id," | ",location.location_name_short)', 'WHERE requests.status_id=1 AND products.prod_type_id IN (' . $TID_comma_replaced . ')', 'ORDER BY requests.location_id');
+            $loc_where = 'WHERE requests.status_id=1  AND requests.blocked_at IS NULL AND products.prod_type_id IN (' . $TID_comma_replaced . ') '.$filter;
+            $data['loc_options'] = self::getLocationDropDownData('CONCAT(requests.location_id," | ",location.location_name_short)', $loc_where, 'ORDER BY requests.location_id');
             if (!empty($LID)) {
-                $data['vendor_options'] = self::getVendorDropDownData('vendor_name', 'WHERE requests.status_id=1 AND requests.location_id=' . $LID . ' AND products.prod_type_id IN (' . $TID_comma_replaced . ')', 'ORDER BY vendor.vendor_name');
+                $vendor_where='WHERE requests.status_id=1  AND requests.blocked_at IS NULL AND requests.location_id=' . $LID . ' AND products.prod_type_id IN (' . $TID_comma_replaced . ')'.$filter;
+                $data['vendor_options'] = self::getVendorDropDownData('CONCAT(vendor_name,IF(vendor.status=0," (Inactive)",""))',$vendor_where, 'ORDER BY vendor.vendor_name');
             } else {
                 $data['vendor_options'] = array('' => '<-- Select');
             }
@@ -141,17 +166,17 @@ class managefegrequeststore extends Sximo
 
         $query = \DB::select('SELECT COUNT(requests.id) as count,O.order_type AS request_count FROM requests
 								LEFT JOIN products P ON P.id = requests.product_id LEFT JOIN order_type O ON O.id = P.prod_type_id
-                                WHERE requests.status_id = 1 AND O.order_type IS NOT NULL ' . $order_type_where . ' GROUP BY P.prod_type_id');
+                                WHERE requests.status_id = 1  AND requests.blocked_at IS NULL AND O.order_type IS NOT NULL ' . $order_type_where . ' GROUP BY P.prod_type_id');
 
         foreach ($query as $index => $row) {
        //     $number_requests = $number_requests ." ".." | <em>". $row->request_count .":</em>";
             if($index == count($query) -1 )
-                $number_requests = $number_requests ." ".$row->request_count. $row->count ;
+                $number_requests = $number_requests ." ".$row->request_count.": ". $row->count ;
             else
-                $number_requests = $number_requests ." ".$row->request_count. $row->count  ;
+                $number_requests = $number_requests ." ".$row->request_count.": ". $row->count  ;
 
         }
-        $data['number_requests'] = substr($number_requests, 0, -2);
+        $data['number_requests'] = $number_requests;
         $query = \DB::select('SELECT GROUP_CONCAT(order_type) AS order_types  FROM order_type
 							  WHERE id != 6 AND id != 10');
         if (count($query) == 1) {
@@ -164,37 +189,61 @@ class managefegrequeststore extends Sximo
         return $data;
     }
 
-    public static function getOrdersDropDownData()
+    public static function getOrdersDropDownData($filter)
     {
-
+        $filter = str_replace('requests.','R.',$filter);
+        $filter = str_replace('products.','P.',$filter);
+        $filter = str_replace('order_type.','O.',$filter);
         $query = \DB::select('SELECT O.id,O.order_type FROM order_type O
 							  LEFT JOIN products P ON P.prod_type_id = O.id
 							  LEFT JOIN requests R ON R.product_id = P.id
 							  WHERE R.status_id = 1
+							  AND R.blocked_at IS NULL
 							  GROUP BY O.id
                               ORDER BY O.order_type');
 
+        $query = \DB::select("SELECT O.id,O.order_type FROM requests R
+                               JOIN products P ON P.id = R.product_id
+                               JOIN order_type O ON O.id = P.prod_type_id
+							  WHERE R.status_id = 1
+							  AND R.blocked_at IS NULL
+							 $filter
+							  GROUP BY O.id
+                              ORDER BY O.order_type");
         $orderTypesArray = array();
+        $haveCategories = 0;
         foreach ($query as $row) {
             if($row->order_type!= 7 && $row->order_type != 8) {
                 $row = array(
                 'id' => $row->id,
                 'text' => $row->order_type
             );
+                //$orderTypesArray[] = $row;
                // Removing 'Instant Wind Prizes' and 'Redemption Prizes' from order type array
                 if($row['id'] != 7 && $row['id'] != 8) {
                     $orderTypesArray[] = $row;
                 }
+                else
+                {
+                    $haveCategories = 1;
+                }
             }
         }
-              // Combining 'Instant Win','Redemption' and 'Party' order types in a single category
-        $customArray[] = array(
-            'id' => '7-8-17',
-            'text' => 'Instant Win, Redemption, Party (Combined)'
-        );
 
-        $array = array_merge($orderTypesArray, $customArray);
-        return $array;
+        if($haveCategories)
+        {
+            // Combining 'Instant Win','Redemption' and 'Party' order types in a single category
+            $customArray[] = array(
+                'id' => '7-8',
+                'text' => 'Instant Win, Redemption (combined)'
+            );
+
+            $orderTypesArray = array_merge($orderTypesArray, $customArray);
+            //$array = array_merge($orderTypesArray);
+        }
+
+
+        return $orderTypesArray;
     }
 
     public static function getLocationDropDownData($customField, $customWhere, $customOrderBy)
@@ -232,7 +281,7 @@ class managefegrequeststore extends Sximo
     function manageRequests($v1 = null, $v2 = null, $v3 = null)
     {
         $user_lever=\Session::get('gid');
-        if ($user_lever == 2)
+        if ($user_lever == Groups::PARTNER)
         {
             redirect('dashboard');
         }
@@ -312,11 +361,11 @@ class managefegrequeststore extends Sximo
                     $TID_comma_replaced = $TID;
                 }
 
-                $data['loc_options'] = self::getLocationDropDownData('CONCAT(requests.location_id," | ",location.location_name_short)','WHERE requests.status_id=1 AND products.prod_type_id IN ('.$TID_comma_replaced.')','ORDER BY requests.location_id');
+                $data['loc_options'] = self::getLocationDropDownData('CONCAT(requests.location_id," | ",location.location_name_short)','WHERE requests.status_id=1  AND requests.blocked_at IS NULL AND products.prod_type_id IN ('.$TID_comma_replaced.')','ORDER BY requests.location_id');
 
                 if(!empty($LID))
                 {
-                    $data['vendor_options'] = self::getVendorDropDownData('vendor_name','WHERE requests.status_id=1 AND requests.location_id='.$LID.' AND products.prod_type_id IN ('.$TID_comma_replaced.')','ORDER BY vendor.vendor_name');
+                    $data['vendor_options'] = self::getVendorDropDownData('vendor_name','WHERE requests.status_id=1  AND requests.blocked_at IS NULL AND requests.location_id='.$LID.' AND products.prod_type_id IN ('.$TID_comma_replaced.')','ORDER BY vendor.vendor_name');
                 }
                 else
                 {
@@ -348,7 +397,7 @@ class managefegrequeststore extends Sximo
             {
                 $number_requests = $number_requests.$row->request_count;
             }
-            $data['number_requests'] = substr($number_requests, 0, -2);
+            $data['number_requests'] = substr($number_requests, 0,-2);
 
             $query = \DB::select('SELECT GROUP_CONCAT(order_type) AS order_types
 									 FROM order_type

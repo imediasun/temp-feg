@@ -81,7 +81,6 @@ class RedemptioncountergallaryController extends Controller
         $results = $this->model->getRows($params);
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'],
             (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));
@@ -162,6 +161,7 @@ class RedemptioncountergallaryController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('redemptioncountergallary.view', $this->data);
     }
@@ -189,29 +189,34 @@ class RedemptioncountergallaryController extends Controller
     function postSave(Request $request, $id = null)
     {
 
-        $rules = array('redemption_image' => 'required|mimes:jpeg,gif,png', 'location' => 'required');
+        $rules = array('redemption_image' => 'required', 'location' => 'required');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data['loc_id'] = $request->get('location');
             $data['theme_name'] = "";
             $data['users'] = "";
             $data['image_category'] = "red";
-            $id = $this->model->insertRow($data, $id);
-            $file = $request->file('redemption_image');
-            $img = Image::make($file->getRealPath());
-            $mime = $img->mime();
-            if ($mime == 'image/jpeg') {
-                $extension = '.jpg';
-            } elseif ($mime == 'image/png') {
-                $extension = '.png';
-            } elseif ($mime == 'image/gif') {
-                $extension = '.gif';
-            } else {
-                $extension = '';
+            $data['batch'] = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
+
+            $files = $request->file('redemption_image');
+            $i=0;
+            foreach($files as $file) {
+                $img = Image::make($file->getRealPath());
+                $mime = $img->mime();
+                if ($mime == 'image/jpeg') {
+                    $extension = '.jpg';
+                } elseif ($mime == 'image/png') {
+                    $extension = '.png';
+                } elseif ($mime == 'image/gif') {
+                    $extension = '.gif';
+                } else {
+                    $extension = '';
+                }
+                $id = $this->model->insertRow($data, NULL);
+                $img->save('./uploads/gallary/' . $id . $extension);
+                $img->resize(101, 150);
+                $img->save('./uploads/gallary/' . $id . '_thumb' . $extension);
             }
-            $img->save(public_path('/uploads/gallary/' . $id . $extension));
-            $img->resize(101, 150);
-            $img->save(public_path('/uploads/gallary/' . $id . '_thumb' . $extension));
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -254,5 +259,35 @@ class RedemptioncountergallaryController extends Controller
                 'status' => 'error',
                 'message' => \Lang::get('core.note_error')));
         }
+    }
+    function postRotate(Request $request)
+    {
+        $id = $request->get('id');
+        $angle = $request->get('angle');
+        $db_angle=(int)$angle;
+        if (abs($angle) == 90) {
+            $angle = -$angle;
+        }
+// Load the image
+        $img = Image::make('./uploads/gallary/' . $id . '.jpg');
+        $imgThumb = Image::make('./uploads/gallary/' . $id . '_thumb.jpg');
+// Rotate
+        $img->rotate((int)$angle);
+        $imgThumb->rotate((int)$angle);
+//and save it on your server...
+        if($img->save('./uploads/gallary/' . $id .'_rotated.jpg'))
+        {
+            \DB::update("UPDATE img_uploads SET img_rotation=$db_angle WHERE id=$id");
+            $imgThumb->save('./uploads/gallary/' . $id .'_thumb_rotated.jpg');
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('Image Rotated Successfully')));
+        }
+        else{
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('Some Error occurred in rotating the image')));
+        }
+
     }
 }

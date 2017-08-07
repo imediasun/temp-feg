@@ -3,6 +3,8 @@
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Core\Groups;
+use App\Models\Feg\System\Options;
+use App\Models\Sximo;
 use App\User;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect;
@@ -13,17 +15,20 @@ class ConfigController extends Controller
     public function __construct()
     {
         parent::__construct();
-        if (\Auth::check() or \Session::get('gid') != '1') {
+        $this->data['pageTitle'] = "Settings";
+        if (\Auth::check() or \Session::get('gid') != Groups::USER) {
             //	echo 'redirect';
-            return Redirect::to('dashboard');
+            return Redirect::to('user/profile');
         };
 
     }
 
     public function getIndex()
     {
+        
         $this->data['active'] = '';
         $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
+        $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
         $this->data['options'] = [
             'CNF_APPNAME' => FEGSystemHelper::getOption('CNF_APPNAME'),
             'CNF_APPDESC' => FEGSystemHelper::getOption('CNF_APPDESC'),
@@ -31,14 +36,13 @@ class ConfigController extends Controller
              'CNF_EMAIL' => FEGSystemHelper::getOption('CNF_EMAIL'),
              'CNF_METAKEY' => FEGSystemHelper::getOption('CNF_METAKEY'),
             'CNF_METADESC' => FEGSystemHelper::getOption('CNF_METADESC'),
-             'CNF_REDIRECTLINK' => FEGSystemHelper::getOption('CNF_REDIRECTLINK'),
+             'CNF_REDIRECTLINK' => FEGSystemHelper::getOption('CNF_REDIRECTLINK')?FEGSystemHelper::getOption('CNF_REDIRECTLINK'):Options::where('option_name','CNF_REDIRECLINK')->pluck('option_value'),
              'CNF_GROUP' => FEGSystemHelper::getOption('CNF_GROUP'),
              'CNF_ACTIVATION' => FEGSystemHelper::getOption('CNF_ACTIVATION'),
              'CNF_MULTILANG' => FEGSystemHelper::getOption('CNF_MULTILANG'),
              'CNF_LANG' => FEGSystemHelper::getOption('CNF_LANG'),
              'CNF_REGIST' => FEGSystemHelper::getOption('CNF_REGIST'),
             'CNF_FRONT' => FEGSystemHelper::getOption('CNF_FRONT'),
-            'CNF_REGIST' => FEGSystemHelper::getOption('CNF_REGIST'),
             'CNF_RECAPTCHA' => FEGSystemHelper::getOption('CNF_RECAPTCHA'),
             'CNF_THEME' => FEGSystemHelper::getOption('CNF_THEME'),
             'CNF_RECAPTCHAPUBLICKEY' => FEGSystemHelper::getOption('CNF_RECAPTCHAPUBLICKEY'),
@@ -50,6 +54,7 @@ class ConfigController extends Controller
             'CNF_REPLY_TO' => FEGSystemHelper::getOption('CNF_REPLY_TO'),
             'CNF_REPLY_TO_PASSWORD' => FEGSystemHelper::getOption('CNF_REPLY_TO_PASSWORD'),
         ];
+
         return view('sximo.config.index', $this->data);
     }
 
@@ -79,6 +84,7 @@ class ConfigController extends Controller
             
 
             $data = $request->all();
+            
             unset($data['_token']);
             foreach ($data as $key => $value)
             {
@@ -122,7 +128,7 @@ class ConfigController extends Controller
 //            sleep(10);
               
             return \Response::json(['status' => 'success', 'message' => 'Settings have been saved successfully']);
-//              return Redirect::to('feg/config')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
+//              return Redirect::to('feg/config')->with('messagetext', 'Settings have been saved successfully')->with('msgstatus', 'success');
 
         } else {
             
@@ -244,7 +250,7 @@ class ConfigController extends Controller
             $fp = fopen($filename, "w+");
             fwrite($fp, $val);
             fclose($fp);
-            return Redirect::to('feg/config/security')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
+            return Redirect::to('feg/config/security')->with('messagetext', 'Settings have been saved successfully')->with('msgstatus', 'success');
         } else {
             return Redirect::to('feg/config/security')->with('messagetext', 'The following errors occurred')->with('msgstatus', 'error')
                 ->withErrors($validator)->withInput();

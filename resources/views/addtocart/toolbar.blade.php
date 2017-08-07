@@ -1,4 +1,4 @@
-<div class="row m-b">
+<div class="row c-margin">
         <?php
       //  $cartData=\Session::get('cartData');
         if($cartData['subtotals'])
@@ -17,7 +17,7 @@
     <?php } ?>
             <div class="col-md-8">
 
-                @if($access['is_remove'] ==1)
+                @if($access['is_remove'] ==1 && $setting['disableactioncheckbox']=='false')
                     <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
                 @endif
                 <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
@@ -46,7 +46,7 @@
         var t = document.getElementById('cart_data_table');
         //$("#cart_data_table tr").remove();
         $.ajax({
-            url:'addtocart/cartdata',
+            url: siteUrl + '/addtocart/cartdata',
             method:'get',
             success:function(data){
 
@@ -78,7 +78,7 @@
 
 
 // Add some text to the new cells:
-                    total_cell1.innerHTML = "Total";
+                    total_cell1.innerHTML = "TOTAL";
                     total_cell2.innerHTML =" $ "+  data['shopping_cart_total'];
                 }
                 else
@@ -90,6 +90,7 @@
                     $("#cartbtn").val(" Submit Weekly Requests totalling $ "+ data['shopping_cart_total']);
 
                 }
+                getCartTotal();
                 $('.ajaxLoading').hide();
 
             }

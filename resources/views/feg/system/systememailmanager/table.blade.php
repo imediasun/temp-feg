@@ -5,7 +5,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','systememailreportmanager/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','systememailreportmanager/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
+			@if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
 		</div>
@@ -43,7 +43,7 @@
                 @if($setting['disablerowactions']=='false')
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
                 @endif
-                @if($setting['disableactioncheckbox']=='false')
+                    @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
                 @endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif
@@ -67,8 +67,8 @@
 					{!! AjaxHelpers::buttonAction('feg/system/systememailreportmanager',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
-                @endif                
-                @if($setting['disableactioncheckbox']=='false')
+                @endif
+                    @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                 <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                 @endif
                 @if($setting['view-method']=='expand')
@@ -81,7 +81,7 @@
                         $conn = (isset($field['conn']) ? $field['conn'] : array() );
 
 
-                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
                         $fieldName = $field['field'];
                         if ($fieldName == "is_active") {
                             $value = $value == "1" ? "Yes" : "No";
@@ -150,7 +150,7 @@
                     <strong>ID:</strong> {{ $vrow->id }}<br/><br/>
                     <strong>Is Active?:</strong> {{ $vrow->is_active }}<br/><br/>
                     <strong>Locationwise filter?:</strong> {{ $vrow->has_locationwise_filter }}<br/><br/>
-                    <strong>Updated at:</strong> {{ $vrow->updated_at }}<br/><br/>
+                    <strong>Updated On:</strong> {{ $vrow->updated_at }}<br/><br/>
                     
                 </td>
                 <td>

@@ -15,7 +15,7 @@
 				<div class="comments">
 					<div class="dates">
 						<i class="fa fa-user"></i> {{ $row->author }} | <i class="fa fa-calendar"></i> {{ date("F j , y",strtotime($row->Posted)) }}
-						@if(Session::get('gid') == 1 or $row->entry_by == Session::get('uid'))
+						@if(Session::get('gid') ==  \App\Models\Core\Groups::USER or $row->entry_by == Session::get('uid'))
 						<a onclick="removeComm('{{ $row->CommentID}}')" class="collapse-close pull-right btn btn-xs btn-danger" href="javascript:void(0)">
 			<i class="fa fa fa-times"></i></a>
 						@endif

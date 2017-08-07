@@ -98,8 +98,7 @@ class ExcludedreadersController extends Controller {
 		$results = $this->model->getRows( $params );
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
-        $pagination = new Paginator($results['rows'], $results['total'], 
+        $pagination = new Paginator($results['rows'], $results['total'],
             (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
 				($results['total'] > 0 ? $results['total'] : '1')));        
 		$pagination->setPath('excludedreaders/data');
@@ -186,6 +185,7 @@ class ExcludedreadersController extends Controller {
         $this->data['tableGrid'] = $this->info['config']['grid'];
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		return view('excludedreaders.view',$this->data);
 	}

@@ -1,6 +1,7 @@
 
 <div class="row">
-    <div class="col-md-3">
+    
+    <div class="col-md-3 sm13">
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
             <option value="select" data-active="0" selected>------------ Select Type --------------</option>
@@ -13,17 +14,18 @@ width: 75%">
             <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
             <option value="productsindevelopment" data-active="0">Products In Development</option>
         </select>
-
-
     </div>
+    
     <div class="col-md-3">
-   <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'   >  </select>
-</div>
+       <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'>  </select>
+    </div>
 
+    <div class="row m-b">
     <div class="col-md-6">
-        {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
+        {!! Form::open(array('url'=> url().'/product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
         <div class="col-md-2"><h3> Export </h3></div>
-        <div class="col-md-6">
+        <div class="col-md-6 sm13">
+            <input name="exportID" value="{{ uniqid('vendorFromProducts', true) }}" type="hidden"/>
             <select name='vendor_id' rows='5' id='vendor_id' class='select3'></select>
         </div>
         <div class="col-md-2">
@@ -33,10 +35,15 @@ width: 75%">
 
         {!! Form::close() !!}
     </div>
-    <div class="row m-b" style=" margin-bottom: 10px !important; margin-left:0px; margin-right:0px;  margin-top: 35px !important;">
+ </div>   
+    <div class="row c-margin" style="margin-left:0px; margin-right:0px;">
+        
         <div class="col-md-9">
             @if($access['is_add'] ==1)
                 {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
+            @endif
+            @if($setting['disableactioncheckbox']=='false')
+            @if($access['is_add'] ==1)
                 <a href="javascript://ajax" class="btn btn-sm btn-white"
                    onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
             @endif
@@ -45,16 +52,17 @@ width: 75%">
                    onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i
                             class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
             @endif
+            @endif
             <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
                onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
             @if(SiteHelpers::isModuleEnabled($pageModule))
                 <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white"
-                   onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Arrange
+                   onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Arrange
                     Columns</a>
                 @if(!empty($colconfigs))
-                    <select class="form-control" style="width:25%!important;display:inline-block;box-sizing: border-box" name="col-config"
+                    <select class="form-control" style="width:auto!important;display:inline-block;box-sizing: border-box" name="col-config"
                             id="col-config">
-                        <option value="0">Select Configuraton</option>
+                        <option value="0">Select Column Arrangement</option>
                         @foreach( $colconfigs as $configs )
                             <option @if($config_id == $configs['config_id']) selected
                                     @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
@@ -62,8 +70,8 @@ width: 75%">
                     </select>
                         @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
                             <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
-                               onclick="SximoModal(this.href,'Column Selector'); return false;" title="Edit Arrange">  <i class="fa fa-pencil-square-o"></i></a>
-                            <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Clear Arrange">  <i class="fa fa-trash-o"></i></button>
+                               onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit column arrangement">  <i class="fa fa-pencil-square-o"></i></a>
+                            <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
                         @endif
                     @endif
             @endif
@@ -86,24 +94,26 @@ width: 75%">
 
                     @endif
                     @if($isExcel)
-                        <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
+                        <a href="{{ URL::to( $pageModule .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
                     @endif
                     @if($isCSV)
-                        <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
+                        <a href="{{ URL::to( $pageModule .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
                     @endif
                     @if($isPDF)
-                        <a href="{{ URL::to( $pageModule .'/export/pdf?return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
+                        <a href="{{ URL::to( $pageModule .'/export/pdf?exportID='.uniqid('pdf', true).'&return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
                     @endif
                     @if($isWord)
-                        <a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
+                        <a href="{{ URL::to( $pageModule .'/export/word?exportID='.uniqid('word', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
                     @endif
                     @if($isPrint)
-                        <a href="{{ URL::to( $pageModule .'/export/print?return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+                        <a href="{{ URL::to( $pageModule .'/export/print?exportID='.uniqid('print', true).'&return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
                     @endif
                 </div>
             @endif
         </div>
     </div>
+    
+    
     <script>
         $(document).ready(function () {
             $("#product_list_type option").each(function(){
@@ -121,11 +131,19 @@ width: 75%">
                 url_for_prod_sub_type = url_for_prod_sub_type+":request_type_id:"+"{{\Session::get('product_type_id')}}";
 
             }
+
+            if($('#product_list_type').val()=='productsindevelopment'){
+                $("#prod_sub_type_id").hide();
+            }else{
+                $("#prod_sub_type_id").show();
+            }
+
             $("#prod_sub_type_id").jCombo(url_for_prod_sub_type,
                     {selected_value: '{{ \Session::get('sub_type') }}', initial_text: '--- Select  Subtype ---'  });
+
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
                     {selected_value: '', initial_text: '--- Select Vendor ---'});
-            renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
+            renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
             var config_id=$("#col-config").val();
             if(config_id ==0 )
             {
@@ -200,8 +218,13 @@ width: 75%">
                 $('#submit-btn').enable();
             }
         });
+
+        $('#submit-btn').on('click', function (){
+            setAndProbeExportFormSessionTimeout($(this).closest('form'));
+        });
+
         $('#delete-cols').click(function(){
-            if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
+            if(confirm('Are you sure, You want to delete this columns arrangement?')) {
                 showRequest();
                 var module = "{{ $pageModule }}";
                 var config_id = $("#col-config").val();

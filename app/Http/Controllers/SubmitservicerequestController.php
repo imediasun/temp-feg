@@ -81,7 +81,8 @@ class SubmitservicerequestController extends Controller
         $results = $this->model->getRows($params);
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('submitservicerequests/data');
         $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
@@ -155,6 +156,7 @@ class SubmitservicerequestController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('submitservicerequest.view', $this->data);
     }

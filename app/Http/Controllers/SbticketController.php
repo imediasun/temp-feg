@@ -6,7 +6,9 @@ use App\Models\SbticketSetting;
 use App\Models\Ticketcomment;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use App\Library\FEG\System\FEGSystemHelper;
 use Validator, Input, Redirect;
+use App\Models\Core\Groups;
 
 class SbticketController extends Controller
 {
@@ -18,6 +20,7 @@ class SbticketController extends Controller
 
     public function __construct()
     {
+        //die('====THIS CODE IS DEPRECATED, ITS MARKED FOR REMOVE, CONTACT DEVELOPER======');
         parent::__construct();
         $this->model = new Sbticket();
 
@@ -92,7 +95,8 @@ class SbticketController extends Controller
         }
 
 
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('sbticket/data');
         $rows = $results['rows'];
         $comments = new Ticketcomment();
@@ -121,7 +125,7 @@ class SbticketController extends Controller
 
             }
 
-            if ($group_id != 10) {
+            if ($group_id != Groups::SUPPER_ADMIN) {
                 if (!in_array($user_id, array_unique($members_access))) {
                     $flag = 0;
                 }
@@ -225,6 +229,7 @@ class SbticketController extends Controller
         $this->data['uid'] = \Session::get('uid');
         $this->data['fid'] = \Session::get('fid');
         $this->data['access'] = $this->access;
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('sbticket.view', $this->data);
@@ -377,15 +382,26 @@ class SbticketController extends Controller
         $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
         $reply_to='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
         $subject = 'FEG Ticket #' . $ticketId;
-        $headers = 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . $reply_to . ' <' . $reply_to . '>' . "\r\n";
+        //$headers = 'MIME-Version: 1.0' . "\r\n";
+        //$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+        //$headers .= 'From: ' . $reply_to . ' <' . $reply_to . '>' . "\r\n";
 
         foreach ($department_memebers as $i => $id) {
             $get_user_id_from_employess = \DB::select("Select users.email FROM employees JOIN users ON users.id=employees.user_id WHERE employees.id = " . $id . "");
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
-                mail($to, $subject, $message, $headers);
+                //mail($to, $subject, $message, $headers);
+                if(!empty($to)){
+                    FEGSystemHelper::sendSystemEmail(array(
+                        'to' => $to,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'from' => $reply_to,
+                        //'bcc' => $bcc,
+                        'configName' => 'SUBMIT TICKET EMAIL'
+                    ));
+                }
             }
         }
     }
@@ -398,10 +414,21 @@ class SbticketController extends Controller
                 $to = $assignee->email;
                 $reply_to='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
                 $subject = 'FEG Ticket #' . $ticketId;
-                $headers = 'MIME-Version: 1.0' . "\r\n";
-                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                $headers .= 'From: ' . $reply_to . ' <' . $reply_to . '>' . "\r\n";
-                mail($to, $subject, $message, $headers);
+                //$headers = 'MIME-Version: 1.0' . "\r\n";
+                //$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                //$headers .= 'From: ' . $reply_to . ' <' . $reply_to . '>' . "\r\n";
+                //mail($to, $subject, $message, $headers);
+                if(!empty($to)){
+                    FEGSystemHelper::sendSystemEmail(array(
+                        'to' => $to,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'from' => $reply_to,
+                        //'bcc' => $bcc,
+                        'configName' => 'SUBMIT TICKET EMAIL'
+                    ));
+                }
             }
         }
     }

@@ -47,4 +47,14 @@ class Ticketcomment extends Sximo  {
     
         return $data;
     }
+	public static function doesCommentExist($UID){
+        $UID = trim($UID);
+        if ($UID == '') {
+            return false;
+        }
+        $comment = self::where('imap_message_id', '=', $UID)
+                    ->first();
+
+        return !empty($comment);
+	}
 }

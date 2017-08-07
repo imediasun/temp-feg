@@ -2,7 +2,11 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+			<h4> @if($id)
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Pending Request
+				@else
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Pending Request
+				@endif
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -11,7 +15,7 @@
 @endif	
 			{!! Form::open(array('url'=>'pendingrequest/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'pendingrequestFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Pending Requests</legend>
+						<fieldset>
 									
 				  <div class="form-group  " > 
 					<label for="Id" class=" control-label col-md-4 text-left"> 
@@ -99,19 +103,21 @@
 					<label for="Process Date" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Process Date', (isset($fields['process_date']['language'])? $fields['process_date']['language'] : array())) !!}	
 					</label>
-					<div class="col-md-6">
-					  {!! Form::text('process_date', $row['process_date'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
+                      <div class="col-md-6">
+                          <div class="input-group m-b" style="width:150px !important;">
+                              {!! Form::text('process_date', $row['process_date'],array('class'=>'form-control date')) !!}
+                              <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                          </div>
+                      </div>
+                      <div class="col-md-2">
+                     </div>
 				  </div> 					
 				  <div class="form-group  " > 
 					<label for="Status Id" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Status Id', (isset($fields['status_id']['language'])? $fields['status_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('status_id', $row['status_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::select('status_id',DB::table('merch_request_status')->lists('status','id'), $row['status_id'],array('class'=>'select2')) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -158,8 +164,7 @@
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
-				<div class="col-sm-8">	
+				<div class="col-sm-12 text-center">	
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			
@@ -182,7 +187,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	renderDropdown($(".select2 "), { width:"98%"});
+	renderDropdown($(".select2 "), { width:"100%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({

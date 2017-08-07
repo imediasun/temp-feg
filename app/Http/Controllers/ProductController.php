@@ -32,7 +32,49 @@ class ProductController extends Controller
 
 
     }
+    
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
 
+
+        // Get custom Ticket Type filter value
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $skipFilters = ['search_all_fields'];
+        $mergeFilters = [];
+        extract($globalSearchFilter); //search_all_fields
+
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+        $searchInput = $trimmedSearchQuery;
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                    'O.order_type',
+                    'T.type_description',
+                    'vendor.vendor_name',
+                    'products.vendor_description',
+                    'products.case_price',
+                    'products.retail_price',
+                    'products.unit_price',
+                    'T.type_description',
+                    'products.expense_category',
+                    'products.sku',
+                    'products.size',
+                    'products.item_description',
+                    'products.ticket_value',
+                    'products.details'
+                ];
+            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+        }
+
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
+
+
+        return $filter;
+    }
+    
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
@@ -70,7 +112,7 @@ class ProductController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $filter = $this->getSearchFilterQuery();//(!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 
         $page = $request->input('page', 1);
@@ -204,6 +246,7 @@ class ProductController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('product.view', $this->data);
     }
@@ -221,7 +264,7 @@ class ProductController extends Controller
         $toCopy = implode(",", $request->input('ids'));
 
         $sql = "INSERT INTO products (" . implode(",", $columns) . ") ";
-        $columns[1] = "CONCAT('copy ',vendor_description)";
+        $columns[1] = "CONCAT('copy ".mt_rand()." ',vendor_description)";
         $sql .= " SELECT " . implode(",", $columns) . " FROM products WHERE id IN (" . $toCopy . ")";
         \DB::insert($sql);
 
@@ -235,15 +278,25 @@ class ProductController extends Controller
     {
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
-        $rules['sku'] = 'required|unique:products,sku,'.$id;
+        //$rules['sku'] = 'required';
+        $rules['expense_category'] = 'required|numeric|min:0';
         $validator = Validator::make($request->all(), $rules);
+        $retail_price = $request->get('retail_price');
+        if($request->get('prod_type_id') != 8)
+        {
+            $retail_price=0.000;
+        }
         if ($validator->passes()) {
             if ($id == 0) {
                 $data = $this->validatePost('products');
+                $data['retail_price']=$retail_price;
                 $id = $this->model->insertRow($data, $request->input('id'));
             } else {
+
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
+
+                $data['retail_price']=$retail_price;
                 $id = $this->model->insertRow($data, $id);
             }
             /*
@@ -315,12 +368,22 @@ class ProductController extends Controller
 
     function postListcsv(Request $request)
     {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
 
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        
         $vendor_id = $request->vendor_id;
         $rows = $this->model->getVendorPorductlist($vendor_id);
         $fields = array('Vendor', 'Description', 'Sku', 'Unit Price', 'Item Per Case', 'Case Price', 'Ticket Value', 'Order Type', 'Product Type', 'INACTIVE');
         $this->data['pageTitle'] = 'ProductList_';
         $content = array(
+            'exportID' => $exportSessionID,
             'fields' => $fields,
             'rows' => $rows,
             'type' => 'move',
@@ -379,19 +442,43 @@ class ProductController extends Controller
     {
         $isActive = $request->get('isActive');
         $productId = $request->get('productId');
-        echo $isActive;
         if ($isActive == "true") {
-            $update = \DB::update('update products set inactive=1 where id=' . $productId);
-        } else {
-            $update = \DB::update('update products set inactive=0 where id=' . $productId);
+            $update = \DB::update('update products set inactive = 1 where id=' . $productId);
         }
-
+        else
+         {
+            $update = \DB::update('update products set inactive = 0,in_development = 0 where id=' . $productId);
+             /*if($update &&  \Session::get('product_type') == "productsindevelopment")
+             {
+                 \DB::update('update products set in_development = 0 where id=' . $productId);
+             }*/
+        }
         if ($update) {
-            echo "congrates";
+            return response()->json(array(
+                'status' => 'success'
+            ));
         } else {
-            echo "sorry";
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in Activation'
+            ));
         }
     }
+function getExpenseCategory(Request $request)
+{
+    $order_type_id=$request->get('order_type');
+    $product_type_id=$request->get('product_type');
+    $expense_category="";
+    if(!empty($product_type_id))
+    {
 
+        $expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->where('product_type',$product_type_id)->pluck('mapped_expense_category');
+    }
+    else
+    {
+        $expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->pluck('mapped_expense_category');
+    }
+return json_encode(array('expense_category'=>$expense_category));
+}
 
 }

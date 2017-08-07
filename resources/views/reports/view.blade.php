@@ -1,7 +1,7 @@
 @if($setting['view-method'] =='native')
 <div class="sbox">
 	<div class="sbox-title">  
-		<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+		<h4> <i class="fa fa-eye"></i> <?php echo $pageTitle ;?>
 			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
 			<i class="fa fa fa-times"></i></a>
 		</h4>
@@ -125,13 +125,13 @@
 						
 					</tr>
 				
-					<tr>
+					{{-- <tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Region Id', (isset($fields['region_id']['language'])? $fields['region_id']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->region_id }} </td>
 						
-					</tr>
+					</tr> --}}
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>

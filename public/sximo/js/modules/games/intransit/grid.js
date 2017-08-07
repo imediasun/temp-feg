@@ -154,7 +154,7 @@
         });
 
         $('#delete-cols').click(function(){
-            if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
+            if(confirm('Are you sure, You want to delete this columns arrangement?')) {
                 showProgress();
                 var module = moduleName;
                 var config_id = $("#col-config").val();

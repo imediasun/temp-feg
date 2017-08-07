@@ -10,9 +10,15 @@
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','shopfegrequeststore/data?type=store&active_inactive=active&return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
-                <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
+            @if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
+                <a href="{{ url('feg/module/config/'.$pageModule) }}" 
+                   class="btn btn-xs btn-white tips openModuleConfig"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
+    			<a href="{{ url('feg/module/special-permissions/'.$pageModule.'/solo') }}" 
+                   class="btn btn-xs btn-white tips openSpecialPermissions"
+                   title="Special Permissions"
+                   ><i class="fa fa-sliders"></i></a>
+
             @endif
         </div>
     </div>
@@ -42,7 +48,7 @@
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <th width="35"> No </th>
                         @endif
-                        @if($setting['disableactioncheckbox']=='false')
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                             <th width="30"> <input type="checkbox" class="checkall" /></th>
                         @endif
                         @if($setting['view-method']=='expand') <th>  </th> @endif
@@ -64,7 +70,7 @@
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
                                             ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                            ' align="'.$t['align'].'"'.
+                                            ' style=text-align:'.$t['align'].
                                             ' width="'.$t['width'].'"';
                                     $th .= '>';
                                     $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -74,9 +80,9 @@
                             endif;
                         endforeach; ?>
                             @if($setting['disablerowactions']=='false')
-                                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                                <th width="75"><?php echo Lang::get('core.btn_action') ;?></th>
                             @endif
-                            <th width="115">Add To Cart</th>
+                            <th width="130">Add To Cart</th>
                     </tr>
                     </thead>
 
@@ -84,7 +90,7 @@
                     @if($access['is_add'] =='1' && $setting['inline']=='true')
                         <tr id="form-0">
                             <td> #</td>
-                            @if($setting['disableactioncheckbox']=='false')
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                                 <td> </td>
                             @endif
                             @if($setting['view-method']=='expand')
@@ -110,11 +116,11 @@
                     <?php foreach ($rowData as $row) :
                     $id = $row->id;
                     ?>
-                    <tr class="editable" id="form-{{ $row->id }}">
+                    <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this,1)" @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
-                        @if($setting['disableactioncheckbox']=='false')
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                             <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                         @endif
                         @if($setting['view-method']=='expand')
@@ -125,7 +131,7 @@
                         <?php foreach ($tableGrid as $field) :
                         if($field['view'] == '1') :
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
-                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
+                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
@@ -147,12 +153,11 @@
                             @if($setting['disablerowactions']=='false')
                                 <td data-values="action" data-key="<?php echo $row->id ;?>">
                                     {!! AjaxHelpers::buttonAction('shopfegrequeststore',$access,$id ,$setting) !!}
-                                    {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                                 </td>
                             @endif
-                        <td>@if($row->inactive == 0)
+                        <td>@if($row->inactive == 0 && $row->vendor_hide == 0 && $row->vendor_status == 1)
                                 <input type="number" title="Quantity" value="1" min="1" onkeyup="if(!this.checkValidity()){this.value='';alert('Please Enter a Non Zero Number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}" min="0"  />
-                                <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-xs btn-white"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+                                <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-sm btn-white pull-right"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
                             @else
                                 Not Avail.
                             @endif</td>
@@ -172,6 +177,11 @@
                     </tbody>
 
                 </table>
+                @if($setting['inline']!='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->id,'id',1) !!}
+                    @endforeach
+                @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">
@@ -237,7 +247,8 @@
                     data: {},
                     success: function (response) {
                         $("#update_text_to_add_cart").text(response.total_cart);
-                        showResponse(response)
+                        showResponse(response);
+                        getCartTotal();
                     }
                 });
             }

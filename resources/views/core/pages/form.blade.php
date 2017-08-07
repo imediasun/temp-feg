@@ -31,15 +31,21 @@
 		</ul>
 		 {!! Form::open(array('url'=>'core/pages/save/'.$row['pageID'], 'class'=>'form-vertical row ','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
 
-			<div class="col-sm-8 ">
+			<div class="col-sm-8 " style="padding-right: 0px;">
 				<div class="sbox containerBox">
-					<div class="sbox-title">Page Content </div>
+					<div class="sbox-title">
+						@if($id)
+							<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Page
+						@else
+							<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Page
+						@endif</div>
 					<div class="sbox-content">
 
 						<ul class="nav nav-tabs" >
 						  <li class="active"><a href="#info" data-toggle="tab"> Page Content </a></li>
 						  <li ><a href="#meta" data-toggle="tab"> Meta & Description </a></li>
 						</ul>
+
 
 						<div class="tab-content">
 						  <div class="tab-pane active m-t" id="info">
@@ -78,7 +84,7 @@
 				</div>
 		 	</div>
 
-		 <div class="col-sm-4 ">
+		 <div class="col-sm-4 " id="cms_bar_id">
 			<div class="sbox">
 				<div class="sbox-title">Page Info </div>
 				<div class="sbox-content">
@@ -175,11 +181,28 @@
 					</label>
 				  </div>
 
+
+				  <div class="form-group  userShowEditLinkInPagePermission" >
+					<label>Show edit link in page view for: </label>
+                    <p>
+                        <label>Group: </label>
+                        <select name='direct_edit_groups[]' multiple id="iGroups" class='select2 '></select>
+                    </p>
+                    <p>
+					<label>User: </label>
+                     <select name='direct_edit_users[]' multiple id="iUsers" class='select2 '></select>
+                    </p>
+                    <p>
+					<label>Exclude User: </label>
+                     <select name='direct_edit_users_exclude[]' multiple id="eUsers" class='select2 '></select>
+                    </p>
+				  </div>
+
+
+
 			  <div class="form-group">
-
+                <input type="hidden" name="return" value="{!! $return !!}" />
 				<button type="submit" class="btn btn-primary ">  Submit </button>
-
-
 			  </div>
 			  </div>
 			  </div>
@@ -190,9 +213,80 @@
 	</div>
 </div>
 
-<style type="text/css">
-.note-editor .note-editable { height:500px;}
-</style>
+  {{--Upload PDF --}}
+
+  <div class="note-link-dialog modal" aria-hidden="false" id="pdf_modal">
+	  <div class="modal-dialog">
+		  <div class="modal-content">
+			  <div class="modal-header">
+				  <button type="button" class="close" aria-hidden="true" tabindex="-1" onclick="$('#pdf_modal').modal('toggle');">×</button>
+				  <h4>Upload PDF</h4>
+			  </div>
+			  <div class="modal-body">
+				  <div class="row-fluid">
+					  <form method="post" enctype="multipart/form-data" name="pdf_form">
+					  <div class="form-group">
+						  <label>Browse File</label>
+						  <input type="file" name="upload_file" id="pdf_file" accept="application/pdf, application/msword" />
+						  <label style="color:red;font-size:14px;margin-top:5px;" id="pdf_error"></label>
+					  </div>
+					  </form>
+				  </div>
+			  </div>
+			  <div class="modal-footer">
+				  <button href="#" onclick="upload_pdf();" class="btn btn-primary" id="pdf_upload">Insert</button>
+			  </div>
+		  </div>
+	  </div>
+  </div>
+
+  <script>
+	  function upload_pdf() {
+		  $('#pdf_upload').text('Uploading...');
+		  $('#pdf_upload').prop('disabled', true);
+		  var fd = new FormData(document.forms.namedItem("pdf_form"));
+		  //fd.append("CustomField", "This is some extra data");
+		  $.ajax({
+			  url: "{{url()}}/pages/upload",
+			  type: "POST",
+			  data: fd,
+			  processData: false,  // tell jQuery not to process the data
+			  contentType: false,   // tell jQuery not to set contentType
+			  success: function (data) {
+				  console.log(data);
+				  $('#pdf_modal').modal('toggle');
+				  $('.icon-link').trigger('click');
+				  $('.note-link-url').val("{{url('')}}/upload/pageCmsPDF/"+data);
+				  $('.note-link-btn').trigger('click');
+				  $('#pdf_file').val('');
+				  $('#pdf_upload').text('Insert');
+				  $('#pdf_upload').prop('disabled', false);
+			  },
+			  error: function (xhr) {
+					if(xhr.status=='422'){
+						var error= JSON.parse(xhr.responseText);
+						console.log("error is "+error.upload_file);
+						$('#pdf_error').text(error.upload_file);
+					}else{
+						$('#pdf_error').text('Something went wrong. Try again.');
+					}
+				  $('#pdf_file').val('');
+				  $('#pdf_upload').text('Insert');
+				  $('#pdf_upload').prop('disabled', false);
+			  }
+		  });
+	  }
+
+	  $( document ).ready(function() {
+		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach File" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal()><i class="fa fa-file-o"></i></button></div>');
+		  $('[data-toggle="tooltip"]').tooltip();
+
+		  $('.note-editor .note-editable').css('height', $('#cms_bar_id').height()-208);
+	  });
+
+  </script>
+
+
   <!--<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>-->
 <!--  <script>tinymce.init({
           selector: '#content4',
@@ -202,4 +296,17 @@
           toolbar: "insertfile undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image", theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect"
            });
   </script>-->
+
+
+    <script>
+        $(document).ready(function(){
+            $("#iGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
+                    {selected_value: "{{ is_object($row)?$row->direct_edit_groups:'' }}"});
+            $("#iUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
+                    {selected_value: "{{ is_object($row)?$row->direct_edit_users:'' }}"});
+            $("#eUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
+                    {selected_value: "{{ is_object($row)?$row->direct_edit_users_exclude:'' }}"});
+        });
+        var row = <?php echo json_encode($row) ; ?>;
+    </script>
 @stop

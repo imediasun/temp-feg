@@ -6,12 +6,18 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips clearSearchButton" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','mylocationgame/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips reloadDataButton" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','mylocationgame/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
-			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+			@if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
+			<a href="{{ url('feg/module/config/'.$pageModule) }}"
+                class="btn btn-xs btn-white tips openModuleConfig"
+                title=" {{ Lang::get('core.btn_config') }}"
+               ><i class="fa fa-cog"></i></a>
+			<a href="{{ url('feg/module/special-permissions/'.$pageModule.'/solo') }}" 
+                class="btn btn-xs btn-white tips openSpecialPermissions"
+                title="Special Permissions" ><i class="fa fa-sliders"></i></a>
 			@endif
 		</div>
 	</div>
-	<div class="sbox-content">
+	<div class="sbox-content" style="margin-bottom: 15px;">
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
             @if(!empty($simpleSearchForm))
@@ -39,7 +45,7 @@
                 <th width="35"> No </th>
             @endif
 
-            @if($setting['disableactioncheckbox']=='false')
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                 <th width="30"> <input type="checkbox" class="checkall" /></th>
             @endif
                 @if($setting['view-method']=='expand') <th>  </th> @endif
@@ -61,7 +67,7 @@
                                 ' data-sortable="'.$colIsSortable.'"'.
                                 ' data-sorted="'.($colIsSorted?1:0).'"'.
                                 ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                ' align="'.$t['align'].'"'.
+                                ' style=text-align:'.$t['align'].
                                 ' width="'.$t['width'].'"';
                         $th .= '>';
                         $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -71,7 +77,7 @@
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="80"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
@@ -80,7 +86,7 @@
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
-				@if($setting['disableactioncheckbox']=='false')
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 				<td> </td>
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
@@ -88,9 +94,11 @@
 					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
+                        @if (!in_array($t['field'], ['for_sale', 'sale_pending']) || !empty($pass['Edit '.FEGFormat::field2title($t['field'])]))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
 							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
+						@endif
 						@endif
 					@endif
 				@endforeach
@@ -104,11 +112,11 @@
 					  //print_r($row);
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
-					@if($setting['disableactioncheckbox']=='false')
+						@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 							<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 						@endif
 					@if($setting['view-method']=='expand')
@@ -118,7 +126,7 @@
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
@@ -133,6 +141,7 @@
                                                 <?php $value="<a style='color:red' href=#>In Transit</a>" ?>
                                             @endif
                                         @endif
+                                        {!! $value !!}
 									@elseif($field['field'] == "img")
                                          {!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false,$row->id) !!}
                                     @else
@@ -147,7 +156,7 @@
 					  ?>
 				 <td class="action" data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('mylocationgame',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+
 				</td>
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -164,6 +173,11 @@
         </tbody>
 
     </table>
+        @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+            @foreach ($rowData as $row)
+                {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+            @endforeach
+        @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">
@@ -189,7 +203,7 @@ $(document).ready(function() {
 		radioClass: 'iradio_square-blue',
 	});
     
-    renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
+    renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
     
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
@@ -203,7 +217,9 @@ $(document).ready(function() {
 		reloadData('#{{ $pageModule }}',url);
 		return false ;
 	});
-
+	@if(Session::get('gid') == 10 || Session::get('gid') == 11 || Session::get('gid') == 12)
+	$('select[name=location_id]').append('<option value="0"> In-Transit </option>');
+	@endif
 	<?php if($setting['view-method'] =='expand') :
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
@@ -222,9 +238,13 @@ $(document).ready(function() {
     }
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+
+	$('select[name=location_id]').append('<option value="0"> In-Transit </option>');
 });
 </script>
 <style>
+
+    
     .table th.right {
         text-align: right !important;
     }

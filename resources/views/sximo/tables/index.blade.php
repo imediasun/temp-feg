@@ -20,7 +20,7 @@
 
  	<div class="page-content-wrapper m-t">
 
- 		<div class="ajaxLoading"></div>
+
 			<div class="sbox">
 
 			<div class="sbox-title"><i class="icon-database"></i> All Tables  

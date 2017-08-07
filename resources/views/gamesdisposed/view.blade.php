@@ -11,7 +11,6 @@
 
         <div class="sbox-content">
             @endif
-
             <table class="table table-striped table-bordered">
                 <tbody>
 
@@ -25,14 +24,14 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Game Name', (isset($fields['game_name']['language'])? $fields['game_name']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->game_name }} </td>
+                    <td>{{ \SiteHelpers::formatStringValue($row->game_name) }} </td>
                 </tr>
                 <tr>
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Prev Location', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) }}
                     </td>
                     <td>{!!
-                        SiteHelpers::gridDisplayView($row->prev_location_id,'prev_location_id','1:location:id:location_name')
+                        SiteHelpers::gridDisplayView($row->prev_location_id,'prev_location_id','1:location:id:location_name',$nodata['prev_location_id'])
                         !!}
                     </td>
                 </tr>
@@ -40,13 +39,13 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->notes }} </td>
+                    <td>{{ \DateHelpers::formatStringValue($row->notes) }} </td>
                 </tr>
                 <tr>
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Serial', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->serial }} </td>
+                    <td>{{ \DateHelpers::formatStringValue($row->serial) }} </td>
 
                 </tr>
                 <tr>
@@ -55,19 +54,19 @@
 
 
                     </td>
-                    <td>{{  $row->date_sold = date("m/d/Y", strtotime($row->date_sold))  }}</td>
+                    <td>{{  \DateHelpers::formatDate($row->date_sold )  }}</td>
                 </tr>
                 <tr>
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Sold To', (isset($fields['sold_to']['language'])? $fields['sold_to']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->sold_to }} </td>
+                    <td>{{ \DateHelpers::formatStringValue($row->sold_to) }} </td>
                 </tr>
                 <tr>
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Test Piece', (isset($fields['test_piece']['language'])? $fields['test_piece']['language'] : array())) }}
                     </td>
-                    <td>{!! SiteHelpers::gridDisplayView($row->test_piece,'test_piece','1:yes_no:id:yesno') !!}</td>
+                    <td>{!! SiteHelpers::gridDisplayView($row->test_piece,'test_piece','1:yes_no:id:yesno',$nodata['test_piece']) !!}</td>
                 </tr>
 
                 </tbody>

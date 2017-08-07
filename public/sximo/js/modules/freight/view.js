@@ -36,26 +36,31 @@
             container.find('.date').datepicker({format:'mm/dd/yyyy', autoclose:true});
             container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});     
 
-            container.find("input[id^='company']").select2({
+            renderDropdown(container.find("input[id^='company']"), {
                 'width': '100%',
                 'data': data['companies_dropdown'],
                 'placeholder': "Select Company"
             });
 
-            container.find("#freight_company_1").select2({
+            renderDropdown(container.find("#freight_company_1"), {
                 'width':'100%',
                 'data': data['companies_dropdown'],
                 'placeholder': "Select Company"
             });
 
-            container.find("input[id^='loc_game_']").each(function(){       
-                $(this).select2({
+            container.find("input[id^='loc_game_']").each(function(key,value){
+                renderDropdown($(this), {
                     'width': '100%',
                     'data': data['game_drop_down'],
                     'placeholder': "Select Game"
                 });
-            });            
-
+                if($(this).val() == '' || $(this).val() == null || $(this).val() == '0')
+                {
+                    $(this).siblings('.select2-container').children('a').children('span').first().text('Select Game').css('color','#999999');
+                }
+            });
+            var $eventSelect = container.find("input[id^='loc_game_']");
+            $eventSelect.on("change", function (e) { console.log($(this));$(this).siblings('.select2-container').children('a').children('span').first().css('color','#444' , 'important'); });
             if(to_contact_name !== "" && email_notes === "") {
                 $("#email_notes").val("Hi"+to_contact_name+",");
             }

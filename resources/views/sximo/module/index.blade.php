@@ -84,7 +84,7 @@
 		@foreach ($rowData as $row)
 			<tr>		
 				<td>
-				<div class="btn-group">
+				<div class="btn-group" style="padding: 3px;background-color: #1c84c6;padding-right: 8px;">
 				<button class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown">
 				<I class="icon-cogs"></I> <span class="caret"></span>
 				</button>
@@ -128,6 +128,22 @@
 </div>	
 
 </div>
+
+  <style>
+	.btn-xs, .btn-group-xs > .btn {
+		padding: 0px 3px;
+		font-size: 12px;
+		line-height: 1.5;
+		border-radius: 3px;
+	}
+
+	  .btn-group:hover{
+		  background-color: #14457a !important;
+	  }
+		.btn-group:active{
+			background-color: #14457a !important;
+		}
+</style>
   <script language='javascript' >
   jQuery(document).ready(function($){
     $('.post_url').click(function(e){

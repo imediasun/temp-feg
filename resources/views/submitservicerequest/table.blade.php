@@ -5,7 +5,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','submitservicerequest/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','submitservicerequest/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
+			@if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
 		</div>
@@ -24,7 +24,7 @@
         <thead>
 			<tr>
 				<th width="20"> No </th>
-                @if($setting['disableactioncheckbox']=='false')
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
                 @endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif
@@ -33,7 +33,7 @@
 						$limited = isset($t['limited']) ? $t['limited'] :'';
 						if(SiteHelpers::filterColumn($limited ))
 						{
-							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
+							echo '<th style=text-align:'.$t['align'].' width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
 
                 }
 					endif;
@@ -48,7 +48,7 @@
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
-                @if($setting['disableactioncheckbox']=='false')
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 				<td> </td>
                 @endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
@@ -71,9 +71,9 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif >
 					<td class="number"> <?php echo ++$i;?>  </td>
-                    @if($setting['disableactioncheckbox']=='false')
+					@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                     @endif
 					@if($setting['view-method']=='expand')
@@ -84,7 +84,7 @@
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
 
 
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
@@ -99,8 +99,7 @@
                   @if($setting['disablerowactions']=='false')
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('submitservicerequest',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
-				</td>
+                 </td>
                 @endif
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -117,6 +116,11 @@
         </tbody>
 
     </table>
+            @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                @foreach ($rowData as $row)
+                    {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                @endforeach
+            @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">

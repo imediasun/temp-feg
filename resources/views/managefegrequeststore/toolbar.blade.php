@@ -1,8 +1,8 @@
-<div class="row m-b">
+<div class="row c-margin">
 
     {!! Form::open(array('url'=>'managefegrequeststore/multirequestorderfill/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
     <div >
-        <div class="col-md-3 m-b">
+        <div class="col-md-2 m-b">
 
         <select name="type" class="select3" id="request_type">
             <option value="archive" @if($view == 'archive'): selected @endif>FEG Store Requests Archives</option>
@@ -11,23 +11,23 @@
 
     </div>
     @if($view == "manage")
-        <div class="col-md-3">
+        <div class="col-md-2 sm13">
 
-        <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:98%">
+        <input  name="order_type" @if($TID && in_array($TID,array_flatten($manageRequestInfo['order_dropdown-data']))) value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:100%">
     </div>
-    <div class="col-md-2">
+        <div class="col-md-2 sm13">
 
-        <select id="location_id" class="form-control" name="location_id" onchange="pageRefresh('L');">
+        <select id="location_id" class="select3 select2-offscreen" name="location_id" onchange="pageRefresh('L');">
             @foreach($manageRequestInfo['loc_options'] as $k => $locations)
                 <option @if($LID == $k) selected @endif value="{{ $k }}">{{ $locations}}</option>
             @endforeach
         </select>
     </div>
-    <div class="col-md-2">
+        <div class="col-md-2">
 
-        <select id="vendor_id" class="form-control" name="vendor_id" onchange="pageRefresh('V');">
+        <select id="vendor_id" class="select3 select2-offscreen" name="vendor_id" onchange="pageRefresh('V');">
             @foreach($manageRequestInfo['vendor_options'] as $k => $vendor)
-                <option @if($VID== $k) selected @endif value="{{ $k }}">{{ $vendor }}</option>
+                <option data-status={{ substr($vendor, -10) }} @if($VID== $k) selected @endif value="{{ $k }}">{{ $vendor }}</option>
             @endforeach
         </select>
     </div>
@@ -47,16 +47,17 @@
             <p style="color:red;font-weight: bold"><?php echo $manageRequestInfo['number_requests']; ?></p>
         </div>
     @endif
-    <div class="col-md-12">
+    
+    <div class="col-md-9">
 
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
-            <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+            <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
             @if(!empty($colconfigs))
-                <select class="form-control" style="width:15%!important;display:inline-block;box-sizing: border-box" name="col-config"
+                <select class="form-control" style="top: 1px;width:auto!important;display:inline-block;box-sizing: border-box" name="col-config"
                         id="col-config">
-                    <option value="0">Select Configuraton</option>
+                    <option value="0">Select Column Arrangement</option>
                     @foreach( $colconfigs as $configs )
                         <option @if($config_id == $configs['config_id']) selected
                                                                          @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
@@ -64,15 +65,19 @@
                 </select>
                 @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
                     <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
-                       onclick="SximoModal(this.href,'Column Selector'); return false;" title="Edit Arrange">  <i class="fa fa-pencil-square-o"></i></a>
-                    <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Clear Arrange">  <i class="fa fa-trash-o"></i></button>
+                       onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit column arrangement">  <i class="fa fa-pencil-square-o"></i></a>
+                    <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
                 @endif
             @endif
         @endif
+        
+    </div>
+    
+    <div class="col-md-3">
         <div class="pull-right">
-            <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white">
+            <a href="{{ URL::to( $pageModule .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white">
                 Excel</a>
-            <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white">
+            <a href="{{ URL::to( $pageModule .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-white">
                 CSV </a>
         </div>
     </div>
@@ -81,7 +86,20 @@
 
 
 </div>
+<style>
+    .select2-container .select2-choice > .select2-chosen {
+        margin-right: 26px;
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        float: none;
+        width: auto;
+        color: #333;
+    }
+</style>
 <script>
+
     $('document').ready(function () {
         setType();
             var config_id=$("#col-config").val();
@@ -93,7 +111,7 @@
             {
                 $('#edit-cols,#delete-cols').show();
             }
-        renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
+        renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
         renderDropdown($("#order_type"), {
             dataType: 'json',
             placeholder: "Select an Order Type",
@@ -105,6 +123,10 @@
         }
         else{
             $('#groups').show();
+        }
+        if($("#vendor_id").val())
+        {
+            ifVendorInactive();
         }
     });
     $("#public,#private").change(function () {
@@ -211,6 +233,7 @@
             }
         }
         else if (type == 'V') {
+
             var VID = $('#vendor_id').val();
             get += "&v3=V" + VID;
             if($('#location_id').val())
@@ -228,7 +251,7 @@
 
     }
     $('#delete-cols').click(function(){
-        if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
+        if(confirm('Are you sure, You want to delete this columns arrangement?')) {
             showRequest();
             var module = "{{ $pageModule }}";
             var config_id = $("#col-config").val();
@@ -262,19 +285,31 @@
     }
     function getSimpleSearchParams()
     {
-        var test="";
+        var params="&simplesearch=1&search=";
         $(".simpleSearchContainer .form-control").each(function(){
 
             var val = $(this).val();
             if($(this).data("simplesearch")) {
                 if(val !== '' && val !== null)
                 {
-                    test += "&simplesearch=1&search="+$(this).attr('name')+":"+$(this).data('simplesearchoperator')+":"+val+"|";
+
+                    params+= $(this).attr('name')+":"+$(this).data('simplesearchoperator')+":"+val+"|";
                 }
             }
 
 
         });
-        return test;
+        return params;
+    }
+    function ifVendorInactive()
+    {
+        var status=$("#vendor_id").find(":selected").data("status");
+        if(status == "(Inactive)")
+        {
+            $("#multi-btn").attr('disabled',true);
+        }
+        else{
+            $("#multi-btn").attr('disabled',false);
+        }
     }
 </script>

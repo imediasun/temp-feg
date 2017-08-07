@@ -2,7 +2,7 @@
 
 return array(
 // General 
-	"norecord" => "No Record Found",
+	"norecord" => "No record found",
 	"create" => "Create New",
 	"add_to_cart" => "Item added to cart",
 	"already_add_to_cart" => "Item already added to cart",
@@ -23,8 +23,6 @@ return array(
 	"language" => "Language",	
 	"firstname" => "First Name",
 	"lastname" => "Last Name ",
-	"g_mail" => "Google Mail Address",
-	"g_password" => "Google Mail Password",
 	"lastlogin"	=> "Last Login",
 	"personalinfo"	=> "Personal Info",
 	"changepassword"	=> "Change Password",
@@ -54,7 +52,7 @@ return array(
 	"m_menu" 			=> "Menu Management",
 	"m_logs" 			=> "Activity Logs",
 	"m_codebuilder" 	=> "Code Builder",
-	"m_blastemail" 		=> "Send Internal Notification",
+	"m_blastemail" 		=> "Send internal notification",
 	"m_myaccount" 		=> "My Account",
 	"m_logout" 			=> "Logout",
 	"m_profile" 		=> "Profile",
@@ -138,7 +136,11 @@ return array(
 	"t_tipsdrag"					=> "Drag and Drop to reorder menu list", // updated apidevlab
 	"t_tipsnote"					=> "Note!, Menus only support 3 levels ", // updated apidevlab
 	"tab_topmenu"					=> "Top Menu",
-	"tab_sidemenu"					=> "Side Menu ",
+	"tab_sidemenu"					=> "Side Menu",
+	"tab_top_menu"					=> "Top Menu",
+	"tab_sidebar_menu"				=> "Side Menu",
+	"tab_both_menu"					=> "Both Menu",
+	"tab_control-panel_menu"        => "Control Panel Menu",
 	"sb_reorder"					=> "Reorder Menu",	
 	"fr_mtitle"						=> "Name / Title ",	
 	"fr_mtype"						=> "Menu Type",	
@@ -153,7 +155,7 @@ return array(
 	
 /* Code BuilderModule */
 	"t_module"						=> "Module",
-	"t_modulesmall"					=> "List Of All Modules",// updated apidevlab
+	"t_modulesmall"					=> "List of all modules",// updated apidevlab
 	"tab_installed"					=> "Installed Modules", // updated apidevlab
 	"tab_core"						=> "Core Modules", // updated apidevlab
 	"fr_modtitle"					=> "Module Name / Title",
@@ -179,30 +181,65 @@ return array(
 /*updates	on may ,5 2014 */
 	
 	"loginsocial"				=> "Login via Social Networking", // updated apidevlab
-	"enteremailforgot"			=> "Enter Your Email Address",
+	"enteremailforgot"			=> "Enter your email address",
 	"detail" 					=> "View Detail",
 	"addedit" 					=> "Add - Edit",
     "image_delete"              =>"Remove Image",
 	
 /* Notification */
-	"note_noexists"				=> "Sorry, The Page Does Not Exist!", // updated apidevlab
+	"note_noexists"				=> "Sorry, The page does not exist!", // updated apidevlab
 	"note_restric"				=> "Sorry, You are not allowed to access this page!", // updated apidevlab
 	"note_success"				=> "Saved successfully!", // updated apidevlab
 	"note_error"				=> "The following errors occurred !",
 	"note_success_delete"		=> "Removed successfully!",	// updated apidevlab
     "note_block"                => "Blocked",
     "note_unblock"              => "Unblocked",
-    "request_sent_success"      => "Request Sent Successfully",
+    "request_sent_success"      => "Request sent successfully",
     "request_send_fial"         => "Error in Sending Request",
-    "note_freight_paid"         => "Status Changed,Paid Successfully",
-     "mail_sent_success"        => "Email Sent Successfully",
-    "delete_success"            => "Deleted Successfully",
-    "delete_error"              => "Some Error Occurred while Deleting",
-    "email_missing_error"       => "Failed!Sender or Vendor Email is missing",
+    "note_freight_paid_"         => "Status Changed,Paid Successfully",
+    "note_freight_paid"         => "Freight order paid successfully",
+     "mail_sent_success"        => "Email sent successfully",
+    "delete_success"            => "Deleted successfully",
+    "delete_error"              => "Some error occurred while deleting",
+    "email_missing_error"       => "Failed!Sender or vendor email is missing",
     "google_account_not_exist"  => "Google account detail not exist",
     "smtp_connect_failed"       => "Mail Error: SMTP connect() failed",
     "gmail_smtp_connect_failed" => 'To allow system to send emails using your Gmail account, you must turn on less secure apps by clicking <a target="_blank" href="https://www.google.com/settings/u/6/security/lesssecureapps?pageId=none">Here</a>',
-    "error_sending_mail"        => "An Error Occurred in Sending Email."
+    "error_sending_mail"        => "An error occurred in sending email.",
+    "note_success_denied"  => "Request denied successfully",
 
+    /* Orders */
+    "order_api_expose_button_label"  => "Post to Netsuite",
+    "order_api_exposed_label"  => "Posted to Netsuite",
+    "order_api_exposed_label_pending"  => "Pending post to Netsuite",
+    "order_api_exposed_label_ineligible"  => "The Purchase Order is not eligible to be posted to Netsuite",
+    "order_missing_id"  => "The Purchase Order is not available",
+    "order_clone_error"  => "Error while duplicating the Purchase Order",
+    "order_api_exposed"  => "The Purchase Order has been posted to Netsuite",
+    "order_api_not_exposable"  => "The Purchase Order is not eligible to post to Netsuite",
+    "order_api_expose_error"  => "Unable to post the Purchase Order to Netsuite",
+    "order_voided_edit_alert"  => "This Purchase Order has been voided and is not editable any more.",
+    "order_closed_edit_alert"  => "This Purchase Order has been closed and is not editable any more.",
+    "order_api_edit_partial_alert"  => "This Purchase Order has already been received partially and is not editable any more.",
+    "order_api_exposed_edit_alert"  => "This Purchase Order has already been submitted to Netsuite. If you continue, then this Purchase Order will be voided and a new Purchase Order created. Do you wish to continue?",
+    "order_api_exposed_edit_restrict_alert"  => "This Purchase Order has already been submitted to Netsuite and is not editable any more.",
+    "order_voided_receipt_alert"  => "This Purchase Order has been voided and is not receivable any more.",
+    "order_closed_receipt_alert"  => "This Purchase Order has been closed and is not receivable any more.",
+    "order_receive_error_api_not_exposed"  => "This Purchase Order has not yet been submitted to Netsuite. Please contact the Merchandise team to be able to receive this order.",
+
+    "order_clone_successful"  => "This Purchase Order has been duplicated.",
+    "order_clone_void_successful"  => "This Purchase Order has been voided successfully. A duplicate Purchase Order has been created.",
+    "order_voided_receipt_alert"  => "This Purchase Order has been voided and is not receivable any more.",
+    "order_voided_receipt_alert"  => "This Purchase Order has been voided and is not receivable any more.",
+    "cart_invalid_quantity"  => "Invalid cart quantity",
+    "partial_close_restrict"  => "You can't close a partial order",
+
+    "templates" => array(
+        "order_replaces" => "This Purchase Order replaces voided Purchase Order #{0} as of {1}",
+        "order_replaced_by" => "This Purchase Order was voided and replaced with Purchase Order #{0} on {1}",
+
+    ),
+
+    "unauthorized" => "Unauthorized to perform operation",
 
 );

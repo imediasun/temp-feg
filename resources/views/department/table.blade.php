@@ -5,7 +5,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','department/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','department/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
+			@if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif 
 		</div>
@@ -38,7 +38,7 @@
             @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                 <th width="35"> No </th>
             @endif
-            @if($setting['disableactioncheckbox']=='false')
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                 <th width="30"> <input type="checkbox" class="checkall" /></th>
             @endif
             @if($setting['view-method']=='expand') <th>  </th> @endif
@@ -60,7 +60,7 @@
                                 ' data-sortable="'.$colIsSortable.'"'.
                                 ' data-sorted="'.($colIsSorted?1:0).'"'.
                                 ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                ' align="'.$t['align'].'"'.
+                                ' style=text-align:'.$t['align'].
                                 ' width="'.$t['width'].'"';
                         $th .= '>';
                         $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -81,7 +81,7 @@
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
-				@if($setting['disableactioncheckbox']=='false')
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 					<td> </td>
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
@@ -104,11 +104,11 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
-					@if($setting['disableactioncheckbox']=='false')
+						@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 					@endif
 					@if($setting['view-method']=='expand')
@@ -117,7 +117,7 @@
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : 
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],isset($field['nodata'])?$field['nodata']:0);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
@@ -132,8 +132,7 @@
 					<td>{!! $row->total_close_tickets  !!}</td>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('department',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
-				</td>			 
+                 </td>
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -147,6 +146,11 @@
         </tbody>
       
     </table>
+        @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+            @foreach ($rowData as $row)
+                {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+            @endforeach
+        @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">
@@ -214,4 +218,3 @@ $(document).ready(function() {
     }
 
 </style>
-	

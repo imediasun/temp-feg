@@ -64,7 +64,7 @@
 	   </div>-->
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
 		<div class="col-sm-7">			 
-            {!! $pagination->appends($pager)->render() !!}
+            {!! urldecode($pagination->appends($pager)->render()) !!}
         </div>
         @endif
 	  </div>

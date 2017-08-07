@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use App\Library\DBHelpers;
 use SiteHelpers;
 
 class merchandiseexpensesreport extends Sximo  {
@@ -50,7 +51,9 @@ class merchandiseexpensesreport extends Sximo  {
         if (empty($location_id)) {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         } 
-        
+
+        //$defaultEndDate = DBHelpers::getHighestRecorded('orders', 'date_ordered');
+        //ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 30);
         ReportHelpers::dateRangeFix($date_start, $date_end); 
         
         $total = ReportHelpers::getMerchandizeExpensesCount($date_start, $date_end, $location_id, $debit_type_id);

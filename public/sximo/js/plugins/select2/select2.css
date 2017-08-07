@@ -633,3 +633,9 @@ html[dir="rtl"] .select2-search-choice-close {
         background-position: 100% -21px !important;
     }
 }
+
+
+.select-full .select2-container.select2 {
+  width: 100% !important;
+}
+

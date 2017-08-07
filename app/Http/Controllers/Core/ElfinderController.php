@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Core\Groups;
+use App\Models\Sximo;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
@@ -20,7 +21,7 @@ class ElfinderController extends Controller
         //return public_path().'/uploads/userfiles/';
         if (!is_dir(public_path() . '/uploads/userfiles/')) mkdir(public_path() . '/uploads/userfiles/', 0777);
         $groupID = \Session::get('gid');
-        if ($groupID == 1 or $groupID == 2) {
+        if ($groupID == Groups::USER or $groupID == Groups::PARTNER) {
             $data['folder'] = 'uploads/';
         } else {
             $folder = \Session::get('uid');

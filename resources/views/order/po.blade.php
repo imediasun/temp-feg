@@ -29,7 +29,11 @@
                         {{ $data[0]['vend_state'] }}
                         {{ $data[0]['vend_zip'] }} <br/><br/>
                         {{ $data[0]['vend_contact'] }}
-                        {{ isset($data[0]['vend_email'])?$data[0]['vend_email']:"" }}
+                        {{ isset($data[0]['vend_email'])?$data[0]['vend_email']:"" }}<br/>
+                        @if(isset($data[0]['billing_account']) && $data[0]['billing_account']!='0')
+                            <b>Billing Account Number: </b>
+                            {{$data[0]['billing_account']}}
+                        @endif
                         <br/>
                     </td>
                     <td style="vertical-align:baseline;border-top:1px solid #000; border-right:1px solid #000;border-bottom: none;border-left: 1px solid #000;  padding-left: 10px; padding-top: 0px; margin-top:0px; color:red"><span style="padding: 0px !important;">
@@ -54,6 +58,7 @@
 <br/>
         <div style="width:100%;border:1px solid #000;padding:8px; border-collapse:collapse;">
             <p> {{ $data[0]['po_notes'] }}</p>
+            <p>{!! @$data[0]['relationships'] !!}</p>
         </div>
         <br/>
 
@@ -63,11 +68,22 @@
                 <tr>
                     <td style="padding:8px;text-align: left;border:1px solid #000"> Ordered By
                         : {{ $data[0]['first_name'] }} {{ $data[0]['last_name'] }} <br/>
-                        Order Description
+                        Item Name
                     </td>
                     @if(($data[0]['new_format']==1))
-
-                        <td style="padding:8px;border:1px solid #000; text-align: right">Unit Price</td>
+                        <?php
+                            $case_price_categories = [];
+                            if(isset($data['pass']['calculate price according to case price']))
+                            {
+                                $case_price_categories = explode(',',$data['pass']['calculate price according to case price']->data_options);
+                            }
+                            $case_price_if_no_unit_categories = [];
+                            if(isset($data['pass']['use case price if unit price is 0.00']))
+                            {
+                                $case_price_if_no_unit_categories = explode(',',$data['pass']['use case price if unit price is 0.00']->data_options);
+                            }
+                        ?>
+                        <td style="padding:8px;border:1px solid #000; text-align: right">@if(in_array($data[0]['order_type_id'],$case_price_if_no_unit_categories))Unit/Case Price @elseif(in_array($data[0]['order_type_id'],$case_price_categories)) Case Price @else Unit Price @endif</td>
                         <td style="padding:8px;border:1px solid #000;text-align: center">QTY</td>
                         <td style="padding:9px;border:1px solid #000;text-align: right">Item Total</td>
                         <td></td>
@@ -75,9 +91,9 @@
                 @for($i=0;$i < count($data[0]['orderDescriptionArray']);$i++)
                     <tr>
                         <td style="padding:8px;border:1px dotted #000; border-top:none">  {{ $data[0]['orderDescriptionArray'][$i] }} <br/></td>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none;text-align: right">  {{CurrencyHelpers::formatCurrency(number_format($data[0]['orderPriceArray'][$i], \App\Models\Order::ORDER_PERCISION)) }} <br/></td>
+                        <td style="padding:8px;border:1px dotted #000;border-top:none;text-align: right">  {{CurrencyHelpers::formatCurrency(number_format($data[0]['orderItemsPriceArray'][$i], \App\Models\Order::ORDER_PERCISION)) }} <br/></td>
                         <td style="padding:8px;border:1px dotted  #000;border-top:none;text-align: center">  {{ $data[0]['orderQtyArray'][$i] }} <br/></td>
-                        <td style="padding:2px;border:1px dotted  #000;border-top:none;border-right:1px dotted #000;text-align: right ">  $ {{number_format($data[0]['orderPriceArray'][$i]* $data[0]['orderQtyArray'][$i], \App\Models\Order::ORDER_PERCISION) }}  <br/></td>
+                        <td style="padding:2px;border:1px dotted  #000;border-top:none;border-right:1px dotted #000;text-align: right ">  $ {{number_format($data[0]['orderItemsPriceArray'][$i]* $data[0]['orderQtyArray'][$i], \App\Models\Order::ORDER_PERCISION) }}  <br/></td>
 <td></td>
                     </tr>
                 @endfor

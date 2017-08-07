@@ -4,6 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Managenewgraphicrequests;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use App\Library\FEG\System\FEGSystemHelper;
 use Validator, Input, Redirect;
 
 class ManagenewgraphicrequestsController extends Controller
@@ -34,7 +35,7 @@ class ManagenewgraphicrequestsController extends Controller
     public function getApprove($id)
     {
 
-        
+
         $request = Managenewgraphicrequests::find($id);
         $data = array(
             'status_id' => 2,
@@ -72,7 +73,56 @@ class ManagenewgraphicrequestsController extends Controller
         $this->data['access'] = $this->access;
         return view('managenewgraphicrequests.index', $this->data);
     }
+    public function getSearchFilterQuery($customQueryString = null) {
 
+        // Get custom Ticket Type filter value
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'status_id' => '']);
+        $skipFilters = ['search_all_fields'];
+        $mergeFilters = [];
+        extract($globalSearchFilter); //search_all_fields
+
+
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+        $searchInput = $trimmedSearchQuery;
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                'new_graphics_request.description',
+                'u1.first_name',
+                'u1.last_name',
+                'location.location_name',
+                'new_graphics_request_status.status'
+            ];
+            $dateSearchFields = [
+                'new_graphics_request.request_date',
+                'new_graphics_request.need_by_date',
+                'new_graphics_request.approve_date',
+            ];
+            $dates = FEGSystemHelper::probeDatesInSearchQuery($search_all_fields);
+            $searchInput = ['query' => $search_all_fields, 'dateQuery' => $dates,
+                'fields' => $searchFields, 'dateFields' => $dateSearchFields];
+
+        }
+
+
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput)) :
+            $this->buildSearch($customQueryString);
+
+
+        // Get assigned locations list as sql query (part)
+        //$locationFilter = \SiteHelpers::getQueryStringForLocation('new_graphics_request', 'location_id', [], ' OR new_graphics_request.location_id=0 ');
+        $locationFilter = \SiteHelpers::getQueryStringForLocation('new_graphics_request');
+        // if search filter does not have location_id filter
+        // add default location filter
+        $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));
+        if (empty($frontendSearchFilters['location_id'])) {
+            $filter .= $locationFilter;
+        }
+
+        return $filter;
+    }
     public function postData(Request $request)
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'managenewgraphicrequests')->pluck('module_id');
@@ -97,7 +147,8 @@ class ManagenewgraphicrequestsController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $filter = $this->getSearchFilterQuery();
+        //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 
         $page = $request->input('page', 1);
@@ -115,6 +166,7 @@ class ManagenewgraphicrequestsController extends Controller
         $this->data['manageNewGraphicsInfo'] = $this->model->getManageGraphicsRequestsInfo();
         // Get Query
         $results = $this->model->getRows($params, $cond);
+
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
@@ -122,8 +174,8 @@ class ManagenewgraphicrequestsController extends Controller
         if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
-
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('managenewgraphicrequests/data');
         $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
@@ -197,6 +249,7 @@ class ManagenewgraphicrequestsController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('managenewgraphicrequests.view', $this->data);
     }
@@ -235,6 +288,9 @@ class ManagenewgraphicrequestsController extends Controller
                 $data['approve_date'] = '';
             }
             $id = $this->model->insertRow($data, $id);
+
+            //$this->editImages($id);
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -248,6 +304,46 @@ class ManagenewgraphicrequestsController extends Controller
                 'status' => 'error'
             ));
         }
+
+    }
+
+    public function editImages($id){
+        $new_graphics_request = \DB::table('new_graphics_request')->select('img')->where('id',$id)->get();
+        $images = explode(',', $new_graphics_request[0]->img);
+
+        $input = \Input::all();
+        foreach ($images as $index => $image) {
+            if (Input::hasFile('img_'.($index+1).'')) {
+
+                /* $rules['img_'.($index+1).''] = 'mimes:jpeg,gif,png';
+                 $validation = Validator::make($input, $rules);
+
+                 if ($validation->fails()) {
+                     return response()->json(array(
+                         'status' => 'error',
+                         'message' => implode(' ', $validation->errors()->all())
+                     ));
+                 }*/
+
+                $destinationPath = public_path() . '/uploads/newGraphic'; // upload path
+
+                $extension = \Input::file('img_'.($index+1).'')->getClientOriginalExtension(); // getting file extension
+                $fileName = $id . "_" . rand(111, 999) . '.' . $extension;
+                $upload_success = \Input::file('img_'.($index+1).'')->move($destinationPath, $fileName); // uploading file to given path
+
+                $images[$index] = $fileName;
+            }
+        }
+
+        \DB::table('new_graphics_request')->where('id',$id) ->update(['img' => implode(',', $images)]);
+    }
+
+    public function postDeletegraphic(Request $request){
+
+        $images = \DB::table('new_graphics_request')->select('img')->where('id',$request->id)->get();
+        $images = explode(',', $images[0]->img);
+        unset($images[array_search($request->img, $images)]);
+        \DB::table('new_graphics_request')->where('id',$request->id) ->update(['img' => implode(',', $images)]);
 
     }
 

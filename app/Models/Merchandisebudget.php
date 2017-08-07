@@ -27,10 +27,33 @@ class merchandisebudget extends Sximo
   CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Jul' THEN location_budget.budget_value ELSE 0 END),2)) July,
   CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Aug' THEN location_budget.budget_value ELSE 0 END),2)) August,
   CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Sep' THEN location_budget.budget_value ELSE 0 END),2)) September,
-  CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Oct' THEN location_budget.budget_value ELSE 0 END),2)) Octuber,
+  CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Oct' THEN location_budget.budget_value ELSE 0 END),2)) October,
   CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Nov' THEN location_budget.budget_value ELSE 0 END),2)) November,
   CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Dec' THEN location_budget.budget_value ELSE 0 END),2)) December
   FROM location,location_budget ";
+    }
+    public static function querySelectVal()
+    {
+        return "SELECT 
+            CONCAT(location.id,' | ',location.location_name) as location,location.location_name,
+            location_budget.location_id,
+            location_budget.id,
+            YEAR(location_budget.budget_date) As budget_year,
+
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Jan' THEN location_budget.budget_value ELSE 0.00 END),2) Jan,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Feb' THEN location_budget.budget_value ELSE 0.00 END),2) Feb,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Mar' THEN location_budget.budget_value ELSE 0.00 END),2) March ,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Apr' THEN location_budget.budget_value ELSE 0.00 END),2) April ,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='May' THEN location_budget.budget_value ELSE 0.00 END),2) May ,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Jun' THEN location_budget.budget_value ELSE 0.00 END),2) June ,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Jul' THEN location_budget.budget_value ELSE 0.00 END),2) July,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Aug' THEN location_budget.budget_value ELSE 0.00 END),2) August,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Sep' THEN location_budget.budget_value ELSE 0.00 END),2) September,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Oct' THEN location_budget.budget_value ELSE 0.00 END),2) October,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Nov' THEN location_budget.budget_value ELSE 0.00 END),2) November,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Dec' THEN location_budget.budget_value ELSE 0.00 END),2) December
+  
+        FROM location,location_budget ";
     }
 
     public static function queryWhere($current_year = null)
@@ -45,7 +68,8 @@ class merchandisebudget extends Sximo
                 $current_year = date('Y');
             }
             }
-        return " WHERE location.id=location_budget.location_id AND YEAR(location_budget.budget_date)=$current_year AND location_budget.id IS NOT NULL";
+        $selectedLocations = \SiteHelpers::getCurrentUserLocationsFromSession();
+        return " WHERE location.id=location_budget.location_id AND YEAR(location_budget.budget_date)=$current_year AND location_budget.id IS NOT NULL AND location.id IN ($selectedLocations)";
     }
 
     public static function queryGroup()
@@ -53,13 +77,14 @@ class merchandisebudget extends Sximo
         return " GROUP BY location_budget.location_id ";
     }
 
-    public function insertRow($data, $id, $location_id = null, $budget_year = null)
+    public function insertRow($data, $id = null, $location_id = null, $budget_year = null)
     {
 
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         $vals = array();
         foreach ($data as $budget) {
+            $budget['budget_value'] = str_replace('$','',$budget['budget_value']);
             $vals[] = $budget;
         }
 
@@ -80,10 +105,8 @@ class merchandisebudget extends Sximo
        // return $id;
     }
 
-    public static function getRow($id=0,$cond=null)
+    public static function getRow($id=0, $isFormatted = true)
     {
-
-
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         $res=\DB::select("select location_id,YEAR(budget_date) as year from $table where id=".$id);
@@ -93,7 +116,7 @@ class merchandisebudget extends Sximo
             $location_id = $res[0]->location_id;
         }
         $result = \DB::select(
-            self::querySelect() .
+            ($isFormatted ? self::querySelect() : self::querySelectVal()) .
             self::queryWhere($year) .
             " AND " . $table . ".location_id  = $location_id" .
             self::queryGroup()

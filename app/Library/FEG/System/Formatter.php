@@ -12,6 +12,7 @@ use App\Library\DBHelpers;
 use App\Library\DateHelpers;
 use App\Library\FEG\System\FEGSystemHelper;
 
+// alias as FEGFormat
 class Formatter
 {    
     /**
@@ -35,7 +36,7 @@ class Formatter
      * @return string
      */
     public static function readerIDHTMLStyler($reader_id) {
-        $action =Route::getCurrentRoute()->getActionName();
+        $action =Route::getCurrentRoute()->getActionName(); 
         $isExportAction = stripos($action, "@getExport") !== false || stripos($action, "@postExport") !== false;
         if ($isExportAction) {
             return $reader_id;
@@ -85,6 +86,31 @@ class Formatter
         }
         return $url;
     }
+    public static function usersToNames($ids, $separator = ", ", $prefix = "", $suffix = "", $displayFields = [], $delim = " ") {
+        $values = [];
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+        if (empty($displayFields)) {
+            $displayFields = ["first_name", "last_name"];
+        }
+        
+        foreach($ids as $id) {
+            $user = \App\Models\Core\Users::where('id', $id)->first();
+            if (!empty($user)) {
+                $displayValues = [];
+                foreach($displayFields as $field) {
+                    $displayValues[] = $user->$field;
+                }
+                $displayValue = implode($delim, $displayValues);
+            }
+            $values[] = $prefix.$displayValue.$suffix;
+        }
+
+        $finalValue = implode($separator, $values);
+        return $finalValue;
+    }
+
     public static function userToName($id, $displayValue = "", $displayFields = ["first_name", "last_name"], $delim = " ") {
         $user = \App\Models\Core\Users::where('id', $id)->first();
         if (!empty($user)) {
@@ -112,24 +138,32 @@ class Formatter
         return FEGSystemHelper::getLabelFromOptions($value, self::getTicketPriorities(), $default);
     }
     public static function getTicketIssueType($value = '', $default = '') {
-        return FEGSystemHelper::getLabelFromOptions($value, self::getTicketIssueTypes(), $default);
-    }
-
+        return FEGSystemHelper::getLabelFromOptions($value, self::getTicketIssueTypes(), $default);        
+    }    
+  
     public static function getTicketStatuses() {
         return \SiteHelpers::getModuleFormFieldDropdownOptions('servicerequests', 'Status');
     }
     public static function getTicketPriorities() {
         return \SiteHelpers::getModuleFormFieldDropdownOptions('servicerequests', 'Priority');
     }
-    public static function getTicketIssueTypes() {
+    public static function getTicketIssueTypes() {        
         return \SiteHelpers::getModuleFormFieldDropdownOptions('servicerequests', 'issue_type');
-    }
-
-    public static function empty2blank($value = null) {
+    } 
+    
+    public static function empty2blank($value = null) {        
         return empty($value) ? '' : $value;
-    }
-    public static function delegateTo($value = null) {
+    } 
+    public static function delegateTo($value = null) {        
         return is_null($value) ? '' : $value;
     }
 
+    /**
+     * Converts all snake case strings (word_word_word) to title case (Word Word Word)
+     * @param type $value
+     * @return type
+     */
+    public static function field2title($value = null) {        
+        return str_replace('_', ' ', ucwords($value, '_'));
+    } 
 }

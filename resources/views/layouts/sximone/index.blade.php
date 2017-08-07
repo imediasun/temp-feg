@@ -56,7 +56,7 @@
             <div class="col-md-6 col-sm-6 right">
                 <ul class="list-unstyled list-inline pull-right">
                      @if(!Auth::check()) 
-					 	<li><a href="{{ URL::to('user/login') }}"><i class="fa fa-sign-in"></i> {{ Lang::get('core.signin') }}</a></li>
+					 	<li><a href="{{ URL::to('/') }}"><i class="fa fa-sign-in"></i> {{ Lang::get('core.signin') }}</a></li>
                     	<li><a href="{{ URL::to('user/register') }}"><i class="fa fa-user"></i> {{ Lang::get('core.signup') }}</a></li>
 					 @else
 					 	<li><a href="{{ URL::to('user/profile') }}"><i class="fa fa-user "></i> {{ Lang::get('core.m_myaccount') }}</a></li>
@@ -116,7 +116,7 @@
 			<div class="modal-header bg-default">
 		
 			<button type="button " class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h4 class="modal-title">Modal title</h4>
+			<h4 class="modal-title">&nbsp:</h4>
 		</div>
 		<div class="modal-body" id="sximo-modal-content">
 	

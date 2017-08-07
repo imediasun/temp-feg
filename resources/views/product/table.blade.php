@@ -6,7 +6,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','product/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','product/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
+			@if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif 
 		</div>
@@ -39,7 +39,7 @@
             @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                 <th width="35"> No </th>
             @endif
-            @if($setting['disableactioncheckbox']=='false')
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                 <th width="30"> <input type="checkbox" class="checkall" /></th>
             @endif
             @if($setting['view-method']=='expand') <th>  </th> @endif
@@ -61,7 +61,7 @@
                                 ' data-sortable="'.$colIsSortable.'"'.
                                 ' data-sorted="'.($colIsSorted?1:0).'"'.
                                 ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                ' align="'.$t['align'].'"'.
+                                ' style=text-align:'.$t['align'].
                                 ' width="'.$t['width'].'"';
                         $th .= '>';
                         $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -71,7 +71,7 @@
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="105"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
@@ -81,7 +81,7 @@
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" style="display: none">
 				<td> # </td>
-				@if($setting['disableactioncheckbox']=='false')
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 					<td> </td>
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
@@ -104,11 +104,12 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" onkeyup="calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
+					<input type="hidden" name="numberOfItems" value="{{$row->num_items}}" />
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
-					@if($setting['disableactioncheckbox']=='false')
+						@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 					@endif
 					@if($setting['view-method']=='expand')
@@ -117,7 +118,7 @@
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : 
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
@@ -146,7 +147,7 @@
 ?>
                                      @elseif($field['field']=='inactive')
                                          <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif 	data-size="mini" data-animate="true"
-                                                data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="test" data-id="{{$row->id}}"
+                                                data-on-text="Inactive" data-name="{{$row->vendor_description}}" data-off-text="Active" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
                                                 id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 
                                      @else
@@ -159,10 +160,10 @@
 						endforeach; 
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::GamestitleButtonAction('product',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
+                     {!! AjaxHelpers::GamestitleButtonAction('product',$access,$id ,$setting) !!}
+					 <a href="{{ URL::to('product/upload/'.$row->id)}}"class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
 
-                    <a href="{{ URL::to('product/upload/'.$row->id)}}"class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
+
 
 
 				 </td>
@@ -183,6 +184,11 @@
         </tbody>
       
     </table>
+        @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+            @foreach ($rowData as $row)
+                {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+            @endforeach
+        @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">
@@ -231,28 +237,33 @@ function showModal(id,obj){
 }
 
 $(document).ready(function() {
-	//$(".sel-search").select2({ width:"98%"});
+	//$(".sel-search").select2({ width:"100%"});
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
-
-
-        var productId=$(this).data('id');
+        productId=$(this).data('id');
         $.ajax(
-                {
-                    type:'POST',
-                    url:'product/trigger',
-                    data:{isActive:state,productId:productId},
-                    success:function(data){
-
+            {
+                type:'POST',
+                url:'product/trigger',
+                data:{isActive:state,productId:productId},
+                success:function(data){
+                    if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
+                    {
+                        //window.location.reload();
+                        $('#form-'+productId).hide(800);
+                    }
+                    if(data.status == "error"){
+                        //notyMessageError(data.message);
                     }
                 }
+            }
         );
     });
 
-    $("[id^='toggle_trigger_']").bootstrapSwitch();
+    $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
 	$('.tips').tooltip();
-	$('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
+	$('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
-		radioClass: 'iradio_square-blue',
+		radioClass: 'iradio_square-blue'
 	});	
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
@@ -288,6 +299,33 @@ if (simpleSearch.length) {
 initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
 
+
+	function calculateUnitPrice(id){
+		var case_price = $('#form-'+id+' input[name = "case_price"]').val();
+		var quantity = $('#form-'+id+' input[name = "numberOfItems"]').val();
+		var unit_price = case_price/quantity;
+		if(quantity != 0 && unit_price != 0) {
+			$('#form-'+id+' input[name = "unit_price"]').val(unit_price.toFixed(3));
+		}
+		else
+		{
+			$('#form-'+id+' input[name = "unit_price"]').val(0.000);
+		}
+
+	}
+
+$('a[data-original-title=Edit]').click(function () {
+	$("[id^='toggle_trigger_']").bootstrapSwitch('destroy');
+	showAction();
+});
+
+$('a[data-original-title=View]').click(function () {
+	showAction();
+});
+
+$('a[data-original-title="Upload Image"]').click(function () {
+	showAction();
+});
 
 </script>
 

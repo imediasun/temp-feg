@@ -3,8 +3,10 @@
 use App\Http\Controllers\controller;
 use App\Models\Freightquoters;
 use Illuminate\Http\Request;
+use \App\Models\Sximo\Module;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
+
 
 class FreightquotersController extends Controller
 {
@@ -21,8 +23,13 @@ class FreightquotersController extends Controller
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
+        $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->pass['Can Edit']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Remove']) ? 1 : 0;
 
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => 'freightquoters',
@@ -81,7 +88,6 @@ class FreightquotersController extends Controller
         $results = $this->model->getRows($params);
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'],
             (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));
@@ -162,6 +168,7 @@ class FreightquotersController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('freightquoters.view', $this->data);
     }
@@ -239,5 +246,25 @@ class FreightquotersController extends Controller
         }
 
     }
+    function postTrigger(Request $request)
+    {
+        $isActive = $request->get('isActive');
+        $id = $request->get('id');
+        if ($isActive == "true") {
+            $update = \DB::update('update freight_companies set active=1 where id=' . $id);
+        } else {
+            $update = \DB::update('update freight_companies set active=0 where id=' . $id);
+        }
 
+        if ($update) {
+            return response()->json(array(
+                'status' => 'success'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in Activation'
+            ));
+        }
+    }
 }

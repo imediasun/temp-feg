@@ -1,6 +1,6 @@
 <?php
-
     $game = $row[0];
+    $gameNotes = $game->notes;
     $statusId = $game->status_id;
     $statusName = $game->game_status;
     
@@ -44,7 +44,19 @@
     $prevLocationIdName = $game->previous_location;
     $lastEditedBy = $game->last_edited_by;
     $lastEditedOn = $game->last_edited_on;
-    $lastEditedDetails = $lastEditedBy . (!empty($lastEditedOn) ? ' on '. DateHelpers::formatDateCustom($lastEditedOn) : '');
+    $lastEditedDetailsDate = [];
+
+    if (empty(trim($lastEditedBy))) {
+        $lastEditedBy = " - ";
+    }
+    if (!empty(trim($lastEditedOn))) {
+        $lastEditedDetailsDate[] = $lastEditedBy;
+        $lastEditedDetailsDate[] = DateHelpers::formatDateCustom($lastEditedOn);
+    }
+    else {
+        $lastEditedDetails[] = $game->last_edited_by;
+    }
+    $lastEditedDetails = implode(' on ', $lastEditedDetailsDate);
     
     $hasManual = $game->has_manual === 1;
     $manualDetails = $hasManual ? "<a href='uploads/games/manuals/{$gameTitleId}.pdf' target='_blank'>Click to View</a>" : '';
@@ -63,11 +75,12 @@
 <div class="sbox">
 	<div class="sbox-title">
 		<h4> 
-            <i class="fa fa-gamepad"></i>
-            {{ $gameTitle }} ({{ $assetID }})
+            <i class="fa fa-eye"></i>
+            @if($headingStatus == '') Move My Location's Game @else Move Game {{$headingStatus}}@endif
+            {{--{{ $gameTitle }} ({{ $assetID }})
             @if (!empty($locationId))
             <small>at {{ $locationIdName }} </small>
-            @endif
+            @endif--}}
 			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}', this)">
 			<i class="fa fa fa-times"></i></a>
 		</h4>
@@ -113,16 +126,20 @@
         <div class="downforRepairDetails" style="display: none;" >
             <div class="form-group">
                 <label for="date_down" class=" control-label col-md-4">
-                    Date Game Down</label>
+                    Date Game Down:</label>
                 <div class="col-md-8">
-                    <div class="input-group" style="width:150px !important;">
-                        {!! Form::text('date_down', "", array(
-                            'class'=>'form-control date',
-                            'parsley-errors-container' => '.dateDownError',
-                            'parsley-nofocus' => 'true'
-                        )) !!}
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                    </div>
+
+                    <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+                        <i class="fa fa-calendar" id="icon"></i>
+                    </span>
+
+                    {!! Form::text('date_down', "", array(
+                        'class'=>'form-control date',
+                        'parsley-errors-container' => '.dateDownError',
+                        'parsley-nofocus' => 'true',
+                        'style' => 'width:150px !important;'
+                    )) !!}
+
                     <div class='dateDownError'></div>
                 </div>
             </div>
@@ -142,13 +159,13 @@
         @if (isset($lastServiceData))        
         <div class="downforRepairDetailsText" > 
             <div class="form-group clearfix">
-                <label class="control-label col-md-4">Date Down</label>
+                <label class="control-label col-md-4">Date Down:</label>
                 <div class="col-md-8">
                     {!! DateHelpers::formatDate($lastServiceData->date_down) !!}
                 </div>
             </div>
             <div class="form-group clearfix">
-                <label class=" control-label col-md-4">Problem</label>
+                <label class=" control-label col-md-4">Problem:</label>
                 <div class="col-md-8">
                     {!! $lastServiceData->problem !!}
                 </div>
@@ -161,13 +178,18 @@
                 <label for="date_up" class=" control-label col-md-4">
                     Date Game Up</label>
                 <div class="col-md-8">
+
+                    <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+                        <i class="fa fa-calendar" id="icon"></i>
+                    </span>
+
                     <div class="input-group" style="width:150px !important;">
                         {!! Form::text('date_up', "",array(
                             'class'=>'form-control date',
                             'parsley-errors-container' => '.dateUpError',
-                            'parsley-nofocus' => 'true'                            
+                            'parsley-nofocus' => 'true',
+                            'style' => 'width:150px !important;'
                         )) !!}
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                     </div>
                     <div class='dateUpError'></div>
                 </div>
@@ -188,7 +210,7 @@
             <input type="hidden" name="prev_location_id" value="{{ $prevLocationId }}">
             <input type="hidden" name="old_location_id" value="{{ $locationId }}">
             <input type="hidden" name="game_move_id" value="{{ $moveId }}">
-            <label for="location_id" class=" control-label col-md-4">
+            <label for="location_id" class="control-label col-md-4" style="padding-right: 0px">
                 {!! SiteHelpers::activeLang('Location', (isset($fields['location']['language'])? $fields['location']['language'] : array())) !!}
                 <span class="locationLabelModifier" 
                        @if($statusId != 3) style="display: none;" @endif                      
@@ -213,12 +235,13 @@
             </label>
             <div class="col-md-8">
                 <input type="hidden" name="oldserial" value="{{ $serialNumber }}" />
-                <input type="text" name="serial" value="{{ $serialNumber }}" 
-                       style="width: 98%"
-                       class="form-control" placeholder="Serial #" required/>
+                <input type="text" name="serial" value="{{ $serialNumber }}"
+                       style="width: 100%"
+                       class="form-control" placeholder="Serial #" />
+
             </div>
         </div>
-        @endif         
+        @endif
         
         @if (!$isSold)
         <!-- Submit Button -->
@@ -235,91 +258,118 @@
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $gameTitle }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($gameTitle) }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Manufacturer', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Manufacturer', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $manufacturer }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($manufacturer) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Game Type', (isset($fields['game_type']['language'])? $fields['game_type']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Game Type', (isset($fields['game_type']['language'])? $fields['game_type']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $gameType }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($gameType) }}</div>
         </div>        
         <div class="form-group clearfix " >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Asset ID', (isset($fields['asset_number']['language'])? $fields['asset_number']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Asset ID', (isset($fields['asset_number']['language'])? $fields['asset_number']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $assetID }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatZeroValue($assetID) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Serial #', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Serial #', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $serialNumber }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($serialNumber) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Alt. Version/Signage', (isset($fields['version']['language'])? $fields['version']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Alt. Version/Signage', (isset($fields['version']['language'])? $fields['version']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $version }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($version) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Game Converted from', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Game Converted from', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $prevGameName }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($prevGameName) }}</div>
         </div>
         @if (!$isNewlyAddedGame)
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Current Location', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Current Location', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $locationIdName }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($locationIdName) }}</div>
         </div>
         @endif
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Previous Location', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Previous Location', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $prevLocationIdName }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($prevLocationIdName) }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Last Edited By', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Notes', (isset($fields['note']['language'])? $fields['note']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $lastEditedDetails }}</div>
+            <div class="col-md-7"><span id="notes_text">{{ $gameNotes }}</span><span id="notes_input" style="display: none;"><textarea name='notes' rows='5' id='notes' class='form-control' >{{$gameNotes}}</textarea>
+                <ul id="parsley-custom" style="display: none" class="parsley-error-list"><li class="required" style="display: list-item;">This value is required.</li></ul>
+                </span></div>
+            <div class="col-md-1">
+                <a style="margin-top: 8px;" href="javascript:void(0)" id="editNotes" class="collapse-close pull-right btn btn-xs btn-primary">
+                    <i class="fa fa fa-pencil"></i>
+                </a>
+                <a style="margin-top: 8px; display: none" href="javascript:void(0)" id="saveNotes" class="collapse-close pull-right btn btn-xs btn-primary">
+                    <i class="fa fa fa-save"></i>
+                </a>
+                <a style="margin-top: 2px; display: none;width: 22px" href="javascript:void(0)" id="cancelNotes" class="collapse-close pull-right btn btn-xs btn-danger">
+                    <i class="fa fa fa-times"></i>
+                </a>
+            </div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                Current Product
+                {!! SiteHelpers::activeLang('Last Edited by', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}:
+            </label>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($lastEditedDetails) }}</div>
+        </div>
+        <div class="form-group clearfix" >
+            <label class="col-md-4">
+                Current Product:
             </label>
             <div class="col-md-8">
-                @if (count($products) > 0) 
+                @if (count($products) > 0)
                 <ul class='productList'>
                 @foreach($products as $product) 
-                    <li>{!! $product->vendor_description !!}</li>
+                    <li>{!! \DateHelpers::formatStringValue($product->vendor_description) !!}</li>
                 @endforeach
                 </ul>
+                    @else
+                    {{ "No Data" }}
                 @endif 
             </div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Game Manual', (isset($fields['has_manual']['language'])? $fields['has_manual']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Game Manual', (isset($fields['has_manual']['language'])? $fields['has_manual']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{!! $manualDetails !!}</div>
+            <div class="col-md-8">{!! \DateHelpers::formatStringValue($manualDetails) !!}</div>
         </div>        
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Game Bulletin', (isset($fields['has_bulletin']['language'])? $fields['has_bulletin']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Game Bulletin', (isset($fields['has_bulletin']['language'])? $fields['has_bulletin']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{!! $serviceBulletinDetails !!}</div>
+            <div class="col-md-8">{!! \DateHelpers::formatStringValue($serviceBulletinDetails) !!}</div>
+        </div>
+        <div class="form-group clearfix" >
+            <label class="col-md-4">
+                {!! SiteHelpers::activeLang('Exclude From Reports', (isset($fields['exclude_from_reports']['language'])? $fields['exclude_from_reports']['language'] : array())) !!}:
+            </label>
+            <div class="col-md-8">{{$game->exclude_from_reports == 1 ? 'Yes' : 'No'}}</div>
         </div>
     </div>
 
@@ -358,19 +408,19 @@
                 {{--*/ $gameTitle = $thisGame ? "<b>This Exact Machine</b>" : 
                     ("<em>Another <b>" . $service_history->game_title . "</b></em>") /*--}}
                 <td @if($thisGame) class="text-danger" @endif> {!! $gameTitle !!}</td>
-                <td> {{ $service_history->game_id }}</td>
-                <td> {{ $service_history->location_id }} {{ $service_history->location_name }} </td>
+                <td> {{ \DateHelpers::formatZeroValue($service_history->game_id) }}</td>
+                <td> {{ \DateHelpers::formatMultiValues($service_history->location_id,$service_history->location_name) }} </td>
                 <td>{{ DateHelpers::formatDate($service_history->date_down) }}</td>
-                <td>{{ $service_history->down_first_name}} | {{ $service_history->down_last_name }}</td>
-                <td>{{ $service_history->problem }}</td>
-                <td>{{ $service_history->solution }}</td>
-                <td>{{ $service_history->up_first_name }} {{ $service_history->up_last_name }}</td>
+                <td>{{ \DateHelpers::formatMultiValues($service_history->down_first_name,$service_history->down_last_name)}} </td>
+                <td>{{ \DateHelpers::formatStringValue($service_history->problem) }}</td>
+                <td>{{ \DateHelpers::formatStringValue($service_history->solution) }}</td>
+                <td>{{ \DateHelpers::formatMultiValues($service_history->up_first_name,$service_history->up_last_name) }} </td>
                 <td>{{ DateHelpers::formatDate($service_history->date_up) }}</td>
 
             </tr>
                 @endforeach
                 @else
-                <tr><td> Nothing Found </td></tr>
+                <tr><td colspan="9" style="text-align: center"> No Data </td></tr>
                 @endif
             </tbody>
 
@@ -394,20 +444,20 @@
                 </thead>
                 <tbody>
 
-                @if(($row['move_history']))
+                @if($row['move_history'])
                     @foreach($row['move_history'] as $move_history)
                         <tr>
-                            <td> {{ DateHelpers::formatDate($move_history->from_date) }}</td>
-                            <td>{{ $move_history->from_location }}</td>
-                            <td>{{ $move_history->to_location}}</td>
-                            <td>{{ $move_history->from_name }} </td>
-                            <td>{{ $move_history->to_name }} </td>
-                            <td>{{ DateHelpers::formatDate($move_history->to_date) }} </td>
-                            <td>{{  \SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date) }}</td>
+                            <td> {{ \DateHelpers::formatDate($move_history->from_date) }}</td>
+                            <td>{{ \DateHelpers::formatMultiValues($move_history->from_location_id,$move_history->from_location) }} </td>
+                            <td>{{ \DateHelpers::formatMultiValues($move_history->to_location_id,$move_history->to_location)}} </td>
+                            <td>{{ \DateHelpers::formatMultiValues($move_history->from_first_name,$move_history->from_last_name) }}</td>
+                            <td>{{ \DateHelpers::formatMultiValues($move_history->to_first_name,$move_history->to_last_name) }} </td>
+                            <td>{{ \DateHelpers::formatDate($move_history->to_date) }} </td>
+                            <td>{{ \DateHelpers::formatZeroValue(\SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date)) }}</td>
                         </tr>
                     @endforeach
                 @else
-                    <tr><td colspan="7"> Nothing Found </td></tr>
+                    <tr><td colspan="7" style="text-align: center"> No Data </td></tr>
                 @endif
 
                 </tbody>
@@ -427,6 +477,67 @@
         mainModule = '{{ $pageModule }}';
     
     $(document).ready(function() {
+        function toggleInput()
+        {
+            $('#notes_text').toggle();
+            $('#saveNotes').toggle();
+            $('#notes_input').toggle();
+            $('#cancelNotes').toggle();
+            $('#editNotes').toggle();
+        }
+        $('#editNotes').click(function () {
+            $('#notes_text').hide();
+            $('#saveNotes').show();
+            $('#notes_input').show();
+            $('#cancelNotes').show();
+            $('#editNotes').hide();
+        });
+        $('#saveNotes').click(function () {
+            if($('#notes_input textarea').val() == '' || $.trim($('#notes_input textarea').val()) == '')
+            {
+                $('#parsley-custom').show();
+                $('#notes_input textarea').css('border','1px solid red');
+            }
+            else
+            {
+                $('#parsley-custom').hide();
+                $('#notes_input textarea').css('border','1px solid #e5e6e7');
+                $.ajax({
+                    type:'POST',
+                    url:"{{url('mylocationgame/notes')}}",
+                    data:{
+                        _token:"{{csrf_token()}}",
+                        notes:$('#notes_input textarea').val(),
+                        id:"{{$game->asset_number}}"
+                    },
+                    success:function (data) {
+                        $('#notes_text').html($('#notes_input textarea').val()).show();
+                        $('#saveNotes').hide();
+                        $('#notes_input').hide();
+                        $('#cancelNotes').hide();
+                        $('#editNotes').show();
+                        console.log('notes saved!');
+                        console.log(data);
+
+                    },
+                    error:function (data) {
+                        console.log('notes save Error!');
+                        console.log(data);
+                    }
+
+                });
+            }
+
+        });
+        $('#cancelNotes').click(function () {
+            $('#notes_input textarea').val($('#notes_text').text());
+            $('#notes_text').show();
+            $('#saveNotes').hide();
+            $('#notes_input').hide();
+            $('#cancelNotes').hide();
+            $('#editNotes').show();
+        });
+
         App.modules.games.detailedView.init({
                 'container': $('#'+pageModule+'View'),
                 'moduleName': pageModule,

@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Models\Gameservicehistory;
 use Illuminate\Http\Request;
+use \App\Models\Sximo\Module;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
 
@@ -22,7 +23,13 @@ class GameservicehistoryController extends Controller
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
 
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
+        $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->pass['Can Edit']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Remove']) ? 1 : 0;
+        
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => 'gameservicehistory',
@@ -89,7 +96,6 @@ class GameservicehistoryController extends Controller
         if ($results['total'] == 0) {
             $params['limit'] = 1;
         }
-        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'],
             (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));
@@ -135,7 +141,7 @@ class GameservicehistoryController extends Controller
         }
 
         if ($id != '') {
-            if ($this->access['is_edit'] == 0)
+            if ($this->access['is_edit'] == 0 && empty($this->pass['Can Edit']))
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
 
@@ -171,6 +177,7 @@ class GameservicehistoryController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('gameservicehistory.view', $this->data);
     }
@@ -222,7 +229,7 @@ class GameservicehistoryController extends Controller
     public function postDelete(Request $request)
     {
 
-        if ($this->access['is_remove'] == 0) {
+        if ($this->access['is_remove'] == 0 && empty($this->pass['Can Remove'])) {
             return response()->json(array(
                 'status' => 'error',
                 'message' => \Lang::get('core.note_restric')

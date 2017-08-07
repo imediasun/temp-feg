@@ -17,7 +17,6 @@
 	<!-- Begin Content -->
 	<div class="page-content-wrapper m-t">
 		<div class="resultData"></div>
-		<div class="ajaxLoading"></div>
 		<div id="{{ $pageModule }}View" class="moduleView"></div>			
 		<div id="{{ $pageModule }}Grid" class="moduleGrid"></div>
 	</div>	

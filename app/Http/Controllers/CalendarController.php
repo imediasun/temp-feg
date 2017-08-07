@@ -65,7 +65,8 @@ class CalendarController extends Controller
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('calendar/data');
 
         $this->data['param'] = $params;
@@ -137,6 +138,7 @@ class CalendarController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['tableGrid']=$this->info['config']['grid'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('calendar.view', $this->data);
     }

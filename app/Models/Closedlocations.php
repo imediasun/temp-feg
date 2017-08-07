@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use App\Library\DBHelpers;
 use SiteHelpers;
 
 class closedlocations extends Sximo  {
@@ -38,7 +39,10 @@ class closedlocations extends Sximo  {
             'date_start' => '', 'date_end' => '', 'id' => 'location_id', 'debit_type_id'  => ''
         ));        
         extract($filters);
-        ReportHelpers::dateRangeFix($date_start, $date_end);        
+
+        $defaultEndDate = DBHelpers::getHighestRecorded('game_earnings_transfer_adjustments', 'date_start', "notes='CLOSED'");
+        ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
+        //ReportHelpers::dateRangeFix($date_start, $date_end);
         
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();

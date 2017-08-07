@@ -18,7 +18,8 @@ class CronController extends Controller
         $password = CNF_REPLY_TO_PASSWORD;
 
         /* try to connect */
-        $inbox = imap_open($hostname, $username, $password) or die('Cannot connect to Gmail: ' . imap_last_error());
+        $inbox = imap_open($hostname, $username, $password,NULL, 1,
+            array('DISABLE_AUTHENTICATOR' => 'PLAIN')) or die('Cannot connect to Gmail: ' . imap_last_error());
         echo "connection established";
         /* grab emails */
         $emails = imap_search($inbox, 'SUBJECT "FEG Ticket #"');

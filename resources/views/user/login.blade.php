@@ -78,7 +78,7 @@
 
             <div class="form-group  has-feedback text-center  animated fadeInLeft delayp1" style=" margin-bottom:20px;" >
 
-                <button type="submit"  class="btn darkblue-btn btn-sm btn-block" ><i class="fa fa-sign-in"></i> {{ Lang::get('core.signin') }}</button>
+                <button type="submit"  class="btn darkblue-btn btn-sm btn-block" id="loginBtn"><i class="fa fa-sign-in"></i> {{ Lang::get('core.signin') }}</button>
 
 
 

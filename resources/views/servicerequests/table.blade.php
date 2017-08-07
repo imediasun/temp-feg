@@ -10,7 +10,7 @@
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips reloadDataButton" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','servicerequests/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
+            @if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
@@ -27,9 +27,10 @@
                             {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                         </div>
                     @endforeach
-                    <div class="sscol-submit"><br/>
-                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                    </div>
+                        <div class="sscol col-md-2">
+                            <span style="width: 100%;margin-top:22px;float: left;margin-bottom: 5px;margin-left: 3px;"><input type="checkbox" name="showAll" id="showAll" class="form-control checkbox" data-simplesearch="1" @if(\Illuminate\Support\Facades\Session::get('showAllChecked') == true) checked @endif>&nbsp;&nbsp; <label for="showAll">Display Closed</label></span>
+                        </div>
+                    {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
             @endif
         @endif
@@ -44,7 +45,7 @@
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <th width="35"> No </th>
                         @endif
-                        @if($setting['disableactioncheckbox']=='false')
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                             <th width="30"> <input type="checkbox" class="checkall" /></th>
                         @endif
                         @if($setting['view-method']=='expand') <th>  </th> @endif
@@ -66,7 +67,7 @@
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
                                             ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                            ' align="'.$t['align'].'"'.
+                                            ' style=text-align:'.$t['align'].
                                             ' width="'.$t['width'].'"';
                                     $th .= '>';
                                     $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -76,7 +77,7 @@
                             endif;
                         endforeach; ?>
                         @if($setting['disablerowactions']=='false')
-                            <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                            <th width="75"><?php echo Lang::get('core.btn_action') ;?></th>
                         @endif
                     </tr>
                     </thead>
@@ -85,7 +86,9 @@
                     @if($access['is_add'] =='1' && $setting['inline']=='true')
                         <tr id="form-0" >
                             <td> # </td>
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                             <td> </td>
+                            @endif
                             @if($setting['view-method']=='expand') <td> </td> @endif
                             @foreach ($tableGrid as $t)
                               @if ($canChangeStatus || !in_array($t['field'],['Status', 'closed']))                             
@@ -108,11 +111,11 @@
 
                     $id = $row->TicketID;
                     ?>
-                    <tr class="editable" id="form-{{ $row->TicketID }}">
+                    <tr class="editable" id="form-{{ $row->TicketID }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->TicketID }}" ondblclick="showFloatingCancelSave(this)" @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
-                        @if($setting['disableactioncheckbox']=='false')
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                                 <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->TicketID;?>"/></td>
                         @endif
 
@@ -123,7 +126,7 @@
                         <?php foreach ($tableGrid as $field) :
                         if($field['view'] == '1') :
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
-                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
+                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
@@ -137,7 +140,6 @@
                         ?>
                         <td data-values="action" data-key="<?php echo $row->TicketID;?>">
                             {!! AjaxHelpers::buttonAction('servicerequests',$access,$id ,$setting) !!}
-                            {!! AjaxHelpers::buttonActionInline($row->TicketID,'TicketID') !!}
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -154,6 +156,11 @@
                     </tbody>
 
                 </table>
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->TicketID,'TicketID') !!}
+                    @endforeach
+                @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">
@@ -187,7 +194,18 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
-
+        $('select[name="Status"]').change(function () {
+            var showAll = $('input[name=showAll]');
+            if($('select[name="Status"] :selected')[0].index == 0)
+            {
+                $('input[name=showAll]').removeAttr('disabled');
+            }
+            else
+            {
+                showAll.attr('disabled','disabled');
+                showAll.parent('.icheckbox_square-blue').removeClass('checked');
+            }
+        });
         <?php if ($setting['view-method'] == 'expand') :
         echo AjaxHelpers::htmlExpandGrid();
     endif;
@@ -206,6 +224,16 @@
         }
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+        setTimeout(function () {
+            console.log($('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text(),$('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen')[0]);
+            if($('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text() == ' -- Select  -- ')
+            {
+                $('input[name=showAll]').removeAttr('disabled');
+            }
+            else {
+                $('input[name=showAll]').attr('disabled','disabled').parent('.icheckbox_square-blue').removeClass('checked').css('cursor','no-drop');
+            }
+        },400);
     });
 </script>
 <style>
@@ -218,4 +246,3 @@
     }
 
 </style>
-	

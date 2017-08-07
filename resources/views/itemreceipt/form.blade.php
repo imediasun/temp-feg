@@ -129,8 +129,7 @@
 				
 					
 				  <div class="form-group">
-					<label class="col-sm-4 text-right">&nbsp;</label>
-					<div class="col-sm-8">	
+					<div class="col-sm-12 text-center">	
 					<button type="submit" name="apply" class="btn btn-info btn-sm" ><i class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
 					<button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
 					<button type="button" onclick="location.href='{{ URL::to('itemreceipt?return='.$return) }}' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>

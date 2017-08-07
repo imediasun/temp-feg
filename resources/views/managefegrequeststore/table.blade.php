@@ -5,7 +5,7 @@
         <div class="sbox-tools" >
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}', 'managefegrequeststore/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','managefegrequeststore/data?view=manage&return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
+            @if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
             <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
             @endif
         </div>
@@ -65,7 +65,7 @@
                     @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                         <th width="35"> No </th>
                     @endif
-                    @if($setting['disableactioncheckbox']=='false')
+                        @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                         <th width="30"> <input type="checkbox" class="checkall" /></th>
                     @endif
                     @if($setting['view-method']=='expand') <th>  </th> @endif
@@ -87,7 +87,7 @@
                                         ' data-sortable="'.$colIsSortable.'"'.
                                         ' data-sorted="'.($colIsSorted?1:0).'"'.
                                         ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                        ' align="'.$t['align'].'"'.
+                                        ' style=text-align:'.$t['align'].
                                         ' width="'.$t['width'].'"';
                                 $th .= '>';
                                 $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -99,10 +99,10 @@
 
                         <th width="200">Vendor</th>
                         <th width="100">Price</th>
-                        <th width="130" style="background-color:red;color:#FFF">Remaining Reserved Qty</th>
+                        <th width="140" style="background-color:red;color:#FFF">Remaining Reserved Qty</th>
                         <th width="100">Order Type</th>
                         @if($setting['disablerowactions']=='false')
-                            <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                            <th width="105"><?php echo Lang::get('core.btn_action') ;?></th>
                         @endif
                     </tr>
                 </thead>
@@ -111,7 +111,7 @@
                     @if($access['is_add'] =='1' && $setting['inline']=='true')
                     <tr id="form-0" >
                         <td> # </td>
-                        @if($setting['disableactioncheckbox']=='false')
+                        @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                             <td> </td>
                         @endif
                         @if($setting['view-method']=='expand') <td> </td> @endif
@@ -135,11 +135,11 @@
                     foreach ($rowData as $row) :
                         $id = $row->id;
                         ?>
-                        <tr class="editable" id="form-{{ $row->id }}">
+                        <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
                             @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                                 <td class="number"> <?php echo ++$i;?>  </td>
                             @endif
-                            @if($setting['disableactioncheckbox']=='false')
+                                @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                                 <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                             @endif
                             @if($setting['view-method']=='expand')
@@ -151,7 +151,7 @@
                                     $conn = (isset($field['conn']) ? $field['conn'] : array() );
 
 
-                                    $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
+                                    $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                                     ?>
             <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
@@ -169,13 +169,15 @@
                                 endif;
                             endforeach;
                             ?>
-                            <td>{{ $row->vendor_name }}</td>
+                            <td>{{ \DateHelpers::formatZeroValue($row->vendor_name) }}</td>
                             <td>{{CurrencyHelpers::formatPrice($row->case_price)}} </td>
-                            <td align="center">{{ $row->reserved_difference }}</td>
-                            <td> {{ $row->order_type }}</td>
+                            <td align="center">{{ \DateHelpers::formatZeroValue($row->reserved_difference) }}</td>
+                            <td> {{ \DateHelpers::formatZeroValue($row->order_type) }}</td>
                             <td data-values="action" data-key="<?php echo $row->id; ?>">
                                 {!! AjaxHelpers::buttonAction('managefegrequeststore',$access,$id ,$setting) !!}
-                                {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                               @if($view == "manage" && $access['is_edit'] == 1 )
+                                <a href="#"  class="tips btn btn-xs btn-white" data-id="{{ $row->id }}" title="Deny Request" onclick="denyRequest(this);"><i class="fa fa-ban" aria-hidden="true"></i></a>
+                            @endif
                             </td>
                         </tr>
                         @if($setting['view-method']=='expand')
@@ -192,6 +194,11 @@
                 </tbody>
 
             </table>
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                    @endforeach
+                @endif
             @else
 
             <div style="margin:100px 0; text-align:center;">
@@ -255,7 +262,63 @@ endif;
         params.data.force['view'] = 'manage';
 
     });
+function denyRequest(ele)
+{
+    $('.ajaxLoading').show();
+    var requestId=$(ele).data('id');
+    var url="{{ url() }}/managefegrequeststore/deny";
+    $.post(url,{request_id:requestId},function(data){
 
+        if(data.status == 'success')
+        {
+            notyMessage(data.message);
+console.log($('#managefegrequeststoreTable tbody tr').not('.hiddenNow').length);
+            if($('#managefegrequeststoreTable tbody tr').not('.hiddenNow').length < 3)
+            {
+                console.log('performing reload');
+
+                if($('#vendor_id').val()!=''){
+                    console.log('Clearing vendor');
+                    $('#vendor_id').val('');
+
+                }else if($('#location_id').val()!=''){
+                    console.log('Clearing location');
+                    $('#location_id').val('');
+
+                }else if($('#order_type').val()!=''){
+                    console.log('Clearing order types');
+                    $('#order_type').val('');
+                }
+
+
+                if($('#order_type').val()==''){
+                    console.log('Reload all');
+                    reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+
+                }else if($('#location_id').val()==''){
+                    console.log('Reload order types');
+                    pageRefresh('T');
+
+                }else if($('#vendor_id').val()==''){
+                    console.log('Reload location');
+                    pageRefresh('L');
+                }
+
+            }
+            else
+            {
+                $('#form-'+requestId).addClass('hiddenNow').hide(200);
+                $('.ajaxLoading').hide();
+                return true;
+            }
+
+        } else {
+            notyMessageError(data.message);
+            $('.ajaxLoading').hide();
+            return false;
+        }
+    });
+}
 </script>
 <style>
     .table th.right {

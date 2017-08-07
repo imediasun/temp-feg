@@ -18,13 +18,12 @@
 	<!-- Begin Content -->
 	<div class="page-content-wrapper m-t">
 		<div class="resultData"></div>
-		<div class="ajaxLoading"></div>
-		<div id="{{ $pageModule }}View"></div>
+        <div id="{{ $pageModule }}View"></div>
 		<div id="{{ $pageModule }}Grid"></div>
 	</div>
 	<!-- End Content -->
     <?php
-        echo \Session::get('filter_before_redirect');
+        //echo \Session::get('filter_before_redirect');
     if(! isset($id)){
         $id= 0;
     }
@@ -35,8 +34,7 @@
 $(document).ready(function(){
     var id = "{{ $sid  }}";
     if(id){
-
-        ajaxViewDetail('#order',"{{url()}}/order/update/1/"+id); return false;
+        ajaxViewDetail('#order',"{{url()}}/order/update/0/"+id); return false;
        // ajaxViewDetail('#order',"http://demo/sximo/public/order/update/1/"+id); return false;
         //reloadData('#{{ $pageModule }}','/sximo/public/order/data');
     }
@@ -61,5 +59,71 @@ $(document).ready(function(){
     }
 
 });
+
+App.autoCallbacks.registerCallback('ajaxview.before', function (eventData){
+    var url = eventData.url,
+        id,
+        checkUrl,
+        isEdit = /\/order\/update\/[^0][^\/]/.test(url) && !/\/clone$/.test(url);
+
+    if (isEdit) {
+        id = url.split('/').pop().replace(/[^\d]/, '');
+        checkUrl = siteUrl + '/order/check-editable/'+id;
+
+        blockUI();
+        $.ajax({
+            type: "GET",
+            url: checkUrl,
+            success: function (data) {
+                if(data.status === 'success'){
+                    unblockUI();
+                    if (eventData && eventData.callback) {
+                        eventData.callback();
+                    }
+                }
+                else {
+                    if (data.action && data.action =='clone') {
+                            App.notyConfirm({
+                                message: data.message,
+                                confirmButtonText: 'Yes',
+                                cancelButtonText: 'No',
+                                confirm: function (){
+                                    $.ajax({
+                                        type: "GET",
+                                        url: data.url,
+                                        success: function (cdata) {
+                                            if (cdata && cdata.status=='success') {
+                                                notyMessage(cdata.message);
+                                                $(".orderTableReload").click();
+                                                ajaxViewDetail("#order", cdata.editUrl);
+                                            }
+                                            else {
+                                                notyMessageError(cdata.message);
+                                            }
+                                            unblockUI();                                            
+                                        }
+                                    });
+                                },
+                                cancel: function (){
+                                    unblockUI();
+                                }
+                            });
+                    }
+                    else {
+                        notyMessageError(data.message);
+                        unblockUI();
+                    }
+                }
+            }
+        });
+    }
+    else {
+        if (eventData && eventData.callback) {
+            eventData.callback();
+        }
+    }
+});
+
+
 </script>
 @endsection

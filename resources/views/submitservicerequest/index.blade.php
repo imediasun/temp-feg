@@ -20,55 +20,54 @@
 
         <div class="page-content-wrapper m-t">
             <div class="sbox animated fadeInRight">
-                <div class="sbox-title"><h5><i class="fa fa-table"></i></h5>
+                <div class="sbox-title"><h5><i class="fa fa-table"></i>&nbsp; &nbsp;IT / Parts / Service Request</h5>
 
                     <div class="sbox-tools">
-                        @if(Session::get('gid') ==1)
+                        @if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
                             <a href="{{ URL::to('feg/module/config/'.$pageModule) }}"
                                class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}"><i
                                         class="fa fa-cog"></i></a>
                         @endif
                     </div>
                 </div>
-                <div class="sbox-content">
-                    <div class="col-md-6" style="background: #FFF;box-shadow:1px 1px 5px lightgray;padding:30px">
-                        <h2 class="text-center">IT / Parts / Service Request</h2>
-                        <hr/>
+                <div class="sbox-content"  style="background: #FFF">
+                    <div class="col-md-12">
+                        
                         {!! Form::open(array('url'=>'submitservicerequest/save/',
                         'class'=>'form-horizontal' ,'id' =>'submitservicerequest' )) !!}
-                        <div class="form-group  ">
+                        <div class="form-group">
                             <label for="location_id" class="control-label col-md-4 text-left">
-                                For Location
+                                For Location:
                             </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6 select-full">
                                 <select name="location_id" id="location_id" class="select2"></select>
                             </div>
                         </div>
                         <div class="form-group " id="game_div">
                             <label for="game_id" class="control-label col-md-4 text-left">
-                                For Game :
+                                For Game:
                             </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <select name="game_id" id="game_id" class="select2" onchange="grabGameId()"></select>
                             </div>
                         </div>
                         <div class="form-group ">
 
                             <label for="tech_type" class=" control-label col-md-4 text-left">
-                                <b style="color:red">IT Service Request</b> </label>
+                                <b style="color:red">IT Service Request:</b> </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input type="radio" name="tech_type" value="service" id="tech_type" checked="checked"/>
                             </div>
                         </div>
                         <div class="form-group  ">
                             <label for="requestTitle" class=" control-label col-md-4 text-left">
-                                Title
+                                Title:
                             </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input type="text" class="form-control"
                                        placeholder="Title" maxlength="35"
                                        value=""
@@ -76,14 +75,14 @@
                             </div>
                         </div>
                         <div class="form-group  " id="description_div">
-                            <label for="description" class=" control-label col-md-10 text-left">
-                                Detailed Description (parts request and/or description of problem)
-                            </label>
 
-                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <label for="description" class="" style="font-weight: normal;">
+                                    Detailed Description (parts request and/or description of problem):
+                                </label>
+                            </div>
 
-                            <div class="col-md-8">
-                                <br/>
+                            <div class="col-md-6">
                                 <textarea class="form-control" name="description" id="description" cols="40"
                                           rows="6"></textarea>
                             </div>
@@ -91,10 +90,10 @@
                         </div>
                         <div class="form-group" id="cost_div">
                             <label for="cost" class=" control-label col-md-4 text-left">
-                                Part Cost
+                                Part Cost:
                             </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input type="text" class="form-control" placeholder="Cost" value="" name="part_cost"
                                        id="cost">
                             </div>
@@ -113,9 +112,12 @@
                             <label for="date_needed" class="control-label col-md-4 text-left date">
                                 Date Needed: </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
+                                <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+                                    <i class="fa fa-calendar" id="icon"></i>
+                                </span>
                                 <input typ="text" class="form-control date" name="need_by_date" value="" id="date_needed"
-                                        />
+                                        style="width:150px !important;" />
                             </div>
 
                         </div>
@@ -123,16 +125,16 @@
                             <label for="game_down" class=" control-label col-md-4 text-left">
                                 Game is Down: </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input type="checkbox" name="game_down" value="1" id="game_down"/>
                                 <input type="hidden" name="game_down" value="0" id="game_down"/>
                             </div>
                         </div>
                         <div class="form-group ">
                             <label for="userfile" class=" control-label col-md-4 text-left">
-                                Upload File </label>
+                                Upload File: </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input type="file" name="userfile" class="" id="userfile"/>
                             </div>
 
@@ -142,11 +144,12 @@
                                    value="{{ \Session::get('company_id') }}">
 
                             <div class="form-group">
-                                <label class="col-sm-4 text-right">&nbsp;</label>
-
-                                <div class="col-sm-8">
-                                    <button type="submit" class="btn btn-primary btn-sm "><i
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-6 text-center"><br>
+                                    <button type="submit" class="btn btn-primary btn-sm " ><i
                                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
+                                    <b class="text-center">&nbsp;Submitted
+                                        on {{ date('m/d/Y') }}</b>
                                     {{--<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')"--}}
                                             {{--class="btn btn-success btn-sm"><i--}}
                                                 {{--class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }}--}}
@@ -157,9 +160,6 @@
 
                             {!! Form::close() !!}
                         </div>
-                        <hr/>
-                        <h4 class="text-center">Submitted
-                            on {{ date('m/d/Y') }}</h4>
 
                     </div>
                     <div class="col-md-6">
@@ -275,7 +275,6 @@
                 </div>
             </div>
         </div>
-        <div class="ajaxLoading"></div>
     </div>
 
 

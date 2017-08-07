@@ -1,7 +1,8 @@
 @if($setting['view-method'] =='native')
 <div class="sbox">
 	<div class="sbox-title">  
-		<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+		<h4> 
+			<i class="fa fa-eye"></i>&nbsp;&nbsp;<?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
 			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
 			<i class="fa fa fa-times"></i></a>
 		</h4>
@@ -24,7 +25,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) }}
 						</td>
-						<td>{{ $row[0]->game_title }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row[0]->game_title,$nodata['game_title']) }} </td>
 
 					</tr>
 
@@ -32,7 +33,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Manufacturer', (isset($fields['mfg_id']['language'])? $fields['mfg_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row[0]->vendor_name }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row[0]->vendor_name,$nodata['mfg_id']) }} </td>
 
 					</tr>
 
@@ -40,7 +41,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Game Type ', (isset($fields['game_type_id']['language'])? $fields['game_type_id']['language'] : array())) }}
 						</td>
-						<td>{!! SiteHelpers::gridDisplayView($row[0]->game_type_id,'game_type_id','1:game_type:id:game_type_short') !!} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row[0]->game_type_id,'game_type_id','1:game_type:id:game_type_short',$nodata['game_type_id']) !!} </td>
 
 					</tr>
 

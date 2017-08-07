@@ -1,4 +1,10 @@
 {{--*/      use App\Library\FEG\System\FEGSystemHelper;                   /*--}}
+<style>
+    .collapse-close
+    {
+        top:0 !important;
+    }
+</style>
 @if($setting['view-method'] =='native')
 	<div class="sbox">
 		<div class="ticketHeaderContainer clearfix">
@@ -39,6 +45,12 @@
 		<div class="sbox-content">
 @endif
 			<div class="ticketViewParentContainer clearfix">
+                {!! Form::open(array('url'=>'servicerequests/status-update/'.SiteHelpers::encryptID($row['TicketID']), 'id'=> 'servicerequestsStatusUpdateFormAjax')) !!}
+                    {!! Form::hidden('TicketID', $row['TicketID']) !!}
+                    {!! Form::hidden('Status', $row['Status']) !!}
+                    {!! Form::hidden('oldStatus', $row['Status']) !!}
+                    {!! Form::hidden('Priority', $row['Priority']) !!}
+                {!! Form::close() !!}
                 {!! Form::open(array('url'=>'servicerequests/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'servicerequestsFormAjax')) !!}
                 <div class="ticketLeftSidebarContainer" >
                     <div class="ticketLeftSidebar">

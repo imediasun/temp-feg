@@ -1,29 +1,33 @@
-<div class="row m-b">
+<div class="row c-margin">
 	<div class="col-md-9">
-        @if($access['is_add'] ==1)
-        {!! AjaxHelpers::buttonActionCreate($pageUrl,$setting) !!}
-        <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
-        @endif
-        @if($access['is_remove'] ==1)
-        <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+		@if($access['is_add'] ==1)
+			{!! AjaxHelpers::buttonActionCreate($pageUrl,$setting) !!}
+		@endif
+		@if($setting['disableactioncheckbox']=='false')
+			@if($access['is_add'] ==1)
+			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
+			@endif
+			@if($access['is_remove'] ==1)
+			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+			@endif
         @endif
         @if(SiteHelpers::isModuleEnabled($pageModule))
         @if(!empty($colconfigs))
-        <select class="form-control" style="width:25%!important;display:inline;" name="col-config"
+        <select class="form-control" style="width:auto!important;display:inline;" name="col-config"
                 id="col-config">
-            <option value="0">Select Configuraton</option>
+            <option value="0">Select Column Arrangement</option>
             @foreach( $colconfigs as $configs )
             <option @if($config_id == $configs['config_id']) selected
             @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
             @endforeach
         </select>
         <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
+           onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
         @endif
         @endif
     </div>
 	<div class="col-md-3 ">
-        <?php 
+        <?php
             $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
             $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;
             $isPDF = isset($access['is_pdf'])  && $access['is_pdf'] == 1;
@@ -34,21 +38,21 @@
 		@if($isExport)
 		<div class="pull-right">
             @if($isExcel)
-			<a href="{{ URL::to( $pageUrl .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
+			<a href="{{ URL::to( $pageUrl .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
 			@endif
             @if($isCSV)
-			<a href="{{ URL::to( $pageUrl .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
+			<a href="{{ URL::to( $pageUrl .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
 			@endif
             @if($isPDF)
-			<a href="{{ URL::to( $pageUrl .'/export/pdf?return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
+			<a href="{{ URL::to( $pageUrl .'/export/pdf?exportID='.uniqid('pdf', true).'&return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
 			@endif
             @if($isWord)
-			<a href="{{ URL::to( $pageUrl .'/export/word?return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
+			<a href="{{ URL::to( $pageUrl .'/export/word?exportID='.uniqid('word', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
 			@endif
             @if($isPrint)
-			<a href="{{ URL::to( $pageUrl .'/export/print?return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+			<a href="{{ URL::to( $pageUrl .'/export/print?exportID='.uniqid('print', true).'&return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
 			@endif
-		</div>	
+		</div>
 		@endif
 	</div>
 </div>

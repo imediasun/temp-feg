@@ -2,6 +2,8 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Library\ReportHelpers;
+use App\Library\DBHelpers;
 
 class productsindevelopmentreport extends Sximo  {
 	
@@ -13,7 +15,7 @@ class productsindevelopmentreport extends Sximo  {
 		
 	}
 
-	public static function querySelect( $isCount = false ){
+	public static function querySelect($params = array(), $isCount = false ){
         
         $selectFields = " products.id,
     		products.date_added AS DateAdded, 
@@ -29,6 +31,7 @@ class productsindevelopmentreport extends Sximo  {
     		products.date_added as start_date,
     		products.date_added as end_date ";
         
+        extract($params);
         
         $sql = "SELECT " . ($isCount ? " count(*) as totalCount " : $selectFields);
         
@@ -37,17 +40,13 @@ class productsindevelopmentreport extends Sximo  {
             LEFT JOIN order_type T ON T.id = products.prod_type_id
             LEFT JOIN product_type D ON D.id = products.prod_sub_type_id "; 
         
-        $filters = self::getSearchFilters();
-        $date_start = @$filters['start_date'];
-        $date_end = @$filters['end_date'];
-        $description = @$filters['Description'];
-        
-		$where = "   WHERE products.in_development = 1  ";        
+		$where = "   WHERE products.in_development = 1  ";
+
         if (!empty($date_start)) {
             $where .= " AND products.date_added >= '$date_start' ";
         }
         if (!empty($date_end)) {
-            $where .= " AND products.date_added <= '$date_end 23:59:59' ";
+            $where .= " AND products.date_added <= '$date_end' ";
         }
         if (!empty($description)) {
             $where .= " AND products.vendor_description LIKE '%$description%' ";
@@ -86,8 +85,23 @@ class productsindevelopmentreport extends Sximo  {
 			'global'	=> 1
 		), $args ));
 
+
+        $filters = self::getSearchFilters();
+        $date_start = @$filters['start_date'];
+        $date_end = @$filters['end_date'];
+        $description = @$filters['Description'];
+
+        $defaultEndDate = DBHelpers::getHighestRecorded('products', 'date_added', 'products.in_development = 1');
+        ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
+
+        $searchQueries = [
+            'date_start' => $date_start,
+            'date_end' => $date_end,
+            'description' => $description,
+        ];
+
         $total = 0;
-        $totalQuery = self::querySelect(true);
+        $totalQuery = self::querySelect($searchQueries, true);
         $totalRows = \DB::select($totalQuery);
         if (!empty($totalRows) && isset($totalRows[0])) {
             $total = $totalRows[0]->totalCount;
@@ -101,13 +115,15 @@ class productsindevelopmentreport extends Sximo  {
             
 		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : '';
 
-        $selectQuery = self::querySelect(). " {$orderConditional} {$limitConditional}";
+        $selectQuery = self::querySelect($searchQueries). " {$orderConditional} {$limitConditional}";
         $rawRows = \DB::select($selectQuery);
         $rows = self::processRows($rawRows);        
                 
         if ($total == 0) {
-            $messaeg = "To view the contents of this report, please select a date range";
+            $message = "To view the contents of this report, please select a date range";
         }
+        $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
+        $topMessage = "Products in development $humanDateRange";
 		
 		return $results = array(
                     'topMessage' => $topMessage,

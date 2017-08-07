@@ -4,9 +4,15 @@ namespace App\Http\Controllers\core;
 use App\Http\Controllers\controller;
 use App\Models\Core\Users;
 use App\Models\Core\Groups;
+use App\Models\Sximo\Module;
+use App\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Session, Auth, DB;
+use App\Library\FEG\System\FEGSystemHelper;
+
 
 
 class UsersController extends Controller
@@ -35,6 +41,40 @@ class UsersController extends Controller
             'return' => self::returnUrl()
 
         );
+    }
+
+    public function getCheckAccess()
+    {
+        if (!\Auth::check()) {
+            response()->json(['status' => "fail", 'noAuth' => true, 'message' => 'You are no longer logged-in. Please login again.']);
+        }
+        $moduleName = Input::get('module');
+        $searchableModuleName = $moduleName;
+        $urlParts = explode('/', trim(Input::get('url'), '/'));
+        array_pop($urlParts);
+        $copiedUrlParts = $urlParts;
+        $fullPassList = ['forum'];
+
+        $moduleId = Module::where('module_name', $searchableModuleName)->pluck('module_id');
+        while (empty($moduleId) && !empty($copiedUrlParts)) {
+            $searchableModuleName = array_pop($copiedUrlParts);
+            $moduleId = Module::where('module_name', $searchableModuleName)->pluck('module_id');
+        }
+
+        $access = [];
+
+        if (!empty($moduleId)) {
+            $access = $this->model->validAccess($moduleId);
+        }
+        else {
+            $access = $this->model->validPageAccess($moduleName);
+        }
+        if (empty($access)) {
+            if (in_array($moduleName, $fullPassList)) {
+                $access = ['is_view' => 1];
+            }
+        }
+        return response()->json($access);
     }
 
     public function getIndex(Request $request, $id=null)
@@ -104,7 +144,6 @@ class UsersController extends Controller
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'],
             (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));
@@ -148,50 +187,74 @@ class UsersController extends Controller
         
     public function getPlay($id = null)
     {
-        $return_id = \Session::get('uid');
+        $isPlaback = $id == 'back';
+        $impersonatedUserIdPath = Session::has('return_id') ? Session::get('return_id') : [];
+        $current_user = \Session::get('uid');
+
+        if ($isPlaback) {
+            if (!is_array($impersonatedUserIdPath)) {
+                $id = $impersonatedUserIdPath;
+                $impersonatedUserIdPath = [];
+            }
+            else {
+                $id = array_pop($impersonatedUserIdPath);
+            }
+        }
+        else {
+            $impersonatedUserIdPath[] = $current_user;
+        }
+
         $row = Users::find($id);
-        Auth::loginUsingId($row->id);
+        if(is_object($row))
+        {
+            Auth::loginUsingId($row->id);
 
-        DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m-d H:i:s")));
-        //Session::regenerate();
+            DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m-d H:i:s")));
+            //Session::regenerate();
 
-        Session::put('uid', $row->id);
-        Session::put('gid', $row->group_id);
-        Session::put('eid', $row->email);
-        Session::put('flgStatus', 1);
-        Session::put('ll', $row->last_login);
-        Session::put('fid', $row->first_name . ' ' . $row->last_name);
-        Session::put('user_name', $row->username);
-        Session::put('ufname', $row->first_name);
-        Session::put('ulname', $row->last_name);
-        Session::put('company_id', $row->company_id);
-        $user_locations = \SiteHelpers::getLocationDetails($row->id);
-        if (!empty($user_locations)) {
+            Session::put('uid', $row->id);
+            Session::put('gid', $row->group_id);
+            Session::put('eid', $row->email);
+            Session::put('flgStatus', 1);
+            Session::put('ll', $row->last_login);
+            Session::put('fid', $row->first_name . ' ' . $row->last_name);
+            Session::put('user_name', $row->username);
+            Session::put('ufname', $row->first_name);
+            Session::put('ulname', $row->last_name);
+            Session::put('company_id', $row->company_id);
+            $user_locations = \SiteHelpers::getLocationDetails($row->id);
+            if (empty($user_locations)) {
+                $user_locations = [];
+            }
+            $user_location_ids = \SiteHelpers::getIdsFromLocationDetails($user_locations);
+            $has_all_locations = empty($row->has_all_locations) ? 0 : 1;
+            \Session::put('user_has_all_locations', $has_all_locations);
             Session::put('user_locations', $user_locations);
-            Session::put('selected_location', $user_locations[0]->id);
-            Session::put('selected_location_name', $user_locations[0]->location_name_short);
+            Session::put('selected_location', isset($user_locations[0]->id) ? $user_locations[0]->id: null);
+            Session::put('selected_location_name', isset($user_locations[0]->location_name_short) ? $user_locations[0]->location_name_short : null);
+            \Session::put('user_location_ids', $user_location_ids);
+            Session::put('get_locations_by_region', $row->get_locations_by_region);
+            Session::put('email_2', $row->email_2);
+            Session::put('primary_phone', $row->primary_phone);
+            Session::put('secondary_phone', $row->secondary_phone);
+            Session::put('street', $row->street);
+            Session::put('city', $row->city);
+            Session::put('state', $row->state);
+            Session::put('zip', $row->zip);
+            Session::put('reg_id', $row->reg_id);
+            Session::put('restricted_mgr_email', $row->restricted_mgr_email);
+            Session::put('restricted_user_email', $row->restricted_user_email);
+
+            Session::put('return_id', $impersonatedUserIdPath);
+
+            Session::save();
+
+            return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
         }
-        Session::put('get_locations_by_region', $row->get_locations_by_region);
-        Session::put('email_2', $row->email_2);
-        Session::put('primary_phone', $row->primary_phone);
-        Session::put('secondary_phone', $row->secondary_phone);
-        Session::put('street', $row->street);
-        Session::put('city', $row->city);
-        Session::put('state', $row->state);
-        Session::put('zip', $row->zip);
-        Session::put('reg_id', $row->reg_id);
-        Session::put('restricted_mgr_email', $row->restricted_mgr_email);
-        Session::put('restricted_user_email', $row->restricted_user_email);
-        Session::save();
-
-        if (Session::get('return_id') == $id) {
-
-            Session::put('return_id', '');
-        } else {
-
-            Session::put('return_id', $return_id);
+        else
+        {
+            return redirect()->back();
         }
-        return Redirect::to('dashboard');
     }
 
     function get($id = NULL)
@@ -251,31 +314,60 @@ class UsersController extends Controller
     function getUpdate(Request $request, $id = null)
     {
 
+        if($request->get('code'))
+        {
 
-        if ($id == '') {
+            $client = new Client();
+            $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8'),'form_params'=>array('grant_type'=>'authorization_code','code'=>$request->get('code'),'client_id'=>env('G_ID'),'redirect_uri'=>url('/').env('G_REDIRECT_2'),'client_secret'=>env('G_SECRET'))));
+            $result = $res->getBody();
+            $array = json_decode($result, true);
 
-            if ($this->access['is_add'] == 0)
-                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-            $this->data['user_locations'] = 0;
+            $res2 = $client->request('GET', 'https://www.googleapis.com/oauth2/v1/userinfo?access_token='.$array['access_token'],array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8')));
+            $result2 = $res2->getBody();
+            $array2 = json_decode($result2, true);
+
+            $user = User::find($request->get('state'));
+            $user->oauth_token = $array['access_token'];
+            $user->oauth_email=$array2['email'];
+            if(isset($array['refresh_token']))
+            {
+                $user->refresh_token = $array['refresh_token'];
+            }
+
+            $user->save();
+            return redirect(url('core/users/update/'.$request->get('state')));
+        }
+        else
+        {
+            if ($id == '') {
+
+                if ($this->access['is_add'] == 0)
+                    return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+                $this->data['user_locations'] = 0;
+            }
+
+            if ($id != '') {
+                if ($this->access['is_edit'] == 0)
+                    return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+                $this->data['user_locations'] = $this->model->getLocations($id);
+            }
+
+            $row = $this->model->find($id);
+            if ($row) {
+                $this->data['row'] = $row;
+            } else {
+                $this->data['row'] = $this->model->getColumnTable('users');
+            }
+
+            $this->data['id'] = $id;
+
+            $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
+            $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
+            //$this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com/&approval_prompt=force&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri='.url('/').env('G_REDIRECT').'&response_type=code&client_id='.env('G_ID');
+            $this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com+profile+email&access_type=offline&include_granted_scopes=true&state='.$id.'&redirect_uri='.url('/').env('G_REDIRECT_2').'&response_type=code&client_id='.env('G_ID');
+            return view('core.users.form', $this->data);
         }
 
-        if ($id != '') {
-            if ($this->access['is_edit'] == 0)
-                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-            $this->data['user_locations'] = $this->model->getLocations($id);
-        }
-
-        $row = $this->model->find($id);
-        if ($row) {
-            $this->data['row'] = $row;
-        } else {
-            $this->data['row'] = $this->model->getColumnTable('users');
-        }
-
-        $this->data['id'] = $id;
-
-        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
-        return view('core.users.form', $this->data);
     }
 
     function getUpload($id = NULL)
@@ -296,7 +388,7 @@ class UsersController extends Controller
         $id = Input::get('id');
         if ($validator->fails()) {
             // send back to the page with the input data and errors
-            return Redirect::to('core/users/upload/' . $id)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'Please select an Image..')->withErrors($validator);;
+            return Redirect::to('core/users/upload/' . $id)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'Please select an Image..')->withErrors($validator);
 
         } else {
             $updates = array();
@@ -318,24 +410,33 @@ class UsersController extends Controller
 
     }
 
-    public function getShow($id = null)
+    public function getShow($id = null, $mode = null)
     {
-
-        if ($this->access['is_detail'] == 0)
-            return Redirect::to('dashboard')
-                ->with('messagetext', Lang::get('core.note_restric'))->with('msgstatus', 'error');
-
+        if ($mode != 'popup') {
+            if ($this->access['is_detail'] == 0) {
+                return Redirect::to('dashboard')
+                    ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+            }
+        }
         $row = $this->model->getRow($id);
         if ($row) {
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('users');
         }
+        $this->data['mode'] = $mode;
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $location_details = \SiteHelpers::getLocationDetails($id);
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['user_locations'] = $location_details;
-        return view('core.users.view', $this->data);
+        if (empty($mode)) {
+            return view('core.users.view', $this->data);
+        }
+        else {
+            return view("core.users.view.$mode", $this->data);
+        }
+        
     }
 
     function postSave(Request $request, $id = 0)
@@ -345,13 +446,9 @@ class UsersController extends Controller
         $form_data['created_at'] = date('Y-m-d');
         $form_data['updated_at'] = date('Y-m-d');
         $rules = $this->validateForm();
-        $rules['g_mail'] = 'email';
-        $rules['g_password'] = 'min:8';
-       
-
         $rules['email'] = 'required|email|unique:users,email';
         if ($request->input('id') == '') {
-            $rules['password'] = 'required|between:6,12';
+            $rules['password'] = 'required|confirmed|between:6,12';
             $rules['password_confirmation'] = 'required|between:6,12';
             $rules['username'] = 'required|min:2|unique:users';
 
@@ -359,7 +456,7 @@ class UsersController extends Controller
         } else {
             $rules['email'] = 'required|email|unique:users,email,'.$request->input('id');
             if ($request->input('password') != '') {
-                $rules['password'] = 'required|between:6,12';
+                $rules['password'] = 'required|confirmed|between:6,12';
                 $rules['password_confirmation'] = 'required|between:6,12';
             }
 
@@ -394,20 +491,25 @@ class UsersController extends Controller
             $data['redirect_link'] = $request->get('redirect_link');
 
             $data['active']=$request->get('active');
-            /* add google account password and email*/
-            $data['g_mail'] = $request->input('g_mail');
-            if(!is_null($request->input('g_password')))
-            {
-                $password = base64_encode(env('SALT_KEY').$request->input('g_password').env('SALT_KEY'));
-                $data['g_password'] = $password;
-            }
+            $data['street']=$request->get('street');
+            $data['tier']=$request->get('tier');
+            $data['primary_phone']=$request->get('primary_phone');
+            $data['restricted_mgr_email']=$request->get('restricted_mgr_email');
+            $data['restricted_user_email']=$request->get('restricted_user_email');
+            $data['restrict_merch']=$request->get('restrict_merch');
+            $data['is_tech_contact']=$request->get('is_tech_contact');
+
             $id = $this->model->insertRow($data, $request->input('id'));
             $all_locations = Input::get('all_locations');
-            if (empty($all_locations)) {
+
+            if(empty($request->input('multiple_locations')) && empty($all_locations)){
+                \DB::table('user_locations')->where('user_id', '=', $request->input('id'))->delete();
+            }
+            else if (empty($all_locations)) {
                 $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
                 \DB::update("update users set has_all_locations=0 where id=$id");
             } else {
-                $all_locations = \DB::select('select id from location');
+                $all_locations = \DB::select('select id from location where active = 1');
                 $locations = array();
                 $i = 0;
                 foreach ($all_locations as $l) {
@@ -532,11 +634,23 @@ class UsersController extends Controller
                         $subject = $request->input('subject');
                         $message = $request->input('message');
                         $message = $this->replaceVariables($message, $row);
-                        $headers = 'MIME-Version: 1.0' . "\r\n";
-                        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                        //$headers = 'MIME-Version: 1.0' . "\r\n";
+                        //$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 
-                        $headers .= 'From: ' . CNF_APPNAME . ' <' . $replyEmailAddress . '>' . "\r\n";
-                        mail($to, $subject, $message, $headers);
+                        //$headers .= 'From: ' . CNF_APPNAME . ' <' . $replyEmailAddress . '>' . "\r\n";
+                        //mail($to, $subject, $message, $headers);
+                        if(!empty($to)){
+                            FEGSystemHelper::sendSystemEmail(array(
+                                'to' => $to,
+                                'subject' => $subject,
+                                'message' => $message,
+                                'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                                'from' => $replyEmailAddress,
+                                //'cc' => $cc,
+                                //'bcc' => $bcc,
+                                'configName' => 'USER BLAST EMAIL'
+                            ));
+                        }
 
                         $count = ++$count;
                     }
@@ -566,14 +680,35 @@ class UsersController extends Controller
         $content = str_replace("[email]",$object->email,$content);
         return $content;
     }
-    public function getSendPasswordResetEmails()
+    /*public function getSendPasswordResetEmails()
     {
         $this->model->passwordForgetEmails();
-    }
+    }*/
 public function getUserDetails($id)
 {
     $request=new Request();
 return $this->getIndex($request,$id);
 //    return view('core.users.index', $data);
 }
+    function postTrigger(Request $request)
+    {
+        $isActive = $request->get('isActive');
+        $userId = $request->get('userId');
+        if ($isActive == "true") {
+            $update = \DB::update('update users set active=1 where id=' . $userId);
+        } else {
+            $update = \DB::update('update users set active=0 where id=' . $userId);
+        }
+
+        if ($update) {
+            return response()->json(array(
+                'status' => 'success'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in Activation'
+            ));
+        }
+    }
 }

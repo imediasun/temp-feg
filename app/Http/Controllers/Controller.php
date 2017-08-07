@@ -11,6 +11,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\Feg\System\Options;
 
 
 abstract class Controller extends BaseController
@@ -21,6 +22,18 @@ abstract class Controller extends BaseController
     public function __construct()
     {
 
+        if(!empty(\Session::get('uid'))){
+            $newLocations = \SiteHelpers::getLocationDetails(\Session::get('uid'));
+            $oldLocations = \Session::get('user_locations');
+            $result=array_udiff($newLocations,$oldLocations,"self::compareArrays");
+
+            if(!empty($result)){
+                \Session::flash('messagetext', 'Your location has been changed by administrator');
+                \Session::flash('msgstatus', 'info');
+                \SiteHelpers::refreshUserLocations(\Session::get('uid'));
+            }
+        }
+        
         $this->addToCartModel = new Addtocart();
 
         $this->middleware('ipblocked');
@@ -42,6 +55,7 @@ abstract class Controller extends BaseController
                 \Session::put('eid', \Auth::user()->email);
                 \Session::put('ll', \Auth::user()->last_login);
                 \Session::put('fid', \Auth::user()->first_name . ' ' . \Auth::user()->last_name);
+                \Session::put('user_name', \Auth::user()->username);
                 \Session::put('ufname', \Auth::user()->first_name);
                 \Session::put('ulname', \Auth::user()->last_name);
                 \Session::put('company_id', \Auth::user()->company_id);
@@ -71,8 +85,53 @@ abstract class Controller extends BaseController
             'last_activity' => strtotime(Carbon::now())
         );
         \DB::table('users')->where('id', \Session::get('uid'))->update($data);
+
+        $this->data = [
+            'UQID' =>  uniqid('', true)
+        ];
     }
 
+    static function compareArrays($a,$b)
+    {
+        if ($a->location_name === $b->location_name)
+        {
+            return 0;
+        }
+        return ($a>$b)?1:-1;
+    }
+
+    function postInitExport($exportId = null) {
+        global $exportSessionID;
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        $time = \Session::get($exportSessionID);
+        return response()->json(array('session' => $exportSessionID, 'timestart' => $time));        
+    }
+
+    function postProbeExport($id) {
+        global $exportSessionID;
+        $exportSessionID = 'export-'.$id;
+        if (\Session::has($exportSessionID) && !is_null(\Session::has($exportSessionID))) {
+            $idTime = \Session::get($exportSessionID);
+            $now = microtime(true);
+            $diff = $now - $idTime;
+            \Session::forget($exportSessionID);            
+            return response()->json(array(
+                'session' => $exportSessionID,
+                'timestart' => $idTime,
+                'timenow' => $now,
+                'elapsed' => $diff,
+                'waiting' => true, 
+            ));
+        }
+        return response()->json(array(                
+                'session' => $exportSessionID,
+                'elapsed' => 0,
+                'waiting' => false,
+            ));
+    }
 
     function getComboselect(Request $request)
     {
@@ -398,7 +457,7 @@ abstract class Controller extends BaseController
         $errMsg = \Lang::get('core.note_error');
         $errMsg .= '<hr /> <ul>';
         foreach ($rules as $key => $val) {
-            $errMsg .= '<li>' . $key . ' : ' . $val[0] . '</li>';
+            $errMsg .= '<li>' . $val[0] . '</li>';
         }
         $errMsg .= '</li>';
         return $errMsg;
@@ -612,18 +671,68 @@ abstract class Controller extends BaseController
         $fields = '';
         $param = '';
         $allowsearch = $this->info['config']['forms'];
+        $searchAllValue = '';
+        $searchAllFields = [];
+        if (is_array($customSearchString) && !empty($customSearchString['query'])) {
+            $searchAllValue = $customSearchString['query'];
+            $searchAllFields = $customSearchString['fields'];
+            $searchDateFields = isset($customSearchString['dateFields']) ? $customSearchString['dateFields'] : [];
+            $dateQuery = isset($customSearchString['dateQuery']) ? $customSearchString['dateQuery'] : [];
+            $dateQueryOperator = isset($customSearchString['dateQueryOperator']) ? $customSearchString['dateQueryOperator'] :
+                (count($dateQuery)== 2 ? 'BETWEEN' : '=');
+            $customSearchString = '';
+        }
+
         $searchQuerystring = !is_null($customSearchString) ? $customSearchString : 
                 (isset($_GET['search']) ? $_GET['search'] : '');
-        
-        foreach ($allowsearch as $as)
+
+        foreach ($allowsearch as $as) {
             $arr[$as['field']] = $as;
-        if ($searchQuerystring != '') {
+        }
+        // search in all fields
+        if (!empty($searchAllValue)) {
+            $params = [];
+            $searchAllValue = addslashes(urldecode($searchAllValue));
+            if (!empty($searchAllFields)) {
+                foreach($searchAllFields as $field) {
+                    $params[] = " $field LIKE '%$searchAllValue%' ";
+                }
+            }
+            else {
+                foreach($arr as $fieldName => $item) {
+                    $alias = @$item['alias'];
+                    $isSearch = @$item['search'] == 1;
+                    if ($isSearch) {
+                        $field = (empty($alias) ?  '' : $alias.'.').$fieldName;
+                        $params[] = " $field LIKE '%$searchAllValue%' ";
+                    }
+                }
+            }
+            if (!empty($dateQuery)) {
+                foreach($dateQuery as $dateIndex => $dateItem) {
+                    $dateQuery[$dateIndex] = "'$dateItem'";
+                }
+                foreach($searchDateFields as $field) {
+                    $params[] = " ($field $dateQueryOperator ".implode(" AND ", $dateQuery). ") ";
+                }
+            }
+            $param = " AND (" . implode(' OR ', $params) . ') ';
+        }
+
+        elseif ($searchQuerystring != '') {
             $search_params=str_replace('_amp','&',$searchQuerystring);
             $type = explode("|", $search_params);
             if (count($type) >= 1) {
                 foreach ($type as $t) {
 
                     $keys = explode(":", $t);
+                    if (isset($keys[2])) {
+                        $keys[2] = urldecode($keys[2]);
+                    }
+                    if (isset($keys[3])) {
+                        $keys[3] = urldecode($keys[3]);
+                    }
+
                     if (in_array($keys[0], array_keys($arr))) {
 
                         if ($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio') {
@@ -644,28 +753,40 @@ abstract class Controller extends BaseController
                                         $multi_in[] .= '"' . $v . '"';
                                     }
                                     $multi_in = implode(',', $multi_in);
-                                    $param .= " AND " . $table . "." . $keys[0] . " IN(" . $multi_in . ") ";
+                                    $field = (empty($table) ?  "": $table.".") . $keys[0];
+                                    $param .= " AND $field IN(" . $multi_in . ") ";
                                 } else {
-                                    $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IN(" . $keys[2] . ") ";
+                                    $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[2];
+                                    $param .= " AND $field IN(" . $keys[2] . ") ";
                                 }
                             } else {
-
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                                $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
+                                $param .= " AND $field " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                             }
 
                         }
                         else {
-                            $col = $arr[$keys[0]]['alias'] . "." . $keys[0];
+                            $col = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
                             if ($keys[0] == 'up_user_id' && $arr[$keys[0]]['alias'] == "game_service_history") {
                                 $col = "DATEDIFF(date_up,date_down)";
                             } elseif ($keys[0] == 'description' && $arr[$keys[0]]['alias'] == "requests" && \Request::segment(1)=="managefegrequeststore") {
                                 $col = "products.vendor_description";
                             }
-
                             $operate = self::searchOperation($keys[1]);
                             if ($operate == 'like') {
-                                $param .= " AND " . $col . " LIKE '%" . addslashes($keys[2]) . "%%' ";
-                            } else if ($operate == 'is_null') {
+                                //For vend_to and vend_from search vendor_name or location_name
+                                if($keys[0] == 'vend_to' && $arr[$keys[0]]['alias'] == "freight_orders" && \Request::segment(1)=="managefreightquoters")
+                                {
+                                    $param .= "AND (V2.vendor_name LIKE'%". addslashes($keys[2]) . "%%' OR L2.location_name LIKE'%". addslashes($keys[2]) . "%%' OR CONCAT(freight_orders.to_add_name,'(',freight_orders.to_add_state,')') LIKE'%". addslashes($keys[2]) . "%%')";
+                                }
+                                elseif($keys[0] == 'vend_from' && $arr[$keys[0]]['alias'] == "freight_orders" && \Request::segment(1)=="managefreightquoters")
+                                {
+                                    $param .= "AND (V.vendor_name LIKE'%". addslashes($keys[2]) . "%%' OR L.location_name LIKE'%". addslashes($keys[2]) . "%%' OR CONCAT(freight_orders.from_add_name,'(',freight_orders.from_add_state,')') LIKE'%". addslashes($keys[2]) . "%%' )";
+                                }
+                                else {
+                                    $param .= " AND " . $col . " LIKE '%" . addslashes($keys[2]) . "%%' ";
+                                }
+                                } else if ($operate == 'is_null') {
                                 $param .= " AND " . $col . " IS NULL ";
 
                             } else if ($operate == 'not_null') {
@@ -732,7 +853,16 @@ abstract class Controller extends BaseController
     public
     function getExport($t = 'excel')
     {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
 
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
         if (method_exists($this, 'getSearchFilterQuery')) {
@@ -834,6 +964,7 @@ abstract class Controller extends BaseController
         }
 
         $content = array(
+            'exportID' => $exportSessionID,
             'fields' => $fields,
             'rows' => $rows,
             'title' => $this->data['pageTitle'],
@@ -983,5 +1114,102 @@ abstract class Controller extends BaseController
         \Session::put('filter_before_redirect',false);
     }
 
+    public function postReportIssue(Request $request) {
+
+        $optionCount = intval(Options::getOption('UIErrorReportCount', 1));
+        if (empty($optionCount)) {
+            $optionCount = 1;
+        }
+        Options::updateOption('UIErrorReportCount', ++$optionCount);
+
+        $supportEmail = env('ERROR_REPORT_RECIPIENT', "support@element5digital.com");
+        $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCC', "e5devmail@gmail.com");
+        $responseText = urldecode(urldecode($request->input('responseText')));
+
+        $statusText = $request->input('statusText');
+        $status = $request->input('status');
+        $readyState = $request->input('readyState');
+
+        $pageUrl = $request->input('pageUrl');
+        $url = $request->input('url');
+        $type = $request->input('type');
+        $data = $request->input('data');
+
+        $uid = \Session::get('uid');
+        $email = \Session::get('eid');
+        $uname = \Session::get('fid');
+        $username = \Session::get('user_name');
+
+        $userAgent = $request->input('userAgent');
+        $ip = request()->ip();
+        
+        $logPath = "ErrorReport";
+        $htmlFile = $logFile = "$username-$uid";
+
+        $errorMessages = [
+                       "Error Report ID: #" .$optionCount,
+                       "",
+                       "Reported On (EST): " .date("m/d/Y H:i:s"),
+                       "",
+                       "Page: $pageUrl",
+                       "Request Url: $url",
+                       "Request Type: [$type]",
+                       "Request Data: ". (empty($data) ? '{none}': json_encode($data)),
+                       "",
+                       "Error: $statusText",
+                       "Error Code: $status",
+                       "Ready State: $status",
+                       "",
+                       "Username: $username",
+                       "User ID: $uid",
+                       "Name: $uname",
+                       "Email: $email",
+                       "",
+                       "Browser: $userAgent",
+                       "IP: $ip",
+                       ""];
+        
+        $errorMessageHTML = implode("<br/>", $errorMessages);
+        $errorMessageLog = implode(", \r\n", $errorMessages);
+
+        $htmlFilePath = FEGSystemHelper::getUniqueFilePath($htmlFile.'.html', $logPath.'/html');
+        file_put_contents($htmlFilePath, $responseText, FILE_APPEND);
+
+        $logFile = FEGSystemHelper::getUniqueFile($logFile.'.log', $logPath.'/log');
+        $L = FEGSystemHelper::setLogger(null, $logFile, $logPath.'/log', "ERROR");
+        $L->log(str_repeat("#", 100));
+        $L->error($errorMessageLog);
+        $responseTextStripped = FEGSystemHelper::strip_html_tags($responseText);
+        $L->error($responseTextStripped);
+        $L->log(str_repeat("#", 100));
+        $responseAsBodyHTML = FEGSystemHelper::retainHTMLBody($responseText);        
+
+        $emailAttachment = $htmlFilePath;
+        $subject = "An error has been reported by user from FEG Admin";
+        $emailMessage = "<p>".$errorMessageHTML . "</p><hr/>"
+                . "<p style='font-family:monospace;font-size:120%;'>".
+                $responseAsBodyHTML. '</p><hr/>';
+        
+        $emailConfigurations = [
+            'from' => CNF_EMAIL,
+            'fromName' => "FEG Admin Error Reporting",
+            'to' => $supportEmail,
+            'bcc' => $supportEmailBCC,
+            'subject' => $subject,
+            'message' => $emailMessage,
+            'isTest' => env('SEND_ERRORREPORT_EMAIL_TO_TEST_RECIPIENT=true', false),
+            'configName' => 'Error Reporting',
+        ];
+
+        if (!empty($emailAttachment)) {
+            $emailConfigurations['attach'] = explode(',', $emailAttachment);
+        }
+        FEGSystemHelper::sendSystemEmail($emailConfigurations);
+        
+        return response()->json(array(
+            'status' => 'success',
+            'message' => 'Error reported successfully!',
+        ));
+    }
 }
 

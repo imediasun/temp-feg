@@ -124,7 +124,8 @@ class LocationController extends Controller
         }
 
 
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('location/data');
         $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
@@ -201,7 +202,7 @@ class LocationController extends Controller
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $gridSettings = $this->info['config']['grid'];
-        
+
         $row->contact_name = '';
         if (!empty($row->contact_id)) {
             $contactDetails = \SiteHelpers::getUserDetails($row->contact_id);
@@ -212,12 +213,12 @@ class LocationController extends Controller
             $fieldName = $field['field'];
             if($field['view'] == '1' && isset($row->$fieldName)) {
                 $conn = (isset($field['conn']) ? $field['conn'] : array());
-                $value = \AjaxHelpers::gridFormater($row->$fieldName, $row, $field['attribute'], $conn);
+                $value = \AjaxHelpers::gridFormater($row->$fieldName, $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                 $this->data['row']->$fieldName = $value;
             }
             $gridSettings[$field['field']] = $field;
         }
-        $this->data['tableGrid'] = $gridSettings;
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('location.view', $this->data);
     }
@@ -244,25 +245,28 @@ class LocationController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-
         $rules = $this->validateForm();
         $input_id=$request->get('id');
         $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
         
         if(\Session::get('location_updated') != $input_id) {
-            $rules['id'] = 'required|unique:location,id,'.$input_id;
+            if (!empty($input_id)) {
+                $rules['id'] = 'required|unique:location,id,'.$input_id;
+            }
         }
         else{
-            $rules['id'] = 'required';
+            if(is_null($id)) {
+               $rules['id'] = 'required';
+            }
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('location', !empty($id));
-            
+
             // old id in case the existing location's id has been modified
             $oldId = $id;
-            $newId = $data['id'];
-            if ($oldId == $newId) {
+            $newId = isset($data['id']) ? $data['id'] : $id;
+            if (empty($newId) || empty($oldId) || $oldId == $newId) {
                 $oldId = null;
             }
             
@@ -277,7 +281,7 @@ class LocationController extends Controller
                     unset($data[$fieldName]);
                 }                
             }
-            
+
             $id = $this->model->insertRow($data, $id);
             
             foreach($locationAssignments as $groupId => $userId) {
@@ -390,5 +394,39 @@ function getIsLocationAvailable($id)
         ));
     }
 }
+    function postTrigger(Request $request)
+    {
+        $isActive = $request->get('isActive');
+        $locationId = $request->get('locationId');
+        /*$user_locations=\Session::get('user_locations');
+        foreach ($user_locations as $key=>$value) {
+            if ($value->id == $locationId) {
+                unset($user_locations[$key]);
+            }
+        }*/
+        //\Session::put('user_locations',$user_locations);
+        $message="";
+        if ($isActive == "true") {
+            $update = \DB::update('update location set active=1 where id=' . $locationId);
+        $message="active";
+        } else {
+            $update = \DB::update('update location set active=0 where id=' . $locationId);
+        $message="inactive";
+        }
+        \SiteHelpers::addLocationToAllLocationUsers();
+        \SiteHelpers::refreshUserLocations(\Session::get('uid'));
+        if ($update) {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => $message
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in Activation'
+            ));
+        }
+
+    }
 
 }

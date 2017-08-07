@@ -65,7 +65,6 @@ class MerchandisebudgetController extends Controller
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
-
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -83,7 +82,6 @@ class MerchandisebudgetController extends Controller
         $results = $this->model->getRows($params, $budget_year);
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'],
             (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));
@@ -136,13 +134,12 @@ class MerchandisebudgetController extends Controller
         }
 
 
-        $row = $this->model->getRow($id);
-
+        $row = $this->model->getRow($id, false);
         $row = json_decode(json_encode($row), true);
         if ($row) {
             $this->data['row'] = $row;
         } else {
-            $this->data['row'] = array("id" => null, "location_id" => "", 'budget_year' => "", 'Jan' => '0', 'Feb' => '0', 'March' => '0', 'April' => '0', 'May' => '0', 'June' => '0', 'July' => '0', 'August' => '0', 'September' => '0', 'Octuber' => '0', 'Octuber' => '0', 'November' => '0', 'December' => '0');
+            $this->data['row'] = array("id" => null, "location_id" => "", 'budget_year' => "", 'Jan' => '0', 'Feb' => '0', 'March' => '0', 'April' => '0', 'May' => '0', 'June' => '0', 'July' => '0', 'August' => '0', 'September' => '0', 'October' => '0','November' => '0', 'December' => '0');
         }
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -168,6 +165,7 @@ class MerchandisebudgetController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('merchandisebudget.view', $this->data);
     }
@@ -197,19 +195,25 @@ class MerchandisebudgetController extends Controller
 
         $budget_vals = array();
         $location_id = $request->get('location_id');
+        if(empty($location_id))
+        {
+            $location = $request->get('location');
+            $id = explode('|',$location);
+            $location_id = rtrim($id[0]);
+        }
         $budget_year = $request->get('budget_year');
         $budget_vals['jan'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-01-01', 'budget_value' => $request->get('jan'));
         $budget_vals['feb'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-02-01', 'budget_value' => $request->get('feb'));
         $budget_vals['march'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-03-01', 'budget_value' => $request->get('march'));
         $budget_vals['april'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-04-01', 'budget_value' => $request->get('april'));
         $budget_vals['may'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-05-01', 'budget_value' => $request->get('may'));
-        $budget_vals['jun'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-06-01', 'budget_value' => $request->get('jun'));
-        $budget_vals['jul'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-07-01', 'budget_value' => $request->get('jul'));
-        $budget_vals['aug'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-08-01', 'budget_value' => $request->get('aug'));
-        $budget_vals['sep'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-09-01', 'budget_value' => $request->get('sep'));
-        $budget_vals['oct'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-10-01', 'budget_value' => $request->get('oct'));
-        $budget_vals['nov'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-11-01', 'budget_value' => $request->get('nov'));
-        $budget_vals['dec'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-12-01', 'budget_value' => $request->get('dec'));
+        $budget_vals['jun'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-06-01', 'budget_value' => $request->get('june'));
+        $budget_vals['jul'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-07-01', 'budget_value' => $request->get('july'));
+        $budget_vals['aug'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-08-01', 'budget_value' => $request->get('august'));
+        $budget_vals['sep'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-09-01', 'budget_value' => $request->get('september'));
+        $budget_vals['oct'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-10-01', 'budget_value' => $request->get('october'));
+        $budget_vals['nov'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-11-01', 'budget_value' => $request->get('november'));
+        $budget_vals['dec'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-12-01', 'budget_value' => $request->get('december'));
         if ($id == 0) {
             $id = $this->model->insertRow($budget_vals, $request->input('id'), $location_id, $budget_year);
         } else {
@@ -274,6 +278,9 @@ class MerchandisebudgetController extends Controller
                             if ($keys[0] == "budget_date") {
                                 \Session::put('budget_year', $keys[2]);
                                 $param .= " AND " . "YEAR(" . $arr[$keys[0]]['alias'] . "." . $keys[0] . ") " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
+                            } else if($arr[$keys[0]]['alias'] . "." . $keys[0] == 'location_budget.location_id') {
+                                $values = explode(',',addslashes($keys[2]));
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IN ('" . implode("','",$values) . "') ";
                             } else {
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
                             }

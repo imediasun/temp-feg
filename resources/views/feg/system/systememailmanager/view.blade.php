@@ -227,7 +227,7 @@
 					</tr>
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							Updated At
+							Updated On
 						</td>
 						<td>{!! $vrow->updated_at !!} </td>
 						

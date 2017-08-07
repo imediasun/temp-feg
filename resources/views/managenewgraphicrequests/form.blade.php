@@ -1,8 +1,11 @@
 @if($setting['form-method'] =='native')
     <div class="sbox">
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
-                <small>{{ $pageNote }}</small>
+            <h4>@if($id)
+                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Graphics Request
+                @else
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Graphics Request
+                @endif
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
@@ -15,7 +18,7 @@
             'managenewgraphicrequestsFormAjax')) !!}
             <div class="col-md-12">
                 <fieldset>
-                    <legend> Manage New Graphics Req</legend>
+                    
                     <div class="form-group  ">
                         <label for="Priority" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Priority ', (isset($fields['priority_id']['language'])?
@@ -76,9 +79,8 @@
             <div style="clear:both"></div>
 
             <div class="form-group">
-                <label class="col-sm-4 text-right">&nbsp;</label>
 
-                <div class="col-sm-8 form-save">
+                <div class="col-sm-12 text-center form-save">
                     <button type="submit" class="btn btn-primary btn-sm "><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
@@ -106,7 +108,7 @@
         $('.editor').summernote();
         $('.previewImage').fancybox();
         $('.tips').tooltip();
-        renderDropdown($(".select4 "), { width:"98%"});
+        renderDropdown($(".select4 "), { width:"100%"});
         $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
         $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
         $('input[type="checkbox"],input[type="radio"]').iCheck({
@@ -156,6 +158,25 @@
             $('.ajaxLoading').hide();
             return false;
         }
+    }
+
+
+    function deleteGraphic(id, img) {
+        $('.ajaxLoading').show();
+        $.ajax({
+            type: "POST",
+            url:'{{url()}}/managenewgraphicrequests/deletegraphic',
+            dataType:'json',
+            data: {img:img, id:id},
+            success:function(data){
+                $('.ajaxLoading').hide();
+                $('#'+img.replace(".", "")).hide(300);
+            },
+            error: function(){
+                $('.ajaxLoading').hide();
+            },
+
+        });
     }
 
 </script>		 

@@ -17,7 +17,6 @@
 	<!-- Begin Content -->
 	<div class="page-content-wrapper m-t">
 		<div class="resultData"></div>
-		<div class="ajaxLoading"></div>
 		<div id="{{ $pageModule }}View"></div>			
 		<div id="{{ $pageModule }}Grid"></div>
 	</div>	
@@ -33,10 +32,16 @@
 
     <script type="text/javascript">
         var pageModule = '{{$pageModule}}',
-            pageUrl = '{{$pageUrl}}';
-
+            pageUrl = '{{$pageUrl}}',
+            viewTicketId = @if(empty(@$_GET['view'])) "" @else "{{ \SiteHelpers::encryptID($_GET['view'], true) }}" @endif,
+            hasViewTicket = viewTicketId && viewTicketId != 0;
+        
         $(document).ready(function(){
-            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
+
+            if(hasViewTicket){
+                ajaxViewDetail('#'+pageModule, pageUrl + "/show/"+viewTicketId);
+            }
+            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data', UNFN, { isBackground: hasViewTicket});
         });
     </script>
     <script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/grid.js') }}"></script>          

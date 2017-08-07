@@ -6,6 +6,7 @@ use App\Http\Controllers\controller;
 use App\Models\Managefreightquoters;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use App\Library\FEG\System\FEGSystemHelper;
 use Validator,
     Input,
     Redirect;
@@ -97,7 +98,6 @@ class ManagefreightquotersController extends Controller
         $this->data['description'] = $description;
 // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
             ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('managefreightquoters/data');
@@ -171,6 +171,7 @@ class ManagefreightquotersController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('managefreightquoters.view', $this->data);
     }
@@ -201,11 +202,9 @@ class ManagefreightquotersController extends Controller
         $form_data = array();
         $form_data['loc_to_1'] = 0;
         $form_data['date_submitted'] = date('Y-m-d');
-        $form_data['date_paid'] = date('Y-m-d');
-        $form_data['date_booked'] = date('Y-m-d');
-
+        $form_data['date_paid'] = "";
+        $form_data['date_booked'] = "";
         $rules['from_type'] = $rules['to_type'] = $rules['games_per_location'] = $rules['description'] = $rules['dimensions'] = 'required';
-
         if ($to_form_type == 'blank') {
             $rules['to_add_name'] = $rules['to_add_city'] = $rules['to_add_state'] = $rules['to_add_zip'] = $rules['to_add_street'] = $rules['to_contact_name'] = $rules['to_contact_phone'] = $rules['to_contact_email'] = 'required';
             $rules['to_contact_email'] = 'required|email';
@@ -319,7 +318,7 @@ class ManagefreightquotersController extends Controller
             if ($from_form_type == 'location') {
                 $query = \DB::select('SELECT L.location_name,L.street1,L.city AS loc_city,L.state AS loc_state,L.zip AS loc_zip,L.loading_info,
                  U.first_name AS user_first_name,U.last_name AS user_last_name,U.email AS user_email,U.primary_phone AS user_phone
-										 FROM location L                                          
+										 FROM location L
                                          LEFT JOIN user_locations UL ON UL.location_id = L.id AND UL.group_id=101
                                          LEFT JOIN users U ON U.id = UL.user_id
 										WHERE L.id = ' . $form_data['loc_from'] . '');
@@ -365,7 +364,7 @@ class ManagefreightquotersController extends Controller
                 foreach ($location_to as $location) {
                     $query = \DB::select('SELECT L.location_name, L.street1,  L.city AS loc_city, L.state AS loc_state, L.zip AS loc_zip, L.loading_info,
 											  U.first_name AS user_first_name, U.last_name AS user_last_name, U.email AS user_email,  U.primary_phone AS user_phone
-										 FROM location L 
+										 FROM location L
                                          LEFT JOIN user_locations UL ON UL.location_id = L.id AND UL.group_id=101
                                          LEFT JOIN users U ON U.id = UL.user_id
                                          WHERE L.id = ' . $location . '');
@@ -408,26 +407,80 @@ class ManagefreightquotersController extends Controller
             }
             $from_loading_info = $request->get('from_loading_info');
             if (!empty($from_loading_info)) {
-                $from_loading_info = '<b>**' . $from_loading_info . '</b>** <br>';
+                $from_loading_info = '<b>**' . $from_loading_info . '**</b> <br>';
             }
-            $subject = 'FREIGHT QUOTE for Family Entertainment Group - ' . $request->get('from_add_city') . ' to ' . $request->get('to_add_city') . '';
-            if (!empty($from_contact_full_name) || !empty($from_contact_phone) || !empty($from_contact_email)) {
-                $from_contact_summary = $from_contact_full_name . ' | ' . $from_contact_phone . ' | ' . $from_contact_email . '<br>';
-            } else {
-                $from_contact_summary = '';
+            $subject = 'FREIGHT QUOTE For Family Entertainment Group - ';
+            if(!empty($from_city))
+            {
+                $subject  .= 'From '.$from_city;
             }
+            if(!empty($to_city))
+            {
+                if(is_array($to_city))
+                {
+                    $str = implode(',',$to_city);
+                    if(($str != '' && $str != ' '))
+                    {
+                        $subject  .= ' To '.implode(',',$to_city);
+                    }
+                }
+                elseif($to_city != ' ' && $to_city != '')
+                {
+                    $subject .=' To '.$to_city;
+                }
+
+            }
+            $subject .= '';
+            $from_contact_summary = '';
+            if (!empty($from_contact_full_name)) {
+                $from_contact_summary = $from_contact_full_name;
+            }
+            if(!empty($from_contact_phone))
+            {
+                $from_contact_summary .= (!empty($from_contact_full_name) ? ' | ' : '') . $from_contact_phone;
+
+            }
+            if(!empty($from_contact_email))
+            {
+                $from_contact_summary .= ((!empty($from_contact_full_name) && !empty($from_contact_phone)) ? ' | ' : '') . $from_contact_email;
+            }
+            $from_contact_summary.= '<br>';
+
             $fromMessage = '<b>FROM:</b><br>' .
                 $from_name . '<br>' .
-                $from_street . '<br>' .
-                $from_city . ', ' . $from_state . ' ' . $from_zip . '<br>' .
+                $from_street . '<br>' ;
+            if(!empty($from_city))
+            {
+                $fromMessage .= $from_city. (!empty($from_state)?', ':'') ;
+            }
+            if(!empty($from_state))
+            {
+                $fromMessage .= $from_state. (!empty($from_zip)?', ':'')  ;
+            }
+            if(!empty($from_zip))
+            {
+                $fromMessage .= $from_zip ;
+            }
+            $fromMessage.= '<br>' .
                 $from_contact_summary .
-                '<b style="color:red">' . $from_loading_info . '</b>';
+                '<b style="color:red">' . $from_loading_info . '</b><br><br>';
             if (!empty($to_contact_full_name) || !empty($to_contact_phone) || !empty($to_contact_email)) {
                 $to_contact_summary = "";
-                for ($i = 1;
-                     $i < count($to_contact_full_name);
-                     $i++) {
-                    $to_contact_summary .= $to_contact_full_name[$i] . ' | ' . $to_contact_phone[$i] . ' | ' . $to_contact_email[$i] . '<br>';
+                for ($i = 1; $i < count($to_contact_full_name); $i++) {
+                    //$to_contact_summary .= $to_contact_full_name[$i] . ' | ' . $to_contact_phone[$i] . ' | ' . $to_contact_email[$i] . '<br>';
+                    if (!empty($to_contact_full_name[$i])) {
+                        $to_contact_summary = $to_contact_full_name[$i];
+                    }
+                    if(!empty($to_contact_phone[$i]))
+                    {
+                        $to_contact_summary .= (!empty($to_contact_full_name[$i]) ? ' | ' : '') . $to_contact_phone[$i];
+
+                    }
+                    if(!empty($to_contact_email[$i]))
+                    {
+                        $to_contact_summary .= ((!empty($to_contact_full_name[$i]) && !empty($to_contact_phone[$i])) ? ' | ' : '') . $to_contact_email[$i];
+                    }
+                    $to_contact_summary.= '<br>';
                 }
             } else {
                 $to_contact_summary = '';
@@ -442,20 +495,77 @@ class ManagefreightquotersController extends Controller
                     }
 
                     $toMessage = $toMessage . " " . $to_name[$i] . '<br>' .
-                        $to_street[$i] . '<br>' .
-                        $to_city[$i] . ', ' . $to_state[$i] . ' ' . $to_zip[$i] . '<br>' .
-                        $to_contact_full_name[$i] . ' | ' . $to_contact_phone[$i] . ' | ' . $to_contact_email[$i] . '<br>' .
-                        '<b style="color:red">' . $to_loading_info[$i] . '</b><br><br>';
-                    $subject = $subject . ', ' . $to_city[$i];
+                        $to_street[$i] . '<br>' ;
+                    if(!empty($to_city[$i]))
+                    {
+                        $toMessage .= $to_city[$i]. (!empty($to_state[$i])?', ':'') ;
+                    }
+                    if(!empty($to_state[$i]))
+                    {
+                        $toMessage .= $to_state[$i]. (!empty($to_zip[$i])?', ':'')  ;
+                    }
+                    if(!empty($to_zip[$i]))
+                    {
+                        $toMessage .= $to_zip[$i] ;
+                    }
+                    $toMessage.= '<br>' ;
+
+                    if (!empty($to_contact_full_name[$i])) {
+                        $toMessage .= $to_contact_full_name[$i];
+                    }
+                    if(!empty($to_contact_phone[$i]))
+                    {
+                        $toMessage .= (!empty($to_contact_full_name[$i]) ? ' | ' : '') . $to_contact_phone[$i];
+
+                    }
+                    if(!empty($to_contact_email[$i]))
+                    {
+                        $toMessage .= ((!empty($to_contact_full_name[$i]) && !empty($to_contact_phone[$i])) ? ' | ' : '') . $to_contact_email[$i];
+                    }
+                    $toMessage.= '<br>';
+                    if(!empty($to_loading_info[$i]))
+                    {
+                        $toMessage.=   '<b style="color:red">**' . $to_loading_info[$i] . '**</b>';
+                    }
+                    $toMessage.= '<br><br>';
+                    //$subject .=  $to_city[$i];
                 }
             } else {
                 $toMessage = $toMessage . '<b> TO:</b><br>';
                 $toMessage = $toMessage . " " . $to_name . '<br>' .
-                    $to_street . '<br>' .
-                    $to_city . ', ' . $to_state . ' ' . $to_zip . '<br>' .
-                    $to_contact_full_name . ' | ' . $to_contact_phone . ' | ' . $to_contact_email . '<br>' .
-                    '<b style="color:red">' . $to_loading_info . '</b><br><br>';
-                $subject = $subject . ', ' . $to_city;
+                    $to_street . '<br>' ;
+                    if(!empty($to_city))
+                    {
+                        $toMessage .= $to_city. (!empty($to_state)?', ':'') ;
+                    }
+                    if(!empty($to_state))
+                    {
+                        $toMessage .= $to_state. (!empty($to_zip)?', ':'')  ;
+                    }
+                    if(!empty($to_zip))
+                    {
+                        $toMessage .= $to_zip ;
+                    }
+                    $toMessage.= '<br>' ;
+                if (!empty($to_contact_full_name)) {
+                    $toMessage = $to_contact_full_name;
+                }
+                if(!empty($to_contact_phone))
+                {
+                    $toMessage .= (!empty($to_contact_full_name) ? ' | ' : '') . $to_contact_phone;
+
+                }
+                if(!empty($to_contact_email))
+                {
+                    $toMessage .= ((!empty($to_contact_full_name) && !empty($to_contact_phone)) ? ' | ' : '') . $to_contact_email;
+                }
+                $toMessage.= '<br>';
+                if(!empty($to_loading_info))
+                {
+                    $toMessage.=   '<b style="color:red">**' . $to_loading_info . '**</b>';
+                }
+                $toMessage .= '<br><br>';
+                //$subject .=  $to_city;
             }
             $forMessage = "";
             for ($i = 1;
@@ -464,7 +574,7 @@ class ManagefreightquotersController extends Controller
                 $forMessage .= '<br><b>FOR:</b><br>
 						Pallet #' . $i . ': ' .
                     $pallet_data['description'][$i - 1] . '<br>
-						Pallet Dimms.: ' .
+						Pallet Dimms: ' .
                     $pallet_data['dimensions'][$i - 1] . '<br>';
             }
             $notes = $request->get('ship_notes');
@@ -474,19 +584,29 @@ class ManagefreightquotersController extends Controller
 							<b>' . $notes . '</b>';
             }
             $message = $fromMessage . $toMessage . $forMessage;
-            $bcc = 'freight-notifications@fegllc.com';
             $from = \Session::get('eid');
             $sender_name = \Session::get('fname');
             $sender_name .= \Session::get('lname');
             $freightCompanyQuery = \DB::select('SELECT rep_email FROM freight_companies WHERE active = 1  AND rep_email != ""');
+            $recipients =  \FEGHelp::getSystemEmailRecipients('GET FREIGHT QUOTE EMAIL');
             foreach ($freightCompanyQuery as $rowFreight) {
-                $to = $rowFreight->rep_email;
-                $headers = "Bcc: " . $bcc . "\r\n";
-                $headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
-                $headers .= "MIME-Version: 1.0\r\n";
-                $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                //mail($to, $subject, $message, $headers);
+                $recipients['to'] .= (empty($recipients['to']))? $rowFreight->rep_email:','.$rowFreight->rep_email;
             }
+            $to_emails = explode(",", $recipients['to']);
+            foreach ($to_emails as $to){
+                $recipients['to'] = $to;
+                if(!empty($recipients['to'])){
+                    FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                        'subject' => $subject,
+                        'message' => $message,
+                        'preferGoogleOAuthMail' => true,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'from' => $from
+                    )));
+                }
+            }
+
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -540,11 +660,28 @@ class ManagefreightquotersController extends Controller
     {
         $update = array('status' => 2, 'date_paid' => date('Y-m-d'));
         \DB::table('freight_orders')->where('id', $freight_order_id)->update($update);
-        return Redirect::to('managefreightquoters')->with('messagetext', \Lang::get('core.note_freight_paid'))->with('msgstatus', 'success');
+        $row = $this->model->getRow($freight_order_id);
+        if ($row) {
+            $this->data['row'] = $row;
+        } else {
+            $this->data['row'] = $this->model->getColumnTable('freight_orders');
+        }
+        $this->data['id'] = $freight_order_id;
+        $this->data['access'] = $this->access;
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        return view('managefreightquoters.view', $this->data);
+        //return Redirect::to('managefreightquoters')->with('messagetext', \Lang::get('core.note_freight_paid'))->with('msgstatus', 'success');
     }
 
     public function getGamedetails($SID)
     {
         return Redirect::to('mylocationgame')->with('game_id', $SID);
+    }
+    public function messages()
+    {
+        return [
+            'email.required' => 'Er, you forgot your email address!',
+        ];
     }
 }

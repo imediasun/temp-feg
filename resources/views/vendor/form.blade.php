@@ -2,7 +2,11 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4>
+			<h4>@if($id)
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Vendor
+				@else
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Vendor
+					@endif
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -11,7 +15,7 @@
 @endif	
 			{!! Form::open(array('url'=>'vendor/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'vendorFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> vendor</legend>
+						<fieldset>
 									
 				  <div class="form-group  " > 
 					<label for="Vendor Name" class=" control-label col-md-4 text-left"> 
@@ -157,7 +161,7 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
+				  <div class="form-group  " >
 					<label for="Games  Email" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Games  Email', (isset($fields['games_contact_email']['language'])? $fields['games_contact_email']['language'] : array())) !!}	
 					</label>
@@ -167,7 +171,7 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
+				  </div>
 				  <div class="form-group  " > 
 					<label for="Games  Phone" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Games  Phone', (isset($fields['games_contact_phone']['language'])? $fields['games_contact_phone']['language'] : array())) !!}	
@@ -178,13 +182,25 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+				  </div>
+
+				<div class="form-group  " >
+					<label for="Billing Account Number" class=" control-label col-md-4 text-left">
+						{!! SiteHelpers::activeLang('Billing Account Number', (isset($fields['bill_account_num']['language'])? $fields['bill_account_num']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+						{!! Form::text('bill_account_num', $row['bill_account_num'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					</div>
+					<div class="col-md-2">
+
+					</div>
+				</div>
+							<div class="form-group  " >
 					<label for="Partner Hide" class=" control-label col-md-4 text-left">
                         <input type='hidden' value='0' name='partner_hide'>
 					{!! SiteHelpers::activeLang('Partner Hide', (isset($fields['partner_hide']['language'])? $fields['partner_hide']['language'] : array())) !!}	
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-6 check-no">
 					  <?php $partner_hide = explode(",",$row['partner_hide']); ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='partner_hide' value ='1'   class=''
@@ -200,7 +216,7 @@
 					<label for="Parts Vendor" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Game Vendor', (isset($fields['isgame']['language'])? $fields['isgame']['language'] : array())) !!}
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-6 check-no">
 					  <?php $isgame = explode(",",$row['isgame']); ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='isgame' value ='1'   class=''
@@ -217,7 +233,7 @@
 					<label for="Merchandise Vendor" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Merchandise Vendor', (isset($fields['ismerch']['language'])? $fields['ismerch']['language'] : array())) !!}
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-6 check-no">
 					  <?php $ismerch = explode(",",$row['ismerch']); ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='ismerch' value ='1'   class=''
@@ -238,7 +254,40 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> </fieldset>
+				  </div>
+							<div class="form-group  " >
+								<input type='hidden' value='0' name='hide'>
+								<label for="Hide Vendor" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Hide Vendor', (isset($fields['hide']['language'])? $fields['hide']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6 check-no">
+                                    <?php $hide = explode(",",$row['hide']); ?>
+									<label class='checked checkbox-inline'>
+										<input type='checkbox' name='hide' value ='1'   class=''
+											   @if(in_array('1',$hide))checked @endif
+										/>  </label>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+							<div class="form-group  " >
+								<input type='hidden' value='0' name='status'>
+								<label for="Active" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Active', (isset($fields['status']['language'])? $fields['status']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6 check-no">
+                                    <?php $status = explode(",",$row['status']); ?>
+									<label class='checked checkbox-inline'>
+										<input type='checkbox' name='status' value ='1'   class=''
+											   @if(in_array('1',$status))checked @endif
+										/>  </label>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+						</fieldset>
 			</div>
 			
 												
@@ -247,8 +296,7 @@
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
-				<div class="col-sm-8">	
+				<div class="col-sm-12 text-center">	
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			
@@ -272,7 +320,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	renderDropdown($(".select2 "), { width:"98%"});
+	renderDropdown($(".select2 "), { width:"100%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
@@ -285,16 +333,21 @@ $(document).ready(function() {
 		$(this).parent('div').empty();	
 		return false;
 	});			
-	var form = $('#vendorFormAjax'); 
+	var form = $('#vendorFormAjax');
+    
 	form.parsley();
-	form.submit(function(){
-		
+	form.submit(function(){        
 		if(form.parsley('isValid') == true){			
 			var options = { 
 				dataType:      'json', 
-				beforeSubmit :  showRequest,
+				beforeSubmit :  function (d, f, o) {
+                    o.form = f;
+                    var myAction = {};
+                    return App.functions.cleanupFormData(d, myAction, o);
+                },
 				success:       showResponse  
-			}  
+			}
+            blockUI();
 			$(this).ajaxSubmit(options); 
 			return false;
 						
@@ -308,7 +361,7 @@ $(document).ready(function() {
 
 function showRequest()
 {
-	$('.ajaxLoading').show();		
+	unblockUI();
 }  
 function showResponse(data)  {		
 	
@@ -325,4 +378,12 @@ function showResponse(data)  {
 	}	
 }			 
 
-</script>		 
+</script>
+
+<style>
+	.form-horizontal .control-label, .form-horizontal .radio, .form-horizontal .checkbox, .form-horizontal .radio-inline, .form-horizontal .checkbox-inline {
+		padding-top: 0px;
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+</style>

@@ -4,7 +4,9 @@ use App\Http\Controllers\controller;
 use App\Models\Addtocart;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Mockery\CountValidator\Exception;
 use Validator, Input, Redirect;
+use App\Models\Core\Groups;
 
 class AddtocartController extends Controller
 {
@@ -46,6 +48,13 @@ class AddtocartController extends Controller
 
     public function postData(Request $request)
     {
+        if(count(\Session::get('user_locations'))<=0){
+            return response()->json(array(
+                'status' => 'error',
+                'message' => "No location assigned!"
+            ));
+        }
+
         $productId = \Session::get('productId');
         $cartData = $this->model->popupCartData(null);
         $this->data['cartData'] = $cartData;
@@ -71,6 +80,7 @@ class AddtocartController extends Controller
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
+        $filter .= ' AND requests.request_user_id='.\Session::get('uid');
 
         $page = $request->input('page', 1);
         $params = array(
@@ -85,7 +95,8 @@ class AddtocartController extends Controller
         $results = $this->model->getRows($params);
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('addtocart/data');
         $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
@@ -159,6 +170,7 @@ class AddtocartController extends Controller
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         return view('addtocart.view', $this->data);
     }
 
@@ -249,18 +261,21 @@ class AddtocartController extends Controller
     {
 
         $now = date('Y-m-d');
-
+        $inputs = \Input::all();
+        $products = $inputs['products'];
         $location_id = \Session::get('selected_location');
         $data['user_level'] = \Session::get('gid');
-        if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
+        /*if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
             $statusId = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
-            $statusId = 0;
-        }
-
-        if (!empty($new_location)) {
+            $statusId = 4;
+        }*/
+        $statusId = 4;
+        /*
+          //commented on 07/07/2017 by asad because its not needed now
+         if (!empty($new_location)) {
             $query = \DB::select('SELECT product_id,description,qty,status_id,request_type_id FROM requests
-                                  WHERE location_id = ' . $location_id . ' AND status_id = 9');
+                                  WHERE location_id = ' . $location_id . ' AND status_id = 9 AND request_user_id = '.\Session::get('uid'));
 
             foreach ($query as $row) {
                 $insert = array(
@@ -275,14 +290,20 @@ class AddtocartController extends Controller
                 );
                 \DB::table('requests')->insert($insert);
             }
+        }*/
+
+        $check = \DB::select("SELECT * FROM requests WHERE location_id = $location_id AND status_id = 1 AND product_id IN (".implode(',',$products).")");
+        if(!empty($check)){
+            return redirect('/addtocart')->with('messagetext', 'You are requesting a product which already has been requested(See already order qty column). For adjustment contact Merchandise Office Team.')->with('msgstatus', 'error');
         }
+
         $update = array('status_id' => 1,
             'request_user_id' => \Session::get('uid'),
             'request_date' => $now);
-        \DB::table('requests')->where('location_id', $location_id)->where('status_id', $statusId)->update($update);
+        \DB::table('requests')->where('location_id', $location_id)->where('request_user_id', \Session::get('uid'))->where('status_id', $statusId)->update($update);
 
         if (empty($new_location)) {
-            return Redirect::to('./shopfegrequeststore')->with('messagetext', 'Submitted Successfully')->with('msgstatus', 'success');
+            return Redirect::to('/shopfegrequeststore')->with('messagetext', 'Submitted successfully')->with('msgstatus', 'success');
             \Session::put('total_cart', 0);
             //redirect('fegllc/popupCart', 'refresh');
         } else {
@@ -290,21 +311,25 @@ class AddtocartController extends Controller
              * comment line because $new_location value always come null from addtocart/table.blade
             $this->getChangelocation($new_location);
              */
-            return redirect('./shopfegrequeststore/popup-cart/');
+            return redirect('/shopfegrequeststore/popup-cart/');
         }
     }
 
     public function getSave($id = null, $qty = null, $vendor_name = null)
     {
-        $data = array('qty' => $qty);
-        $update = \DB::table('requests')->where('id', $id)->update($data);
-        if ($update) {
+
+        try {
+            $data = array('qty' => $qty);
+            \DB::table('requests')->where('id', $id)->update($data);
             $vendor_name = str_replace('_', ' ', $vendor_name);
 
             $updated = $this->model->popupCartData(null, $vendor_name);
             return json_encode(array('vendor_name' => $updated['subtotals'][0]['vendor_name'], 'subtotal' => $updated['subtotals'][0]['vendor_total']));
-        } else {
-            echo "Update Failed...";
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ));
         }
     }
 

@@ -1,8 +1,11 @@
 @if($setting['form-method'] =='native')
     <div class="sbox">
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
-                <small>{{ $pageNote }}</small>
+            <h4>@if($id)
+                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Freight Quote
+                @else
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Freight Quote
+                @endif
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
@@ -15,10 +18,12 @@
             'managefreightquotersFormAjax')) !!}
             <div class="col-md-8 col-md-offset-2" style="background: #FFF;box-shadow:1px 1px 5px lightgray">
                 <fieldset>
-                    <legend>Get Freight Quote</legend>
 
-                    <div class="form-group  ">
-                        <div class="col-md-8 col-md-offset-2">
+                    <div class="form-group">
+                        <label class="col-md-4">
+                            From :
+                        </label>
+                        <div class="col-md-8">
                             <label class="radio-inline">
                                 <input type="radio" name="from_type" value="location" id="radio_from_loc">&nbsp&nbsp Our
                                 Location </label>
@@ -34,16 +39,14 @@
                     </div>
                     <div class="clearfix"></div>
                     <div class="form-group">
-                        <label class="col-md-6 col-md-offset-3">
-                            From :
-                        </label>
+
                         <div id="from_div">
                             <div class="col-md-6 col-md-offset-4" id="location_from_div">
-                                <select name="location_from" id="location_id" class="select3">
+                                <select name="location_from" id="location_id" class="form-control">
                                 </select>
                             </div>
                             <div class="col-md-6 col-md-offset-4" id="vend_from_div">
-                                <select name="vend_from" id="vendor_id" class="select3">
+                                <select name="vend_from" id="vendor_id" class="form-control">
                                 </select>
                             </div>
                             <div class="col-md-12" id="std_from_div">
@@ -171,7 +174,10 @@
                     <hr/>
 
                     <div class="form-group  ">
-                        <div class="col-md-8 col-md-offset-2">
+                        <label class="col-md-4">
+                            To :
+                        </label>
+                        <div class="col-md-8 ">
                             <label class="radio-inline">
                                 <input type="radio" name="to_type" value="location" id="radio_to_loc">&nbsp&nbsp
                                 Our Location </label>
@@ -187,22 +193,19 @@
                     </div>
                     <div class="clearfix"></div>
                     <div class="form-group">
-                        <label class="col-md-6 col-md-offset-3">
-                            To :
-                        </label>
-
                         <div id="from_div">
                             <div class="col-md-6 col-md-offset-4" id="location_to_div">
                                 <div class="clone clonedInput">
-                                    <div class="col-md-10" style="padding:0px">
-                                        <select name="location_to[]" style="" id="location_to_id" class="form-control">
+                                    <div class="col-md-12" style="padding:0;margin-bottom: 15px">
+                                        <select name="location_to[]" style="width: 100%" id="location_to_id" class="form-control">
                                         </select>
+                                        <div class="col-md-1" style="position: absolute;right: -47px;top: 5px;">
+                                            <a onclick=" $(this).parents('.clonedInput').remove();$(this).removeAttr('required');  reInitParcley();  return false"
+                                               href="#" class="remove btn btn-xs btn-danger">-</a>
+                                            <input type="hidden" name="counter[]">
+                                        </div>
                                     </div>
-                                    <div class="col-md-1">
-                                        <a onclick=" $(this).parents('.clonedInput').remove();  return false"
-                                           href="#" class="remove btn btn-xs btn-danger">-</a>
-                                        <input type="hidden" name="counter[]">
-                                    </div>
+
                                 </div>
                                 <div class="text-center col-md-2 col-md-offset-3" style="padding-left:30px">
                                     <a style="display:inline-block;margin-top:10px;" href="javascript:void(0);"
@@ -211,7 +214,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6 col-md-offset-4" id="vend_to_div">
-                                <select name="vend_to" id="vendor_to_id" class="select3">
+                                <select name="vend_to" id="vendor_to_id" class="form-control">
                                 </select>
                             </div>
                             <div class="col-md-12" id="std_to_div">
@@ -338,16 +341,12 @@
                     </div>
                     <hr/>
                     <h3>Pallet Details:</h3>
-                    <div class="text-center col-md-3 col-md-offset-5" style="padding-left:60px" id="add_section_btn">
-                        <a style="display:inline-block;margin:10px;" href="javascript:void(0);"
-                           class="addC btn btn-xs btn-info" rel=".clone1" id="newpallet" "><i class="fa fa-plus"></i> Add
-                            Section</a>
-                    </div><div class="clearfix"></div>
+
 <div class="testbtn">
                     <div class="clone1 clonedInput">
                         <div class="form-group">
                             <label for="" class="control-label col-md-4 text-left">
-                                Description <span id="#"></span>
+                                <span class="counter"> </span>  Description
                             </label>
 
                             <div class="col-md-6">
@@ -359,25 +358,32 @@
                         </div>
                         <div class="form-group">
                             <label for="" class="control-label col-md-4 text-left">
-                                Dimensions <span id="#"></span></label>
+                                <span class="counter1"> </span>  Dimensions <span id="#"></span></label>
 
                             <div class="col-md-6">
                                 <input type="text" name="dimensions[]" id="dimensions"
                                        value="<?php //echo set_value('dimensions'); ?>" class="form-control" required/>
                             </div>
                             <div class="col-md-2" >
-                                <a onclick=" $(this).parents('.clonedInput').remove(); return false"
-                                   href="#"
-                                   class=" remove btn btn-xs btn-danger">-</a>
+                                <p id="hide-button"
+                                   onclick="removeRow(this.id);"
+                                   class="remove btn btn-xs btn-danger">-
+                                </p>
                                 <input type="hidden" name="counter[]">
                             </div>
                         </div>
 
-                        <hr/>
+
                     </div>
     </div>
+                    <div class="text-center col-md-3 col-md-offset-5" style="padding-left:60px" id="add_section_btn">
+                        <a style="display:inline-block;margin:10px;" href="javascript:void(0);"
+                           class="addC btn btn-xs btn-info" rel=".clone1" id="newpallet"><i class="fa fa-plus"></i> Add
+                        Section</a>
+                    </div><div class="clearfix"></div>
 
                     <div class="clearfix"></div>
+                    <hr/>
                     <div class="form-group">
                         <label for="" class="control-label col-md-4 text-left">
                             Shipment Notes
@@ -397,20 +403,16 @@
 
                         <div class="col-md-6">
                             <select class="form-control" name="games_per_location" id="games_per_location">
-                                <option value="0">0</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
+                                @for($i =0 ; $i <= 12 ; $i++)
+                                    <option value="{{$i}}">{{$i}}</option>
+                                @endfor
                             </select>
                         </div>
                         <div class="col-md-2">
                         </div>
                     </div>
                     <div class="form-group ">
-                        <label class="col-sm-4 text-right">&nbsp;</label>
-                        <div class="col-sm-6 text-center">
+                        <div class="col-sm-12 text-center">
                             <button type="submit" class="btn btn-primary btn-sm "><i
                                         class="fa  fa-save "></i>  Email Freight Quote </button>
                         </div>
@@ -428,11 +430,11 @@
         $('#std_from_div,#vend_from_div,#location_from_div,#from_vendor_type_div,#std_to_div,#vend_to_div,#location_to_div,#to_vendor_type_div').hide();
         $("#location_id").jCombo("{{ URL::to('managefreightquoters/comboselect?filter=location:id:id|location_name') }}",
                 {selected_value: '', initial_text: 'Select Location'});
-        $("#vendor_id").jCombo("{{ URL::to('managefreightquoters/comboselect?filter=vendor:id:vendor_name') }}",
+        $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '', initial_text: 'Select Vendor'});
         $('[id^="location_to_id"]').jCombo("{{ URL::to('managefreightquoters/comboselect?filter=location:id:id|location_name') }}",
                 {selected_value: '', initial_text: 'Select Location'});
-        $("#vendor_to_id").jCombo("{{ URL::to('managefreightquoters/comboselect?filter=vendor:id:vendor_name') }}",
+        $("#vendor_to_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '', initial_text: 'Select Vendor'});
         $('.editor').summernote();
         $('.addC').relCopy({});
@@ -455,7 +457,6 @@
         var form = $('#managefreightquotersFormAjax');
         form.parsley();
         form.submit(function () {
-
             if (form.parsley('isValid') == true) {
                 var options = {
                     dataType: 'json',
@@ -473,7 +474,7 @@
 
 
     });
-
+$("#radio_to_loc").click();
     function showRequest() {
         $('.ajaxLoading').show();
     }
@@ -481,6 +482,7 @@
 
         if (data.status == 'success') {
             ajaxViewClose('#{{ $pageModule }}');
+            {{ \Session::put('freight_status', 'requested') }}
             ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');
@@ -494,8 +496,23 @@
         var id = $(this).attr('id');
         fromType(id);
     });
+    $(".addC").click(function(){
+        reInitParcley();
+    });
     $('#radio_to_loc,#radio_to_vend,#radio_to_blank').on('ifChecked', function (event) {
         var id = $(this).attr('id');
+        if(id == "radio_to_loc")
+        {
+            $('[id^=location_to_id]').attr('required','required');
+            reInitParcley();
+        }
+        else
+        {
+          $('[id^=location_to_id]').removeAttr('required');
+            $('#location_to_id').removeAttr('required');
+           // $('[id^=location_to_id]').attr('required',false);
+            reInitParcley();
+        }
         toType(id);
     });
     $('#add_from_vendor_to_list').on('ifChecked', function (event) {
@@ -533,14 +550,51 @@
         else if (type == 'radio_to_vend') {
             $('#vend_to_div').show();
             $('#std_to_div,#location_to_div').hide();
+
         }
         else {
             $('#std_to_div').show();
             $('#vend_to_div,#location_to_div').hide();
         }
     }
+    var counter=0;
+    $("#newpallet").click(function(){
+        handleItemCount('add');
+    });
+    function removeRow(id) {
+        reInitParcley();
+        if (counter > 2) {
+            $("#" + id).parents('.clonedInput').remove();
+        }
+        else {
+            notyMessageError("You can't remove first item.");
+        }
+        decreaseCounter();
+        return false;
+    }
+    function handleItemCount(mode) {
+        $('.counter').each(function (index, value) {
+            $(value).text("#"+ ++index+ "." );
+            counter = index + 1;
+        });
+        $('.counter1').each(function (index, value) {
+            $(value).text("#"+ ++index+ "." );
+            counter = index + 1;
+        });
+    }
+    function decreaseCounter() {
 
-
+        handleItemCount('remove');
+    }
+    function reInitParcley()
+    {
+        $('#managefreightquotersFormAjax').parsley().destroy();
+        $('#managefreightquotersFormAjax').parsley(
+                {
+                    excluded: 'input[type=button], input[type=submit], input[type=reset]',
+                    inputs: 'input, textarea, select, input[type=hidden], :hidden'
+                } );
+    }
 </script>
 <style>
     .clone:first-of-type a {

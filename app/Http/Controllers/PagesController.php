@@ -65,7 +65,8 @@ class PagesController extends Controller
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('pages/data');
 
         $this->data['param'] = $params;
@@ -95,6 +96,7 @@ class PagesController extends Controller
 
     function getUpdate(Request $request, $id = null)
     {
+
         if ($id == '') {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -136,6 +138,7 @@ class PagesController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('pages.view', $this->data);
     }
@@ -215,4 +218,18 @@ class PagesController extends Controller
 
     }
 
+    function postUpload(Request $request)
+    {
+        //return $request->all();
+        $this->validate($request, [
+            'upload_file' => 'required',
+        ]);
+        if( $request->hasFile('upload_file')) {
+            $file = $request->file('upload_file');
+            $path = public_path('upload/pageCmsPDF');
+            $name = mt_rand() . '_' . $file->getClientOriginalName();
+            $file->move($path, $name);
+            return $name;
+        }
+    }
 }

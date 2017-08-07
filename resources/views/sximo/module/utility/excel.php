@@ -17,6 +17,7 @@
 		foreach($fields as $f )
 		{
 			if($f['download'] =='1'):
+				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
 				$content .= '<td> '. htmlentities(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn)) . '</td>';
 			endif;
@@ -42,6 +43,9 @@
 	// It will be called file.xls
 	header('Content-disposition: attachment; filename="'.($title . '-' . date("mdYHis")).'.xlsx"');
 
+    global $exportSessionID;
+    \Session::forget($exportSessionID);
+    \Session::forget($exportID);
 	// Write file to the browser
 	$objWriter->save('php://output');
 	/*

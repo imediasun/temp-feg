@@ -1,9 +1,10 @@
+<?php use App\Models\Order; ?>
 @if($setting['view-method'] =='native')
     <div class="sbox">
 
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
-                <small>{{ $pageNote }}</small>
+            <h4><i class="fa fa-eye"></i> <?php echo $pageTitle;?>
+
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
                    onclick="ajaxViewClose('#{{ $pageModule }}')">
                     <i class="fa fa fa-times"></i></a>
@@ -32,7 +33,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->po_number }}
+                            {{ \DateHelpers::formatStringValue($row->po_number) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -42,7 +43,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->alt_address }}
+                            {{ \DateHelpers::formatStringValue($row->alt_address) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -52,7 +53,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->user_id,'user_id','1:users:id:username') !!}
+                            {!! SiteHelpers::gridDisplayView($row->user_id,'user_id','1:users:id:username',$nodata['user_id']) !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -62,8 +63,8 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!!
-                            SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name')
+                          {!!
+                            SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name',$nodata['location_id'])
                             !!}
                         </div>
                     </div>
@@ -74,7 +75,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name') !!}
+                            {!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name',$nodata['vendor_id']) !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -84,7 +85,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->company_id,'company_id','1:company:id:company_name_long') !!}
+                            {!! SiteHelpers::gridDisplayView($row->company_id,'company_id','1:company:id:company_name_long',$nodata['company_id']) !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -94,7 +95,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{  $row->date_ordered = date("m/d/Y", strtotime($row->date_ordered))  }}
+                            {{  \DateHelpers::formatDate($row->date_ordered) }}
 
                         </div>
 
@@ -105,6 +106,8 @@
                             {{ SiteHelpers::activeLang('Date Received', (isset($fields['date_received']['language'])? $fields['date_received']['language'] : array())) }}
                         </label>
                         <div class="col-md-8">
+
+                           {{-- ToDo why we are using an unknown key received_date {{  DateHelpers::formatDate($order_data["received_date"])  }}--}}
                             {{  DateHelpers::formatDate($order_data["received_date"])  }}
 
 
@@ -117,10 +120,29 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->received_by,'received_by','1:users:id:username') !!}
+                            {!! SiteHelpers::gridDisplayView($row->received_by,'received_by','1:users:id:username',$nodata['received_by']) !!}
 
                         </div>
                     </div>
+                    <div class="form-group netSuiteStatus"><br/><br/>
+
+                        <p class="text-info netSuiteStatusSuccess @if(!Order::isApified($id, $row)) hidden @endif">
+                            <i class="fa fa-check-square-o m-l-sm m-r-xs"></i>
+                            {{ Lang::get('core.order_api_exposed_label') }}
+                        </p>
+                        <p class="text-warning netSuiteStatusPending @if(Order::isApified($id, $row) || !Order::isApiable($id, $row)) hidden @endif">
+                            <i class="fa fa-exclamation-triangle m-l-sm m-r-xs"></i>
+                            {{ Lang::get('core.order_api_exposed_label_pending') }}
+                        </p>
+                        <p class="text-gray netSuiteStatusNR  @if(Order::isApiable($id, $row)) hidden @endif">
+                            <i class="fa fa-times m-l-sm m-r-xs"></i>
+                            {{ Lang::get('core.order_api_exposed_label_ineligible') }}
+                        </p>
+                    </div>
+
+                     <div class="form-group relationshipStatus"><br/><br/>
+                         {!!implode("<br/>", @$relationships)!!}
+                     </div>
 
                 </fieldset>
             </div>
@@ -138,7 +160,7 @@
 
                         <div class="col-md-8">
                             {{
-                            SiteHelpers::gridDisplayView($row->order_type_id,'order_type_id','1:order_type:id:order_type')
+                            SiteHelpers::gridDisplayView($row->order_type_id,'order_type_id','1:order_type:id:order_type',$nodata['order_type_id'])
                             }}
                         </div>
                     </div>
@@ -149,13 +171,13 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->order_description }}
+                            {{ \DateHelpers::formatStringValue($row->order_description) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
                     <div class="form-group">
                         <label class="label-control col-md-4">
-                            {{ SiteHelpers::activeLang('Total Cost (NO "$")', (isset($fields['order_total']['language'])? $fields['order_total']['language'] : array())) }}
+                            {{ SiteHelpers::activeLang('Total Cost', (isset($fields['order_total']['language'])? $fields['order_total']['language'] : array())) }}
                         </label>
 
                         <div class="col-md-8">
@@ -169,7 +191,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->status_id,'status_id','1:order_status:id:status') !!}
+                            {!! SiteHelpers::gridDisplayView($row->status_id,'status_id','1:order_status:id:status',$nodata['status_id']) !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -180,7 +202,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->po_notes }}
+                            {{ \DateHelpers::formatStringValue($row->po_notes) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -191,7 +213,7 @@
 
                         <div class="col-md-8">
                             <td> {!!
-                                SiteHelpers::gridDisplayView($row->freight_id,'freight_id','1:freight:id:freight_type')
+                                SiteHelpers::gridDisplayView($row->freight_id,'freight_id','1:freight:id:freight_type',$nodata['freight_id'])
                                 !!}
                             </td>
                         </div>
@@ -203,7 +225,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->notes }}
+                            {!! \DateHelpers::formatStringValue($row->notes) !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -212,7 +234,7 @@
                         </label>
 
                         <div class="col-md-8">
-                          {{  SiteHelpers::gridDisplayView($row->warranty,'warranty','1:yes_no:id:yesno') }}
+                          {{  SiteHelpers::gridDisplayView($row->warranty,'warranty','1:yes_no:id:yesno',$nodata['warranty']) }}
 
                         </div>
                     </div>
@@ -241,7 +263,7 @@ if(!empty($order_data['orderQtyArray'])){
 }
 ?>
                         <div class="col-md-8" id="quantity">
-                            {{ $quantity }}
+                            {{ \DateHelpers::formatZeroValue($quantity,$nodata['quantity']) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -251,7 +273,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->new_format,'new_format','1:yes_no:id:yesno') !!}
+                            {!! SiteHelpers::gridDisplayView($row->new_format,'new_format','1:yes_no:id:yesno',$nodata['new_format']) !!}
 
                         </div>
                     </div>
@@ -262,7 +284,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->order_content }}
+                            {{ \DateHelpers::formatStringValue($row->order_content) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -272,7 +294,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView( $row->added_to_inventory,'added_to_inventory','1:yes_no:id:yesno') !!}
+                            {!! SiteHelpers::gridDisplayView( $row->added_to_inventory,'added_to_inventory','1:yes_no:id:yesno',$nodata['added_to_inventory']) !!}
 
                         </div>
                     </div>
@@ -283,7 +305,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->tracking_number }}
+                            {{ \DateHelpers::formatZeroValue($row->tracking_number) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -293,7 +315,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->game_ids }}
+                            {{ \DateHelpers::formatZeroValue($row->game_ids) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -303,7 +325,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->request_ids }}
+                            {{ \DateHelpers::formatZeroValue($row->request_ids) }}
                         </div>
                     </div>
                 </fieldset>
@@ -311,14 +333,15 @@ if(!empty($order_data['orderQtyArray'])){
             </div>
             <div class="clr clear"></div>
             <br/>
-            <div class="table-responsive" style="box-shadow: 1px 1px 10px gray;background: #fff;padding:10px 10px 0px">
+            <div class="table-responsive col-md-12" style="box-shadow: 1px 1px 10px gray;background: #fff;padding:10px 10px 0px">
                 <fieldset>
                     <legend> Order Items</legend>
-            <table class="table table-hover table-striped">
+            <table class="table">
                 <thead>
                 <tr>
-                <th>N0 #</th>
-                <th>Sku #</th>
+                <th>NO #</th>
+                <th>SKU #</th>
+                <th>Item Name</th>
                 <th>Item Description</th>
                 <th>Item Price</th>
                 <th>Item Quantity </th>
@@ -331,19 +354,21 @@ if(!empty($order_data['orderQtyArray'])){
                 </tr>
                 </thead>
                 <tbody>
+
                 @if( $order_data['requests_item_count'] > 0 )
                 @for($i = 0 ; $i < $order_data['requests_item_count']; $i++)
                     <tr>
                         <td>{{ $i+1 }} </td>
-                        <td>{{  $order_data['skuNumArray'][$i]}}</td>
-                        <td>{{  $order_data['orderDescriptionArray'][$i] }}</td>
-                        <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['orderPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}</td>
-                        <td>{{  $order_data['orderQtyArray'][$i] }}</td>
+                        <td>{{  \DateHelpers::formatStringValue($order_data['skuNumArray'][$i])}}</td>
+                        <td>{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
+                        <td>{{  \DateHelpers::formatStringValue($order_data['orderDescriptionArray'][$i]) }}</td>
+                        <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['orderItemsPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}</td>
+                        <td>{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
                         <td>{{ $order_data['receivedItemsArray'][$i] }}</td>
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
-                            <td>{{  $order_data['gamenameArray'][$i] }}</td>
+                            <td>{{  \DateHelpers::formatStringValue($order_data['gamenameArray'][$i]) }}</td>
                         @endif
-                        <td>{{ CurrencyHelpers::formatCurrency(number_format(  $order_data['orderPriceArray'][$i]* $order_data['orderQtyArray'][$i],3))}}</td>
+                        <td>{{ CurrencyHelpers::formatCurrency(number_format(  $order_data['orderItemsPriceArray'][$i]* $order_data['orderQtyArray'][$i],3))}}</td>
                           </tr>
                     @endfor
                 <tr>
@@ -352,16 +377,16 @@ if(!empty($order_data['orderQtyArray'])){
                     @else
                         <td colspan="5">&nbsp;</td>
                     @endif
-                    <td  colspan="1">Sub Total</td>
-                    <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</td>
+                    <td  colspan="2"><b>Sub Total ($)</b></td>
+                    <td colspan="1"><b>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</b></td>
 
                 </tr>
                     @else
                     <tr>
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
-                            <td colspan="8" class="text-center">Nothing  Found..</td>
+                            <td colspan="9" class="text-center">Nothing  Found..</td>
                         @else
-                            <td colspan="7" class="text-center">Nothing  Found..</td>
+                            <td colspan="8" class="text-center">Nothing  Found..</td>
                         @endif
 
                     </tr>

@@ -61,7 +61,6 @@ class PagesController extends Controller
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'],
             (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));
@@ -144,8 +143,11 @@ class PagesController extends Controller
         }
 
         $this->data['groups'] = $group;
-
         $this->data['id'] = $id;
+
+        $redirect = $request->has('return') ? $request->input('return') : '';
+        $this->data['return'] = $redirect;
+
         return view('core.pages.form', $this->data);
     }
 
@@ -172,15 +174,16 @@ class PagesController extends Controller
 
         $rules = array(
             'title' => 'required',
-            'alias' => 'required|alpha_dash',
+            'alias' => 'required',
             'filename' => 'required|alpha',
             'status' => 'required',
-
-
         );
+
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $content = $request->input('content');
+            $content = $this->addEditLinkTemplate($content);
+            
             $data = $this->validatePost('tb_pages');
 
             if ($request->input('pageID') == 1) {
@@ -202,15 +205,40 @@ class PagesController extends Controller
 
             $data['allow_guest'] = $request->input('allow_guest');
             $data['template'] = $request->input('template');
+            
+            $data['direct_edit_groups'] = $request->input('direct_edit_groups');
+            $data['direct_edit_users'] = $request->input('direct_edit_users');
+            $data['direct_edit_users_exclude'] = $request->input('direct_edit_users_exclude');
+
+            if(is_array($data['direct_edit_groups'])) {
+                $data['direct_edit_groups'] = implode(',', $data['direct_edit_groups']);
+            }
+            if(is_array($data['direct_edit_users'])) {
+                $data['direct_edit_users'] = implode(',', $data['direct_edit_users']);
+            }
+            if(is_array($data['direct_edit_users_exclude'])) {
+                $data['direct_edit_users_exclude'] = implode(',', $data['direct_edit_users_exclude']);
+            }
+
+            $data['alias']=str_slug($request->input('alias'), '-');
 
             $this->model->insertRow($data, $request->input('pageID'));
             self::createRouters();
 
-            return Redirect::to('core/pages?return=' . self::returnUrl())->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
+            $redirect = $request->has('return') ? $request->input('return') : '';
+            if (empty($redirect)) {
+                $redirect = 'core/pages?return=' . self::returnUrl();
+            }
+            
+            return Redirect::to($redirect)
+                    ->with('messagetext', \Lang::get('core.note_success'))
+                    ->with('msgstatus', 'success');
 
         } else {
-
-            return Redirect::to('core/pages/update/' . $id)->with('messagetext', \Lang::get('core.note_error'))->with('msgstatus', 'error')
+            //return $request->all();
+            return Redirect::to('core/pages/update/' . $id)
+                ->with('messagetext', \Lang::get('core.note_error'))
+                ->with('msgstatus', 'error')
                 ->withErrors($validator)->withInput();
         }
 
@@ -223,8 +251,8 @@ class PagesController extends Controller
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         // delete multipe rows
-        if (count($request->input('id')) >= 1) {
-            $this->model->destroy($request->input('id'));
+        if (count($request->input('ids')) >= 1) {
+            $this->model->destroy($request->input('ids'));
 
             self::createRouters();
             return Redirect::to('core/pages')
@@ -255,5 +283,25 @@ class PagesController extends Controller
 
     }
 
-
+    public function addEditLinkTemplate($content = '') {
+        $hasLink = stripos($content, '$editLink') !== FALSE;
+        if ($hasLink) {
+            return $content;
+        }
+        $titlePosition = stripos($content, '$pageTitle');
+        if ($titlePosition === false) {
+            return $content;
+        }
+        $templateEndBraceCount = 2;
+        $endOfTitleTemplatePosition = stripos($content, '}}', $titlePosition + 1);
+        if ($endOfTitleTemplatePosition === false) {
+            $templateEndBraceCount = 1;
+            $endOfTitleTemplatePosition = stripos($content, '}', $titlePosition + 1);
+        }
+        if ($endOfTitleTemplatePosition !== false) {            
+            $content = substr_replace($content, '{!! $editLink !!}',
+                    $endOfTitleTemplatePosition + $templateEndBraceCount, 0);
+        }
+        return $content;        
+    }
 }

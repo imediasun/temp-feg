@@ -3,7 +3,11 @@
 <div class="sbox">
 		<div class="sbox-title">  
 			<h4>
-                @if ($isAdd) Create @else Edit @endif Ticket
+				@if($id)
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Ticket
+				@else
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Ticket
+				@endif
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -131,9 +135,9 @@
                         {!! SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
                     </label>
                     <div class="col-md-6">
-                        <div class="input-group datepicker" style="width:150px ">
-                            {!! Form::text('need_by_date', $needByDate, array('class'=>'form-control date', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
-                            <span class="input-group-addon datepickerHandleButton"><i class="fa fa-calendar" id="icon"></i></span>
+                        <div class="input-group">
+							<span class="input-group-addon datepickerHandleButton" style="width: 32px;"><i class="fa fa-calendar" id="icon"></i></span>
+							{!! Form::text('need_by_date', $needByDate, array('class'=>'form-control date', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
                         </div>
                     </div>
                     <div class="col-md-2"></div>
@@ -172,8 +176,7 @@
         @endif
 							
         <div class="form-group clearfix">
-            <label class="col-sm-4 text-right">&nbsp;</label>
-            <div class="col-sm-8">	
+            <div class="col-sm-12 text-center">	
                 <button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                 <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
             </div>			
@@ -189,7 +192,9 @@
 $(document).ready(function() { 
 	
     $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
-        {  selected_value : '{{ $locationId }}','initial-text': "Select Location" });
+        {  selected_value : '{{ $locationId }}','initial-text': "Select Location" ,
+            <?php $locationId == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$locationId." , 'Location', 'active' , 'id|location_name' )") ?>
+        });
 
 	$('.datepickerHandleButton').click(function(){
         $("#my-datepicker").datepicker().focus();
@@ -202,7 +207,7 @@ $(document).ready(function() {
             formattedDate,
             datePicker = $("#my-datepicker"),
             datePickerVal = datePicker.val();
-            
+
         if (isSameDay && !datePickerVal) {
             formattedDate = $.datepicker.formatDate('mm/dd/yy', new Date(date));
             datePicker.datepicker('update', formattedDate);
@@ -216,16 +221,16 @@ $(document).ready(function() {
 	$('.tips').tooltip();	
     
 	renderDropdown($(".select2"), { width:"100%"});	
-    
-	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+    console.log( new Date() );
+	$('.date').datepicker({format:'mm/dd/yyyy',startDate:new Date(Date.now() - 864e5),autoclose:true});
     
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
     
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
-		radioClass: 'iradio_square-blue',
-	});			
-    
+		radioClass: 'iradio_square-blue'
+	});
+
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');
 		$.get(removeUrl,function(response){});
@@ -251,7 +256,6 @@ $(document).ready(function() {
 		}		
 	
 	});
-
 });
 
 function showRequest()
@@ -273,6 +277,14 @@ function showResponse(data)  {
 		$('.ajaxLoading').hide();
 		return false;
 	}	
-}			 
+}
 
 </script>		 
+
+<style>
+	.file_pathUpl input, .attachmentInputs input {
+		margin-bottom: 14px;
+		width: 100%;
+		margin-top: 0px;
+	}
+</style>

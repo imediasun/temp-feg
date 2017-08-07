@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use App\Library\DBHelpers;
 use SiteHelpers;
 
 class potentialoverreportingerrors extends Sximo  {
@@ -48,10 +49,14 @@ class potentialoverreportingerrors extends Sximo  {
         if (empty($location_id)) {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         } 
-        
-        ReportHelpers::dateRangeFix($date_start, $date_end);
+
+        $defaultEndDate = DBHelpers::getHighestRecorded('report_game_plays', 'date_played', 
+                'report_status=1 AND record_status=1
+                    GROUP BY date_played, location_id, game_id HAVING SUM(IFNULL(game_revenue,0)) > 4000
+                    ORDER BY date_played DESC LIMIT 1');
+        ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         if (empty($game_id) || (!empty($date_start) && !empty($date_end))) {
-            ReportHelpers::dateRangeFix($date_start, $date_end);
+            ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         }        
         
 		$offset = ($page-1) * $limit ;

@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Models\Shopfegrequeststore;
 use App\Models\Addtocart;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, URL;
@@ -22,18 +23,63 @@ class ShopfegrequeststoreController extends Controller
         $this->addToCartModel = new Addtocart();
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
 
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'shopfegrequeststore',
-            'pageUrl' => url('shopfegrequeststore'),
+            'pageModule' => $this->module,
+            'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
 
 
     }
 
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+
+
+        // Get custom Ticket Type filter value
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $skipFilters = ['search_all_fields'];
+        $mergeFilters = [];
+        extract($globalSearchFilter); //search_all_fields
+
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+        $searchInput = $trimmedSearchQuery;
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                'products.id',
+                'products.vendor_description',
+                'products.item_description',
+                'products.size',
+                'products.unit_price',
+                'products.num_items',
+                'products.case_price',
+                'products.retail_price',
+                'products.created_at',
+                'products.updated_at',
+                'products.expense_category',
+                'vendor.vendor_name',
+                'products.ticket_value',
+                'O.order_type',
+                'T.product_type'
+            ];
+            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+        }
+
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
+
+
+        return $filter;
+    }
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
@@ -76,7 +122,9 @@ class ShopfegrequeststoreController extends Controller
 
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+      //Commented below line to implement single Search field in simple search
+      //$filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        $filter = $this->getSearchFilterQuery();
         // add special price range query
         if (!empty($price_range)) {
             $pr1 = '';
@@ -142,7 +190,8 @@ class ShopfegrequeststoreController extends Controller
             $params['limit'] = 1;
         }
 
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('shopfegrequeststore/data');
         $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
@@ -217,6 +266,7 @@ class ShopfegrequeststoreController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('shopfegrequeststore.view', $this->data);
     }
@@ -243,11 +293,10 @@ class ShopfegrequeststoreController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('products');
+            $data = $this->validatePost('products',true);
             $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(
@@ -312,25 +361,27 @@ class ShopfegrequeststoreController extends Controller
 
     function postNewgraphic(Request $request)
     {
-        $rules['img'] = 'mimes:jpeg,gif,png';
-        $validator = Validator::make($request->all(), $rules);
+        $rules['myInputs'] = 'required';
+        $messages = [ 'myInputs.required' => 'Image field is required.' ];
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->passes()) {
             $item_id = $request->get('item_id');
             $graphics_description = $request->get('graphics_description');
             $graphics_description = str_replace('"', '', $graphics_description);
             $qty = $request->get('qty');
-            $date_needed = date("m/d/Y", strtotime($request->get('date_needed')));
+            $date_needed = date("Y-m-d", strtotime($request->get('date_needed')));
             $game_info = $request->get('game_info');
             $locationId = $request->get('location_name');
             $statusId = 1;
-            $now = date('m/d/Y');
+            $now = date('Y-m-d');
             $filesnames = $request->get('myInputs');
             if(!empty($filesnames)) {
                 $filesnames = implode(',', $filesnames);
               }
             $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId, 'img' => $filesnames);
+
             $last_insert_id = $this->model->newGraphicRequest($data);
-            
+
 
             return response()->json(array(
                 'status' => 'success',
@@ -338,13 +389,25 @@ class ShopfegrequeststoreController extends Controller
             ));
 
         } else {
-
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'status' => 'error',
+                'message' => $message
+            ));
         }
 
     }
 
     function getPopupCart($productId = null, $qty = 0)
     {
+//        if (\Session::get('gid') == 2)
+//        {
+//            return response()->json(array(
+//                'status' => 'error',
+//                'message' => "You don't have permission to perform this task"
+//            ));
+//        }
+
         $current_total_cart = \Session::get('total_cart');
         \Session::put('productId', $productId);
         $cartData = $this->addToCartModel->popupCartData($productId, null, $qty);

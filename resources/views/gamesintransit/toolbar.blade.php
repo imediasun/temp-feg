@@ -1,12 +1,13 @@
-<div class="row m-b">
+<div class="row c-margin">
 	<div class="col-md-9">
-			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
+	    <button class="btn btn-sm btn-white addNewGameButton" ><i class="fa fa-plus"></i>Add Game</button>
+		<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
-        <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+        <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
         @if(!empty($colconfigs))
-        <select class="form-control" style="width:25%!important;display:inline;" name="col-config"
+        <select class="form-control" style="width:auto !important;display:inline;" name="col-config"
                 id="col-config">
-            <option value="0">Select Configuraton</option>
+            <option value="0">Select Column Arrangement</option>
             @foreach( $colconfigs as $configs )
             <option @if($config_id == $configs['config_id']) selected
             @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
@@ -14,12 +15,12 @@
         </select>
                 @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
                     <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
-                       onclick="SximoModal(this.href,'Column Selector'); return false;" title="Edit Arrange">  <i class="fa fa-pencil-square-o"></i></a>
-                    <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Clear Arrange">  <i class="fa fa-trash-o"></i></button>
+                       onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit column arrangement">  <i class="fa fa-pencil-square-o"></i></a>
+                    <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
                 @endif
             @endif
         @endif
-        <button class="btn btn-sm btn-white addNewGameButton" ><i class="fa fa-plus"></i>Add Game</button>
+        
 
     </div>
     <div id="myModal" class="modal fade" role="dialog" tabindex="4">
@@ -36,7 +37,7 @@
                     'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>
                     'addnewgameFormAjax')) !!}
                         <div class="form-group">
-                        <label class="control-label col-md-4" for="game_title">Game Title*</label>
+                        <label class="control-label col-md-4" for="game_title">Game Title:*</label>
                         <div class="col-md-8">
                             <select  name="game_title" id="game_title" class="form-control select2" required ></select>
                              
@@ -44,7 +45,7 @@
                         </div>
 
                         <div class="form-group">
-                        <label class="control-label col-md-4" for="asset_number">Asset Number*</label>
+                        <label class="control-label col-md-4" for="asset_number">Asset Number:*</label>
                         <div class="col-md-8">
                             <input type="text" name="asset_number" id="asset_number" class="form-control" 
                                    required
@@ -60,21 +61,21 @@
                         </div>
                          
                         <div class="form-group">
-                            <label class="control-label col-md-4" for="serial">Serial #</label>
+                            <label class="control-label col-md-4" for="serial">Serial #:</label>
                         <div class="col-md-8">
                             <input type="text" class="element text medium form-control" name="serial" id="serial" value=""/>
                                </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-md-4" for="notes">Notes</label>
+                            <label class="control-label col-md-4" for="notes">Notes:</label>
                         <div class="col-md-8">
                             <textarea class="form-control" cols="5" rows="6"  name="notes" id="notes"/></textarea>  
                         </div>
                         </div>
 
                             <div class="form-group">
-                                <label class="control-label col-md-4" for="test_piece">Game On Test</label>
+                                <label class="control-label col-md-4" for="test_piece">Game On Test:</label>
                         <div class="col-md-8">
                             <input name="test_piece" id="test_piece" type="hidden" value="0"/>
                             <input name="test_piece" id="test_piece" type="checkbox" value="1"/>
@@ -104,19 +105,19 @@
         @if($isExport)
             <div class="pull-right">
                 @if($isExcel)
-                    <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
+                    <a href="{{ URL::to( $pageModule .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
                 @endif
                 @if($isCSV)
-                    <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
+                    <a href="{{ URL::to( $pageModule .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
                 @endif
                 @if($isPDF)
-                    <a href="{{ URL::to( $pageModule .'/export/pdf?return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
+                    <a href="{{ URL::to( $pageModule .'/export/pdf?exportID='.uniqid('pdf', true).'&return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
                 @endif
                 @if($isWord)
-                    <a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
+                    <a href="{{ URL::to( $pageModule .'/export/word?exportID='.uniqid('word', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
                 @endif
                 @if($isPrint)
-                    <a href="{{ URL::to( $pageModule .'/export/print?return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+                    <a href="{{ URL::to( $pageModule .'/export/print?exportID='.uniqid('print', true).'&return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
                 @endif
             </div>
         @endif

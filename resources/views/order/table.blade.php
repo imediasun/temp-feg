@@ -1,17 +1,25 @@
-<?php usort($tableGrid, "SiteHelpers::_sort");
+<?php
+use App\Models\Order;
+usort($tableGrid, "SiteHelpers::_sort");
 ?>
 <div class="sbox">
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','order/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','order/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
-			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips orderTableClearSearch" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','order/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips orderTableReload" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','order/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			@if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
+			<a href="{{ url('feg/module/config/'.$pageModule) }}"
+               class="btn btn-xs btn-white tips openModuleConfig"
+               title=" {{ Lang::get('core.btn_config') }}"
+               ><i class="fa fa-cog"></i></a>
+            <a href="{{ url('feg/module/special-permissions/'.$pageModule.'/solo') }}"
+                   class="btn btn-xs btn-white tips openSpecialPermissions" title="Special Permissions"
+                ><i class="fa fa-sliders"></i></a>
 			@endif
 		</div>
 	</div>
-	<div class="sbox-content" style="border: none;">
+	<div class="sbox-content" style="padding-bottom:0">
         <?php
          $searched=\Request::get('search');
          $searched=explode("|",$searched);
@@ -51,17 +59,19 @@
             @endif
         @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
-			<div class="sbox-content" style="border: none;">
-	 <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+			<div class="sbox-content" style="border: medium none; padding-top: 15px;">
+            @if ($access['is_remove'] ==1 || !empty($pass['Can remove order']))
+                <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+            @endif
 <div class="table-responsive">
 	@if(count($rowData)>=1)
-    <table class="table table-striped datagrid " id="{{ $pageModule }}Table">
+    <table class="table table-striped datagrid " id="{{ $pageModule }}Table" style="position:relative">
         <thead>
-        <tr>
+        <tr class="row-">
             @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                 <th width="35"> No </th>
             @endif
-            @if($setting['disableactioncheckbox']=='false')
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1' || !empty($pass['Can remove order'])))
                 <th width="30"> <input type="checkbox" class="checkall" /></th>
             @endif
             @if($setting['view-method']=='expand') <th>  </th> @endif
@@ -83,7 +93,7 @@
                                 ' data-sortable="'.$colIsSortable.'"'.
                                 ' data-sorted="'.($colIsSorted?1:0).'"'.
                                 ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                ' align="'.$t['align'].'"'.
+                                ' style=text-align:'.$t['align'].
                                 ' width="'.$t['width'].'"';
                         $th .= '>';
                         $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -93,45 +103,46 @@
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="220"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
-			<tr id="form-0" >
-				<td> # </td>
-				@if($setting['disableactioncheckbox']=='false')
-					<td> </td>
+			<tr id="form-0">
+				<td class="cell"> # </td>
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1' || !empty($pass['Can remove order'])))
+					<td class="cell"> </td>
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
 					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
-						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+						<td class="cell" data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
 							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
 						@endif
 					@endif
 				@endforeach
-				<td >
+				<td class="cell">
 					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
 				</td>
 			  </tr>
 			  @endif
 
            		<?php foreach ($rowData as $row) :
-           			  $id = $row->id;
+                    $id = $row->id;
+                    $eid = \SiteHelpers::encryptID($id);
            		?>
 
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr  class="editable" data-id="{{ $row->id }}" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
 
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
-					@if($setting['disableactioncheckbox']=='false')
-						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+						@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1' || !empty($pass['Can remove order'])))
+						<td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 					@endif
 
 
@@ -141,7 +152,7 @@
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
@@ -155,24 +166,50 @@
 					  ?>
 
 
-				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
-
-
-
-						<a href="{{ URL::to('order/po/'.$row->id)}}"  class="tips btn btn-xs btn-white" title="Generate PO"><i class="fa fa-cogs" aria-hidden="true"></i></a>
-
-
-						<a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="tips btn btn-xs btn-white" title="Clone Order"><i class=" fa fa-random" aria-hidden="true"></i></a>
-
-
-                    @if($row->status_id=='Open')
-                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa fa-truck" aria-hidden="true"></i></a>
-                   @endif
-					@if($row->status_id=='Open')
-						<a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}" class="tips btn btn-xs btn-white" title="Request Removal"><i class="fa fa-trash-o " aria-hidden="true"></i></a>
-						@endif
+                    <td data-values="action" data-key="<?php echo $row->id ;?>">
+                        {!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
+                        <a href="{{ URL::to('order/po/'.$row->id)}}"
+                            data-id="{{$eid}}"
+                            data-action="po"
+                           class="tips btn btn-xs btn-white orderGenPOAction"
+                           title="Generate PO">
+                            <i class="fa fa-cogs" aria-hidden="true"></i>
+                        </a>
+                        <a href="{{ $pageModule }}/update/{{$row->id}}/clone"
+                            onclick="ajaxViewDetail('#order',this.href); return false; "
+                            data-id="{{$eid}}"
+                            data-action="clone"
+                           class="tips btn btn-xs btn-white orderCloneAction"
+                           title="Clone Order">
+                            <i class=" fa fa-random" aria-hidden="true"></i>
+                        </a>
+                        @if($row->is_freehand=='1' || !Order::isApified($id, $row))
+                            <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
+                               data-id="{{$eid}}"
+                               data-action="receipt"
+                               class="tips btn btn-xs btn-white orderReceiptAction"
+                               title="Receive Order">
+                                <i class="fa fa fa-truck" aria-hidden="true"></i>
+                            </a>
+                        @endif
+                        @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
+                            <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
+                               data-id="{{$eid}}"
+                               data-action="removal"
+                               class="tips btn btn-xs btn-white orderRemovalRequestAction"
+                               title="Request Removal">
+                                <i class="fa fa-trash-o " aria-hidden="true"></i>
+                            </a>
+                        @endif
+                        @if(Order::canPostToNetSuit($row->id)  && !Order::isApified($id, $row) && Order::isApiable($id, $row, true))
+                            <a href="javascript:void(0)"
+                               data-id="{{$eid}}"
+                               data-action="post"
+                               class="tips btn btn-xs btn-white postToNetSuitAction"
+                               title="{{ Lang::get('core.order_api_expose_button_label') }}">
+                                <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                            </a>
+                        @endif
 					</td>
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -189,7 +226,8 @@
         </tbody>
 
     </table>
-	@else
+
+    @else
 
 	<div style="margin:100px 0; text-align:center;">
 
@@ -199,19 +237,27 @@
 	@endif
 
 	</div>
-	<?php echo Form::close() ;?>
+            @if ($access['is_remove'] == 1 || !empty($pass['Can remove order']))
+                <?php echo Form::close() ;?>
+            @endif
 	@include('ajaxfooter')
 
 	</div>
+            @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                @foreach ($rowData as $row)
+                    {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                @endforeach
+            @endif
 </div>
 </div>
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>
-$(document).ready(function() {
-
-	$('.tips').tooltip();
-	$('input[type="checkbox"],input[type="radio"]').iCheck({
+    $(document).ready(function() {
+    $('.tips').tooltip();
+        $('select[name="status_id"] option:first-child').text('All');
+        $('select[name="status_id"]').change();
+        $('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue'
 	});
@@ -247,15 +293,57 @@ $(document).ready(function() {
     }
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+
+    $("a.orderReceiptAction").click(function (e){
+        var btn = $(this),
+            id = btn.data('id'),
+            checkUrl = siteUrl + '/order/check-receivable/'+id;
+
+        e.preventDefault();
+
+        btn.prop('disabled', true);
+        blockUI();
+        $.ajax({
+            type: "GET",
+            url: checkUrl,
+            success: function (data) {
+                unblockUI();
+                if(data.status === 'success'){
+                    location.href = data.url;
+                }
+                else {
+                    btn.prop('disabled', false);
+                    notyMessageError(data.message);
+                    e.preventDefault();
+                }
+            }
+        });
+    });
+
+    $(".postToNetSuitAction").on('click', function() {
+        var btn = $(this);
+        btn.prop('disabled', true);
+        var id = $(this).data('id');
+        blockUI();
+        $.ajax({
+            type: "GET",
+            url: "{{ url() }}/order/expose-api/"+id,
+            success: function (data) {
+                unblockUI();
+                if(data.status === 'success'){
+                    notyMessage(data.message);
+                    btn.remove();
+                    reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
+                }
+                else {
+                    btn.prop('disabled', false);
+                    notyMessageError(data.message);
+                }
+            }
+        });
+        $('.tooltip').hide();
+    });
+
 });
 </script>
-<style>
-    .table th.right {
-        text-align: right !important;
-    }
 
-    .table th.center {
-        text-align: center !important;
-    }
-
-</style>

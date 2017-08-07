@@ -6,10 +6,12 @@ use App\Models\Restapi;
 use App\Models\Sximo;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Http\Request;
+use App\Library\FEG\System\FEGSystemHelper;
 use Validator, Input, Redirect;
 
 class FegapiController extends Controller
 {
+    protected $apiLogger = null;
 
     public function __construct()
     {
@@ -19,6 +21,16 @@ class FegapiController extends Controller
 
     public function index()
     {
+        if(env('DISABLE_API',false) === true){
+            $jsonData = array(
+                'total' => 0,
+                'records' => 0,
+                'rows' => [],
+                'control' => '',
+                'key' => ''
+            );
+            return \Response::json($jsonData, 200);
+        }
 
         $class = ucwords(Input::get('module'));
         if (!empty($class)) {
@@ -51,7 +63,7 @@ class FegapiController extends Controller
             $prod_type_id = Input::get('prod_type_id');
             $vendor_id = Input::get('vendor_id');
             $active = Input::get('active');
-
+            $qry='';
 
             if (!is_null($limit) or $limit != 0) $param['limit'] = $limit;
             if (is_null($limit)) $param['limit'] = 500;
@@ -69,9 +81,16 @@ class FegapiController extends Controller
             if (!is_null($vendor_id)) $param['vendor_id'] = $vendor_id;
             if (!is_null($active)) $param['active'] = $active;
 
-
-            $results = $class1::getRows($param);
-
+            if($class != 'Order' && $class != "Itemreceipt")
+            {
+                $results = $class1::getRows($param);
+                $qry = $class1::$getRowsQuery;
+            }
+            else
+            {
+                $results = $class1::getRows($param , 'only_api_visible');
+                $qry = $class1::$getRowsQuery;
+            }
             $json = array();
             //condition necessary to show additional fields in api response
             if ($class == "Itemreceipt") {
@@ -116,6 +135,16 @@ class FegapiController extends Controller
                 );
             }
 
+            $apiLogger = $this->apiLogger = FEGSystemHelper::setLogger($this->apiLogger, "feg-api-call.log", "FEGApiCallLogs/ApiCallLogs", "API_CALL");
+            $apiLogger->log('============Start Logging API Call============');
+            $apiLogger->log('Module: ',$class);
+            $apiLogger->log('Client IP: ',$this->getClientIp());
+            $apiLogger->log('Parameters: ',array_filter($param));
+            $apiLogger->log('Query: ',$qry);
+            $apiLogger->log('Results: ',$jsonData);
+
+
+
             return \Response::json($jsonData, 200);
         } else {
             return \Response::json(array('Status' => 'Error', 'Message' => \Lang::get('restapi.EmptyModule')));
@@ -157,7 +186,7 @@ class FegapiController extends Controller
             return \Response::json(array('Status' => \Lang::get('restapi.StatusError'), "Message" => \Lang::get('restapi.NothingFound')));
         }
     }
-
+    /*
     public function store()
     {
 
@@ -346,5 +375,26 @@ class FegapiController extends Controller
             $data['entry_by'] = \Session::get('uid');
 
         return $data;
+    }*/
+
+    
+
+    private function getClientIp() {
+        $ipaddress = '';
+        if (getenv('HTTP_CLIENT_IP'))
+            $ipaddress = getenv('HTTP_CLIENT_IP');
+        else if(getenv('HTTP_X_FORWARDED_FOR'))
+            $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+        else if(getenv('HTTP_X_FORWARDED'))
+            $ipaddress = getenv('HTTP_X_FORWARDED');
+        else if(getenv('HTTP_FORWARDED_FOR'))
+            $ipaddress = getenv('HTTP_FORWARDED_FOR');
+        else if(getenv('HTTP_FORWARDED'))
+            $ipaddress = getenv('HTTP_FORWARDED');
+        else if(getenv('REMOTE_ADDR'))
+            $ipaddress = getenv('REMOTE_ADDR');
+        else
+            $ipaddress = 'UNKNOWN';
+        return $ipaddress;
     }
 }

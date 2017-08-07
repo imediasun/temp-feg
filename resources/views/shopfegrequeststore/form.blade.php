@@ -2,16 +2,20 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+			<h4> @if($id)
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Shop FEG Request Store
+				@else
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Shop FEG Request Store
+				@endif
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
 
 	<div class="sbox-content"> 
-@endif	
+@endif
 			{!! Form::open(array('url'=>'shopfegrequeststore/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'shopfegrequeststoreFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Shop FEG Request Store</legend>
+						<fieldset>
 									
 				  <div class="form-group  " > 
 					<label for="Id" class=" control-label col-md-4 text-left"> 
@@ -153,7 +157,7 @@
 					{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('prod_type_id', $row['prod_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+						{!! Form::select('prod_type_id', DB::table('product_type')->lists('product_type','id'), $row['prod_type_id'],array('class'=>'form-control') ) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -164,8 +168,8 @@
 					{!! SiteHelpers::activeLang('Prod Sub Type Id', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('prod_sub_type_id', $row['prod_sub_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
+						{!! Form::select('prod_sub_type_id', DB::table('product_type')->lists('product_type','id'), $row['prod_sub_type_id'],array('class'=>'form-control') ) !!}
+					</div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -175,7 +179,7 @@
 					{!! SiteHelpers::activeLang('Is Reserved', (isset($fields['is_reserved']['language'])? $fields['is_reserved']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('is_reserved', $row['is_reserved'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::checkbox('is_reserved', 1,$row['is_reserved']) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -241,7 +245,7 @@
 					{!! SiteHelpers::activeLang('In Development', (isset($fields['in_development']['language'])? $fields['in_development']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('in_development', $row['in_development'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::checkbox('in_development', 1,$row['in_development']) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -279,7 +283,7 @@
 					{!! SiteHelpers::activeLang('Hot Item', (isset($fields['hot_item']['language'])? $fields['hot_item']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('hot_item', $row['hot_item'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::checkbox('hot_item', 1,$row['hot_item']) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -293,8 +297,7 @@
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
-				<div class="col-sm-8">	
+				<div class="col-sm-12 text-center">	
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			
@@ -317,7 +320,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	renderDropdown($(".select2 "), { width:"98%"});
+	renderDropdown($(".select2 "), { width:"100%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({

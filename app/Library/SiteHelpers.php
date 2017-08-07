@@ -1,11 +1,16 @@
 <?php
 
 use App\Library\FEG\System\FEGSystemHelper;
+use \App\Models\Sximo;
+use App\Models\Core\Groups;
 
 class SiteHelpers
 {
-    public static function menus($position = 'top', $active = '1')
+    public static function menus($position = 'top', $active = '1', $showAll = false)
     {
+        if ($showAll) {
+            $active = "all";
+        }
         $data = array();
         $menu = self::nestedMenu(0, $position, $active);
         foreach ($menu as $row) {
@@ -13,7 +18,7 @@ class SiteHelpers
             $p = json_decode($row->access_data, true);
 
 
-            if ($row->allow_guest == 1) {
+            if ($row->allow_guest == 1 || $showAll) {
                 $is_allow = 1;
             } else {
                 $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
@@ -41,6 +46,7 @@ class SiteHelpers
                                 'menu_name' => $row2->menu_name,
                                 'menu_lang' => json_decode($row2->menu_lang, true),
                                 'menu_icons' => $row2->menu_icons,
+                                'active' => $row->active == 1 ? 'active' : 'inactive',
                                 'childs' => array()
                             );
 
@@ -63,6 +69,7 @@ class SiteHelpers
                                             'menu_name' => $row3->menu_name,
                                             'menu_lang' => json_decode($row3->menu_lang, true),
                                             'menu_icons' => $row3->menu_icons,
+                                            'active' => $row->active == 1 ? 'active' : 'inactive',
                                             'childs' => array()
                                         );
                                         $child_level_3[] = $menu3;
@@ -86,6 +93,7 @@ class SiteHelpers
                     'menu_name' => $row->menu_name,
                     'menu_lang' => json_decode($row->menu_lang, true),
                     'menu_icons' => $row->menu_icons,
+                    'active' => $row->active == 1 ? 'active' : 'inactive',
                     'childs' => $child_level
                 );
 
@@ -741,7 +749,7 @@ class SiteHelpers
         $type = '';
         $bulk = ($bulk == true ? '[]' : '');
         $mandatory = '';
-        $selectMultiple = "";   
+        $selectMultiple = "";
         $simpleSearchOptionsBasic = '';
         $simpleSearchOptions = '';
         $simpleSearchOperator = '';
@@ -752,7 +760,7 @@ class SiteHelpers
         $simpleSearchEndClass = '';
         $simpleSearchPlaceholder = '';
         $simpleSearchEndPlaceholder = '';
-        $isSSSFWOBD = false; 
+        $isSSSFWOBD = false;
 
         foreach ($forms as $f) {
             $hasSimpleSearch = isset($f['generatingSimpleSearch']) ? $f['generatingSimpleSearch'] : false;
@@ -760,7 +768,7 @@ class SiteHelpers
                 $type = ($f['type'] != 'file' ? $f['type'] : '');
                 $option = $f['option'];
                 $required = $f['required'];
-                $selectMultiple = empty($option['select_multiple']) ? "": " multiple='multiple' ";
+                $selectMultiple = empty($option['select_multiple']) ? "" : " multiple='multiple' ";
                 if ($required == 'required') {
                     $mandatory = "data-parsley-required='true'";
                 } else if ($required == 'email') {
@@ -776,28 +784,28 @@ class SiteHelpers
                     $simpleSearchOperator = 'equal';
                     if (isset($f['simplesearchoperator'])) {
                         $simpleSearchOperator = $f['simplesearchoperator'];
-                    }                    
+                    }
                     $isSimpleSearchBetween = $simpleSearchOperator == 'between';
                     if ($isSimpleSearchBetween) {
                         $simpleSearchPlaceholder = "placeholder='Start'";
                         $simpleSearchEndPlaceholder = "placeholder='End'";
                         $simpleSearchStyle = "style=''";
-                        $simpleSearchEndStyle = "style=''";                        
+                        $simpleSearchEndStyle = "style=''";
                         $simpleSearchClass = "betweenRangeStart";
-                        $simpleSearchEndClass = "betweenRangeEnd";                        
+                        $simpleSearchEndClass = "betweenRangeEnd";
                     }
-                    
+
                     $simpleSearchOptionsBasic = " data-simpleSearch='1' 
                         data-simpleSearchOperator='{$simpleSearchOperator}' ";
                     $simpleSearchOptions = "$simpleSearchOptionsBasic 
                         $simpleSearchPlaceholder 
                         $simpleSearchStyle ";
-                    
+
                     if (isset($f['simplesearchselectfieldwithoutblankdefault'])) {
                         $isSSSFWOBD = $f['simplesearchselectfieldwithoutblankdefault'] == 1;
-                    } 
-                    
-                }                
+                    }
+
+                }
                 break;
             }
         }
@@ -812,8 +820,8 @@ class SiteHelpers
                     $mandatory $simpleSearchOptions value='{$value}'/>";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left'> - </div>" 
-                            ."<input type='text' 
+                        . "<div class='betweenseparator pull-left'> - </div>"
+                        . "<input type='text'
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
                                 class='form-control input-sm pull-left $simpleSearchEndClass' 
@@ -824,7 +832,7 @@ class SiteHelpers
                                 $simpleSearchEndPlaceholder 
                                 />
                             </div>";
-                }                 
+                }
                 break;
 
             case 'textarea_editor';
@@ -833,8 +841,8 @@ class SiteHelpers
                         $mandatory $simpleSearchOptions value='{$value}'/>";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' > - </div>" 
-                            ."<input type='text' 
+                        . "<div class='betweenseparator pull-left' > - </div>"
+                        . "<input type='text'
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
                                 class='form-control input-sm pull-left $simpleSearchEndClass' 
@@ -845,7 +853,7 @@ class SiteHelpers
                                 $simpleSearchEndPlaceholder 
                                 />
                             </div>";
-                }                 
+                }
                 break;
 
             case 'text';
@@ -854,8 +862,8 @@ class SiteHelpers
                     $mandatory $simpleSearchOptions value='{$value}'/>";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left'> - </div>" 
-                            ."<input type='text' 
+                        . "<div class='betweenseparator pull-left'> - </div>"
+                        . "<input type='text'
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
                                 class='form-control input-sm pull-left $simpleSearchEndClass' 
@@ -866,7 +874,7 @@ class SiteHelpers
                                 $simpleSearchEndPlaceholder 
                                 />
                             </div>";
-                }                
+                }
                 break;
 
             case 'text_date';
@@ -875,8 +883,8 @@ class SiteHelpers
                     $mandatory $simpleSearchOptions value='{$value}'/> ";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' > - </div>" 
-                            ."<input type='text' 
+                        . "<div class='betweenseparator pull-left' > - </div>"
+                        . "<input type='text'
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
                                 class='date form-control input-sm pull-left $simpleSearchEndClass' 
@@ -896,8 +904,8 @@ class SiteHelpers
                     $mandatory $simpleSearchOptions value='{$value}'/> ";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' > - </div>" 
-                            ."<input type='text' 
+                        . "<div class='betweenseparator pull-left' > - </div>"
+                        . "<input type='text'
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
                                 class='date form-control input-sm pull-left $simpleSearchEndClass' 
@@ -908,69 +916,64 @@ class SiteHelpers
                                 $simpleSearchEndPlaceholder 
                                 />
                             </div>";
-                }                 
+                }
                 break;
+
+
+
 
             case 'select';
                 if ($option['opt_type'] == 'external') {
 
                     $opts = '';
-                    if($option['lookup_table'] =='location')
-                    {
-                        $lookupParts = explode('|',$option['lookup_value']);
+                    if ($option['lookup_table'] == 'location') {
+                        $lookupParts = explode('|', $option['lookup_value']);
 
-                        if(is_array($lookupParts) && !empty($lookupParts)){
+                        if (is_array($lookupParts) && !empty($lookupParts)) {
                             $option['lookup_value'] = $lookupParts[0];
                         }
                         $selected = '';
-                        $current_user_id=Auth::id();
-                        $user_ids = DB::table('user_locations')->leftjoin('location as l','user_locations.location_id','=','l.id')->where('user_locations.user_id',$current_user_id)->orderby('l.'.$option['lookup_value'])->get();
-                        foreach ($user_ids as $user_id)
-                        {
-                            $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
+                        $current_user_id = Auth::id();
+                        $user_ids = DB::table('user_locations')->leftjoin('location as l', 'user_locations.location_id', '=', 'l.id')->where('user_locations.user_id', $current_user_id)->orderby('l.' . $option['lookup_value'])->get();
+                        foreach ($user_ids as $user_id) {
+                            $locations = DB::table($option['lookup_table'])->where('id', $user_id->location_id)->orderby($option['lookup_value'])->get();
                             foreach ($locations as $location) {
                                 $value1 = "";
-                                foreach($lookupParts as $lookup){
-                                    $value1 .= $location->$lookup." - ";
+                                foreach ($lookupParts as $lookup) {
+                                    $value1 .= $location->$lookup . " - ";
                                 }
-                                $value1 = trim($value1,' - ');
-                                if ($value == $location->id){
+                                $value1 = trim($value1, ' - ');
+                                if ($value == $location->id) {
                                     $selected = 'selected="selected"';
-                                }
-                                else{ 
-                                    $selected="";
+                                } else {
+                                    $selected = "";
                                 }
                                 $opts .= "<option  $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value1 . " </option> ";
                             }
                         }
-                    }
-                    else {
-                        $fields = explode("|", $option['lookup_value']);                        
-                        $search = isset($option['lookup_search']) ? $option['lookup_search'] : '';                        
+                    } else {
+                        $fields = explode("|", $option['lookup_value']);
+                        $search = isset($option['lookup_search']) ? $option['lookup_search'] : '';
                         $query = DB::table($option['lookup_table']);
                         if (!empty($search)) {
                             $searchParts = explode(':', urldecode($search));
                             if (count($searchParts) > 1) {
                                 $query->where($searchParts[0], $searchParts[1]);
-                            }
-                            else {
+                            } else {
                                 $query->whereRaw($search);
                             }
-                        }                        
-                        
-                        if(count($fields)>1)
-                        {
-                            $query->where($option['lookup_key'],'!=','')
-                                    ->orderby($option['lookup_key'])
-                                    ->groupby($option['lookup_key']);
                         }
-                        else
-                        {
-                            $query->where($option['lookup_value'],'!=','')
-                                    ->orderby($option['lookup_value'])
-                                    ->groupby($option['lookup_value']);
+
+                        if (count($fields) > 1) {
+                            $query->where($option['lookup_key'], '!=', '')
+                                ->orderby($option['lookup_key'])
+                                ->groupby($option['lookup_key']);
+                        } else {
+                            $query->where($option['lookup_value'], '!=', '')
+                                ->orderby($option['lookup_value'])
+                                ->groupby($option['lookup_value']);
                         }
-                        
+
                         $data = $query->get();
                         foreach ($data as $row) {
                             $selected = '';
@@ -984,8 +987,7 @@ class SiteHelpers
                             $opts .= "<option $selected value='" . $row->$option['lookup_key'] . "' $mandatory > " . $val . " </option> ";
                         }
                     }
-                }
-                else {
+                } else {
                     $opt = explode("|", $option['lookup_query']);
                     $opts = '';
                     for ($i = 0; $i < count($opt); $i++) {
@@ -996,16 +998,76 @@ class SiteHelpers
                     }
 
                 }
-                
+
                 $multipleClass = "";
+                $multiple = false;
                 if (!empty($selectMultiple)) {
                     $multipleClass = "sel-search-multiple";
+                    $multiple = true;
+                }
+                $form = "<select name='$field{$bulk}'  class='form-control select3 sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
+                    (empty($selectMultiple) && !$isSSSFWOBD ? "<option value=''> -- Select  -- </option>" : "") .
+                    "	$opts
+						</select>";
+
+                if($f['alias'] == 'game_service_history')
+                {
+                	$random = str_random(4);
+                	$form = "<select data-name='$field{$bulk}' style='display:none' class=''>" .
+                    (empty($selectMultiple) && !$isSSSFWOBD ? "<option value=''> -- Select  -- </option>" : "") .
+                    "	$opts
+						</select>";
+                    $form .= "<input type='hidden' name='$field{$bulk}' id='$field{$bulk}' class='form-control custom-select sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions value='$value'>
+					<script>
+                        (function (){
+                            var data_$random = [], cache = {};
+
+                            $.each($('select[data-name=$field{$bulk}]').prop('options'), function(i, opt) {
+                                cache[opt.value] = opt.textContent;
+                                data_$random.push({id: ''+opt.value, text: ''+opt.textContent});
+                            });
+
+                            $('.form-control[name=$field{$bulk}]').select2({
+
+                                initSelection: function(element, callback) {
+                                    var data = [];
+                                    $((element.val()||'').split(',')).each(function () {
+                                        var obj = { id: this, text: cache[this] || this };
+                                        //data.push(obj);
+                                    });
+                                    callback(data);
+                                },
+                                query: function(options){
+                                    var pageSize = 100;
+                                    var startIndex  = (options.page - 1) * pageSize;
+                                    var filteredData = data_$random;
+
+                                    if( options.term && options.term.length > 0 ){
+                                        if( !options.context ){
+                                            var term = options.term.toLowerCase();
+                                            options.context = data_$random.filter( function(metric){
+                                                return ( metric.text.toLowerCase().indexOf(term) !== -1 );
+                                            });
+                                        }
+                                        filteredData = options.context;
+                                    }
+
+                                    options.callback({
+                                        context: filteredData,
+                                        results: filteredData.slice(startIndex, startIndex + pageSize),
+                                        more: (startIndex + pageSize) < filteredData.length
+                                    });
+                                }
+
+                                "
+                                .($multiple == true ? ', multiple:  true': '').
+                                "
+                            });
+                        }());
+					</script>
+                    ";
                 }
 
-                $form = "<select name='$field{$bulk}'  class='form-control select3 sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
-						(empty($selectMultiple) && !$isSSSFWOBD ? 	"<option value=''> -- Select  -- </option>" : "") .
-						"	$opts
-						</select>";
                 break;
 
             case 'radio':
@@ -1019,8 +1081,8 @@ class SiteHelpers
                     $opts .= "<option value ='" . $row[0] . "' > " . $row[1] . " </option> ";
                 }
                 $form = "<select name='$field{$bulk}' class='form-control' $mandatory $simpleSearchOptions>" .
-                        ($isSSSFWOBD ? "" : "<option value=''> -- Select  -- </option")
-                        . ">$opts</select>";
+                    ($isSSSFWOBD ? "" : "<option value=''> -- Select  -- </option")
+                    . ">$opts</select>";
                 break;
 
 
@@ -1029,42 +1091,60 @@ class SiteHelpers
         return $form;
     }
 
-    public static  function transInlineForm( $field, $forms = array(),$bulk=false , $value ='')
+    /**
+     *
+     * @param type $field
+     * @param type $forms
+     * @param type $bulk
+     * @param type $value
+     * @return type
+     */
+    public static function transInlineForm($field, $forms = array(), $bulk = false, $value = '')
     {
         $type = '';
-        $bulk = ($bulk == true ? '[]' : '');
+        $bulk = is_string($bulk) ? $bulk : ($bulk === true ? '[]' : '');
         $mandatory = '';
-        foreach($forms as $f)
-        {
+        $attribute = '';
+        $extend_class = '';
+        $selectMultiple = '';
+
+        foreach ($forms as $f) {
             $hasShow = isset($f['view']) ? $f['view'] == 1 : false;
-            if($f['field'] == $field && $hasShow)
-            {
-                $type = ($f['type'] !='file' ? $f['type'] : '');
+            if ($f['field'] == $field && $hasShow) {
+                $type = ($f['type'] != 'file' ? $f['type'] : '');
                 $option = $f['option'];
                 $required = $f['required'];
-                if($required =='required') {
-                    $mandatory = "data-parsley-required='true'";
-                } else if($required =='email') {
-                    $mandatory = "data-parsley-type'='email' ";
-                } else if($required =='date') {
-                    $mandatory = "data-parsley-required='true'";
-                } else if($required =='numeric') {
-                    $mandatory = "data-parsley-type='number' ";
+                if ($required == 'required') {
+                    $mandatory = "required='required' data-parsley-required='true'";
+                } else if ($required == 'email') {
+                    $mandatory = "required='required' data-parsley-type'='email' ";
+                } else if ($required == 'date') {
+                    $mandatory = "required='required' data-parsley-required='true'";
+                } else if ($required == 'numeric') {
+                    $mandatory = "required='required' data-parsley-type='number' ";
                 } else {
                     $mandatory = '';
                 }
+
+                if (!empty($option['attribute'])) {
+                    $attribute = $option['attribute'];
+                }
+                if (!empty($option['extend_class'])) {
+                    $extend_class = $option['extend_class'];
+                }
+                $selectMultiple = empty($option['select_multiple_inline']) ? "" : "multiple='multiple'";
+                break;
             }
         }
 
-        switch($type)
-        {
+        switch ($type) {
             default:
-                $form ='';
+                $form = '';
                 break;
             case 'textarea':
             case 'textarea_editor':
             case 'text':
-                $form = "<input  type='text' name='".$field."{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
                 break;
 
             case 'text_date':
@@ -1077,76 +1157,69 @@ class SiteHelpers
 
             case 'select':
 
-                if($option['opt_type'] =='external')
-                {
+                if ($option['opt_type'] == 'external') {
 
                     $opts = '';
-                    if($option['lookup_table'] =='location')
-                    {
-                        $lookupParts = explode('|',$option['lookup_value']);
-                        if(is_array($lookupParts) && !empty($lookupParts)){
+                    if ($option['lookup_table'] == 'location') {
+                        $lookupParts = explode('|', $option['lookup_value']);
+                        if (is_array($lookupParts) && !empty($lookupParts)) {
                             $option['lookup_value'] = $lookupParts[0];
                         }
                         $selected = '';
-                        $current_user_id=Auth::id();
-                        $user_ids = DB::table('user_locations')->leftjoin('location as l','user_locations.location_id','=','l.id')->where('user_locations.user_id',$current_user_id)->orderby('l.'.$option['lookup_value'])->get();
-                        foreach ($user_ids as $user_id)
-                        {
-                            $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
+                        $current_user_id = Auth::id();
+                        $user_ids = DB::table('user_locations')->leftjoin('location as l', 'user_locations.location_id', '=', 'l.id')->where('user_locations.user_id', $current_user_id)->orderby('l.' . $option['lookup_value'])->get();
+                        foreach ($user_ids as $user_id) {
+                            $locations = DB::table($option['lookup_table'])->where('id', $user_id->location_id)->orderby($option['lookup_value'])->get();
                             foreach ($locations as $location) {
                                 $value = "";
-                                foreach($lookupParts as $lookup){
-                                    $value .= $location->$lookup." - ";
+                                foreach ($lookupParts as $lookup) {
+                                    $value .= $location->$lookup . " - ";
                                 }
-                                $value = trim($value,' - ');
+                                $value = trim($value, ' - ');
                                 $opts .= "<option $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value . " </option> ";
                             }
 
                         }
 
-                    }
-                    else {
+                    } else {
                         $fields = explode("|", $option['lookup_value']);
                         $search = isset($option['lookup_search']) ? $option['lookup_search'] : '';
-                        
+
                         $query = DB::table($option['lookup_table']);
                         if (!empty($search)) {
                             $searchParts = explode(':', urldecode($search));
                             if (count($searchParts) > 1) {
                                 $query->where($searchParts[0], $searchParts[1]);
-                            }
-                            else {
+                            } else {
                                 $query->whereRaw($search);
                             }
                         }
-                        
-                        if($option['lookup_table'] == 'order_type')
-                        {
-                            $data = $query->where('can_request','=','1')
+
+                        if ($option['lookup_table'] == 'order_type') {
+                            $data = $query->where('can_request', '=', '1')
+                                ->orderby($option['lookup_key'])
+                                ->groupby($option['lookup_key']);
+                        } else {
+                            if (count($fields) > 1) {
+                                $data = $query
+                                    ->where($option['lookup_key'], '!=', '')
                                     ->orderby($option['lookup_key'])
                                     ->groupby($option['lookup_key']);
-                        }
-                        else
-                        {
-                            if(count($fields)>1)
-                            {
+                            } else {
                                 $data = $query
-                                        ->where($option['lookup_key'],'!=','')
-                                        ->orderby($option['lookup_key'])
-                                        ->groupby($option['lookup_key']);
-                            }
-                            else
-                            {
-                                $data = $query
-                                        ->where($option['lookup_value'],'!=','')
-                                        ->orderby($option['lookup_value'])
-                                        ->groupby($option['lookup_value']);
+                                    ->where($option['lookup_value'], '!=', '')
+                                    ->orderby($option['lookup_value'])
+                                    ->groupby($option['lookup_value']);
                             }
                         }
                         $data = $query->get();
                         foreach ($data as $row):
                             $selected = '';
-                            if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
+                            $values = explode(',', $value);
+                            $valueFound = count($values) > 1 ? in_array($row->$option['lookup_key'], $values) : false;
+                            if ($value == $row->$option['lookup_key'] || $valueFound) {
+                                $selected = 'selected="selected"';
+                            }
 
                             //print_r($fields);exit;
                             $val = "";
@@ -1158,36 +1231,64 @@ class SiteHelpers
                     }
 
                 } else {
-                    $opt = explode("|",$option['lookup_query']);
+                    $opt = explode("|", $option['lookup_query']);
+                    $datalistOptions = \FEGHelp::parseStringToArray($option['lookup_query']);
+                    $values = explode(',', $value);
                     $opts = '';
-                    for($i=0; $i<count($opt);$i++)
-                    {
+                    for ($i = 0; $i < count($opt); $i++) {
                         $selected = '';
-                        if($value == ltrim(rtrim($opt[0]))) $selected ='selected="selected"';
-                        $row =  explode(":",$opt[$i]);
-                        $opts .= "<option $selected value ='".trim($row[0])."' > ".$row[1]." </option> ";
+                        if ($value == ltrim(rtrim($opt[0]))) {
+                            $selected = 'selected="selected"';
+                        }
+                        $row = explode(":", $opt[$i]);
+                        if (count($values) > 1) {
+                            $valueFound = in_array(trim($row[0]), $values);
+                            if ($valueFound) {
+                                $selected = 'selected="selected"';
+                            }
+                        }
+
+                        $opts .= "<option $selected value ='" . trim($row[0]) . "' > " . $row[1] . " </option> ";
                     }
 
                 }
-                $form = "<select name='$field{$bulk}'  class='sel-inline $field{$bulk}' $mandatory>" .
-                    "<option value=''> -- Select  -- </option>".
+                $form = "<select name='$field{$bulk}'  class='sel-inline $field{$bulk}' $mandatory {$selectMultiple}>" .
+                    "<option value=''> -- Select  -- </option>" .
                     "	$opts
 						</select>";
                 break;
 
             case 'radio':
             case 'checkbox':
-                $opt = explode("|",$option['lookup_query']);
+                $opt = explode("|", $option['lookup_query']);
                 $opts = '';
-                for($i=0; $i<count($opt);$i++)
-                {
+                for ($i = 0; $i < count($opt); $i++) {
                     $checked = '';
-                    $row =  explode(":",$opt[$i]);
-                    $opts .= "<option value ='".$row[0]."' > ".$row[1]." </option> ";
+                    $row = explode(":", $opt[$i]);
+                    $opts .= "<option value ='" . $row[0] . "' > " . $row[1] . " </option> ";
                 }
                 $form = "<select name='$field{$bulk}' class='sel-inline' $mandatory ><option value=''> -- Select  -- </option>$opts</select>";
                 break;
 
+            case '__checkbox':
+                $form = "<input type='hidden' name='{$field}{$bulk}' value='$value'/>
+                    <input type='checkbox' 
+                            data-proxy-input='{$field}' 
+                            data-parsley-excluded='true'
+                            parsley-excluded='true'
+                            {$mandatory} {$attribute} 
+                            class='{$extend_class}' 
+                            value='{$value}' 
+                            " . ($value ? "checked='checked'" : "") . "
+                        />";
+                break;
+            case '__textarea':
+                $form = "<textarea rows='1' 
+                                name='{$field}{$bulk}' 
+                                class='form-control {$extend_class}' 
+                                {$mandatory} {$attribute}  
+                            >{$value}</textarea>";
+                break;
         }
 
         return $form;
@@ -1356,7 +1457,7 @@ class SiteHelpers
         }
         $searchQuery = '';
         if (!empty($search)) {
-            $searchQuery = "&search=".urlencode($search);
+            $searchQuery = "&search=" . urlencode($search);
         }
         $pre_jCombo = "
         \$(\"#{$field}\").jCombo(\"{{ URL::to('{$class}/comboselect?filter={$table}:{$key}:{$val}') }}$parent_field{$searchQuery}\",
@@ -1473,7 +1574,7 @@ class SiteHelpers
     }
 
 
-    public static function showUploadedFile($file, $path, $width = 50, $circle = true,$id=0)
+    public static function showUploadedFile($file, $path, $width = 50, $circle = true, $id = 0)
     {
         $files = public_path() . $path . $file;
 
@@ -1488,8 +1589,8 @@ class SiteHelpers
                 } else {
                     $class = 'img';
                 }
-                $rel="gallery".$id;
-                return '<p><a href="' . url($path_file . $file) . '" target="_blank" class="previewImage fancybox" data-fancybox-group="'.$rel.'"  rel="'.$rel.'">
+                $rel = "gallery" . $id;
+                return '<p><a href="' . url($path_file . $file) . '" target="_blank" class="previewImage fancybox" data-fancybox-group="' . $rel . '"  rel="' . $rel . '">
 				<img style="box-shadow:1px 1px 5px gray" src="' . asset($path_file . $file) . '" border="0" width="' . $width . '" class="' . $class . '"  /></a></p>';
             } else {
                 $path_file = str_replace("./", "", $path);
@@ -1498,7 +1599,7 @@ class SiteHelpers
 
         } else {
 
-            return "<img src='" . asset('/uploads/images/no-image.png') . "' border='0' width='" . $width . "' /></a>";
+            return "<img src='" . asset('/upload/images/no-image.png') . "' border='0' width='" . $width . "' /></a>";
 
         }
 
@@ -1567,27 +1668,39 @@ class SiteHelpers
         }
     }
 
-    public static function gridDisplayView($val, $field, $arr)
+    public static function gridDisplayView($val, $field, $arr,$nodata=0)
     {
 
         $arr = explode(':', $arr);
 
-        if (isset($arr['0']) && $arr['0'] == 1) {
+        if (isset($arr['0']) && $arr['0'] == 1 && (is_numeric($val))) {
             $Q = DB::select(" SELECT " . str_replace("|", ",", $arr['3']) . " FROM " . $arr['1'] . " WHERE " . $arr['2'] . " = '" . $val . "' ");
             if (count($Q) >= 1) {
+
                 $row = $Q[0];
                 $fields = explode("|", $arr['3']);
                 $v = '';
                 $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
-                $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
-                $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');
+                if (isset($fields[1]) && empty($row->$fields[1])) {
+                    $v = "No Data";
+                } else {
+                    $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
+                }
+
+                if (isset($fields[2]) && !empty($row->$fields[2])) {
+                    $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');
+                }
                 return $v;
             } else {
-                return '';
+                $val = "";
+
             }
-        } else {
-            return $val;
+
         }
+        if (($val === "0" || $val === 0 || $val === NULL || $val === "" || empty($val)) && $nodata == 0) {
+            $val = "No Data";
+        }
+        return $val;
     }
 
     public static function langOption()
@@ -1633,7 +1746,7 @@ class SiteHelpers
 
     public static function avatar($width = 75)
     {
-        $avatar = '<img alt="" src="'.url().'/silouette.png" class="img-circle" width="' . $width . '" />';
+        $avatar = '<img alt="" src="' . url() . '/silouette.png" class="img-circle" width="' . $width . '" />';
         $Q = DB::table("users")->where("id", '=', Session::get('uid'))->get();
         if (count($Q) >= 1) {
             $row = $Q[0];
@@ -1889,6 +2002,7 @@ class SiteHelpers
         }
         return $table;
     }
+
     static function showRequiredCols_v2($tableGrid, $cols)
     {
         $columns = explode(',', $cols);
@@ -1897,12 +2011,13 @@ class SiteHelpers
         foreach ($tableGrid as $t) {
             $fieldName = $t['field'];
             if (in_array($fieldName, $columns)) {
-                $index = array_search($fieldName, $columns);                 
+                $index = array_search($fieldName, $columns);
                 $table[$index] = $t;
             }
         }
         return array_values($table);
-    } 
+    }
+
     static function getAllGroups()
     {
         $groups = \DB::table('tb_groups')->get();
@@ -1956,9 +2071,9 @@ class SiteHelpers
         if ($second != 00 && $first != 00) {
             $interval = $datetime1->diff($datetime2);
             $days = $interval->format("%a");
-            echo $days;
+            return $days;
         } else {
-            echo "N/A";
+            return "N/A";
         }
 
     }
@@ -2029,9 +2144,9 @@ class SiteHelpers
                 $data['selected_location_name'] = $locData['location_name_short'];
             }
 
-            if ($data['user_level'] == 6 || $data['reg_id'] > 1) // IF USER IS DISTRICT MANAGER OR LOCATIONS ARE BASED ON REGION (TYPICALLY USED FOR MANY, ROUTE LOCATIONS)
+            if ($data['user_level'] == Groups::DISTRICT_MANAGER || $data['reg_id'] > 1) // IF USER IS DISTRICT MANAGER OR LOCATIONS ARE BASED ON REGION (TYPICALLY USED FOR MANY, ROUTE LOCATIONS)
             {
-                if ($data['user_level'] == 6) {
+                if ($data['user_level'] == Groups::DISTRICT_MANAGER) {
                     $distMgrQuery = $this->db->query("SELECT DISTINCT GROUP_CONCAT(L.id) AS LocationIdList
 														 FROM location L
 														WHERE L.region_id IN(
@@ -2126,15 +2241,15 @@ class SiteHelpers
     /**
      * Get any field's value from location table. For example, location_name
      * @param number $loc_id
-     * @param string $field   
-     * @param string $default 
+     * @param string $field
+     * @param string $default
      * @return mixed    string value if $field is specified else an object. $default is not found.
      */
-    public static function getLocationInfoById($loc_id = null, $field = null, $default = "") {
-        if(is_null($field)){
+    public static function getLocationInfoById($loc_id = null, $field = null, $default = "")
+    {
+        if (is_null($field)) {
             $query = \DB::select("SELECT * FROM location WHERE id = '$loc_id'");
-        }
-        else{
+        } else {
             $query = \DB::select("SELECT $field FROM location WHERE id = '$loc_id'");
         }
 
@@ -2148,8 +2263,7 @@ class SiteHelpers
         if (!empty($data)) {
             if (is_array($data)) {
                 $value = $data[$field];
-            }        
-            else {
+            } else {
                 $value = $data->$field;
             }
         }
@@ -2158,32 +2272,55 @@ class SiteHelpers
         }
         return $value;
     }
+
     /**
      * Get Locations details of locations assigned to a user
-     * @param number    $id User ID
-     * @return array 
+     * @param number $id User ID
+     * @return array
      */
-    static function getLocationDetails($id)
+    static function getLocationDetails($id,$canSeeAllLocations = false)
     {
-        $locations = \DB::table('user_locations')
-            ->join('location', 'user_locations.location_id', '=', 'location.id')
-            ->join('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
-            ->select(
-                    'location.id', 
-                    'location.location_name', 
-                    'location.location_name_short', 
-                    'location.debit_type_id', 
-                    'debit_type.company', 
-                    'location.street1', 
-                    'location.state', 
-                    'location.city', 
-                    'location.zip')
-            ->where('location.active', 1)
-            ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
-            ->get();
+    	if($canSeeAllLocations)
+	    {
+            $locations = \DB::table('user_locations')
+                ->join('location', 'user_locations.location_id', '=', 'location.id')
+                ->leftJoin('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
+                ->select(DB::raw(implode(',', [
+                    'DISTINCT location.id',
+                    'location.location_name',
+                    'location.location_name_short',
+                    'location.debit_type_id',
+                    'debit_type.company',
+                    'location.street1',
+                    'location.state',
+                    'location.city',
+                    'location.zip'])))
+                ->where('location.active', 1)
+                ->orderBy('id', 'asc')
+                ->get();
+	    }
+	    else{
+            $locations = \DB::table('user_locations')
+                ->join('location', 'user_locations.location_id', '=', 'location.id')
+                ->leftJoin('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
+                ->select(DB::raw(implode(',', [
+                    'DISTINCT location.id',
+                    'location.location_name',
+                    'location.location_name_short',
+                    'location.debit_type_id',
+                    'debit_type.company',
+                    'location.street1',
+                    'location.state',
+                    'location.city',
+                    'location.zip'])))
+                ->where('location.active', 1)
+                ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
+                ->get();
+	    }
+
         return $locations;
     }
-    
+
     /**
      * Get Location IDs in an indexed array from list of locations
      * @param type $userLocations
@@ -2193,13 +2330,13 @@ class SiteHelpers
     {
         $locations = array();
         if (!empty($userLocations)) {
-            foreach($userLocations as $location) {
+            foreach ($userLocations as $location) {
                 $locations[] = $location->id;
             }
         }
         return $locations;
-    }    
-    
+    }
+
     public static function getCurrentUserLocationsFromSession($asArray = false)
     {
 //        $locations = array();        
@@ -2207,29 +2344,31 @@ class SiteHelpers
 //        if ($hasAllLocations) {
 //            $locations = \Session::get('user_location_ids');            
 //        }       
-        
-        $locations = \Session::get('user_location_ids');   
+
+        $locations = \Session::get('user_location_ids');
         if ($locations === null) {
             $locations = array();
-        }        
+        }
         if (!$asArray) {
             $locations = implode(',', $locations);
-        }        
+        }
         return $locations;
-    }       
+    }
 
-    static function getQueryStringForLocation($table, $fieldName = 'location_id', $addOnLocations = array(), $orClause = '')
+    static function getQueryStringForLocation($table, $fieldName = 'location_id', $addOnLocations = array(), $orClause = '',$canSeeAllLocations = false)
     {
-        $locationsData = self::getLocationDetails(\Session::get('uid'));
+        $locationsData = self::getLocationDetails(\Session::get('uid'),$canSeeAllLocations);
         $locations = is_array($addOnLocations) ? $addOnLocations : array();
-        foreach($locationsData as $locationItem)
-        {
-            $locations[] = "'".$locationItem->id."'";
+        foreach ($locationsData as $locationItem) {
+            $locations[] = "'" . $locationItem->id . "'";
         }
         $locationsCSV = implode(',', $locations);
+        if (empty($locationsCSV)) {
+            $locationsCSV = 'NULL';
+        }
         $queryString = " AND ($table.$fieldName IN ($locationsCSV) " .
-                (!empty($orClause) ? $orClause : '') . ")";
-        
+            (!empty($orClause) ? $orClause : '') . ")";
+
         return $queryString;
     }
 
@@ -2237,19 +2376,18 @@ class SiteHelpers
     {
         $queryString = '';
         $locations = self::getLocationDetails(\Session::get('uid'));
-        foreach($locations as $index => $location) {
-            if($location->id == $id)
-            {
+        foreach ($locations as $index => $location) {
+            if ($location->id == $id) {
                 $queryString .= " AND service_requests.location_id = '$id'";
                 break;
             }
         }
-        if(empty($queryString))
-        {
+        if (empty($queryString)) {
             $queryString = self::getQueryStringForLocation();
         }
         return $queryString;
     }
+
     static function getOrderHistory()
     {
         $loc1 = \Session::get('selected_location');
@@ -2269,12 +2407,12 @@ class SiteHelpers
             $prevMonthYear = $curYear;
         }
         $user_level = \Session::get('gid');
-        if ($user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 || $user_level == 11) {
+        if ($user_level == Groups::USER || $user_level == Groups::PARTNER || $user_level == Groups::DISTRICT_MANAGER || $user_level == Groups::PARTNER_PLUS || $user_level == Groups::TECHNICAL_MANAGER) {
             $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget
-											WHERE location_id=' . $loc1 . ' AND MONTH(budget_date) = ' . $curMonthNumber . ' AND YEAR(budget_date)='.$curYear.')
+											WHERE location_id=' . $loc1 . ' AND MONTH(budget_date) = ' . $curMonthNumber . ' AND YEAR(budget_date)=' . $curYear . ')
 											   AS monthly_merch_budget,
 										  (SELECT SUM(budget_value) FROM location_budget
-											WHERE location_id=' . $loc1 . ' AND MONTH(budget_date) = ' . $prevMonthNumber . ' AND YEAR(budget_date)='.$curYear.')
+											WHERE location_id=' . $loc1 . ' AND MONTH(budget_date) = ' . $prevMonthNumber . ' AND YEAR(budget_date)=' . $curYear . ')
 											   AS last_month_merch_budget,
 										  (SELECT SUM(order_total)
 										  	 FROM orders
@@ -2303,29 +2441,29 @@ class SiteHelpers
 										      AND location_id=' . $loc1 . ')
 											   AS annual_order_total');
             $data['user_group'] = "regusers";
-        } else if ($user_level == 6) {
-            $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget left join location on location_budget.location_id = location.id where MONTH(budget_date) = ' . $curMonthNumber . ' AND YEAR(budget_date)='.$curYear.'
+        } else if ($user_level == Groups::DISTRICT_MANAGER) {
+            $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget left join location on location_budget.location_id = location.id where MONTH(budget_date) = ' . $curMonthNumber . ' AND YEAR(budget_date)=' . $curYear . '
 										 AND location.region_id=' . $reg_id . ')
 										   AS monthly_merch_budget,
-									  (SELECT  SUM(budget_value) FROM location_budget left join location on location_budget.location_id = location.id where MONTH(budget_date) = ' . $prevMonthNumber . ' AND YEAR(budget_date)='.$curYear.'
+									  (SELECT  SUM(budget_value) FROM location_budget left join location on location_budget.location_id = location.id where MONTH(budget_date) = ' . $prevMonthNumber . ' AND YEAR(budget_date)=' . $curYear . '
 										  AND location.region_id=' . $reg_id . ')
 										   AS last_month_merch_budget,
 									  (SELECT SUM(O.order_total) FROM orders O, location L
-										WHERE O.location_id = L.id
+										WHERE O.location_id = ' . $loc1 . '
 										  AND order_type_id IN(7,8)
 										  AND MONTH(O.date_ordered)=' . $curMonthNumber . '
 										  AND YEAR(O.date_ordered)=' . $curYear . '
 										  AND L.region_id=' . $reg_id . ')
 											AS monthly_merch_order_total,
 									   (SELECT SUM(O.order_total) FROM orders O, location L
-										WHERE O.location_id = L.id
+										WHERE O.location_id = ' . $loc1 . '
 										  AND order_type_id IN(7,8)
 										  AND MONTH(O.date_ordered)=' . $prevMonthNumber . '
 										  AND YEAR(O.date_ordered)=' . $prevMonthYear . '
 										  AND L.region_id=' . $reg_id . ')
 											AS last_month_merch_order_total,
 									   (SELECT SUM(O.order_total) FROM orders O, location L
-									   	 WHERE O.location_id = L.id
+									   	 WHERE O.location_id = ' . $loc1 . '
 									 	   AND order_type_id NOT IN(7,8,18)
 										   AND MONTH(O.date_ordered)=' . $curMonthNumber . '
 										   AND YEAR(O.date_ordered)=' . $curYear . '
@@ -2333,32 +2471,36 @@ class SiteHelpers
 											AS monthly_else_order_total,
 									   (SELECT SUM(O.order_total) FROM orders O, location L
 										 WHERE YEAR(O.date_ordered)=' . $curYear . '
-									   	   AND O.location_id = L.id
+									   	   AND O.location_id = ' . $loc1 . '
 										   AND L.region_id=' . $reg_id . ')
 										    AS annual_order_total');
             $data['user_group'] = "distmgr";
         } else {
-            $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget where MONTH(budget_date) =' . $curMonthNumber . ' AND YEAR(budget_date)='.$curYear.' )
+            $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget where location_id=' . $loc1 . ' AND MONTH(budget_date) =' . $curMonthNumber . ' AND YEAR(budget_date)=' . $curYear . ' )
 										   AS monthly_merch_budget,
-									  (SELECT SUM(budget_value) FROM location_budget where MONTH(budget_date) =' . $prevMonthNumber . ' AND YEAR(budget_date)='.$prevMonthYear.')
+									  (SELECT SUM(budget_value) FROM location_budget where location_id=' . $loc1 . ' AND MONTH(budget_date) =' . $prevMonthNumber . ' AND YEAR(budget_date)=' . $prevMonthYear . ')
 										   AS last_month_merch_budget,
 									  (SELECT SUM(order_total) FROM orders
 										WHERE MONTH(date_ordered)=' . $curMonthNumber . '
 										  AND YEAR(date_ordered)=' . $curYear . '
+										  AND location_id=' . $loc1 . '
 										  AND order_type_id IN(7,8))
 										   AS monthly_merch_order_total,
 									  (SELECT SUM(order_total) FROM orders
 										WHERE MONTH(date_ordered)=' . $prevMonthNumber . '
 										  AND YEAR(date_ordered)=' . $prevMonthYear . '
+										  AND location_id=' . $loc1 . '
 										  AND order_type_id IN(7,8))
 										   AS last_month_merch_order_total,
 									  (SELECT SUM(order_total) FROM orders
 										WHERE MONTH(date_ordered)=' . $curMonthNumber . '
 										  AND YEAR(date_ordered)=' . $curYear . '
+										  AND location_id=' . $loc1 . '
 										  AND order_type_id NOT IN(7,8))
 										   AS monthly_else_order_total,
 									  (SELECT SUM(order_total) FROM orders
-										WHERE YEAR(date_ordered)=' . $curYear . ')
+										WHERE YEAR(date_ordered)=' . $curYear . '
+										AND location_id=' . $loc1 . ')
 										   AS annual_order_total');
             $data['user_group'] = "";
         }
@@ -2375,7 +2517,7 @@ class SiteHelpers
         $data['curMonth'] = $curMonth;
         $data['curYear'] = $curYear;
         $data['selected_location'] = $loc1;
-        $data['reg_id']=$reg_id;
+        $data['reg_id'] = $reg_id;
 
         return $data;
     }
@@ -2383,34 +2525,40 @@ class SiteHelpers
     static function getRegionName($id = null)
     {
         $region_name = \DB::select('select region from region where id=' . $id);
-        return $region_name;
+        return $region_name[0]->region;
     }
-    
-    static function configureSimpleSearchForm($data) {
+
+    static function getLocationName($id = null)
+    {
+        $location_name = \DB::select('select location_name from location where id=' . $id);
+        return $location_name[0]->location_name;
+    }
+
+    static function configureSimpleSearchForm($data)
+    {
         $newArray = array();
-        foreach($data as $item) {
-            if (isset($item['simplesearch']) && $item['simplesearch']  == '1') {
+        foreach ($data as $item) {
+            if (isset($item['simplesearch']) && $item['simplesearch'] == '1') {
                 $item['generatingSimpleSearch'] = true;
                 $newArray[] = $item;
             }
         }
-        
-        foreach($newArray as $key => &$item) {
+
+        foreach ($newArray as $key => &$item) {
             $width = $item['simplesearchfieldwidth'];
             $widthClass = "";
             $widthStyle = "";
             if (preg_match('/^[\_a-zA-Z]/', $width) == 1) {
                 $widthClass = $width;
-            }
-            else {
-                $widthStyle = 'width:' . $width. ';';
+            } else {
+                $widthStyle = 'width:' . $width . ';';
             }
             $item['widthClass'] = $widthClass;
             $item['widthStyle'] = $widthStyle;
-        }  
-        
-        uasort($newArray, function ($a, $b) { 
-            return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1); 
+        }
+
+        uasort($newArray, function ($a, $b) {
+            return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1);
         });
 
         return $newArray;
@@ -2421,61 +2569,64 @@ class SiteHelpers
     {
         return \DB::table('products')->where('id', $id)->pluck('vendor_description');
     }
+
     static function getConfigOwner($config_id)
     {
-        $user_id=\DB::table('user_module_config')->where('id','=',$config_id)->pluck('user_id');
+        $user_id = \DB::table('user_module_config')->where('id', '=', $config_id)->pluck('user_id');
         return $user_id;
     }
-    
+
     /**
-     * Add all unassigned locations to users set with All Locations = true 
+     * Add all unassigned locations to users set with All Locations = true
      * (having has_all_locations=1)
      * The two parameters of the function can use used when an existing location id has been modified
-     * @param number $location    [optional] Location ID after changed
-     * @param number $replaceLocation   [optional] Location ID before changed
-     * @param bool $skipInactive   [optional] When set to false would also assign inactive locations
+     * @param number $location [optional] Location ID after changed
+     * @param number $replaceLocation [optional] Location ID before changed
+     * @param bool $skipInactive [optional] When set to false would also assign inactive locations
      */
-    public static function addLocationToAllLocationUsers($location = null, $replaceLocation = null, $skipInactive = true) {
+    public static function addLocationToAllLocationUsers($location = null, $replaceLocation = null, $skipInactive = true)
+    {
         $table = "user_locations";
-        
+
         // update renamed location id
         if (!empty($replaceLocation) && !empty($location)) {
             $data = array('location_id' => $location);
             $query = \DB::table($table)->where('location_id', $replaceLocation);
             $query->update($data);
         }
-                
+
 //        $q = "SELECT l.id AS location_id, u.id AS user_id 
 //                FROM users u, location l 
 //                WHERE u.has_all_locations=1
 //                AND NOT EXISTS (SELECT * FROM user_locations WHERE user_id=u.id AND location_id=l.id)
 //                AND l.active=1 ";
-        
+
         // add all unassigned locations to users having has_all_locations=1
         $q = "INSERT INTO user_locations (location_id, user_id) 
                 SELECT l.id AS location_id, u.id AS user_id 
                 FROM users u, location l 
                 WHERE u.has_all_locations=1
                 AND NOT EXISTS (SELECT * FROM user_locations WHERE user_id=u.id AND location_id=l.id) ";
-                
+
         if ($skipInactive) {
             $q .= " AND l.active=1 ";
         }
 
         \DB::insert($q);
-        
-        self::cleanUpUserLocations();     
-        
+
+        self::cleanUpUserLocations();
+
     }
-    
+
     /**
      * Clean up orphan user-location assignments.
      * Orphan records are created when either a user or a location is deleted
-     * @param bool $skipInactive   [optional] Would not delete inactive locations when set to true.
+     * @param bool $skipInactive [optional] Would not delete inactive locations when set to true.
      */
-    public static function cleanUpUserLocations($skipInactive = false) {
+    public static function cleanUpUserLocations($skipInactive = false)
+    {
         $table = "user_locations";
-        
+
 //        $q = "SELECT * FROM $table
 //                WHERE NOT EXISTS (
 //                    SELECT u.id AS user_id, l.id AS location_id 
@@ -2490,53 +2641,55 @@ class SiteHelpers
                         FROM users u, location l 
                         WHERE u.id=user_locations.user_id AND l.id=user_locations.location_id
                     ) ";
-        
+
         if (!$skipInactive) {
             $q .= " OR user_locations.location_id IN (SELECT id FROM location WHERE active=0) ";
         }
-        
+
         \DB::delete($q);
-    }   
-    
-    public static function generateSimpleSearchButton($setting = array()) {
-        $width = isset($setting['simplesearchbuttonwidth']) ? trim($setting['simplesearchbuttonwidth']): '';
-         
+    }
+
+    public static function generateSimpleSearchButton($setting = array())
+    {
+        $width = isset($setting['simplesearchbuttonwidth']) ? trim($setting['simplesearchbuttonwidth']) : '';
+
         $widthClass = $widthStyle = $buttonStyle = "";
         if (preg_match('/^[\_a-zA-Z]/', $width) == 1) {
             $widthClass = $width . ' add-pad-right';
-        }
-        elseif (!empty($width)) {
+        } elseif (!empty($width)) {
             $widthClass = 'add-pad-right';
-            $widthStyle = 'width:' . $width. ';';
+            $widthStyle = 'width:' . $width . ';';
         }
         if (!empty($width)) {
             $buttonStyle = "width: 100%;";
         }
-        $button = '<div class="sscol-submit '. $widthClass . '" 
-            style="'. $widthStyle .'"><br/>
-            <button type="button" name="search" style="'. $buttonStyle .'"
+        $button = '<div class="sscol-submit ' . $widthClass . '"
+            style="' . $widthStyle . '"><br/>
+            <button type="button" name="search" style="' . $buttonStyle . '"
                     class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
             </div>';
-        
+
         return $button;
     }
-    
-    public static function getUserGroup ($id=null) {
+
+    public static function getUserGroup($id = null)
+    {
         $groupId = '';
         if (empty($id)) {
             $id = \Session::get('uid');
             $groupId = \Session::get('gid');
-        }
-        else {
+        } else {
             $groupId = \DB::table('users')->where('id', '=', $id)->pluck('group_id');
-        }        
+        }
         return $groupId;
     }
-    
-    public static function getUsersInGroup ($gid=null) {
+
+    public static function getUsersInGroup($gid = null)
+    {
     }
-    
-    public static function  getUserDetails($id=null) {
+
+    public static function  getUserDetails($id = null)
+    {
         if (empty($id)) {
             $id = \Session::get('uid');
         }
@@ -2544,162 +2697,180 @@ class SiteHelpers
         if (empty($data)) {
             $data = [];
         }
-        return $data;        
+        return $data;
     }
 
     public static function getStatus($value)
     {
-        if($value==1)
+        if ($value == 1)
             return "Yes";
-        elseif($value==0)
+        elseif ($value == 0)
             return "No";
-        elseif($value==-1)
+        elseif ($value == -1)
             return "Both";
         return $value;
     }
-  public static function refreshUserLocations($userId){
 
-      $user_locations = self::getLocationDetails($userId);
-      $user_location_ids = self::getIdsFromLocationDetails($user_locations);
+    public static function refreshUserLocations($userId)
+    {
 
-      if (!empty($user_locations)) {
-          \Session::put('user_locations', $user_locations);
-          \Session::put('selected_location', $user_locations[0]->id);
-          \Session::put('selected_location_name', $user_locations[0]->location_name_short);
-          \Session::put('user_location_ids', $user_location_ids);
-      } else {
-          \Session::put('selected_location', 0);
-      }
-  }
-  
-  public static function getModuleSetting($moduleName, $setting = '') {
-      $returnValue = null;
-      $data = \App\Models\Sximo\Module::where('module_name', $moduleName)->pluck('module_config');
-      if (!empty($data)) {
-        $config = self::CF_decode_json($data);
-        if (!is_array($setting)) {
-            $setting = ['setting', $setting];
+        $user_locations = self::getLocationDetails($userId);
+        $user_location_ids = self::getIdsFromLocationDetails($user_locations);
+
+        if (!empty($user_locations)) {
+            \Session::put('user_locations', $user_locations);
+            \Session::put('selected_location', $user_locations[0]->id);
+            \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+            \Session::put('user_location_ids', $user_location_ids);
+        } else {
+            \Session::put('selected_location', 0);
         }
-        if (!empty($config)) {
-            if (is_array($setting)) {
-                foreach($setting as $property) {
-                    if (is_null($config)) {
-                        break;
-                    }
-                    $config = isset($config[$property]) ? $config[$property] : null;
-                    if (in_array($property, ['forms', 'grid'])) {
-                        $newArray = [];
-                        foreach($config as $item) {
-                            $newArray[$item['field']] = $item;
-                        }
-                        $config = $newArray;
-                    }                    
-                }
+    }
+
+    public static function getModuleSetting($moduleName, $setting = '')
+    {
+        $returnValue = null;
+        $data = \App\Models\Sximo\Module::where('module_name', $moduleName)->pluck('module_config');
+        if (!empty($data)) {
+            $config = self::CF_decode_json($data);
+            if (!is_array($setting)) {
+                $setting = ['setting', $setting];
             }
-            $returnValue = $config;
+            if (!empty($config)) {
+                if (is_array($setting)) {
+                    foreach ($setting as $property) {
+                        if (is_null($config)) {
+                            break;
+                        }
+                        $config = isset($config[$property]) ? $config[$property] : null;
+                        if (in_array($property, ['forms', 'grid'])) {
+                            $newArray = [];
+                            foreach ($config as $item) {
+                                $newArray[$item['field']] = $item;
+                            }
+                            $config = $newArray;
+                        }
+                    }
+                }
+                $returnValue = $config;
+            }
         }
-      }
-      return $returnValue;
-  }
-  
-    public static function getModuleFormFieldDropdownOptions($module, $fieldName, $defaults = array()) {
+        return $returnValue;
+    }
+
+    public static function getModuleFormFieldDropdownOptions($module, $fieldName, $defaults = array())
+    {
         $minutes = 60;
         $cacheKey = md5("getModuleFormFieldDropdownOptions-$module-$fieldName");
         $options = Cache::remember($cacheKey, $minutes, function () use ($module, $fieldName, $defaults) {
             $optionsString = self::getModuleSetting($module, ['forms', $fieldName, 'option', 'lookup_query']);
             $options = FEGSystemHelper::parseStringToArray($optionsString, '|', ':', $defaults);
             return $options;
-        });        
+        });
         return $options;
     }
-    
+
     /**
-     * 
+     *
      * @param string $type
      * @param string $field
      * @param string $value
      * @return mixed
      */
-    public static function getUniqueLocationUserAssignmentMeta($type = 'id', $field = null, $value = '') { 
+    public static function getUniqueLocationUserAssignmentMeta($type = 'id', $field = null, $value = '')
+    {
         $minutes = 60;
         $cacheKey = md5("getUniqueLocationUserAssignmentMeta-$type-$field");
         //return Cache::remember($cacheKey, $minutes, function () use ($type, $returnType, $value) {
-            $q = \DB::table('location_user_roles_master');
-            if ($value !== '') {
-                if (!empty($field)){
-                    return $q->where($field, $value)->pluck($type);
-                }
-                return null;
+        $q = \DB::table('location_user_roles_master');
+        if ($value !== '') {
+            if (!empty($field)) {
+                return $q->where($field, $value)->pluck($type);
             }
-            $q->select('id', 'group_id', 'role_title', 'proxy_field_name', 'unique_assignment');
-            
-            if ($field == 'non-grouped') {
-                $q->whereRaw(" group_id NOT IN (SELECT group_id from tb_groups)");
-            }
-            if ($field == 'grouped') {
-                $q->whereRaw(" group_id IN (SELECT group_id from tb_groups)");                
-            }
-            
-            if ($type != 'all' || $field == 'non-grouped' || $field == 'grouped') {
-                $q->where('unique_assignment', 1);
-            }
-            if ($type == 'sql') {
-                $sqlSelect = [];
-                $sqlJoins = [];
-                $data = $q->get();
-                foreach($data as $item) {
-                    $gid = $item->group_id;
-                    $pfn = $item->proxy_field_name;
-                    $sqlSelect[] = "$pfn.user_id as $pfn";
-                    $sqlJoins[] = "LEFT JOIN user_locations $pfn ON $pfn.location_id = location.id AND $pfn.group_id='$gid'";
-                }
+            return null;
+        }
+        $q->select('id', 'group_id', 'role_title', 'proxy_field_name', 'unique_assignment');
 
-                $sqlSelectString = implode(", ", $sqlSelect);
-                $sqlJoinString = implode(" \r\n ", $sqlJoins);
+        if ($field == 'non-grouped') {
+            $q->whereRaw(" group_id NOT IN (SELECT group_id from tb_groups)");
+        }
+        if ($field == 'grouped') {
+            $q->whereRaw(" group_id IN (SELECT group_id from tb_groups)");
+        }
 
-                return ['select' => $sqlSelectString, 'join' => $sqlJoinString];
-            }
-            $data = [];
-            $records = $q->get();
-            foreach ($records as $item) {
+        if ($type != 'all' || $field == 'non-grouped' || $field == 'grouped') {
+            $q->where('unique_assignment', 1);
+        }
+        if ($type == 'sql') {
+            $sqlSelect = [];
+            $sqlJoins = [];
+            $data = $q->get();
+            foreach ($data as $item) {
                 $gid = $item->group_id;
                 $pfn = $item->proxy_field_name;
-                $rt = $item->role_title;
-                $item = ['group_id' => $gid, 'field' => $pfn, 'label' => $rt];
-                switch($type) {
-                    case "field":
-                        $data[$pfn] = $item;
-                        break;
-                    case "-field":
-                        $data[] = $pfn;
-                        break;
-                    case "field-":
-                        $data[$pfn] = '';
-                        break;
-                    case "field-id":
-                        $data[$pfn] = $gid;
-                        break;
-                    case "field-label":
-                        $data[$pfn] = $rt;
-                        break;
-                    case "-id":
-                        $data[] = $gid;
-                        break;
-                    case "id-":
-                        $data[$gid] = '';
-                        break;
-                    case "id-field":
-                        $data[''.$gid] = $pfn;
-                        break;
-                    case "id-label":
-                        $data[''.$gid] = $rt;
-                        break;
-                    default:
-                        $data[$gid] = $item;
-                }
-            }            
-            return $data;
+                $sqlSelect[] = "$pfn.user_id as $pfn";
+                $sqlJoins[] = "LEFT JOIN user_locations $pfn ON $pfn.location_id = location.id AND $pfn.group_id='$gid'";
+            }
+
+            $sqlSelectString = implode(", ", $sqlSelect);
+            $sqlJoinString = implode(" \r\n ", $sqlJoins);
+
+            return ['select' => $sqlSelectString, 'join' => $sqlJoinString];
+        }
+        $data = [];
+        $records = $q->get();
+        foreach ($records as $item) {
+            $gid = $item->group_id;
+            $pfn = $item->proxy_field_name;
+            $rt = $item->role_title;
+            $item = ['group_id' => $gid, 'field' => $pfn, 'label' => $rt];
+            switch ($type) {
+                case "field":
+                    $data[$pfn] = $item;
+                    break;
+                case "-field":
+                    $data[] = $pfn;
+                    break;
+                case "field-":
+                    $data[$pfn] = '';
+                    break;
+                case "field-id":
+                    $data[$pfn] = $gid;
+                    break;
+                case "field-label":
+                    $data[$pfn] = $rt;
+                    break;
+                case "-id":
+                    $data[] = $gid;
+                    break;
+                case "id-":
+                    $data[$gid] = '';
+                    break;
+                case "id-field":
+                    $data['' . $gid] = $pfn;
+                    break;
+                case "id-label":
+                    $data['' . $gid] = $rt;
+                    break;
+                default:
+                    $data[$gid] = $item;
+            }
+        }
+        return $data;
         //});                
     }
 
+    public static function isNoData($tableGrid)
+    {
+
+        $noDataArray=array();
+        if(!is_null($tableGrid)) {
+            foreach ($tableGrid as $f) {
+                if(isset($f['nodata']) && isset($f['field'])) {
+                    $noDataArray[$f['field']] = $f['nodata'];
+                }
+            }
+        }
+        return $noDataArray;
+    }
 }

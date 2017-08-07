@@ -1,4 +1,12 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<style>
+    table .btn.btn-xs {
+        height: 23px;
+        line-height: 18px;
+        margin: 0;
+        float: none;
+    }
+</style>
 <div class="sbox">
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>
@@ -11,7 +19,7 @@
                onclick="reloadData('#{{ $pageModule }}','throwreport/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
             -->
-            @if(Session::get('gid') ==1)
+            @if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
@@ -39,11 +47,11 @@
                                 $limited = isset($t['limited']) ? $t['limited'] : '';
                                 if (SiteHelpers::filterColumn($limited)) {
                                     if ($t['label'] == 'meter') {
-                                        echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">Add/Remove</th>';
-                                        echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">Meter Start</th>';
-                                        echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">Meter End</th>';
+                                        echo '<th style=text-align:'.$t['align']. '" width="' . $t['width'] . '">Add/Remove</th>';
+                                        echo '<th  style=text-align:'.$t['align']. '" width="' . $t['width'] . '">Meter Start</th>';
+                                        echo '<th  style=text-align:'.$t['align'] . '" width="' . $t['width'] . '">Meter End</th>';
                                     } else
-                                        echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
+                                        echo '<th style=text-align:'.$t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
 
                                 }
                             endif;
@@ -79,7 +87,7 @@
                     <?php foreach ($rowData as $row) :
                     $id = $row->id;
                     ?>
-                    <tr class="editable" id="{{ $row->id }}">
+                    <tr class="editable" id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
                         <td class="number"> <?php echo ++$i;?>  </td>
 
                         @if($setting['view-method']=='expand')
@@ -91,7 +99,7 @@
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
 
 
-                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
+                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
@@ -208,6 +216,11 @@
                     </tbody>
 
                 </table>
+                    @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                        @foreach ($rowData as $row)
+                            {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                        @endforeach
+                    @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">

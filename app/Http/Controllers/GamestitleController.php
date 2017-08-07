@@ -3,8 +3,10 @@
 use App\Http\Controllers\controller;
 use App\Models\Gamestitle;
 use Illuminate\Http\Request;
+use \App\Models\Sximo\Module;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect,Image;
+
 
 class GamestitleController extends Controller
 {
@@ -21,7 +23,13 @@ class GamestitleController extends Controller
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
 
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
+        $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->pass['Can Edit']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Remove']) ? 1 : 0;
+
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => 'gamestitle',
@@ -76,29 +84,6 @@ class GamestitleController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
-
-        foreach ($results['rows'] as $result) {
-
-            if ($result->has_manual == 1) {
-                $result->has_manual = "Yes";
-
-            } else {
-                $result->has_manual = "No";
-            }
-            if ($result->has_servicebulletin == 1) {
-                $result->has_servicebulletin = "Yes";
-
-            } else {
-                $result->has_servicebulletin = "No";
-            }
-            if ($result->num_prize_meters == 1) {
-                $result->num_prize_meters = "Yes";
-
-            } else {
-                $result->num_prize_meters = "No";
-            }
-        }
-
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
@@ -108,7 +93,8 @@ class GamestitleController extends Controller
         }
 
 
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('gamestitle/data');
 
         $this->data['param'] = $params;
@@ -178,14 +164,16 @@ class GamestitleController extends Controller
 
         if ($row) {
 
+            $manualPath = "uploads/games/manuals/{$row[0]->id }.pdf";
+            $bulletinPath = "uploads/games/bulletins/{$row[0]->id}.pdf";
 
-            if ($row[0]->has_manual == 1) {
+            if ($row[0]->has_manual == 1 && file_exists($manualPath)) {
                 $row[0]->has_manual = "Yes";
 
             } else {
                 $row[0]->has_manual = "No";
             }
-            if ($row[0]->has_servicebulletin == 1) {
+            if ($row[0]->has_servicebulletin == 1 && file_exists($bulletinPath)) {
                 $row[0]->has_servicebulletin = "Yes";
 
             } else {
@@ -207,6 +195,7 @@ class GamestitleController extends Controller
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         return view('gamestitle.view', $this->data);
     }
 
@@ -227,7 +216,6 @@ class GamestitleController extends Controller
         $sql = "INSERT INTO game_title (" . implode(",", $columns) . ") ";
         $columns[0] = "CONCAT('copy',game_title)";
         $sql .= " SELECT " . implode(",", $columns) . " FROM game_title WHERE id IN (" . $toCopy . ")";
-
         \DB::insert($sql);
         return response()->json(array(
             'status' => 'success',
@@ -240,23 +228,40 @@ class GamestitleController extends Controller
         $rules = $this->validateForm();
         //  $rules['manual']='Not Required|mimes:pdf';
        // $rules['img']='required';
+        $rules['game_type_id']="required";
         if($id == null) {
-            $rules["game_title"] = "unique:game_title";
+            $rules["game_title"] = "required|unique:game_title";
         }// $rules['service_bulletin']='Not Required|mimes:pdf';
         else{
-            $rules["game_title"] = "";
+            $rules["game_title"] = "required";
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
 
             $data = $this->validatePost('game_title');
+            if(isset($data['mfg_old']))
+            {
+                unset($data['mfg_old']);
+            }
             if($id != null )
             {
                 unset($data['manual']);
                 unset($data['bulletin']);
                 unset($data['img']);
+
+                //updating Manufacturer in all dependent games
+                if(!empty($request->get('mfg_old')))
+                {
+                    if($request->get('mfg_old') != $request->get('mfg_id'))
+                    {
+                        //dd($request->get('mfg_id') );
+                        $mfg_id = $request->get('mfg_id');
+                        \DB::update("UPDATE game set mfg_id = $mfg_id WHERE game_title_id = $id");
+                    }
+                }
             }
             $data['game_title'] = trim($data['game_title']);
+            unset($data['has_servicebulletin']);
             $id = $this->model->insertRow($data, $id);
 
             $updates = array();
@@ -316,10 +321,15 @@ class GamestitleController extends Controller
                    // $img->save($img_thumb);
                     $new_name .= $count.$extension.',';
                 }
-
+                $imgFlag=true;
             }
-            $imgFlag=true;
+
             $updates['img'] = substr($new_name,0,strlen($new_name)-1);
+            if(empty($updates['img']))
+            {
+                $imgFlag=false;
+                unset($updates['img']);
+            }
             if($manualFlag || $serviceFlag || $imgFlag) {
                 $this->model->insertRow($updates, $id);
             }

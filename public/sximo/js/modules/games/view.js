@@ -39,11 +39,12 @@
             renderDropdown(container.find(".select2, .select3, .select4, .select5"), { width:"98%"});
             
             container.find("#status").on('change',gameStatusChanged);
+            container.find("#location_id").on('change',gameLocationChanged);
             
             container.find("#status").jCombo(mainUrl+"/comboselect?filter=game_status:id:game_status", 
                         {  selected_value : ''+ gameData.status_id });
             container.find("#location_id").jCombo(mainUrl+"/comboselect?filter=location:id:id|location_name&delimiter=%20|%20", 
-                        {  selected_value : ''+ gameData.dropdownlocation });
+                        {  selected_value : ''+ gameData.dropdownlocation  , ready:addInactiveItem("#location_id", ''+ gameData.dropdownlocation , 'Location', 'active' , 'id|location_name')});
                         
             container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
             container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
@@ -219,6 +220,20 @@
        
     };
     
+    function gameLocationChanged(options) {
+        var GAME_MOVE = 3,
+            statusSelector = container.find("#status"),
+            status=statusSelector.val(),
+            locationSelector = $(this),
+            location = locationSelector.val(),
+            initialLocation = locationSelector.data('original-value') || 0,
+            submitButton = container.find("#submit");
+
+        if (status == GAME_MOVE) {
+            submitButton.prop('disabled', location == initialLocation);
+        }
+    }
+
     function showUpFromRepair(showIt) {
         var fieldRequired = showIt !== false;
         if (showIt === false) {

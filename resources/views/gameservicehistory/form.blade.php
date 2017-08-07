@@ -2,7 +2,12 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+			<h4>
+				@if($id)
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Game Service History
+				@else
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Game Service History
+				@endif
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -11,7 +16,7 @@
 @endif	
 			{!! Form::open(array('url'=>'gameservicehistory/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gameservicehistoryFormAjax')) !!}
 			<div class="col-md-12">
-                <fieldset><legend> Game Service History</legend>
+                <fieldset>
                 {!! Form::hidden('id', $row['id']) !!}
                     
 				  <div class="form-group  " >
@@ -41,10 +46,14 @@
 					{!! SiteHelpers::activeLang('Date Down', (isset($fields['date_down']['language'])? $fields['date_down']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <input name='date_down' type="text" rows='5' id='date_down' class='form-control date' 
-                             value="{{ DateHelpers::formatDate($row['date_down']) }}" 
-                             required>
-					 </div> 
+
+						<span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+  							<i class="fa fa-calendar" id="icon"></i>
+						</span>
+
+                        <input name='date_down' type="text" rows='5' id='date_down' style="width:150px !important;" class='form-control date'
+                               value="{{  \DateHelpers::formatDateCustom($row['date_down'], 'm/d/Y')  }}" required>
+                    </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -78,7 +87,7 @@
 					</label>
 					<div class="col-md-6">
 					  <textarea name='solution' rows='5' id='solution' class='form-control '
-				           required>{{ $row['solution'] }}</textarea>
+				           >{{ $row['solution'] }}</textarea>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -89,9 +98,13 @@
 					{!! SiteHelpers::activeLang('Date Up', (isset($fields['date_up']['language'])? $fields['date_up']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <input type="text" name='date_up'  id='date_up' class='form-control date' 
-                             value="{{ DateHelpers::formatDate($row['date_up']) }}"
-                             required>
+						<div class="input-group">
+						<span class="input-group-addon datepickerHandleButton" style="width: 32px;">
+  							<i class="fa fa-calendar" id="icon"></i>
+						</span>
+					  	<input type="text" name='date_up'  id='date_up' style="width:150px !important;" class='form-control date'
+                             value="{{  \DateHelpers::formatDateCustom($row['date_up'], 'm/d/Y')  }}">
+						</div>
 					 </div>
 					 <div class="col-md-2">
 					 	
@@ -117,8 +130,7 @@
             <div style="clear:both"></div>
 
             <div class="form-group">
-                <label class="col-sm-4 text-right">&nbsp;</label>
-                <div class="col-sm-8">
+                <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
                 </div>
@@ -136,9 +148,11 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    
+
     $("#location_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
-            {  selected_value : "{{ $row['location_id'] }}", initial_text:'-- Select Location --' });
+            {  selected_value : "{{ $row['location_id'] }}", initial_text:'-- Select Location --',
+                <?php $row["location_id"] == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$row['location_id']." , 'Location', 'active' , 'id|location_name' )") ?>
+            });
                 
     $("#up_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",
             {  selected_value : '{{ $row["up_user_id"] }}',initial_text:'-- Select User --' });
@@ -150,8 +164,8 @@ $(document).ready(function() {
     $('.editor').summernote();
     $('.previewImage').fancybox();
     $('.tips').tooltip();
-    renderDropdown($(".select2 "), { width:"98%"});
-    $('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+    renderDropdown($(".select2 "), { width:"100%"});
+    $('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
     $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
     $('input[type="checkbox"],input[type="radio"]').iCheck({
         checkboxClass: 'icheckbox_square-blue',

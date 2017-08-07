@@ -25,7 +25,6 @@
         </ul>        
         
 		<div class="resultData"></div>
-		<div class="ajaxLoading"></div>
 		<div id="{{ $pageModule }}View"></div>
         <div id="{{ $pageModule }}Grid">
             @include("core.users.table")

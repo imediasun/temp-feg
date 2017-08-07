@@ -32,8 +32,7 @@
         
         <div class="taskPanel taskPanel-{{ $taskId }} panel @if($isActive) panel-active @else panel-inactive @endif" data-taskid="{{ $taskId }}">
         <div class="popupRunTaskFormCotainer clearfix"></div>
-        <div class="ajaxLoading"></div>
-        <form action="" method="post" class="taskForm taskForm-{{ $taskId }}">
+            <form action="" method="post" class="taskForm taskForm-{{ $taskId }}">
             <div class="panel-heading clearfix">                
                 <div class="isActiveContainer pull-left">
                     <input type="checkbox" data-handle-width="35"

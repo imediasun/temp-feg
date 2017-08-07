@@ -26,7 +26,12 @@ class UtilsController extends Controller
 	{   
         //$this->data['request'] = Request::all();
         //$this->data['params'] = $params;
+        $this->data['data'] = [$params];
 		return view('feg.system.utils.index',$this->data);
 	}
-
+	public function manages($params = null)
+	{
+        $this->data['data'] = FEGHelp::removeDuplicateUserLocations();
+		return view('feg.system.utils.index',$this->data);
+	}
 }

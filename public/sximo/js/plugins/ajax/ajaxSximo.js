@@ -1,8 +1,11 @@
 
-function reloadData( id,url,callback)
+function reloadData( id,url,callback, options)
 {
+    options = options || {};
     var isClearSearch = /data\?search\=$/.test(url),
+        isBackground = options.isBackground || false,
         clearFilters;
+
     
     App.autoCallbacks.runCallback.call($( id +'Grid' ), 'beforereloaddata', 
         {id:id, url:url, isClear: isClearSearch});       
@@ -12,13 +15,19 @@ function reloadData( id,url,callback)
         url += clearFilters;         
     }
 
-	$('.ajaxLoading').show();
-	$.post( url ,function( data ) {
+    if (!isBackground) {
+        $('.ajaxLoading').show();
+    }
+	$.post( encodeURI(url) ,function( data ) {
 		$( id +'Grid' ).html( data );
-		$('.ajaxLoading').hide();
 		typeof callback === 'function' && callback(data);
         App.autoCallbacks.runCallback.call($( id +'Grid' ), 'reloaddata', 
-            {id:id, url:url, data:data, isClear: isClearSearch});        
+            {id:id, url:url, data:data, isClear: isClearSearch});
+        if (!isBackground) {
+            $( id +'Grid' ).show();
+            $('.ajaxLoading').hide();
+        }
+        
 	});
 
 }
@@ -246,29 +255,32 @@ reloadData(id, url+"?"+attr);
 
 function ajaxCopy(  id , url )
 {
-	
-	if(confirm('Are you sure you want to Copy selected row(s)'))
-	{
-		var datas = $( id +'Table :input').serialize();
-			$.post( url+'/copy' ,datas,function( data ) {
-				if(data.status =='success')
-				{
-					notyMessage(data.message );
-					ajaxFilter( id ,url+'/data' );
-				} else {
-					notyMessage(data.message );
-				}				
-			});			
-	} else {
-		return false;
-	}
-	
+    if($(".ids:checked").length > 0) {
+        if (confirm('Are you sure you want to copy selected row(s)')) {
+            var datas = $(id + 'Table :input').serialize();
+            $.post(url + '/copy', datas, function (data) {
+                if (data.status == 'success') {
+                    notyMessage(data.message);
+                    ajaxFilter(id, url + '/data');
+                } else {
+                    notyMessage(data.message);
+                }
+            });
+        } else {
+            return false;
+        }
+    }
+    else
+    {
+        notyMessageError("Please select one or more rows.");
+    }
 
 }
 
 function ajaxRemove( id, url )
 {
     var datas = $( id +'Table :input').serialize();
+    if($(".ids:checked").length > 0) {
     if(confirm('Are you sure you want to delete the selected row(s)?')) {
 
         $.post( url+'/delete' ,datas,function( data ) {
@@ -285,25 +297,78 @@ function ajaxRemove( id, url )
         });
 
     }
+    }
+    else
+    {
+        notyMessageError("Please select one or more rows.");
+    }
+}
+function ajaxGameDispose( id, url )
+{
+    var datas = $( id +'Table :input').serialize();
+    if($(".ids:checked").length > 0) {
+    if(confirm('Are you sure you want to dispose the selected game(s)?')) {
+
+        $.post( url+'/dispose' ,datas,function( data ) {
+
+            if(data.status =='success')
+            {
+                //console.log("called succes");
+                notyMessage(data.message);
+                ajaxFilter( id ,url+'/data' );
+            } else {
+                //console.log("called error");
+                notyMessageError(data.message);
+            }
+        });
+
+    }
+    }
+    else
+    {
+        notyMessageError("Please select one or more rows.");
+    }
 }
 
 function ajaxViewDetail( id , url )
 {
-	$('.ajaxLoading').show();
-	//console.log(url);
-	$.get( url ,function( data ) {
-		$( id +'View').html( data );
-		$( id +'Grid').hide( );
-		var w = $(window); 
-		var duration = 300;
-		$('html, body').animate({scrollTop: 0}, duration);
-		$('.ajaxLoading').hide();
-	});		
-		
+    var beforeSximoEvent = 'ajaxview.before',
+        beforeSximoEventModule = 'ajaxview.before.'+id,
+        showView = function () {
+            $('.ajaxLoading').show();
+            console.log(url);
+            $.get( url ,function( data ) {
+                $( id +'View').html( data );
+                $( id +'Grid').hide( );
+                var w = $(window);
+                var duration = 300;
+                $('html, body').animate({scrollTop: 0}, duration);
+                $('.control-label,.label-control').each(function () {
+                    var str = $(this).text();
+                    if (str.indexOf(':') == -1) {
+                        $(this).addClass('addcolon');
+                    }
+                });
+                $('.ajaxLoading').hide();
+            });
+        },
+        eventData = {url:url, id:id, callback: showView};
+
+    if (App.autoCallbacks[beforeSximoEventModule] && App.autoCallbacks[beforeSximoEventModule].length) {
+        App.autoCallbacks.runCallback.call(window, beforeSximoEvent,eventData);
+    }
+    if (App.autoCallbacks[beforeSximoEvent] && App.autoCallbacks[beforeSximoEvent].length) {
+        App.autoCallbacks.runCallback.call(window, beforeSximoEvent, eventData);
+    }
+    else {
+        showView();
+    }
+    
 }
 
-function ajaxViewClose( id , elm)
+function ajaxViewClose( id , elm, options)
 {
+    options = options || {};
     var view = $(id+'View'),
         grid = $(id+'Grid'),
         $elm = elm && $(elm) || [];
@@ -316,31 +381,84 @@ function ajaxViewClose( id , elm)
             grid = view.closest('.page-content').find('.moduleGrid');
         }
     }
-    
+
 	view.html('');
-	grid.show();	
-	$('#sximo-modal').modal('hide');
+    if($('.table.datagrid').find('.bootstrap-switch-wrapper').length > 0 || id == '#managefreightquoters')
+    {
+        var url = id+'/data';
+        url = url.replace('#','');
+        reloadData(id,url);
+    }
+    else
+    {
+        grid.show();
+    }
+    if (options.modal) {
+        SximoModalHide(options.modal, options.callback);
+    }
+    else {
+        if (!options.noModal) {
+            SximoModalHide($('#sximo-modal'), options.callback);
+        }
+        
+    }
 }
 
-var newwindow;
+function ajaxViewChange(id , newContent, elm, options)
+{
+    options = options || {};
+    var view = $(id+'View'),
+        pos,
+        top = 0,
+        $elm = elm && $(elm) || [];
+    
+    if ($elm.length) {
+        if (!view.length) {
+            view = $elm.closest('.moduleView');
+        }
+    }
+    if (options.modal) {
+        SximoModalHide(options.modal, options.callback);
+    }
+    else {
+        if (!options.noModal) {
+            SximoModalHide($('#sximo-modal'), options.callback);
+        }
+    }
+    
+    view.html(newContent);
+    pos = view.position();
+    top = pos && pos.top || 0;
+    scrollTo(0, top);
+    
+}
+
+
 function ajaxPopupStatic(url ,w , h)
 {
+    var newwindow;
 	var w = (w == '' ? w : 800 );	
 	var h = (h == '' ? wh: 600 );	
 	newwindow=window.open(url,'name','height='+w+',width='+h+',resizable=yes,toolbar=no,scrollbars=yes,location=no');
 	if (window.focus) {newwindow.focus()}
 }
 
-function notyMessage(message,showDuration)
+function notyMessage(message, options, messageType, title)
 {
-	showDuration = showDuration || "300";
-	toastr.success("", message);
-	toastr.options = {
+    options = options || {};
+    if (!messageType) {
+        messageType = 'success';
+    }
+    if (!title) {
+        title = '';
+    }
+    
+	var finalOptions = $.extend({}, {
 		  "closeButton": true,
 		  "debug": false,
 		  "positionClass": "toast-bottom-right",
 		  "onclick": null,
-		  "showDuration": showDuration,
+		  "showDuration": "300",
 		  "hideDuration": "1000",
 		  "timeOut": "5000",
 		  "extendedTimeOut": "1000",
@@ -348,20 +466,24 @@ function notyMessage(message,showDuration)
 		  "hideEasing": "linear",
 		  "showMethod": "fadeIn",
 		  "hideMethod": "fadeOut"
-
-	};	
+	}, options);
+    
+	toastr[messageType](message, title, finalOptions);
 	
 }
-function notyMessageError(message, showDuration)
+function notyMessageError(message, options, title)
 {
-	showDuration = showDuration || "300";
-	toastr.error("", message);
-	toastr.options = {
+    options = options || {};
+    if (!title) {
+        title = '';
+    }
+    
+	var finalOptions = $.extend({}, {
 		  "closeButton": true,
 		  "debug": false,
 		  "positionClass": "toast-bottom-right",
 		  "onclick": null,
-		  "showDuration": showDuration,
+		  "showDuration": "300",
 		  "hideDuration": "1000",
 		  "timeOut": "5000",
 		  "extendedTimeOut": "1000",
@@ -369,8 +491,9 @@ function notyMessageError(message, showDuration)
 		  "hideEasing": "linear",
 		  "showMethod": "fadeIn",
 		  "hideMethod": "fadeOut"
+        }, options);
 
-	};	
+	toastr.error(message, title, finalOptions);
 	
 }
 

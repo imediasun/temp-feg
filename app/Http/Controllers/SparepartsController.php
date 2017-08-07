@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Spareparts;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\Auth;
 use Validator, Input, Redirect;
 
 class SparepartsController extends Controller
@@ -21,8 +23,13 @@ class SparepartsController extends Controller
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
+        $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->pass['Can Edit']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Remove']) ? 1 : 0;
 
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => 'spareparts',
@@ -89,7 +96,8 @@ class SparepartsController extends Controller
             $params['limit'] = $results['total'];
         }
 
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('spareparts/data');
         $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
@@ -137,6 +145,7 @@ class SparepartsController extends Controller
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('spare_parts');
+            $this->data['row']['status_id'] = 2;
         }
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -163,6 +172,7 @@ class SparepartsController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('spareparts.view', $this->data);
     }
@@ -189,13 +199,76 @@ class SparepartsController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        $rules = array('description' => "required",  'qty' => "required", 'value' => 'required', 'loc_id' => 'required', 'user' => 'required','status_id' => 'required');
+        $row = '';
+        //status_id 1 means claimed and 2 means available
+        if($id)
+        {
+            $row = $this->model->getRow($id);
+
+            if($row->status_id == Spareparts::$CLAIMED)
+            {
+                $rules = array('loc_id' => 'required', 'status_id' => 'required');
+            }
+            else
+            {
+                $rules = array('description' => "required", 'value' => 'required', 'loc_id' => 'required', 'status_id' => 'required');
+            }
+        }
+        else
+        {
+            $rules = array('description' => "required",  'qty' => "required", 'value' => 'required', 'loc_id' => 'required', 'user' => 'required','status_id' => 'required');
+        }
 //        $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('spare_parts');
+            if($id)
+            {
 
-            $id = $this->model->insertRow($data, $id);
+                if($request->status_id == Spareparts::$AVAILABLE)
+                {
+                    $data['claimed_location_id'] = null;
+                    $data['user_claim'] = null;
+                }
+                if($row->status_id == Spareparts::$CLAIMED)
+                {
+                    $data['description'] = $request->has('description')?$request->get('description'):$row->description;
+
+                    $data['value'] = $request->has('value')?$request->get('value'):$row->value;
+
+                    $data['claimed_by'] = ($request->status_id == Spareparts::$AVAILABLE) ?  null : \Session::get('uid');
+                }
+                else
+                {
+
+                    if($request->status_id == Spareparts::$CLAIMED)
+                    {
+                        $data['claimed_by'] = \Session::get('uid');
+                    }
+                }
+                $data['qty'] = 1;
+                $data['user'] = $row->user;
+                $id = $this->model->insertRow($data, $id);
+            }
+            else
+            {
+                if($request->status_id == Spareparts::$AVAILABLE)
+                {
+                    $data['claimed_by'] = null;
+                    $data['claimed_location_id'] = null;
+                    $data['user_claim'] = null;
+                }
+                else
+                {
+                    $data['claimed_by'] =\Session::get('uid');
+                }
+                $numberOfSpareparts = $request->qty;
+                for($i=0; $i<$numberOfSpareparts; $i++)
+                {
+                    $data['qty'] = 1;
+                    $this->model->insertRow($data);
+                }
+            }
 
             return response()->json(array(
                 'status' => 'success',

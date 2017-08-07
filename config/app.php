@@ -127,6 +127,7 @@ return [
         Illuminate\Routing\ControllerServiceProvider::class,
         Illuminate\Cookie\CookieServiceProvider::class,
         Illuminate\Database\DatabaseServiceProvider::class,
+        //App\Library\Database\DatabaseServiceProvider::class,
         Illuminate\Encryption\EncryptionServiceProvider::class,
         Illuminate\Filesystem\FilesystemServiceProvider::class,
         Illuminate\Foundation\Providers\FoundationServiceProvider::class,
@@ -182,7 +183,7 @@ return [
         'Config'    => Illuminate\Support\Facades\Config::class,
         'Cookie'    => Illuminate\Support\Facades\Cookie::class,
         'Crypt'     => Illuminate\Support\Facades\Crypt::class,
-        'DB'        => Illuminate\Support\Facades\DB::class,
+        'DB'        => \App\Library\SximoDB::class,
         'Eloquent'  => Illuminate\Database\Eloquent\Model::class,
         'Event'     => Illuminate\Support\Facades\Event::class,
         'File'      => Illuminate\Support\Facades\File::class,
@@ -217,8 +218,7 @@ return [
         'FEGFormat' => \App\Library\FEG\System\Formatter::class,
         'FEGHelp'   => \App\Library\FEG\System\FEGSystemHelper::class,
         'FEGLog'    => \App\Library\MyLog::class,
-
-
+        'FEGSPass' => \App\Models\Feg\System\Pass::class,
     ],
 
 ];

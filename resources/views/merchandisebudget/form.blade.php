@@ -1,8 +1,12 @@
+
 @if($setting['form-method'] =='native')
     <div class="sbox">
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
-                <small>{{ $pageNote }}</small>
+            <h4>@if($id)
+                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Merchandise Budget
+                @else
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Merchandise Budget
+                @endif
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
@@ -14,7 +18,6 @@
             , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'merchandisebudgetFormAjax')) !!}
             <div class="col-md-12">
                 <fieldset>
-                    <legend> Merchandise Budget</legend>
                     <div class="form-group  ">
                         <label for="Location Id" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Location Id', (isset($fields['location_id']['language'])?
@@ -48,7 +51,7 @@
                                 <label for="jan" class=" control-label col-md-4 text-left">January</label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="jan" id="jan" value="{{$row['Jan']}}"
+                                    <input type="number" name="jan" id="jan" value="{{ number_format($row['Jan'], 2, '.', '') }}"
                                            class="form-control"/>
                                 </div>
                                 <div class="col-md-4">
@@ -58,7 +61,7 @@
                                 <label for="feb" class=" control-label col-md-4 text-left"> February</label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="feb" id="feb" value="{{ $row['Feb']}}"
+                                    <input type="number" name="feb" id="feb" value="{{ number_format($row['Feb'], 2, '.', '')}}"
                                            class="form-control"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -69,7 +72,7 @@
                                 </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="march" id="march" value="{{$row['March']}}"
+                                    <input type="number" name="march" id="march" value="{{number_format($row['March'], 2, '.', '')}}"
                                            class="form-control"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -80,7 +83,7 @@
 
                                 <div class="col-md-4">
                                     <input type="number" name="april" id="april" class="form-control"
-                                           value="{{$row['April']}}"/></div>
+                                           value="{{number_format($row['April'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -90,7 +93,7 @@
 
                                 <div class="col-md-4">
                                     <input type="number" name="may" id="may" class="form-control"
-                                           value="{{$row['May']}}"/></div>
+                                           value="{{number_format($row['May'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -99,8 +102,8 @@
                                     June</label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="jun" id="jun" class="form-control"
-                                           value="{{$row['June']}}"/></div>
+                                    <input type="number" name="june" id="jun" class="form-control"
+                                           value="{{number_format($row['June'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -109,8 +112,8 @@
                                     July </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="jul" id="jul" class="form-control"
-                                           value="{{$row['July']}}"/></div>
+                                    <input type="number" name="july" id="jul" class="form-control"
+                                           value="{{number_format($row['July'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -119,8 +122,8 @@
                                     August </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="aug" id="aug" class="form-control"
-                                           value="{{$row['August']}}"/></div>
+                                    <input type="number" name="august" id="aug" class="form-control"
+                                           value="{{number_format($row['August'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -129,18 +132,18 @@
                                     September </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="sep" id="sep" class="form-control"
-                                           value="{{$row['September']}}"/></div>
+                                    <input type="number" name="september" id="sep" class="form-control"
+                                           value="{{number_format($row['September'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
                             <div class="form-group  ">
                                 <label for="oct" class=" control-label col-md-4 text-left">
-                                    Octuber </label>
+                                    October </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="oct" id="oct" class="form-control"
-                                           value="{{$row['Octuber']}}"/>
+                                    <input type="number" name="october" id="oct" class="form-control"
+                                           value="{{number_format($row['October'], 2, '.', '')}}"/>
                                 </div>
                                 <div class="col-md-4">
                                 </div>
@@ -150,8 +153,8 @@
                                     November </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="nov" id="nov" class="form-control"
-                                           value="{{$row['November']}}"/>
+                                    <input type="number" name="november" id="nov" class="form-control"
+                                           value="{{number_format($row['November'], 2, '.', '')}}"/>
                                 </div>
                                 <div class="col-md-4">
                                 </div>
@@ -161,8 +164,8 @@
                                     December </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="dec" id="dec" class="form-control"
-                                           value="{{$row['December']}}"/></div>
+                                    <input type="number" name="december" id="dec" class="form-control"
+                                           value="{{number_format($row['December'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -174,9 +177,8 @@
             <div style="clear:both"></div>
 
             <div class="form-group">
-                <label class="col-sm-4 text-right">&nbsp;</label>
 
-                <div class="col-sm-8">
+                <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm "><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
@@ -198,12 +200,14 @@
     $(document).ready(function () {
 
         $("#location_id").jCombo("{{ URL::to('merchandisebudget/comboselect?filter=location:id:id|location_name') }}",
-                {selected_value: '{{ $row['location_id'] }}'});
+                {selected_value: '{{ $row['location_id'] }}' ,
+                    <?php $row["location_id"] == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$row['location_id']." , 'Location', 'active' , 'id|location_name' )") ?>
+                });
 
         $('.editor').summernote();
         $('.previewImage').fancybox();
         $('.tips').tooltip();
-        renderDropdown($(".select3 "), { width:"98%"});
+        renderDropdown($(".select3 "), { width:"100%"});
         $('.datee').datepicker({
             format: " yyyy", // Notice the Extra space at the beginning
             viewMode: "years",
@@ -286,7 +290,7 @@
     {
         ev.stopPropagation();
         var txt=$(t).prev().val().replace(/[|]/g,"");
-        if ($.trim(txt)=='') return;
+        if ($.number_format(txt)=='') return;
         var p=$(t).closest('.bootstrap-select').prev();
         var o=$('option', p).eq(-2);
         o.before( $("<option>", { "selected": true, "text": txt}) );

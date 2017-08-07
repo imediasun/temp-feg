@@ -91,17 +91,17 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Email" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Email', (isset($fields['email']['language'])? $fields['email']['language'] : array())) !!}	
+				  <div class="form-group  " >
+					<label for="Email" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Email', (isset($fields['email']['language'])? $fields['email']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
+					  {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div>
-				  </div> 					
+					 <div class="col-md-2">
+
+					 </div>
+				  </div>
 				  <div class="form-group  " > 
 					<label for="Company Id" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Company Id', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}	
@@ -121,8 +121,7 @@
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
-				<div class="col-sm-8">	
+				<div class="col-sm-12 text-center">
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			
@@ -142,7 +141,9 @@
 $(document).ready(function() { 
 	
         $("#location_id").jCombo("{{ URL::to('employee/comboselect?filter=location:id:location_name') }}",
-        {  selected_value : '{{ $row["location_id"] }}' });
+        {  selected_value : '{{ $row["location_id"] }}' ,
+            <?php $row["location_id"] == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$row['location_id']." , 'Location', 'active' , 'location_name' )") ?>
+        });
         
         $("#company_id").jCombo("{{ URL::to('employee/comboselect?filter=company:id:company_name_long') }}",
         {  selected_value : '{{ $row["company_id"] }}' });
@@ -151,7 +152,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	renderDropdown($(".select2 "), { width:"98%"});
+	renderDropdown($(".select2 "), { width:"100%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Core\Groups;
 use Closure;
 
 class SximoAuthMiddleware
@@ -17,7 +18,7 @@ class SximoAuthMiddleware
     {
         $superadmin = app('session')->get('gid');
         
-        if($superadmin !='10')
+        if($superadmin !=Groups::SUPPER_ADMIN)
         {
             return redirect('dashboard')->with('msgstatus','error')->with('messagetext',$superadmin);
         }

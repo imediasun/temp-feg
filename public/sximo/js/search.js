@@ -39,7 +39,10 @@ function performAdvancedSearch(params) {
             if (value2 === null || value2 === UNDEFINED ) {
                 value2 = '';
             }
-
+            if (typeof value == 'string') {
+                value  = $.trim(value);
+                value2 = $.trim(value2);
+            }
             // cache original value
             cache[field] = {value:value, value2: value2, operator: operate};           
 
@@ -178,6 +181,43 @@ function changeSearchOperator( val , field , elm ,type)
     }
 
 }
+function initAdvancedSearchCache(container) {
+    if (App && App.search && App.search.cache && !$.isEmptyObject(App.search.cache)) {
+        return App.search.cache;
+    }
+    var cache = App.search.cache = {};
+    container.find(' tr.fieldsearch').each(function(i){
+        var UNDEFINED,
+            trcontainer = this,
+            jQcontainer = $(trcontainer),
+            field = jQcontainer.attr('id'),
+            name = jQcontainer.attr('name'),
+            operatorField = jQcontainer.find('#'+field+'_operate'),
+            operate = operatorField.val(),
+            valueField = jQcontainer.find("[name="+field+"]"),
+            value = valueField.val(),
+            value2Field = jQcontainer.find("[name="+field+"_end]"),
+            value2 = value2Field.val();
+
+        // not required
+        if (!field || name === '_token') {
+            return;
+        }
+
+        // normalize values to '' if null/undefined to avoid unwanted results
+        if (value === null || value === UNDEFINED ) {
+            value = '';
+        }
+        if (value2 === null || value2 === UNDEFINED ) {
+            value2 = '';
+        }
+
+        // cache original value
+        cache[field] = {value:value, value2: value2, operator: operate};
+
+    });
+    return cache;
+}
 function showBetweenFields(options) {
     if (!options) {
         options = {};
@@ -255,6 +295,8 @@ App.autoCallbacks.registerCallback('advancedsearch', function(params) {
     searchButton.click(function(){
         App.lastSearchMode = 'advanced';
     });
+    App.search.cache = initAdvancedSearchCache(modal);
+    console.log(App.search.cache);
     App.search.populateFields(modal);    
 });
 
@@ -265,5 +307,5 @@ App.autoCallbacks.registerCallback('advancesearch', function(params, options) {
 
 
 App.search.populateFields = function(modal) {
-    App.populateFieldsFromCache(modal, App.search, true);
+    App.populateFieldsFromCache(modal, App.search, true);    
 };

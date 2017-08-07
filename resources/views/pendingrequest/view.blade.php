@@ -1,7 +1,7 @@
 @if($setting['view-method'] =='native')
 <div class="sbox">
 	<div class="sbox-title">  
-		<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+		<h4> <i class="fa fa-eye"></i> <?php echo $pageTitle ;?>
 			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
 			<i class="fa fa fa-times"></i></a>
 		</h4>
@@ -16,7 +16,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->location }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->location) }} </td>
 						
 					</tr>
 				
@@ -24,7 +24,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Date Requested', (isset($fields['request_date']['language'])? $fields['request_date']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->request_date }} </td>
+						<td>{{ \DateHelpers::formatDate($row->request_date) }} </td>
 						
 					</tr>
 				
@@ -32,7 +32,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Requested By', (isset($fields['request_user_id']['language'])? $fields['request_user_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->request_name}} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->request_name)}} </td>
 						
 					</tr>
 
@@ -40,7 +40,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Product', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row->vendor_description}} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->vendor_description)}} </td>
 
 					</tr>
 
@@ -48,7 +48,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Supply Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->description }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->description) }} </td>
 						
 					</tr>
 				
@@ -56,15 +56,16 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Case Qty', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->qty }} </td>
+						<td>{{ \DateHelpers::formatZeroValue($row->qty,$nodata['qty']) }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Status', (isset($fields['status_id']['language'])? $fields['status_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Status', (isset($fields['status_id']['language'])? $fields['status_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row->status_id }} </td>
+
+						<td>{{ \DateHelpers::formatStringValue($row->status_id)}}</td>
 						
 					</tr>
 				
@@ -72,7 +73,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Date Processed', (isset($fields['process_date']['language'])? $fields['process_date']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->process_date }} </td>
+						<td>{{ \DateHelpers::formatDate($row->process_date) }} </td>
 						
 					</tr>
 				
@@ -80,14 +81,14 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Process User', (isset($fields['process_user_id']['language'])? $fields['process_user_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row->process_name }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->process_name) }} </td>
 						
 					</tr>
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->notes }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->notes) }} </td>
 						
 					</tr>
 				

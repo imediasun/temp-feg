@@ -24,15 +24,19 @@
 			@endforeach
 		</ul>
 <div class="sbox animated fadeInRight">
-	<div class="sbox-title"> <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h4></div>
+	<div class="sbox-title"> <h4> @if($id)
+				<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Users Group
+			@else
+				<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Users Group
+			@endif</h4></div>
 	<div class="sbox-content"> 	
 
 		 {!! Form::open(array('url'=>'core/groups/save?return='.$return, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
 <div class="col-md-12">
-						<fieldset><legend> Users Group</legend>
+						<fieldset>
 									
 								  <div class="form-group hidethis " style="display:none;">
-									<label for="Group Id" class=" control-label col-md-4 text-left"> Group Id </label>
+									<label for="Group Id" class=" control-label col-md-4 text-left"> Group Id: </label>
 									<div class="col-md-6">
 									  {!! Form::text('group_id', $row['group_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
 									 </div> 
@@ -41,7 +45,7 @@
 									 </div>
 								  </div> 					
 								  <div class="form-group  " >
-									<label for="Name" class=" control-label col-md-4 text-left"> Name <span class="asterix"> * </span></label>
+									<label for="Name" class=" control-label col-md-4 text-left"> Name: <span class="asterix"> * </span></label>
 									<div class="col-md-6">
 									  {!! Form::text('name', $row['name'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!} 
 									 </div> 
@@ -50,7 +54,7 @@
 									 </div>
 								  </div> 					
 								  <div class="form-group  " >
-									<label for="Description" class=" control-label col-md-4 text-left"> Description </label>
+									<label for="Description" class=" control-label col-md-4 text-left"> Description: </label>
 									<div class="col-md-6">
 									  <textarea name='description' rows='2' id='description' class='form-control '  
 				           >{{ $row['description'] }}</textarea> 
@@ -60,7 +64,7 @@
 									 </div>
 								  </div> 					
 								  <div class="form-group  " >
-									<label for="Level" class=" control-label col-md-4 text-left"> Level <span class="asterix"> * </span></label>
+									<label for="Level" class=" control-label col-md-4 text-left"> Level: <span class="asterix"> * </span></label>
 									<div class="col-md-6">
 									  {!! Form::text('level', $row['level'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!} 
 									 </div> 
@@ -71,10 +75,10 @@
 
 
 							<div class="form-group  int-link" >
-								<label for="ipt" class=" control-label col-md-4 text-right"> Login Start Page </label>
+								<label for="ipt" class=" control-label col-md-4 text-right"> Login Start Page: </label>
 								<div class="col-md-6">
 									<select name="redirect_link"  rows='5' type="text" id="redirect_link"  style="width:100%"  class='select-liquid ' value="{{ $row['redirect_link'] }}" >
-										<option value=""> -- Select Module -- </option>
+										<option value=""> -- Select Module or Page -- </option>
 										<optgroup label="Module ">
 											@foreach($modules as $mod)
                                                 <?php                                
@@ -93,9 +97,16 @@
                                                 @endif
 											@endforeach
 										</optgroup>
-                                        <optgroup label="Dashboards">
+                                        {{--<optgroup label="Dashboards">
                                             <option value="dashboard">Dashboard</option>
-                                        </optgroup>                                            
+                                        </optgroup>   --}}
+										<optgroup label="Page CMS ">
+											@foreach($pages as $page)
+												<option value="{{ $page->alias}}"
+														@if($row['redirect_link']=== $page->alias ) selected="selected" @endif
+												>Page : {{ $page->title}}</option>
+											@endforeach
+										</optgroup>
 									</select>
 								</div>
 								</div>
@@ -108,8 +119,8 @@
 				
 					
 				  <div class="form-group">
-					<label class="col-sm-4 text-right">&nbsp;</label>
-					<div class="col-sm-8">	
+					
+					<div class="col-sm-12 text-center">	
 					<button type="submit" name="apply" class="btn btn-info btn-sm" ><i class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
 					<button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
 					<button type="button" onclick="location.href='{{ URL::to('core/groups?return='.$return) }}' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>

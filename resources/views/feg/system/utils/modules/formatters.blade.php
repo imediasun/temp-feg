@@ -16,6 +16,7 @@
                 if (!empty($formatter)) {
                     $data = [
                         "Field Name" => $field,
+                        "Active?" => $item[ 'attribute']['formater']['active'] == 1 ? "Yes" : "No",
                         "Formatter"  => $formatter,
                     ];
                     $formatters[] = $data;

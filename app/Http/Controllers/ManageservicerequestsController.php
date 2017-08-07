@@ -167,6 +167,7 @@ class ManageservicerequestsController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('manageservicerequests.view', $this->data);
     }
@@ -203,6 +204,15 @@ class ManageservicerequestsController extends Controller
             $data['status_id'] = $request->get('status_id');
             $data['solved_date'] = date("Y-m-d", strtotime($request->get('solved_date')));
             */
+            $request_date=$request->get('request_date');
+            $need_by_date=$request->get('need_by_date');
+            if(strtotime($request_date) > strtotime($need_by_date))
+            {
+                return response()->json(array(
+                    'message' => "Requested date should be less then Need by date",
+                    'status' => 'error'
+                ));
+            }
             if(empty($id))
                 $data = $this->validatePost('service_requests');
             else

@@ -12,7 +12,7 @@
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','sbticket/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
+            @if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
@@ -47,7 +47,7 @@
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <th width="35"> No </th>
                         @endif
-                        @if($setting['disableactioncheckbox']=='false')
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                             <th width="30"> <input type="checkbox" class="checkall" /></th>
                         @endif
                         @if($setting['view-method']=='expand') <th>  </th> @endif
@@ -69,7 +69,7 @@
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
                                             ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                            ' align="'.$t['align'].'"'.
+                                            ' style=text-align:'.$t['align'].
                                             ' width="'.$t['width'].'"';
                                     $th .= '>';
                                     $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -90,11 +90,11 @@
 
                     $id = $row->TicketID;
                     ?>
-                    <tr class="editable" id="form-{{ $row->TicketID }}">
+                    <tr class="editable" id="form-{{ $row->TicketID }}"  @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
-                        @if($setting['disableactioncheckbox']=='false')
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                                 <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->TicketID;?>"/></td>
                         @endif
 
@@ -105,7 +105,7 @@
                         <?php foreach ($tableGrid as $field) :
                         if($field['view'] == '1') :
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
-                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
+                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
@@ -155,7 +155,6 @@
                         ?>
                         <td data-values="action" data-key="<?php echo $row->TicketID;?>">
                             {!! AjaxHelpers::buttonAction('sbticket',$access,$id ,$setting) !!}
-                            {!! AjaxHelpers::buttonActionInline($row->TicketID,'TicketID') !!}
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -172,6 +171,11 @@
                     </tbody>
 
                 </table>
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->TicketID,'TicketID') !!}
+                    @endforeach
+                @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">
@@ -239,4 +243,3 @@
     }
 
 </style>
-	

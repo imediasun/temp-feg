@@ -484,7 +484,11 @@ class ReportHelpers
    LEFT JOIN debit_type D ON D.id = L.debit_type_id   
    LEFT JOIN game_title T ON T.id = G.game_title_id
    LEFT JOIN game_type Y ON Y.id = T.game_type_id
-	   WHERE E.game_id <> 0 AND E.record_status = 1 AND E.report_status = 1 ";
+	   WHERE E.game_id <> 0 
+	   AND E.record_status = 1 
+	   AND E.report_status = 1 
+	   AND G.exclude_from_reports = 0
+	   ";
                      
         if (!empty($gameId)) {
             $Q .= " AND E.game_id IN ($gameId) ";
@@ -504,6 +508,10 @@ class ReportHelpers
         if (!empty($onTest)) {
             if ($onTest == "notest") {
                 $Q .= " AND E.game_on_test IN (0)";
+            }
+            else if($onTest == "all")
+            {
+
             }
             else {
                 $Q .= " AND E.game_on_test IN (1)";
@@ -593,9 +601,10 @@ class ReportHelpers
         LEFT JOIN game_type GTY ON E.game_type_id = GTY.id
         LEFT JOIN debit_type D ON L.debit_type_id = D.id
         WHERE 
-        G.sold != 1 AND
+
         L.reporting = 1 AND
         E.game_id <> 0 AND 
+        G.exclude_from_reports = 0 AND
         E.record_status = 1 AND
         E.date_played >= '$dateStart' and E.date_played <= '$dateEnd'";
 
@@ -607,6 +616,10 @@ class ReportHelpers
         }
         if (empty($onTest) || $onTest == "notest") {
             $Q .= " AND E.game_on_test IN (0)";
+        }
+        else if($onTest == "all")
+        {
+
         }
         else {
             $Q .= " AND E.game_on_test IN (1)";
@@ -695,8 +708,9 @@ class ReportHelpers
             LEFT JOIN game_type Y ON Y.id = T.game_type_id
             LEFT JOIN location L ON L.id = E.location_id
             LEFT JOIN debit_type D ON D.id = E.debit_type_id   
-                WHERE E.game_id <> 0 AND G.not_debit = 0 
-                AND G.sold != 1 AND E.record_status = 1 
+                WHERE E.game_id <> 0 
+                AND G.exclude_from_reports = 0 
+                AND E.record_status = 1
                 ";
                      
         if (!empty($gameTitleId)) {
@@ -721,6 +735,10 @@ class ReportHelpers
         if (!empty($onTest)) {
             if ($onTest == "notest") {
                 $Q .= " AND G.test_piece IN (0)";
+            }
+            else if($onTest == "all")
+            {
+
             }
             else {
                 $Q .= " AND G.test_piece IN (1)";
@@ -804,8 +822,9 @@ class ReportHelpers
             LEFT JOIN debit_type D ON D.id = L.debit_type_id   
             LEFT JOIN game_title T ON T.id = E.game_title_id
             LEFT JOIN game_type Y ON Y.id = E.game_type_id
-                WHERE E.game_id <> 0  AND E.game_not_debit = 0 
+                WHERE E.game_id <> 0  
                 AND G.sold != 1
+                AND E.exclude_from_reports = 0 
                 AND E.report_status = 0 AND E.record_status = 1 ";
                      
         if (!empty($gameTitleId)) {
@@ -830,6 +849,10 @@ class ReportHelpers
         if (!empty($onTest)) {
             if ($onTest == "notest") {
                 $Q .= " AND E.game_on_test IN (0)";
+            }
+            else if($onTest == "all")
+            {
+
             }
             else {
                 $Q .= " AND E.game_on_test IN (1)";
@@ -970,6 +993,7 @@ class ReportHelpers
                 
                 WHERE E.game_id <> 0 
                 AND E.game_on_test = 1
+                AND E.exclude_from_reports = 0
                 AND E.report_status = 1 
                 AND E.record_status = 1
                 AND E.date_played >= '$dateStart' 
@@ -1050,7 +1074,8 @@ class ReportHelpers
     }
     
     public static function getRetrySyncStatusQuery($adjustment_date = null, $location = "") {
-        $q = "SELECT GA.date_start, GA.loc_id, L.debit_type_id, GA.status, GA.notes, GA.adjustment_date
+        $q = "SELECT GA.date_start, GA.loc_id, L.debit_type_id, GA.status, GA.notes, GA.adjustment_date,
+            GA.is_past_sync_adjustment
             FROM game_earnings_transfer_adjustments GA 
             LEFT JOIN location L ON L.id=GA.loc_id
             WHERE 
@@ -1065,7 +1090,8 @@ class ReportHelpers
         return $q;
     }
     public static function getRetrySyncSuccessQuery($adjustment_date = null) {
-        $q = "SELECT date_start, loc_id, status, notes, adjustment_date
+        $q = "SELECT date_start, loc_id, status, notes, adjustment_date,
+            is_past_sync_adjustment
             FROM game_earnings_transfer_adjustments 
             WHERE status = 0 AND notes='ADJUSTED' ";
         if (!empty($adjustment_date)) {
@@ -1225,10 +1251,16 @@ class ReportHelpers
      * @param Boolean $includeEndInRange   Whether full day of end date is inclusive in the range
      * @return Array 
      */
-    public static function dateRangeFix(&$startDate = "", &$endDate = "", $includeEndInRange = true) {
+    public static function dateRangeFix(&$startDate = "", &$endDate = "", $includeEndInRange = true, $defaultEndDate = null, $defaultDaysToReport = 7) {
         $newStartDate = trim($startDate);
         $newEndDate = trim($endDate);
         $yesterday = self::dateify("", -1);
+
+        if (empty($newStartDate) && empty($newEndDate) && !empty($defaultEndDate)) {
+            $newEndDate = trim($defaultEndDate);
+            $newStartDate = date('Y-m-d H:i:s', strtotime($newEndDate.' -' .($defaultDaysToReport-1).' days'));
+        }
+
         if (empty($newStartDate)) {
             if (empty($newEndDate)) {
                 $newStartDate = $yesterday;
@@ -1545,6 +1577,10 @@ class ReportHelpers
             if ($onTest == "notest") {
                 $Q .= " AND G.test_piece IN (0)";
             }
+            else if($onTest == "all")
+            {
+
+            }
             else {
                 $Q .= " AND G.test_piece IN (1)";
             }            
@@ -1570,7 +1606,7 @@ class ReportHelpers
    
     public static function buildBlankResultDataDueToNoLocation($message = "", $topMessage = "Report not available", $bottomMessage = "") {
         if (empty($message)) {
-            $message = "In order to run reports you must be assigned to atleast one location. 
+            $message = "In order to run reports you must be assigned to at least one location. 
                 You have not been assigned to any locations. 
                 Please contact an administrator if you believe this to be an error.";
         }

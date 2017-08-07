@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Console;
+
 use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -19,6 +20,11 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\Elm5TaskManager::class,
         \App\Console\Commands\CreateDummyOrders::class,
         \App\Console\Commands\SyncUserLocations::class,
+        \App\Console\Commands\RefreshOAuthToken::class,
+        \App\Console\Commands\ResetEmailsToAllActiveUsers::class,
+        \App\Console\Commands\EnableBlockedOrderItems::class,
+        \App\Console\Commands\RestorePONumber::class,
+        \App\Console\Commands\CheckStuff::class
     ];
 
     /**
@@ -30,11 +36,16 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //giving error
+        $schedule->command('refresh:token')->cron('*/50 * * * * *')->withoutOverlapping();;
         $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
-        $schedule->command('inspire')->hourly();
+        $schedule->command('inspire')->everyMinute();
         //turning off to allow client to test and avoid from varying counts
         $schedule->command('create:dummy_order')->cron('*/30 * * * * *')->withoutOverlapping();;
         $schedule->command('elm5taskmanager')->everyMinute();
+        $schedule->command('enable:blocked_order_items')->everyMinute();
+        $schedule->command('restore:po')->everyMinute();
+        $schedule->command('check:stuff')->daily();
+
     }
 }

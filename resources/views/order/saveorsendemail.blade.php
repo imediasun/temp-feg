@@ -1,13 +1,13 @@
 @extends('layouts.app')
 @section('content')
-    <div class="ajaxLoading"></div>
+<?php use App\Models\Order; ?>
     <div class="page-content row">
         <!-- Page header -->
         <div class="sbox-title">
             <h3> Save/Download PO
             </h3>
-            <button style="visibility: hidden" type="button " class="btn-xs collapse-close btn btn-danger pull-right"><i
-                        class="fa fa fa-times"></i></button>
+         {{--   <button style="visibility: hidden" type="button " class="btn-xs collapse-close btn btn-danger pull-right"><i
+                        class="fa fa fa-times"></i></button> --}}
             <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" id="close"
                onclick="reloadOrder();"
                     ><i class="fa fa fa-times"></i></a>
@@ -55,8 +55,16 @@
                                         style="width:33%" title="SEND" ><i
                                             class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }} </button>
                             </div>
+                            
+                            @if($order_id && Order::isApiable($order_id) && !Order::isApified($order_id))
+                            {{--<div class="form-group" style="margin-top:10px;">
+                                <button type="button" class="btn btn-info btn-lg exposeAPIFromSaveOrSend"
+                                        style="width:33%">
+                                {{ Lang::get('core.order_api_expose_button_label') }} </button>
+                            </div>--}}
+                            {!! Form::close() !!}
+                            @endif
                         </div>
-                        {!! Form::close() !!}
                         <ul class="parsley-error-list">
                             @foreach($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -82,7 +90,6 @@
                                     ','id'=>'sendFormAjax')) !!}
 
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
-                                    <input type="hidden" value="{{ $google_account->g_mail }}" name="from"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
@@ -94,7 +101,7 @@
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="cc">CC</label>
                                         <div class="col-md-8">
-                                            <input name="cc" id="cc" multiple class="form-control" />
+                                            <input name="cc" id="cc" value="{{ $cc }}" multiple class="form-control" />
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -150,7 +157,6 @@
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
                                     <input type="hidden" value="sendorsave" name="submit"/>
-                                    <input type="hidden" value="{{ $google_account->g_mail }}" name="from"/>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
 
@@ -159,14 +165,14 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-md-4" for="cc">CC</label>
+                                        <label class="control-label col-md-4" for="cc1">CC</label>
 
                                         <div class="col-md-8">
-                                            <input name="cc1" id="cc1" class="form-control">
+                                            <input name="cc1" id="cc1" value="{{ $cc }}" class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-md-4" for="bcc">BCC</label>
+                                        <label class="control-label col-md-4" for="bcc1">BCC</label>
 
                                         <div class="col-md-8">
                                             <input name="bcc1" id="bcc1" class="form-control" />
@@ -213,7 +219,28 @@
     </style>
     <script>
         $(document).ready(function () {
+            $(".exposeAPIFromSaveOrSend").click(function(e){
+                return false; //Functionality removed!
 
+                var btn = $(this);
+                btn.prop('disabled', true);
+                blockUI();
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url() }}/order/expose-api/{{ \SiteHelpers::encryptID($order_id) }}",
+                    success: function (data) {
+                        unblockUI();
+                        if(data.status === 'success'){
+                            notyMessage(data.message);
+                            btn.remove();
+                        }
+                        else {
+                            btn.prop('disabled', false);
+                            notyMessageError(data.message);
+                        }
+                    }
+                });
+            });
         });
         $("#po-close").click(function(){
             reloadOrder();
@@ -242,6 +269,7 @@
 
 
         function reloadOrder() {
+            {{ \Session::put('filter_before_redirect','redirect') }}
             redirect_link = "{{ \Session::get('redirect') }}";
             location.href = "{{ url() }}/" + redirect_link;
         }
@@ -321,6 +349,7 @@
             $('.ajaxLoading').show();
         }
         function showResponse(data) {
+            console.log(data);
             if (data.status == 'success') {
                 notyMessage(data.message);
                 $('.ajaxLoading').hide();

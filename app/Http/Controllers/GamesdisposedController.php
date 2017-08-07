@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Gamesdisposed;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
@@ -21,12 +22,20 @@ class GamesdisposedController extends Controller
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
+        $this->mylocationgamePass = \FEGSPass::getMyPass(Module::name2id('mylocationgame'));
+        $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->mylocationgamePass['Can Edit']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->mylocationgamePass['Can Dispose']) ? 1 : 0;
+
 
         $this->data = array(
+            'pass' => $this->pass,
+            'mylocationgamePass' => $this->mylocationgamePass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'gamesdisposed',
-            'pageUrl' => url('gamesdisposed'),
+            'pageModule' => $this->module,
+            'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
 
@@ -103,7 +112,8 @@ class GamesdisposedController extends Controller
             $params['limit'] = $results['total'];
         }
 
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('gamesdisposed/data');
         $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
@@ -177,6 +187,7 @@ class GamesdisposedController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('gamesdisposed.view', $this->data);
     }
@@ -266,7 +277,16 @@ class GamesdisposedController extends Controller
 
     public function getExport($t = 'excel')
     {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
 
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
         $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
@@ -280,6 +300,7 @@ class GamesdisposedController extends Controller
         $fields = array('Menufacturer', 'Game Title', 'Version', 'Serial', 'Date In Service', 'Id', 'Last Location', 'City', 'State', 'Date Sold', 'SoldTo', 'WholeSale', 'Retail', 'Notes');
         $rows = $results;
         $content = array(
+            'exportID' => $exportSessionID,
             'fields' => $fields,
             'rows' => $rows,
             'title' => $this->data['pageTitle'],

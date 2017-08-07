@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Gamesintransit;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
@@ -21,12 +22,19 @@ class GamesintransitController extends Controller
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
+        $this->mylocationgamePass = \FEGSPass::getMyPass(Module::name2id('mylocationgame'));
+        $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->mylocationgamePass['Can Edit']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->mylocationgamePass['Can Dispose']) ? 1 : 0;
 
         $this->data = array(
+            'pass' => $this->pass,
+            'mylocationgamePass' => $this->mylocationgamePass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'gamesintransit',
-            'pageUrl' => url('gamesintransit'),
+            'pageModule' => $this->module,
+            'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
 
@@ -81,6 +89,9 @@ class GamesintransitController extends Controller
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+        if($request->input('sort')=='game_type_id'){
+            $sort = 'game.game_type_id';
+        }
         // End Filter sort and order for query
         // Filter Search for query
         $filter = $this->getSearchFilterQuery();
@@ -104,7 +115,8 @@ class GamesintransitController extends Controller
             $params['limit'] = $results['total'];
         }
 
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('gamesintransit/data');
         $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
@@ -178,6 +190,7 @@ class GamesintransitController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('gamesintransit.view', $this->data);
     }
@@ -309,22 +322,22 @@ class GamesintransitController extends Controller
     {
         if(strlen(trim($asset_num)) < 8 || strlen(trim($asset_num)) > 8)
         {
-            return json_encode(array('status'=>'error','message'=>'Asset Number must have 8 digits'));
+            return json_encode(array('status'=>'error','message'=>'Asset number must have 8 digits'));
 
         }
         if(preg_match('/[^0-9]/', trim($asset_num)) === 1)
         {
-            return json_encode(array('status'=>'error','message'=>'Asset Number must be a Number'));
+            return json_encode(array('status'=>'error','message'=>'Asset number must be a number'));
 
         }
         $row=\DB::select('select id from game where id ='.trim($asset_num));
         if(count($row) > 0)
         {
-            echo json_encode(array('status'=>'error','message'=>'This Asset Number not available'));
+            echo json_encode(array('status'=>'error','message'=>'This asset number is not available'));
         }
         else
         {
-            echo json_encode(array('status'=>'success','message'=>'This Asset Number is available'));
+            echo json_encode(array('status'=>'success','message'=>'This asset number is available'));
         }
     }
 }

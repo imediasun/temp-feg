@@ -14,7 +14,7 @@ if (!$colconfigs) {
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','location/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
+            @if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
@@ -48,7 +48,7 @@ if (!$colconfigs) {
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <th width="35"> No </th>
                         @endif
-                        @if($setting['disableactioncheckbox']=='false')
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                             <th width="30"> <input type="checkbox" class="checkall" /></th>
                         @endif
                         @if($setting['view-method']=='expand') <th>  </th> @endif
@@ -70,7 +70,7 @@ if (!$colconfigs) {
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
                                             ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                            ' align="'.$t['align'].'"'.
+                                            ' style=text-align:'.$t['align'].
                                             ' width="'.$t['width'].'"';
                                     $th .= '>';
                                     $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -81,7 +81,7 @@ if (!$colconfigs) {
                         endforeach; ?>
 
                         @if($setting['disablerowactions']=='false')
-                            <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                            <th width="80"><?php echo Lang::get('core.btn_action') ;?></th>
                         @endif
                     </tr>
                     </thead>
@@ -89,7 +89,7 @@ if (!$colconfigs) {
                     @if($access['is_add'] =='1' && $setting['inline']=='true')
                         <tr id="form-0" >
                             <td> # </td>
-                            @if($setting['disableactioncheckbox']=='false')
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                                 <td> </td>
                             @endif
                             @if($setting['view-method']=='expand') <td> </td> @endif
@@ -114,11 +114,11 @@ if (!$colconfigs) {
                     $id = $row->id;
                     ?>
 
-                    <tr class="editable" id="form-{{ $row->id }}">
+                    <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
-                        @if($setting['disableactioncheckbox']=='false')
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                             <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                         @endif
 
@@ -129,12 +129,20 @@ if (!$colconfigs) {
                         <?php foreach ($tableGrid as $field) :
                         if($field['view'] == '1') :
                             $conn = (isset($field['conn']) ? $field['conn'] : array());
-                            $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
+                            $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
                                 <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
-                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">{!! $value !!}</td>
+                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                    @if($field['field'] =='active')
+                                        <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif 	data-size="mini" data-animate="true"
+                                               data-on-text="Active" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+                                               id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+                                    @else
+                                    {!! $value !!}
+                                @endif
+                                </td>
                         @endif
                         <?php
                         endif;
@@ -143,7 +151,6 @@ if (!$colconfigs) {
 
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('location',$access,$id ,$setting) !!}
-                            {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -159,6 +166,11 @@ if (!$colconfigs) {
                     </tbody>
 
                 </table>
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                    @endforeach
+                @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">
@@ -178,8 +190,67 @@ if (!$colconfigs) {
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
     $(document).ready(function () {
+        $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
+            var locationId=$(this).data('id');
+            var message = '';
+            var check = false;
+            if(state)
+            {
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Active this Location <br> <b>***WARNING***</b><br> if you active this location then this will be visible for all users how assigned to this and will be able to do any task on this location.</div>";
+            }
+            else
+            {
+                check = true;
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this Location <br> <b>***WARNING***</b><br> if you inactive this location then this will be hidden for all users how assigned to this and will not be able to do any task on this location.</div>";
+            }
+
+            currentElm = $(this);
+            currentElm.bootstrapSwitch('state', check,true);
+            $('.custom_overlay').show();
+            App.notyConfirm({
+                message: message,
+                confirmButtonText: 'Yes',
+                container: '.custom-container',
+                confirm: function (){
+                    $('.custom_overlay').slideUp(500);
+                    $.ajax(
+                        {
+                            type:'POST',
+                            url:'location/trigger',
+                            data:{isActive:state,locationId:locationId},
+                            success:function(data){
+                                currentElm.bootstrapSwitch('state', !check,true);
+                                if(data.status != "error") {
+                                    if (data.message == "inactive") {
+                                        $("#user_locations option[value=" + locationId + "]").hide();
+                                    }
+                                    else
+                                    {
+                                        $("#user_locations option[value=" + locationId + "]").show();
+                                    }
+                                    if ($('select[name="active"] :selected').val() == 1 && data.message == "inactive") {
+                                        $('#form-'+locationId).hide(500);
+                                        $('#divOverlay_'+locationId).hide(500);
+                                    }
+                                    else if($('select[name="active"] :selected').val() == 0 && data.message == "active")
+                                    {
+                                        $('#form-'+locationId).hide(500);
+                                        $('#divOverlay_'+locationId).hide(500);
+                                    }
+                                }
+                            }
+                        }
+                    );
+                },
+                cancel: function () {
+                    $('.custom_overlay').slideUp(500);
+                }
+            });
+        });
+
+        $("[id^='toggle_trigger']").bootstrapSwitch();
         $('.tips').tooltip();
-        $('input[type="checkbox"],input[type="radio"]').iCheck({
+        $('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue'
         });
@@ -226,4 +297,3 @@ if (!$colconfigs) {
     }
 
 </style>
-	

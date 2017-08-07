@@ -3,7 +3,7 @@
 use App\Library\FEG\System\FEGSystemHelper;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use Log;
+use Log, View, Auth;
 
 class shopfegrequeststore extends Sximo  {
 	
@@ -14,7 +14,7 @@ class shopfegrequeststore extends Sximo  {
 	}
 	public static function querySelect(  ){
 		
-		return "SELECT products.*,vendor.vendor_name,O.order_type,T.product_type FROM products
+		return "SELECT products.*,vendor.vendor_name,vendor.hide as vendor_hide,vendor.status as vendor_status,O.order_type,T.product_type FROM products
                 LEFT JOIN vendor ON (products.vendor_id = vendor.id)
                 LEFT JOIN order_type O ON (O.id = products.prod_type_id)
                 LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id)";
@@ -109,7 +109,7 @@ class shopfegrequeststore extends Sximo  {
                                 V.min_order_amt - SUM(R.qty*P.case_price) AS amt_short FROM requests R
 								LEFT JOIN products P ON P.id = R.product_id
 								LEFT JOIN vendor V ON V.id = P.vendor_id
-									WHERE R.status_id = 0
+									WHERE R.status_id = 4
 									  AND R.location_id = "'.$location_id .'"
 								 GROUP BY V.vendor_name');
             foreach ($query as $row)
@@ -241,40 +241,85 @@ class shopfegrequeststore extends Sximo  {
 
     function newGraphicRequest($data)
     {
-        $configName = 'Request new custom graphics email';
         $last_inserted_id=\DB::table('new_graphics_request')->insertGetId($data);
         $locationName = $this->get_location_info_by_id($data['location_id'], 'location_name');
         $game_info=explode('-',$data['description']);
         $mangeGraphicRequestURL = url("managenewgraphicrequests");
         $graphicApproveLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/approve/$last_inserted_id";
         $graphicDenyLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/deny/$last_inserted_id";
-        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
-        $message = '<b>Date Requested:</b> '.$data['request_date'].'<br>
-					<b>Requestor:</b> '.\Session::get('fid').'<br>
+        $description='';
+        if(strlen($data['description'])>=140){
+            $description=substr($data['description'], 0, 140).'...';
+        }else{
+            $description=$data['description'];
+        }
+        /*$baseMessage = '
+                    <b>Project:</b> '.$game_info[0].'<br>
+                    <b>Date:</b> '. \DateHelpers::formatDate($data['request_date']).'<br>
+					<b>Submitter:</b> '.\Session::get('fid').'<br>
 					<b>Location:</b> '.$data['location_id'].' | '.$locationName.'<br>
-					<b>For Game:</b> '.$game_info[0]  .'<br>
-					<b>Description:</b> '.$data['description'].'<br>
-					<b>Quantity:</b> '.$data['qty'].'<br>
-					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br>
-                    <em>**Mark/Tom, please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
-					to Approve/Deny this graphic request <br><br>
-					&nbsp;&nbsp;&nbsp; 2.) Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
-					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
-                    $from = \Session::get('eid');
-                    $subject = 'New Graphics Request for '.$locationName;
-                    $message = $message;
-                   
+					<b>Description:</b> '.$description.'<a href="'.$mangeGraphicRequestURL.'">See full request</a>
+					<br><em>';
 
-                    FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
-                        'subject' => $subject,
-                        'message' => $message,
-                        'isTest' => env('APP_ENV', 'development') !== 'production'?true:false,
-                        'configName' => $configName,
-                        'from' => $from,
-                        'replyTo' => $from,
-                    )));
+        $links = 'Please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
+					to Approve/Deny this graphic request <br><br>&nbsp;&nbsp;&nbsp;';
 
-                   return $last_inserted_id;
+        $messageEnd = '<br> To fast-track the completion of this task, please contact the Graphics Department at (847) 852-4270 to arrange an expedited deadline.';
+
+        //$messageEnd = 'Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
+					//**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';*/
+
+        $messageWithLink = View::make('shopfegrequeststore.emails.graphic-request-submitter-link', array(
+            'title' => $game_info[0],
+            'date' => \DateHelpers::formatDate($data['request_date']),
+            'submitter' => \Session::get('fid'),
+            'location_id' => $data['location_id'],
+            'location_name' => $locationName,
+            'description' => $description,
+            'request_link' => $mangeGraphicRequestURL,
+            'approve_link' => $graphicApproveLink,
+            'deny_link' => $graphicDenyLink
+        ))->render();
+
+        $from = \Session::get('eid');
+        $subject = 'New Graphics Request for '.$locationName;
+
+        $configName = 'Request new custom graphics email';
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
+        $message = $messageWithLink;//$baseMessage.$links.$messageEnd;
+
+
+        FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
+            'subject' => $subject,
+            'message' => $message,
+//            'preferGoogleOAuthMail' => true,
+            'isTest' => env('APP_ENV', 'development') !== 'production'?true:false,
+            'configName' => $configName,
+            'from' => $from,
+            'replyTo' => $from,
+        )));
+
+        $receipientsForEmailWihtoutLinksConfigName = 'New custom graphics notification without links';
+        $receipientsForEmailWihtoutLinks = FEGSystemHelper::getSystemEmailRecipients($receipientsForEmailWihtoutLinksConfigName);
+
+        $messageWithoutLink = View::make('shopfegrequeststore.emails.graphic-request-submitter', array(
+            'submitterEmailAddress' => \Session::get('eid')
+        ))->render();
+
+        if(empty($receipientsForEmailWihtoutLinks['to'])){
+            $receipientsForEmailWihtoutLinks['to']=Auth::user()->email;
+        }
+
+        FEGSystemHelper::sendSystemEmail(array_merge($receipientsForEmailWihtoutLinks, array(
+            'subject' => $subject,
+            'message' => $messageWithoutLink,
+//            'preferGoogleOAuthMail' => true,
+            'isTest' => env('APP_ENV', 'development') !== 'production',
+            'from' => $from,
+            'replyTo' => $from,
+        )));
+
+        return $last_inserted_id;
     }
 
     /**

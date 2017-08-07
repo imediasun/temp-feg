@@ -1,4 +1,4 @@
-<div class="row m-b">
+<div class="row c-margin">
 
 
     <div class="col-md-4">
@@ -20,22 +20,24 @@
 </div>
 
 
-<div class="row m-b" >
+<div class="row  c-margin" >
 
     <div class="col-md-8">
+        @if($setting['disableactioncheckbox']=='false')
         @if($access['is_remove'] ==1)
             <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+        @endif
         @endif
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white"
-               onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Arrange
+               onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Arrange
                 Columns</a>
             @if(!empty($colconfigs))
-                <select class="form-control" style="width:25%!important;display:inline;" name="col-config"
+                <select class="form-control" style="width:auto!important;display:inline;" name="col-config"
                         id="col-config">
-                    <option value="0">Select Configuration</option>
+                    <option value="0">Select Column Arrangement</option>
                     @foreach( $colconfigs as $configs )
                         <option @if($config_id == $configs['config_id']) selected
                                                                          @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
@@ -43,8 +45,8 @@
                 </select>
                 @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
                     <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
-                       onclick="SximoModal(this.href,'Column Selector'); return false;" title="Edit Arrange">  <i class="fa fa-pencil-square-o"></i></a>
-                    <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Clear Arrange">  <i class="fa fa-trash-o"></i></button>
+                       onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit column arrangement">  <i class="fa fa-pencil-square-o"></i></a>
+                    <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
                 @endif
             @endif
         @endif
@@ -82,7 +84,8 @@
                             });
 //                }
             });
-            renderDropdown($(".select3"), { width:"98%"});
+            renderDropdown($(".select3"), { width:"100%"});
+
             var config_id=$("#col-config").val();
             if(config_id ==0 )
             {
@@ -115,7 +118,8 @@
         type = $("#active_inactive").val();
         order_type = $("#order_type").val();
         product_type = $("#product_type").val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?&type=store'+ getFooterFilters()+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
+        console.log(getFooterFilters({'page': true}));
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?&type=store'+ getFooterFilters({'page': true})+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
     });
 
     /* todo refactor code
@@ -124,7 +128,7 @@
         window.location = "<?php echo url();?>//shopfegrequeststore/changelocation/" + $('#locations').val();
     });*/
     $('#delete-cols').click(function(){
-        if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
+        if(confirm('Are you sure, You want to delete this columns arrangement?')) {
             showRequest();
             var module = "{{ $pageModule }}";
             var config_id = $("#col-config").val();

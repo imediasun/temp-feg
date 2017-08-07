@@ -1,7 +1,7 @@
 @if($setting['view-method'] =='native')
     <div class="sbox">
             <div class="sbox-title">
-                <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+                <h4> <i class="fa fa-eye"></i> <?php echo $pageTitle ;?>
                     <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
                         <i class="fa fa fa-times"></i></a>
                 </h4>
@@ -10,10 +10,10 @@
             <div class="sbox-content">
                 @endif
 
-            <div class="col-md-6 col-md-offset-3 " style="border-bottom:1px solid lightgray">
-                <h1>{{ $row->vendor_description }}</h1>
+            <div class="col-md-6 col-md-offset-3 text-center" style="border-bottom:1px solid lightgray">
+                <h2>{{ $row->vendor_description }}</h2>
 
-                <h2 class="text-center" > @if($row->inactive == 1) <span style="color:red"> {{ "NOT AVAILABLE" }} </span> @else <span style="color:green"> {{ "AVAILABLE" }} </span> @endif </h2>
+                <h3 class="text-center" > @if($row->inactive == 1) <span style="color:red"> {{ "NOT AVAILABLE" }} </span> @else <span style="color:green"> {{ "AVAILABLE" }} </span> @endif </h3>
             </div>
             <div class="col-md-3"></div>
             <div class="clearfix"></div>
@@ -43,7 +43,7 @@
                             <td width='30%' class='label-view text-right'>
                                 {{ SiteHelpers::activeLang('Vendor ', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) }}
                             </td>
-                            <td>{!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name')
+                            <td>{!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name',$nodata['vendor_id'])
                                 !!}
                             </td>
 
@@ -90,7 +90,7 @@
                     @if($setting['form-method'] =='native')
                 </div>
                 @endif
-                <div class="col-md-5" >
+                <div class="col-md-5 res-img">
                     <?php
                     echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/',400, false);
                     ?>

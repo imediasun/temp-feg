@@ -12,7 +12,7 @@
 
         <div class="page-content-wrapper m-t">
             <div class="sbox animated fadeInRight">
-                <div class="sbox-title"> <h4> <i class="fa fa-table"></i> {{ $pageTitle }} <small>{{ $pageNote}}</small></h4></div>
+                <div class="sbox-title"> <h4> <i class="fa fa-table"></i> {{ $pageTitle }} </h4></div>
                 <div class="sbox-content">
 
 
@@ -62,7 +62,7 @@
     </div>
 <script>
     function deleteImage() {
-        if (confirm("Do you Really Want to Delete Existing Image...")) {
+        if (confirm("Do you really want to delete existing image...")) {
             location.href="{{ url() }}/gamestitle/imageremove/{{ $game_id }}";
         }
     }

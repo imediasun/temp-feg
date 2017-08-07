@@ -30,6 +30,7 @@ jQuery(document).ready(function($){
       button.appendTo("body");
       
       jQuery(window).scroll(function() {
+        offset = Math.min(jQuery(window).height(), 220);
         if (jQuery(this).scrollTop() > offset) {
             jQuery('.back-to-top').fadeIn(duration);
         } else {
@@ -48,13 +49,13 @@ jQuery(document).ready(function($){
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P'});
 	
 	/* Tooltip */
-	$('.previewImage').fancybox();	
+	$('.previewImage').fancybox(
+     
+    );
 	$('.tips').tooltip();	
 	$('.editor').summernote();
-	$(".select2").select2({ width:"98%"});	
-	$(".select-liquid").select2({
-		minimumResultsForSearch: "-1"
-	});	
+    renderDropdown($(".select2"), { width:"98%"});
+    renderDropdown($(".select-liquid"), {minimumResultsForSearch: "-1"});
 	$('.panel-trigger').click(function(e){
 		e.preventDefault();
 		$(this).toggleClass('active');
@@ -80,7 +81,7 @@ jQuery(document).ready(function($){
 			cblist.removeAttr("checked");
 		}	
 	});
-	
+
 	$('.nav li ul li.active').parents('li').addClass('active');
 	
 	
@@ -119,7 +120,7 @@ jQuery(document).ready(function($){
 		$(this).parent('div').empty();	
 		return false;
 	});	
-		    	
+	  	
 })
 function debounce(func, wait, immediate) {
     var timeout;
@@ -152,11 +153,11 @@ function SximoConfirmDelete( url )
 function SximoDelete(  )
 {	
 	var total = $('input[class="ids"]:checkbox:checked').length;
-	if(confirm('are u sure removing selected rows ?'))
+	if(confirm('Are you sure removing selected rows ?'))
 	{
 			$('#SximoTable').submit();// do the rest here	
 	}	
-}	
+}
 function SximoModal( url , title)
 {
 	$('#sximo-modal-content').html(' ....Loading content , please wait ...');
@@ -164,7 +165,7 @@ function SximoModal( url , title)
 	$('#sximo-modal-content').load(url,function(){
         var modal = $('#sximo-modal-content').closest('.modal'),
             titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
-            App.autoCallbacks.runCallback.call(modal, titletrim, {url:url, title:title});      
+            App.autoCallbacks.runCallback.call(modal, titletrim, {url:url, title:title});
 	});
 	$('#sximo-modal').modal('show');	
 }
@@ -174,14 +175,61 @@ function SximoModalShow(modal, callbackName, data) {
         App.autoCallbacks.runCallback.call(modal, callbackName, data);   
     }
 }
-function SximoModalHide(modal, callbackName, data) {
-	modal.modal('hide');
+function SximoModalHide(modal, callbackName, data) {    
+    if (modal && modal.length) {
+        modal.each(function (){
+            $(this).modal('hide');
+        });
+    }	
     if (callbackName) {
         App.autoCallbacks.runCallback.call(modal, callbackName, data);   
     }    
 }
+function decodeEntities(encodedString) {
+    var textArea = document.createElement('textarea');
+    textArea.innerHTML = encodedString;
+    return textArea.value;
+}
+function addInactiveItem(field,id,module,check,column,inverse)
+{
+    inverse = inverse || 0;
+    setTimeout(function() {
+        select = field + " option[value='" + id + "']";
+        if(!($(select).length > 0))
+		{
+            console.log(select);
+            console.log('Not exists!');
+			$.ajax({
+				method: 'GET',
+				url: siteUrl + '/vendor/itemcheck',
+				data: {
+					id: id,
+					module: module,
+					check: check,
+					column: column,
+                    inverse: inverse
+				}
+			}).success(function (item) {
+				if (item != 0) {
 
-;(function ($, window, document, undefined) {
+					console.log(item);
+					var option = new Option(item, id);
+					option.selected = true;
+
+					$(field).append(option);
+					$(field).trigger("change");
+
+				}
+			})
+    	}
+    	else {
+            console.log(select);
+            console.log('Already exists!');
+        }
+    }, 2000);
+
+}
+(function ($, window, document, undefined) {
 
     var pluginName = "sximMenu",
         defaults = {

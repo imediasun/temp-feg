@@ -67,6 +67,9 @@ class PendingrequestController extends Controller
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
+        //following script is used to avoid conflict of vendor_id in search
+        $filter = str_replace('vendor.vendor_id','vendor.id',$filter);
+
 
         $page = $request->input('page', 1);
         $params = array(
@@ -88,37 +91,10 @@ class PendingrequestController extends Controller
         }
 
 
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('pendingrequest/data');
         $rows = $results['rows'];
-        foreach ($rows as $index => $data) {
-
-            /*$product = \DB::select("Select unit_price,vendor_id FROM products WHERE id = " . $data->product_id . "");
-
-            if (isset($product[0]->vendor_id)) {
-                $vendor = \DB::select("Select vendor_name FROM vendor WHERE id = " . $product[0]->vendor_id . "");
-
-            }
-            $rows[$index]->vendor_description = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
-            $product = (isset($product[0]->unit_price) ? $product[0]->unit_price : 0.00000);
-            */
-           // $rows[$index]->total_cost = \CurrencyHelpers::formatCurrency($data->unit_price * (isset($data->qty) ? $data->qty : 0));
-
-            //$user = \DB::select("Select username FROM users WHERE id = " . $data->request_user_id . "");
-            //$rows[$index]->request_user_id = (isset($user[0]->username) ? $user[0]->username : '');
-
-            if ($data->status_id == 2) {
-                $rows[$index]->status_id = 'Approved';
-            } elseif ($data->status_id == 3) {
-                $rows[$index]->status_id = 'Denied';
-            }
-            //$location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
-            //$rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
-        }
-        //echo '<pre>';
-        //print_r($rows);
-        //echo '</pre>';
-        //exit;
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
@@ -167,6 +143,8 @@ class PendingrequestController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('requests');
         }
+        $row['request_date'] = \DateHelpers::formatDate($row['request_date'],1);
+        $row['process_date'] = \DateHelpers::formatDate($row['process_date'],1);
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
@@ -185,11 +163,11 @@ class PendingrequestController extends Controller
         $row = $this->model->getRow($id);
         if ($row) {
             $this->data['row'] = $row;
-            if ($row->status_id == 2) {
+            /*if ($row->status_id == 2) {
                 $row->status_id = 'Approved';
             } elseif ($row->status_id == 3) {
                 $row->status_id = 'Denied';
-            }
+            }*/
             if ($row->process_date == "0000-00-00") {
                 $row->process_date = '00/00/0000';
             } else {
@@ -202,6 +180,7 @@ class PendingrequestController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('pendingrequest.view', $this->data);
     }
@@ -232,7 +211,6 @@ class PendingrequestController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('requests');
-
             $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(

@@ -89,7 +89,7 @@
 						@endif
 												
 					
-				</td>				 
+				</td>
                 </tr>
 				
             @endforeach

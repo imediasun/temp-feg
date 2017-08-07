@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Library\FEG\System\FEGSystemHelper;
 
 class managefreightquoters extends Sximo
 {
@@ -27,11 +28,11 @@ class managefreightquoters extends Sximo
         else {
             $statusqry = '"<b style=\"color:darkblue\">Invoice Paid</b>"';
         }
-        return 'SELECT freight_orders.*,freight_orders.date_submitted,freight_orders.date_paid,GROUP_CONCAT(company_name) AS company_name,
+        return 'SELECT freight_orders.*,IF(freight_orders.loc_to_1 = 0,"",freight_orders.loc_to_1) AS loc_to_1,freight_orders.date_submitted,freight_orders.date_paid,GROUP_CONCAT(company_name) AS company_name,
                 (select c.company_name from freight_companies c where c.id=freight_orders.freight_company_1) as company_name_1,
-                IF(freight_orders.vend_to = 0 AND freight_orders.loc_to_1=0, CONCAT(freight_orders.to_add_name," (",freight_orders.to_add_state,")"),
-                IF(freight_orders.vend_to = 0,CONCAT("",GROUP_CONCAT(L2.location_name_short)), V2.vendor_name)) AS vend_to,
-                IF(freight_orders.vend_from = 0 AND freight_orders.loc_from = 0, CONCAT(freight_orders.from_add_name,"(",freight_orders.from_add_state,")"),IF(freight_orders.vend_from = 0, L.location_name_short, V.vendor_name)) AS vend_from,
+                IF(freight_orders.vend_to = 0 AND freight_orders.loc_to_1=0, CONCAT(freight_orders.to_add_name,"(",freight_orders.to_add_state,")"),
+                IF(freight_orders.vend_to = 0,CONCAT("",GROUP_CONCAT(L2.location_name)), V2.vendor_name)) AS vend_to,
+                IF(freight_orders.vend_from = 0 AND freight_orders.loc_from = 0, CONCAT(freight_orders.from_add_name,"(",freight_orders.from_add_state,")"),IF(freight_orders.vend_from = 0, L.location_name, V.vendor_name)) AS vend_from,
                 ' . $statusqry . ' AS status
                 FROM freight_orders  LEFT JOIN
                 freight_location_to FLT ON freight_orders.id=FLT.freight_order_id LEFT JOIN freight_companies FC ON FLT.freight_company=FC.id
@@ -65,7 +66,7 @@ class managefreightquoters extends Sximo
 
     function getDescription($freight_order_id)
     {
-        $description = \DB::select("SELECT freight_orders.id,GROUP_CONCAT(description) as description FROM freight_pallet_details LEFT JOIN freight_orders ON freight_orders.id=freight_pallet_details.freight_order_id where freight_orders.id=" . $freight_order_id . " GROUP BY freight_orders.id");
+        $description = \DB::select("SELECT freight_orders.id,GROUP_CONCAT(description SEPARATOR ', ') as description FROM freight_pallet_details LEFT JOIN freight_orders ON freight_orders.id=freight_pallet_details.freight_order_id where freight_orders.id=" . $freight_order_id . " GROUP BY freight_orders.id");
         return $description;
     }
 
@@ -109,13 +110,13 @@ class managefreightquoters extends Sximo
 						group_concat(FLT.dimensions) as dimensions, group_concat(FLT.ship_exception) as shipping_exception,group_concat(FLT.id) as freight_pallet_id,
 						V2.vendor_name AS vend_to_name, V2.street1 AS vend_to_street, V2.city AS vend_to_city, V2.state AS vend_to_state, V2.zip AS vend_to_zip, V2.games_contact_name AS vend_to_contact_name,
 						V2.games_contact_email AS vend_to_contact_email, V2.games_contact_phone AS vend_to_contact_phone, F.loc_from AS loc_from_id,
-						CONCAT(F.loc_from, " | ", L.location_name_short) AS loc_from,F.from_add_name,F.from_add_street,F.from_add_city,F.from_add_state,F.loc_to_1,
+						CONCAT(F.loc_from, " | ", L.location_name) AS loc_from,F.from_add_name,F.from_add_street,F.from_add_city,F.from_add_state,F.loc_to_1,
 						F.from_add_zip,F.from_contact_name,F.from_contact_email,F.from_contact_phone,F.from_loading_info,F.to_add_name,
 						F.to_add_street,F.to_add_city,F.to_add_state,F.to_add_zip,F.to_contact_name,F.to_contact_email,
 						F.to_contact_phone,F.to_loading_info,F.external_ship_quote,F.external_ship_trucking_co,
 						F.external_ship_pro, F.to_add_name,F.to_add_state,F.notes,F.num_games_per_destination,F.email_notes,
-						If(F.status = 0, "<b style=\"color:red; font-size:1.2em\">Quote Requested</b>",
-						If(F.status = 1, "<b style=\"color:green; font-size:1.2em;\">Freight Booked</b>", "<b style=\"color:darkblue; font-size:1.2em;\">Invoice Paid</b>")) AS status,
+						If(F.status = 0, "<b style=\"color:red; font-size:12px\">Quote Requested</b>",
+						If(F.status = 1, "<b style=\"color:green; font-size:12px;\">Freight Booked</b>", "<b style=\"color:darkblue; font-size:12px;\">Invoice Paid</b>")) AS status,
 						F.status AS status_id FROM freight_orders F LEFT JOIN freight_pallet_details FLT on F.id=FLT.freight_order_id
 						LEFT JOIN vendor V ON V.id = F.vend_from LEFT JOIN vendor V2 ON V2.id = F.vend_to  LEFT JOIN location L ON L.id = F.loc_from
 						WHERE F.id = ' . $id);
@@ -270,14 +271,13 @@ class managefreightquoters extends Sximo
     public static function populateGamesDropDownInFreightQuote()
     {
         $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id), " | ",T.game_title," | ",G.id, IF(G.notes = "","", CONCAT(" (",G.notes,")")))';
-        $where="";
-        $orderBy = 'L.id,T.game_title';
+        $where="AND IF(G.status_id = 3, 1, L.active) = 1";
+        $orderBy = 'G.status_id DESC,L.id,T.game_title';
         $query = \DB::select('SELECT G.id AS id, IFNULL(' . $concat . ',"") AS text  FROM game G
 							LEFT JOIN game_title T ON T.id = G.game_title_id
 							LEFT JOIN location L ON L.id = G.location_id
                             WHERE G.sold = 0 ' . $where . '  ORDER BY ' . $orderBy);
         $query=json_decode(json_encode($query),true);
-
         return $query;
     }
 
@@ -490,10 +490,8 @@ class managefreightquoters extends Sximo
                         }
 
                         $from = \Session::get('eid');
-                        $to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
-                        $cc = 'freight-notifications@fegllc.com';
-                        $bcc = 'support@fegllc.com';
-                        $subject = '(' . $num_games_per_destination . ')' . ' Game[s] Scheduled for Delivery to ' . $locationName . '!';
+                        $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT INTERNAL EMAIL', $data['request']['loc'][$i]);
+                        $subject = ((int)$num_games_per_destination == 0)?('Scheduled for delivery to ' . $locationName . '!'):('('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!');
                         $message = '<p>
 										' . $email_notes . '
 										<br>
@@ -526,12 +524,12 @@ class managefreightquoters extends Sximo
 													Destination:
 												</td>
 						    					<td style="padding-right:3px; border:thin black solid; text-align:left; font-weight:bold;">
-						    						' . $data['request']['loc'][$i] . $locationName . '
+						    						' . $data['request']['loc'][$i] . ' || ' . $locationName . '
 						    					</td>
 								            </tr>
 			            					<tr style="color:black; border:thin black solid;">
 								                <td style="padding-right:3px; border:thin black solid; text-align:right; width:15%"">
-													Trucking Company:
+													Trucking Line:
 												</td>
 								                <td style="padding-right:3px; border:thin black solid; text-align:left; font-weight:bold;">
 													' . $data['request']['trucking_line'][$i] . '
@@ -542,7 +540,7 @@ class managefreightquoters extends Sximo
 													Pro Number:
 												</td>
 								                <td style="padding-right:3px; border:thin black solid; text-align:left; font-weight:bold;">
-													' . $data['request']['pro_number'][$i] . '	<em>(visit Trucking Company website for Shipment Tracking)</em>
+													' . $data['request']['pro_number'][$i] . '	<em>(visit Trucking Line website for Shipment Tracking)</em>
 						    					</td>
 								            </tr>
 								        </table>
@@ -579,13 +577,17 @@ class managefreightquoters extends Sximo
 								            </tr>
 								        </table>
 									</p>';
-                        $headers = "CC: " . $cc . PHP_EOL;
-                        $headers .= "BCC:" . $bcc . PHP_EOL;
-                        $headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
-                        $headers .= "MIME-Version: 1.0\r\n";
-                        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                        // echo $message;
-                        //mail($to, $subject, $message, $headers);
+
+                        if(!empty($recipients['to'])){
+                            FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                                'subject' => $subject,
+                                'message' => $message,
+                                'preferGoogleOAuthMail' => true,
+                                'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                                'from' => $from,
+                            )));
+                        }
+
                     } else {
 
                     }
@@ -593,23 +595,18 @@ class managefreightquoters extends Sximo
             }
         } else {
             $contact_email = $data['request']['contact_email'];
-            if ($email == 1 && !empty($contact_email)) {
                 $contents_message = '';
                 if (isset($data['request']['description']) && !empty($data['request']['description'])) {
                     for ($i = 0; $i < count($data['request']['description']); $i++) {
-                        $contents_message = $contents_message .
-                            'Pallet ' . $i + 1 . ':
-									<b>' . $data['request']['description'][$i] . '</b>
+                        $contents_message = $contents_message . 'Pallet ' . ($i + 1) . ':
+									' . $data['request']['description'][$i] . '
 									<br>
 									Dimensions:
-									<b>' . $data['request']['dimension'][$i] . '</b>';
+									' . $data['request']['dimension'][$i];
                     }
                 }
                 $from = 'support@fegllc.com';
-                $to = $contact_email;
-                $cc = 'rich.pankey@fegllc.com';
-                $bcc = '';
-                $subject = 'FEG Has Schedule a Freight Shipment to You!';
+                $subject = 'FEG has scheduled a Freight Shipment to you!';
                 $message = '<p style="font-size:1em;">
 							' . $email_notes . '
 							<br>
@@ -620,11 +617,11 @@ class managefreightquoters extends Sximo
 							' . $contents_message . '
 							<br>
 							<br>
-							Trucking Company: <b>' . $external_ship_trucking_co . '</b>
+							Trucking Line: ' . $external_ship_trucking_co . '
 							<br>
 							Pro Number: <b>' . $external_ship_pro . '</b>
 							<br>
-							<em>visit Trucking Company website for Shipment Tracking</em>
+							<em>visit Trucking Line website for Shipment Tracking</em>
 							<br>
 						</p>
 						<p style="font-size:1em; font-weight:bold; color:black;">
@@ -637,14 +634,20 @@ class managefreightquoters extends Sximo
 								immediately</b> for determination as to whether you should accept or refuse the shipment.
 							<br>
 						</p>';
-                $headers = "CC: " . $cc . PHP_EOL;
-                $headers .= "BCC:" . $bcc . PHP_EOL;
-                $headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
-                $headers .= "MIME-Version: 1.0\r\n";
-                $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                // echo $message;
-              mail($to, $subject, $message, $headers);
-            }
+                $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT EXTERNAL EMAIL');
+                if($email == 1 && !empty($contact_email)){
+                    $recipients['to'].= (empty($recipients['to']))? $contact_email:','.$contact_email;
+                }
+                if($recipients['to']!=''){
+                    FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                        'subject' => $subject,
+                        'message' => $message,
+                        'preferGoogleOAuthMail' => true,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'from' => $from,
+                    )));
+                }
+
         }
         return true;
 

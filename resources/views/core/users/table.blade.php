@@ -10,7 +10,7 @@
      <a href="{{ url() }}/core/users?{{ $sortParam }}{{ $orderParam }}{{ $rowsParam }}"
         class="btn btn-xs btn-white tips btn-search" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
     @endif
-    @if(Session::get('gid') ==1)
+    @if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
         <a href="{{ URL::to('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
     @endif
     </div>
@@ -45,7 +45,7 @@
             @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                 <th width="35"> No </th>
             @endif
-            @if($setting['disableactioncheckbox']=='false')
+                @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                 <th width="30"> <input type="checkbox" class="checkall" /></th>
             @endif
             @if($setting['view-method']=='expand') <th>  </th> @endif
@@ -67,7 +67,7 @@
                                 ' data-sortable="'.$colIsSortable.'"'.
                                 ' data-sorted="'.($colIsSorted?1:0).'"'.
                                 ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                ' align="'.$t['align'].'"'.
+                                ' style=text-align:'.$t['align'].
                                 ' width="'.$t['width'].'"';
                         $th .= '>';
                         $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -86,7 +86,7 @@
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
-				@if($setting['disableactioncheckbox']=='false')
+                @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 					<td> </td>
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
@@ -108,11 +108,11 @@
 
               @foreach ($rowData as $row)
            		<?php $id = $row->id; ?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
-					@if($setting['disableactioncheckbox']=='false')
+                        @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 					@endif
 					@if($setting['view-method']=='expand')
@@ -126,12 +126,14 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                            @if($field['field'] == 'avatar')
                                <?php if( file_exists( './uploads/users/'.$row->avatar) && $row->avatar !='') { ?>
-                               <img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="40" class="img-circle" />
+                               <img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="30" height="30" class="img-circle test" />
                                <?php  } else { ?>
-                               <img alt="" src="{{url()}}/silouette.png" width="40" class="img-circle" border="0"/>
+                               <img alt="" src="{{url()}}/silouette.png" width="30" height="30" class="img-circle test" border="0"/>
                                <?php } ?>
                            @elseif($field['field'] =='active')
-                               {!! ($row->active == 1 ? '<lable class="label label-success">Active</lable>' : '<lable class="label label-danger">Inactive</lable>')  !!}
+                                <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif 	data-size="mini" data-animate="true"
+                                       data-on-text="Active" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+                                       id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
                             @elseif($field['field'] =='date')
                                 {{  DateHelpers::formatDate($value) }}
                             @elseif($field['field'] =='last_login')
@@ -160,7 +162,16 @@
                             <a  href="{{ URL::to('core/users/update/'.$row->id.'?return='.$return) }}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
 						@endif
 
-                        <a  href="{{ URL::to('core/users/play/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Impersonate"><i class="fa fa-user"  aria-hidden="true"></i></a>
+                        <a
+                            @if(\Session::get('uid')==$row->id)
+                                disabled
+                            @else  
+                                href="{{ URL::to('core/users/play/'.$row->id)}}"
+                            @endif
+                            class="tips btn btn-xs btn-white"
+                            title="Impersonate">
+                            <i class="fa fa-user"  aria-hidden="true"></i>
+                        </a>
 
                         @if($row->banned=='1')
                             <a  href="{{ URL::to('core/users/unblock/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Unblock User" ><i class="fa fa-unlock" aria-hidden="true"></i></a>
@@ -169,7 +180,7 @@
                         @endif
                         <a href="{{ URL::to('core/users/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
                         </div>
-                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+
                     </td>
                     @endif
                 </tr>
@@ -187,6 +198,11 @@
         </tbody>
 
     </table>
+            @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                @foreach ($rowData as $row)
+                    {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                @endforeach
+            @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">
@@ -208,9 +224,57 @@
 
 	</div>
 </div>
-</div>
-	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
+<script>
+    $(document).ready(function(){
+        $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
+            var userId=$(this).data('id');
+            var message = '';
+            var check = false;
+            if(state)
+            {
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Active this User <br> <b>***WARNING***</b><br> if you active this User then he will be able to login and to do any task.</div>";
+            }
+            else
+            {
+                check = true;
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this User <br> <b>***WARNING***</b><br> if you inactive this User then he will be unable to login and to do any task.</div>";
+            }
 
+            currentElm = $(this);
+            currentElm.bootstrapSwitch('state', check,true);
+            $('.custom_overlay').show();
+            App.notyConfirm({
+                message: message,
+                confirmButtonText: 'Yes',
+                confirm: function (){
+                    $('.custom_overlay').slideUp(500);
+                    $.ajax(
+                        {
+                            type:'POST',
+                            url:'users/trigger',
+                            data:{isActive:state,userId:userId},
+                            success:function(data){
+                                currentElm.bootstrapSwitch('state', !check,true);
+                                if(data.status == "error"){
+                                    //  notyMessageError(data.message);
+                                }
+                            }
+                        }
+                    );
+                },
+                cancel: function () {
+                    $('.custom_overlay').slideUp(500);
+                }
+            });
+
+        });
+        $("[id^='toggle_trigger']").bootstrapSwitch();
+        $('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue'
+        });
+    });
+</script>
 <style>
     .table th.right {
         text-align: right !important;

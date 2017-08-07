@@ -1,8 +1,11 @@
 @if($setting['form-method'] =='native')
     <div class="sbox">
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
-                <small>{{ $pageNote }}</small>
+            <h4>@if($id)
+                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Service Request
+                @else
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Service Request
+                @endif
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
@@ -15,9 +18,6 @@
             'manageservicerequestsFormAjax')) !!}
             <div class="col-md-12">
                 <fieldset>
-                    <legend> Manage Service Requests</legend>
-
-
                     <div class="form-group  ">
                         <label for="Priority" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Priority ', (isset($fields['priority_id']['language'])?
@@ -37,8 +37,11 @@
                         </label>
 
                         <div class="col-md-6">
+                            <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+                                <i class="fa fa-calendar" id="icon"></i>
+                            </span>
                             {!! Form::text('solved_date', $row['solved_date'] == "0000-00-00" ? "" : date("m/d/Y", strtotime($row['solved_date'])),array('class'=>'form-control date',
-                            'placeholder'=>'', )) !!}
+                            'placeholder'=>'', 'style'=>'width:150px !important;')) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -65,9 +68,7 @@
             <div style="clear:both"></div>
 
             <div class="form-group">
-                <label class="col-sm-4 text-right">&nbsp;</label>
-
-                <div class="col-sm-8">
+                <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm "><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">

@@ -20,7 +20,8 @@ class SyncFromOldLiveHelpers
         extract(array_merge(array(
             'cleanFirst' => 0,
             'reverse' => 1,
-            'skipSyncCommon' => 0,
+            'skipSyncCommon' => 1,
+            'location' => null,
             'dateStart' => null,
             'dateEnd' => null,
         ), $params));
@@ -31,7 +32,7 @@ class SyncFromOldLiveHelpers
         $timeStart = microtime(true);
         
         if ($skipSyncCommon != 1) {
-            self::commonSyncAll($params);
+            //self::commonSyncAll($params);
         }        
         $q = "select date_format(max(date_start), '%Y-%m-%d') as maxd, 
             date_format(min(date_start), '%Y-%m-%d') as mind, 
@@ -54,6 +55,9 @@ class SyncFromOldLiveHelpers
         $params['date_end'] = $max;
         $params['count'] = $count;
         $params['reverse'] = $reverse;
+        if (!empty($location)) {
+            $params['location'] = $location;
+        }
         
         SyncHelpers::generateDailySummaryDateRange($params);
         

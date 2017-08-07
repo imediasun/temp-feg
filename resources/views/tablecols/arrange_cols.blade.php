@@ -6,18 +6,14 @@
     <input type="hidden" value="{{ $config_id }}" name="config_id"/>
     <div class="form-group form-group-sm col-md-12">
         <input type="text" name="config_name" id="configname" class="form-control" required
-               placeholder="Enter Configuration Name:" value="{{ $config_name }}"/>
+               placeholder="Enter Column Arrangement Name" value="{{ $config_name }}"/>
     </div>
     <div class="form-group col-md-12">
     <label for="pre-selected-options" class="label-control">Columns</label><br/>
     <select name="cols[]"  id='keep-order' multiple='multiple'>
         @foreach($allColumns as $columns)
-            @if($pageModule == 'throwreport' || $pageModule == 'throwreportinstantwin' || $pageModule == 'throwreportpayout')
-                @if($columns['view'] == 1 )
-                    <option value="{{ $columns['field'] }}"> {{ $columns['label'] }} </option>
-                @endif
-            @else
-                <option value="{{ $columns['field'] }}"> {{ $columns['label'] }} </option>
+            @if($columns['view'] == 1 )
+                <option value="{{ $columns['field'] }}"> {{ $columns['label']}} </option>
             @endif
         @endforeach
     </select>
