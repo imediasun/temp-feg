@@ -217,9 +217,9 @@ $(document).ready(function() {
 		reloadData('#{{ $pageModule }}',url);
 		return false ;
 	});
-
+	@if(Session::get('gid') == 10 || Session::get('gid') == 11 || Session::get('gid') == 12)
 	$('select[name=location_id]').append('<option value="0"> In-Transit </option>');
-
+	@endif
 	<?php if($setting['view-method'] =='expand') :
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
