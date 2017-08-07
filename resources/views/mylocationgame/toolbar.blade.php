@@ -1,6 +1,6 @@
 <div class="simpleBoxContainer gameExportContainer clearfix">
 
-    {!! Form::open(array('url'=>'mylocationgame/export/csv/games',
+    {!! Form::open(array('url'=>'mylocationgame/export/""/games',
         'class'=>'form-horizontal',
         'target'=>'_self',
         'id'=> 'mylocationgameExportFormAjax')) !!}
@@ -30,7 +30,7 @@
         
         <dov class="col-md-2 col-sm-12 m-b-xs m-t-xs clearfix">
             <div class="col-xs-12 clearfix" >
-                <button type="submit" class="btn btn-primary submitButton" id="submit" name="submit">Export to CSV</button>
+                <button type="submit" class="btn btn-primary submitButton" id="submit" name="submit">Export to Excel</button>
             </div>
         </dov>
         
