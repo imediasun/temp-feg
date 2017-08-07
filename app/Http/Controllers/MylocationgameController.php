@@ -859,7 +859,7 @@ class MylocationgameController extends Controller
                 return view('sximo.module.utility.print', $content);
                 break;
             default:
-                return view('sximo.module.utility.excel', $content);
+                return view('sximo.module.utility.excel_mylocationgames', $content);
         }
     }
 
