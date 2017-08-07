@@ -798,9 +798,9 @@ class MylocationgameController extends Controller
         $results = $this->model->getRows($params);
 
         $rows = $results['rows'];
-        foreach ($rows as $row){
+        /*foreach ($rows as $row){
             $row->serial = '="'.$row->serial.'"';
-        }
+        }*/
 
         if (!empty($request['validateDownload'])) {
             $status = [];
@@ -864,7 +864,7 @@ class MylocationgameController extends Controller
                 return view('sximo.module.utility.print', $content);
                 break;
             default:
-                return view('sximo.module.utility.excel', $content);
+                return view('sximo.module.utility.excel_mylocationgames', $content);
         }
     }
 
