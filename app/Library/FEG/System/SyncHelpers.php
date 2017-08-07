@@ -1109,13 +1109,13 @@ class SyncHelpers
     
     public static function getReaderExclude($debit_type_id = null, $location = null, $encapsulateQuotes = true) {
         $excluded = array();
-        $q = "SELECT reader_id FROM reader_exclude WHERE id IS NOT NULL " .
+        $q = "SELECT concat(reader_id, '@', loc_id) as loc_reader_id FROM reader_exclude WHERE id IS NOT NULL " .
                 (!empty($debit_type_id) ?  " AND debit_type_id IN ($debit_type_id)" : "") .
                 (!empty($location) ?  " AND loc_id IN ($location)" : "");
                 
         $items = DB::select($q);
         foreach ($items as $exclude_row) {
-            $readerId = $exclude_row->reader_id;
+            $readerId = $exclude_row->loc_reader_id;
             if ($encapsulateQuotes) {
                 $readerId = "'".$readerId."'";
             }
@@ -1155,6 +1155,7 @@ class SyncHelpers
                         loc_id,
                         game_id,
                         trim(both '\t' from trim(both ' ' from reader_id)) as reader_id,
+                        concat(trim(both '\t' from trim(both ' ' from reader_id), '@', loc_id) as loc_reader_id,
                         play_value,
                         total_notional_value,
                         std_plays,
@@ -1206,7 +1207,7 @@ class SyncHelpers
             $query->whereIn('loc_id', $locations);
         }
         if (!empty($readerExclude)) {
-            $query->whereNotIn('reader_id', $readerExclude);
+            $query->whereNotIn('loc_reader_id', $readerExclude);
         }
          
         $rowcount = 0;
@@ -1223,6 +1224,7 @@ class SyncHelpers
                              $rowcount += $dataSize;
                              $__logger->log("Data received chunk #$chunkCount of size $dataSize. Total items received so far: $rowcount");        
                              $__logger->log("Adding data to local");
+                             unset($data['loc_reader_id']);
                              DB::table($table)->insert($data);
                          }
                          else {
