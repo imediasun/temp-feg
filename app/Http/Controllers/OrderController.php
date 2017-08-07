@@ -558,6 +558,7 @@ class OrderController extends Controller
             $force_remove_items = $request->get('force_remove_items');
             $games = $request->get('game');
             $item_received = $request->get('item_received');
+            $denied_SIDs = $request->get('denied_SIDs');
             $num_items_in_array = count($itemsArray);
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
@@ -738,6 +739,18 @@ class OrderController extends Controller
 //        $message->from($from);
 //
 //    });
+
+            //Deny Denied SID's
+            if($editmode == 'SID' && !empty($denied_SIDs)){
+                //$denied_SIDs = explode('-', $denied_SIDs);
+                //array_pop($denied_SIDs);
+                //array_shift($denied_SIDs)
+                $denied_SIDs = ltrim($denied_SIDs, ',');
+                \DB::update('UPDATE requests
+                         SET status_id = 3
+                       WHERE id IN('.$denied_SIDs.')');
+            }
+
             //Updating PO Track table
             if(isset($orderData['po_number'])){
                 \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
