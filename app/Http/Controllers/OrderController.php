@@ -699,10 +699,8 @@ class OrderController extends Controller
 
                     if($restore_qty > 0){
                         \DB::update('UPDATE requests
-                         SET status_id = 1,
+                         SET status_id = 3,
                              qty = '.$restore_qty.',
-                             process_user_id = ' . \Session::get('uid') . ',
-                             process_date = "' . $now . '",
                              blocked_at = null
                        WHERE id='.$request_id);
                     }else{
