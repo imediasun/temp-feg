@@ -136,6 +136,17 @@ class OrderController extends Controller
     }
 
 
+    public function getRunDailyEmailReport()
+    {
+
+        \App\Library\FEG\System\Sync::transferEarnings();
+        \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
+        \App\Library\FEG\System\Sync::generateDailySummary();
+        \App\Library\FEG\System\Email\Report::daily();
+        \App\Library\FEG\System\Email\Report::missingDataReport();
+        echo "done transfer";
+        exit;
+    }
     public function getIndex()
     {
         /*
