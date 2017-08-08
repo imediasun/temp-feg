@@ -476,6 +476,14 @@
                     hideShowAltLocation();
                 }
         );
+
+        @if($data['prefill_type'] == 'SID')
+            $('body #sidemenu a:not(.expand)').on('click',function (e) {
+                e.preventDefault();
+                alert('No delete order');
+            });
+        @endif
+
         function hideShowAltLocation() {
             if ($("#alt_ship_to").is(':checked'))
                 $("#ship_address").show();
