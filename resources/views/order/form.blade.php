@@ -465,13 +465,7 @@
             }
         });
 
-        $('#ordersubmitFormAjax').on('keyup keypress', function(e) {
-            var keyCode = e.keyCode || e.which;
-            if (keyCode === 13) {
-                e.preventDefault();
-                return false;
-            }
-        });
+
         var isRequestApprovalProcess = <?php echo $isRequestApproveProcess ? 'true' : 'false'; ?>;
         var counter = isRequestApprovalProcess ? $('input[name^=item_num]').length : 0;
         var hidePopup;
@@ -486,17 +480,7 @@
         @if($data['prefill_type'] == 'SID')
             $('body #sidemenu a:not(.expand)').on('click',function (e) {
                 e.preventDefault();
-                reloadOrder(1);
-                if($(this).attr('id') == 'logo')
-                {
-                    location.href = $(this).attr('href');
-                }
-            });
-            $('.navbar-top-links li a:not([href="javascript:void(0)"])').on('click',function(e)
-            {
-                e.preventDefault();
-                reloadOrder(1);
-                location.href = $(this).attr('href');
+                alert('No delete order');
             });
         @endif
 
@@ -1456,9 +1440,7 @@
         $("#closeOrderForm").click(function(e){
             reloadOrder();
         });
-        function reloadOrder(redirectToClickedItem) {
-            redirectToClickedItem = redirectToClickedItem || 0;
-            console.log('redirectToClickedItem = ' + redirectToClickedItem);
+        function reloadOrder() {
             var requestIds = $('#where_in_expression').val();
             if(requestIds)
             {
@@ -1480,11 +1462,7 @@
                         }
                         else {
                             //  {{ \Session::put('filter_before_redirect','redirect') }}
-                           if(redirectToClickedItem == 0)
-                            {
-                                location.href = redirectLink;
-                            }
-
+                            location.href = redirectLink;
                         }
                     })
                     .error(function (data) {
@@ -1660,7 +1638,6 @@
             window.location.href = url+'/'+sid_uri;
         }
         $("#denied_SIDs").val($("#denied_SIDs").val()+','+id);
-        getNotesOfSIDProducts();
         console.log(sid_uri);
     }
 
@@ -1723,36 +1700,5 @@
         $('#'+id).parents('.clonedInput').hide();
         decreaseCounter();
     }
-
-    function getNotesOfSIDProducts(){
-        var currURI= window.location.href;
-        var sid_uri= currURI.substring(currURI.lastIndexOf('/') + 1);
-        var sids = sid_uri.split('-');
-        sids.shift(); sids.pop();
-
-        $.ajax({
-            method: "Get",
-            url:"{{ url() }}/order/sid-notes",
-            data:{sids:sids}
-        })
-        .success(function (data) {
-            var notes = '';
-            for(x in data){
-                notes += data[x].notes+"\n";
-            }
-
-            $('#notes').val(notes);
-        })
-        .error(function (data) {
-            console.log(data);
-        })
-    }
-
-
-    $(document).ready(function () {
-        if(mode == 'SID'){
-            getNotesOfSIDProducts();
-        }
-    });
 
 </script>

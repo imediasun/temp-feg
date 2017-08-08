@@ -66,7 +66,7 @@ class readersmissingassetidreport extends Sximo  {
         
 		$offset = ($page-1) * $limit ;
         $total = ReportHelpers::getReadersMissingAssetIdCount($date_start, $date_end, $location_id, $debit_type_id, $reader_id);
-        if ($offset >= $total) {
+        if ($offset >= $total && $limit != 0) {
             $page = ceil($total/$limit);
             $offset = ($page-1) * $limit ;
         }           

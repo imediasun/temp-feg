@@ -189,7 +189,7 @@ class Sximo extends Model {
         }
         
         $offset = ($page - 1) * $limit;
-        if ($offset >= $total && $total != 0) {
+        if ($offset >= $total && $total != 0 && $limit != 0) {
             $page = ceil($total/$limit);
             $offset = ($page-1) * $limit ;
         }

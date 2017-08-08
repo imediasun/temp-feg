@@ -61,7 +61,7 @@ class potentialoverreportingerrors extends Sximo  {
         
 		$offset = ($page-1) * $limit ;
         $total = ReportHelpers::getPotentialOverReportingErrorCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test. $game_id);
-        if ($offset >= $total) {
+        if ($offset >= $total && $limit != 0) {
             $page = ceil($total/$limit);
             $offset = ($page-1) * $limit ;
         }           
