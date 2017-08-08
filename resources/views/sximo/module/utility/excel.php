@@ -16,6 +16,7 @@
 		$content .= '<tr>';
 		foreach($fields as $f )
 		{
+			$f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':2';
 			if($f['download'] =='1'):
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
