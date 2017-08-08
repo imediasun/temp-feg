@@ -480,7 +480,7 @@
         @if($data['prefill_type'] == 'SID')
             $('body #sidemenu a:not(.expand)').on('click',function (e) {
                 e.preventDefault();
-                alert('No delete order');
+                //alert('No delete order');
             });
         @endif
 
