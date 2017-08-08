@@ -25,9 +25,9 @@
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
                 $a = htmlentities(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn));
                 $b = str_replace( ',', '', $a );
-                $b = str_replace('$','',$a);
-                if( is_numeric( $b ) ) {
-                    $a = $b;
+                $c = str_replace('$','',$b);
+                if( is_numeric( $c ) ) {
+                    $a = $c;
                 }
                 $content .= '<td> '. $a . '</td>';
 			endif;
