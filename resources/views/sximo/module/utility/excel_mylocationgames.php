@@ -17,7 +17,10 @@
 		foreach($fields as $f )
 		{
 			if($f['download'] =='1'):
-                $f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':2';
+				if(isset($f['attribute']['formater']))
+				{
+                    $f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':3:false:';
+				}
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
 				$content .= '<td> '. str_replace('$','',htmlentities(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn))) . '</td>';

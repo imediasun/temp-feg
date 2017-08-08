@@ -22,7 +22,10 @@ foreach ($rows as $row)
 	foreach($fields as $f )
 	{
 		if($f['download'] =='1'):
-            $f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':2';
+            if(isset($f['attribute']['formater']))
+            {
+                $f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':3:false:';
+            }
 			unset($f['attribute']['hyperlink']);
 			$conn = (isset($f['conn']) ? $f['conn'] : array() );
             $row->$f['field']=html_entity_decode(htmlentities($row->$f['field'], ENT_QUOTES, 'UTF-8'), ENT_QUOTES , 'ISO-8859-15');
