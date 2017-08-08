@@ -236,7 +236,10 @@ $(document).ready(function() {
     }
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
-    @if(Session::get('gid') == 10 || Session::get('gid') == 11 || Session::get('gid') == 12)
+	<?php
+		$canSeeInTransit = isset($this->pass["In Transit Games to Specific Users"]);
+	?>
+    @if($canSeeInTransit)
         $('select[name=location_id]').append('<option value="0"> In-Transit </option>');
     @endif
 });
