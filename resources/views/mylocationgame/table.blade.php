@@ -237,7 +237,7 @@ $(document).ready(function() {
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 	<?php
-		$canSeeInTransit = isset($this->pass["In Transit Games to Specific Users"]);
+		$canSeeInTransit = isset($pass["In Transit Games to Specific Users"]);
 	?>
     @if($canSeeInTransit)
         $('select[name=location_id]').append('<option value="0"> In-Transit </option>');
