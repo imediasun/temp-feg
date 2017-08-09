@@ -130,7 +130,7 @@ class merchthrowsdetailed extends Sximo  {
         }
         
 		$offset = ($page-1) * $limit ;       
-        if ($offset >= $total) {
+        if ($offset >= $total && $limit != 0) {
             $page = ceil($total/$limit);
             $offset = ($page-1) * $limit ;
         }             

@@ -52,7 +52,7 @@ class reports extends Sximo  {
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
 		$offset = ($page-1) * $limit ;
         $total = ReportHelpers::getLocationNotReportingCount($date_start, $date_end, $location_id, $debit_type_id);
-        if ($offset >= $total) {
+        if ($offset >= $total && $limit != 0) {
             $page = ceil($total/$limit);
             $offset = ($page-1) * $limit ;
         }           

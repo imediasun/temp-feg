@@ -217,9 +217,7 @@ $(document).ready(function() {
 		reloadData('#{{ $pageModule }}',url);
 		return false ;
 	});
-	@if(Session::get('gid') == 10 || Session::get('gid') == 11 || Session::get('gid') == 12)
-	$('select[name=location_id]').append('<option value="0"> In-Transit </option>');
-	@endif
+
 	<?php if($setting['view-method'] =='expand') :
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
@@ -238,8 +236,12 @@ $(document).ready(function() {
     }
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
-
-	$('select[name=location_id]').append('<option value="0"> In-Transit </option>');
+	<?php
+		$canSeeInTransit = isset($pass["In Transit Games to Specific Users"]);
+	?>
+    @if($canSeeInTransit)
+        $('select[name=location_id]').append('<option value="0"> In-Transit </option>');
+    @endif
 });
 </script>
 <style>

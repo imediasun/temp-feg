@@ -64,8 +64,8 @@ class MylocationgameController extends Controller
 
         // Get assigned locations list as sql query (part)
         $locationFilter = \SiteHelpers::getQueryStringForLocation('game','location_id',[],'',$canSeeAllLocations);
-        $group = \Session::get('gid');
-        if($group == 10 || $group == 11 || $group == 12)
+        $canSeeInTransit = isset($this->pass["In Transit Games to Specific Users"]);
+        if($canSeeInTransit)
         {
             //Injecting In-transit location(0) to location filter.
             $locationFilter = substr_replace($locationFilter, "'0',", strpos($locationFilter ,'game.location_id IN (')+21, 0);
@@ -800,9 +800,9 @@ class MylocationgameController extends Controller
         $results = $this->model->getRows($params);
 
         $rows = $results['rows'];
-        foreach ($rows as $row){
+        /*foreach ($rows as $row){
             $row->serial = '="'.$row->serial.'"';
-        }
+        }*/
 
         if (!empty($request['validateDownload'])) {
             $status = [];
@@ -866,7 +866,7 @@ class MylocationgameController extends Controller
                 return view('sximo.module.utility.print', $content);
                 break;
             default:
-                return view('sximo.module.utility.excel', $content);
+                return view('sximo.module.utility.excel_mylocationgames', $content);
         }
     }
 

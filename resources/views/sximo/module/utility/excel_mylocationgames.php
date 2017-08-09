@@ -19,17 +19,17 @@
 			if($f['download'] =='1'):
 				if(isset($f['attribute']['formater']))
 				{
-					$f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':3:false:';
+                    $f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':3:false:';
 				}
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
                 $a = htmlentities(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn));
                 $b = str_replace( ',', '', $a );
                 $c = str_replace('$','',$b);
-                if( is_numeric( $c) ) {
+                if( is_numeric( $c ) ) {
                     $a = $c;
                 }
-				$content .= '<td> '. $a . '</td>';
+                $content .= '<td> '. $a . '</td>';
 			endif;
 		}
 		$content .= '</tr>';
@@ -44,6 +44,30 @@
 
 	// Pass to writer and output as needed
 	$objWriter = PHPExcel_IOFactory::createWriter($content, 'Excel2007');
+	$objPHPExcel = $objWriter->getPHPExcel();
+
+	//Finding Serial column
+	$serialColumn = '';
+	$row = $objPHPExcel->getActiveSheet()->getRowIterator(2)->current();
+	$cellIterator = $row->getCellIterator();
+	$cellIterator->setIterateOnlyExistingCells(false);
+	foreach ($cellIterator as $cell) {
+		if($cell->getValue() == 'Serial'){
+			$serialColumn = $cell->getColumn();
+			break;
+		}
+	}
+
+	/*$objPHPExcel->getActiveSheet(0)->getStyle('P1:P97')
+	->getNumberFormat()
+	->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);*/
+
+	//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setWidth(50);
+	$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
+	$objPHPExcel->getDefaultStyle()
+	->getAlignment()
+	->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
 	// Delete temporary file
 	unlink($path);
 

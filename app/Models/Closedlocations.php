@@ -53,7 +53,7 @@ class closedlocations extends Sximo  {
         
         $total = ReportHelpers::getClosedLocationsCount($date_start, $date_end, $location_id, $debit_type_id);
         $offset = ($page-1) * $limit ;
-        if ($offset >= $total) {
+        if ($offset >= $total && $limit != 0) {
             $page = ceil($total/$limit);
             $offset = ($page-1) * $limit ;
         }   

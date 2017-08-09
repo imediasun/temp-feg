@@ -93,7 +93,7 @@ class nonfegreaders extends Sximo  {
             $total = $totalRows[0]->totalCount;
         }
         $offset = ($page-1) * $limit ;
-        if ($offset >= $total) {
+        if ($offset >= $total && $limit != 0) {
             $page = ceil($total/$limit);
             $offset = ($page-1) * $limit ;
         }           

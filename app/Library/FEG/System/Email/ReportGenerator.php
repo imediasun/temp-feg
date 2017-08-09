@@ -119,10 +119,11 @@ class ReportGenerator
                     @$readersMissingAssetIds .
                     "<br><b><u>Games Not Played:</u></b><br>" .
                     @$gamesNotPlayed .
-                    "<br><b><u style='color:red;'>Missing or Incorrect Reader IDs:</u></b><br>" .
-                    @$missingReadersReport.
                     "<br><b><u style='color:red;'>Unknown Asset IDs:</u></b><br>" .
-                    @$unknownAssetIdReport;
+                    @$unknownAssetIdReport.
+                    "<br><b><u style='color:red;'>Reader ID Issues:</u></b><br>" .
+                    @$missingReadersReport;
+
 
             $configName = 'Daily Game Earnings DB Transfer Report';
             $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);

@@ -162,16 +162,20 @@
                             <a  href="{{ URL::to('core/users/update/'.$row->id.'?return='.$return) }}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
 						@endif
 
-                        <a
-                            @if(\Session::get('uid')==$row->id)
-                                disabled
-                            @else  
-                                href="{{ URL::to('core/users/play/'.$row->id)}}"
-                            @endif
-                            class="tips btn btn-xs btn-white"
-                            title="Impersonate">
-                            <i class="fa fa-user"  aria-hidden="true"></i>
-                        </a>
+                        @if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN && $row->group_id == \App\Models\Core\Groups::SUPPER_ADMIN)
+                        <!-- Current User is not admin but current row have group super admin -->
+                        @else
+                            <a
+                                @if(\Session::get('uid')==$row->id)
+                                    disabled
+                                @else
+                                    href="{{ URL::to('core/users/play/'.$row->id)}}"
+                                @endif
+                                class="tips btn btn-xs btn-white"
+                                title="Impersonate">
+                                <i class="fa fa-user"  aria-hidden="true"></i>
+                            </a>
+                        @endif
 
                         @if($row->banned=='1')
                             <a  href="{{ URL::to('core/users/unblock/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Unblock User" ><i class="fa fa-unlock" aria-hidden="true"></i></a>
