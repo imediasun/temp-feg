@@ -481,6 +481,10 @@
             $('body #sidemenu a:not(.expand)').on('click',function (e) {
                 e.preventDefault();
                 reloadOrder(1);
+                if($(this).attr('id') == 'logo')
+                {
+                    location.href = $(this).attr('href');
+                }
             });
             $('.navbar-top-links li a:not([href="javascript:void(0)"])').on('click',function(e)
             {
