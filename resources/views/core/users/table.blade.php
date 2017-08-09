@@ -158,27 +158,33 @@
 					 	@if($access['is_detail'] ==1)
                             <a href="{{ URL::to('core/users/show/'.$row->id.'?return='.$return)}}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
 						@endif
-						@if($access['is_edit'] ==1)
-                            <a  href="{{ URL::to('core/users/update/'.$row->id.'?return='.$return) }}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
-						@endif
 
-                        <a
-                            @if(\Session::get('uid')==$row->id)
-                                disabled
-                            @else  
-                                href="{{ URL::to('core/users/play/'.$row->id)}}"
-                            @endif
-                            class="tips btn btn-xs btn-white"
-                            title="Impersonate">
-                            <i class="fa fa-user"  aria-hidden="true"></i>
-                        </a>
-
-                        @if($row->banned=='1')
-                            <a  href="{{ URL::to('core/users/unblock/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Unblock User" ><i class="fa fa-unlock" aria-hidden="true"></i></a>
+                        @if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN && $row->group_id == \App\Models\Core\Groups::SUPPER_ADMIN)
+                        <!-- Current User is not admin but current row have group super admin -->
                         @else
-                            <a  href="{{ URL::to('core/users/block/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Block User"><i class="fa fa-ban" aria-hidden="true"></i></a>
+                            @if($access['is_edit'] ==1)
+                            <a  href="{{ URL::to('core/users/update/'.$row->id.'?return='.$return) }}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
+                            @endif
+
+                            <a
+                                @if(\Session::get('uid')==$row->id)
+                                    disabled
+                                @else
+                                    href="{{ URL::to('core/users/play/'.$row->id)}}"
+                                @endif
+                                class="tips btn btn-xs btn-white"
+                                title="Impersonate">
+                                <i class="fa fa-user"  aria-hidden="true"></i>
+                            </a>
+                            @if($row->banned=='1')
+                                <a  href="{{ URL::to('core/users/unblock/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Unblock User" ><i class="fa fa-unlock" aria-hidden="true"></i></a>
+                            @else
+                                <a  href="{{ URL::to('core/users/block/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Block User"><i class="fa fa-ban" aria-hidden="true"></i></a>
+                            @endif
+                            <a href="{{ URL::to('core/users/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
                         @endif
-                        <a href="{{ URL::to('core/users/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
+
+
                         </div>
 
                     </td>
