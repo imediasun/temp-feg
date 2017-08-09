@@ -55,7 +55,11 @@
                             <label for="Group / Level" class=" control-label col-md-4 text-left"> Group / Level: <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
-                                <select name='group_id' rows='5' id='group_id' code='{$group_id}' class='select2 ' required></select>
+                                @if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN)
+                                    {!! Form::select('group_id',DB::table('tb_groups')->where('group_id','!=',10)->lists('name','group_id'), $row['group_id'],array('class'=>'select2','required'=>'required')) !!}
+                                @else
+                                    {!! Form::select('group_id',DB::table('tb_groups')->lists('name','group_id'), $row['group_id'],array('class'=>'select2','required'=>'required')) !!}
+                                @endif
                             </div>
 
                             <div class="col-md-2">
@@ -484,9 +488,7 @@
                     $(this).prev().val('0');
                 }
             });
-
-            $("#group_id").jCombo("{{ URL::to('core/users/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $row["group_id"] }}'});
+            renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
             $("#multiple_loc").jCombo("{{ URL::to('core/users/comboselect?filter=location:id:location_name') }}",
                     {selected_value: '{{ $user_locations }}'});
         });
