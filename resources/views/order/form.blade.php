@@ -31,6 +31,8 @@
             <input type='hidden' name='force_remove_items' id="force_remove_items">
             <input type="hidden" id="is_freehand" name="is_freehand" value="{{ $isFreeHand  }}">
             <input type="hidden" id="can_select_product_list" value="1">
+            <input type="hidden" id="denied_SIDs" name="denied_SIDs">
+
             <div class="row">
             <div class="col-md-6">
                 <div class="box-white">
@@ -339,7 +341,7 @@
                                          required></td>
                         <td><br/> <input type='number' name='qty[]' placeholder='0' autocomplete="off"
 
-                                         class='calculate form-control qty' min="1" step="1" id="qty" placeholder="00"
+                                         class='calculate form-control qty' receive="0" min="1" step="1" id="qty" orderqty="0" placeholder="00"
                                          required></td>
                         <td class="game" style="display:none">
                             <br/> <input type='hidden' name='game[]' id='game_0'>
@@ -474,6 +476,24 @@
                     hideShowAltLocation();
                 }
         );
+
+        @if($data['prefill_type'] == 'SID')
+            $('body #sidemenu a:not(.expand)').on('click',function (e) {
+                e.preventDefault();
+                reloadOrder(1);
+                if($(this).attr('id') == 'logo')
+                {
+                    location.href = $(this).attr('href');
+                }
+            });
+            $('.navbar-top-links li a:not([href="javascript:void(0)"])').on('click',function(e)
+            {
+                e.preventDefault();
+                reloadOrder(1);
+                location.href = $(this).attr('href');
+            });
+        @endif
+
         function hideShowAltLocation() {
             if ($("#alt_ship_to").is(':checked'))
                 $("#ship_address").show();
@@ -540,7 +560,6 @@
                                 $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
                                 if (counter <= 1) {
                                     beforeLastRemove(id);
-                                    decreaseCounter();
                                 }else{
                                     $("#" + id).parents('.clonedInput').remove();
                                     decreaseCounter();
@@ -564,17 +583,16 @@
             });
         }
 
+        //Remove product item
         function removeRow(id) {
-
             if(mode == 'edit'){
                 forceRemoveOrderContent(id);
             }else{
                 if (isRequestApprovalProcess) {
                     removeIdFromSIDList(id);
                 }
-                if (counter <= 1) {
+                if (counter <= 1 || $('.clone').length == 1) {
                     beforeLastRemove(id);
-                    decreaseCounter();
                 }else{
                     $("#" + id).parents('.clonedInput').remove();
                     decreaseCounter();
@@ -708,7 +726,7 @@
             var form = $('#ordersubmitFormAjax');
             form.parsley();
             form.submit(function () {
-                if (counter <= 1 && $('.hiddenClone').length) {
+                if (counter <= 1 && $('.hiddenClone').length ) {
                     notyMessageError('For order there must be 1 minimum item available');
                     return false;
                 }
@@ -778,8 +796,9 @@
                     //$('input[name^=qty]').eq(i).val(order_qty_array[i]-order_qty_received_array[i]);
                     //while editing order show original quantities as per gabe on 8/01/2017
                     $('input[name^=qty]').eq(i).val(order_qty_array[i]);
-                    //$('input[name^=qty]').eq(i).attr('min', order_qty_received_array[i]);
-                    if(mode=='edit'){ ///Don't set item received when making clone order.
+                    $('input[name^=qty]').eq(i).attr('orderqty', order_qty_array[i]);
+                    if(mode=='edit'){ ///Don't set item received when making clone/create order.
+                        $('input[name^=qty]').eq(i).attr('receive', order_qty_received_array[i]);
                         $('input[name^=item_received]').eq(i).val(order_qty_received_array[i]);
                     }
                     $('input[name^=order_content_id]').eq(i).val(order_content_id_array[i]);
@@ -1176,6 +1195,7 @@
             }
             $("[name^=qty]").keypress(isNumeric);
             reInitParcley();
+
         });
         function isNumeric(ev) {
             var keyCode = window.event ? ev.keyCode : ev.which;
@@ -1430,7 +1450,9 @@
         $("#closeOrderForm").click(function(e){
             reloadOrder();
         });
-        function reloadOrder() {
+        function reloadOrder(redirectToClickedItem) {
+            redirectToClickedItem = redirectToClickedItem || 0;
+            console.log('redirectToClickedItem = ' + redirectToClickedItem);
             var requestIds = $('#where_in_expression').val();
             if(requestIds)
             {
@@ -1452,7 +1474,11 @@
                         }
                         else {
                             //  {{ \Session::put('filter_before_redirect','redirect') }}
-                            location.href = redirectLink;
+                           if(redirectToClickedItem == 0)
+                            {
+                                location.href = redirectLink;
+                            }
+
                         }
                     })
                     .error(function (data) {
@@ -1627,7 +1653,7 @@
         }else{
             window.location.href = url+'/'+sid_uri;
         }
-        //$("#SID_string").val(currURI);
+        $("#denied_SIDs").val($("#denied_SIDs").val()+','+id);
         console.log(sid_uri);
     }
 
@@ -1662,7 +1688,7 @@
     var preserveValue;
     $('.qty').focus(function(){ preserveValue = $(this).val(); }).change(function () {
 
-        if(parseInt($(this).attr('min')) >= parseInt($(this).val()) && mode == "edit"){
+        if(parseInt($(this).attr('receive')) >= parseInt($(this).val()) && mode == "edit" && $(this).attr('receive')!=0){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
             $('.custom_overlay').show();
@@ -1672,12 +1698,12 @@
                 confirm: function () {
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
-                    element.val(preserveValue);
+                    element.val(element.attr('orderqty'));
                 },
                 cancel:function(){
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
-                    element.val(preserveValue);
+                    element.val(element.attr('orderqty'));
                 }
             });
         }
@@ -1688,10 +1714,7 @@
         $('#'+id).parents('.clonedInput').find('input').each(function(){$(this).removeAttr('value');});
         $('#'+id).parents('.clonedInput').addClass('hiddenClone');
         $('#'+id).parents('.clonedInput').hide();
-        decreaseCounter('');
+        decreaseCounter();
     }
 
-    $('#add_new_item').click(function () {
-
-    });
 </script>
