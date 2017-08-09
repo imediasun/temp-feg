@@ -480,7 +480,13 @@
         @if($data['prefill_type'] == 'SID')
             $('body #sidemenu a:not(.expand)').on('click',function (e) {
                 e.preventDefault();
-                //alert('No delete order');
+                reloadOrder(1);
+            });
+            $('.navbar-top-links li a:not([href="javascript:void(0)"])').on('click',function(e)
+            {
+                e.preventDefault();
+                reloadOrder(1);
+                location.href = $(this).attr('href');
             });
         @endif
 
@@ -1440,7 +1446,9 @@
         $("#closeOrderForm").click(function(e){
             reloadOrder();
         });
-        function reloadOrder() {
+        function reloadOrder(redirectToClickedItem) {
+            redirectToClickedItem = redirectToClickedItem || 0;
+            console.log('redirectToClickedItem = ' + redirectToClickedItem);
             var requestIds = $('#where_in_expression').val();
             if(requestIds)
             {
@@ -1462,7 +1470,11 @@
                         }
                         else {
                             //  {{ \Session::put('filter_before_redirect','redirect') }}
-                            location.href = redirectLink;
+                           if(redirectToClickedItem == 0)
+                            {
+                                location.href = redirectLink;
+                            }
+
                         }
                     })
                     .error(function (data) {
