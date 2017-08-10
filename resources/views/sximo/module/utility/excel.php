@@ -40,7 +40,7 @@
 
 	// Read the contents of the file into PHPExcel Reader class
 	$reader = new PHPExcel_Reader_HTML;
-	$content = strip_tags($reader->load($path));
+	$content = $reader->load($path);
 
 	// Pass to writer and output as needed
 	$objWriter = PHPExcel_IOFactory::createWriter($content, 'Excel2007');
