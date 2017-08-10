@@ -18,7 +18,7 @@
 			if($f['download'] =='1'):
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );					
-				$content .= '<td> '. AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn) . '</td>';
+				$content .= '<td> '. strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn)) . '</td>';
 			endif;	
 		}
 		$content .= '</tr>';

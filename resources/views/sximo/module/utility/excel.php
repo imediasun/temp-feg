@@ -17,9 +17,19 @@
 		foreach($fields as $f )
 		{
 			if($f['download'] =='1'):
+				if(isset($f['attribute']['formater']))
+				{
+					$f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':3:false:';
+				}
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
-				$content .= '<td> '. htmlentities(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn)) . '</td>';
+                $a = htmlentities(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn));
+                $b = str_replace( ',', '', $a );
+                $c = str_replace('$','',$b);
+                if( is_numeric( $c) ) {
+                    $a = $c;
+                }
+				$content .= '<td> '. strip_tags($a) . '</td>';
 			endif;
 		}
 		$content .= '</tr>';
