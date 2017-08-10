@@ -18,9 +18,13 @@
  	<div class="page-content-wrapper">   
 	   <div class="toolbar-line">
 	   		<a href="{{ URL::to('core/users?return='.$return) }}" class="tips btn btn-xs btn-default" title="{{ Lang::get('core.btn_back') }}"><i class="fa fa-arrow-circle-left"></i>&nbsp;{{ Lang::get('core.btn_back') }}</a>
-			@if($access['is_add'] ==1)
-	   		<a href="{{ URL::to('core/users/update/'.$id.'?return='.$return) }}" class="tips btn btn-xs btn-primary" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit"></i>&nbsp;{{ Lang::get('core.btn_edit') }}</a>
-			@endif  		   	  
+			@if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN && $row->group_id == \App\Models\Core\Groups::SUPPER_ADMIN)
+				<!-- Current User is not admin but current row have group super admin -->
+		    @else
+			   @if($access['is_add'] ==1)
+				<a href="{{ URL::to('core/users/update/'.$id.'?return='.$return) }}" class="tips btn btn-xs btn-primary" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit"></i>&nbsp;{{ Lang::get('core.btn_edit') }}</a>
+				@endif
+			@endif
 		</div>
 <div class="sbox animated fadeInRight">
 	<div class="sbox-title"> <h4> <i class="fa fa-eye"></i> <?php echo $pageTitle ;?></h4></div>

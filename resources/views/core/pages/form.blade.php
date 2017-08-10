@@ -29,7 +29,7 @@
 				<li>{{ $error }}</li>
 			@endforeach
 		</ul>
-		 {!! Form::open(array('url'=>'core/pages/save/'.$row['pageID'], 'class'=>'form-vertical row ','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
+		 {!! Form::open(array('url'=>'core/pages/save/'.$row['pageID'], 'class'=>'form-vertical row ','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id' => 'pageCMS')) !!}
 
 			<div class="col-sm-8 " style="padding-right: 0px;">
 				<div class="sbox containerBox">
@@ -117,7 +117,7 @@
 				  <div class="form-group  " >
 				  <label for="ipt"> Who can view this page ? </label>
 					@foreach($groups as $group)
-					<label class="checkbox">
+					<label class="checkbox" id="group_id{{$group['id']}}">
 					  <input  type='checkbox' name='group_id[{{ $group['id'] }}]'    value="{{ $group['id'] }}"
 					  @if($group['access'] ==1 or $group['id'] ==1)
 					  	checked
@@ -299,6 +299,7 @@
 
 
     <script>
+		superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
         $(document).ready(function(){
             $("#iGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: "{{ is_object($row)?$row->direct_edit_groups:'' }}"});
@@ -306,6 +307,19 @@
                     {selected_value: "{{ is_object($row)?$row->direct_edit_users:'' }}"});
             $("#eUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
                     {selected_value: "{{ is_object($row)?$row->direct_edit_users_exclude:'' }}"});
+            @if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN)
+				$('#group_id'+superAdmin).css('display','none');
+				$( document ).ajaxStop(function() {
+					console.log( "Triggered ajaxStop handler." );
+					/*$('#iGroups option[value="'+superAdmin+'"]').attr('disabled','disabled');*/
+					$('#iGroups option[value="'+superAdmin+'"]').remove();
+					$('#iGroups').trigger('change');
+            	});
+			@endif
+			/*$('form#pageCMS').submit(function () {
+                $('#iGroups option[value="'+superAdmin+'"]').removeAttr('disabled');
+                $('#iGroups').trigger('change');
+            })*/
         });
         var row = <?php echo json_encode($row) ; ?>;
     </script>
