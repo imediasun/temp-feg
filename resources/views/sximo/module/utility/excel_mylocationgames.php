@@ -23,14 +23,13 @@
 				}
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
-                $row->$f['field']=html_entity_decode(htmlentities($row->$f['field'], ENT_QUOTES, 'UTF-8'), ENT_QUOTES , 'ISO-8859-15');
-                $a = (AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn));
+                $a = htmlentities(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn));
                 $b = str_replace( ',', '', $a );
                 $c = str_replace('$','',$b);
                 if( is_numeric( $c ) ) {
                     $a = $c;
                 }
-                $content .= '<td> '. strip_tags(html_entity_decode($a)) . '</td>';
+                $content .= '<td> '. $a . '</td>';
 			endif;
 		}
 		$content .= '</tr>';
