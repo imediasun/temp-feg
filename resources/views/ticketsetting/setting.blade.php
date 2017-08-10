@@ -118,8 +118,6 @@
     <script>
         $(document).ready(function(){
             superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
-            alert(superAdmin);
-            alert({{Session::get('gid')}});
             $("#role1").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: '{{ $ticket_setting->role1 }}'});
             $("#role2").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
