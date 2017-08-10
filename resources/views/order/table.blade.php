@@ -187,7 +187,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                         $canPostToNetSuit = Order::canPostToNetSuit($row->id);
                         $isApified = Order::isApified($id, $row);
                         ?>
-                        @if((!$canPostToNetSuit && !$isApified) || $row->status_id !='Close Order')
+                        @if((!$canPostToNetSuit && !$isApified) || ($row->status_id !='Close Order'&& !$isApified))
                             <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
                                data-id="{{$eid}}"
                                data-action="receipt"
