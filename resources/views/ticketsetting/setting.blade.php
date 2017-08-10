@@ -144,7 +144,8 @@
         @if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN)
                     $( document ).ajaxStop(function() {
             console.log( "Triggered ajaxStop handler." );
-            $('#role1 option[value="'+superAdmin+'"],#role2 option[value="'+superAdmin+'"],#role3 option[value="'+superAdmin+'"],#role4 option[value="'+superAdmin+'"],#role5 option[value="'+superAdmin+'"]').attr('disabled','disabled');
+            $('#role1 option[value="'+superAdmin+'"],#role2 option[value="'+superAdmin+'"],#role3 option[value="'+superAdmin+'"],#role4 option[value="'+superAdmin+'"],#role5 option[value="'+superAdmin+'"]').remove();
+            /*$('#role1 option[value="'+superAdmin+'"],#role2 option[value="'+superAdmin+'"],#role3 option[value="'+superAdmin+'"],#role4 option[value="'+superAdmin+'"],#role5 option[value="'+superAdmin+'"]').attr('disabled','disabled');*/
             $('#role1,#role2,#role3,#role4,#role5').trigger('change');
         });
                 @endif
@@ -152,8 +153,8 @@
         form.parsley();
         form.submit(function () {
             if (form.parsley('isValid') == true) {
-                $('#role1 option[value="'+superAdmin+'"],#role2 option[value="'+superAdmin+'"],#role3 option[value="'+superAdmin+'"],#role4 option[value="'+superAdmin+'"],#role5 option[value="'+superAdmin+'"]').removeAttr('disabled');
-                $('#role1,#role2,#role3,#role4,#role5').trigger('change');
+                /*$('#role1 option[value="'+superAdmin+'"],#role2 option[value="'+superAdmin+'"],#role3 option[value="'+superAdmin+'"],#role4 option[value="'+superAdmin+'"],#role5 option[value="'+superAdmin+'"]').removeAttr('disabled');
+                $('#role1,#role2,#role3,#role4,#role5').trigger('change');*/
                 var options = {
                     dataType: 'json',
                     beforeSubmit: showRequest,

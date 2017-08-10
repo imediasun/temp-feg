@@ -311,14 +311,15 @@
 				$('#group_id'+superAdmin).css('display','none');
 				$( document ).ajaxStop(function() {
 					console.log( "Triggered ajaxStop handler." );
-					$('#iGroups option[value="'+superAdmin+'"]').attr('disabled','disabled');
+					/*$('#iGroups option[value="'+superAdmin+'"]').attr('disabled','disabled');*/
+					$('#iGroups option[value="'+superAdmin+'"]').remove();
 					$('#iGroups').trigger('change');
             	});
 			@endif
-			$('form#pageCMS').submit(function () {
+			/*$('form#pageCMS').submit(function () {
                 $('#iGroups option[value="'+superAdmin+'"]').removeAttr('disabled');
                 $('#iGroups').trigger('change');
-            })
+            })*/
         });
         var row = <?php echo json_encode($row) ; ?>;
     </script>
