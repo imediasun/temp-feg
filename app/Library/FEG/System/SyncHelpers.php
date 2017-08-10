@@ -991,7 +991,8 @@ class SyncHelpers
         if ($dataExists !== false) {
             $__logger->log("MISSING DATA for $location on $date [record updated]");
             DB::table($table)
-                    ->where('id', $dataExists)
+                    ->where('date_start', $date)
+                    ->where('loc_id', $location)
                     ->update(array(
                         'status' => 0, 
                         'notes' => $notes, 
