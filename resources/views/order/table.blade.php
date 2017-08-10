@@ -183,7 +183,10 @@ usort($tableGrid, "SiteHelpers::_sort");
                            title="Clone Order">
                             <i class=" fa fa-random" aria-hidden="true"></i>
                         </a>
-                        @if($row->is_freehand=='1' || !Order::isApified($id, $row))
+                        <?php
+                        $canPostToNetSuit = Order::canPostToNetSuit($row->id);
+                        ?>
+                        @if(!$canPostToNetSuit)
                             <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
                                data-id="{{$eid}}"
                                data-action="receipt"
@@ -192,10 +195,8 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa fa-truck" aria-hidden="true"></i>
                             </a>
                         @endif
-                        <?php
-                            $canPostToNetSuit = Order::canPostToNetSuit($row->id);
-                        ?>
-                        @if(!$canPostToNetSuit)
+
+                        @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
                             <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
                                data-id="{{$eid}}"
                                data-action="removal"
