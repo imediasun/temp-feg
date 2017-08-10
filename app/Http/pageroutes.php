@@ -13,6 +13,4 @@ Route::get('inventor', 'HomeController@index');
 Route::get('generaltips', 'HomeController@index');
 Route::get('trainingmatrials', 'HomeController@index');
 Route::get('popupblocker', 'HomeController@index');
-Route::get('be', 'HomeController@index');
-Route::get('testpagecms', 'HomeController@index');
 ?>
