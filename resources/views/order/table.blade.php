@@ -192,7 +192,10 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa fa-truck" aria-hidden="true"></i>
                             </a>
                         @endif
-                        @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
+                        <?php
+                            $canPostToNetSuit = Order::canPostToNetSuit($row->id);
+                        ?>
+                        @if(!$canPostToNetSuit)
                             <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
                                data-id="{{$eid}}"
                                data-action="removal"
@@ -201,7 +204,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-trash-o " aria-hidden="true"></i>
                             </a>
                         @endif
-                        @if(Order::canPostToNetSuit($row->id)  && !Order::isApified($id, $row) && Order::isApiable($id, $row, true))
+                        @if($canPostToNetSuit  && !Order::isApified($id, $row) && Order::isApiable($id, $row, true))
                             <a href="javascript:void(0)"
                                data-id="{{$eid}}"
                                data-action="post"
