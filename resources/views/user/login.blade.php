@@ -19,11 +19,34 @@
 		</ul>		
 		
 	<ul class="nav nav-tabs" >
-	  <li class="active"><a href="#tab-sign-in" data-toggle="tab">  {{ Lang::get('core.signin') }} </a></li>
+	  <li class="active"><a href="#tab-social" data-toggle="tab">  {{ Lang::get('core.social') }} </a></li>
+	  <li><a href="#tab-sign-in" data-toggle="tab">  {{ Lang::get('core.signin') }} </a></li>
 	   <li ><a href="#tab-forgot" data-toggle="tab"> {{ Lang::get('core.forgotpassword') }} </a></li>
 	</ul>
 	<div class="tab-content" >
-		<div class="tab-pane active m-t" id="tab-sign-in">
+		<div class="tab-pane active m-t" id="tab-social">
+			<div class="animated fadeInUp delayp1">
+				<div class="form-group has-feedback text-center">
+					@if($socialize['google']['client_id'] !='' || $socialize['twitter']['client_id'] !='' || $socialize['facebook'] ['client_id'] !='')
+						<br />
+						<p class="text-muted text-center"><b> {{ Lang::get('core.loginsocial') }} </b>	  </p>
+					@endif
+					<div style="padding: 0;">
+						@if($socialize['facebook']['client_id'] !='')
+							<a href="{{ URL::to('user/socialize/facebook')}}" class="btn btn-primary"><i class="icon-facebook"></i> Facebook </a>
+						@endif
+						@if($socialize['google']['client_id'] !='')
+							<a href="{{ URL::to('user/socialize/google')}}" style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;" class="btn btn-block"><i class="icon-google-plus"></i> Google </a>
+						@endif
+						@if($socialize['twitter']['client_id'] !='')
+							<a href="{{ URL::to('user/socialize/twitter')}}" class="btn btn-info"><i class="icon-twitter"></i> Twitter </a>
+						@endif
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div class="tab-pane m-t" id="tab-sign-in">
 		<form method="post" action="{{ url('user/signin')}}" class="form-vertical">
 			<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		
@@ -85,26 +108,6 @@
                 <div class="clr"></div>
 
             </div>
-            <div class="animated fadeInUp delayp1">
-		<div class="form-group has-feedback text-center">
-			@if($socialize['google']['client_id'] !='' || $socialize['twitter']['client_id'] !='' || $socialize['facebook'] ['client_id'] !='') 
-			<br />
-			<p class="text-muted text-center"><b> {{ Lang::get('core.loginsocial') }} </b>	  </p>
-			@endif
-			<div style="padding: 0;">
-				@if($socialize['facebook']['client_id'] !='') 
-				<a href="{{ URL::to('user/socialize/facebook')}}" class="btn btn-primary"><i class="icon-facebook"></i> Facebook </a>
-				@endif
-				@if($socialize['google']['client_id'] !='') 
-				<a href="{{ URL::to('user/socialize/google')}}" style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;" class="btn btn-block"><i class="icon-google-plus"></i> Google </a>
-				@endif
-				@if($socialize['twitter']['client_id'] !='') 
-				<a href="{{ URL::to('user/socialize/twitter')}}" class="btn btn-info"><i class="icon-twitter"></i> Twitter </a>
-				@endif
-			</div>
-		</div>			
-
-		   	</div>	
 		   </form>			
 		</div>
 	

@@ -1256,7 +1256,7 @@ border-radius:0;
   color: #A7B5C2;
   font-weight: 500;
   background-color: #e6e6e6;
-  padding: 5px 15px 5px 20px;
+  padding: 5px 15px;
 }
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus {
