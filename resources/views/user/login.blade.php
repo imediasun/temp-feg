@@ -1,6 +1,17 @@
 @extends('layouts.login')
 
 @section('content')
+	<style>
+		.nav.nav-tabs li:last-child:after {
+			content: "";
+			position: absolute;
+			background: #f9f9f9;
+			width: 5px;
+			height: 1px;
+			right: -3px;
+			bottom: 0;
+		}
+	</style>
     <div class="text-center">
     <img src="{{ asset('sximo/images/feg_new_logo.png') }}" />
         <img id="logo-bar"  src="{{ asset('sximo/images/logo_bar.png') }}" class="full-width"/>
