@@ -26,7 +26,9 @@
 $(document).ready(function(){
     var searchParams="{{ \Session::get('searchParams') }}";
     var searchParams = searchParams.replace(/&amp;/g, '&');
-    if("{{ \Session::get('filter_before_redirect') }}" == "redirect" && searchParams!=' ') {
+    console.log('Manage FEG Test Starts Here');
+    console.log(searchParams);
+    if("{{ \Session::get('filter_before_redirect') }}" == "redirect" && searchParams!='' && searchParams!=' ') {
      <?php
      if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
         {
