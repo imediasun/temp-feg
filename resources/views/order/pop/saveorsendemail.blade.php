@@ -3,7 +3,7 @@
     <div class="sbox">
         <div class="sbox-title">
             <h3> Save/Download PO</h3>
-            <a href="javascript:void(0)"
+            <a href="javascript:reloadData('#order','order/data?search=')"
                class="collapse-close pull-right btn btn-xs btn-danger"
                id="closeSaveOrSend"
             ><i class="fa fa fa-times"></i></a>
@@ -32,7 +32,7 @@
                            class=" btn  btn-lg btn-primary" title="SAVE" data-action="save" ><i class="fa fa-save"
                                                                             aria-hidden="true"></i>
                             &nbsp {{ Lang::get('core.sb_save') }}</a>
-                        <a href="javascript:void(0)" id="po-close" style="width:33%;display: none"
+                        <a href="javascript:reloadData('#order','order/data?search=')" id="po-close" style="width:33%;display: none"
                            class=" btn  btn-lg btn-primary" title="Close" data-action="close" >&nbsp {{ Lang::get('core.sb_close') }}</a>
                     </div>
 
