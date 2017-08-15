@@ -3468,3 +3468,7 @@ span.order_custom_error ~ ul.parsley-error-list
   font-weight: bold;
 }
 
+.middle-box .nav-tabs
+{
+  border-bottom: none;
+}
