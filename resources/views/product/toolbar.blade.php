@@ -176,7 +176,7 @@ width: 75%">
             var val = $("#product_list_type").val();
             var active = $(this).find('option:selected').attr('data-active');
             if (val) {
-                 var footer_filters=getFooterFilters({'page': true});
+                 var footer_filters=getFooterFilters();
                 if(footer_filters.indexOf('sub_type') != -1)
                 {
                     footer_filters = footer_filters.replace( /sub_type.*?&/, '' );
@@ -195,7 +195,7 @@ width: 75%">
             var type="{{\Session::get('product_type')}}";
             var url="{{ $pageModule }}/data?";
             var active="0";
-            url +='&active=' + active + getFooterFilters({'page': true});
+            url +='&active=' + active + getFooterFilters();
             if(type != "")
             {
                 url += "&prod_list_type="+type;
