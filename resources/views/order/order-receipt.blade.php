@@ -342,6 +342,10 @@
             return count;
         }
 
+        $('input[name^="receivedQty"]').change(function () {
+            $('#orderreceiveFormAjax').parsley( 'validate' );
+        });
+
     </script>
 
 @endsection
