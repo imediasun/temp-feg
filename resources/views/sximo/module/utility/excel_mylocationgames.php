@@ -13,7 +13,7 @@
 
 	foreach ($rows as $row)
 	{
-		$content .= '<tr>';dd($fields);
+		$content .= '<tr>';
 		foreach($fields as $f )
 		{
 			if($f['download'] =='1'):
