@@ -219,7 +219,7 @@
             numberFieldValidationChecks($("input[type='number']"));
 
             var dTable =  $('#itemTable').DataTable({
-
+                paging: false
             });
 
 
