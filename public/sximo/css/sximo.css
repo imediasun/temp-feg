@@ -1259,6 +1259,11 @@ border-radius:0;
   background-color: #e6e6e6;
   padding: 5px 15px;
 }
+@-moz-document url-prefix() {
+  .nav-tabs > li > a {
+    padding: 5px 9px;
+  }
+}
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus {
   background-color: #e6e6e6;
@@ -3464,3 +3469,7 @@ span.order_custom_error ~ ul.parsley-error-list
   font-weight: bold;
 }
 
+.middle-box .nav-tabs
+{
+  border-bottom: none;
+}
