@@ -25,7 +25,7 @@
                 if( is_numeric( $c ) ) {
                     $a = $c;
                 }
-                $content .= '<td> '. ($f["label"] == "Serial" ?  "'".$a : $a). '</td>';
+                $content .= '<td> '. ($a). '</td>';
 			endif;
 		}
 		$content .= '</tr>';
