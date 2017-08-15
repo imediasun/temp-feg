@@ -465,7 +465,13 @@
             }
         });
 
-
+        $('#ordersubmitFormAjax').on('keyup keypress', function(e) {
+            var keyCode = e.keyCode || e.which;
+            if (keyCode === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
         var isRequestApprovalProcess = <?php echo $isRequestApproveProcess ? 'true' : 'false'; ?>;
         var counter = isRequestApprovalProcess ? $('input[name^=item_num]').length : 0;
         var hidePopup;
