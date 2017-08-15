@@ -60,6 +60,9 @@
 
 	//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setWidth(50);
 	$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
+$objPHPExcel->getActiveSheet()->getStyle('P1:P10000')
+    ->getNumberFormat()
+    ->setFormatCode('0');
 	$objPHPExcel->getDefaultStyle()
 	->getAlignment()
 	->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
