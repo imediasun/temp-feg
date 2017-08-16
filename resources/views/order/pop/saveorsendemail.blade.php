@@ -3,7 +3,7 @@
     <div class="sbox">
         <div class="sbox-title">
             <h3> Save/Download PO</h3>
-            <a href="javascript:reloadData('#order','order/data?search=')"
+            <a href="javascript:reloadOrderModule()"
                class="collapse-close pull-right btn btn-xs btn-danger"
                id="closeSaveOrSend"
             ><i class="fa fa fa-times"></i></a>
@@ -32,7 +32,7 @@
                            class=" btn  btn-lg btn-primary" title="SAVE" data-action="save" ><i class="fa fa-save"
                                                                             aria-hidden="true"></i>
                             &nbsp {{ Lang::get('core.sb_save') }}</a>
-                        <a href="javascript:reloadData('#order','order/data?search=')" id="po-close" style="width:33%;display: none"
+                        <a href="javascript:reloadOrderModule()" id="po-close" style="width:33%;display: none"
                            class=" btn  btn-lg btn-primary" title="Close" data-action="close" >&nbsp {{ Lang::get('core.sb_close') }}</a>
                     </div>
 
@@ -385,4 +385,17 @@
             });
         }
     }());
+        
+        function reloadOrderModule() {
+            var searchParams="{{ \Session::get('searchParams') }}";
+            var searchParams = searchParams.replace(/&amp;/g, '&');
+            <?php
+            if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
+               {
+                   \Session::put('filter_before_redirect','no');
+               }
+            ?>
+               reloadData('#order', 'order/data' + searchParams.replace("&amp;", "&"));
+
+        }
     </script>
