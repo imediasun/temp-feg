@@ -816,7 +816,11 @@ class order extends Sximo
         {
             $data = (array)$data;
         }
-        if(strtolower($data['status']) != 'closed' && $data['invoice_verified'] == 0){
+        //remap status id to status value
+        if(isset($data['status_value'])){
+            $data['status_id'] = $data['status_value'];
+        }
+        if(!self::isClosed($id,$data) || $data['invoice_verified'] == 0){
             return false;
         }
         if(!empty($received_qty)){
