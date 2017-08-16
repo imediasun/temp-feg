@@ -103,7 +103,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="220"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="250"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
@@ -183,7 +183,11 @@ usort($tableGrid, "SiteHelpers::_sort");
                            title="Clone Order">
                             <i class=" fa fa-random" aria-hidden="true"></i>
                         </a>
-                        @if($row->is_freehand=='1' || !Order::isApified($id, $row))
+                        <?php
+                        $canPostToNetSuit = Order::canPostToNetSuit($row->id, $row);
+                        $isApified = Order::isApified($id, $row);
+                        ?>
+                        @if((!$canPostToNetSuit && !$isApified) || ($row->status_id !='Close Order'&& !$isApified))
                             <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
                                data-id="{{$eid}}"
                                data-action="receipt"
@@ -192,6 +196,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa fa-truck" aria-hidden="true"></i>
                             </a>
                         @endif
+
                         @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
                             <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
                                data-id="{{$eid}}"
@@ -201,13 +206,24 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-trash-o " aria-hidden="true"></i>
                             </a>
                         @endif
-                        @if(Order::canPostToNetSuit($row->id)  && !Order::isApified($id, $row) && Order::isApiable($id, $row, true))
+
+                        @if($canPostToNetSuit  && !$isApified && Order::isApiable($id, $row, true))
                             <a href="javascript:void(0)"
                                data-id="{{$eid}}"
                                data-action="post"
                                class="tips btn btn-xs btn-white postToNetSuitAction"
                                title="{{ Lang::get('core.order_api_expose_button_label') }}">
                                 <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                            </a>
+                        @endif
+
+                        @if($row->invoice_verified == 0)
+                            <a href="javascript:void(0)"
+                               data-id="{{$eid}}"
+                               data-action="post"
+                               class="tips btn btn-xs btn-white verifyInvoiceAction"
+                               title="{{ Lang::get('core.order_invoice_verify_btn_title') }}">
+                                <i class="fa fa-check-square-o" aria-hidden="true"></i>
                             </a>
                         @endif
 					</td>
@@ -344,6 +360,30 @@ usort($tableGrid, "SiteHelpers::_sort");
         $('.tooltip').hide();
     });
 
+
+    $(".verifyInvoiceAction").on('click', function() {
+            var btn = $(this);
+            btn.prop('disabled', true);
+            var id = $(this).data('id');
+            blockUI();
+            $.ajax({
+                type: "GET",
+                url: "{{ url() }}/order/verify-invoice/"+id,
+                success: function (data) {
+                    unblockUI();
+                    if(data.status === 'success'){
+                        notyMessage(data.message);
+                        btn.remove();
+                        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
+                    }
+                    else {
+                        btn.prop('disabled', false);
+                        notyMessageError(data.message);
+                    }
+                }
+            });
+            $('.tooltip').hide();
+        });
 });
 </script>
 
