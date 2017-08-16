@@ -1798,6 +1798,7 @@
             window.location.href = url+'/'+sid_uri;
         }
         $("#denied_SIDs").val($("#denied_SIDs").val()+','+id);
+        getNotesOfSIDProducts();
         console.log(sid_uri);
     }
 
@@ -1860,5 +1861,34 @@
         $('#'+id).parents('.clonedInput').hide();
         decreaseCounter();
     }
+
+    function getNotesOfSIDProducts(){
+        var currURI= window.location.href;
+        var sid_uri= currURI.substring(currURI.lastIndexOf('/') + 1);
+        var sids = sid_uri.split('-');
+        sids.shift(); sids.pop();
+
+        $.ajax({
+            method: "Get",
+            url:"{{ url() }}/order/sid-notes",
+            data:{sids:sids}
+        })
+        .success(function (data) {
+            var notes = '';
+            for(x in data){
+                notes += data[x].notes+"\n";
+            }
+
+            $('#notes').val(notes);
+        })
+        .error(function (data) {
+            console.log(data);
+        })
+    }
+
+
+    $(document).ready(function () {
+        getNotesOfSIDProducts();
+    });
 
 </script>

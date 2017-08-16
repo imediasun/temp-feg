@@ -1777,4 +1777,8 @@ class OrderController extends Controller
         return response()->json($dataList);
     }
 
+    public function getSidNotes(Request $request){
+        $notes = \DB::table('requests')->select('notes')->whereIn('id', $request->sids)->get();
+        return $notes;
+    }
 }
