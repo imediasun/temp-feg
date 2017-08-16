@@ -49,7 +49,7 @@ h3,h4,h5 {
 .nav > li > a {
   color: #a7b1c2;
   font-weight: 500;
-  font-size:11px;
+  font-size:10px;
   padding: 14px 20px 14px 25px;
 }
 .nav.navbar-right > li > a {
@@ -1241,11 +1241,13 @@ body.body-small .footer.fixed {
   background: #1ab394;
   border-color: #1ab394 #1ab394 rgba(0, 0, 0, 0);
   border-bottom: #1ab394;
-  border-image: none; font-weight:600;
+  border-image: none;
+  font-weight:600;
   border-style: solid;
   border-width: 1px;
   color: #ffffff;
   cursor: default;
+  font-size: 10px;
 }
 .nav.nav-tabs li {
   background: none;
@@ -1257,12 +1259,13 @@ border-radius:0;
   color: #A7B5C2;
   font-weight: 500;
   background-color: #e6e6e6;
-  padding: 5px 15px;
+  padding: 5px 0;
+  text-align: center;
 }
-@-moz-document url-prefix() {
-  .nav-tabs > li > a {
-    padding: 5px 9px;
-  }
+.no-padding
+{
+  padding: 0;
+  margin: 0;
 }
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus {
@@ -3299,7 +3302,10 @@ position: relative;
 .c-margin .col-md-7{
   margin-bottom: 5px;
 }
-
+  .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus
+  {
+    font-size: 9px;
+  }
 
 .c-margin .col-md-12 select,
 .c-margin .col-md-11 select,
