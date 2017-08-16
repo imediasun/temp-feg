@@ -394,16 +394,16 @@ class UserController extends Controller
                     if ($row->active == '0') {
                         // inactive
                         \Auth::logout();
-                        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is not active'));
+                        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is not active'))->with('active_tab',1);
 
                     } else if ($row->active == '2') {
                         // BLocked users
                         \Auth::logout();
-                        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
+                        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'))->with('active_tab',1);
                     } else if ($row->banned == 1) {
                         // BLocked users
                         \Auth::logout();
-                        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
+                        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'))->with('active_tab',1);
                     } else {
                         \DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m/d H:i:s")));
                         \Session::put('uid', $row->id);
@@ -470,12 +470,14 @@ class UserController extends Controller
             } else {
                 return Redirect::to('/')
                     ->with('message', \SiteHelpers::alert('error', 'Your username/password combination was incorrect'))
+                    ->with('active_tab',1)
                     ->withInput();
             }
         } else {
 
             return Redirect::to('/')
                 ->with('message', \SiteHelpers::alert('error', 'The following  errors occurred'))
+                ->with('active_tab',1)
                 ->withErrors($validator)->withInput();
         }
     }
@@ -675,15 +677,15 @@ class UserController extends Controller
                 $affectedRows = User::where('email', '=', $user->email)
                     ->update(array('reminder' => $request->input('_token')));
 
-                return Redirect::to('/')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('success', 'Please check your email'))->with('active_tab',2);
 
             } else {
-                return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Cant find email address'));
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Cant find email address'))->with('active_tab',2);
             }
 
         } else {
             return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
-            )->withErrors($validator)->withInput();
+            )->with('active_tab',2)->withErrors($validator)->withInput();
         }
     }
 
