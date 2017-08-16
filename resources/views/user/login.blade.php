@@ -30,12 +30,12 @@
 		</ul>		
 		
 	<ul class="nav nav-tabs col-lg-12 col-md-12 col-sm-12 col-xs-12 no-padding" >
-	  <li class="active col-lg-4 col-md-4 col-sm-4 col-xs-4 no-padding"><a href="#tab-social" data-toggle="tab">  {{ Lang::get('core.social') }} </a></li>
-	  <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4 no-padding"><a href="#tab-sign-in" data-toggle="tab">  {{ Lang::get('core.signin') }} </a></li>
-	   <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4 no-padding"><a href="#tab-forgot" data-toggle="tab"> {{ Lang::get('core.forgotpassword') }} </a></li>
+	  <li class="@if(!Session::has('active_tab')) active @endif col-lg-4 col-md-4 col-sm-4 col-xs-4 no-padding"><a href="#tab-social" data-toggle="tab">  {{ Lang::get('core.social') }} </a></li>
+	  <li class="@if(Session::has('message') && Session::get('active_tab') == 1) active @endif col-lg-4 col-md-4 col-sm-4 col-xs-4 no-padding"><a href="#tab-sign-in" data-toggle="tab">  {{ Lang::get('core.signin') }} </a></li>
+	   <li class="@if(Session::has('message') && Session::get('active_tab') == 2) active @endif col-lg-4 col-md-4 col-sm-4 col-xs-4 no-padding"><a href="#tab-forgot" data-toggle="tab"> {{ Lang::get('core.forgotpassword') }} </a></li>
 	</ul>
-	<div class="tab-content col-lg-12 col-md-12 col-sm-12 col-xs-12" >
-		<div class="tab-pane active m-t" id="tab-social">
+	<div class="tab-content col-lg-12 col-md-12 col-sm-12 col-xs-12 no-padding" >
+		<div class="tab-pane @if(!Session::has('active_tab')) active @endif m-t" id="tab-social">
 			<div class="animated fadeInUp delayp1">
 				<div class="form-group has-feedback text-center">
 					@if($socialize['google']['client_id'] !='' || $socialize['twitter']['client_id'] !='' || $socialize['facebook'] ['client_id'] !='')
@@ -57,10 +57,9 @@
 
 			</div>
 		</div>
-		<div class="tab-pane m-t" id="tab-sign-in">
+		<div class="tab-pane m-t @if(Session::has('message') && Session::get('active_tab') == 1) active @endif" id="tab-sign-in">
 		<form method="post" action="{{ url('user/signin')}}" class="form-vertical">
 			<input type="hidden" name="_token" value="{{ csrf_token() }}">
-		
 			<div class="form-group has-feedback animated fadeInLeft delayp1">
 				<label>{{ Lang::get('core.email') }}	</label>
 				<input type="text" name="email" placeholder="Email Address" class="form-control" required="email" />
@@ -124,7 +123,7 @@
 	
 	
 
-	<div class="tab-pane  m-t" id="tab-forgot">	
+	<div class="tab-pane m-t @if(Session::has('message') && Session::get('active_tab') == 2) active @endif" id="tab-forgot">
 
 		
 		<form method="post" action="{{ url('user/request')}}" class="form-vertical box" id="fr">
