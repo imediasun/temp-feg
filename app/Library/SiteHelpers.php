@@ -2663,7 +2663,7 @@ class SiteHelpers
         if (!empty($width)) {
             $buttonStyle = "width: 100%;";
         }
-        $button = '<div class="sscol-submit ' . $widthClass . '"
+        $button = '<div class="sscol-submit col-sm-2 ' . $widthClass . '"
             style="' . $widthStyle . '"><br/>
             <button type="button" name="search" style="' . $buttonStyle . '"
                     class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
