@@ -29,12 +29,12 @@
 			@endforeach
 		</ul>		
 		
-	<ul class="nav nav-tabs" >
-	  <li class="active"><a href="#tab-social" data-toggle="tab">  {{ Lang::get('core.social') }} </a></li>
-	  <li><a href="#tab-sign-in" data-toggle="tab">  {{ Lang::get('core.signin') }} </a></li>
-	   <li ><a href="#tab-forgot" data-toggle="tab"> {{ Lang::get('core.forgotpassword') }} </a></li>
+	<ul class="nav nav-tabs col-lg-12 col-md-12 col-sm-12 col-xs-12 no-padding" >
+	  <li class="active col-lg-4 col-md-4 col-sm-4 col-xs-4 no-padding"><a href="#tab-social" data-toggle="tab">  {{ Lang::get('core.social') }} </a></li>
+	  <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4 no-padding"><a href="#tab-sign-in" data-toggle="tab">  {{ Lang::get('core.signin') }} </a></li>
+	   <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4 no-padding"><a href="#tab-forgot" data-toggle="tab"> {{ Lang::get('core.forgotpassword') }} </a></li>
 	</ul>
-	<div class="tab-content" >
+	<div class="tab-content col-lg-12 col-md-12 col-sm-12 col-xs-12" >
 		<div class="tab-pane active m-t" id="tab-social">
 			<div class="animated fadeInUp delayp1">
 				<div class="form-group has-feedback text-center">
