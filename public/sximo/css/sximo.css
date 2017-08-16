@@ -3484,3 +3484,6 @@ span.order_custom_error ~ ul.parsley-error-list
 {
   border-bottom: none;
 }
+.btn:focus {
+    color: inherit !important;
+}
