@@ -103,7 +103,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="220"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="250"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
@@ -374,7 +374,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                     if(data.status === 'success'){
                         notyMessage(data.message);
                         btn.remove();
-                        //reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
+                        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
                     }
                     else {
                         btn.prop('disabled', false);
