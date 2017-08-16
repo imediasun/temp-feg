@@ -1728,7 +1728,9 @@
 
 
     $(document).ready(function () {
-        getNotesOfSIDProducts();
+        if(mode == 'SID'){
+            getNotesOfSIDProducts();
+        }
     });
 
 </script>
