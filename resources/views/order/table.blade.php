@@ -184,7 +184,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                             <i class=" fa fa-random" aria-hidden="true"></i>
                         </a>
                         <?php
-                        $canPostToNetSuit = Order::canPostToNetSuit($row->id);
+                        $canPostToNetSuit = Order::canPostToNetSuit($row->id, $row);
                         $isApified = Order::isApified($id, $row);
                         ?>
                         @if((!$canPostToNetSuit && !$isApified) || ($row->status_id !='Close Order'&& !$isApified))

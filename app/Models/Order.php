@@ -795,9 +795,30 @@ class order extends Sximo
         return self::where('id', $id)->update($updateData);
     }
 
-    public static function canPostToNetSuit($id){
+    /**
+     * Conditions for Post to NetSuite Button being visible:
+        1) order fully received;
+        2) order status = Closed;
+        3) Invoice Verified = Yes
+     * Post to Netsuite button will NOT be visible for freehand orders, ever.
+     * After an order has been posted to netsuite, it cannot be edited nor received against.
+     * @param $id
+     * @param null $data
+     * @return bool
+     */
+    public static function canPostToNetSuit($id, $data = null){
         $order_qty = \DB::select("SELECT SUM(qty) as qty FROM order_contents WHERE order_id=$id");
         $received_qty = \DB::select("SELECT SUM(quantity) as qty FROM order_received WHERE order_id=$id");
+        if(empty($data)){
+            $data = self::find($id)->toArray();
+        }
+        else
+        {
+            $data = (array)$data;
+        }
+        if(strtolower($data['status']) != 'closed' && $data['invoice_verified'] == 0){
+            return false;
+        }
         if(!empty($received_qty)){
             if($received_qty[0]->qty == $order_qty[0]->qty){
                 return true;
