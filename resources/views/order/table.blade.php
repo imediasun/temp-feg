@@ -206,6 +206,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-trash-o " aria-hidden="true"></i>
                             </a>
                         @endif
+
                         @if($canPostToNetSuit  && !$isApified && Order::isApiable($id, $row, true))
                             <a href="javascript:void(0)"
                                data-id="{{$eid}}"
@@ -213,6 +214,16 @@ usort($tableGrid, "SiteHelpers::_sort");
                                class="tips btn btn-xs btn-white postToNetSuitAction"
                                title="{{ Lang::get('core.order_api_expose_button_label') }}">
                                 <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                            </a>
+                        @endif
+
+                        @if($row->invoice_verified == 0)
+                            <a href="javascript:void(0)"
+                               data-id="{{$eid}}"
+                               data-action="post"
+                               class="tips btn btn-xs btn-white verifyInvoiceAction"
+                               title="{{ Lang::get('core.order_invoice_verify_btn_title') }}">
+                                <i class="fa fa-check-square-o" aria-hidden="true"></i>
                             </a>
                         @endif
 					</td>
@@ -349,6 +360,30 @@ usort($tableGrid, "SiteHelpers::_sort");
         $('.tooltip').hide();
     });
 
+
+    $(".verifyInvoiceAction").on('click', function() {
+            var btn = $(this);
+            btn.prop('disabled', true);
+            var id = $(this).data('id');
+            blockUI();
+            $.ajax({
+                type: "GET",
+                url: "{{ url() }}/order/verify-invoice/"+id,
+                success: function (data) {
+                    unblockUI();
+                    if(data.status === 'success'){
+                        notyMessage(data.message);
+                        btn.remove();
+                        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
+                    }
+                    else {
+                        btn.prop('disabled', false);
+                        notyMessageError(data.message);
+                    }
+                }
+            });
+            $('.tooltip').hide();
+        });
 });
 </script>
 

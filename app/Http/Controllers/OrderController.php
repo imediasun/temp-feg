@@ -1653,6 +1653,17 @@ class OrderController extends Controller
         return response()->json($response);
     }
 
+    function getVerifyInvoice(Request $request, $eId) {
+        $id = \SiteHelpers::encryptID($eId, true);
+        $response = ['status' => 'error', 'message' => \Lang::get('core.order_missing_id')];
+        if (!empty($id)) {
+            $status = \DB::table('orders')->where('id', $id)->update(['invoice_verified' => '1', 'invoice_verified_date' => date('Y-m-d')]);
+            $response['status'] = $status == false ? 'error' : 'success';
+            $response['message'] = $status == false ? \Lang::get('core.order_invoice_verify_error') : \Lang::get('core.order_invoice_verify_success');
+        }
+        return response()->json($response);
+    }
+
     function getCheckEditable(Request $request, $id) {
         $response = ['status' => 'error', 'message' => \Lang::get('core.order_missing_id')];
         if (!empty($id)) {
