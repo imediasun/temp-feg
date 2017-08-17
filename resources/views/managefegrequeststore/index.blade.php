@@ -26,7 +26,6 @@
 $(document).ready(function(){
     var searchParams="{{ \Session::get('searchParams') }}";
     var searchParams = searchParams.replace(/&amp;/g, '&');
-
     if("{{ \Session::get('filter_before_redirect') }}" == "redirect" && searchParams!='') {
      <?php
      if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
@@ -34,6 +33,7 @@ $(document).ready(function(){
             \Session::put('filter_before_redirect','no');
         }
      ?>
+        console.log(searchParams);
         reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
     }
     else {
