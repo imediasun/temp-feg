@@ -33,7 +33,6 @@ $(document).ready(function(){
             \Session::put('filter_before_redirect','no');
         }
      ?>
-        console.log(searchParams);
         reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
     }
     else {
