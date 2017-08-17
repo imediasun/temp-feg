@@ -650,23 +650,6 @@
                 calculateSum();
                 return false;
             }
-
-            if(mode == 'edit'){
-                forceRemoveOrderContent(id);
-            }else{
-                if (isRequestApprovalProcess) {
-                    removeIdFromSIDList(id);
-                }
-                if (counter <= 1) {
-                    beforeLastRemove(id);
-                    decreaseCounter();
-                }else{
-                    $("#" + id).parents('.clonedInput').remove();
-                    decreaseCounter();
-                }
-                calculateSum();
-                return false;
-            }
         }
         function removeIdFromSIDList(id) {
             var ids = ($("#where_in_expression").val() || '').split(','),
