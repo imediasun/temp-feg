@@ -325,7 +325,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {{ \DateHelpers::formatZeroValue($row->request_ids) }}
+                            {{ implode(', ',explode(',', \DateHelpers::formatZeroValue($row->request_ids))) }}
                         </div>
                     </div>
                 </fieldset>
