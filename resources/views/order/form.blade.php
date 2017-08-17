@@ -489,14 +489,20 @@
                 reloadOrder(1);
                 if($(this).attr('id') == 'logo')
                 {
-                    location.href = $(this).attr('href');
+                    var redirect_url = $(this).attr('href');
+                    $(document).ajaxStop(function () {
+                        location.href = redirect_url;
+                    });
                 }
             });
             $('.navbar-top-links li a:not([href="javascript:void(0)"])').on('click',function(e)
             {
                 e.preventDefault();
                 reloadOrder(1);
-                location.href = $(this).attr('href');
+                var redirect_url = $(this).attr('href');
+                $(document).ajaxStop(function () {
+                    location.href = redirect_url;
+                });
             });
         @endif
 
