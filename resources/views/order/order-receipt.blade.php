@@ -28,7 +28,7 @@
                                     SiteHelpers::gridDisplayView($data['location_id'],'location_id','1:location:id:location_name')
                                     !!}</td></tr>
                             <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
-                            <tr><td><b>Description:</b></td><td>{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
+                            <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
                             <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
