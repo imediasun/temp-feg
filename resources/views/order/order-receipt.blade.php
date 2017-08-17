@@ -1,5 +1,13 @@
 @extends('layouts.app')
 @section('content')
+    <style>
+        .dataTables_filter{
+            float: right !important;
+        }
+        .dataTables_info{
+            float: left !important;
+        }
+    </style>
     <div class="page-content row">
     <div class="page-header">
         <div class="page-title">
@@ -71,7 +79,7 @@
                             @endif
                         </table>
 
-                        <table id="itemTable" class="display" cellspacing="0" width="100%">
+                        <table id="itemTable" class="display table" cellspacing="0" width="100%">
                             <thead>
                             <tr>
                             <th>No#</th>
