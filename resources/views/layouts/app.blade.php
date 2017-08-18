@@ -95,7 +95,7 @@
   	</head>
   	<body class="sxim-init" >
     @yield('afterbodystart', '')
-	<div id="wrapper">
+	<div id="wrapper" {!! (isset($sid) && $sid!='') ? 'style="pointer-events:none"' : '' !!}>
 		@include('layouts/sidemenu')
 		<div class="gray-bg " id="page-wrapper">
 			@include('layouts/headmenu')
