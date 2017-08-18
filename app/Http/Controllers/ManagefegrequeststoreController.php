@@ -135,7 +135,7 @@ class ManagefegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
-        $this->getSearchParamsForRedirect();
+        $this->getSearchParamsForRedirect('manageFegStore');
         $user_level = \Session::get('gid');
         if ($user_level == Groups::PARTNER) {
             return redirect('dashboard');

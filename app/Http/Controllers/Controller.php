@@ -1098,7 +1098,7 @@ abstract class Controller extends BaseController
     {
         \Session::put('searchParams',$request->get('searchParams'));
     }
-    function getSearchParamsForRedirect()
+    function getSearchParamsForRedirect($mode='default')
     {
         $url="?";
         foreach($_GET as $paramName=>$paramValue)
@@ -1106,7 +1106,11 @@ abstract class Controller extends BaseController
             $url .= $paramName."=".$paramValue."&";
         }
         $url=substr($url,0,strlen($url)-1);
-        \Session::put('searchParams',$url);
+        if($mode == 'default'){
+            \Session::put('searchParams',$url);
+        }else{
+            \Session::put('searchParamsForManageFEGStore',$url);
+        }
     }
     function destroyRedirectFilters()
     {
