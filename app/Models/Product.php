@@ -61,6 +61,21 @@ class product extends Sximo  {
                 case 'parts':
                     $product_type_id=1;
                     break;
+                case 'tickets':
+                    $product_type_id=22;
+                    break;
+                case 'tokens':
+                    $product_type_id=23;
+                    break;
+                case 'uniforms':
+                    $product_type_id=24;
+                    break;
+                case 'photopaper':
+                    $product_type_id=25;
+                    break;
+                case 'debitcards':
+                    $product_type_id=26;
+                    break;
             }
            // unset();
             \Session::put('product_type_id',$product_type_id);
