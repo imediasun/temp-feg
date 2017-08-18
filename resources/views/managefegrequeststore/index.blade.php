@@ -24,7 +24,7 @@
 </div>	
 <script>
 $(document).ready(function(){
-    var searchParams="{{ \Session::get('searchParams') }}";
+    var searchParams="{{ \Session::get('searchParamsForManageFEGStore') }}";
     var searchParams = searchParams.replace(/&amp;/g, '&');
     if("{{ \Session::get('filter_before_redirect') }}" == "redirect" && searchParams!='') {
      <?php
@@ -33,7 +33,6 @@ $(document).ready(function(){
             \Session::put('filter_before_redirect','no');
         }
      ?>
-        console.log(searchParams);
         reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
     }
     else {
