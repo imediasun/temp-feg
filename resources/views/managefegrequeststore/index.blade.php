@@ -26,7 +26,8 @@
 $(document).ready(function(){
     var searchParams="{{ \Session::get('searchParamsForManageFEGStore') }}";
     var searchParams = searchParams.replace(/&amp;/g, '&');
-    if("{{ \Session::get('filter_before_redirect') }}" == "redirect" && searchParams!='') {
+    console.log('searchParams: '+searchParams);
+    if(searchParams!='') {
      <?php
      if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
         {

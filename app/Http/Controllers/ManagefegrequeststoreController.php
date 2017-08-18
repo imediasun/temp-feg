@@ -437,6 +437,7 @@ class ManagefegrequeststoreController extends Controller
 
     public function removeBlockedCheck(Request $request)
     {
+        \Session::put('filter_before_redirect','redirect');
         $requestIds = $request->requestIds;
         $query = \DB::update("UPDATE requests set blocked_at = null WHERE id IN ($requestIds)");
         if ($query) {
