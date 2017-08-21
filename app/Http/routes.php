@@ -118,6 +118,7 @@ Route::group(['middleware' => 'auth'], function()
 
 Route::controller('/user', 'UserController');
 Route::get('/login', 'UserController@getLogin');
+Route::get('/forget-password', 'UserController@getForgetPassword');
 Route::get('/', 'UserController@getLogin');
 Route::get('/restric',function(){
 
