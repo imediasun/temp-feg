@@ -227,7 +227,8 @@
             numberFieldValidationChecks($("input[type='number']"));
 
             var dTable =  $('#itemTable').DataTable({
-                paging: true
+                paging: true,
+                "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ]
             });
 
             $('#itemTable').on( 'page.dt', function () {
