@@ -103,7 +103,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="250"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="220"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
@@ -187,8 +187,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                         $canPostToNetSuit = Order::canPostToNetSuit($row->id, $row);
                         $isApified = Order::isApified($id, $row);
                         ?>
-
-                        @if(!$isApified)
+                        @if((!$canPostToNetSuit && !$isApified) || ($row->status_id !='Close Order'&& !$isApified))
                             <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
                                data-id="{{$eid}}"
                                data-action="receipt"
@@ -207,7 +206,6 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-trash-o " aria-hidden="true"></i>
                             </a>
                         @endif
-
                         @if($canPostToNetSuit  && !$isApified && Order::isApiable($id, $row, true))
                             <a href="javascript:void(0)"
                                data-id="{{$eid}}"
