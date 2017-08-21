@@ -227,15 +227,18 @@
             numberFieldValidationChecks($("input[type='number']"));
 
             var dTable =  $('#itemTable').DataTable({
-                paging: false
+                paging: true
             });
 
+            $('#itemTable').on( 'page.dt', function () {
+                setTimeout(function(){ regIcheckEvent(); }, 500);
+            });
 
-            $('#itemTable .yourBox').on('ifChecked',function(){
+            $('#itemTable .yourBox').on('ifChecked', function(){
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).removeAttr('readonly');
             });
-            $('#itemTable .yourBox').on('ifUnchecked',function(){
+            $('#itemTable .yourBox').on('ifUnchecked', function(){
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).attr('readonly', 'readonly');
                 $('#receivedItemText'+itemId).val($('#receivedItemText'+itemId).attr('max'));
@@ -265,6 +268,7 @@
             form.submit(function () {
 
                 if (form.parsley('isValid') == true) {
+                    $('#itemTable').DataTable().destroy();
                     var options = {
                         dataType: 'json',
                         beforeSubmit: showRequest,
@@ -279,6 +283,22 @@
             });
 
         });
+
+        function regIcheckEvent() {
+            $('#itemTable .yourBox').unbind('ifChecked');
+            $('#itemTable .yourBox').unbind('ifUnchecked');
+
+            $('#itemTable .yourBox').on('ifChecked', function(){
+                console.log('test me');
+                var itemId= $(this).val();
+                $('#receivedItemText'+itemId).removeAttr('readonly');
+            });
+            $('#itemTable .yourBox').on('ifUnchecked', function(){
+                var itemId= $(this).val();
+                $('#receivedItemText'+itemId).attr('readonly', 'readonly');
+                $('#receivedItemText'+itemId).val($('#receivedItemText'+itemId).attr('max'));
+            });
+        }
 
         function showRequest() {
             $('.ajaxLoading').show();
