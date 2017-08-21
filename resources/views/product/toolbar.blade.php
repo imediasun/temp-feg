@@ -11,7 +11,12 @@ width: 75%">
             <option value="parts" data-active="0">Parts - Products List</option>
             <option value="party" data-active="0">Party Supplies</option>
             <option value="redemption" data-active="0">Redemption Prizes</option>
-            <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
+           {{-- <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>--}}
+            <option value="tickets" data-active="0">Tickets</option>
+            <option value="tokens" data-active="0">Tokens</option>
+            <option value="uniforms" data-active="0">Uniforms</option>
+            <option value="photopaper" data-active="0">Photo Paper</option>
+            <option value="debitcards" data-active="0">Debit Cards</option>
             <option value="productsindevelopment" data-active="0">Products In Development</option>
         </select>
     </div>
