@@ -598,50 +598,6 @@
         }
 
         //Remove product item
-
-        function forceRemoveOrderContent(id){
-            var value = $("#"+id).parent().siblings(':input.order_content').val();
-            if(value == ''){value=0;}
-            $('.ajaxLoading').show();
-            $.ajax({
-                url: '{{url("")}}/order/checkreceived/'+value,
-                success: function(data){
-                    $('.ajaxLoading').hide();
-                    if(data.available == 'true'){
-                        $('.custom_overlay').show();
-                        App.notyConfirm({
-                            message: "<b>***WARNING***</b><br> Are you sure to remove already received item.<br>",
-                            confirmButtonText: 'Yes',
-                            container: '.custom-container',
-                            confirm: function () {
-                                forceRemoveOrderContentIds.push(value);
-                                $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
-                                if (counter <= 1) {
-                                    beforeLastRemove(id);
-                                    decreaseCounter();
-                                }else{
-                                    $("#" + id).parents('.clonedInput').remove();
-                                    decreaseCounter();
-                                }
-                                $('.custom_overlay').slideUp(500);
-                            },
-                            cancel:function(){
-                                $('.custom_overlay').slideUp(500);
-                            }
-                        });
-                    }else{
-                        if (counter <= 1) {
-                            beforeLastRemove(id);
-                        }else{
-                            $("#" + id).parents('.clonedInput').remove();
-                            decreaseCounter();
-                        }
-
-                    }
-                }
-            });
-        }
-
         function removeRow(id) {
             if(mode == 'edit'){
                 forceRemoveOrderContent(id);
@@ -784,7 +740,7 @@
             var form = $('#ordersubmitFormAjax');
             form.parsley();
             form.submit(function () {
-                if (counter <= 1 && $('.hiddenClone').length) {
+                if (counter <= 1 && $('.hiddenClone').length ) {
                     notyMessageError('For order there must be 1 minimum item available');
                     return false;
                 }
@@ -1700,83 +1656,6 @@
                 }
             });
         });
-    });
-
-    function removeItemURL(id) {
-        var currURI= window.location.href;
-        var sid_uri= currURI.substring(currURI.lastIndexOf('/') + 1);
-        sid_uri = sid_uri.replace(id+'-', '');
-        if(window.history != undefined && window.history.pushState != undefined) {
-            window.history.pushState({}, document.title, sid_uri);
-        }else{
-            window.location.href = url+'/'+sid_uri;
-        }
-        //$("#SID_string").val(currURI);
-        console.log(sid_uri);
-    }
-
-    function reAssignSubmit() {
-        var requestIds = $('#where_in_expression').val();
-        if(requestIds)
-        {
-            $.ajax({
-                method: "Get",
-                url:"{{route('remove_blocked_check')}}",
-                data:{
-                    requestIds:requestIds
-                }
-            })
-            .success(function (data) {
-                console.log(data);
-            })
-            .error(function (data) {
-                console.log(data);
-            })
-        }
-    }
-
-    function prepareSubmit(){
-        var currURI= window.location.href;
-        var sid_uri= currURI.substring(currURI.lastIndexOf('/') + 1);
-        $("#SID_string").val(sid_uri);
-        var where_in = sid_uri.split('-');
-        where_in.shift();where_in.pop();
-        $("#where_in_expression").val(where_in);
-    }
-    var preserveValue;
-    $('.qty').focus(function(){ preserveValue = $(this).val(); }).change(function () {
-
-        if(parseInt($(this).attr('min')) >= parseInt($(this).val()) && mode == "edit"){
-            $(this).css({'border': '1px solid red'});
-            var element = $(this);
-            $('.custom_overlay').show();
-            App.notyConfirm({
-                container: '.custom-container',
-                message: "<b>***WARNING***</b></b></b><br>You can not set quantity equal or lower than it already been received.<br></b>",
-                confirm: function () {
-                    $('.custom_overlay').slideUp(500);
-                    element.css({'border': '1px solid #e5e6e7'});
-                    element.val(preserveValue);
-                },
-                cancel:function(){
-                    $('.custom_overlay').slideUp(500);
-                    element.css({'border': '1px solid #e5e6e7'});
-                    element.val(preserveValue);
-                }
-            });
-        }
-
-    });
-
-    function beforeLastRemove(id){
-        $('#'+id).parents('.clonedInput').find('input').each(function(){$(this).removeAttr('value');});
-        $('#'+id).parents('.clonedInput').addClass('hiddenClone');
-        $('#'+id).parents('.clonedInput').hide();
-        decreaseCounter('');
-    }
-
-    $('#add_new_item').click(function () {
-
     });
 
     function removeItemURL(id) {
