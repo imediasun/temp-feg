@@ -187,7 +187,8 @@ usort($tableGrid, "SiteHelpers::_sort");
                         $canPostToNetSuit = Order::canPostToNetSuit($row->id);
                         $isApified = Order::isApified($id, $row);
                         ?>
-                        @if((!$canPostToNetSuit && !$isApified) || ($row->status_id !='Close Order'&& !$isApified))
+
+                        @if(!$isApified)
                             <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
                                data-id="{{$eid}}"
                                data-action="receipt"
@@ -206,6 +207,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-trash-o " aria-hidden="true"></i>
                             </a>
                         @endif
+
                         @if($canPostToNetSuit  && !$isApified && Order::isApiable($id, $row, true))
                             <a href="javascript:void(0)"
                                data-id="{{$eid}}"
