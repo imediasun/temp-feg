@@ -89,6 +89,9 @@
                                     <label> Remember Me ?... </label>
                                     <input type="checkbox" name="remember" value="1"/>
                                 </div>
+                                <div class="col-sm-6 text-right">
+                                    <a target="_blank" href="{{url('forget-password')}}"> {{ Lang::get('core.forgotpassword') }} ? </a>
+                                </div>
                             </div>
                         </div>
 
@@ -127,12 +130,10 @@
                             <button type="submit" class="btn darkblue-btn btn-sm btn-block" id="loginBtn"><i
                                         class="fa fa-sign-in"></i> {{ Lang::get('core.signin') }}</button>
 
+
                             <div class="clr"></div>
 
                         </div>
-                        <a style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;"
-                                  class="btn btn-block" target="_blank" href="{{url('forget-password')}}"> {{ Lang::get('core.forgotpassword') }} ? </a>
-
                     </form>
                 </div>
             </div>
@@ -146,10 +147,5 @@
                 $('#fr').toggle();
             });
         });
-        if (!!window.performance && window.performance.navigation.type === 2) {
-            // page has been hit using back or forward buttons
-            document.body.style.display = "none";
-            location.reload();
-        }
     </script>
 @stop

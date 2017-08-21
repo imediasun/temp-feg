@@ -651,27 +651,27 @@ class UserController extends Controller
     public function postRequest(Request $request)
     {
         $rules = array(
-            'email' => 'required|email'
+            'credit_email' => 'required|email'
         );
 
         $validator = Validator::make(Input::all(), $rules);
         if ($validator->passes()) {
 
-            $user = User::where('email', '=', $request->input('email'));
+            $user = User::where('email', '=', $request->input('credit_email'));
             if ($user->count() >= 1) {
 
 
                 $user = $user->get();
                 $user = $user[0];
                 $data = array('token' => $request->input('_token'));
-                $to = ['to'=>$request->input('email')];
+                $to = ['to'=>$request->input('credit_email')];
 
                 $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
                 $message = view('user.emails.auth.reminder', $data);
                 FEGSystemHelper::sendSystemEmail(array_merge($to, array(
                     'subject' => $subject,
                     'message' => $message,
-                    'isTest' => false,
+                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                     'from' => CNF_EMAIL,
                     'configName' => 'FORGET PASSWORD EMAIL'
                 )));
@@ -680,14 +680,14 @@ class UserController extends Controller
                 $affectedRows = User::where('email', '=', $user->email)
                     ->update(array('reminder' => $request->input('_token')));
 
-                return Redirect::to('/forget-password')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
 
             } else {
-                return Redirect::to('/forget-password')->with('message', \SiteHelpers::alert('error', 'Cant find email address'));
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Cant find email address'));
             }
 
         } else {
-            return Redirect::to('/forget-password')->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
+            return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
             )->withErrors($validator)->withInput();
         }
     }
