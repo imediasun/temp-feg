@@ -34,7 +34,7 @@
                         <div class="form-group has-feedback">
                             <div class="">
                                 <label>{{ Lang::get('core.enteremailforgot') }}</label>
-                                <input type="text" name="credit_email" placeholder="{{ Lang::get('core.email') }}"
+                                <input type="text" name="email" placeholder="{{ Lang::get('core.email') }}"
                                        class="form-control" required/>
                                 <i class="icon-envelope form-control-feedback"></i>
                             </div>
