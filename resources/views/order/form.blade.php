@@ -1824,7 +1824,7 @@
     var preserveValue;
     $('.qty').focus(function(){ preserveValue = $(this).val(); }).change(function () {
 
-        if(parseInt($(this).attr('receive')) >= parseInt($(this).val()) && mode == "edit" && $(this).attr('receive')!=0){
+        if(parseInt($(this).attr('receive')) > parseInt($(this).val()) && mode == "edit" && $(this).attr('receive')!=0){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
             $('.custom_overlay').show();
