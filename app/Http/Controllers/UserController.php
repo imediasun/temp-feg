@@ -644,7 +644,10 @@ class UserController extends Controller
 
         return view('user.remind');
     }
-
+    public function getForgetPassword()
+    {
+        return view('user.forget');
+    }
     public function postRequest(Request $request)
     {
         $rules = array(
@@ -677,15 +680,15 @@ class UserController extends Controller
                 $affectedRows = User::where('email', '=', $user->email)
                     ->update(array('reminder' => $request->input('_token')));
 
-                return Redirect::to('/')->with('message', \SiteHelpers::alert('success', 'Please check your email'))->with('active_tab',2);
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
 
             } else {
-                return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Cant find email address'))->with('active_tab',2);
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Cant find email address'));
             }
 
         } else {
             return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
-            )->with('active_tab',2)->withErrors($validator)->withInput();
+            )->withErrors($validator)->withInput();
         }
     }
 
