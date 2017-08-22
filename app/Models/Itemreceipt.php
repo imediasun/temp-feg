@@ -82,14 +82,9 @@ orders.id=order_received.order_id ";
 
 
         if(!empty($args['createdFrom']) && isset($args['createdFrom'])){
-            if($fromApi)
-            {
-                $cond .= " AND api_created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
-            }
-            else
-            {
-                $cond .= " AND order_received.created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
-            }
+
+            $cond .= " AND api_created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
+            $cond .= " AND order_received.created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
 
             $createdFlag = true;
         }
