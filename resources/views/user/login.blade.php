@@ -146,5 +146,10 @@
                 $('#fr').toggle();
             });
         });
+        if (!!window.performance && window.performance.navigation.type === 2) {
+            // page has been hit using back or forward buttons
+            document.body.style.display = "none";
+            location.reload();
+        }
     </script>
 @stop
