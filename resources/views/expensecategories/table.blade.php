@@ -139,6 +139,7 @@
 						data-id="{{$row->id}}"
 						data-ordertype = "{{$row->order_type}}"
 						data-producttype = "{{$row->product_type}}"
+						data-expense_category = "{{$row->mapped_expense_category}}"
 						data-action="removal"
 						class="tips btn btn-xs btn-white expenseCategoryDeleteRequest"
 						title="Delete Expense Category">
@@ -243,11 +244,13 @@ $(document).ready(function() {
 		var id = $(this).data('id');
 		var order_type = $(this).data('ordertype');
 		var product_type = $(this).data('producttype');
+		var expense_category = $(this).data('expense_category');
+
 
 		$.ajax({
 			type: 'POST',
 			url: "{{ url() }}/expensecategories/single-delete",
-			data: {id : id, order_type : order_type, product_type : product_type},
+			data: {id : id, order_type : order_type, product_type : product_type, expense_category : expense_category},
 			success: function(data) {
 				console.log(data);
 				reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');

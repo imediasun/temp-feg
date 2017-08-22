@@ -233,6 +233,7 @@ class ExpensecategoriesController extends Controller {
 				\DB::table('products')
 					->where('prod_type_id',$order_type_id)
 					->where('prod_sub_type_id',$product_type_id)
+					->where('expense_category',$expense_category)
 					->update(['expense_category' => $data['mapped_expense_category']]);
 
 				$message = "Expense category has been updated successfully!";
@@ -300,6 +301,7 @@ class ExpensecategoriesController extends Controller {
 		\DB::table('products')
 			->where('prod_type_id',$request->order_type)
 			->where('prod_sub_type_id',empty($request->product_type)? '0':$request->product_type)
+			->where('expense_category',$request->expense_category)
 			->update(['expense_category' => '0']);
 
 		return response()->json(array(
