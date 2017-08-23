@@ -67,7 +67,7 @@
 	$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
 	$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
 	$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . count($rows));
-	dd($colString);
+
 $objPHPExcel->getActiveSheet()->getStyle($colString)
     ->getNumberFormat()
     ->setFormatCode('0');
