@@ -4,19 +4,19 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
 class itemreceipt extends Sximo  {
-	
-	protected $table = 'order_received';
-	protected $primaryKey = 'id';
 
-	public function __construct() {
-	    ini_set('memory_limit','1G');
-		parent::__construct();
-		
-	}
+    protected $table = 'order_received';
+    protected $primaryKey = 'id';
+
+    public function __construct() {
+        ini_set('memory_limit','1G');
+        parent::__construct();
+
+    }
 
     public static function querySelect(){
 
-    return " SELECT orders.*,order_received.order_id FROM orders INNER JOIN order_received ON
+        return " SELECT orders.*,order_received.order_id FROM orders INNER JOIN order_received ON
 orders.id=order_received.order_id ";
 
 
@@ -83,7 +83,8 @@ orders.id=order_received.order_id ";
 
         if(!empty($args['createdFrom']) && isset($args['createdFrom'])){
 
-                $cond .= " AND order_received.created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
+            $cond .= " AND api_created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
+            $cond .= " AND order_received.created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
 
             $createdFlag = true;
         }
@@ -96,15 +97,27 @@ orders.id=order_received.order_id ";
         }
         if(!empty($updatedFrom)){
 
-            if($createdFlag){
-
+            if($createdFlag)
+            {
+                if($fromApi)
+                {
+                    $select .= " OR api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+                else
+                {
                     $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-
+                }
             }
-            else{
-
+            else
+            {
+                if($fromApi)
+                {
+                    $select .= " AND api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+                else
+                {
                     $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-
+                }
             }
 
         }
