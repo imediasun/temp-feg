@@ -666,7 +666,7 @@ class UserController extends Controller
                 FEGSystemHelper::sendSystemEmail(array_merge($to, array(
                     'subject' => $subject,
                     'message' => $message,
-                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                    'isTest' => false,
                     'from' => CNF_EMAIL,
                     'configName' => 'FORGET PASSWORD EMAIL'
                 )));
