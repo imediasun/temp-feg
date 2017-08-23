@@ -17,16 +17,19 @@
 		foreach($fields as $f )
 		{
 			if($f['download'] =='1'):
-                $f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':2';
+				if(isset($f['attribute']['formater']))
+				{
+                    $f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':3:false:';
+				}
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
-                $a = htmlentities(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn));
+                $a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn)));
                 $b = str_replace( ',', '', $a );
                 $c = str_replace('$','',$b);
                 if( is_numeric( $c ) ) {
                     $a = $c;
                 }
-                $content .= '<td> '. $a . '</td>';
+                $content .= '<td> '. ($a). '</td>';
 			endif;
 		}
 		$content .= '</tr>';
@@ -60,7 +63,14 @@
 	->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);*/
 
 	//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setWidth(50);
+
 	$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
+	$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
+	$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . (count($rows)+2));
+
+$objPHPExcel->getActiveSheet()->getStyle($colString)
+    ->getNumberFormat()
+    ->setFormatCode('0');
 	$objPHPExcel->getDefaultStyle()
 	->getAlignment()
 	->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
