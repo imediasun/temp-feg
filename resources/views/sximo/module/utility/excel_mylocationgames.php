@@ -13,7 +13,7 @@
 
 	foreach ($rows as $row)
 	{
-		$content .= '<tr>';
+		$content .= '<tr>';dd($fields);
 		foreach($fields as $f )
 		{
 			if($f['download'] =='1'):
@@ -25,7 +25,7 @@
                 if( is_numeric( $c ) ) {
                     $a = $c;
                 }
-                $content .= '<td> '. "'".$a . '</td>';
+                $content .= '<td> '. ($f["label"] == "Serial" ?  "'".$a : $a). '</td>';
 			endif;
 		}
 		$content .= '</tr>';
