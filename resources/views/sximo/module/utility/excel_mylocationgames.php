@@ -63,9 +63,12 @@
 	->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);*/
 
 	//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setWidth(50);
-dd($objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn),count($rows));
+
 	$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
-$objPHPExcel->getActiveSheet()->getStyle('P1:P10000')
+	$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
+	$colString = ($serialCol->_columnIndex.'1:'.$serialCol->_columnIndex . count($rows));
+	dd($colString);
+$objPHPExcel->getActiveSheet()->getStyle($colString)
     ->getNumberFormat()
     ->setFormatCode('0');
 	$objPHPExcel->getDefaultStyle()
