@@ -17,6 +17,10 @@
 		foreach($fields as $f )
 		{
 			if($f['download'] =='1'):
+				if(isset($f['attribute']['formater']))
+				{
+                    $f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':3:false:';
+				}
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
                 $a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn)));
@@ -59,8 +63,12 @@
 	->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);*/
 
 	//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setWidth(50);
+
 	$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
-$objPHPExcel->getActiveSheet()->getStyle('P1:P10000')
+	$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
+	$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . count($rows));
+
+$objPHPExcel->getActiveSheet()->getStyle($colString)
     ->getNumberFormat()
     ->setFormatCode('0');
 	$objPHPExcel->getDefaultStyle()
