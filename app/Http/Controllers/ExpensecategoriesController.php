@@ -232,9 +232,9 @@ class ExpensecategoriesController extends Controller {
 		if ($validator->passes()) {
 
 			$data = [
-				'order_type' => $request->prod_type_id,
-				'product_type' => empty($request->prod_sub_type_id) ? NULL : $request->prod_sub_type_id,
-				'mapped_expense_category' => $request->expense_category,
+				'order_type' => $request->order_type,
+				'product_type' => empty($request->product_type) ? NULL : $request->product_type,
+				'mapped_expense_category' => $request->mapped_expense_category,
 			];
 
 			$order_type_id = $data['order_type'];

@@ -20,7 +20,7 @@
 
 						<div class="col-md-6">
 
-							<select name='prod_type_id' rows='5' id='prod_type_id' class='select2 '
+							<select name='order_type' rows='5' id='order_type' class='select2 '
 									required='required'></select>
 						</div>
 						<div class="col-md-2">
@@ -34,7 +34,7 @@
 						</label>
 
 						<div class="col-md-6">
-							<select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2 '></select>
+							<select name='product_type' rows='5' id='product_type' class='select2 '></select>
 						</div>
 						<div class="col-md-2">
 
@@ -46,8 +46,8 @@
 							Expense Category
 						</label>
 						<div class="col-md-6">
-							<input type="hidden" name="expense_category" value="{{ $row['mapped_expense_category'] }}" >
-							<input class="form-control parsley-validated" placeholder="" parsley-type="number" required="true" id="expense_category" name="expense_category" type="text" value="{{ $row['mapped_expense_category'] }}">
+							<input type="hidden" name="mapped_expense_category" value="{{ $row['mapped_expense_category'] }}" >
+							<input class="form-control parsley-validated" placeholder="" parsley-type="number" required="true" id="expense_category" name="mapped_expense_category" type="text" value="{{ $row['mapped_expense_category'] }}">
 						</div>
 						<div class="col-md-2">
 						</div>
@@ -120,21 +120,21 @@ $(document).ready(function() {
 
 
 
-	$("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type') }}",
+	$("#order_type").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type') }}",
 			{selected_value: '{{ $row["order_type"] }}'});
 
 	if('{{ $row["order_type"] }}')
 	{
 		$(document).ajaxStop(function() {
 			console.log( "Triggered ajaxStop handler." );
-			$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["order_type"] }}",
+			$("#product_type").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["order_type"] }}",
 					{selected_value: '{{ $row["product_type"] }}'});
 			$(document).unbind('ajaxStop');
 		});
 	}
 
-	$("#prod_type_id").click(function () {
-		$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id').val()+"",
+	$("#order_type").click(function () {
+		$("#product_type").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#order_type').val()+"",
 				{selected_value: '{{ $row["product_type"] }}'});
 		if($(this).val()) {
 			//need to uncomment after discussion
