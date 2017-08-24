@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+    <?php \Session::put('filter_before_redirect', 'redirect'); ?>
     <style>
         .dataTables_filter{
             float: right !important;
@@ -202,7 +203,7 @@
                             <div class="col-md-8">
                                 <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                             class="fa  fa-save "></i>  Receive Order </button>
-                                <button type="button" onclick="window.history.back();" class="btn btn-success btn-sm">
+                                <button type="button" onclick="window.location.href = '{{url('order')}}'" class="btn btn-success btn-sm">
                                     <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
                             </div>
                         </div>
@@ -223,6 +224,7 @@
 </div>
     <script type="text/javascript">
         $(document).ready(function () {
+            console.log("Search params: "+"{{\Session::get('searchParams')}}");
 
             numberFieldValidationChecks($("input[type='number']"));
 
