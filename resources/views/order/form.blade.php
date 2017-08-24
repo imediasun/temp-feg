@@ -515,6 +515,7 @@
                 $("#ship_address").hide();
         }
         function calculateSum() {
+            console.log('Calculating Sum');
             var Subtotal = 0.00;
             var Price = 0.00;
             $('table tr.clone ').each(function (i) {
@@ -585,6 +586,7 @@
                             }
                         });
                     }else{
+                        console.log('Current item ('+id+') not received yet removing it ');
                         if (counter <= 1) {
                             beforeLastRemove(id);
                         }else{
@@ -611,7 +613,7 @@
                     $("#" + id).parents('.clonedInput').remove();
                     decreaseCounter();
                 }
-                calculateSum();
+                //calculateSum();
                 return false;
             }
         }
@@ -1238,7 +1240,7 @@
                 $(value).val(index + 1);
                 counter = index + 1;
             });
-
+            calculateSum();
             /*
              if(mode == "add")
              {

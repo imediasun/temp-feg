@@ -136,17 +136,6 @@ class OrderController extends Controller
     }
 
 
-    public function getRunDailyEmailReport()
-    {
-
-        \App\Library\FEG\System\Sync::transferEarnings();
-        \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
-        \App\Library\FEG\System\Sync::generateDailySummary();
-        \App\Library\FEG\System\Email\Report::daily();
-        \App\Library\FEG\System\Email\Report::missingDataReport();
-        echo "done transfer";
-        exit;
-    }
     public function getIndex()
     {
         /*
@@ -559,6 +548,7 @@ class OrderController extends Controller
             $force_remove_items = $request->get('force_remove_items');
             $games = $request->get('game');
             $item_received = $request->get('item_received');
+            $item_received = $request->get('item_received');
             $denied_SIDs = $request->get('denied_SIDs');
             $num_items_in_array = count($itemsArray);
 
@@ -694,6 +684,12 @@ class OrderController extends Controller
                     //// UPDATE STATUS TO APPROVED AND PROCESSED
                     $now = $this->model->get_local_time('date');
 
+                    \DB::update('UPDATE requests
+							 SET status_id = 2,
+							 	 process_user_id = ' . \Session::get('uid') . ',
+								 process_date = "' . $now . '",
+								 blocked_at = null
+						   WHERE id IN(' . $where_in . ')');
                     $request_qty = \DB::select('SELECT qty FROM requests WHERE id='.$request_id);
                     empty($request_qty)? $request_qty=0 : $request_qty=$request_qty[0]->qty;
                     $restore_qty = $request_qty - $qtyArray[$i];
