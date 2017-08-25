@@ -3488,7 +3488,3 @@ span.order_custom_error ~ ul.parsley-error-list
 .btn:focus {
     color: inherit !important;
 }
-li.multiselect-item.multiselect-group + li a label {
-  color: red;
-  font-weight: bold !important;
-}
