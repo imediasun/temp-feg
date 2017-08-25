@@ -54,7 +54,7 @@
 	foreach ($cellIterator as $cell) {
 
 		$serialColumn = $cell->getColumn();
-		$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
+		//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
 		$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
 		$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . (count($rows)+2));
 
