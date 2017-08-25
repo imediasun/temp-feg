@@ -279,18 +279,32 @@ class ProductController extends Controller
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
-        $rules['expense_category'] = 'required|numeric|min:0';
+        if($id != 0)
+        {
+            $rules['expense_category'] = 'required|numeric|min:0';
+        }
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
         if($request->get('prod_type_id') != 8)
         {
             $retail_price=0.000;
         }
+        $product_categories = $request->get('prod_type_id');
         if ($validator->passes()) {
             if ($id == 0) {
                 $data = $this->validatePost('products');
                 $data['retail_price']=$retail_price;
-                $id = $this->model->insertRow($data, $request->input('id'));
+                foreach ($product_categories as $category)
+                {
+                    $category = explode('_',$category);
+                    $data['prod_type_id'] = $category[0];
+                    $data['prod_sub_type_id'] = $category[1];
+                    $myRequest = new Request();
+                    $myRequest->merge([$category[0],$category[1]]);
+                    $expence_cat = $this->getExpenseCategory($myRequest);
+                    $data['expense_category'] = $expence_cat;
+                    $id = $this->model->insertRow($data, $request->input('id'));
+                }
             } else {
 
                 //for inline editing all fields do not get saved
