@@ -155,7 +155,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            <input type="text" name="sku" id="sku" value="{{$row['sku']}}" class="form-control"  @if(empty($row['id'])) required='required' @endif>
+                            <input type="text" name="sku" id="sku" value="{{$row['sku']}}" class="form-control"  @if(!(in_array($row['prod_type_id'], [1,4,20]))) required='required' @endif>
                         </div>
                         <div class="col-md-2">
 
