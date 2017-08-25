@@ -1,4 +1,11 @@
 @if($setting['form-method'] =='native')
+    <style>
+        .multiselect-container.dropdown-menu
+        {
+            overflow-y: scroll;
+            height: 300px;
+        }
+    </style>
     <div class="sbox">
         <div class="sbox-title">
             <h4>@if($id)
@@ -93,16 +100,28 @@
                         </label>
 
                         <div class="col-md-6">
-
+                            @if(empty($row['id']))
+                            <select name='prod_type_id[]' rows='5' id='prod_type_id'
+                                    required='required' multiple>
+                                @foreach(\DB::table('order_type')->where('can_request',1)->get() as $type )
+                                    <optgroup label="{{$type->order_type}}" id="prod_type_id-{{$type->id}}">
+                                        <option value="{{$type->id}}_0">{{$type->order_type}} </option>
+                                        @foreach(\DB::table('product_type')->where('request_type_id',$type->id)->get() as $subType)
+                                            <option value="{{$type->id}}_{{$subType->id}}">{{$subType->type_description}}</option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
+                            </select>
+                            @else
                             <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 '
                                     required='required'></select>
+                            @endif
                         </div>
                         <div class="col-md-2">
 
                         </div>
                     </div>
-
-
+                    @if(!empty($row['id']))
                     <div class="form-group  ">
                         <label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Product Subtype',
@@ -127,6 +146,7 @@
                         <div class="col-md-2">
                         </div>
                     </div>
+                    @endif
 
                     <div class="form-group  ">
                         <label for="SKU" class=" control-label col-md-4 text-left">
@@ -363,9 +383,17 @@
         var form = $('#productFormAjax');
 
         form.parsley();
-
-        $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
-                {selected_value: '{{ $row["prod_type_id"] }}'});
+        $('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue'
+        });
+        @if(empty($row['id']))
+            $("#prod_type_id").multiselect();
+        @else
+            $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
+            {selected_value: '{{ $row["prod_type_id"] }}'});
+        @endif
+        renderDropdown($(".select2"), {width: "100%"});
         if('{{ $row["prod_type_id"] }}')
         {
             $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
@@ -442,14 +470,10 @@
         $('.editor').summernote();
         $('.previewImage').fancybox();
         $('.tips').tooltip();
-        renderDropdown($(".select2"), {width: "100%"});
+
 
         $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
         $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-        $('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
-            checkboxClass: 'icheckbox_square-blue',
-            radioClass: 'iradio_square-blue'
-        });
         $('.removeCurrentFiles').on('click', function () {
             var removeUrl = $(this).attr('href');
             $.get(removeUrl, function (response) {
