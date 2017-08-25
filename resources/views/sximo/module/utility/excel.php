@@ -63,14 +63,17 @@
 	->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);*/
 
 	//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setWidth(50);
+	if($serialColumn)
+	{
+        $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
+        $serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
+        $colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . (count($rows)+2));
 
-	$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
-	$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
-	$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . (count($rows)+2));
+        $objPHPExcel->getActiveSheet()->getStyle($colString)
+            ->getNumberFormat()
+            ->setFormatCode('0');
+	}
 
-$objPHPExcel->getActiveSheet()->getStyle($colString)
-    ->getNumberFormat()
-    ->setFormatCode('0');
 
 	// Delete temporary file
 	unlink($path);
