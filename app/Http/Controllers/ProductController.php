@@ -303,7 +303,7 @@ class ProductController extends Controller
                     $myRequest->merge(['order_type'=>$category[0],'product_type'=>$category[1]]);
                     $expence_cat = $this->getExpenseCategory($myRequest);
                     $expence_cat = json_decode($expence_cat);
-                    $data['expense_category'] = $expence_cat->expense_category;
+                    $data['expense_category'] = $expence_cat->expense_category == NULL ? 0 :$expence_cat->expense_category;
                     $id = $this->model->insertRow($data, $request->input('id'));
                 }
             } else {
