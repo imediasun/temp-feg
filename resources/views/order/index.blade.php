@@ -23,7 +23,6 @@
 	</div>
 	<!-- End Content -->
     <?php
-        //echo \Session::get('filter_before_redirect');
     if(! isset($id)){
         $id= 0;
     }
@@ -35,11 +34,10 @@ $(document).ready(function(){
     var id = "{{ $sid  }}";
     if(id){
         ajaxViewDetail('#order',"{{url()}}/order/update/0/"+id); return false;
-       // ajaxViewDetail('#order',"http://demo/sximo/public/order/update/1/"+id); return false;
-        //reloadData('#{{ $pageModule }}','/sximo/public/order/data');
     }
     else{
-        var searchParams="{{ \Session::get('searchParams') }}";
+        var searchParams="{{\Session::get('searchParams')}}";
+        console.log(searchParams);
         if("{{ \Session::get('filter_before_redirect')}}" == "redirect")
         {
            <?php if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
