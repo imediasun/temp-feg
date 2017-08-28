@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-
+    <?php \Session::put('filter_before_redirect', 'redirect'); ?>
     <style>
         .dataTables_filter{
             float: right !important;
