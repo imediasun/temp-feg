@@ -251,6 +251,11 @@ class ExpensecategoriesController extends Controller {
 
 			if(empty($expense_category)){
 				$this->model->insertRow($data);
+                \DB::table('products')
+                    ->where('prod_type_id',$order_type_id)
+                    ->where('prod_sub_type_id',$product_type_id)
+                    ->where('expense_category',0)
+                    ->update(['expense_category' => $data['mapped_expense_category']]);
 				$message = "New expense category has been added successfully!";
 			}else{
 

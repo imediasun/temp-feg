@@ -44,6 +44,32 @@
 
 	// Pass to writer and output as needed
 	$objWriter = PHPExcel_IOFactory::createWriter($content, 'Excel2007');
+	$objPHPExcel = $objWriter->getPHPExcel();
+
+	//Finding Serial column
+	$serialColumn = '';
+	$row = $objPHPExcel->getActiveSheet()->getRowIterator(2)->current();
+	$cellIterator = $row->getCellIterator();
+	$cellIterator->setIterateOnlyExistingCells(false);
+	foreach ($cellIterator as $cell) {
+
+		$serialColumn = $cell->getColumn();
+		//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
+		$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
+		$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . (count($rows)+2));
+
+		$objPHPExcel->getActiveSheet()->getStyle($colString)
+			->getNumberFormat()
+			->setFormatCode('0');
+	}
+
+	/*$objPHPExcel->getActiveSheet(0)->getStyle('P1:P97')
+	->getNumberFormat()
+	->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);*/
+
+	//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setWidth(50);
+
+
 	// Delete temporary file
 	unlink($path);
 
