@@ -158,6 +158,10 @@ class OrderController extends Controller
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'order')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         $this->getSearchParamsForRedirect();
+
+        session_start();
+        $_SESSION['searchParamsForOrder'] = \Session::get('searchParams');
+
        // echo \Session::get('searchParams');
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');

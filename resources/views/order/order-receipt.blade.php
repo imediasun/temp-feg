@@ -1,6 +1,10 @@
 @extends('layouts.app')
 @section('content')
-    <?php \Session::put('filter_before_redirect', 'redirect'); ?>
+    <?php
+        session_start();
+        \Session::put('filter_before_redirect', 'redirect');
+        \Session::put('searchParams', $_SESSION['searchParamsForOrder']);
+    ?>
     <style>
         .dataTables_filter{
             float: right !important;
