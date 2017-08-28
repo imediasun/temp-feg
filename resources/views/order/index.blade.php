@@ -41,7 +41,7 @@ $(document).ready(function(){
     else{
         var searchParams="{{ \Session::get('searchParams') }}";
         console.log(searchParams);
-        if(searchParams != "")
+        if("{{ \Session::get('filter_before_redirect')}}" == "redirect")
         {
            <?php if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
             {
