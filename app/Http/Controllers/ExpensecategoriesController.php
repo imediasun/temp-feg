@@ -233,7 +233,7 @@ class ExpensecategoriesController extends Controller {
 
 			$data = [
 				'order_type' => $request->order_type,
-				'product_type' => empty($request->product_type) ? 'NULL' : $request->product_type,
+				'product_type' => empty($request->product_type) ? 'NULL1' : $request->product_type,
 				'mapped_expense_category' => $request->mapped_expense_category,
 			];
 
