@@ -259,7 +259,8 @@ class ExpensecategoriesController extends Controller {
 				$message = "New expense category has been added successfully!";
 			}else{
 
-				\DB::table('expense_category_mappingg')
+				dd($data);
+				\DB::table('expense_category_mapping')
 					->where('order_type', $order_type_id)
 					->where('product_type', $product_type_id)
 					->update($data);
