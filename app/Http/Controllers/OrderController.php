@@ -1794,7 +1794,7 @@ class OrderController extends Controller
         return $notes;
     }
 
-    public function debug(){
+    public function getDebug(){
         dd(\Session::get('searchParams'));
     }
 }
