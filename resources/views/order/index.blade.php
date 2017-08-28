@@ -37,7 +37,7 @@ $(document).ready(function(){
         ajaxViewDetail('#order',"{{url()}}/order/update/0/"+id); return false;
     }
     else{
-        var searchParams="{{ \Session::get('searchParams') }}";
+        var searchParams="{{\Session::get('searchParams')}}";
         console.log(searchParams);
         if("{{ \Session::get('filter_before_redirect')}}" == "redirect")
         {
