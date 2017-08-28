@@ -104,20 +104,20 @@ class inventoryreport extends Sximo  {
                    P.sku,
                    T1.order_type AS Order_Type,
                    D.type_description AS Product_Type,
-                   P.vendor_description,
                    V.vendor_name as vendor_name,
+                   IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product,
                    P.ticket_value,
 				   ROUND(P.case_price / P.num_items,2) AS Unit_Price,
-				   SUM(OC.qty) AS Cases_Ordered,
+				   SUM(P.num_items*OC.qty) AS Cases_Ordered,
 				   OC.case_price AS Case_Price,
 				   SUM(OC.total) AS Total_Spent,O.location_id,
 				   O.date_ordered AS start_date,
 				   O.date_ordered AS end_date
                         ";
-            $totalQuery = "SELECT count(*) as total";
+            $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product";
 
             $fromQuery = " FROM order_contents OC 
-                           JOIN products P ON P.id = OC.product_id 
+                           LEFT JOIN products P ON P.id = OC.product_id 
                            JOIN orders O ON O.id = OC.order_id
 						   LEFT JOIN location L ON L.id = O.location_id
 						   LEFT JOIN vendor V ON V.id = O.vendor_id 
@@ -130,7 +130,7 @@ class inventoryreport extends Sximo  {
                             AND O.date_ordered <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType ";
 
-            $groupQuery = " Group BY P.id";
+            $groupQuery = " GROUP BY (CASE WHEN (O.is_freehand = 1) THEN Product ELSE P.id END ),OC.case_price ";
 
 
             $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
