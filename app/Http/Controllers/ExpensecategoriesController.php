@@ -233,7 +233,7 @@ class ExpensecategoriesController extends Controller {
 
 			$data = [
 				'order_type' => $request->order_type,
-				'product_type' => empty($request->product_type) ? NULL : $request->product_type,
+				'product_type' => empty($request->product_type) ? null : $request->product_type,
 				'mapped_expense_category' => $request->mapped_expense_category,
 			];
 
@@ -260,8 +260,8 @@ class ExpensecategoriesController extends Controller {
 			}else{
 
 				\DB::table('expense_category_mapping')
-					->where('order_type',$order_type_id)
-					->where('product_type',$product_type_id)
+					->where('order_type', $order_type_id)
+					->where('product_type', $product_type_id)
 					->update($data);
 
 				$product_type_id = empty($product_type_id) ? '0' : $product_type_id;
