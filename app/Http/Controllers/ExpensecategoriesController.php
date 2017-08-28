@@ -266,7 +266,7 @@ class ExpensecategoriesController extends Controller {
 
 				$product_type_id = empty($product_type_id) ? '0' : $product_type_id;
 
-				\DB::table('products')
+				\DB::table('productss')
 					->where('prod_type_id',$order_type_id)
 					->where('prod_sub_type_id',$product_type_id)
 					->where('expense_category',$expense_category)
