@@ -317,7 +317,7 @@
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
                 var href="{{url()}}/order";
-                window.location=href;
+                window.location.href=href;
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
