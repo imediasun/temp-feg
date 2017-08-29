@@ -313,11 +313,11 @@
         function showResponse(data) {
             if (data.status == 'success') {
                 ajaxViewClose('#{{ $pageModule }}');
-                ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+                //ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
                 var href="{{url()}}/order";
-                window.location=href;
+                window.location.href=href;
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
