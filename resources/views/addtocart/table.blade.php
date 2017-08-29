@@ -146,7 +146,7 @@
                         <td>{{ $row->ticket_value }}</td>
                         <td>{{CurrencyHelpers::formatPrice($row->case_price) }}</td>
                         <td>{{CurrencyHelpers::formatPrice( $row->retail_price) }}</td>
-                        <td>{{ $row->notes }}</td>
+                        <td class="notes"><textarea id="notes" name="notes" style="width: 100%;">{{ $row->notes }}</textarea></td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('addtocart',$access,$id ,$setting) !!}
                         </td>
