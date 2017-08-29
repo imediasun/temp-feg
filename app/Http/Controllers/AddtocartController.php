@@ -315,11 +315,11 @@ class AddtocartController extends Controller
         }
     }
 
-    public function getSave($id = null, $qty = null, $vendor_name = null)
+    public function getSave($id = null, $qty = null, $vendor_name = null, $notes = null)
     {
 
         try {
-            $data = array('qty' => $qty);
+            $data = array('qty' => $qty, 'notes' => $notes);
             \DB::table('requests')->where('id', $id)->update($data);
             $vendor_name = str_replace('_', ' ', $vendor_name);
 
