@@ -738,19 +738,19 @@
                     return false;
                 }
             });
-            var requests_item_count = <?php echo json_encode($data['requests_item_count']) ?>;
-            var order_description_array = <?php echo json_encode($data['orderDescriptionArray']) ?>;
-            var order_price_array = <?php echo json_encode($data['orderPriceArray']) ?>;
-            var order_qty_array = <?php echo json_encode($data['orderQtyArray']) ?>;
-            var order_content_id_array = <?php echo json_encode($data['order_content_id']) ?>;
-            var order_qty_received_array = <?php echo json_encode($data['receivedItemsArray']) ?>;
-            var order_product_id_array = <?php echo json_encode($data['orderProductIdArray']) ?>;
-            var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
-            var item_name_array =<?php echo json_encode($data['itemNameArray']) ?>;
-            var sku_num_array =<?php echo json_encode($data['skuNumArray']) ?>;
-            var game_ids_array =<?php echo json_encode($data['gameIdsArray']) ?>;
-            var item_case_price =<?php echo json_encode($data['itemCasePrice']) ?>;
-            var item_retail_price =<?php echo json_encode($data['itemRetailPrice'])?>;
+            var requests_item_count = <?php echo json_encode(isset($data['requests_item_count'])?$data['requests_item_count']:[]) ?>;
+            var order_description_array = <?php echo json_encode(isset($data['orderDescriptionArray'])?$data['orderDescriptionArray']:[]) ?>;
+            var order_price_array = <?php echo json_encode(isset($data['orderPriceArray'])?$data['orderPriceArray']:[]) ?>;
+            var order_qty_array = <?php echo json_encode(isset($data['orderQtyArray'])?$data['orderQtyArray']:[]) ?>;
+            var order_content_id_array = <?php echo json_encode(isset($data['order_content_id'])?$data['order_content_id']:[]) ?>;
+            var order_qty_received_array = <?php echo json_encode(isset($data['receivedItemsArray'])?$data['receivedItemsArray']:[]) ?>;
+            var order_product_id_array = <?php echo json_encode(isset($data['orderProductIdArray'])?$data['orderProductIdArray']:[]) ?>;
+            var order_request_id_array = <?php echo json_encode(isset($data['orderRequestIdArray'])?$data['orderRequestIdArray']:[]) ?>;
+            var item_name_array =<?php echo json_encode(isset($data['itemNameArray'])?$data['itemNameArray']:[]) ?>;
+            var sku_num_array =<?php echo json_encode(isset($data['skuNumArray'])?$data['skuNumArray']:[]) ?>;
+            var game_ids_array =<?php echo json_encode(isset($data['gameIdsArray'])?$data['gameIdsArray']:[]) ?>;
+            var item_case_price =<?php echo json_encode(isset($data['itemCasePrice'])?$data['itemCasePrice']:[]) ?>;
+            var item_retail_price =<?php echo json_encode(isset($data['itemRetailPrice'])?$data['itemRetailPrice']:[])?>;
             var item_total = 0;
             for (var i = 0; i < requests_item_count; i++) {
 
