@@ -454,11 +454,14 @@
         case_price_categories = case_price_categories.split(",").map(Number);
 
         var show_freehand = <?php echo $show_freehand  ; ?>;
-
+        var mode = "{{ $data['prefill_type'] }}";
         var forceRemoveOrderContentIds = [];
         console.log(type_permissions);
         console.log('Createing order '+show_freehand);
         $(document).ready(function () {
+            if(mode == 'SID'){
+                $("#wrapper").css("pointer-events","all");
+            }
             if(!show_freehand)
             {
                 $('#can-freehand').hide();
@@ -470,7 +473,6 @@
         var counter = isRequestApprovalProcess ? $('input[name^=item_num]').length : 0;
         var hidePopup;
         var showFirstPopup;
-        var mode = "{{ $data['prefill_type'] }}";
         var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
         $('#alt_ship_to').on('change', function () {
                     hideShowAltLocation();
