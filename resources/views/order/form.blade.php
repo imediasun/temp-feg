@@ -468,7 +468,13 @@
             }
         });
 
-
+        $('#ordersubmitFormAjax').on('keyup keypress', function(e) {
+            var keyCode = e.keyCode || e.which;
+            if (keyCode === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
         var isRequestApprovalProcess = <?php echo $isRequestApproveProcess ? 'true' : 'false'; ?>;
         var counter = isRequestApprovalProcess ? $('input[name^=item_num]').length : 0;
         var hidePopup;
@@ -482,7 +488,23 @@
         @if($data['prefill_type'] == 'SID')
             $('body #sidemenu a:not(.expand)').on('click',function (e) {
                 e.preventDefault();
-                alert('No delete order');
+                reloadOrder(1);
+                if($(this).attr('id') == 'logo')
+                {
+                    var redirect_url = $(this).attr('href');
+                    $(document).ajaxStop(function () {
+                        location.href = redirect_url;
+                    });
+                }
+            });
+            $('.navbar-top-links li a:not([href="javascript:void(0)"])').on('click',function(e)
+            {
+                e.preventDefault();
+                reloadOrder(1);
+                var redirect_url = $(this).attr('href');
+                $(document).ajaxStop(function () {
+                    location.href = redirect_url;
+                });
             });
         @endif
 
@@ -720,7 +742,7 @@
             var form = $('#ordersubmitFormAjax');
             form.parsley();
             form.submit(function () {
-                if (counter <= 1 && $('.hiddenClone').length) {
+                if (counter <= 1 && $('.hiddenClone').length ) {
                     notyMessageError('For order there must be 1 minimum item available');
                     return false;
                 }
@@ -742,19 +764,19 @@
                     return false;
                 }
             });
-            var requests_item_count = <?php echo json_encode(isset($data['requests_item_count'])?$data['requests_item_count']:[]) ?>;
-            var order_description_array = <?php echo json_encode(isset($data['orderDescriptionArray'])?$data['orderDescriptionArray']:[]) ?>;
-            var order_price_array = <?php echo json_encode(isset($data['orderPriceArray'])?$data['orderPriceArray']:[]) ?>;
-            var order_qty_array = <?php echo json_encode(isset($data['orderQtyArray'])?$data['orderQtyArray']:[]) ?>;
-            var order_content_id_array = <?php echo json_encode(isset($data['order_content_id'])?$data['order_content_id']:[]) ?>;
-            var order_qty_received_array = <?php echo json_encode(isset($data['receivedItemsArray'])?$data['receivedItemsArray']:[]) ?>;
-            var order_product_id_array = <?php echo json_encode(isset($data['orderProductIdArray'])?$data['orderProductIdArray']:[]) ?>;
-            var order_request_id_array = <?php echo json_encode(isset($data['orderRequestIdArray'])?$data['orderRequestIdArray']:[]) ?>;
-            var item_name_array =<?php echo json_encode(isset($data['itemNameArray'])?$data['itemNameArray']:[]) ?>;
-            var sku_num_array =<?php echo json_encode(isset($data['skuNumArray'])?$data['skuNumArray']:[]) ?>;
-            var game_ids_array =<?php echo json_encode(isset($data['gameIdsArray'])?$data['gameIdsArray']:[]) ?>;
-            var item_case_price =<?php echo json_encode(isset($data['itemCasePrice'])?$data['itemCasePrice']:[]) ?>;
-            var item_retail_price =<?php echo json_encode(isset($data['itemRetailPrice'])?$data['itemRetailPrice']:[])?>;
+            var requests_item_count = <?php echo json_encode($data['requests_item_count']) ?>;
+            var order_description_array = <?php echo json_encode($data['orderDescriptionArray']) ?>;
+            var order_price_array = <?php echo json_encode($data['orderPriceArray']) ?>;
+            var order_qty_array = <?php echo json_encode($data['orderQtyArray']) ?>;
+            var order_content_id_array = <?php echo json_encode($data['order_content_id']) ?>;
+            var order_qty_received_array = <?php echo json_encode($data['receivedItemsArray']) ?>;
+            var order_product_id_array = <?php echo json_encode($data['orderProductIdArray']) ?>;
+            var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
+            var item_name_array =<?php echo json_encode($data['itemNameArray']) ?>;
+            var sku_num_array =<?php echo json_encode($data['skuNumArray']) ?>;
+            var game_ids_array =<?php echo json_encode($data['gameIdsArray']) ?>;
+            var item_case_price =<?php echo json_encode($data['itemCasePrice']) ?>;
+            var item_retail_price =<?php echo json_encode($data['itemRetailPrice'])?>;
             var item_total = 0;
             for (var i = 0; i < requests_item_count; i++) {
 
@@ -1189,6 +1211,7 @@
             }
             $("[name^=qty]").keypress(isNumeric);
             reInitParcley();
+
         });
         function isNumeric(ev) {
             var keyCode = window.event ? ev.keyCode : ev.which;
@@ -1443,7 +1466,9 @@
         $("#closeOrderForm").click(function(e){
             reloadOrder();
         });
-        function reloadOrder() {
+        function reloadOrder(redirectToClickedItem) {
+            redirectToClickedItem = redirectToClickedItem || 0;
+            console.log('redirectToClickedItem = ' + redirectToClickedItem);
             var requestIds = $('#where_in_expression').val();
             if(requestIds)
             {
@@ -1465,7 +1490,11 @@
                         }
                         else {
                             //  {{ \Session::put('filter_before_redirect','redirect') }}
-                            location.href = redirectLink;
+                           if(redirectToClickedItem == 0)
+                            {
+                                location.href = redirectLink;
+                            }
+
                         }
                     })
                     .error(function (data) {
@@ -1676,7 +1705,7 @@
     var preserveValue;
     $('.qty').focus(function(){ preserveValue = $(this).val(); }).change(function () {
 
-        if(parseInt($(this).attr('receive')) >= parseInt($(this).val()) && mode == "edit" && $(this).attr('receive')!=0){
+        if(parseInt($(this).attr('receive')) > parseInt($(this).val()) && mode == "edit" && $(this).attr('receive')!=0){
             $(this).css({'border': '1px solid red'});
             var element = $(this);
             $('.custom_overlay').show();
