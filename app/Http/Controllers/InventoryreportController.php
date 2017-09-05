@@ -4,20 +4,20 @@ use App\Http\Controllers\controller;
 use App\Models\Inventoryreport;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect ;
 
 class InventoryreportController extends Controller {
 
 	protected $layout = "layouts.main";
-	protected $data = array();	
+	protected $data = array();
 	public $module = 'inventoryreport';
 	static $per_page	= '10';
-	
-	public function __construct() 
+
+	public function __construct()
 	{
 		parent::__construct();
 		$this->model = new Inventoryreport();
-		
+
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
 
@@ -28,7 +28,7 @@ class InventoryreportController extends Controller {
 			'pageUrl'			=>  url('inventoryreport'),
 			'return' 			=> 	self::returnUrl()
 		);
-		
+
 
 
 	}
@@ -45,22 +45,22 @@ class InventoryreportController extends Controller {
 	public function postData( Request $request)
 	{
 
-        $module_id = \DB::table('tb_module')->where('module_name', '=', 'inventoryreport')->pluck('module_id');
-        $this->data['module_id'] = $module_id;
-        if (Input::has('config_id')) {
-        $config_id = Input::get('config_id');
-        } elseif (\Session::has('config_id')) {
-        $config_id = \Session::get('config_id');
-        } else {
-        $config_id = 0;
-        }
-        $this->data['config_id'] = $config_id;
-        \Session::put('config_id', $config_id);
-        $config = $this->model->getModuleConfig($module_id, $config_id);
-        if(!empty($config))
-        {
-            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);        
-        }
+		$module_id = \DB::table('tb_module')->where('module_name', '=', 'inventoryreport')->pluck('module_id');
+		$this->data['module_id'] = $module_id;
+		if (Input::has('config_id')) {
+			$config_id = Input::get('config_id');
+		} elseif (\Session::has('config_id')) {
+			$config_id = \Session::get('config_id');
+		} else {
+			$config_id = 0;
+		}
+		$this->data['config_id'] = $config_id;
+		\Session::put('config_id', $config_id);
+		$config = $this->model->getModuleConfig($module_id, $config_id);
+		if(!empty($config))
+		{
+			$this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
+		}
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query
@@ -82,15 +82,15 @@ class InventoryreportController extends Controller {
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
-        $pagination = new Paginator($results['rows'], $results['total'], 
-            (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
-				($results['total'] > 0 ? $results['total'] : '1')));        
+		$pagination = new Paginator($results['rows'], $results['total'],
+			(isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] :
+				($results['total'] > 0 ? $results['total'] : '1')));
 		$pagination->setPath('inventoryreport/data');
 		$this->data['param']		= $params;
-        $this->data['topMessage']	= @$results['topMessage'];
+		$this->data['topMessage']	= @$results['topMessage'];
 		$this->data['message']          = @$results['message'];
 		$this->data['bottomMessage']	= @$results['bottomMessage'];
-        
+
 		$this->data['rowData']		= $results['rows'];
 		// Build Pagination
 		$this->data['pagination']	= $pagination;
@@ -109,9 +109,9 @@ class InventoryreportController extends Controller {
 
 		// Master detail link if any
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
-        if ($this->data['config_id'] != 0 && !empty($config)) {
-        $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
-        }
+		if ($this->data['config_id'] != 0 && !empty($config)) {
+			$this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
+		}
 // Render into template
 		return view('inventoryreport.table',$this->data);
 
@@ -124,13 +124,13 @@ class InventoryreportController extends Controller {
 		if($id =='')
 		{
 			if($this->access['is_add'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+				return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 		}
 
 		if($id !='')
 		{
 			if($this->access['is_edit'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+				return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 		}
 
 		$row = $this->model->find($id);
@@ -142,7 +142,7 @@ class InventoryreportController extends Controller {
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		
+
 		$this->data['id'] = $id;
 
 		return view('inventoryreport.form',$this->data);
@@ -162,12 +162,12 @@ class InventoryreportController extends Controller {
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('orders');
 		}
-		
-        $this->data['tableGrid'] = $this->info['config']['grid'];
+
+		$this->data['tableGrid'] = $this->info['config']['grid'];
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
-        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
+		$this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		return view('inventoryreport.view',$this->data);
 	}
@@ -176,11 +176,11 @@ class InventoryreportController extends Controller {
 	function postCopy( Request $request)
 	{
 
-	    foreach(\DB::select("SHOW COLUMNS FROM orders ") as $column)
-        {
+		foreach(\DB::select("SHOW COLUMNS FROM orders ") as $column)
+		{
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
-        }
+		}
 		$toCopy = implode(",",$request->input('ids'));
 
 
@@ -202,11 +202,11 @@ class InventoryreportController extends Controller {
 			$data = $this->validatePost('orders');
 
 			$id = $this->model->insertRow($data , $request->input('id'));
-			
+
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
-				));
+			));
 
 		} else {
 
@@ -234,7 +234,7 @@ class InventoryreportController extends Controller {
 		if(count($request->input('ids')) >=1)
 		{
 			$this->model->destroy($request->input('ids'));
-			
+
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success_delete')
@@ -249,73 +249,73 @@ class InventoryreportController extends Controller {
 
 	}
 
-    function getExport($t = 'excel')
-    {
-        global $exportSessionID;
-        ini_set('memory_limit', '1G');
-        set_time_limit(0);
+	function getExport($t = 'excel')
+	{
+		global $exportSessionID;
+		ini_set('memory_limit', '1G');
+		set_time_limit(0);
 
-        $exportId = Input::get('exportID');
-        if (!empty($exportId)) {
-            $exportSessionID = 'export-'.$exportId;
-            \Session::put($exportSessionID, microtime(true));
-        }
+		$exportId = Input::get('exportID');
+		if (!empty($exportId)) {
+			$exportSessionID = 'export-'.$exportId;
+			\Session::put($exportSessionID, microtime(true));
+		}
 
-        $info = $this->model->makeInfo($this->module);
-        //$master  	= $this->buildMasterDetail();
-        if (method_exists($this, 'getSearchFilterQuery')) {
-            $filter = $this->getSearchFilterQuery();
-        }
-        else {
-            $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
-        }
+		$info = $this->model->makeInfo($this->module);
+		//$master  	= $this->buildMasterDetail();
+		if (method_exists($this, 'getSearchFilterQuery')) {
+			$filter = $this->getSearchFilterQuery();
+		}
+		else {
+			$filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+		}
 
-        $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby'];
-        $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];
-        $params = array(
-            'params' => '',
-            'sort' => $sort,
-            'order' => $order,
-            'params' => $filter,
-            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
-        );
+		$sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby'];
+		$order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];
+		$params = array(
+			'params' => '',
+			'sort' => $sort,
+			'order' => $order,
+			'params' => $filter,
+			'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
+		);
 
+		$results = $this->model->getRows($params);
+		$fields = $info['config']['grid'];
+		$rows = $results['rows'];
 
-        $results = $this->model->getRows($params);
+		$rows = $this->updateDateInAllRows($rows);
 
-        $fields = $info['config']['grid'];
-        $rows = $results['rows'];
+		$content = array(
+			'exportID' => $exportSessionID,
+			'fields' => $fields,
+			'rows' => $rows,
+			'categories' => $results['categories'],
+			'title' => $this->data['pageTitle'],
+			'topMessage' => $results['topMessage'],
+		);
 
-        $rows = $this->updateDateInAllRows($rows);
+		if ($t == 'word') {
 
-        $content = array(
-            'exportID' => $exportSessionID,
-            'fields' => $fields,
-            'rows' => $rows,
-            'title' => $this->data['pageTitle'],
-        );
+			return view('sximo.module.utility.word', $content);
 
-        if ($t == 'word') {
+		} else if ($t == 'pdf') {
 
-            return view('sximo.module.utility.word', $content);
+			$pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+			return view($this->data['pageTitle'] . '.pdf');
 
-        } else if ($t == 'pdf') {
+		} else if ($t == 'csv') {
 
-            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
-            return view($this->data['pageTitle'] . '.pdf');
+			return view('sximo.module.utility.csv', $content);
 
-        } else if ($t == 'csv') {
+		} else if ($t == 'print') {
 
-            return view('sximo.module.utility.csv', $content);
+			return view('sximo.module.utility.print', $content);
 
-        } else if ($t == 'print') {
+		} else {
 
-            return view('sximo.module.utility.print', $content);
-
-        } else {
-
-            return view('sximo.module.utility.excel_inventory', $content);
-        }
-    }
+			return view('sximo.module.utility.excel_inventory', $content);
+		}
+	}
 
 }

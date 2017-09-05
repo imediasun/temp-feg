@@ -7,28 +7,28 @@ use App\Library\ReportHelpers;
 use App\Library\DBHelpers;
 
 class inventoryreport extends Sximo  {
-	
-	protected $table = 'orders';
-	protected $primaryKey = 'id';
 
-	public function __construct() {
-		parent::__construct();
-		
-	}
+    protected $table = 'orders';
+    protected $primaryKey = 'id';
 
-	public static function querySelect(  ){
-		
-		return "  SELECT orders.* FROM orders  ";
-	}	
+    public function __construct() {
+        parent::__construct();
 
-	public static function queryWhere(  ){
-		
-		return "  WHERE orders.id IS NOT NULL AND orders.status_id != ".order::ORDER_VOID_STATUS ." ";
-	}
-	
-	public static function queryGroup(){
-		return "  ";
-	}
+    }
+
+    public static function querySelect(  ){
+
+        return "  SELECT orders.* FROM orders  ";
+    }
+
+    public static function queryWhere(  ){
+
+        return "  WHERE orders.id IS NOT NULL AND orders.status_id != ".order::ORDER_VOID_STATUS ." ";
+    }
+
+    public static function queryGroup(){
+        return "  ";
+    }
 
     public static function getRows( $args,$cond=null )
     {
@@ -58,7 +58,7 @@ class inventoryreport extends Sximo  {
         $prod_type_id = @$filters['prod_type_id'];
         $prod_sub_type_id = @$filters['prod_sub_type_id'];
         if (empty($location_id)) {
-            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
+            $location_id = \Session::get('selected_location');
         }
         if (empty($location_id)) {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
@@ -76,7 +76,7 @@ class inventoryreport extends Sximo  {
             $whereOrderType ="";
             $whereProdType = "";
             if (!empty($location_id)) {
-                $whereLocation = "AND O.location_id IN ($location_id) ";
+                $whereLocation = "AND O.location_id = ($location_id) ";
             }
             if (!empty($vendor_id)) {
                 $whereVendor = "AND V.id IN ($vendor_id) ";
@@ -102,6 +102,9 @@ class inventoryreport extends Sximo  {
             $mainQuery = "
             Select P.id,
                    P.sku,
+                   P.num_items,
+                   '' as unit_inventory_count,
+                   '' as total_inventory_value,
                    T1.order_type AS Order_Type,
                    D.type_description AS Product_Type,
                    V.vendor_name as vendor_name,
@@ -114,6 +117,7 @@ class inventoryreport extends Sximo  {
 				   O.date_ordered AS start_date,
 				   O.date_ordered AS end_date
                         ";
+            $catQuery = "Select distinct T1.order_type";
             $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product";
 
             $fromQuery = " FROM order_contents OC 
@@ -146,15 +150,18 @@ class inventoryreport extends Sximo  {
             $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
 
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
-                ' ORDER BY V.vendor_name, P.prod_type_id, P.vendor_description ';
+                ' ORDER BY Unit_Price ';
 
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
+            $finalCatQuery = "$catQuery $fromQuery $whereQuery";
             \Log::info("Inventory Report final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
+            $rawCats = \DB::select($finalCatQuery);
             $rows = self::processRows($rawRows);
 
             $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
-            $topMessage = "Inventory Report $humanDateRange";
+            $location = Location::find($location_id)->location_name;
+            $topMessage = "Inventory Report $humanDateRange $location $location_id";
         }
 
         return $results = array(
@@ -162,6 +169,7 @@ class inventoryreport extends Sximo  {
             'bottomMessage' => $bottomMessage,
             'message' => $message,
             'rows'=> $rows,
+            'categories'=> $rawCats,
             'total' => $total
         );
 
