@@ -84,7 +84,7 @@ $objSheet->getPageSetup()->setFitToHeight(0);*/
 			break;
 		}
 	}
-	$TotalColumn = $objSheet->getHighestColumn();;
+	$TotalColumn = $objSheet->getHighestColumn();
 	$UnitInventoryColumn = 'L';
 	$UnitPriceColumn = 'F';
 	$CasePriceColumn = 'G';
