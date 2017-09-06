@@ -29,6 +29,7 @@
                
                     <h3>Order Receipt</h3>
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
+
                         <table class="table">
                             <tr><td  style="border: none;" ><b>PO #</b></td><td  style="border: none;" >{{ $data['po_number'] }}</td></tr>
                             <tr><td><b>Ordered By:</b></td><td>{{ $data['order_user_name'] }}</td></tr>
@@ -38,7 +39,7 @@
                             <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
                             <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
-                            <tr><td><b></b></td> <td> <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;"><i class="fa fa-edit"></i> Edit Receipt</button> </td></tr>
+                            <tr><td><b></b></td> <td> <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" onclick="$('#update_receipt_btn').toggle();"><i class="fa fa-edit"></i> Edit Receipt</button> </td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
@@ -93,10 +94,9 @@
                                     <th>Case Price</th>
                                     <th>Qty</th>
                                     <th>Received Qty</th>
-                                    <th>Partially Received</th>
+                                    <th>Update Qty</th>
                                     <th>Qty</th>
-                                    <th>Total ( $ )</th>
-
+                                    <th>Total($)</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -106,7 +106,8 @@
                                         <tr>
                                             <td style="text-align: center">
                                                 {{ $value ++ }}
-                                                <input type="hidden" name="itemsID[]" value="{{ $order_item->id }}">
+                                                <input type="hidden" name="orderLineItemId[]" value="{{ $order_item->id }}">
+                                                <input type="hidden" name="updateItemNotes[]" value="{{ $order_item->notes }}">
                                             </td>
                                             <td>{{ $order_item->item_name }}</td>
                                             <td>{{ $order_item->product_description }}</td>
@@ -116,17 +117,19 @@
                                             <td>{{CurrencyHelpers::formatCurrency(number_format($order_item->price , \App\Models\Order::ORDER_PERCISION)) }}</td>
                                             <td> {{ CurrencyHelpers::formatCurrency( number_format( $order_item->case_price , \App\Models\Order::ORDER_PERCISION)) }}</td>
 
-                                            <td>{{ $order_item->qty }}</td>
+                                            <td>{{ $order_item->qty }}
+                                                <input type="hidden" name="updateOrigQty[]" value="{{$order_item->qty}}">
+                                            </td>
                                             <td>
                                                 {{ $order_item->item_received }}
-                                                <input type="hidden" name="receivedItemsQty[]" value="{{$order_item->item_received  }}">
+                                                <input type="hidden" name="updateAlreadyReceivedQty[]" value="{{$order_item->item_received}}">
                                             </td>
 
                                             <td style="text-align: center">
-                                                <input type="checkbox" class="yourBox" name="receivedInParts[]" value="{{ $order_item->id }}" />
+                                                <input type="checkbox" class="updateBox" value="{{ $order_item->id }}" />
                                             </td>
                                             <td>
-                                                <input type="number"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" max="{!! $order_item->qty - $order_item->item_received !!}" min="0" readonly="readonly" />
+                                                <input type="number"  id="updateItemText{{ $order_item->id }}" name="updateQty[]" value="0" max="{!! $order_item->qty - $order_item->item_received !!}" min="0" disabled="disabled" />
                                             </td>
                                             <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
                                             </td>
@@ -138,6 +141,7 @@
                             </table>
                             <br><hr><br>
                         </div>
+
                         <br>
 
                         <table id="itemTable" class="display table" cellspacing="0" width="100%">
@@ -194,6 +198,7 @@
                             @endforeach
                             </tbody>
                         </table>
+
                     </div>
 
                     <div class="clearfix"></div>
@@ -259,10 +264,13 @@
                             <input type="hidden" name='location_id' value="{{ $data['location_id'] }}" id='location_id'/>
                             <input type="hidden" name='user_id' value="{{ $data['user_id'] }}" id='user_id'/>
                             <input type="hidden" name='added_to_inventory' value="{{ $data['added_to_inventory'] }}" id='added_to_inventory'/>
+                            <input type="hidden" name='mode' value="update" id='mode'/>
                             <label class="col-md-4 control-label text-right" >&nbsp</label>
                             <div class="col-md-8">
                                 <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                             class="fa  fa-save "></i>  Receive Order </button>
+                                <button type="submit" class="btn btn-primary btn-sm " id="update_receipt_btn"><i
+                                            class="fa fa-refresh"></i>  Update Receipt </button>
                                 <button type="button" onclick="window.history.back();" class="btn btn-success btn-sm">
                                     <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
                             </div>
@@ -284,7 +292,7 @@
 </div>
     <script type="text/javascript">
         $(document).ready(function () {
-
+            $('#update_receipt_btn').toggle();
             numberFieldValidationChecks($("input[type='number']"));
 
             var dTable =  $('#itemTable').DataTable({

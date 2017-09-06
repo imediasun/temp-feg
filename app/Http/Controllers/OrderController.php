@@ -1462,6 +1462,16 @@ class OrderController extends Controller
         }
     }
 
+    public function updateOrderReceipt($request){
+        dd($request->all());
+        $order_id = $request->get('order_id');
+        $updateQty = $request->get('updateQty');
+        $item_ids = $request->get('orderLineItemId');
+        $received_item_qty = $request->get('receivedItemsQty');
+        $date_received = date("Y-m-d", strtotime($request->get('date_received')));
+
+    }
+
     public function getSubmitorder($SID)
     {
         $this->data['sid'] = $SID;
