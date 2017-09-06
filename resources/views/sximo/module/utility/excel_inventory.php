@@ -142,10 +142,11 @@ $objSheet->getStyle($TotalColumn.'3:'.$TotalColumn.($lastRow+$totalCounters))->g
 $objSheet->getStyle($TotalSpentColumn.'3:'.$TotalSpentColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 $objSheet->getStyle($UnitPriceColumn.'3:'.$UnitPriceColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 $objSheet->getStyle($CasePriceColumn.'3:'.$CasePriceColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
-$objSheet->getColumnDimension($TotalColumn)->setWidth(10);
-$objSheet->getColumnDimension($TotalSpentColumn)->setWidth(10);
-$objSheet->getColumnDimension($UnitPriceColumn)->setWidth(10);
-$objSheet->getColumnDimension($CasePriceColumn)->setWidth(10);
+$objSheet->getColumnDimension($TotalColumn)->setWidth(15);
+$objSheet->getColumnDimension($TotalSpentColumn)->setWidth(12);
+$objSheet->getColumnDimension($UnitPriceColumn)->setWidth(12);
+$objSheet->getColumnDimension($UnitInventoryColumn)->setWidth(12);
+$objSheet->getColumnDimension($CasePriceColumn)->setWidth(12);
 $objSheet->getColumnDimension($OrderTypeColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductTypeColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductColumn)->setWidth(20);
@@ -158,7 +159,63 @@ $objSheet->getStyle($SkuColumn."3:".$SkuColumn.($lastRow+$totalCounters))->getAl
 $objSheet->getStyle($CasePackColumn."3:".$CasePackColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $objSheet->getStyle($QuantityOrderedColumn."3:".$QuantityOrderedColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 	//$objSheet->getColumnDimension($serialColumn)->setWidth(50);
-
+$endOn = $endOn+2;
+$objSheet->insertNewRowBefore($endOn, 1);
+$totalsRowStart = $endOn;
+$objSheet->setCellValue(
+	"A".$totalsRowStart,
+	"Totals"
+);
+dd($categories,$totalsCells);
+	foreach($categories as $key=>$category)
+	{
+		$endOn++;
+		$objSheet->insertNewRowBefore($endOn, 1);
+		$objSheet->setCellValue(
+			"A".$endOn,
+			"$category->order_type"
+		);
+		$objSheet->setCellValue(
+			"B".$endOn,
+			"=$totalsCells[$key]"
+		);
+	}
+$endOn++;
+$objSheet->insertNewRowBefore($endOn, 1);
+$objSheet->setCellValue(
+	"A".$endOn,
+	"Total Location Inventory"
+);
+$objSheet->setCellValue(
+	"B".$endOn,
+	"=SUM(B$totalsRowStart:B$endOn)"
+);
+$objSheet->getStyle("A$totalsRowStart:B$endOn")->applyFromArray(
+	array(
+		'fill' => array(
+			'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			'color' => array('rgb' => '#ffff00')
+		)
+	)
+);
+$endOn = $endOn+2;
+$objSheet->insertNewRowBefore($endOn, 1);
+$objSheet->setCellValue(
+	"A".$endOn,
+	"$category->order_type"
+);
+$endOn++;
+$objSheet->insertNewRowBefore($endOn, 1);
+$objSheet->setCellValue(
+	"A".$endOn,
+	"$category->order_type"
+);
+$endOn++;
+$objSheet->insertNewRowBefore($endOn, 1);
+$objSheet->setCellValue(
+	"A".$endOn,
+	"$category->order_type"
+);
 	$objPHPExcel->getDefaultStyle()
 	->getAlignment()
 	->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
