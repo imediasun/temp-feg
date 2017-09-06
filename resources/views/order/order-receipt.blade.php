@@ -39,7 +39,7 @@
                             <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
                             <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
-                            <tr><td><b></b></td> <td> <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" onclick="$('#update_receipt_btn').toggle();"><i class="fa fa-edit"></i> Edit Receipt</button> </td></tr>
+                            <tr><td><b></b></td> <td> <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button> </td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
@@ -126,10 +126,10 @@
                                             </td>
 
                                             <td style="text-align: center">
-                                                <input type="checkbox" class="updateBox" value="{{ $order_item->id }}" />
+                                                <input type="checkbox" class="updateBox" name="updateProducts[]" value="{{ $order_item->id }}" />
                                             </td>
                                             <td>
-                                                <input type="number"  id="updateItemText{{ $order_item->id }}" name="updateQty[]" value="0" max="{!! $order_item->qty - $order_item->item_received !!}" min="0" disabled="disabled" />
+                                                <input type="number" class="updateQtyInput" id="updateItemText{{ $order_item->id }}" name="updateQty[]" value="0" max="{!! $order_item->qty !!}" min="0" disabled="disabled" />
                                             </td>
                                             <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
                                             </td>
@@ -144,7 +144,8 @@
 
                         <br>
 
-                        <table id="itemTable" class="display table" cellspacing="0" width="100%">
+                        <div class="collapse in" id="receiveItemsPan">
+                            <table id="itemTable" class="display table" cellspacing="0" width="100%">
                             <thead>
                             <tr>
                             <th>No#</th>
@@ -198,6 +199,7 @@
                             @endforeach
                             </tbody>
                         </table>
+                        </div>
 
                     </div>
 
@@ -264,7 +266,8 @@
                             <input type="hidden" name='location_id' value="{{ $data['location_id'] }}" id='location_id'/>
                             <input type="hidden" name='user_id' value="{{ $data['user_id'] }}" id='user_id'/>
                             <input type="hidden" name='added_to_inventory' value="{{ $data['added_to_inventory'] }}" id='added_to_inventory'/>
-                            <input type="hidden" name='mode' value="update" id='mode'/>
+                            <input type="hidden" name='order_state_id' value="{{ $data['status_id'] }}" id='added_to_inventory'/>
+                            <input type="hidden" name='mode' value="receive" id='mode'/>
                             <label class="col-md-4 control-label text-right" >&nbsp</label>
                             <div class="col-md-8">
                                 <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
@@ -308,6 +311,16 @@
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).attr('readonly', 'readonly');
                 $('#receivedItemText'+itemId).val($('#receivedItemText'+itemId).attr('max'));
+            });
+
+            $('#editItemTable .updateBox').on('ifChecked',function(){
+                var itemId= $(this).val();
+                $('#updateItemText'+itemId).removeAttr('disabled');
+            });
+            $('#editItemTable .updateBox').on('ifUnchecked',function(){
+                var itemId= $(this).val();
+                $('#updateItemText'+itemId).attr('disabled', 'disabled');
+                $('#updateItemText'+itemId).val(0);
             });
             var isAdvaceReplacement=0;
 
@@ -421,6 +434,20 @@
 
         $('input[name^="receivedQty"]').change(function () {
             $('#orderreceiveFormAjax').parsley( 'validate' );
+        });
+
+        $('input[name^="updateQty"]').change(function () {
+            $('#orderreceiveFormAjax').parsley( 'validate' );
+        });
+
+        $('#edit_receipt_btn').on('click', function () {
+            $('#update_receipt_btn').toggle();
+            $('#submit_btn').toggle();
+            if($('#update_receipt_btn').is(":visible")){
+                $('#mode').val('update');
+            }else{
+                $('#mode').val('receive');
+            }
         });
 
     </script>

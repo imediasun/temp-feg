@@ -1337,6 +1337,11 @@ class OrderController extends Controller
                 return $value;
             }
         }, \Input::all()));
+dd($request->get('mode'));
+        if($request->get('mode')=='update'){
+            $this->updateOrderReceipt($request);
+            return;
+        }
 
         $received_part_ids = array();
         $order_id = $request->get('order_id');
@@ -1466,9 +1471,28 @@ class OrderController extends Controller
         dd($request->all());
         $order_id = $request->get('order_id');
         $updateQty = $request->get('updateQty');
+        $updateProducts = $request->get('updateProducts');
         $item_ids = $request->get('orderLineItemId');
-        $received_item_qty = $request->get('receivedItemsQty');
+        $receivedQty = $request->get('updateAlreadyReceivedQty');
+        $updateOrigQty = $request->get('updateOrigQty');
+        $item_notes = $request->get('updateItemNotes');
         $date_received = date("Y-m-d", strtotime($request->get('date_received')));
+        $user_id = $request->get('user_id');
+
+        foreach ($item_ids as $i => $item_id){
+            if($updateOrigQty == $updateQty){$status = 1;}else{$status = 2;}
+
+            if (in_array($item_id, $updateProducts)){
+
+                \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
+							 	  		   VALUES (' . $order_id . ',' . $item_id . ',' . $updateQty[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . $item_notes[$i] . '" )');
+
+                \DB::update('UPDATE order_contents
+								 	 	 SET item_received = ' . $updateQty[$i] . '
+							   	   	   WHERE id = ' . $item_id);
+            }
+
+        }
 
     }
 

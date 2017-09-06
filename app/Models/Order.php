@@ -514,6 +514,7 @@ class order extends Sximo
                 $data['item_count'] = '';
                 $data['date_received']=$query[0]->date_received;
                 $data['tracking_number']=$query[0]->tracking_number;
+                $data['status_id']=$query[0]->status_id;
             }
             if (!empty($data['requestIds']) && ($data['order_type'] == 7 || $data['order_type'] == 8)) //INSTANT WIN AND REDEMPTION PRIZES
             {
