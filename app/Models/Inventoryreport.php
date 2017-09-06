@@ -134,7 +134,7 @@ class inventoryreport extends Sximo  {
                             AND O.date_ordered <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType ";
 
-            $groupQuery = " GROUP BY (CASE WHEN (O.is_freehand = 1) THEN Product ELSE P.id END ),OC.case_price ";
+            $groupQuery = " GROUP BY (CASE WHEN (O.is_freehand = 1) THEN OC.item_name ELSE P.id END ),OC.case_price ";
 
 
             $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
@@ -153,7 +153,7 @@ class inventoryreport extends Sximo  {
                 ' ORDER BY Unit_Price ';
 
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
-            $finalCatQuery = "$catQuery $fromQuery $whereQuery";
+            $finalCatQuery = "$catQuery $fromQuery $whereQuery $groupQuery";
             \Log::info("Inventory Report final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
             $rawCats = \DB::select($finalCatQuery);

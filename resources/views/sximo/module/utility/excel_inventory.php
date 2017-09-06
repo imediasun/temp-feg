@@ -22,6 +22,7 @@
 			$content .= '<tr>';
 			foreach($fields as $f )
 			{
+                $nodata = 1;
 				if($f['download'] =='1'):
 					if(isset($f['attribute']['formater']))
 					{
@@ -29,7 +30,11 @@
 					}
 					unset($f['attribute']['hyperlink']);
 					$conn = (isset($f['conn']) ? $f['conn'] : array() );
-					$a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,1)));
+                    if($f['field'] == 'ticket_value')
+                    {
+                        $nodata = 0;
+                    }
+					$a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$nodata)));
 					$b = str_replace( ',', '', $a );
 					$c = str_replace('$','',$b);
 					if( is_numeric( $c ) ) {
@@ -92,6 +97,7 @@ $objSheet->getPageSetup()->setFitToHeight(0);*/
 	$OrderTypeColumn = 'J';
 	$ProductTypeColumn = 'K';
 	$ProductColumn = 'A';
+	$VendorColumn = 'B';
 	$SkuColumn = 'D';
 	$CasePackColumn = 'E';
 	$QuantityOrderedColumn = 'H';
@@ -144,12 +150,13 @@ $objSheet->getStyle($UnitPriceColumn.'3:'.$UnitPriceColumn.($lastRow+$totalCount
 $objSheet->getStyle($CasePriceColumn.'3:'.$CasePriceColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 $objSheet->getColumnDimension($TotalColumn)->setWidth(15);
 $objSheet->getColumnDimension($TotalSpentColumn)->setWidth(12);
+$objSheet->getColumnDimension($VendorColumn)->setWidth(15);
 $objSheet->getColumnDimension($UnitPriceColumn)->setWidth(12);
 $objSheet->getColumnDimension($UnitInventoryColumn)->setWidth(12);
 $objSheet->getColumnDimension($CasePriceColumn)->setWidth(12);
 $objSheet->getColumnDimension($OrderTypeColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductTypeColumn)->setWidth(20);
-$objSheet->getColumnDimension($ProductColumn)->setWidth(20);
+$objSheet->getColumnDimension($ProductColumn)->setWidth(25);
 $objSheet->mergeCells($ProductColumn."1:".$TotalColumn."1");
 $objSheet->getStyle($ProductColumn."1")->getAlignment()->setWrapText(true);
 $objSheet->getStyle($ProductColumn."1")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -159,14 +166,14 @@ $objSheet->getStyle($SkuColumn."3:".$SkuColumn.($lastRow+$totalCounters))->getAl
 $objSheet->getStyle($CasePackColumn."3:".$CasePackColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $objSheet->getStyle($QuantityOrderedColumn."3:".$QuantityOrderedColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 	//$objSheet->getColumnDimension($serialColumn)->setWidth(50);
-$endOn = $endOn+2;
+$endOn = $lastRow+$totalCounters+2;
 $objSheet->insertNewRowBefore($endOn, 1);
 $totalsRowStart = $endOn;
 $objSheet->setCellValue(
 	"A".$totalsRowStart,
-	"Totals"
+	"TOTALS"
 );
-dd($categories,$totalsCells);
+
 	foreach($categories as $key=>$category)
 	{
 		$endOn++;
@@ -179,42 +186,64 @@ dd($categories,$totalsCells);
 			"B".$endOn,
 			"=$totalsCells[$key]"
 		);
+        $objSheet->getStyle("B$endOn")->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 	}
+$objPHPExcel->getActiveSheet()->getStyle("B$endOn")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 $endOn++;
 $objSheet->insertNewRowBefore($endOn, 1);
 $objSheet->setCellValue(
 	"A".$endOn,
 	"Total Location Inventory"
 );
+$totalsRowStart++;
+$totalsRowEnd = $endOn-1;
 $objSheet->setCellValue(
 	"B".$endOn,
-	"=SUM(B$totalsRowStart:B$endOn)"
+	"=SUM(B$totalsRowStart:B$totalsRowEnd)"
 );
+
+$hold = $endOn = $endOn+3;
+
+$objSheet->insertNewRowBefore($endOn, 1);
+$objSheet->setCellValue(
+	"A".$endOn,
+	"Tokens In Stock:"
+);
+$endOn++;
+$objSheet->insertNewRowBefore($endOn, 1);
+$objSheet->setCellValue(
+	"A".$endOn,
+	"Tickets In Stock:"
+);
+$endOn++;
+$objSheet->insertNewRowBefore($endOn, 1);
+$objSheet->setCellValue(
+	"A".$endOn,
+	"Game Cards In Stock:"
+);
+$objSheet->getStyle("A$hold:B$endOn")->applyFromArray(
+    array(
+        'font'  => array(
+            'bold'  => true,
+        ),
+        'borders' => array(
+            'outline' => array(
+                'style' => PHPExcel_Style_Border::BORDER_THICK,
+                'color' => array('argb' => '000000'),
+            ),
+        ),
+
+    )
+);
+//dd("A$totalsRowStart:A$endOn");
+
 $objSheet->getStyle("A$totalsRowStart:B$endOn")->applyFromArray(
-	array(
-		'fill' => array(
-			'type' => PHPExcel_Style_Fill::FILL_SOLID,
-			'color' => array('rgb' => '#ffff00')
-		)
-	)
-);
-$endOn = $endOn+2;
-$objSheet->insertNewRowBefore($endOn, 1);
-$objSheet->setCellValue(
-	"A".$endOn,
-	"$category->order_type"
-);
-$endOn++;
-$objSheet->insertNewRowBefore($endOn, 1);
-$objSheet->setCellValue(
-	"A".$endOn,
-	"$category->order_type"
-);
-$endOn++;
-$objSheet->insertNewRowBefore($endOn, 1);
-$objSheet->setCellValue(
-	"A".$endOn,
-	"$category->order_type"
+    array(
+        'fill' => array(
+            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+            'color' => array('rgb' => 'ffff00')
+        )
+    )
 );
 	$objPHPExcel->getDefaultStyle()
 	->getAlignment()
