@@ -5,6 +5,19 @@
             overflow-y: scroll;
             height: 300px;
         }
+        .input-group span.input-group-addon {
+            float: none !important;
+            width: 4.5%;
+            padding: 8px 10px;
+        }
+        .multiselect-clear-filter{
+            margin-left: -10px !important;
+            height: 35px;
+            margin-right: 8px;
+        }
+        .multiselect-search{
+            height: 35px;
+        }
     </style>
     <div class="sbox">
         <div class="sbox-title">
@@ -388,7 +401,10 @@
             radioClass: 'iradio_square-blue'
         });
         @if(empty($row['id']))
-            $("#prod_type_id").multiselect();
+            $("#prod_type_id").multiselect({
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true
+        });
         @else
             $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
             {selected_value: '{{ $row["prod_type_id"] }}'});
