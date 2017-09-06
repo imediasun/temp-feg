@@ -38,6 +38,7 @@
                             <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
                             <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
+                            <tr><td><b></b></td> <td> <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;"><i class="fa fa-edit"></i> Edit Receipt</button> </td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
@@ -78,6 +79,66 @@
 
                             @endif
                         </table>
+
+                        <div class="collapse" id="editItemsPan">
+                            <hr><b><h3>Edit Order Receipt</h3></b>
+                            <table id="editItemTable" class="display table" cellspacing="0" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>No#</th>
+                                    <th>Name</th>
+                                    <th>Item Description</th>
+                                    @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)<th>Game</th>@endif
+                                    <th>Unit Price</th>
+                                    <th>Case Price</th>
+                                    <th>Qty</th>
+                                    <th>Received Qty</th>
+                                    <th>Partially Received</th>
+                                    <th>Qty</th>
+                                    <th>Total ( $ )</th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php  $value = 1   ?>
+                                @foreach($data['order_items'] as $order_item)
+                                    @if($order_item->item_received > 0)
+                                        <tr>
+                                            <td style="text-align: center">
+                                                {{ $value ++ }}
+                                                <input type="hidden" name="itemsID[]" value="{{ $order_item->id }}">
+                                            </td>
+                                            <td>{{ $order_item->item_name }}</td>
+                                            <td>{{ $order_item->product_description }}</td>
+                                            @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)
+                                                <td> {{ $order_item->game_name }}</td>
+                                            @endif
+                                            <td>{{CurrencyHelpers::formatCurrency(number_format($order_item->price , \App\Models\Order::ORDER_PERCISION)) }}</td>
+                                            <td> {{ CurrencyHelpers::formatCurrency( number_format( $order_item->case_price , \App\Models\Order::ORDER_PERCISION)) }}</td>
+
+                                            <td>{{ $order_item->qty }}</td>
+                                            <td>
+                                                {{ $order_item->item_received }}
+                                                <input type="hidden" name="receivedItemsQty[]" value="{{$order_item->item_received  }}">
+                                            </td>
+
+                                            <td style="text-align: center">
+                                                <input type="checkbox" class="yourBox" name="receivedInParts[]" value="{{ $order_item->id }}" />
+                                            </td>
+                                            <td>
+                                                <input type="number"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" max="{!! $order_item->qty - $order_item->item_received !!}" min="0" readonly="readonly" />
+                                            </td>
+                                            <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
+                                            </td>
+
+                                        </tr>
+                                    @endif
+                                @endforeach
+                                </tbody>
+                            </table>
+                            <br><hr><br>
+                        </div>
+                        <br>
 
                         <table id="itemTable" class="display table" cellspacing="0" width="100%">
                             <thead>
