@@ -82,7 +82,7 @@
                         </table>
 
                         <div class="collapse" id="editItemsPan">
-                            <hr><b><h3>Edit Order Receipt</h3></b>
+                            <hr><b><h3>Edit Receipt:</h3></b>
                             <table id="editItemTable" class="display table" cellspacing="0" width="100%">
                                 <thead>
                                 <tr>
@@ -145,6 +145,7 @@
                         <br>
 
                         <div class="collapse in" id="receiveItemsPan">
+                            <b><h3>Receive Items:</h3></b>
                             <table id="itemTable" class="display table" cellspacing="0" width="100%">
                             <thead>
                             <tr>
@@ -303,7 +304,8 @@
             });
 
             $('#editItemTable').DataTable({
-                paging: true
+                paging: true,
+                "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ]
             });
 
 
@@ -354,6 +356,8 @@
             form.submit(function () {
 
                 if (form.parsley('isValid') == true) {
+
+                    $('#editItemTable').DataTable().destroy();
                     var options = {
                         dataType: 'json',
                         beforeSubmit: showRequest,
@@ -458,9 +462,11 @@
             if($('#update_receipt_btn').is(":visible")){
                 $('#mode').val('update');
                 $('#receiveItemsPan').collapse('hide');
+                $('#edit_receipt_btn').html('<i class="fa fa-truck"></i> Receive Items')
             }else{
                 $('#mode').val('receive');
                 $('#receiveItemsPan').collapse('show');
+                $('#edit_receipt_btn').html('<i class="fa fa-edit"></i> Edit Receipt')
             }
         });
 
