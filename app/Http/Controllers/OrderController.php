@@ -1337,7 +1337,7 @@ class OrderController extends Controller
                 return $value;
             }
         }, \Input::all()));
-dd($request->get('mode'));
+
         if($request->get('mode')=='update'){
             $this->updateOrderReceipt($request);
             return;
@@ -1484,12 +1484,20 @@ dd($request->get('mode'));
 
             if (in_array($item_id, $updateProducts)){
 
+                \DB::table('order_received')->where('order_line_item_id', $updateProducts)->delete();
+
                 \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
 							 	  		   VALUES (' . $order_id . ',' . $item_id . ',' . $updateQty[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . $item_notes[$i] . '" )');
 
                 \DB::update('UPDATE order_contents
 								 	 	 SET item_received = ' . $updateQty[$i] . '
 							   	   	   WHERE id = ' . $item_id);
+
+                if($updateOrigQty < $receivedQty){
+                    \DB::update('UPDATE orders
+								 	 	 SET status_id =  2
+							   	   	   WHERE id = ' . $order_id);
+                }
             }
 
         }
