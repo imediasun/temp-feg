@@ -29,7 +29,7 @@
                 if( is_numeric( $c ) ) {
                     $a = $c;
                 }
-                $content .= '<td> '. ($a). '</td>';
+                $content .= '<td> '. $a . '</td>';
 			endif;
 		}
 		$content .= '</tr>';

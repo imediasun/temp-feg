@@ -279,8 +279,6 @@ class order extends Sximo
                     $ordergamenameArray[] = $row->game_name;
 
                     $orderContentIdArray[] = $row->order_content_id;
-                    
-
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
                 }
                 $order_received_query=\DB::select('select date_received,received_by from order_received where order_id='.$order_id);
@@ -514,6 +512,7 @@ class order extends Sximo
                 $data['item_count'] = '';
                 $data['date_received']=$query[0]->date_received;
                 $data['tracking_number']=$query[0]->tracking_number;
+                $data['status_id']=$query[0]->status_id;
             }
             if (!empty($data['requestIds']) && ($data['order_type'] == 7 || $data['order_type'] == 8)) //INSTANT WIN AND REDEMPTION PRIZES
             {
