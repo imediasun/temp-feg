@@ -320,6 +320,10 @@
                 setTimeout(function(){ regIcheckEvent(); }, 500);
             });
 
+            $('#editItemTable').on( 'page.dt', function () {
+                setTimeout(function(){ regIcheckEventForEdit(); }, 500);
+            });
+
             $('#itemTable .yourBox').on('ifChecked',function(){
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).removeAttr('readonly');
@@ -398,6 +402,24 @@
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).attr('readonly', 'readonly');
                 $('#receivedItemText'+itemId).val($('#receivedItemText'+itemId).attr('max'));
+            });
+        }
+
+        function regIcheckEventForEdit() {
+            $('#editItemTable .updateBox').unbind('ifChecked');
+            $('#editItemTable .updateBox').unbind('ifUnchecked');
+
+            $('#editItemTable .updateBox').on('ifChecked', function(){
+                var itemId= $(this).val();
+                $('#updateItemText'+itemId).removeAttr('readonly');
+                $('#updateItemText'+itemId).css('background-color', '#fff');
+            });
+            $('#editItemTable .updateBox').on('ifUnchecked', function(){
+                var itemId= $(this).val();
+                $('#updateItemText'+itemId).attr('readonly', 'readonly');
+                $('#updateItemText'+itemId).css('background-color', '#c1c1c1');
+                $('#updateItemText'+itemId).val(0);
+                $('#orderreceiveFormAjax').parsley( 'validate' );
             });
         }
 
