@@ -118,7 +118,6 @@ class inventoryreport extends Sximo  {
 				   O.date_ordered AS end_date
                         ";
             $catQuery = "Select distinct T1.order_type";
-            $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product";
 
             $fromQuery = " FROM order_contents OC 
                            LEFT JOIN products P ON P.id = OC.product_id 
@@ -137,10 +136,10 @@ class inventoryreport extends Sximo  {
             $groupQuery = " GROUP BY (CASE WHEN (O.is_freehand = 1) THEN OC.item_name ELSE P.id END ),OC.case_price ";
 
 
-            $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
+            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $groupQuery";
             $totalRows = \DB::select($finalTotalQuery);
             if (!empty($totalRows)) {
-                $total = $totalRows[0]->total;
+                $total = count($totalRows);
             }
             $offset = ($page-1) * $limit ;
             if ($offset >= $total && $limit != 0) {
