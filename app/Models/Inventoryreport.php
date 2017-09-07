@@ -129,7 +129,7 @@ class inventoryreport extends Sximo  {
 						   
 						   ";
 
-            $whereQuery = " WHERE O.date_ordered >= '$date_start'
+            $whereQuery = " WHERE O.status_id != ".order::ORDER_VOID_STATUS ." AND O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType ";
 
