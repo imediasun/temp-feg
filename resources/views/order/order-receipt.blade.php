@@ -129,7 +129,7 @@
                                                 <input type="checkbox" class="updateBox" name="updateProducts[]" value="{{ $order_item->id }}" />
                                             </td>
                                             <td>
-                                                <input type="number" class="updateQtyInput" id="updateItemText{{ $order_item->id }}" name="updateQty[]" value="0" max="{!! $order_item->qty !!}" min="0" disabled="disabled" />
+                                                <input type="number" class="updateQtyInput parsley-validated" id="updateItemText{{ $order_item->id }}" name="updateQty[]" value="0" max="{!! $order_item->qty !!}" min="0" readonly="readonly" style="background-color: #c1c1c1;"/>
                                             </td>
                                             <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
                                             </td>
@@ -302,6 +302,10 @@
                 paging: false
             });
 
+            $('#editItemTable').DataTable({
+                paging: true
+            });
+
 
             $('#itemTable .yourBox').on('ifChecked',function(){
                 var itemId= $(this).val();
@@ -315,12 +319,15 @@
 
             $('#editItemTable .updateBox').on('ifChecked',function(){
                 var itemId= $(this).val();
-                $('#updateItemText'+itemId).removeAttr('disabled');
+                $('#updateItemText'+itemId).removeAttr('readonly');
+                $('#updateItemText'+itemId).css('background-color', '#fff');
             });
             $('#editItemTable .updateBox').on('ifUnchecked',function(){
                 var itemId= $(this).val();
-                $('#updateItemText'+itemId).attr('disabled', 'disabled');
+                $('#updateItemText'+itemId).attr('readonly', 'readonly');
+                $('#updateItemText'+itemId).css('background-color', '#c1c1c1');
                 $('#updateItemText'+itemId).val(0);
+                $('#orderreceiveFormAjax').parsley( 'validate' );
             });
             var isAdvaceReplacement=0;
 
@@ -371,8 +378,13 @@
                 ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
-                var href="{{url()}}/order";
-                window.location=href;
+                if($('#mode').val()=='receive'){
+                    var href="{{url()}}/order";
+                    window.location=href;
+                }else{
+                    window.location = window.location.href;
+                }
+
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
@@ -445,8 +457,10 @@
             $('#submit_btn').toggle();
             if($('#update_receipt_btn').is(":visible")){
                 $('#mode').val('update');
+                $('#receiveItemsPan').collapse('hide');
             }else{
                 $('#mode').val('receive');
+                $('#receiveItemsPan').collapse('show');
             }
         });
 

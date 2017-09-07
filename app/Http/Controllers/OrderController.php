@@ -1339,8 +1339,7 @@ class OrderController extends Controller
         }, \Input::all()));
 
         if($request->get('mode')=='update'){
-            $this->updateOrderReceipt($request);
-            return;
+            return $this->updateOrderReceipt($request);
         }
 
         $received_part_ids = array();
@@ -1468,7 +1467,7 @@ class OrderController extends Controller
     }
 
     public function updateOrderReceipt($request){
-        dd($request->all());
+        //dd($request->all());
         $order_id = $request->get('order_id');
         $updateQty = $request->get('updateQty');
         $updateProducts = $request->get('updateProducts');
@@ -1480,28 +1479,34 @@ class OrderController extends Controller
         $user_id = $request->get('user_id');
 
         foreach ($item_ids as $i => $item_id){
-            if($updateOrigQty == $updateQty){$status = 1;}else{$status = 2;}
+            if($updateOrigQty[$i] == $updateQty[$i]){$status = 1;}else{$status = 2;}
 
-            if (in_array($item_id, $updateProducts)){
+            if (in_array($item_id, $updateProducts) && $updateQty[$i] <= $updateOrigQty[$i]){
 
-                \DB::table('order_received')->where('order_line_item_id', $updateProducts)->delete();
+                \DB::table('order_received')->where('order_line_item_id', $item_id)->delete();
 
-                \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
+                if($updateQty[$i] != 0){
+                    \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
 							 	  		   VALUES (' . $order_id . ',' . $item_id . ',' . $updateQty[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . $item_notes[$i] . '" )');
+                }
 
                 \DB::update('UPDATE order_contents
 								 	 	 SET item_received = ' . $updateQty[$i] . '
 							   	   	   WHERE id = ' . $item_id);
 
-                if($updateOrigQty < $receivedQty){
+                if($updateQty[$i] < $receivedQty[$i]){
                     \DB::update('UPDATE orders
-								 	 	 SET status_id =  2
+								 	 	 SET status_id =  1
 							   	   	   WHERE id = ' . $order_id);
                 }
             }
 
         }
 
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('core.note_success')
+        ));
     }
 
     public function getSubmitorder($SID)
