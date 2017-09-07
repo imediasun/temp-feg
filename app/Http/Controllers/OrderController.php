@@ -138,6 +138,14 @@ class OrderController extends Controller
 
     public function getIndex()
     {
+        /*
+        \App\Library\FEG\System\Sync::transferEarnings();
+        \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
+        \App\Library\FEG\System\Sync::generateDailySummary();
+        \App\Library\FEG\System\Email\Report::daily();
+        \App\Library\FEG\System\Email\Report::missingDataReport();
+        echo "done transfer";
+        exit;*/
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $this->data['sid'] = "";
@@ -150,6 +158,10 @@ class OrderController extends Controller
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'order')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         $this->getSearchParamsForRedirect();
+
+        session_start();
+        $_SESSION['searchParamsForOrder'] = \Session::get('searchParams');
+
        // echo \Session::get('searchParams');
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
@@ -241,6 +253,7 @@ class OrderController extends Controller
 
             $order_status = \DB::select("Select status FROM order_status WHERE id = '" . $data->status_id . "'");
             $partial = $data->is_partial == 1 ? ' (Partial)':'';
+            $rows[$index]->status_value = $rows[$index]->status_id;
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status.$partial : '');
         }
 
@@ -539,6 +552,7 @@ class OrderController extends Controller
             $force_remove_items = $request->get('force_remove_items');
             $games = $request->get('game');
             $item_received = $request->get('item_received');
+            $item_received = $request->get('item_received');
             $denied_SIDs = $request->get('denied_SIDs');
             $num_items_in_array = count($itemsArray);
 
@@ -603,6 +617,18 @@ class OrderController extends Controller
                 }
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
+            }
+            //// UPDATE STATUS TO APPROVED AND PROCESSED
+            //don't put this code in loop below
+            $now = $this->model->get_local_time('date');
+            if (!empty($where_in))
+            {
+                \DB::update('UPDATE requests
+							 SET status_id = 2,
+							 	 process_user_id = ' . \Session::get('uid') . ',
+								 process_date = "' . $now . '",
+								 blocked_at = null
+						   WHERE id IN(' . $where_in . ')');
             }
             for ($i = 0; $i < $num_items_in_array; $i++) {
 
@@ -671,9 +697,6 @@ class OrderController extends Controller
                 }
                 if (!empty($where_in)) {
                     $redirect_link = "managefegrequeststore";
-                    //// UPDATE STATUS TO APPROVED AND PROCESSED
-                    $now = $this->model->get_local_time('date');
-
                     $request_qty = \DB::select('SELECT qty FROM requests WHERE id='.$request_id);
                     empty($request_qty)? $request_qty=0 : $request_qty=$request_qty[0]->qty;
                     $restore_qty = $request_qty - $qtyArray[$i];
@@ -1338,10 +1361,6 @@ class OrderController extends Controller
             }
         }, \Input::all()));
 
-        if($request->get('mode')=='update'){
-            return $this->updateOrderReceipt($request);
-        }
-
         $received_part_ids = array();
         $order_id = $request->get('order_id');
         $item_count = $request->get('item_count');
@@ -1464,49 +1483,6 @@ class OrderController extends Controller
                 'status' => 'error'
             ));
         }
-    }
-
-    public function updateOrderReceipt($request){
-        //dd($request->all());
-        $order_id = $request->get('order_id');
-        $updateQty = $request->get('updateQty');
-        $updateProducts = $request->get('updateProducts');
-        $item_ids = $request->get('orderLineItemId');
-        $receivedQty = $request->get('updateAlreadyReceivedQty');
-        $updateOrigQty = $request->get('updateOrigQty');
-        $item_notes = $request->get('updateItemNotes');
-        $date_received = date("Y-m-d", strtotime($request->get('date_received')));
-        $user_id = $request->get('user_id');
-
-        foreach ($item_ids as $i => $item_id){
-            if($updateOrigQty[$i] == $updateQty[$i]){$status = 1;}else{$status = 2;}
-
-            if (in_array($item_id, $updateProducts) && $updateQty[$i] <= $updateOrigQty[$i]){
-
-                \DB::table('order_received')->where('order_line_item_id', $item_id)->delete();
-
-                if($updateQty[$i] != 0){
-                    \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
-							 	  		   VALUES (' . $order_id . ',' . $item_id . ',' . $updateQty[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . $item_notes[$i] . '" )');
-                }
-
-                \DB::update('UPDATE order_contents
-								 	 	 SET item_received = ' . $updateQty[$i] . '
-							   	   	   WHERE id = ' . $item_id);
-
-                if($updateQty[$i] < $receivedQty[$i]){
-                    \DB::update('UPDATE orders
-								 	 	 SET status_id =  1
-							   	   	   WHERE id = ' . $order_id);
-                }
-            }
-
-        }
-
-        return response()->json(array(
-            'status' => 'success',
-            'message' => \Lang::get('core.note_success')
-        ));
     }
 
     public function getSubmitorder($SID)
@@ -1709,11 +1685,12 @@ class OrderController extends Controller
                 $response['message'] = 'Ready for edit';
                 return response()->json($response);
             }
-            /*
+
             if ($apified) {
-                $message = \Lang::get('core.order_api_exposed_edit_alert');
+                //$message = \Lang::get('core.order_api_exposed_edit_alert');
+                $message = \Lang::get('core.order_api_exposed_edit_restrict_alert');
                 $status = false;
-            }*/
+            }
             /*if ($apified && $partial) {
                 $message = \Lang::get('core.order_api_edit_partial_alert');
                 $status = false;
@@ -1731,12 +1708,12 @@ class OrderController extends Controller
             $response['status'] = $status === false ? 'error' : 'success';
             $response['message'] = $status === false ? $message : 'Ready for edit';
 
-            $isClone = $apified && (!$partial && !$voided && !$closed);
+            /*$isClone = $apified && (!$partial && !$voided && !$closed);
 
             if ($isClone) {
                 $response['url'] = url('/order/insta-clone/'.\SiteHelpers::encryptID($id).'/voided');
                 $response['action'] = 'clone';
-            }
+            }*/
         }
         return response()->json($response);
     }

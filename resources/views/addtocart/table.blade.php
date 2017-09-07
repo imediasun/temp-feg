@@ -66,7 +66,7 @@
                         <th width="100">Ticket Value</th>
                         <th width="100">Case Price</th>
                         <th width="100">Retail Price</th>
-                        <th width="100">Detail</th>
+                        <th width="100">Notes</th>
                         <th width="70"><?php echo Lang::get('core.btn_action');?></th>
 
                     </tr>
@@ -146,7 +146,7 @@
                         <td>{{ $row->ticket_value }}</td>
                         <td>{{CurrencyHelpers::formatPrice($row->case_price) }}</td>
                         <td>{{CurrencyHelpers::formatPrice( $row->retail_price) }}</td>
-                        <td>{{ $row->notes }}</td>
+                        <td class="notes"><textarea id="notes" name="notes" style="width: 100%;">{{ $row->notes }}</textarea></td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('addtocart',$access,$id ,$setting) !!}
                         </td>

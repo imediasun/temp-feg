@@ -6,9 +6,9 @@ use SiteHelpers;
 use App\Library\ReportHelpers;
 use App\Library\DBHelpers;
 
-class productusagereport extends Sximo  {
+class inventoryreport extends Sximo  {
 
-    protected $table = 'requests';
+    protected $table = 'orders';
     protected $primaryKey = 'id';
 
     public function __construct() {
@@ -18,12 +18,12 @@ class productusagereport extends Sximo  {
 
     public static function querySelect(  ){
 
-        return "  SELECT requests.* FROM requests  ";
+        return "  SELECT orders.* FROM orders  ";
     }
 
     public static function queryWhere(  ){
 
-        return "  WHERE requests.id IS NOT NULL ";
+        return "  WHERE orders.id IS NOT NULL AND orders.status_id != ".order::ORDER_VOID_STATUS ." ";
     }
 
     public static function queryGroup(){
@@ -58,13 +58,13 @@ class productusagereport extends Sximo  {
         $prod_type_id = @$filters['prod_type_id'];
         $prod_sub_type_id = @$filters['prod_sub_type_id'];
         if (empty($location_id)) {
-            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
+            $location_id = \Session::get('selected_location');
         }
         if (empty($location_id)) {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }
 
-        $defaultEndDate = DBHelpers::getHighestRecorded('requests', 'process_date');
+        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'date_ordered');
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         if (empty($date_start) || empty($date_end)) {
             $message = "To view the contents of this report, please select a date range and other search filter.";
@@ -76,7 +76,7 @@ class productusagereport extends Sximo  {
             $whereOrderType ="";
             $whereProdType = "";
             if (!empty($location_id)) {
-                $whereLocation = "AND O.location_id IN ($location_id) ";
+                $whereLocation = "AND O.location_id = ($location_id) ";
             }
             if (!empty($vendor_id)) {
                 $whereVendor = "AND V.id IN ($vendor_id) ";
@@ -100,80 +100,47 @@ class productusagereport extends Sximo  {
                 $date_end_stamp = $t;
             }
             $mainQuery = "
-            Select OC.id,
+            Select P.id,
+                   P.sku,
+                   P.num_items,
+                   '' as unit_inventory_count,
+                   '' as total_inventory_value,
+                   T1.order_type AS Order_Type,
+                   D.type_description AS Product_Type,
                    V.vendor_name as vendor_name,
                    IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product,
                    P.ticket_value,
-				   P.num_items,
 				   ROUND(P.case_price / P.num_items,2) AS Unit_Price,
-				   SUM(OC.qty) AS Cases_Ordered,
+				   SUM(P.num_items*OC.qty) AS Cases_Ordered,
 				   OC.case_price AS Case_Price,
-				   SUM(OC.total) AS Total_Spent,
-				    T1.order_type AS Order_Type,
-				   D.type_description AS Product_Type,
-				   O.location_id,
+				   SUM(OC.total) AS Total_Spent,O.location_id,
 				   O.date_ordered AS start_date,
-				   O.date_ordered AS end_date,
-				   requests.id as vendor_id,
-                   requests.id as prod_type_id,
-                   requests.id as prod_sub_type_id 
+				   O.date_ordered AS end_date
                         ";
-            /*$mainQuery = "SELECT requests.id,
-									 V.vendor_name,
-									 P.vendor_description AS Product,
-									 P.ticket_value,
-									 P.num_items,
-									 ROUND(P.case_price / P.num_items,2) AS Unit_Price,
-									 SUM(requests.qty) AS Cases_Ordered,
-									 O.case_price AS Case_Price,
-									 SUM(O.qty * O.case_price) AS Total_Spent,
-									 T.order_type AS Order_Type,
-									 D.type_description AS Product_Type,
-									 requests.location_id,
-									 requests.id as vendor_id,
-									 requests.id as prod_type_id,
-									 requests.id as prod_sub_type_id,
-									 requests.process_date as start_date,
-									 requests.process_date as end_date ";*/
-            $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product ";
+            $catQuery = "Select distinct T1.order_type";
+            $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product";
 
             $fromQuery = " FROM order_contents OC 
+                           LEFT JOIN products P ON P.id = OC.product_id 
                            JOIN orders O ON O.id = OC.order_id
-                           LEFT JOIN requests ON OC.request_id = requests.id
 						   LEFT JOIN location L ON L.id = O.location_id
-						   LEFT JOIN products P ON P.id = requests.product_id 
 						   LEFT JOIN vendor V ON V.id = O.vendor_id 
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
 						   
-						   
 						   ";
-            /*$fromQuery = " FROM requests
-						   LEFT JOIN location L ON L.id = requests.location_id
-						   LEFT JOIN products P ON P.id = requests.product_id
-						   LEFT JOIN vendor V ON V.id = P.vendor_id
-						   LEFT JOIN vendor V1 ON V.id = Order.vendor_id
-						   LEFT JOIN order_type T ON T.id = P.prod_type_id
-						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
-						   LEFT JOIN users U ON U.id = requests.process_user_id
-						   LEFT JOIN order_contents O ON O.request_id = requests.id
-						   ";*/
 
             $whereQuery = " WHERE O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType ";
-            /*$whereQuery = " WHERE requests.status_id = 2
-                            AND requests.process_date >= '$date_start'
-                            AND requests.process_date <= '$date_end'
-                             $whereLocation $whereVendor $whereOrderType $whereProdType ";*/
 
-            $groupQuery = " GROUP BY Product ";
-//            $groupQuery = " GROUP BY P.id ";
+            $groupQuery = " GROUP BY (CASE WHEN (O.is_freehand = 1) THEN Product ELSE P.id END ),OC.case_price ";
+
 
             $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
             $totalRows = \DB::select($finalTotalQuery);
             if (!empty($totalRows)) {
-                $total = count($totalRows);
+                $total = $totalRows[0]->total;
             }
             $offset = ($page-1) * $limit ;
             if ($offset >= $total && $limit != 0) {
@@ -183,15 +150,18 @@ class productusagereport extends Sximo  {
             $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
 
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
-                ' ORDER BY V.vendor_name, P.prod_type_id, P.vendor_description ';
+                ' ORDER BY Unit_Price ';
 
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
-            \Log::info("Product Usage final Data query \n ".$finalDataQuery);
+            $finalCatQuery = "$catQuery $fromQuery $whereQuery";
+            \Log::info("Inventory Report final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
+            $rawCats = \DB::select($finalCatQuery);
             $rows = self::processRows($rawRows);
 
             $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
-            $topMessage = "Products usage $humanDateRange";
+            $location = Location::find($location_id)->location_name;
+            $topMessage = "Inventory Report $humanDateRange $location $location_id";
         }
 
         return $results = array(
@@ -199,6 +169,7 @@ class productusagereport extends Sximo  {
             'bottomMessage' => $bottomMessage,
             'message' => $message,
             'rows'=> $rows,
+            'categories'=> $rawCats,
             'total' => $total
         );
 

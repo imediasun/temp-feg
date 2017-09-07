@@ -12,7 +12,7 @@ use Mail;
 use PHPMailerOAuth;
 use App\Models\Feg\System\Options;
 use App\Models\Core\Users;
-use FEGFormat;
+
 
 class FEGSystemHelper
 {
@@ -224,7 +224,7 @@ class FEGSystemHelper
                     }
                     else {
                         if (!empty($humanifyTitle)) {
-                            $title = FEGFormat::field2title($title);
+                            $title = self::desanitizeTitleId($title);
                         }
                         $htmlArr[] = "<{$th}>{$title}</th>";
                     }
@@ -289,7 +289,7 @@ class FEGSystemHelper
         return $sTitle;
     }
     public static function desanitizeTitleId($title) {
-        $sTitle = FEGFormat::field2title($title);
+        $sTitle = ucwords(str_replace('_', ' ', $title));
         return $sTitle;
     }
 
@@ -1193,9 +1193,13 @@ $message" .
 
             //$messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);
             //$messageLog = nl2br($message);
-            $messageLog = $message;
-            self::logit($messageLog, "{$lf}.html", $lpd, true);
+            //$messageLog = $message;
+            //self::logit($messageLog, "{$lf}.html", $lpd, true);
         }
+
+        $messageLog = $message;
+        self::logit($messageLog, "{$lf}.html", $lpd, true);
+
 
         self::logit("Sending Email", $lf, $lp);
         self::logit($options, $lf, $lp);

@@ -35,7 +35,7 @@
                             <label for="location_id" class="control-label col-md-3">Location</label>
 
                             <div class="col-md-6">
-                                <select name="location" id="location_id" class="select3"></select>
+                                <select name="location" id="location_id" class="select3" required></select>
                             </div>
                         </div>
                         <div style="text-align:center">
@@ -61,6 +61,7 @@
         @endif
         <script type="text/javascript">
             $(document).ready(function () {
+
                 $("#location_id").jCombo("{{ URL::to('redemptioncountergallary/comboselect?filter=location:id:id|location_name') }}",
                         {  selected_value : '',initial_text: 'Select Location' });
 
@@ -69,7 +70,6 @@
                 renderDropdown($(".select2,.select3"), { width:"100%"});
 
                 var form = $('#gallaryfileuploadform');
-                form.parsley();
                 form.submit(function () {
 
                     if (form.parsley('isValid') == true) {
@@ -86,6 +86,8 @@
                     }
 
                 });
+                form.parsley();
+
 
             });
 

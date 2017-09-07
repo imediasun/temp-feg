@@ -22,8 +22,10 @@ class SximoQueryBuilder extends Builder
                 $allwheres[$i]['value'] = $where['value'];
             }
         }
-
-        Sximo::insertLog($this->from,'Update' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($values));
+        if(!($this->from == 'users' && isset($values['last_activity'])))
+        {
+            Sximo::insertLog($this->from,'Update' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($values));
+        }
         return parent::update($values);
     }
 

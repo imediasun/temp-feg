@@ -65,8 +65,8 @@ class Servicerequests extends Observerable  {
                 $q = "  WHERE $controlField IS NULL";
             }
         }
-
-        $q .= ' AND (D.company IS NOT NULL OR location_id = 6001)';
+        //exclude office locations
+        $q .= ' AND (D.company IS NOT NULL OR location_id IN (6001,6000,6030))';
 
         return $q;
     }

@@ -65,7 +65,6 @@ class MerchandisebudgetController extends Controller
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
-
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -279,6 +278,9 @@ class MerchandisebudgetController extends Controller
                             if ($keys[0] == "budget_date") {
                                 \Session::put('budget_year', $keys[2]);
                                 $param .= " AND " . "YEAR(" . $arr[$keys[0]]['alias'] . "." . $keys[0] . ") " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
+                            } else if($arr[$keys[0]]['alias'] . "." . $keys[0] == 'location_budget.location_id') {
+                                $values = explode(',',addslashes($keys[2]));
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IN ('" . implode("','",$values) . "') ";
                             } else {
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
                             }

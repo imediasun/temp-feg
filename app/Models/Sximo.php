@@ -60,7 +60,7 @@ class Sximo extends Model {
             $L->log('--------------------Start UserActions logging------------------');
 
         $L->log("User ID ",$user);
-        $L->log("Impersonated User ID " , $impersonatedUser);
+        $L->log("Actual User ID " , $impersonatedUser);
         $L->log("User IP ",Request::ip());
         $L->log("User Browser ",isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT']: "CLI");
         $L->log("Module or Table : ".$module, $note);

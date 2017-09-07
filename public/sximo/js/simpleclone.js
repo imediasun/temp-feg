@@ -67,7 +67,6 @@
                        counter++;
                         newid = $(clone).attr('id') + (++counter);
                     }
-
 					$(clone).attr('id', newid);
 					$(clone).removeAttr('style');
 					$(clone).removeClass('hiddenClone');
@@ -113,6 +112,7 @@
 								break;
 							default:
 							  $(this).val("");
+
 						}
 					});
 				};

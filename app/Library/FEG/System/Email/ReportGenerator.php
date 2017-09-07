@@ -54,8 +54,8 @@ class ReportGenerator
         $__logger = $_logger;
         $__logger->log("Start Generate Daily Email Reports $date");
         $__logger->log("PARAMS:", $params);
-        
-        $task = $_task;
+
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = $task->is_test_mode;
         $params['isTestMode'] = $isTest;
         $params['humanDate'] = $humanDate = FEGSystemHelper::getHumanDate($date);
@@ -302,8 +302,8 @@ class ReportGenerator
         $statusReport = self::$reportCache['syncStatusReport'];
         
         $_logger->log("Failed Sync on $date", $statusReport);
-        
-        $task =$_task;
+
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = $task->is_test_mode;
         
         $configName = 'Daily Transfer Bulk Fail';
@@ -463,8 +463,8 @@ class ReportGenerator
                $_logger = $__logger;
             }            
         }
-        
-        $task =$_task;
+
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = $task->is_test_mode;
         // all location reports are being sent irrespective of whether there's issue to report
         if (true || $hasDailyReport) {
@@ -811,8 +811,8 @@ class ReportGenerator
         $dEnd  = new \DateTime($date_end);
         $dDiff = $dStart->diff($dEnd);   
         $days = $dDiff->days + 1;
-   
-        $isTest = $_task->is_test_mode;
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
+        $isTest = $task->is_test_mode;
         $humanDate = FEGSystemHelper::getHumanDate($date);
         $humanDateToday = FEGSystemHelper::getHumanDate($today);
         $humanDateStart = FEGSystemHelper::getHumanDate($date_start);
@@ -1130,6 +1130,111 @@ class ReportGenerator
         }
         return $reportString;
     }
+
+    public static function getMissingReadersReport($params = array()) {
+        extract(array_merge(array(
+            'date' => date('Y-m-d', strtotime('-1 day')),
+            'location' => null,
+            '_task' => array(),
+            '_logger' => null,
+        ), $params));
+
+        $q = ReportHelpers::getMissingReadersQuery($date, $date);
+        $data = DB::select($q);
+        $report = array();
+        $missingAssetIdData = array();
+        $missingAssetIdFlatData = array();
+        foreach($data as $index => $row) {
+            $locationId = $row->location_id;
+            $locationName = $row->location_name_short;
+            $locationGameName = $row->loc_game_title;
+            $readerIdOriginal = $row->reader_id;
+            $gameId = $row->game_id;
+            $readerId = preg_replace('/^.*\_/', "", $readerIdOriginal);
+            $gameTotalOriginal = $row->game_total;
+            $gameTotal = number_format(floatval($gameTotalOriginal), 2);
+            $rowNumber = $index + 1;
+            if(empty($readerId))
+            {
+                $readerId = 'MISSING';
+            }
+            $missingAssetId = array(
+                "location_id" => $locationId,
+                "location_name" => $locationName,
+                "loc_game_title" => $locationGameName,
+                "reader_id" => $readerId,
+                "Asset ID" => $gameId,
+                "reader_id_original" => $readerIdOriginal,
+                "game_total_original" => $gameTotalOriginal,
+                "game_total" => $gameTotal,
+            );
+            $missingAssetIdFlatData[] = $missingAssetId;
+            $missingAssetIdData[$locationId][] = $missingAssetId;
+            $report[] = "$rowNumber.) $locationId - $locationName - <b> $readerId </b> - <b>Asset ID: $gameId</b>" .
+                "<span  style='color:black'> [Game Title: $locationGameName".
+                " - <em>Earnings: \${$gameTotal}</em>]</span><br>";
+        }
+
+        self::$reportCache['missingAssetIdsPerLocation'] = $missingAssetIdData;
+        self::$reportCache['missingAssetIds'] = $missingAssetIdFlatData;
+
+        $reportString = '<br>';
+        if (!empty($report)) {
+            $reportString = implode("", $report);
+        }
+        return $reportString;
+    }
+
+    public static function getUnknownAssetIdReport($params = array()) {
+        extract(array_merge(array(
+            'date' => date('Y-m-d', strtotime('-1 day')),
+            'location' => null,
+            '_task' => array(),
+            '_logger' => null,
+        ), $params));
+
+        $q = ReportHelpers::getUnknownAssetIdQuery($date, $date);
+        $data = DB::select($q);
+        $report = array();
+        $missingAssetIdData = array();
+        $missingAssetIdFlatData = array();
+        foreach($data as $index => $row) {
+            $locationId = $row->location_id;
+            $locationName = $row->location_name_short;
+            $locationGameName = $row->loc_game_title;
+            $readerIdOriginal = $row->reader_id;
+            $gameId = $row->game_id;
+            $readerId = preg_replace('/^.*\_/', "", $readerIdOriginal);
+            $gameTotalOriginal = $row->game_total;
+            $gameTotal = number_format(floatval($gameTotalOriginal), 2);
+            $rowNumber = $index + 1;
+
+            $missingAssetId = array(
+                "location_id" => $locationId,
+                "location_name" => $locationName,
+                "loc_game_title" => $locationGameName,
+                "reader_id" => $readerId,
+                "Asset ID" => $gameId,
+                "reader_id_original" => $readerIdOriginal,
+                "game_total_original" => $gameTotalOriginal,
+                "game_total" => $gameTotal,
+            );
+            $missingAssetIdFlatData[] = $missingAssetId;
+            $missingAssetIdData[$locationId][] = $missingAssetId;
+            $report[] = "$rowNumber.) $locationId - $locationName - <b> $readerId</b> - <b>Asset ID: $gameId</b>" .
+                "<span  style='color:black'> [Game Title: $locationGameName".
+                " - <em>Earnings: \${$gameTotal}</em>]</span><br>";
+        }
+
+        self::$reportCache['missingAssetIdsPerLocation'] = $missingAssetIdData;
+        self::$reportCache['missingAssetIds'] = $missingAssetIdFlatData;
+
+        $reportString = '<br>';
+        if (!empty($report)) {
+            $reportString = implode("", $report);
+        }
+        return $reportString;
+    }
     
     public static function getGamesNotPlayedReport($params = array()) {
          extract(array_merge(array(
@@ -1270,8 +1375,8 @@ class ReportGenerator
             '_logger' => null,
         ), $params));
 
-        $task =$_task;
-        $isTest = $task->is_test_mode;        
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
+        $isTest = $task->is_test_mode;
         
         //"Daily Potential Over-reporting Errors Report"
         if (!empty($overReporting) && $overReporting != "None") {
@@ -1383,7 +1488,7 @@ class ReportGenerator
             '_logger' => null,
         ), $params));
 
-        $task =$_task;
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = $task->is_test_mode;
         
         $retryReportAll = $retryReports['all'];
@@ -1589,7 +1694,7 @@ class ReportGenerator
             '_logger' => null,
         ), $params));
 
-        $task =$_task;
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = $task->is_test_mode;        
         
         if (!empty($finalGameSummaryReport)) {
@@ -1639,8 +1744,8 @@ class ReportGenerator
         $dEnd  = new \DateTime($date_end);
         $dDiff = $dStart->diff($dEnd);   
         $days = $dDiff->days + 1;
-   
-        $task = $_task;
+
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $logInfo = " $date_start - $date_end ($days days)";
         $isTest = $task->is_test_mode;
         $params['isTestMode'] = $isTest;

@@ -48,14 +48,15 @@
                 var vendor=$(this).data('vendor');
                 var id= $(this).attr('id');
                 var qty= $(this).val();
+                var notes = $(this).parent().siblings('.notes').children('#notes').val();
                 $('.ajaxLoading').show();
-                doStuff(qty,id,vendor);
+                doStuff(qty,id,vendor,notes);
             });
         }
 
-        function doStuff(value,id,vendor_name) {
+        function doStuff(value,id,vendor_name,notes) {
             $.ajax({
-                url:"addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
+                url:"addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name)+"/"+notes ,
                 method:'get',
                 dataType:'json',
                 success:function(data){

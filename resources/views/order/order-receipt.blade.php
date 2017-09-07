@@ -1,5 +1,10 @@
 @extends('layouts.app')
 @section('content')
+    <?php
+        session_start();
+        \Session::put('filter_before_redirect', 'redirect');
+        \Session::put('searchParams', $_SESSION['searchParamsForOrder']);
+    ?>
     <style>
         .dataTables_filter{
             float: right !important;
@@ -29,7 +34,6 @@
                
                     <h3>Order Receipt</h3>
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
-
                         <table class="table">
                             <tr><td  style="border: none;" ><b>PO #</b></td><td  style="border: none;" >{{ $data['po_number'] }}</td></tr>
                             <tr><td><b>Ordered By:</b></td><td>{{ $data['order_user_name'] }}</td></tr>
@@ -39,7 +43,6 @@
                             <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
                             <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
-                            <tr><td><b></b></td> <td> <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button> </td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
@@ -81,72 +84,7 @@
                             @endif
                         </table>
 
-                        <div class="collapse" id="editItemsPan">
-                            <hr><b><h3>Edit Receipt:</h3></b>
-                            <table id="editItemTable" class="display table" cellspacing="0" width="100%">
-                                <thead>
-                                <tr>
-                                    <th>No#</th>
-                                    <th>Name</th>
-                                    <th>Item Description</th>
-                                    @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)<th>Game</th>@endif
-                                    <th>Unit Price</th>
-                                    <th>Case Price</th>
-                                    <th>Qty</th>
-                                    <th>Received Qty</th>
-                                    <th>Update Qty</th>
-                                    <th>Qty</th>
-                                    <th>Total($)</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <?php  $value = 1   ?>
-                                @foreach($data['order_items'] as $order_item)
-                                    @if($order_item->item_received > 0)
-                                        <tr>
-                                            <td style="text-align: center">
-                                                {{ $value ++ }}
-                                                <input type="hidden" name="orderLineItemId[]" value="{{ $order_item->id }}">
-                                                <input type="hidden" name="updateItemNotes[]" value="{{ $order_item->notes }}">
-                                            </td>
-                                            <td>{{ $order_item->item_name }}</td>
-                                            <td>{{ $order_item->product_description }}</td>
-                                            @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)
-                                                <td> {{ $order_item->game_name }}</td>
-                                            @endif
-                                            <td>{{CurrencyHelpers::formatCurrency(number_format($order_item->price , \App\Models\Order::ORDER_PERCISION)) }}</td>
-                                            <td> {{ CurrencyHelpers::formatCurrency( number_format( $order_item->case_price , \App\Models\Order::ORDER_PERCISION)) }}</td>
-
-                                            <td>{{ $order_item->qty }}
-                                                <input type="hidden" name="updateOrigQty[]" value="{{$order_item->qty}}">
-                                            </td>
-                                            <td>
-                                                {{ $order_item->item_received }}
-                                                <input type="hidden" name="updateAlreadyReceivedQty[]" value="{{$order_item->item_received}}">
-                                            </td>
-
-                                            <td style="text-align: center">
-                                                <input type="checkbox" class="updateBox" name="updateProducts[]" value="{{ $order_item->id }}" />
-                                            </td>
-                                            <td>
-                                                <input type="number" class="updateQtyInput parsley-validated" id="updateItemText{{ $order_item->id }}" name="updateQty[]" value="0" max="{!! $order_item->qty !!}" min="0" readonly="readonly" style="background-color: #c1c1c1;"/>
-                                            </td>
-                                            <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
-                                            </td>
-
-                                        </tr>
-                                    @endif
-                                @endforeach
-                                </tbody>
-                            </table>
-                            <br><hr><br>
-                        </div>
-
-                        <br>
-
-                        <div class="collapse in" id="receiveItemsPan">
-                            <b><h3>Receive Items:</h3></b>
-                            <table id="itemTable" class="display table" cellspacing="0" width="100%">
+                        <table id="itemTable" class="display table" cellspacing="0" width="100%">
                             <thead>
                             <tr>
                             <th>No#</th>
@@ -200,8 +138,6 @@
                             @endforeach
                             </tbody>
                         </table>
-                        </div>
-
                     </div>
 
                     <div class="clearfix"></div>
@@ -267,15 +203,11 @@
                             <input type="hidden" name='location_id' value="{{ $data['location_id'] }}" id='location_id'/>
                             <input type="hidden" name='user_id' value="{{ $data['user_id'] }}" id='user_id'/>
                             <input type="hidden" name='added_to_inventory' value="{{ $data['added_to_inventory'] }}" id='added_to_inventory'/>
-                            <input type="hidden" name='order_state_id' value="{{ $data['status_id'] }}" id='added_to_inventory'/>
-                            <input type="hidden" name='mode' value="receive" id='mode'/>
                             <label class="col-md-4 control-label text-right" >&nbsp</label>
                             <div class="col-md-8">
                                 <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                             class="fa  fa-save "></i>  Receive Order </button>
-                                <button type="submit" class="btn btn-primary btn-sm " id="update_receipt_btn"><i
-                                            class="fa fa-refresh"></i>  Update Receipt </button>
-                                <button type="button" onclick="window.history.back();" class="btn btn-success btn-sm">
+                                <button type="button" onclick="window.location.href = '{{url('order')}}'" class="btn btn-success btn-sm">
                                     <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
                             </div>
                         </div>
@@ -296,40 +228,27 @@
 </div>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#update_receipt_btn').toggle();
+            console.log("Search params: "+"{{\Session::get('searchParams')}}");
+
             numberFieldValidationChecks($("input[type='number']"));
 
             var dTable =  $('#itemTable').DataTable({
-                paging: false
-            });
-
-            $('#editItemTable').DataTable({
                 paging: true,
                 "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ]
             });
 
+            $('#itemTable').on( 'page.dt', function () {
+                setTimeout(function(){ regIcheckEvent(); }, 500);
+            });
 
-            $('#itemTable .yourBox').on('ifChecked',function(){
+            $('#itemTable .yourBox').on('ifChecked', function(){
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).removeAttr('readonly');
             });
-            $('#itemTable .yourBox').on('ifUnchecked',function(){
+            $('#itemTable .yourBox').on('ifUnchecked', function(){
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).attr('readonly', 'readonly');
                 $('#receivedItemText'+itemId).val($('#receivedItemText'+itemId).attr('max'));
-            });
-
-            $('#editItemTable .updateBox').on('ifChecked',function(){
-                var itemId= $(this).val();
-                $('#updateItemText'+itemId).removeAttr('readonly');
-                $('#updateItemText'+itemId).css('background-color', '#fff');
-            });
-            $('#editItemTable .updateBox').on('ifUnchecked',function(){
-                var itemId= $(this).val();
-                $('#updateItemText'+itemId).attr('readonly', 'readonly');
-                $('#updateItemText'+itemId).css('background-color', '#c1c1c1');
-                $('#updateItemText'+itemId).val(0);
-                $('#orderreceiveFormAjax').parsley( 'validate' );
             });
             var isAdvaceReplacement=0;
 
@@ -356,8 +275,7 @@
             form.submit(function () {
 
                 if (form.parsley('isValid') == true) {
-
-                    $('#editItemTable').DataTable().destroy();
+                    $('#itemTable').DataTable().destroy();
                     var options = {
                         dataType: 'json',
                         beforeSubmit: showRequest,
@@ -373,22 +291,33 @@
 
         });
 
+        function regIcheckEvent() {
+            $('#itemTable .yourBox').unbind('ifChecked');
+            $('#itemTable .yourBox').unbind('ifUnchecked');
+
+            $('#itemTable .yourBox').on('ifChecked', function(){
+                console.log('test me');
+                var itemId= $(this).val();
+                $('#receivedItemText'+itemId).removeAttr('readonly');
+            });
+            $('#itemTable .yourBox').on('ifUnchecked', function(){
+                var itemId= $(this).val();
+                $('#receivedItemText'+itemId).attr('readonly', 'readonly');
+                $('#receivedItemText'+itemId).val($('#receivedItemText'+itemId).attr('max'));
+            });
+        }
+
         function showRequest() {
             $('.ajaxLoading').show();
         }
         function showResponse(data) {
             if (data.status == 'success') {
                 ajaxViewClose('#{{ $pageModule }}');
-                ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+                //ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
-                if($('#mode').val()=='receive'){
-                    var href="{{url()}}/order";
-                    window.location=href;
-                }else{
-                    window.location = window.location.href;
-                }
-
+                var href="{{url()}}/order";
+                window.location.href=href;
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
@@ -450,24 +379,6 @@
 
         $('input[name^="receivedQty"]').change(function () {
             $('#orderreceiveFormAjax').parsley( 'validate' );
-        });
-
-        $('input[name^="updateQty"]').change(function () {
-            $('#orderreceiveFormAjax').parsley( 'validate' );
-        });
-
-        $('#edit_receipt_btn').on('click', function () {
-            $('#update_receipt_btn').toggle();
-            $('#submit_btn').toggle();
-            if($('#update_receipt_btn').is(":visible")){
-                $('#mode').val('update');
-                $('#receiveItemsPan').collapse('hide');
-                $('#edit_receipt_btn').html('<i class="fa fa-truck"></i> Receive Items')
-            }else{
-                $('#mode').val('receive');
-                $('#receiveItemsPan').collapse('show');
-                $('#edit_receipt_btn').html('<i class="fa fa-edit"></i> Edit Receipt')
-            }
         });
 
     </script>
