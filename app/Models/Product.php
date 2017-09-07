@@ -76,6 +76,9 @@ class product extends Sximo  {
                 case 'debitcards':
                     $product_type_id=26;
                     break;
+                case 'advancereplacement':
+                    $product_type_id=2;
+                    break;
             }
            // unset();
             \Session::put('product_type_id',$product_type_id);
