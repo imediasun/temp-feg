@@ -92,10 +92,6 @@ class ReportGenerator
         if ($noClosed != 1) {
             $locationsNotReportingReport = self::getLocationsNotReportingReport($params);            
         }
-         // Readers Missing Asset Ids
-        if ($noMissingAssetIds != 1) {        
-            $readersMissingAssetIds = self::getReadersMissingAssetIdsReport($params);
-        }
         // Games Not Played:
         if ($noDownGames != 1) {   
             $gamesNotPlayed = self::getGamesNotPlayedReport($params);
@@ -108,7 +104,11 @@ class ReportGenerator
         if ($noUnknownAssetIds != 1) {
             $unknownAssetIdReport = self::getUnknownAssetIdReport($params);
         }
-
+        // Readers Missing Asset Ids
+        //dont change this function call order with above two functions call this will effect the reports
+        if ($noMissingAssetIds != 1) {
+            $readersMissingAssetIds = self::getReadersMissingAssetIdsReport($params);
+        }
         $__logger->log("        End processing Game Earnings DB Transfer Report for $date");
 
         if ($noTransferSummary != 1) {
