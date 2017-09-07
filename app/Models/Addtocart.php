@@ -21,14 +21,15 @@ class addtocart extends Sximo
     {
         return "SELECT requests.*, (SELECT COALESCE(SUM(qty),0) FROM requests WHERE location_id = location.id AND status_id = 1 AND product_id = products.id) as already_order_qty, u1.username,products.img,IF(product_id = 0, requests.description, products.vendor_description) as description,
                 products.sku,products.case_price,products.retail_price,products.case_price*requests.qty,products.ticket_value,location.location_name_short,
-                merch_request_status.status,products.size,V1.vendor_name,order_type.order_type,If(products.reserved_qty = 0, '' , products.reserved_qty) as reserved_qty,
-                (products.reserved_qty - requests.qty) as reserved_difference FROM requests
+                merch_request_status.status,products.size,V1.vendor_name,order_type.order_type,product_type.type_description,If(products.reserved_qty = 0, '' , products.reserved_qty) as reserved_qty,
+                (products.reserved_qty - requests.qty) as reserved_difference,products.prod_type_id,products.prod_sub_type_id FROM requests
                 LEFT JOIN users u1 ON (requests.request_user_id = u1.id)
 			    LEFT JOIN products ON (requests.product_id = products.id)
 			LEFT JOIN vendor V1 ON (products.vendor_id = V1.id)
 			LEFT JOIN location ON (requests.location_id = location.id)
 			LEFT JOIN merch_request_status ON (requests.status_id = merch_request_status.id)
-			LEFT JOIN order_type ON (order_type.id = products.prod_type_id)";
+			LEFT JOIN order_type ON (order_type.id = products.prod_type_id)
+			LEFT JOIN product_type ON (product_type.id = products.prod_sub_type_id)";
     }
 
     public static function queryWhere()
