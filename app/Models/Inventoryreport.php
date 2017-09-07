@@ -55,8 +55,8 @@ class inventoryreport extends Sximo  {
         $date_end = @$filters['end_date'];
         $location_id = @$filters['location_id'];
         $vendor_id = @$filters['vendor_id'];
-        $prod_type_id = @$filters['prod_type_id'];
-        $prod_sub_type_id = @$filters['prod_sub_type_id'];
+        $prod_type_id = @$filters['Order_Type'];
+        $prod_sub_type_id = @$filters['Product_Type'];
         if (empty($location_id)) {
             $location_id = \Session::get('selected_location');
         }
@@ -111,7 +111,7 @@ class inventoryreport extends Sximo  {
                    IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product,
                    P.ticket_value,
 				   ROUND(P.case_price / P.num_items,2) AS Unit_Price,
-				   SUM(P.num_items*OC.qty) AS Cases_Ordered,
+				   IF(O.order_type_id IN (6,7,8,24),SUM(P.num_items*OC.qty),SUM(OC.qty)) AS Cases_Ordered,
 				   OC.case_price AS Case_Price,
 				   SUM(OC.total) AS Total_Spent,O.location_id,
 				   O.date_ordered AS start_date,
@@ -134,7 +134,7 @@ class inventoryreport extends Sximo  {
                             AND O.date_ordered <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType ";
 
-            $groupQuery = " GROUP BY (CASE WHEN (O.is_freehand = 1) THEN Product ELSE P.id END ),OC.case_price ";
+            $groupQuery = " GROUP BY (CASE WHEN (O.is_freehand = 1) THEN OC.item_name ELSE P.id END ),OC.case_price ";
 
 
             $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
@@ -153,7 +153,7 @@ class inventoryreport extends Sximo  {
                 ' ORDER BY Unit_Price ';
 
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
-            $finalCatQuery = "$catQuery $fromQuery $whereQuery";
+            $finalCatQuery = "$catQuery $fromQuery $whereQuery $groupQuery";
             \Log::info("Inventory Report final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
             $rawCats = \DB::select($finalCatQuery);
