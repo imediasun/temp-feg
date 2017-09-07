@@ -61,4 +61,6 @@ Route::controller('feg/system/systememailreportmanager', 'Feg\System\SystemEmail
 Route::controller('training', 'TrainingController');
 Route::controller('excludedreaders', 'ExcludedreadersController');
 Route::controller('ordertyperestrictions', 'OrdertyperestrictionsController');
+Route::controller('inventoryreport', 'InventoryreportController');
+Route::controller('expensecategories', 'ExpensecategoriesController');
 ?>

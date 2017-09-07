@@ -156,6 +156,8 @@ class FegapiController extends Controller
         $class = ucwords(Input::get('module'));
         if ($class == "Users") {
             $class1 = "App\\Models\\core\\" . $class;
+        }else if($class == "Vendor"){
+            $class1 = "App\\Models\\VendorAPI";
         } else {
             $class1 = "App\\Models\\" . $class;
         }

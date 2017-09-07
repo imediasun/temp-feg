@@ -82,7 +82,7 @@
                                         {{--*/ $hidden = $item['hidden'] ? 
                                             'style="display: none"': '' /*--}}
                                         {{--*/ $defaultValue = $item['default'] /*--}}
-                                        {{--*/
+                                        <?php
                                             
                                             extract(\FEGHelp::specialPermissionFormatter(
                                                 $defaultValue, 
@@ -96,7 +96,7 @@
                                                 ])
                                             ) 
                                     
-                                        /*--}}
+                                        ?>
                                                 
                                         <td
                                             class="{!! $fieldClass !!} tips"
@@ -195,7 +195,7 @@
                                     
                                         {{--*/ $hidden = $item['hidden'] ? 
                                             'style="display: none"': '' /*--}}
-                                        {{--*/
+                                        <?php
                                             
                                             extract(\FEGHelp::specialPermissionFormatter(
                                                 $row->$field, 
@@ -208,7 +208,7 @@
                                                 ])
                                             ) 
                                     
-                                        /*--}}
+                                        ?>
                                                 
                                         <td
                                             class="{!! $fieldClass !!} tips"
