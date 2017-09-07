@@ -221,6 +221,18 @@ $objSheet->setCellValue(
 	"A".$endOn,
 	"Game Cards In Stock:"
 );
+$endOn++;
+$objSheet->insertNewRowBefore($endOn, 1);
+$objSheet->setCellValue(
+	"A".$endOn,
+	"Debit Cards In Stock:"
+);
+$endOn++;
+$objSheet->insertNewRowBefore($endOn, 1);
+$objSheet->setCellValue(
+	"A".$endOn,
+	"Photo Paper In Stock:"
+);
 $objSheet->getStyle("A$hold:B$endOn")->applyFromArray(
     array(
         'font'  => array(
@@ -248,6 +260,13 @@ $objSheet->getStyle("A$totalsRowStart:B$endOn")->applyFromArray(
 	$objPHPExcel->getDefaultStyle()
 	->getAlignment()
 	->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+$objSheet->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
+$objSheet->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+$objSheet->getPageSetup()->setFitToPage(true);
+$objSheet->getPageSetup()->setFitToWidth(1);
+$objSheet->getPageSetup()->setFitToHeight(0);
+$objSheet->getPageMargins()->setRight(0.3);
+$objSheet->getPageMargins()->setLeft(0.3);
 
 //$objSheet->protectCells('A1:B1', 'PHP');//password protected
 //$objSheet->getStyle('A2:B2')->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);//unlocked

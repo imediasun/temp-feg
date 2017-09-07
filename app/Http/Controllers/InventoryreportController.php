@@ -5,6 +5,7 @@ use App\Models\Inventoryreport;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ;
+use \App\Models\Sximo\Module;
 
 class InventoryreportController extends Controller {
 
@@ -20,12 +21,15 @@ class InventoryreportController extends Controller {
 
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
+		$this->module_id = Module::name2id($this->module);
+		$this->pass = \FEGSPass::getMyPass($this->module_id);
 
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
 			'pageModule'		=> 'inventoryreport',
 			'pageUrl'			=>  url('inventoryreport'),
+			'pass'			=>  $this->pass,
 			'return' 			=> 	self::returnUrl()
 		);
 

@@ -55,8 +55,8 @@ class inventoryreport extends Sximo  {
         $date_end = @$filters['end_date'];
         $location_id = @$filters['location_id'];
         $vendor_id = @$filters['vendor_id'];
-        $prod_type_id = @$filters['prod_type_id'];
-        $prod_sub_type_id = @$filters['prod_sub_type_id'];
+        $prod_type_id = @$filters['Order_Type'];
+        $prod_sub_type_id = @$filters['Product_Type'];
         if (empty($location_id)) {
             $location_id = \Session::get('selected_location');
         }
