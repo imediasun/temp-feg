@@ -63,6 +63,11 @@ class RedemptioncountergallaryController extends Controller
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+
+        //comment below if start using sorting feature on page (down left of pagination)
+        $sort = 'loc_id ASC, ';
+        $order = 'id DESC ';
+
         // End Filter sort and order for query
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');

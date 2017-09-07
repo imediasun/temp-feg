@@ -3488,3 +3488,13 @@ span.order_custom_error ~ ul.parsley-error-list
 .btn:focus {
     color: inherit !important;
 }
+li.multiselect-item.multiselect-group + li a label {
+  font-weight: bold !important;
+}
+.multiselect-container>li>a>label>input[type=checkbox] {
+  margin-top: 6px;
+}
+.multiselect-container>li.multiselect-group label
+{
+  color:black;
+}
