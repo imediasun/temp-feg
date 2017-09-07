@@ -294,6 +294,7 @@ class InventoryreportController extends Controller {
 			'exportID' => $exportSessionID,
 			'fields' => $fields,
 			'rows' => $rows,
+			'pass' => $this->data['pass'],
 			'categories' => $results['categories'],
 			'title' => $this->data['pageTitle'],
 			'topMessage' => $results['topMessage'],

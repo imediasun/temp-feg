@@ -166,6 +166,15 @@ $objSheet->getStyle($SkuColumn."3:".$SkuColumn.($lastRow+$totalCounters))->getAl
 $objSheet->getStyle($CasePackColumn."3:".$CasePackColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $objSheet->getStyle($QuantityOrderedColumn."3:".$QuantityOrderedColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 	//$objSheet->getColumnDimension($serialColumn)->setWidth(50);
+if(isset($pass["Users With Limited Access"]))
+{
+	$objSheet->getProtection()->setSheet(true);//locked sheet
+	$objSheet->getProtection()->setPassword('passwordhareherehere');
+	$objSheet->getStyle($UnitInventoryColumn."3:".$UnitInventoryColumn.$endOn)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);//unlocked column L
+
+	//$worksheet->getProtection()->setInsertRows(true);
+	$objSheet->getProtection()->setDeleteRows(false);
+}
 $endOn = $lastRow+$totalCounters+2;
 $objSheet->insertNewRowBefore($endOn, 1);
 $totalsRowStart = $endOn;
@@ -269,8 +278,6 @@ $objSheet->getPageMargins()->setRight(0.3);
 $objSheet->getPageMargins()->setLeft(0.3);
 
 //$objSheet->protectCells('A1:B1', 'PHP');//password protected
-//$objSheet->getStyle('A2:B2')->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);//unlocked
-//$objSheet->getProtection()->setSheet(true);//locked sheet
 	// Delete temporary file
 	unlink($path);
 

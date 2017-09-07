@@ -111,7 +111,7 @@ class inventoryreport extends Sximo  {
                    IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product,
                    P.ticket_value,
 				   ROUND(P.case_price / P.num_items,2) AS Unit_Price,
-				   SUM(P.num_items*OC.qty) AS Cases_Ordered,
+				   IF(O.order_type_id IN (6,7,8,24),SUM(P.num_items*OC.qty),SUM(OC.qty)) AS Cases_Ordered,
 				   OC.case_price AS Case_Price,
 				   SUM(OC.total) AS Total_Spent,O.location_id,
 				   O.date_ordered AS start_date,
