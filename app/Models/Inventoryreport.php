@@ -106,6 +106,7 @@ class inventoryreport extends Sximo  {
                    '' as unit_inventory_count,
                    '' as total_inventory_value,
                    T1.order_type AS Order_Type,
+                   T1.order_type AS Order_Type_For_Product,
                    D.type_description AS Product_Type,
                    V.vendor_name as vendor_name,
                    IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product,
