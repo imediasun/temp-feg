@@ -294,17 +294,13 @@ class AddtocartController extends Controller
 
         $check = \DB::select("SELECT * FROM requests INNER JOIN products ON (requests.product_id = products.id) WHERE location_id = $location_id AND status_id = 1 AND product_id IN (".implode(',',$products).")");
         if(!empty($check)){
-            $productsNames = '';
+            $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px;'>";
             $count = count($check);
             foreach ($check as $key => $request){
-
-                if($key != $count-1){
-                    $productsNames .= "(".$request->vendor_description."), ";
-                }else{
-                    $productsNames = substr($productsNames, 0, -2)." and (".$request->vendor_description.")";
-                }
+                $productsNames .= "<li>".$request->vendor_description."</li>";
             }
-            return redirect('/addtocart')->with('messagetext', "Another employee at your location has already ordered the following product(s): $productsNames. Please remove the duplicate product(s) from your cart to submit your order and contact the head of the department relevant to Order Type to made any further quantity adjustments for this product.")->with('msgstatus', 'error');
+            $productsNames .= "</ul>";
+            return redirect('/addtocart')->with('messagetext', "Another employee at your location has already ordered the following product(s): $productsNames Please remove the duplicate product(s) from your cart to submit your order and contact the head of the department relevant to Order Type to made any further quantity adjustments for this product.")->with('msgstatus', 'error');
         }
 
         $update = array('status_id' => 1,
