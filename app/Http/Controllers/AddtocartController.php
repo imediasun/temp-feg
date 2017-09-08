@@ -292,9 +292,19 @@ class AddtocartController extends Controller
             }
         }*/
 
-        $check = \DB::select("SELECT * FROM requests WHERE location_id = $location_id AND status_id = 1 AND product_id IN (".implode(',',$products).")");
+        $check = \DB::select("SELECT * FROM requests INNER JOIN products ON (requests.product_id = products.id) WHERE location_id = $location_id AND status_id = 1 AND product_id IN (".implode(',',$products).")");
         if(!empty($check)){
-            return redirect('/addtocart')->with('messagetext', '1 or more products in your order has already been requested (see the Already Ordered QTY field). Please contact the head of the department relevant to Order Type to make any further quantity adjustments for this product.')->with('msgstatus', 'error');
+            $productsNames = '';
+            $count = count($check);
+            foreach ($check as $key => $request){
+
+                if($key != $count-1){
+                    $productsNames .= "(".$request->vendor_description."), ";
+                }else{
+                    $productsNames = substr($productsNames, 0, -2)." and (".$request->vendor_description.")";
+                }
+            }
+            return redirect('/addtocart')->with('messagetext', "Another employee at your location has already ordered the following product(s): $productsNames. Please remove the duplicate product(s) from your cart to submit your order and contact the head of the department relevant to Order Type to made any further quantity adjustments for this product.")->with('msgstatus', 'error');
         }
 
         $update = array('status_id' => 1,
