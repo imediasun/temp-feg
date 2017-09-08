@@ -5,6 +5,7 @@
         \Session::put('filter_before_redirect', 'redirect');
         \Session::put('searchParams', $_SESSION['searchParamsForOrder']);
     ?>
+    <!-- some change in feature/Bug#97 -->
     <style>
         .dataTables_filter{
             float: right !important;
