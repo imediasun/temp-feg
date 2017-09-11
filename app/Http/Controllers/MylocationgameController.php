@@ -799,6 +799,10 @@ class MylocationgameController extends Controller
         $results = $this->model->getRows($params);
 
         $rows = $results['rows'];
+        /*foreach ($rows as $row){
+            $row->serial = '="'.$row->serial.'"';
+        }*/
+
         if (!empty($request['validateDownload'])) {
             $status = [];
             if (empty($rows)) {

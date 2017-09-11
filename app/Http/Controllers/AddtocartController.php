@@ -292,9 +292,15 @@ class AddtocartController extends Controller
             }
         }*/
 
-        $check = \DB::select("SELECT * FROM requests WHERE location_id = $location_id AND status_id = 1 AND product_id IN (".implode(',',$products).")");
+        $check = \DB::select("SELECT * FROM requests INNER JOIN products ON (requests.product_id = products.id) WHERE location_id = $location_id AND status_id = 1 AND product_id IN (".implode(',',$products).")");
         if(!empty($check)){
-            return redirect('/addtocart')->with('messagetext', '1 or more products in your order has already been requested (see the Already Ordered QTY field). Please contact the head of the department relevant to Order Type to make any further quantity adjustments for this product.')->with('msgstatus', 'error');
+            $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px;'>";
+            $count = count($check);
+            foreach ($check as $key => $request){
+                $productsNames .= "<li>".$request->vendor_description."</li>";
+            }
+            $productsNames .= "</ul>";
+            return redirect('/addtocart')->with('messagetext', "Another employee at your location has already ordered the following product(s): $productsNames Please remove the duplicate product(s) from your cart to submit your order and contact the head of the department relevant to Order Type to made any further quantity adjustments for this product.")->with('msgstatus', 'error');
         }
 
         $update = array('status_id' => 1,
@@ -315,11 +321,11 @@ class AddtocartController extends Controller
         }
     }
 
-    public function getSave($id = null, $qty = null, $vendor_name = null)
+    public function getSave($id = null, $qty = null, $vendor_name = null, $notes = null)
     {
 
         try {
-            $data = array('qty' => $qty);
+            $data = array('qty' => $qty, 'notes' => $notes);
             \DB::table('requests')->where('id', $id)->update($data);
             $vendor_name = str_replace('_', ' ', $vendor_name);
 

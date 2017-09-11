@@ -103,7 +103,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="220"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="250"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
@@ -184,7 +184,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                             <i class=" fa fa-random" aria-hidden="true"></i>
                         </a>
                         <?php
-                        $canPostToNetSuit = Order::canPostToNetSuit($row->id);
+                        $canPostToNetSuit = Order::canPostToNetSuit($row->id, $row);
                         $isApified = Order::isApified($id, $row);
                         ?>
 
@@ -350,7 +350,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                 if(data.status === 'success'){
                     notyMessage(data.message);
                     btn.remove();
-                    reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
+                    ajaxFilter('#{{ $pageModule }}', '{{ $pageModule }}/data');
                 }
                 else {
                     btn.prop('disabled', false);
@@ -375,7 +375,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                     if(data.status === 'success'){
                         notyMessage(data.message);
                         btn.remove();
-                        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
+                        ajaxFilter('#{{ $pageModule }}', '{{ $pageModule }}/data');
                     }
                     else {
                         btn.prop('disabled', false);

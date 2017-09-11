@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
 <div class="page-content row">
   <!-- Begin Header & Breadcrumb -->
     <div class="page-header">
@@ -12,7 +10,7 @@
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
         <li class="active">{{ $pageTitle }}</li>
-      </ul>
+      </ul>	  	  
     </div>
 	<!-- End Header & Breadcrumb -->
 
@@ -28,18 +26,5 @@
 $(document).ready(function(){
 	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
 });	
-    
-function cancelAction() {
-    $('#{{$pageModule}}View').hide();
-    $('#{{$pageModule}}Grid').show();
-    $('#{{$pageModule}}View').html('');
-    $("[id^='toggle_trigger_']").iCheck('destroy');
-    $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
-}
-
-function showAction() {
-    $('#{{$pageModule}}View').show();
-    $('#{{$pageModule}}Grid').hide();
-}
 </script>	
 @endsection

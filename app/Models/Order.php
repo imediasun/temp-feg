@@ -279,8 +279,6 @@ class order extends Sximo
                     $ordergamenameArray[] = $row->game_name;
 
                     $orderContentIdArray[] = $row->order_content_id;
-
-
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
                 }
                 $order_received_query=\DB::select('select date_received,received_by from order_received where order_id='.$order_id);
@@ -514,6 +512,7 @@ class order extends Sximo
                 $data['item_count'] = '';
                 $data['date_received']=$query[0]->date_received;
                 $data['tracking_number']=$query[0]->tracking_number;
+                $data['status_id']=$query[0]->status_id;
             }
             if (!empty($data['requestIds']) && ($data['order_type'] == 7 || $data['order_type'] == 8)) //INSTANT WIN AND REDEMPTION PRIZES
             {
@@ -795,9 +794,34 @@ class order extends Sximo
         return self::where('id', $id)->update($updateData);
     }
 
-    public static function canPostToNetSuit($id){
+    /**
+     * Conditions for Post to NetSuite Button being visible:
+        1) order fully received;
+        2) order status = Closed;
+        3) Invoice Verified = Yes
+     * Post to Netsuite button will NOT be visible for freehand orders, ever.
+     * After an order has been posted to netsuite, it cannot be edited nor received against.
+     * @param $id
+     * @param null $data
+     * @return bool
+     */
+    public static function canPostToNetSuit($id, $data = null){
         $order_qty = \DB::select("SELECT SUM(qty) as qty FROM order_contents WHERE order_id=$id");
         $received_qty = \DB::select("SELECT SUM(quantity) as qty FROM order_received WHERE order_id=$id");
+        if(empty($data)){
+            $data = self::find($id)->toArray();
+        }
+        else
+        {
+            $data = (array)$data;
+        }
+        //remap status id to status value
+        if(isset($data['status_value'])){
+            $data['status_id'] = $data['status_value'];
+        }
+        if(!self::isClosed($id,$data) || $data['invoice_verified'] == 0){
+            return false;
+        }
         if(!empty($received_qty)){
             if($received_qty[0]->qty == $order_qty[0]->qty){
                 return true;

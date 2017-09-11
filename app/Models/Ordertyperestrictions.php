@@ -20,7 +20,7 @@ class Ordertyperestrictions extends Sximo  {
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE order_type.id IS NOT NULL ";
+		return "  WHERE can_request = 1 AND order_type.id IS NOT NULL ";
 	}
 	
 	public static function queryGroup(){

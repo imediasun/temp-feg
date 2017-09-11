@@ -23,11 +23,44 @@ Route::group(['middleware' => 'auth'], function()
     Route::filter('authorization', function()
     {
 
+        if(env('APP_ENV', 'development') == 'production' ? true : false){
+            return;
+        }
+
+        if(!isset($_GET['token'])){
+            return Response::json([
+                'error' => true,
+                'message' => 'Authentication token not provided!',
+                'code' => 401], 401
+            );
+        }
+
         if(is_null(Input::get('module')))
             return Response::json(array('status'=>'error','message'=>\Lang::get('restapi.ModuleEmpty')),400);
 
-       /* if(!isset($_SERVER['PHP_AUTH_USER']) && !isset($_SERVER['PHP_AUTH_PW']))
+        $key = $_GET['token'];
+
+        $auth = DB::table('tb_restapi')->where('apikey',"$key")->get();
+
+        if(count($auth) <=0 )
         {
+            return Response::json([
+                'error' => true,
+                'message' => 'Invalid authenticated params !',
+                'code' => 401], 401
+            );
+        }
+
+    });
+    Route::filter('authorization_http', function()
+    {
+
+        if(is_null(Input::get('module')))
+            return Response::json(array('status'=>'error','message'=>\Lang::get('restapi.ModuleEmpty')),400);
+
+        if(!isset($_SERVER['PHP_AUTH_USER']) && !isset($_SERVER['PHP_AUTH_PW']))
+        {
+            header('WWW-Authenticate: Basic realm="My Realm"');
             return Response::json([
                 'error' => true,
                 'message' => 'Not authenticated',
@@ -64,7 +97,7 @@ Route::group(['middleware' => 'auth'], function()
                 }
 
             }
-        }*/
+        }
 
     });
     Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
@@ -85,6 +118,7 @@ Route::group(['middleware' => 'auth'], function()
 
 Route::controller('/user', 'UserController');
 Route::get('/login', 'UserController@getLogin');
+Route::get('/forget-password', 'UserController@getForgetPassword');
 Route::get('/', 'UserController@getLogin');
 Route::get('/restric',function(){
 

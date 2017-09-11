@@ -1,5 +1,11 @@
 @extends('layouts.app')
 @section('content')
+    <?php
+        session_start();
+        \Session::put('filter_before_redirect', 'redirect');
+        \Session::put('searchParams', $_SESSION['searchParamsForOrder']);
+    ?>
+    <!-- some change in feature/Bug#97 -->
     <style>
         .dataTables_filter{
             float: right !important;
@@ -202,7 +208,7 @@
                             <div class="col-md-8">
                                 <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                             class="fa  fa-save "></i>  Receive Order </button>
-                                <button type="button" onclick="window.history.back();" class="btn btn-success btn-sm">
+                                <button type="button" onclick="window.location.href = '{{url('order')}}'" class="btn btn-success btn-sm">
                                     <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
                             </div>
                         </div>
@@ -223,19 +229,24 @@
 </div>
     <script type="text/javascript">
         $(document).ready(function () {
+            console.log("Search params: "+"{{\Session::get('searchParams')}}");
 
             numberFieldValidationChecks($("input[type='number']"));
 
             var dTable =  $('#itemTable').DataTable({
-                paging: false
+                paging: true,
+                "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ]
             });
 
+            $('#itemTable').on( 'page.dt', function () {
+                setTimeout(function(){ regIcheckEvent(); }, 500);
+            });
 
-            $('#itemTable .yourBox').on('ifChecked',function(){
+            $('#itemTable .yourBox').on('ifChecked', function(){
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).removeAttr('readonly');
             });
-            $('#itemTable .yourBox').on('ifUnchecked',function(){
+            $('#itemTable .yourBox').on('ifUnchecked', function(){
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).attr('readonly', 'readonly');
                 $('#receivedItemText'+itemId).val($('#receivedItemText'+itemId).attr('max'));
@@ -265,6 +276,7 @@
             form.submit(function () {
 
                 if (form.parsley('isValid') == true) {
+                    $('#itemTable').DataTable().destroy();
                     var options = {
                         dataType: 'json',
                         beforeSubmit: showRequest,
@@ -280,17 +292,33 @@
 
         });
 
+        function regIcheckEvent() {
+            $('#itemTable .yourBox').unbind('ifChecked');
+            $('#itemTable .yourBox').unbind('ifUnchecked');
+
+            $('#itemTable .yourBox').on('ifChecked', function(){
+                console.log('test me');
+                var itemId= $(this).val();
+                $('#receivedItemText'+itemId).removeAttr('readonly');
+            });
+            $('#itemTable .yourBox').on('ifUnchecked', function(){
+                var itemId= $(this).val();
+                $('#receivedItemText'+itemId).attr('readonly', 'readonly');
+                $('#receivedItemText'+itemId).val($('#receivedItemText'+itemId).attr('max'));
+            });
+        }
+
         function showRequest() {
             $('.ajaxLoading').show();
         }
         function showResponse(data) {
             if (data.status == 'success') {
                 ajaxViewClose('#{{ $pageModule }}');
-                ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+                //ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
                 var href="{{url()}}/order";
-                window.location=href;
+                window.location.href=href;
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();

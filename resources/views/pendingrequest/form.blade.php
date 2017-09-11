@@ -13,11 +13,11 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'pendingrequest/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'pendingrequestFormAjax')) !!}
+			{!! Form::open(array('url'=>'pendingrequest/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'pendingrequestFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset>
 									
-				  <div class="form-group  " > 
+				  {{--<div class="form-group  " >
 					<label for="Id" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}	
 					</label>
@@ -27,7 +27,7 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
+				  </div>--}}
 				  <div class="form-group  " > 
 					<label for="Product Id" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Product Id', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) !!}	

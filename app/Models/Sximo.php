@@ -60,7 +60,7 @@ class Sximo extends Model {
             $L->log('--------------------Start UserActions logging------------------');
 
         $L->log("User ID ",$user);
-        $L->log("Impersonated User ID " , $impersonatedUser);
+        $L->log("Actual User ID " , $impersonatedUser);
         $L->log("User IP ",Request::ip());
         $L->log("User Browser ",isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT']: "CLI");
         $L->log("Module or Table : ".$module, $note);
@@ -211,6 +211,8 @@ class Sximo extends Model {
     public static function getRow($id) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
+
+        Log::info("Get Row Query : ".self::querySelect() .self::queryWhere() ." AND " . $table . "." . $key . " = '{$id}' " .self::queryGroup());
 
         $result = \DB::select(
                         self::querySelect() .
