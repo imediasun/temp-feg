@@ -83,24 +83,61 @@ foreach ($cellIterator as $cell) {
 	$objSheet->getStyle($column."2")->getAlignment()->setWrapText(true);
 	$objSheet->getStyle($column."2")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 	$objSheet->getStyle($column."2")->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-	if($cell->getValue() == 'Serial'){
-		$serialColumn = $cell->getColumn();
 
-		break;
+	if($cell->getValue() == 'Product Name')
+	{
+		$ProductColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Vendor Name')
+	{
+		$VendorColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Sku')
+	{
+		$SkuColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Case Pack')
+	{
+		$CasePackColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Ticket Value')
+	{
+		$TicketValueColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Unit Price')
+	{
+		$UnitPriceColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Case Price')
+	{
+		$CasePriceColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Quantity Ordered in this time period')
+	{
+		$QuantityOrderedColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Total Spent')
+	{
+		$TotalSpentColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Order Type')
+	{
+		$OrderTypeColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Product Type')
+	{
+		$ProductTypeColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Product Sub Type')
+	{
+		$ProductSubTypeColumn = $cell->getColumn();
+	}
+	else if($cell->getValue() == 'Total Unit Inventory Count')
+	{
+		$UnitInventoryColumn = $cell->getColumn();
 	}
 }
 $TotalColumn = $objSheet->getHighestColumn();
-$UnitInventoryColumn = 'L';
-$UnitPriceColumn = 'F';
-$CasePriceColumn = 'G';
-$TotalSpentColumn = 'I';
-$OrderTypeColumn = 'J';
-$ProductTypeColumn = 'K';
-$ProductColumn = 'A';
-$VendorColumn = 'B';
-$SkuColumn = 'D';
-$CasePackColumn = 'E';
-$QuantityOrderedColumn = 'H';
 $lastRow = $objSheet->getHighestRow();
 for ($row = 3; $row <= $lastRow; $row++) {
 	$cell = $objSheet->getCell($TotalColumn.$row);
@@ -156,6 +193,7 @@ $objSheet->getColumnDimension($UnitInventoryColumn)->setWidth(12);
 $objSheet->getColumnDimension($CasePriceColumn)->setWidth(12);
 $objSheet->getColumnDimension($OrderTypeColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductTypeColumn)->setWidth(20);
+$objSheet->getColumnDimension($ProductSubTypeColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductColumn)->setWidth(25);
 $objSheet->mergeCells($ProductColumn."1:".$TotalColumn."1");
 $objSheet->getStyle($ProductColumn."1")->getAlignment()->setWrapText(true);
