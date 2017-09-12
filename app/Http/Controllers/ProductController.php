@@ -302,9 +302,11 @@ class ProductController extends Controller
                     $expence_cat = $this->getExpenseCategory($myRequest);
                     $expence_cat = json_decode($expence_cat);
                     $data['expense_category'] = $expence_cat->expense_category == NULL ? 0 :$expence_cat->expense_category;
+                    /*
+                     * commented as per Gabe request on 9/13/2017
                     if($data['prod_type_id'] != 8){
                         $data['retail_price'] = 0.000;
-                    }
+                    }*/
                     $id = $this->model->insertRow($data, $request->input('id'));
                 }
             } else {
