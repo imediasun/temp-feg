@@ -225,11 +225,9 @@ class ManagenewgraphicrequestsController extends Controller
             $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
         }
 
-
         $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby'];
         $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];
         $params = array(
-            'params' => '',
             'sort' => $sort,
             'order' => $order,
             'params' => $filter,
@@ -243,77 +241,8 @@ class ManagenewgraphicrequestsController extends Controller
 
         $fields = $info['config']['grid'];
         $rows = $results['rows'];
-        //print_r($fields[0]);die;
-        $extra = array(
-            'field' => '',
-            'alias' => 'departments',
-            'language' =>
-                array('id' => ''),
-            'label' => '',
-            'view' => '1',
-            'detail' => '1',
-            'sortable' => '1',
-            'search' => '1',
-
-            'download' => '1',
-            'frozen' => '1',
-            'limited' => '',
-            'width' => '100',
-            'align' => 'left',
-            'sortlist' => '0',
-            'conn' =>
-                array(
-                    'valid' => '0',
-                    'db' => '',
-                    'key' => '',
-                    'display' => ''),
-            'attribute' =>
-                array(
-                    'hyperlink' => '',
-                    array(
-                        'active' => '0',
-                        'link' => '',
-                        'target' => 'modal',
-                        'html' => ''),
-                    'image' =>
-                        array(
-
-                            'active' => '0',
-                            'path' => '',
-                            'size_x' => '',
-                            'size_y' => '',
-                            'html' => ''),
-                    'formater' =>
-                        array(
-                            'active' => '0',
-                            'value' => '',
-
-
-                        )));
 
         $rows = $this->updateDateInAllRows($rows);
-        if ($this->module == 'department') {
-
-            $extra['field'] = 'total_open';
-            $extra['label'] = 'No Tickets Open';
-            $fields[] = $extra;
-            $extra['field'] = 'total_closed';
-            $extra['label'] = 'No Tickets Closed';
-            $fields[] = $extra;
-            unset($fields[2]);
-            unset($fields[3]);
-            unset($fields[4]);
-            foreach ($rows as $index => $row) {
-
-                $open = \DB::select("Select * FROM sb_tickets WHERE department_id = " . $row->id . " AND status = 'open'");
-                $close = \DB::select("Select * FROM sb_tickets WHERE department_id = " . $row->id . " AND status = 'close'");
-                unset($rows[$index]->created_at);
-                unset($rows[$index]->updated_at);
-                $rows[$index]->total_closed = count($close);
-                $rows[$index]->total_open = count($open);
-            }
-
-        }
 
         $content = array(
             'exportID' => $exportSessionID,
