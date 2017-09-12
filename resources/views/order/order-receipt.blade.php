@@ -45,12 +45,12 @@
                             <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
                             <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
-                            <tr><td><b></b></td> <td> <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button> </td></tr>
+                            <tr><td><b></b></td> <td> <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button> <input type='checkbox' data-animate="true" data-on-text="Edit Receipt" data-off-text="Receive Order" class="toggle" id="toggle_trigger" onSwitchChange="trigger()" /> </td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
 
-                            <tr style="margin-top:10px;">
+                            <tr style="margin-top:10px;display: none;">
                                 <td width="4%" style="border:thin black solid; padding:2px">IMG</td>
                                 <td width="78%" style="border:thin black solid; padding:2px">Item Description</td>
                                 <td width="5%" style="border:thin black solid; text-align:center; padding:2px">Case QTY</td>
@@ -135,7 +135,7 @@
                                                 <input type="checkbox" class="updateBox" name="updateProducts[]" value="{{ $order_item->id }}" />
                                             </td>
                                             <td>
-                                                <input type="number" class="updateQtyInput parsley-validated" id="updateItemText{{ $order_item->id }}" name="updateQty[]" value="0" max="{!! $order_item->qty !!}" min="0" readonly="readonly" style="background-color: #c1c1c1;"/>
+                                                <input type="number" class="updateQtyInput parsley-validated" id="updateItemText{{ $order_item->id }}" name="updateQty[]" value="{{$order_item->item_received}}" max="{!! $order_item->qty !!}" min="0" readonly="readonly" style="background-color: #c1c1c1;"/>
                                             </td>
                                             <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
                                             </td>
@@ -520,6 +520,11 @@
                 $('#edit_receipt_btn').html('<i class="fa fa-edit"></i> Edit Receipt')
             }
         });
+
+        $("#toggle_trigger").on('switchChange.bootstrapSwitch', function(event, state) {
+
+        });
+        $("#toggle_trigger").bootstrapSwitch();
 
     </script>
 
