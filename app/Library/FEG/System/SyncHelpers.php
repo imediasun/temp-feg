@@ -1147,7 +1147,7 @@ class SyncHelpers
         
         $logDetails = "$date_start " . (empty($location) ? "" : " Location: $location");
 
-        $readerExclude = self::getReaderExclude($debit_type, $location);
+        $readerExclude = self::getReaderExclude($debit_type, $location,false);
         //$readerExcludeQuery = self::getReaderExcludeQuery($debit_type, $location);
         $query = $sourceDB->table($table);
         //sudipto code commented

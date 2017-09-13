@@ -1070,8 +1070,8 @@ class ReportGenerator
                 " - <em>Earnings: \${$gameTotal}</em>]</span><br>";
         }
 
-        self::$reportCache['missingAssetIdsPerLocation'] = $missingAssetIdData;
-        self::$reportCache['missingAssetIds'] = $missingAssetIdFlatData;
+        //self::$reportCache['missingAssetIdsPerLocation'] = $missingAssetIdData;
+        //self::$reportCache['missingAssetIds'] = $missingAssetIdFlatData;
 
         $reportString = '<br>';
         if (!empty($report)) {
@@ -1121,8 +1121,8 @@ class ReportGenerator
                 " - <em>Earnings: \${$gameTotal}</em>]</span><br>";
         }
 
-        self::$reportCache['missingAssetIdsPerLocation'] = $missingAssetIdData;
-        self::$reportCache['missingAssetIds'] = $missingAssetIdFlatData;
+        //self::$reportCache['missingAssetIdsPerLocation'] = $missingAssetIdData;
+        //self::$reportCache['missingAssetIds'] = $missingAssetIdFlatData;
 
         $reportString = '<br>';
         if (!empty($report)) {
