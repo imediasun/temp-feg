@@ -280,8 +280,8 @@
                             <div class="col-md-8">
                                 <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                             class="fa  fa-save "></i>  Receive Order </button>
-                                <button type="submit" class="btn btn-primary btn-sm " id="update_receipt_btn"><i
-                                            class="fa fa-refresh"></i>  Update Receipt </button>
+                                {{--<button type="submit" class="btn btn-primary btn-sm " id="update_receipt_btn"><i
+                                            class="fa fa-refresh"></i>  Update Receipt </button>--}}
                                 <button type="button" onclick="window.history.back();" class="btn btn-success btn-sm">
                                     <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
                             </div>
