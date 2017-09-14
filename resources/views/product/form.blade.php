@@ -578,6 +578,7 @@
             }
 
         });
+        $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
     });
 
     function showRequest() {
