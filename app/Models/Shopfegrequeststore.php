@@ -285,7 +285,7 @@ class shopfegrequeststore extends Sximo  {
         $subject = 'New Graphics Request for '.$locationName;
 
         $configName = 'Request new custom graphics email';
-        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName,$data['location_id']);
         $message = $messageWithLink;//$baseMessage.$links.$messageEnd;
 
 
