@@ -104,7 +104,8 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;
            		?>
-                <tr class="editable" onkeyup="calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
+				{{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
+                <tr class="editable" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
 					<input type="hidden" name="numberOfItems" value="{{$row->num_items}}" />
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
