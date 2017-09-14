@@ -245,7 +245,7 @@ class ExpensecategoriesController extends Controller {
 			\DB::table('products')
 				->where('prod_type_id', $order_type_id)
 				->where('prod_sub_type_id', $product_type_id)
-				->where('expense_category', $old_expense_category)
+				//->where('expense_category', $old_expense_category)
 				->update(['expense_category' => $expense_category]);
 
 			return response()->json(array(
