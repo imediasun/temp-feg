@@ -301,7 +301,7 @@ class shopfegrequeststore extends Sximo  {
         )));
 
         $receipientsForEmailWihtoutLinksConfigName = 'New custom graphics notification without links';
-        $receipientsForEmailWihtoutLinks = FEGSystemHelper::getSystemEmailRecipients($receipientsForEmailWihtoutLinksConfigName);
+        $receipientsForEmailWihtoutLinks = FEGSystemHelper::getSystemEmailRecipients($receipientsForEmailWihtoutLinksConfigName,$data['location_id']);
 
         $messageWithoutLink = View::make('shopfegrequeststore.emails.graphic-request-submitter', array(
             'submitterEmailAddress' => \Session::get('eid')

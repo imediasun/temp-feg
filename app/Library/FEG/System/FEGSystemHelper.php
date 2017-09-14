@@ -873,8 +873,16 @@ class FEGSystemHelper
                 $emails['bcc'] = $data->test_bcc_emails;
             }
             else {
+                if($data->has_locationwise_filter)
+                {
+                    $location = empty($location) ? null : $location;
+                }
+                else
+                {
+                    //overwriting location with null if location wise filter in system email manager is off
+                    $location = null;
+                }
 
-                $location = empty($location) ? null : $location;
 
                 $lut = $data->to_email_location_contacts;
                 $lucc = $data->cc_email_location_contacts;
