@@ -300,7 +300,7 @@ class AddtocartController extends Controller
                 $productsNames .= "<li>".$request->vendor_description."</li>";
             }
             $productsNames .= "</ul>";
-            return redirect('/addtocart')->with('messagetext', "Another employee at your location has already ordered the following product(s): $productsNames Please remove the duplicate product(s) from your cart to submit your order and contact the head of the department relevant to Order Type to made any further quantity adjustments for this product.")->with('msgstatus', 'error');
+            return redirect('/addtocart')->with('messagetext', "Another employee at your location has already ordered the following product(s): $productsNames Please remove the duplicate product(s) from your cart to submit your order and contact the head of the department relevant to Order Type to make any further quantity adjustments for this product.")->with('msgstatus', 'error');
         }
 
         $update = array('status_id' => 1,
