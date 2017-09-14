@@ -5,8 +5,12 @@
             overflow-y: scroll;
             height: 300px;
         }
-        .input-group span.input-group-addon {
+        .multiselect-item .input-group span.input-group-addon
+        {
             float: none !important;
+        }
+        .input-group span.input-group-addon {
+            /*float: none !important;*/
             width: 4.5%;
             padding: 8px 10px;
         }
@@ -17,6 +21,16 @@
         }
         .multiselect-search{
             height: 35px;
+        }
+        .product_type
+        {
+            display: flex;
+            flex-direction: column;
+            max-width: 350px;
+        }
+        .product_type ul
+        {
+            order:2;
         }
     </style>
     <div class="sbox">
@@ -112,7 +126,7 @@
                             $fields['prod_type_id']['language'] : array())) !!}
                         </label>
 
-                        <div class="col-md-6">
+                        <div class="col-md-6 product_type">
                             @if(empty($row['id']))
                             <select name='prod_type_id[]' rows='5' id='prod_type_id'
                                     required='required' multiple>
@@ -392,6 +406,7 @@
 //
 <script type="text/javascript">
     $(document).ready(function () {
+
         numberFieldValidationChecks($("#qty_input"));
         var form = $('#productFormAjax');
 
@@ -403,8 +418,60 @@
         @if(empty($row['id']))
             $("#prod_type_id").multiselect({
             enableFiltering: true,
-            enableCaseInsensitiveFiltering: true
+            enableCaseInsensitiveFiltering: true,
+            onChange: function(currentOption, checked) {
+                var $options = $('option', $("#prod_type_id"));
+                $options = $options.filter(':selected');
+                var $selectedCategories = [];
+                $options.each(function(index,option){
+                    console.log(option);
+                    var $value = $(option).val().split('_');
+                    $selectedCategories[index] = parseInt($value[0]);
+                });
+                console.log("Selected Categories -> ");
+                console.log($selectedCategories);
+                if(($.inArray( 1 , $selectedCategories) + $.inArray( 4 , $selectedCategories) +$.inArray( 20 , $selectedCategories)) > -1)
+                {
+
+                    $('input[name="sku"]').removeAttr('required');
+
+                }
+                else
+                {
+                    $('input[name="sku"]').attr('required','required');
+                }
+
+                if ($.inArray( 8 , $selectedCategories) > -1) {
+                    $("#retail_price").show(300);
+                    $("#retail_input").attr('required','required');
+                }
+                else {
+                    $("#retail_price").hide(300);
+                    $("#retail_input").removeAttr('required');
+                }
+                if ($.inArray( 7 , $selectedCategories) > -1) {
+                    $("#ticket_value").show(300);
+                    $("#ticket_input").attr('required','required');
+                }
+                else if($.inArray( 8 , $selectedCategories) > -1)
+                {
+                    $("#ticket_value").show(300);
+                }
+                else
+                {
+                    $("#ticket_value").hide(300);
+                    $("#ticket_input").removeAttr('required');
+                }
+                /*$options.each(function (option)
+                {
+
+                   console.log(option.val());
+                })*/
+                form.parsley().destroy();
+                form.parsley();
+            }
         });
+        $('.product_type .multiselect-container input[type=checkbox]').attr('parsley-group','group1');
         @else
             $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
             {selected_value: '{{ $row["prod_type_id"] }}'});
@@ -424,35 +491,33 @@
             }
             if($('#prod_type_id').val() == 1 || $('#prod_type_id').val() == 4 || $('#prod_type_id').val() == 20)
             {
-                form.parsley().destroy();
                 $('input[name="sku"]').removeAttr('required');
-                form.parsley();
             }
             else
             {
-                form.parsley().destroy();
                 $('input[name="sku"]').attr('required','required');
-                form.parsley();
             }
 
             if ($(this).val() == "8") {
                 $("#retail_price").show(300);
-                $("#retail_price").attr('required','required');
+                $("#retail_input").attr('required','required');
             }
             else {
                 $("#retail_price").hide(300);
-                $("#retail_price").removeAttr('required');
+                $("#retail_input").removeAttr('required');
             }
             if ($(this).val() == "7") {
                 $("#ticket_value").show(300);
-                $("#ticket_value").attr('required','required');
+                $("#ticket_input").attr('required','required');
             }else if($(this).val() == "8"){
                 $("#ticket_value").show(300);
             }
             else {
                 $("#ticket_value").hide(300);
-                $("#ticket_value").removeAttr('required');
+                $("#ticket_input").removeAttr('required');
             }
+            form.parsley().destroy();
+            form.parsley();
         });
         $("#prod_sub_type_id").click(function () {
             if($(this).val()) {
@@ -562,10 +627,10 @@
     }
 </script>
 <style>
-    /*
+
     #ticket_value, #retail_price {
         display: none;
-    }*/
+    }
     .form-horizontal .control-label, .form-horizontal .radio, .form-horizontal .checkbox, .form-horizontal .radio-inline, .form-horizontal .checkbox-inline {
         padding-top: 0px;
         margin-top: 0;
