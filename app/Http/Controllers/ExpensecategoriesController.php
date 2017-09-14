@@ -202,7 +202,6 @@ class ExpensecategoriesController extends Controller {
 		return view('expensecategories.view',$this->data);
 	}
 
-
 	function postCopy( Request $request)
 	{
 
@@ -226,59 +225,32 @@ class ExpensecategoriesController extends Controller {
 	function postSave( Request $request, $id =0)
 	{
 		$rules = $this->validateForm();
-		$rules['expense_category'] = 'sometimes|integer|required';
-		$rules['mapped_expense_category'] = 'sometimes|integer|required';
+		$rules['mapped_expense_category'] = 'integer|required';
 		$validator = Validator::make($request->all(), $rules);
-		if ($validator->passes()) {
+		if ($validator->passes() && $id != 0) {
 
-			$data = [
-				'order_type' => $request->order_type,
-				'product_type' => empty($request->product_type) ? 'NULL' : $request->product_type,
-				'mapped_expense_category' => $request->mapped_expense_category,
-			];
+			$expense_category = $request->mapped_expense_category;
+			$data = \DB::table('expense_category_mapping')->where('id', $id)->get();
 
-			$order_type_id = $data['order_type'];
-			$product_type_id = $data['product_type'];
+			$order_type_id = $data[0]->order_type;
+			$product_type_id = $data[0]->product_type;
+			$old_expense_category = $data[0]->mapped_expense_category;
 
-			$expense_category = "";
-			$message = "";
-			if(!empty($product_type_id)) {
-				$expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->where('product_type',$product_type_id)->pluck('mapped_expense_category');
-			}
-			else {
-				$expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->pluck('mapped_expense_category');
-			}
+			\DB::table('expense_category_mapping')
+				->where('id', $id)
+				->update(['mapped_expense_category' => $expense_category]);
 
-			if(empty($expense_category)){
-				$this->model->insertRow($data);
-                \DB::table('products')
-                    ->where('prod_type_id',$order_type_id)
-                    ->where('prod_sub_type_id',$product_type_id)
-                    ->where('expense_category',0)
-                    ->update(['expense_category' => $data['mapped_expense_category']]);
-				$message = "New expense category has been added successfully!";
-			}else{
+			$product_type_id = empty($product_type_id) ? '0' : $product_type_id;
 
-				\DB::table('expense_category_mapping')
-					->where('order_type', $order_type_id)
-					->where('product_type', $product_type_id)
-					->update($data);
-
-				$product_type_id = empty($product_type_id) ? '0' : $product_type_id;
-
-				\DB::table('products')
-					->where('prod_type_id',$order_type_id)
-					->where('prod_sub_type_id',$product_type_id)
-					->where('expense_category',$expense_category)
-					->update(['expense_category' => $data['mapped_expense_category']]);
-
-				$message = "Expense category has been updated successfully!";
-			}
-
+			\DB::table('products')
+				->where('prod_type_id', $order_type_id)
+				->where('prod_sub_type_id', $product_type_id)
+				->where('expense_category', $old_expense_category)
+				->update(['expense_category' => $expense_category]);
 
 			return response()->json(array(
 				'status'=>'success',
-				'message'=> $message
+				'message'=> "Expense category has been updated successfully!"
 				));
 
 		} else {
@@ -322,7 +294,9 @@ class ExpensecategoriesController extends Controller {
 
 	}
 
-	public function postSingleDelete(Request $request){
+	public function postSingleDelete(Request $request)
+	{
+		die('Feature is removed! Contact admin');
 
 		if($this->access['is_remove'] ==0) {
 			return response()->json(array(
@@ -348,4 +322,36 @@ class ExpensecategoriesController extends Controller {
 
 	}
 
+	public function getGenerateExpenseCategories()
+	{
+		$order_types = \DB::select("SELECT * FROM order_type");
+		$product_types = \DB::select("SELECT * FROM product_type");
+
+		$order_type_logs = '';
+		$combined_type_logs = '';
+		//Process one
+		foreach ($order_types as $key => $order_type){
+			$check = \DB::select("SELECT mapped_expense_category FROM expense_category_mapping WHERE order_type = $order_type->id ");
+			if(empty($check)){
+				\DB::insert("INSERT INTO expense_category_mapping (order_type, product_type, mapped_expense_category) VALUES ($order_type->id, NULL, '0')");
+				$order_type_logs .= "<b style='background-color:#61fd61'>Entry added</b> for order_type: <b>$order_type->id</b> <br>";
+			}else{
+				$order_type_logs .= "Entry for order_type: <b>$order_type->id</b> is <b style='background-color:#fd9c9c'>already exist</b><br>";
+			}
+
+			//Process two
+			foreach ($product_types as $key => $product_type){
+				$checkCombined = \DB::select("SELECT mapped_expense_category FROM expense_category_mapping WHERE order_type = $order_type->id AND product_type = $product_type->id");
+				if(empty($checkCombined)){
+					\DB::insert("INSERT INTO expense_category_mapping (order_type, product_type, mapped_expense_category) VALUES ($order_type->id, $product_type->id, '0')");
+					$combined_type_logs .= "<b style='background-color:#61fd61'>Entry added</b> for order_type: <b>$order_type->id</b> and product_type: <b>$product_type->id</b> <br>";
+				}else{
+					$combined_type_logs .= "Entry for order_type: <b>$order_type->id</b> and product_type: <b>$product_type->id</b> is <b style='background-color:#fd9c9c'>already exist</b><br>";
+				}
+			}
+		}
+
+		echo $order_type_logs.'<br><br>';
+		echo $combined_type_logs.'<br><br>';
+	}
 }
