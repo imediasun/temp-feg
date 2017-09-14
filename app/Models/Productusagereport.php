@@ -137,7 +137,7 @@ class productusagereport extends Sximo  {
 									 requests.process_date as end_date ";*/
             $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product ";
 
-            $fromQuery = " FROM order_contents OC 
+            $fromQuery = " FROM order_contentss OC 
                            JOIN orders O ON O.id = OC.order_id
                            LEFT JOIN requests ON OC.request_id = requests.id
 						   LEFT JOIN location L ON L.id = O.location_id
