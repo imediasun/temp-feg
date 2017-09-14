@@ -225,76 +225,32 @@ class ExpensecategoriesController extends Controller {
 	function postSave( Request $request, $id =0)
 	{
 		$rules = $this->validateForm();
-		$rules['expense_category'] = 'sometimes|integer|required';
-		$rules['mapped_expense_category'] = 'sometimes|integer|required';
+		$rules['mapped_expense_category'] = 'integer|required';
 		$validator = Validator::make($request->all(), $rules);
-		if ($validator->passes()) {
+		if ($validator->passes() && $id != 0) {
 
-			$data = [
-				'order_type' => $request->order_type,
-				'product_type' => empty($request->product_type) ? 'NULL' : $request->product_type,
-				'mapped_expense_category' => $request->mapped_expense_category,
-			];
+			$expense_category = $request->mapped_expense_category;
+			$data = \DB::table('expense_category_mapping')->where('id', $id)->get();
 
-			$order_type_id = $data['order_type'];
-			$product_type_id = $data['product_type'];
-
-			$expense_category = "0";
-			$message = "";
-			if(!empty($product_type_id)) {
-				$expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->where('product_type',$product_type_id)->pluck('mapped_expense_category');
-			}
-			else {
-				$expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->pluck('mapped_expense_category');
-			}
+			$order_type_id = $data[0]->order_type;
+			$product_type_id = $data[0]->product_type;
+			$old_expense_category = $data[0]->mapped_expense_category;
 
 			\DB::table('expense_category_mapping')
-				->where('order_type', $order_type_id)
-				->where('product_type', $product_type_id)
-				->update($data);
+				->where('id', $id)
+				->update(['mapped_expense_category' => $expense_category]);
 
 			$product_type_id = empty($product_type_id) ? '0' : $product_type_id;
 
 			\DB::table('products')
-				->where('prod_type_id',$order_type_id)
-				->where('prod_sub_type_id',$product_type_id)
-				->where('expense_category',$expense_category)
-				->update(['expense_category' => $data['mapped_expense_category']]);
-
-			$message = "Expense category has been updated successfully!";
-
-			/*if(empty($expense_category)){
-				$this->model->insertRow($data);
-                \DB::table('products')
-                    ->where('prod_type_id',$order_type_id)
-                    ->where('prod_sub_type_id',$product_type_id)
-                    ->where('expense_category',0)
-                    ->update(['expense_category' => $data['mapped_expense_category']]);
-
-				$message = "New expense category has been added successfully!";
-			}
-			else
-			{
-
-				\DB::table('expense_category_mapping')
-					->where('order_type', $order_type_id)
-					->where('product_type', $product_type_id)
-					->update($data);
-
-				$product_type_id = empty($product_type_id) ? '0' : $product_type_id;
-
-				\DB::table('products')
-					->where('prod_type_id',$order_type_id)
-					->where('prod_sub_type_id',$product_type_id)
-					->where('expense_category',$expense_category)
-					->update(['expense_category' => $data['mapped_expense_category']]);
-
-				$message = "Expense category has been updated successfully!";
-			}*/
+				->where('prod_type_id', $order_type_id)
+				->where('prod_sub_type_id', $product_type_id)
+				->where('expense_category', $old_expense_category)
+				->update(['expense_category' => $expense_category]);
 
 			return response()->json(array(
 				'status'=>'success',
-				'message'=> $message
+				'message'=> "Expense category has been updated successfully!"
 				));
 
 		} else {

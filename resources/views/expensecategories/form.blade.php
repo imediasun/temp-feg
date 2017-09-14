@@ -9,38 +9,9 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'expensecategories/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'expensecategoriesFormAjax')) !!}
+			{!! Form::open(array('url'=>'expensecategories/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'expensecategoriesFormAjax')) !!}
 			<div class="col-md-12">
 				<fieldset>
-
-					<div class="form-group  ">
-						<label for="Prod Type Id" class=" control-label col-md-4 text-left">
-							Product Type:
-						</label>
-
-						<div class="col-md-6">
-
-							<select name='order_type' rows='5' id='order_type' class='select2 '
-									required='required'></select>
-						</div>
-						<div class="col-md-2">
-
-						</div>
-					</div>
-
-					<div class="form-group  ">
-						<label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
-							Product Subtype:
-						</label>
-
-						<div class="col-md-6">
-							<select name='product_type' rows='5' id='product_type' class='select2 '></select>
-						</div>
-						<div class="col-md-2">
-
-						</div>
-					</div>
-
 					<div class="form-group">
 						<label for="Expense Category" class=" control-label col-md-4 text-left">
 							Expense Category
