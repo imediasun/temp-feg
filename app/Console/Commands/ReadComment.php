@@ -160,10 +160,19 @@ class ReadComment extends Command
                 }
 
 
-                /*
-                 //commented for testing on dev
-                 $L->log('Delete email');
-                imap_delete($inbox, $email_number);*/
+                if(env('APP_ENV', 'development') == 'production')
+                {
+                    //commented for testing on dev
+                    $L->log('Delete email');
+                    imap_delete($inbox, $email_number);
+                }
+                else
+                {
+                    //commented for testing on dev
+                    //not delete emails if environment is not production
+                }
+
+
                 //$L->log('Sending comment notificaiton');
                 //$this->sendNotification($commentsData, $userId);
 
