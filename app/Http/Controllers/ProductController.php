@@ -290,7 +290,7 @@ class ProductController extends Controller
         if ($validator->passes()) {
             if ($id == 0) {
                 $data = $this->validatePost('products');
-
+                $data['netsuite_description'] = "$id...".substr($data['vendor_description'],0,52);
                 foreach ($product_categories as $category)
                 {
                     $data['retail_price'] = $retail_price;
@@ -313,7 +313,7 @@ class ProductController extends Controller
 
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
-
+                $data['netsuite_description'] = "$id...".substr($data['vendor_description'],0,52);
                 $data['retail_price']=$retail_price;
                 $id = $this->model->insertRow($data, $id);
             }
