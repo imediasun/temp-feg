@@ -45,8 +45,8 @@
                             <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
                             <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
-                            <tr><td><b></b></td> <td> {{--<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button>--}}
-                                    <input type='checkbox' name="toggle_trigger" data-handle-width="100px" data-size="mini" data-on-text="Receive Order" data-off-text="Edit Receipt" id="toggle_trigger" onSwitchChange="trigger()" style="float: right;margin-top: 19px;" /> </td></tr>
+                            <tr><td><b>Edit Receipt:</b></td> <td> {{--<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button>--}}
+                                   <input type='checkbox' name="toggle_trigger" data-handle-width="100px" data-size="mini" data-on-text="Active" data-off-text="Inactive" id="toggle_trigger" onSwitchChange="trigger()" style="float: right;margin-top: 19px;" /> </td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
@@ -101,7 +101,7 @@
                                     <th>Case Price</th>
                                     <th>Qty</th>
                                     <th>Received Qty</th>
-                                    <th>Update Qty</th>
+                                    {{--<th>Update Qty</th>--}}
                                     <th>Qty</th>
                                     <th>Total($)</th>
                                 </tr>
@@ -132,11 +132,11 @@
                                                 <input type="hidden" name="updateAlreadyReceivedQty[]" value="{{$order_item->item_received}}">
                                             </td>
 
-                                            <td style="text-align: center">
+                                            {{--<td style="text-align: center">
                                                 <input type="checkbox" class="updateBox" name="updateProducts[]" value="{{ $order_item->id }}" />
-                                            </td>
+                                            </td>--}}
                                             <td>
-                                                <input type="number" class="updateQtyInput parsley-validated" id="updateItemText{{ $order_item->id }}" name="updateQty[]" value="{{$order_item->item_received}}" max="{!! $order_item->qty !!}" min="0" readonly="readonly" style="background-color: #c1c1c1;"/>
+                                                <input type="number" class="updateQtyInput parsley-validated" id="updateItemText{{ $order_item->id }}" name="updateQty[]" value="{{$order_item->item_received}}" max="{!! $order_item->qty !!}" min="0" />
                                             </td>
                                             <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
                                             </td>
@@ -374,7 +374,6 @@
 
                 if (form.parsley('isValid') == true) {
                     $('#itemTable').DataTable().destroy();
-
                     $('#editItemTable').DataTable().destroy();
                     var options = {
                         dataType: 'json',
@@ -434,7 +433,7 @@
                 //ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
-                if($('#mode').val()=='receive'){
+                if($('#mode').val()=='receive' || true){
                     var href="{{url()}}/order";
                     window.location=href;
                 }else{
@@ -527,15 +526,15 @@
             $('#toggle_trigger').iCheck('destroy');
             $("#toggle_trigger").bootstrapSwitch();
             $("#toggle_trigger").on('switchChange.bootstrapSwitch', function(event, state) {
-                $('#update_receipt_btn').toggle();
-                $('#submit_btn').toggle();
+                //$('#update_receipt_btn').toggle();
+                //$('#submit_btn').toggle();
                 $('#editItemsPan').toggle();
-                if($('#update_receipt_btn').is(":visible")){
+                if($('#toggle_trigger').is(":checked")){
                     $('#mode').val('update');
-                    $('#receiveItemsPan').collapse('hide');
+                    //$('#receiveItemsPan').collapse('hide');
                 }else{
                     $('#mode').val('receive');
-                    $('#receiveItemsPan').collapse('show');
+                    //$('#receiveItemsPan').collapse('show');
                 }
             });
 

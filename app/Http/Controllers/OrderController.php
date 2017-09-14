@@ -1362,7 +1362,7 @@ class OrderController extends Controller
         }, \Input::all()));
 
         if($request->get('mode')=='update'){
-            return $this->updateOrderReceipt($request);
+            $this->updateOrderReceipt($request);
         }
 
         $received_part_ids = array();
@@ -1493,13 +1493,21 @@ class OrderController extends Controller
         //dd($request->all());
         $order_id = $request->get('order_id');
         $updateQty = $request->get('updateQty');
-        $updateProducts = $request->get('updateProducts');
+        //$updateProducts = $request->get('updateProducts');
         $item_ids = $request->get('orderLineItemId');
         $receivedQty = $request->get('updateAlreadyReceivedQty');
         $updateOrigQty = $request->get('updateOrigQty');
         $item_notes = $request->get('updateItemNotes');
         $date_received = date("Y-m-d", strtotime($request->get('date_received')));
         $user_id = $request->get('user_id');
+        $updateProducts = [];
+        $receiveHistory = \DB::select("SELECT * FROM order_received WHERE order_id = $order_id AND order_line_item_id IN (".implode(',',$item_ids).") ORDER  BY order_line_item_id");
+
+        foreach ($receiveHistory as $key => $item) {
+            if($item->quantity != $updateQty[$key]){
+                array_push($updateProducts, $item->order_line_item_id);
+            }
+        }
 
         foreach ($item_ids as $i => $item_id){
             if($updateOrigQty[$i] == $updateQty[$i]){$status = 1;}else{$status = 2;}
@@ -1526,10 +1534,10 @@ class OrderController extends Controller
 
         }
 
-        return response()->json(array(
+        /*return response()->json(array(
             'status' => 'success',
             'message' => \Lang::get('core.note_success')
-        ));
+        ));*/
     }
 
     public function getSubmitorder($SID)
