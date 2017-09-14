@@ -212,6 +212,8 @@ class Sximo extends Model {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
 
+        Log::info("Get Row Query : ".self::querySelect() .self::queryWhere() ." AND " . $table . "." . $key . " = '{$id}' " .self::queryGroup());
+
         $result = \DB::select(
                         self::querySelect() .
                         self::queryWhere() .

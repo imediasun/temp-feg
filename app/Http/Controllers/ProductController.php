@@ -285,17 +285,15 @@ class ProductController extends Controller
         }
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
-        if($request->get('prod_type_id') != 8)
-        {
-            $retail_price=0.000;
-        }
+
         $product_categories = $request->get('prod_type_id');
         if ($validator->passes()) {
             if ($id == 0) {
                 $data = $this->validatePost('products');
-                $data['retail_price']=$retail_price;
+                $data['netsuite_description'] = "$id...".substr($data['vendor_description'],0,52);
                 foreach ($product_categories as $category)
                 {
+                    $data['retail_price'] = $retail_price;
                     $category = explode('_',$category);
                     $data['prod_type_id'] = $category[0];
                     $data['prod_sub_type_id'] = $category[1];
@@ -304,13 +302,18 @@ class ProductController extends Controller
                     $expence_cat = $this->getExpenseCategory($myRequest);
                     $expence_cat = json_decode($expence_cat);
                     $data['expense_category'] = $expence_cat->expense_category == NULL ? 0 :$expence_cat->expense_category;
+                    /*
+                     * commented as per Gabe request on 9/13/2017
+                    if($data['prod_type_id'] != 8){
+                        $data['retail_price'] = 0.000;
+                    }*/
                     $id = $this->model->insertRow($data, $request->input('id'));
                 }
             } else {
 
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
-
+                $data['netsuite_description'] = "$id...".substr($data['vendor_description'],0,52);
                 $data['retail_price']=$retail_price;
                 $id = $this->model->insertRow($data, $id);
             }

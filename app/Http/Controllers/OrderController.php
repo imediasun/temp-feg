@@ -1855,4 +1855,5 @@ class OrderController extends Controller
         $notes = \DB::table('requests')->select('notes')->whereIn('id', $request->sids)->get();
         return $notes;
     }
+
 }

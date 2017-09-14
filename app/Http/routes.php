@@ -23,9 +23,9 @@ Route::group(['middleware' => 'auth'], function()
     Route::filter('authorization', function()
     {
 
-        if(env('APP_ENV', 'development') == 'production' ? true : false){
+        /*if(env('APP_ENV', 'development') == 'production' ? true : false){
             return;
-        }
+        }*/
 
         if(!isset($_GET['token'])){
             return Response::json([
