@@ -115,6 +115,7 @@ class productusagereport extends Sximo  {
 				   (Select SUM(order_contents.total) From order_contents where item_name = Product) AS Total_Spent,
 				    T1.order_type AS Order_Type,
 				    T.order_type AS Product_Type,
+				    max(P.prod_type_id),max(P.prod_sub_type_id),max(O.order_type_id),
 				   D.type_description AS Product_Sub_Type,
 				   O.location_id,
 				   O.date_ordered AS start_date,
