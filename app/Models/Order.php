@@ -96,8 +96,8 @@ class order extends Sximo
         //all order contents place them in relevent order
         foreach($result as $item){
             $orderId = $item->order_id;
-            $item->price = (float)\CurrencyHelpers::formatPrice($item->price, 3, false);
-            $item->case_price = (float)\CurrencyHelpers::formatPrice($item->case_price, 3, false);
+            $item->price = \CurrencyHelpers::formatPrice($item->price, 3, false);
+            $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);
             foreach($data as &$record){
                 if($record['id'] == $orderId){
                     break;
