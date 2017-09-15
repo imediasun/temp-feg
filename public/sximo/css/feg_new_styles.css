@@ -6,9 +6,7 @@
 .nav > li.active {
     background: #0a2347;
 }
-.sbox-content .nav.nav-tabs li.active {
-    background: none;
-}
+
 .navbar-default .nav > li > a:hover,
 .navbar-default .nav > li > a:focus {
     background-color: #0a2347;
