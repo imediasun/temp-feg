@@ -1029,7 +1029,22 @@ class MylocationgameController extends Controller
             $assetIds = '0';
         }
 
+
         $rows = $this->model->getForSaleList($assetIds);
+
+        dd($this->pass);
+        $restrictedIDs = explode(',', $this->pass['Wholesale Download Restricted']->group_ids);
+
+        dd(in_array(\Session::get('gid'), $restrictedIDs));
+        if( in_array(\Session::get('gid'), $restrictedIDs) ){
+
+        }
+
+        array_map(function($row){
+            unset($row->Wholesale);
+        },$rows);
+
+        dd($rows);
         if (!empty($request['validateDownload'])) {
             $status = [];
             if (empty($assetIds) || empty($rows)) {
