@@ -55,8 +55,9 @@ class productusagereport extends Sximo  {
         $date_end = @$filters['end_date'];
         $location_id = @$filters['location_id'];
         $vendor_id = @$filters['vendor_id'];
-        $prod_type_id = @$filters['prod_type_id'];
-        $prod_sub_type_id = @$filters['prod_sub_type_id'];
+        $order_type_id = @$filters['Order_Type'];
+        $prod_type_id = @$filters['Product_Type'];
+        $prod_sub_type_id = @$filters['Product_Sub_Type'];
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
         }
@@ -82,7 +83,10 @@ class productusagereport extends Sximo  {
                 $whereVendor = "AND V.id IN ($vendor_id) ";
             }
             if (!empty($prod_type_id)) {
-                $whereOrderType = "AND O.order_type_id IN ($prod_type_id) ";
+                $whereOrderType = "AND P.prod_type_id IN ($prod_type_id) ";
+            }
+            if (!empty($order_type_id)) {
+                $whereOrderType = "AND O.order_type_id IN ($order_type_id) ";
             }
             if (!empty($prod_sub_type_id)) {
                 $whereProdType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
@@ -110,13 +114,11 @@ class productusagereport extends Sximo  {
 				   OC.case_price AS Case_Price,
 				   SUM(OC.total) AS Total_Spent,
 				    T1.order_type AS Order_Type,
-				   D.type_description AS Product_Type,
+				    T.order_type AS Product_Type,
+				   D.type_description AS Product_Sub_Type,
 				   O.location_id,
 				   O.date_ordered AS start_date,
-				   O.date_ordered AS end_date,
-				   requests.id as vendor_id,
-                   requests.id as prod_type_id,
-                   requests.id as prod_sub_type_id 
+				   O.date_ordered AS end_date 
                         ";
             /*$mainQuery = "SELECT requests.id,
 									 V.vendor_name,
@@ -138,12 +140,12 @@ class productusagereport extends Sximo  {
             $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product ";
 
             $fromQuery = " FROM order_contents OC 
-                           JOIN orders O ON O.id = OC.order_id
-                           LEFT JOIN requests ON OC.request_id = requests.id
+                           JOIN orders O ON O.id = OC.order_id 
 						   LEFT JOIN location L ON L.id = O.location_id
 						   LEFT JOIN products P ON P.id = OC.product_id 
 						   LEFT JOIN vendor V ON V.id = O.vendor_id 
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
+						   LEFT JOIN order_type T ON T.id = P.prod_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
 						   
 						   
