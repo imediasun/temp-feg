@@ -324,6 +324,8 @@ class ExpensecategoriesController extends Controller {
 
 	public function getGenerateExpenseCategories()
 	{
+		\DB::delete("DELETE FROM expense_category_mapping WHERE mapped_expense_category = 0");
+		echo "<H4>ALL UNUSED MAPPED CATEGORIES(0) DELETED</H4>";
 		$order_types = \DB::select("SELECT * FROM order_type");
 		$product_types = \DB::select("SELECT * FROM product_type");
 
@@ -331,10 +333,10 @@ class ExpensecategoriesController extends Controller {
 		$combined_type_logs = '';
 		//Process one
 		foreach ($order_types as $key => $order_type){
-			$check = \DB::select("SELECT mapped_expense_category FROM expense_category_mapping WHERE order_type = $order_type->id ");
+			$check = \DB::select("SELECT mapped_expense_category FROM expense_category_mapping WHERE order_type = $order_type->id AND product_type IS NULL");
 			if(empty($check)){
 				\DB::insert("INSERT INTO expense_category_mapping (order_type, product_type, mapped_expense_category) VALUES ($order_type->id, NULL, '0')");
-				$order_type_logs .= "<b style='background-color:#61fd61'>Entry added</b> for order_type: <b>$order_type->id</b> <br>";
+				$order_type_logs .= "<b style='background-color:#61fd61'>Entry added</b> for order_type: <b>$order_type->id</b> and product_type: <b>0</b> <br>";
 			}else{
 				$order_type_logs .= "Entry for order_type: <b>$order_type->id</b> is <b style='background-color:#fd9c9c'>already exist</b><br>";
 			}
