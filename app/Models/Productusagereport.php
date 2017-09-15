@@ -137,7 +137,7 @@ class productusagereport extends Sximo  {
 									 requests.id as prod_sub_type_id,
 									 requests.process_date as start_date,
 									 requests.process_date as end_date ";*/
-            $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product ";
+            $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product ,OC.case_price AS Case_Price ";
 
             $fromQuery = " FROM order_contents OC 
                            JOIN orders O ON O.id = OC.order_id 
@@ -169,7 +169,7 @@ class productusagereport extends Sximo  {
                             AND requests.process_date <= '$date_end'
                              $whereLocation $whereVendor $whereOrderType $whereProdType ";*/
 
-            $groupQuery = " GROUP BY Product ";
+            $groupQuery = " GROUP BY Product , Case_Price";
 //            $groupQuery = " GROUP BY P.id ";
 
             $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
