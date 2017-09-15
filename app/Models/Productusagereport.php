@@ -111,7 +111,8 @@ class productusagereport extends Sximo  {
                    IF(P.num_items = '', 0, P.num_items) AS num_items,
 				   OC.price AS Unit_Price,
 				   SUM(OC.qty) AS Cases_Ordered,
-				   IF(O.order_type_id IN(2,6,7,8), OC.case_price,OC.`price`) AS Case_Price,
+				   IF(O.order_type_id IN(2,6,7,8), OC.case_price,OC.`price`) AS Case_Price_Group,
+				   OC.case_price AS Case_Price,
 				   SUM(OC.total) AS Total_Spent,
 				    T1.order_type AS Order_Type,
 				    T.order_type AS Product_Type,
@@ -137,7 +138,7 @@ class productusagereport extends Sximo  {
 									 requests.id as prod_sub_type_id,
 									 requests.process_date as start_date,
 									 requests.process_date as end_date ";*/
-            $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product ,OC.case_price AS Case_Price ";
+            $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product ,IF(O.order_type_id IN(2,6,7,8), OC.case_price,OC.`price`) AS Case_Price_Group ";
 
             $fromQuery = " FROM order_contents OC 
                            JOIN orders O ON O.id = OC.order_id 
@@ -169,7 +170,7 @@ class productusagereport extends Sximo  {
                             AND requests.process_date <= '$date_end'
                              $whereLocation $whereVendor $whereOrderType $whereProdType ";*/
 
-            $groupQuery = " GROUP BY Product , Case_Price";
+            $groupQuery = " GROUP BY Product , Case_Price_Group";
 //            $groupQuery = " GROUP BY P.id ";
 
             $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
