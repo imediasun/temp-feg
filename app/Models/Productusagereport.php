@@ -201,7 +201,8 @@ class productusagereport extends Sximo  {
             'bottomMessage' => $bottomMessage,
             'message' => $message,
             'rows'=> $rows,
-            'total' => $total
+            'total' => $total,
+            'excelExcludeFormatting' => ['Unit Price','Case Price','Total Spent']
         );
 
 
