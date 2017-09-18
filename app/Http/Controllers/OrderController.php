@@ -36,7 +36,7 @@ class OrderController extends Controller
         $case_unit_price_permission = \FEGSPass::getPasses($this->module_id,'module.order.special.usecasepriceifunitpriceis0.00',false);
         $this->pass['calculate price according to case price'] = $case_price_permission['calculate price according to case price'];
         $this->pass['use case price if unit price is 0.00'] = $case_unit_price_permission['use case price if unit price is 0.00'];
-dd($this->pass);
+
         $this->data = array(
             'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
