@@ -23,7 +23,7 @@
 				}
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
-                $a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn)));
+                $a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$f['nodata'])));
                 $b = str_replace( ',', '', $a );
                 $c = str_replace('$','',$b);
                 if( is_numeric( $c) ) {
