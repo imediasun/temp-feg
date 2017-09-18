@@ -108,7 +108,7 @@ class productusagereport extends Sximo  {
                    V.vendor_name as vendor_name,
                    OC.item_name AS Product,
                    IF(P.ticket_value = 0, '', P.ticket_value) AS ticket_value,
-                   IF(P.num_items = '' OR P.num_items = null, 0, P.num_items) AS num_items,
+                   IF(P.num_items = '' OR P.num_items IS NULL, 0, P.num_items) AS num_items,
 				   OC.price AS Unit_Price,
 				   SUM(OC.qty) AS Cases_Ordered,
 				   IF(O.order_type_id IN(2,6,7,8), OC.case_price,OC.`price`) AS Case_Price_Group,
