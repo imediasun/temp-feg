@@ -1030,6 +1030,9 @@ class MylocationgameController extends Controller
         }
 
         $rows = $this->model->getForSaleList($assetIds);
+
+
+
         if (!empty($request['validateDownload'])) {
             $status = [];
             if (empty($assetIds) || empty($rows)) {
@@ -1057,6 +1060,14 @@ class MylocationgameController extends Controller
             "WholeSale" => 'Wholesale',
             "Retail" => 'Retail'
         );
+
+        if(!isset($this->pass['Allow Wholesale Download'])){
+            unset($fields['WholeSale']);
+            array_map(function($row){
+                unset($row->Wholesale);
+            },$rows);
+        }
+
         $content = array(
             'fields' => $fields,
             'rows' => $rows,
