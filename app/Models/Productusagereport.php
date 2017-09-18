@@ -55,7 +55,7 @@ class productusagereport extends Sximo  {
         $date_end = @$filters['end_date'];
         $location_id = @$filters['location_id'];
         $vendor_id = @$filters['vendor_id'];
-        $prod_type_id = @$filters['prod_type_id'];
+        $prod_type_id = @$filters['Order_Type'];
         $prod_sub_type_id = @$filters['prod_sub_type_id'];
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
