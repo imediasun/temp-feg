@@ -15,7 +15,7 @@ class Pass extends Sximo  {
         return $this->belongsTo('App\Models\Feg\System\PassMaster', 'permission_id');
     }
     
-    public static function getMyPass($moduleId, $user = '', $includeInactive = false, $bypassLogin = false,$allUsers = false) {
+    public static function getMyPass($moduleId, $user = '', $includeInactive = false, $bypassLogin = false) {
         if(!$bypassLogin){
 
             $data = [];
@@ -30,13 +30,13 @@ class Pass extends Sximo  {
         $query = self::filterPass(null, [
             'module_id' => $moduleId,
             'user' => $user
-        ], $includeInactive,$allUsers);
+        ], $includeInactive);
         
         $models = $query->get();
         $passes = self::pass2array($models);
         return $passes;        
     }
-    public static function hasPass($configName, $user = "", $includeInactive = false,$allUsers = false) {
+    public static function hasPass($configName, $user = "", $includeInactive = false) {
         $data = false;
         
         if (empty($user)) {
@@ -49,26 +49,26 @@ class Pass extends Sximo  {
         $passes = self::filterPass(null, [
             'config_name' => $configName,
             'user' => $user
-        ], $includeInactive,$allUsers);
+        ], $includeInactive);
         
          $data = $passes->exists();
          
          return $data;
     }
    
-    public static function getPasses($moduleId, $configName = '', $includeInactive = false,$allUsers = false) {
+    public static function getPasses($moduleId, $configName = '', $includeInactive = false) {
         $filters = [ 'module_id' => $moduleId ];
         if (!empty($configName)) {
             $filters['config_name'] = $configName;
         }
-        $query = self::filterPass(null, $filters, $includeInactive,$allUsers);
+        $query = self::filterPass(null, $filters, $includeInactive);
         
         $models = $query->orderBy('id', 'desc')->get();
         $passes = self::pass2array($models);        
         return $passes;
     }
     
-    public static function filterPass($query, $filters = array(), $includeInactive = false,$allUsers = false) {
+    public static function filterPass($query, $filters = array(), $includeInactive = false) {
         
         if (!empty($filters['config_name'])) {
             $configName = array_pull($filters, 'config_name');
