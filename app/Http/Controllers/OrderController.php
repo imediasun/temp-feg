@@ -31,6 +31,12 @@ class OrderController extends Controller
         $this->module_id = Module::name2id($this->module);
         $this->pass = \FEGSPass::getMyPass($this->module_id);
 
+        // "calculate price according to case price" and "use case price if unit price is 0.00" these two permissions will be visible to all users
+        $case_price_permission = \FEGSPass::getPasses($this->module_id,'module.order.special.calculatepriceaccordingtocaseprice',false,true);
+        $case_unit_price_permission = \FEGSPass::getPasses($this->module_id,'module.order.special.usecasepriceifunitpriceis0.00',false,true);
+        $this->pass['calculate price according to case price'] = $case_price_permission['calculate price according to case price'];
+        $this->pass['use case price if unit price is 0.00'] = $case_unit_price_permission['use case price if unit price is 0.00'];
+
         $this->data = array(
             'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
@@ -487,18 +493,18 @@ class OrderController extends Controller
         $order_contents = array();
         $data = array_filter($request->all());
         $redirect_link = "order";
-        if ($validator->passes()) {
-
-            $case_price_categories = [];
-            if(isset($this->data['pass']['calculate price according to case price']))
-            {
-                $case_price_categories = explode(',',$this->data['pass']['calculate price according to case price']->data_options);
-            }
-            $case_price_if_no_unit_categories = [];
-            if(isset($this->data['pass']['use case price if unit price is 0.00']))
-            {
-                $case_price_if_no_unit_categories = explode(',',$this->data['pass']['use case price if unit price is 0.00']->data_options);
-            }
+        $case_price_categories = [];
+        if(isset($this->data['pass']['calculate price according to case price']))
+        {
+            $case_price_categories = explode(',',$this->data['pass']['calculate price according to case price']->data_options);
+        }
+        $case_price_if_no_unit_categories = [];
+        if(isset($this->data['pass']['use case price if unit price is 0.00']))
+        {
+            $case_price_if_no_unit_categories = explode(',',$this->data['pass']['use case price if unit price is 0.00']->data_options);
+        }
+        if ($validator->passes())
+        {
             $order_id = $request->get('order_id');
             $editmode = $request->get('editmode');
             $where_in = $request->get('where_in_expression');
@@ -772,12 +778,41 @@ class OrderController extends Controller
         }
         elseif($id != 0){
             $data = $this->validatePost('orders',true);
+
+            if(isset($data['order_type_id']))
+            {
+                $order_contents = \DB::table('order_contents')->where('order_id', $id)->get();
+                $orderTotal = 0;
+                $order_type = $data['order_type_id'];
+                foreach ($order_contents as $content)
+                {
+                    if(in_array($order_type,$case_price_categories))
+                    {
+                        $sum = $content->qty * $content->case_price;
+                    }
+                    elseif(in_array($order_type,$case_price_if_no_unit_categories))
+                    {
+                        $sum = $content->qty * (($content->price == 0.00)?$content->case_price:$content->price);
+                    }
+                    else
+                    {
+                        $sum = $content->qty * $content->price;
+                    }
+                    if($sum != $content->total)
+                    {
+                        \DB::table('order_contents')->where('id', $content->id)->update(['total'=>$sum]);
+                    }
+                    $orderTotal+=$sum;
+                }
+                $data['order_total'] = $orderTotal;
+            }
             $this->model->insertRow($data, $id);
             \Session::put('order_id', $id);
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
+                'total' => $orderTotal,
                 'message' => \Lang::get('core.note_success'),
 
             ));
