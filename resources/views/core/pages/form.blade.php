@@ -231,6 +231,11 @@
 						  <label style="color:red;font-size:14px;margin-top:5px;" id="pdf_error"></label>
 					  </div>
 					  </form>
+					  <div class="progress upload_progress_container">
+						  <div class="progress-bar" id="upload_file_progress_bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+							  <span id="progress_complete">0</span>%
+						  </div>
+					  </div>
 				  </div>
 			  </div>
 			  <div class="modal-footer">
@@ -244,6 +249,7 @@
 	  function upload_pdf() {
 		  $('#pdf_upload').text('Uploading...');
 		  $('#pdf_upload').prop('disabled', true);
+		  $('.upload_progress_container').toggle();
 		  var fd = new FormData(document.forms.namedItem("pdf_form"));
 		  //fd.append("CustomField", "This is some extra data");
 		  $.ajax({
@@ -252,6 +258,26 @@
 			  data: fd,
 			  processData: false,  // tell jQuery not to process the data
 			  contentType: false,   // tell jQuery not to set contentType
+			  xhr: function() {
+				  var xhr = new window.XMLHttpRequest();
+				  xhr.upload.addEventListener("progress", function(evt) {
+					  if (evt.lengthComputable) {
+						  var percentComplete = evt.loaded / evt.total;
+						  percentComplete = parseInt(percentComplete * 100);
+						  $('#upload_file_progress_bar').attr('aria-valuenow', percentComplete);
+						  $('#upload_file_progress_bar').css('width', percentComplete+'%');
+						  $('#progress_complete').html(percentComplete);
+
+						  if (percentComplete === 100) {
+							  console.log("File Uploaded!");
+							  $('.upload_progress_container').toggle();
+						  }
+
+					  }
+				  }, false);
+
+				  return xhr;
+			  },
 			  success: function (data) {
 				  console.log(data);
 				  $('#pdf_modal').modal('toggle');
@@ -278,10 +304,12 @@
 	  }
 
 	  $( document ).ready(function() {
-		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach File" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal()><i class="fa fa-file-o"></i></button></div>');
+		  var model_obj = "{backdrop:'static',keyboard:false}";
+		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach File" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal('+model_obj+');$(".upload_progress_container").toggle();><i class="fa fa-file-o"></i></button></div>');
 		  $('[data-toggle="tooltip"]').tooltip();
 
 		  $('.note-editor .note-editable').css('height', $('#cms_bar_id').height()-208);
+		  //$('.upload_progress_container').toggle();
 	  });
 
   </script>
