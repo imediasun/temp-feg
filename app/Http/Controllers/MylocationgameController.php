@@ -1062,6 +1062,7 @@ class MylocationgameController extends Controller
         );
 
         if(!isset($this->pass['Allow Wholesale Download'])){
+            unset($fields['WholeSale']);
             array_map(function($row){
                 unset($row->Wholesale);
             },$rows);
