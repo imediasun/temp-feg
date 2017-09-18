@@ -148,6 +148,16 @@ class PagesController extends Controller
         $redirect = $request->has('return') ? $request->input('return') : '';
         $this->data['return'] = $redirect;
 
+
+        $patternExtend = '/@extends.*?\(.*?\)/im';
+        $patternSection = '/@section.*?\(.*?\)/im';
+        $patternTitle = '/<div class="sbox-title">.*?<\/div>/im';
+        $patternPageTitle = '/{{.*?\$pageTitle.*?}}/im';
+        $patternEditLink = '/{!!.*?\$editLink.*?!!}/im';
+        $patternStop = '/@stop/im';
+
+        $this->data['content'] = preg_replace(array($patternExtend, $patternSection, $patternTitle, $patternStop), '', $this->data['content']);
+        
         return view('core.pages.form', $this->data);
     }
 
@@ -182,6 +192,13 @@ class PagesController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $content = $request->input('content');
+
+            $patternAddTitleSection = '/<div.*?class=["\']sbox.*?animated.*?["\']>/im';
+
+            $content = "@extends ('layouts.app') @section('content')".$content;
+            $content = preg_replace($patternAddTitleSection, '<div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
+            $content = $content."@stop";
+
             $content = $this->addEditLinkTemplate($content);
             
             $data = $this->validatePost('tb_pages');
