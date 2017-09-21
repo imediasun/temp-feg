@@ -142,7 +142,7 @@ foreach ($cellIterator as $cell) {
 	{
 		$ProductTypeColumn = $cell->getColumn();
 	}
-	else if($cell->getValue() == 'Product Sub Type')
+	else if($cell->getValue() == 'Product Subtype')
 	{
 		$ProductSubTypeColumn = $cell->getColumn();
 	}
