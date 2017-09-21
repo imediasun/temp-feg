@@ -1,6 +1,20 @@
 <?php
 
-
+$orders = [
+	'Product Name'=>0,
+	'Vendor Name'=>1,
+	'Ticket Value'=>2,
+	'Sku'=>3,
+	'Case Pack'=>4,
+	'Unit Price'=>5,
+	'Case Price'=>6,
+	'Quantity Ordered in this time period'=>7,
+	'Total Spent'=>8,
+	'Order Type'=>9,
+	'Product Type'=>10,
+	'Total Unit Inventory Count'=>11,
+	'Total Inventory Value at Location'=>12
+];
 
 $content = $topMessage;
 $content .= '<table border="1">';
