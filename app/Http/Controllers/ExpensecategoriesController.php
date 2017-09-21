@@ -236,22 +236,39 @@ class ExpensecategoriesController extends Controller {
 			$product_type_id = $data[0]->product_type;
 			$old_expense_category = $data[0]->mapped_expense_category;
 
-			\DB::table('expense_category_mapping')
-				->where('id', $id)
-				->update(['mapped_expense_category' => $expense_category]);
+			if($product_type_id == ''){
 
-			$product_type_id = empty($product_type_id) ? '0' : $product_type_id;
+				\DB::table('expense_category_mapping')
+					->where('order_type', $order_type_id)
+					->where('mapped_expense_category', $old_expense_category)
+					->update(['mapped_expense_category' => $expense_category]);
 
-			\DB::table('products')
-				->where('prod_type_id', $order_type_id)
-				->where('prod_sub_type_id', $product_type_id)
-				//->where('expense_category', $old_expense_category)
-				->update(['expense_category' => $expense_category]);
+				\DB::table('products')
+					->where('prod_type_id', $order_type_id)
+					//->where('prod_sub_type_id', '0')
+					->where('expense_category', $old_expense_category)
+					->update(['expense_category' => $expense_category]);
+
+			}else{
+				\DB::table('expense_category_mapping')
+					->where('id', $id)
+					->update(['mapped_expense_category' => $expense_category]);
+
+				$product_type_id = empty($product_type_id) ? '0' : $product_type_id;
+
+				\DB::table('products')
+					->where('prod_type_id', $order_type_id)
+					->where('prod_sub_type_id', $product_type_id)
+					//->where('expense_category', $old_expense_category)
+					->update(['expense_category' => $expense_category]);
+			}
 
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> "Expense category has been updated successfully!"
-				));
+			));
+
+
 
 		} else {
 
@@ -325,7 +342,7 @@ class ExpensecategoriesController extends Controller {
 	public function getGenerateExpenseCategories()
 	{
 		\DB::delete("DELETE FROM expense_category_mapping WHERE mapped_expense_category = 0");
-		echo "<H4>ALL UNUSED MAPPED CATEGORIES(0) DELETED</H4>";
+		echo "<H4>ALL UNUSED MAPPED CATEGORIES(0) DELETED AND RECREATED</H4>";
 		$order_types = \DB::select("SELECT * FROM order_type");
 		$product_types = \DB::select("SELECT * FROM product_type");
 
@@ -333,22 +350,24 @@ class ExpensecategoriesController extends Controller {
 		$combined_type_logs = '';
 		//Process one
 		foreach ($order_types as $key => $order_type){
+			$expense = '0';
 			$check = \DB::select("SELECT mapped_expense_category FROM expense_category_mapping WHERE order_type = $order_type->id AND product_type IS NULL");
 			if(empty($check)){
-				\DB::insert("INSERT INTO expense_category_mapping (order_type, product_type, mapped_expense_category) VALUES ($order_type->id, NULL, '0')");
-				$order_type_logs .= "<b style='background-color:#61fd61'>Entry added</b> for order_type: <b>$order_type->id</b> and product_type: <b>0</b> <br>";
+				\DB::insert("INSERT INTO expense_category_mapping (order_type, product_type, mapped_expense_category) VALUES ($order_type->id, NULL, $expense)");
+				$order_type_logs .= "<b style='background-color:#61fd61'>Entry added</b> for order_type: <b>$order_type->id</b> and product_type: <b>0</b> with expense_category = $expense <br>";
 			}else{
-				$order_type_logs .= "Entry for order_type: <b>$order_type->id</b> is <b style='background-color:#fd9c9c'>already exist</b><br>";
+				$expense = $check[0]->mapped_expense_category;
+				$order_type_logs .= "Entry for order_type: <b>$order_type->id</b> with expense_category = $expense is <b style='background-color:#fd9c9c'>already exist</b><br>";
 			}
 
 			//Process two
 			foreach ($product_types as $key => $product_type){
 				$checkCombined = \DB::select("SELECT mapped_expense_category FROM expense_category_mapping WHERE order_type = $order_type->id AND product_type = $product_type->id");
 				if(empty($checkCombined)){
-					\DB::insert("INSERT INTO expense_category_mapping (order_type, product_type, mapped_expense_category) VALUES ($order_type->id, $product_type->id, '0')");
-					$combined_type_logs .= "<b style='background-color:#61fd61'>Entry added</b> for order_type: <b>$order_type->id</b> and product_type: <b>$product_type->id</b> <br>";
+					\DB::insert("INSERT INTO expense_category_mapping (order_type, product_type, mapped_expense_category) VALUES ($order_type->id, $product_type->id, $expense)");
+					$combined_type_logs .= "<b style='background-color:#61fd61'>Entry added</b> for order_type: <b>$order_type->id</b> and product_type: <b>$product_type->id</b> with expense_category = $expense <br>";
 				}else{
-					$combined_type_logs .= "Entry for order_type: <b>$order_type->id</b> and product_type: <b>$product_type->id</b> is <b style='background-color:#fd9c9c'>already exist</b><br>";
+					$combined_type_logs .= "Entry for order_type: <b>$order_type->id</b> and product_type: <b>$product_type->id</b> with expense_category = $expense is <b style='background-color:#fd9c9c'>already exist</b><br>";
 				}
 			}
 		}
