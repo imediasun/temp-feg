@@ -55,8 +55,9 @@ class inventoryreport extends Sximo  {
         $date_end = @$filters['end_date'];
         $location_id = @$filters['location_id'];
         $vendor_id = @$filters['vendor_id'];
-        $prod_type_id = @$filters['Order_Type'];
-        $prod_sub_type_id = @$filters['Product_Type'];
+        $order_type_id = @$filters['Order_Type'];
+        $prod_type_id = @$filters['Product_Type'];
+        $prod_sub_type_id = @$filters['Product_Sub_Type'];
         if (empty($location_id)) {
             $location_id = \Session::get('selected_location');
         }
@@ -81,11 +82,14 @@ class inventoryreport extends Sximo  {
             if (!empty($vendor_id)) {
                 $whereVendor = "AND V.id IN ($vendor_id) ";
             }
+            if (!empty($order_type_id)) {
+                $whereOrderType = "AND O.order_type_id IN ($order_type_id) ";
+            }
             if (!empty($prod_type_id)) {
-                $whereOrderType = "AND O.order_type_id IN ($prod_type_id) ";
+                $whereProdType = "AND O.order_type_id IN ($prod_type_id) ";
             }
             if (!empty($prod_sub_type_id)) {
-                $whereProdType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
+                $whereProdSubType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
 
 
@@ -132,7 +136,7 @@ class inventoryreport extends Sximo  {
 
             $whereQuery = " WHERE O.status_id != ".order::ORDER_VOID_STATUS ." AND O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
-                             $whereLocation $whereVendor $whereOrderType $whereProdType ";
+                             $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
             $groupQuery = " GROUP BY (CASE WHEN (O.is_freehand = 1) THEN OC.item_name ELSE P.id END ),OC.case_price ";
 
