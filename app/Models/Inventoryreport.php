@@ -76,6 +76,7 @@ class inventoryreport extends Sximo  {
             $whereVendor = "";
             $whereOrderType ="";
             $whereProdType = "";
+            $whereProdSubType = "";
             if (!empty($location_id)) {
                 $whereLocation = "AND O.location_id = ($location_id) ";
             }
