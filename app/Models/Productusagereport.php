@@ -55,8 +55,9 @@ class productusagereport extends Sximo  {
         $date_end = @$filters['end_date'];
         $location_id = @$filters['location_id'];
         $vendor_id = @$filters['vendor_id'];
-        $prod_type_id = @$filters['prod_type_id'];
-        $prod_sub_type_id = @$filters['prod_sub_type_id'];
+        $order_type_id = @$filters['Order_Type'];
+        $prod_type_id = @$filters['Product_Type'];
+        $prod_sub_type_id = @$filters['Product_Sub_Type'];
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
         }
@@ -75,6 +76,7 @@ class productusagereport extends Sximo  {
             $whereVendor = "";
             $whereOrderType ="";
             $whereProdType = "";
+            $whereProdSubType = "";
             if (!empty($location_id)) {
                 $whereLocation = "AND O.location_id IN ($location_id) ";
             }
@@ -82,10 +84,13 @@ class productusagereport extends Sximo  {
                 $whereVendor = "AND V.id IN ($vendor_id) ";
             }
             if (!empty($prod_type_id)) {
-                $whereOrderType = "AND O.order_type_id IN ($prod_type_id) ";
+                $whereProdType = "AND P.prod_type_id IN ($prod_type_id) ";
+            }
+            if (!empty($order_type_id)) {
+                $whereOrderType = "AND O.order_type_id IN ($order_type_id) ";
             }
             if (!empty($prod_sub_type_id)) {
-                $whereProdType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
+                $whereProdSubType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
 
 
@@ -102,21 +107,20 @@ class productusagereport extends Sximo  {
             $mainQuery = "
             Select OC.id,
                    V.vendor_name as vendor_name,
-                   IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product,
-                   P.ticket_value,
-				   P.num_items,
-				   ROUND(P.case_price / P.num_items,2) AS Unit_Price,
+                   OC.item_name AS Product,
+                   IF(P.ticket_value = 0, '', P.ticket_value) AS ticket_value,
+                   IF(P.num_items = '' OR P.num_items IS NULL, 0, P.num_items) AS num_items,
+				   OC.price AS Unit_Price,
 				   SUM(OC.qty) AS Cases_Ordered,
+				   IF(O.order_type_id IN(2,6,7,8), OC.case_price,OC.`price`) AS Case_Price_Group,
 				   OC.case_price AS Case_Price,
 				   SUM(OC.total) AS Total_Spent,
 				    T1.order_type AS Order_Type,
-				   D.type_description AS Product_Type,
+				    T.order_type AS Product_Type,
+				   D.type_description AS Product_Sub_Type,
 				   O.location_id,
 				   O.date_ordered AS start_date,
-				   O.date_ordered AS end_date,
-				   requests.id as vendor_id,
-                   requests.id as prod_type_id,
-                   requests.id as prod_sub_type_id 
+				   O.date_ordered AS end_date 
                         ";
             /*$mainQuery = "SELECT requests.id,
 									 V.vendor_name,
@@ -135,15 +139,15 @@ class productusagereport extends Sximo  {
 									 requests.id as prod_sub_type_id,
 									 requests.process_date as start_date,
 									 requests.process_date as end_date ";*/
-            $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product ";
+            $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product ,IF(O.order_type_id IN(2,6,7,8), OC.case_price,OC.`price`) AS Case_Price_Group ";
 
             $fromQuery = " FROM order_contents OC 
-                           JOIN orders O ON O.id = OC.order_id
-                           LEFT JOIN requests ON OC.request_id = requests.id
+                           JOIN orders O ON O.id = OC.order_id 
 						   LEFT JOIN location L ON L.id = O.location_id
-						   LEFT JOIN products P ON P.id = requests.product_id 
+						   LEFT JOIN products P ON P.id = OC.product_id 
 						   LEFT JOIN vendor V ON V.id = O.vendor_id 
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
+						   LEFT JOIN order_type T ON T.id = P.prod_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
 						   
 						   
@@ -161,13 +165,13 @@ class productusagereport extends Sximo  {
 
             $whereQuery = " WHERE O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
-                             $whereLocation $whereVendor $whereOrderType $whereProdType ";
+                             $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
             /*$whereQuery = " WHERE requests.status_id = 2
                             AND requests.process_date >= '$date_start'
                             AND requests.process_date <= '$date_end'
                              $whereLocation $whereVendor $whereOrderType $whereProdType ";*/
 
-            $groupQuery = " GROUP BY Product ";
+            $groupQuery = " GROUP BY Product , Case_Price_Group";
 //            $groupQuery = " GROUP BY P.id ";
 
             $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
@@ -199,7 +203,8 @@ class productusagereport extends Sximo  {
             'bottomMessage' => $bottomMessage,
             'message' => $message,
             'rows'=> $rows,
-            'total' => $total
+            'total' => $total,
+            'excelExcludeFormatting' => ['Unit Price','Case Price','Total Spent']
         );
 
 
