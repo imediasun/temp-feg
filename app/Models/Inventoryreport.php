@@ -87,7 +87,7 @@ class inventoryreport extends Sximo  {
                 $whereOrderType = "AND O.order_type_id IN ($order_type_id) ";
             }
             if (!empty($prod_type_id)) {
-                $whereProdType = "AND O.order_type_id IN ($prod_type_id) ";
+                $whereProdType = "AND P.prod_type_id IN ($prod_type_id) ";
             }
             if (!empty($prod_sub_type_id)) {
                 $whereProdSubType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
