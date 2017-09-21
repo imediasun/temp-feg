@@ -105,7 +105,7 @@ class productusagereport extends Sximo  {
                    IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product,
                    P.ticket_value,
 				   P.num_items,
-				   ROUND(P.case_price / P.num_items,2) AS Unit_Price,
+				   (P.case_price / P.num_items) AS Unit_Price,
 				   SUM(OC.qty) AS Cases_Ordered,
 				   OC.case_price AS Case_Price,
 				   SUM(OC.total) AS Total_Spent,
