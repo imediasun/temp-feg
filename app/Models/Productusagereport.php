@@ -93,6 +93,9 @@ class productusagereport extends Sximo  {
                 $whereProdSubType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
 
+            $module_id = Module::name2id('order');
+            $case_price_permission = \FEGSPass::getPasses($module_id,'module.order.special.calculatepriceaccordingtocaseprice',false);
+            $casePriceCats = $case_price_permission["calculate price according to case price"]->data_options;
 
             $date_start_stamp = strtotime($date_start);
             $date_end_stamp = strtotime($date_end);
@@ -112,7 +115,7 @@ class productusagereport extends Sximo  {
                    IF(P.num_items = '' OR P.num_items IS NULL, 0, P.num_items) AS num_items,
 				   OC.price AS Unit_Price,
 				   SUM(OC.qty) AS Cases_Ordered,
-				   IF(O.order_type_id IN(2,6,7,8), OC.case_price,OC.`price`) AS Case_Price_Group,
+				   IF(O.order_type_id IN(".$casePriceCats."), OC.case_price,OC.`price`) AS Case_Price_Group,
 				   OC.case_price AS Case_Price,
 				   SUM(OC.total) AS Total_Spent,
 				    T1.order_type AS Order_Type,
