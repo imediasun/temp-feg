@@ -123,7 +123,8 @@ class inventoryreport extends Sximo  {
 				   OC.price AS Unit_Price,
 				   IF(O.order_type_id IN (".$casePriceCats."),SUM(P.num_items*OC.qty),SUM(OC.qty)) AS Cases_Ordered,
 				   OC.case_price AS Case_Price,
-				   SUM(OC.total) AS Total_Spent,O.location_id,
+				   CAST((SUM(OC.total)) AS  decimal(12,5)) AS Total_Spent,
+				   O.location_id,
 				   O.date_ordered AS start_date,
 				   O.date_ordered AS end_date
                         ";
