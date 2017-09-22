@@ -76,6 +76,7 @@ class productusagereport extends Sximo  {
             $whereVendor = "";
             $whereOrderType ="";
             $whereProdType = "";
+            $whereProdSubType = "";
             if (!empty($location_id)) {
                 $whereLocation = "AND O.location_id IN ($location_id) ";
             }
@@ -83,13 +84,13 @@ class productusagereport extends Sximo  {
                 $whereVendor = "AND V.id IN ($vendor_id) ";
             }
             if (!empty($prod_type_id)) {
-                $whereOrderType = "AND P.prod_type_id IN ($prod_type_id) ";
+                $whereProdType = "AND P.prod_type_id IN ($prod_type_id) ";
             }
             if (!empty($order_type_id)) {
                 $whereOrderType = "AND O.order_type_id IN ($order_type_id) ";
             }
             if (!empty($prod_sub_type_id)) {
-                $whereProdType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
+                $whereProdSubType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
 
 
@@ -164,7 +165,7 @@ class productusagereport extends Sximo  {
 
             $whereQuery = " WHERE O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
-                             $whereLocation $whereVendor $whereOrderType $whereProdType ";
+                             $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
             /*$whereQuery = " WHERE requests.status_id = 2
                             AND requests.process_date >= '$date_start'
                             AND requests.process_date <= '$date_end'
