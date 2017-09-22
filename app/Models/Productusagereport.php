@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use SiteHelpers;
 use App\Library\ReportHelpers;
 use App\Library\DBHelpers;
-
+use \App\Models\Sximo\Module;
 class productusagereport extends Sximo  {
 
     protected $table = 'requests';
