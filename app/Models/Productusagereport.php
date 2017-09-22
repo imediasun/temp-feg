@@ -118,9 +118,9 @@ class productusagereport extends Sximo  {
 				   IF(O.order_type_id IN(".$casePriceCats."), OC.case_price,OC.`price`) AS Case_Price_Group,
 				   OC.case_price AS Case_Price,
 				   CAST((SUM(OC.total)) AS  decimal(12,5)) AS Total_Spent,
-				    T1.order_type AS Order_Type,
-				    T.order_type AS Product_Type,
-				   D.type_description AS Product_Sub_Type,
+				     GROUP_CONCAT(DISTINCT  T1.order_type) AS Order_Type,
+				    GROUP_CONCAT(DISTINCT  T.order_type) AS Product_Type,
+				   GROUP_CONCAT(DISTINCT  D.type_description) AS Product_Sub_Type,
 				   O.location_id,
 				   O.date_ordered AS start_date,
 				   O.date_ordered AS end_date 
