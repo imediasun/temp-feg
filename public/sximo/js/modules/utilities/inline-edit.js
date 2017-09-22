@@ -403,6 +403,7 @@
    };
 
     window.saveSilentInlineForm = saveSilentInlineForm = function (rowDomId, event, element,actionColumnHidden) {
+        console.log('let debug');
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {
             event.preventDefault();
         }
@@ -419,10 +420,18 @@
                 cell = cellHookParams.cell = $(this),
 
             //cellOriginalValue = config.originalValue = cell.data('values'),
-                cellOriginalValue = config.originalValue = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val(),//cell.data('values'),
+                orgVal = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val(),//cell.data('values'),
+                cellOriginalValue = config.originalValue = orgVal,
                 cellFormattedValue = config.formattedValue = cell.data('format'),
             //cellOriginalHTML = config.originalHtmlValue = cell.data('original-value-html'),
-                cellOriginalHTML = config.originalHtmlValue = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val(),//cell.data('original-value-html'),
+                htmlVal = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val();//cell.data('original-value-html'),
+                if(htmlVal == '' || htmlVal == '0' || htmlVal == ' -- Select  -- '){
+                    htmlVal = 'No Data';
+                }
+                if(cellFormattedValue[0] == '$'){
+                    htmlVal = '$ '+htmlVal;
+                }
+                var cellOriginalHTML = config.originalHtmlValue = htmlVal,
                 cellOriginalDomElements = config.cellOriginalValue = cell.data('original-value-elments');
 
             cell.data('values', cell.find("[name='"+cell.data('field')+"']").val());
