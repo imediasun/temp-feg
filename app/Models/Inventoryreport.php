@@ -92,6 +92,9 @@ class inventoryreport extends Sximo  {
             if (!empty($prod_sub_type_id)) {
                 $whereProdSubType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
+            $module_id = Module::name2id('order');
+            $case_price_permission = \FEGSPass::getPasses($module_id,'module.order.special.calculatepriceaccordingtocaseprice',false);
+            $casePriceCats = $case_price_permission["calculate price according to case price"]->data_options;
 
 
             $date_start_stamp = strtotime($date_start);
@@ -117,7 +120,7 @@ class inventoryreport extends Sximo  {
                    IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product,
                    P.ticket_value,
 				   OC.price AS Unit_Price,
-				   IF(O.order_type_id IN (6,7,8,24),SUM(P.num_items*OC.qty),SUM(OC.qty)) AS Cases_Ordered,
+				   IF(O.order_type_id IN (".$casePriceCats."),SUM(P.num_items*OC.qty),SUM(OC.qty)) AS Cases_Ordered,
 				   OC.case_price AS Case_Price,
 				   SUM(OC.total) AS Total_Spent,O.location_id,
 				   O.date_ordered AS start_date,
