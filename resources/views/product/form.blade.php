@@ -154,7 +154,8 @@
                             {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('expense_category', $row['expense_category'],array('class'=>'form-control', 'placeholder'=>'','parsley-type'=>"number", 'required'=>'true', 'id'=>'expense_category'  )) !!}
+                            <select name='expense_category' rows='5' id='expense_category' class='select2'></select>
+                            {{--{!! Form::text('expense_category', $row['expense_category'],array('class'=>'form-control', 'placeholder'=>'','parsley-type'=>"number", 'required'=>'true', 'id'=>'expense_category'  )) !!}--}}
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -415,6 +416,10 @@
             $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
         }
+
+        $("#expense_category").jCombo("{{ URL::to('product/expense-category-groups') }}",
+                {selected_value: '{{ $row["expense_category"] }}'});
+
         $("#prod_type_id").click(function () {
             $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id').val()+"",
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
