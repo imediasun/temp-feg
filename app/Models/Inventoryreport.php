@@ -118,10 +118,10 @@ class inventoryreport extends Sximo  {
 				    GROUP_CONCAT(DISTINCT  P.prod_type_id) AS Product_Type,
 				   GROUP_CONCAT(DISTINCT  D.type_description) AS Product_Sub_Type,
                    V.vendor_name as vendor_name,
-                   OC.item_name AS Product,
+                   IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product,
                    P.ticket_value,
 				   OC.price AS Unit_Price,
-				   IF(O.order_type_id IN (".$casePriceCats."),P.num_items*SUM(OC.qty),SUM(OC.qty)) AS Cases_Ordered,
+				   IF(O.order_type_id IN (".$casePriceCats."),SUM(P.num_items*OC.qty),SUM(OC.qty)) AS Cases_Ordered,
 				   OC.case_price AS Case_Price,
 				   CAST((SUM(OC.total)) AS  decimal(12,5)) AS Total_Spent,
 				   O.location_id,
@@ -144,9 +144,7 @@ class inventoryreport extends Sximo  {
                             AND O.date_ordered <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
-            // both group by quires are same
-            $groupQuery = " GROUP BY OC.item_name,OC.case_price ";
-            $groupQuery2 = " GROUP BY Product,Case_Price ";
+            $groupQuery = " GROUP BY (CASE WHEN (O.is_freehand = 1) THEN OC.item_name ELSE P.id END ),OC.case_price ";
 
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $groupQuery";
@@ -161,12 +159,10 @@ class inventoryreport extends Sximo  {
             }
             $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
 
-            $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY P.id DESC, {$sort} {$order} " :
-                ' ORDER BY P.id DESC, Unit_Price ';
+            $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
+                ' ORDER BY Unit_Price ';
 
-            // order by before group by will show the product List item instead of freehand item if both with same name and case price exists
-
-            $finalDataQuery = "Select * from ( $mainQuery $fromQuery $whereQuery $orderConditional $limitConditional) t $groupQuery2";
+            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
             $finalCatQuery = "$catQuery $fromQuery $whereQuery $groupQuery";
             \Log::info("Inventory Report final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
