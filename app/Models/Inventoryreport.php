@@ -130,7 +130,7 @@ class inventoryreport extends Sximo  {
                     O.date_ordered AS end_date
                         ";
             $mainQueryEnd  = " ) AS t ";
-            $orderBy = " ORDER BY P.id ASC ";
+            $orderBy = " ORDER BY P.id ASC LIMIT 0 , 20000000000000";
 
             $catQuery = "Select distinct T1.order_type";
 
