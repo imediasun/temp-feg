@@ -290,6 +290,7 @@ class GamesintransitController extends Controller
             $asset_number = $request->get('asset_number');
             $notes = $request->get('notes');
             $test_piece = $request->get('test_piece');
+            $mfg_id = \DB::table('game_title')->find($request->get('game_title'))->mfg_id;
             $insert = array(
                 'id' => $asset_number,
                 'game_title_id' => $game_title_id,
@@ -298,6 +299,7 @@ class GamesintransitController extends Controller
                 'status_id' => 3,
                 'test_piece' => $test_piece,
                 'notes' => $notes,
+                'mfg_id' => $mfg_id,
                 'last_edited_on' => date('Y-m-d H:i:s'),
             );
             \DB::table('game')->insert($insert);
