@@ -219,7 +219,7 @@
 	  <div class="modal-dialog">
 		  <div class="modal-content">
 			  <div class="modal-header">
-				  <button type="button" class="close" aria-hidden="true" tabindex="-1" onclick="$('#pdf_modal').modal('toggle');">×</button>
+				  <button type="button" class="close" aria-hidden="true" tabindex="-1" onclick="cancelFileUpload();">×</button>
 				  <h4>Upload PDF</h4>
 			  </div>
 			  <div class="modal-body">
@@ -246,13 +246,18 @@
   </div>
 
   <script>
+	  var file_upload_request;
 	  function upload_pdf() {
+		  $(window).bind('beforeunload', function(){
+			  return 'You are not finished uploading your file, do you wish to continue?';
+		  });
+
 		  $('#pdf_upload').text('Uploading...');
 		  $('#pdf_upload').prop('disabled', true);
 		  $('.upload_progress_container').toggle();
 		  var fd = new FormData(document.forms.namedItem("pdf_form"));
 		  //fd.append("CustomField", "This is some extra data");
-		  $.ajax({
+		  file_upload_request = $.ajax({
 			  url: "{{url()}}/pages/upload",
 			  type: "POST",
 			  data: fd,
@@ -271,6 +276,8 @@
 						  if (percentComplete === 100) {
 							  console.log("File Uploaded!");
 							  $('.upload_progress_container').toggle();
+							  $('#upload_file_progress_bar').attr('aria-valuenow', '0');
+							  $('#upload_file_progress_bar').css('width', '0%');
 						  }
 
 					  }
@@ -287,6 +294,7 @@
 				  $('#pdf_file').val('');
 				  $('#pdf_upload').text('Insert');
 				  $('#pdf_upload').prop('disabled', false);
+				  $(window).unbind('beforeunload');
 			  },
 			  error: function (xhr) {
 					if(xhr.status=='422'){
@@ -299,13 +307,28 @@
 				  $('#pdf_file').val('');
 				  $('#pdf_upload').text('Insert');
 				  $('#pdf_upload').prop('disabled', false);
+				  $(window).unbind('beforeunload');
 			  }
 		  });
 	  }
 
+	  function cancelFileUpload(){
+		  if($('#pdf_upload').text() == 'Uploading...'){
+			  var choice = confirm("You are not finished uploading your file, do you wish to continue?");
+			  if(choice){
+				  file_upload_request.abort();
+				  $('#pdf_error').hide();
+				  $('#pdf_modal').modal('toggle');
+			  }
+		  }else{
+			  $('#pdf_modal').modal('toggle');
+		  }
+	  }
+
+
 	  $( document ).ready(function() {
 		  var model_obj = "{backdrop:'static',keyboard:false}";
-		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach File" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal('+model_obj+');$(".upload_progress_container").toggle();><i class="fa fa-file-o"></i></button></div>');
+		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach File" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal('+model_obj+');$(".upload_progress_container").hide();><i class="fa fa-file-o"></i></button></div>');
 		  $('[data-toggle="tooltip"]').tooltip();
 
 		  $('.note-editor .note-editable').css('height', $('#cms_bar_id').height()-208);
