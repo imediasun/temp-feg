@@ -1396,10 +1396,6 @@ class OrderController extends Controller
             }
         }, \Input::all()));
 
-        if($request->get('mode')=='update'){
-            $this->updateOrderReceipt($request);
-        }
-
         $received_part_ids = array();
         $order_id = $request->get('order_id');
         $item_count = $request->get('item_count');
@@ -1510,6 +1506,11 @@ class OrderController extends Controller
                 'is_partial' => $partial,
                 'added_to_inventory' => $added);
             \DB::table('orders')->where('id', $request->get('order_id'))->update($data);
+
+            if($request->get('mode')=='update'){
+                $this->updateOrderReceipt($request);
+            }
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -1522,6 +1523,7 @@ class OrderController extends Controller
                 'status' => 'error'
             ));
         }
+
     }
 
     public function updateOrderReceipt($request){
@@ -1536,13 +1538,15 @@ class OrderController extends Controller
         $date_received = date("Y-m-d", strtotime($request->get('date_received')));
         $user_id = $request->get('user_id');
         $updateProducts = [];
-        $receiveHistory = \DB::select("SELECT * FROM order_received WHERE order_id = $order_id AND order_line_item_id IN (".implode(',',$item_ids).") ORDER  BY order_line_item_id");
+        $receiveHistory = \DB::select("SELECT sum(quantity) AS total_qty, order_received.* FROM order_received WHERE order_id = $order_id AND order_line_item_id IN (".implode(',',$item_ids).") GROUP BY order_line_item_id ORDER BY order_line_item_id");
+
 
         foreach ($receiveHistory as $key => $item) {
-            if($item->quantity != $updateQty[$key]){
+            if($item->total_qty != $updateQty[$key]){
                 array_push($updateProducts, $item->order_line_item_id);
             }
         }
+
 
         foreach ($item_ids as $i => $item_id){
             if($updateOrigQty[$i] == $updateQty[$i]){$status = 1;}else{$status = 2;}
