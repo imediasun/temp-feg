@@ -109,8 +109,16 @@ class inventoryreport extends Sximo  {
                 $date_end_stamp = $t;
             }
             $mainQuery = "
-            SELECT id,sku,num_items,'' AS unit_inventory_count,'' AS total_inventory_value,GROUP_CONCAT(DISTINCT order_type) AS Order_Type,GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,vendor_name,Product,ticket_value
-            ,Unit_Price,IF(order_type_id IN (".$casePriceCats."),num_items*SUM(qty),SUM(qty)) AS Cases_Ordered,Case_Price,CAST((SUM(total)) AS DECIMAL(12,5)) AS Total_Spent,location_id,start_date,end_date
+            SELECT 
+            max(id), max(sku), max(num_items), 
+            '' AS unit_inventory_count,'' AS total_inventory_value,
+            GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
+            GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
+            GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,
+            vendor_name,Product,max(ticket_value)
+            ,Unit_Price,
+            IF(order_type_id IN (".$casePriceCats."),IF(max(num_items) is null , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
+            Case_Price,CAST((SUM(total)) AS DECIMAL(12,5)) AS Total_Spent,location_id,start_date,end_date
              FROM ( 
                     SELECT P.id ,
                     P.sku,
@@ -153,7 +161,7 @@ class inventoryreport extends Sximo  {
             $groupQuery2 = " GROUP BY Product,Case_Price ";
 
 
-            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $orderBy $mainQueryEnd $groupQuery2";
+            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
             $totalRows = \DB::select($finalTotalQuery);
             if (!empty($totalRows)) {
                 $total = count($totalRows);
@@ -170,7 +178,7 @@ class inventoryreport extends Sximo  {
 
             // order by before group by will show the product List item instead of freehand item if both with same name and case price exists
 
-            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $orderBy $mainQueryEnd $groupQuery2 $orderConditional $limitConditional ";
+            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2 $orderConditional $limitConditional ";
             $finalCatQuery = "$catQuery $fromQuery $whereQuery $groupQuery";
             \Log::info("Inventory Report final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
