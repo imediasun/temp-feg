@@ -109,7 +109,7 @@ class productusagereport extends Sximo  {
             }
             $mainQuery = "
             SELECT 
-            max(id) as id, max(sku) as sku, max(num_items) as num_items,
+            max(id) as id,orderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
             GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
             GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,
@@ -119,7 +119,8 @@ class productusagereport extends Sximo  {
             IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
             Case_Price,CAST((SUM(total)) AS DECIMAL(12,5)) AS Total_Spent,location_id,start_date,end_date
              FROM (
-            Select P.id,
+            Select O.id as orderId
+                   P.id,
                    P.sku,
                    V.vendor_name as vendor_name,
                    OC.item_name AS Product,
