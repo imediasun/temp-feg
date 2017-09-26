@@ -18,12 +18,12 @@ class productusagereport extends Sximo  {
 
     public static function querySelect(  ){
 
-        return "  SELECT requests.* FROM requests  ";
+        return "  SELECT orders.* FROM orders  ";
     }
 
     public static function queryWhere(  ){
 
-        return "  WHERE requests.id IS NOT NULL ";
+        return "  WHERE orders.id IS NOT NULL ";
     }
 
     public static function queryGroup(){
@@ -65,7 +65,7 @@ class productusagereport extends Sximo  {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }
 
-        $defaultEndDate = DBHelpers::getHighestRecorded('requests', 'process_date');
+        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'date_ordered');
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         if (empty($date_start) || empty($date_end)) {
             $message = "To view the contents of this report, please select a date range and other search filter.";
@@ -108,41 +108,36 @@ class productusagereport extends Sximo  {
                 $date_end_stamp = $t;
             }
             $mainQuery = "
-            Select OC.id,
+            SELECT 
+            max(id) as id, max(sku) as sku, max(num_items) as num_items,
+            GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
+            GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
+            GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,
+            vendor_name,Product,max(ticket_value) as ticket_value
+            ,Unit_Price,
+            IF(order_type_id IN (".$casePriceCats."),IF(max(num_items) is null , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
+            IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
+            Case_Price,CAST((SUM(total)) AS DECIMAL(12,5)) AS Total_Spent,location_id,start_date,end_date
+             FROM (
+            Select P.id,
+                   P.sku,
                    V.vendor_name as vendor_name,
                    OC.item_name AS Product,
                    IF(P.ticket_value = 0, '', P.ticket_value) AS ticket_value,
                    IF(P.num_items = '' OR P.num_items IS NULL, 0, P.num_items) AS num_items,
 				   OC.price AS Unit_Price,
-				   SUM(OC.qty) AS Cases_Ordered,
-				   IF(O.order_type_id IN(".$casePriceCats."), OC.case_price,OC.`price`) AS Case_Price_Group,
+				   OC.qty,
+				   O.order_type_id,
 				   OC.case_price AS Case_Price,
-				   CAST((SUM(OC.total)) AS  decimal(12,5)) AS Total_Spent,
-				     GROUP_CONCAT(DISTINCT  T1.order_type) AS Order_Type,
-				    GROUP_CONCAT(DISTINCT  T.order_type) AS Product_Type,
-				   GROUP_CONCAT(DISTINCT  D.type_description) AS Product_Sub_Type,
+				   OC.total,
+				   T1.order_type,
+				   P.prod_type_id,
+				   D.type_description,
 				   O.location_id,
 				   O.date_ordered AS start_date,
 				   O.date_ordered AS end_date 
                         ";
-            /*$mainQuery = "SELECT requests.id,
-									 V.vendor_name,
-									 P.vendor_description AS Product,
-									 P.ticket_value,
-									 P.num_items,
-									 ROUND(P.case_price / P.num_items,2) AS Unit_Price,
-									 SUM(requests.qty) AS Cases_Ordered,
-									 O.case_price AS Case_Price,
-									 SUM(O.qty * O.case_price) AS Total_Spent,
-									 T.order_type AS Order_Type,
-									 D.type_description AS Product_Type,
-									 requests.location_id,
-									 requests.id as vendor_id,
-									 requests.id as prod_type_id,
-									 requests.id as prod_sub_type_id,
-									 requests.process_date as start_date,
-									 requests.process_date as end_date ";*/
-            $totalQuery = "SELECT count(*) as total,OC.item_name AS Product ,IF(O.order_type_id IN(".$casePriceCats."), OC.case_price,OC.`price`) AS Case_Price_Group ";
+            $mainQueryEnd  = " ) AS t ";
 
             $fromQuery = " FROM order_contents OC 
                            JOIN orders O ON O.id = OC.order_id 
@@ -150,21 +145,10 @@ class productusagereport extends Sximo  {
 						   LEFT JOIN products P ON P.id = OC.product_id 
 						   LEFT JOIN vendor V ON V.id = O.vendor_id 
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
-						   LEFT JOIN order_type T ON T.id = P.prod_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
 						   
 						   
 						   ";
-            /*$fromQuery = " FROM requests
-						   LEFT JOIN location L ON L.id = requests.location_id
-						   LEFT JOIN products P ON P.id = requests.product_id
-						   LEFT JOIN vendor V ON V.id = P.vendor_id
-						   LEFT JOIN vendor V1 ON V.id = Order.vendor_id
-						   LEFT JOIN order_type T ON T.id = P.prod_type_id
-						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
-						   LEFT JOIN users U ON U.id = requests.process_user_id
-						   LEFT JOIN order_contents O ON O.request_id = requests.id
-						   ";*/
 
             $whereQuery = " WHERE O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
@@ -177,7 +161,7 @@ class productusagereport extends Sximo  {
             $groupQuery = " GROUP BY Product , Case_Price_Group";
 //            $groupQuery = " GROUP BY P.id ";
 
-            $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
+            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery";
             $totalRows = \DB::select($finalTotalQuery);
             if (!empty($totalRows)) {
                 $total = count($totalRows);
@@ -192,7 +176,7 @@ class productusagereport extends Sximo  {
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
                 ' ORDER BY V.vendor_name, P.prod_type_id, P.vendor_description ';
 
-            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
+            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $orderConditional $limitConditional";
             \Log::info("Product Usage final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
             $rows = self::processRows($rawRows);
