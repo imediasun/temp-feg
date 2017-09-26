@@ -142,7 +142,7 @@ class productusagereport extends Sximo  {
 									 requests.id as prod_sub_type_id,
 									 requests.process_date as start_date,
 									 requests.process_date as end_date ";*/
-            $totalQuery = "SELECT count(*) as total,IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product ,IF(O.order_type_id IN(2,6,7,8), OC.case_price,OC.`price`) AS Case_Price_Group ";
+            $totalQuery = "SELECT count(*) as total,OC.item_name AS Product ,IF(O.order_type_id IN(".$casePriceCats."), OC.case_price,OC.`price`) AS Case_Price_Group ";
 
             $fromQuery = " FROM order_contents OC 
                            JOIN orders O ON O.id = OC.order_id 
