@@ -8,7 +8,7 @@ use App\Library\DBHelpers;
 use \App\Models\Sximo\Module;
 class productusagereport extends Sximo  {
 
-    protected $table = 'requests';
+    protected $table = 'orders';
     protected $primaryKey = 'id';
 
     public function __construct() {
