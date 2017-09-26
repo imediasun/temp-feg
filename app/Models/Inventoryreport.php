@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use SiteHelpers;
 use App\Library\ReportHelpers;
 use App\Library\DBHelpers;
+use \App\Models\Sximo\Module;
 
 class inventoryreport extends Sximo  {
 
@@ -92,6 +93,9 @@ class inventoryreport extends Sximo  {
             if (!empty($prod_sub_type_id)) {
                 $whereProdSubType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
+            $module_id = Module::name2id('order');
+            $case_price_permission = \FEGSPass::getPasses($module_id,'module.order.special.calculatepriceaccordingtocaseprice',false);
+            $casePriceCats = $case_price_permission["calculate price according to case price"]->data_options;
 
 
             $date_start_stamp = strtotime($date_start);
@@ -105,24 +109,37 @@ class inventoryreport extends Sximo  {
                 $date_end_stamp = $t;
             }
             $mainQuery = "
-            Select P.id,
-                   P.sku,
-                   P.num_items,
-                   '' as unit_inventory_count,
-                   '' as total_inventory_value,
-                   T1.order_type AS Order_Type,
-                   P.prod_type_id AS Product_Type,
-                   D.type_description AS Product_Sub_Type,
-                   V.vendor_name as vendor_name,
-                   IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product,
-                   P.ticket_value,
-				   OC.price AS Unit_Price,
-				   IF(O.order_type_id IN (6,7,8,24),SUM(P.num_items*OC.qty),SUM(OC.qty)) AS Cases_Ordered,
-				   OC.case_price AS Case_Price,
-				   SUM(OC.total) AS Total_Spent,O.location_id,
-				   O.date_ordered AS start_date,
-				   O.date_ordered AS end_date
+            SELECT 
+            max(id) as id, max(sku) as sku, max(num_items) as num_items, 
+            '' AS unit_inventory_count,'' AS total_inventory_value,
+            GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
+            GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
+            GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,
+            vendor_name,Product,max(ticket_value) as ticket_value
+            ,Unit_Price,
+            IF(order_type_id IN (".$casePriceCats."),IF(max(num_items) is null , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
+            Case_Price,CAST((SUM(total)) AS DECIMAL(12,5)) AS Total_Spent,location_id,start_date,end_date
+             FROM ( 
+                    SELECT P.id ,
+                    P.sku,
+                    P.num_items,
+                    T1.order_type,O.order_type_id,
+                    P.prod_type_id,
+                    D.type_description,
+                    V.vendor_name AS vendor_name,
+                    OC.item_name AS Product,
+                    P.ticket_value,
+                    OC.price AS Unit_Price,
+                    OC.qty,
+                    OC.case_price AS Case_Price,
+                    OC.total,
+                    O.location_id,
+                    O.date_ordered AS start_date,
+                    O.date_ordered AS end_date
                         ";
+            $mainQueryEnd  = " ) AS t ";
+            $orderBy = " ORDER BY P.id ASC LIMIT 0 , 20000000000000";
+
             $catQuery = "Select distinct T1.order_type";
 
             $fromQuery = " FROM order_contents OC 
@@ -139,10 +156,12 @@ class inventoryreport extends Sximo  {
                             AND O.date_ordered <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
-            $groupQuery = " GROUP BY (CASE WHEN (O.is_freehand = 1) THEN OC.item_name ELSE P.id END ),OC.case_price ";
+            // both group by quires are same
+            $groupQuery = " GROUP BY OC.item_name,OC.case_price ";
+            $groupQuery2 = " GROUP BY Product,Case_Price ";
 
 
-            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $groupQuery";
+            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
             $totalRows = \DB::select($finalTotalQuery);
             if (!empty($totalRows)) {
                 $total = count($totalRows);
@@ -157,7 +176,9 @@ class inventoryreport extends Sximo  {
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
                 ' ORDER BY Unit_Price ';
 
-            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
+            // order by before group by will show the product List item instead of freehand item if both with same name and case price exists
+
+            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2 $orderConditional $limitConditional ";
             $finalCatQuery = "$catQuery $fromQuery $whereQuery $groupQuery";
             \Log::info("Inventory Report final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
