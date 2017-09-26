@@ -110,7 +110,7 @@ class inventoryreport extends Sximo  {
             }
             $mainQuery = "
             SELECT 
-            max(id) as id, max(sku) as sku, max(num_items) as num_items, 
+            max(id) as id,GROUP_CONCAT(DISTINCT orderId) as orderId, max(sku) as sku, max(num_items) as num_items, 
             '' AS unit_inventory_count,'' AS total_inventory_value,
             GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
             GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
@@ -120,7 +120,7 @@ class inventoryreport extends Sximo  {
             IF(order_type_id IN (".$casePriceCats."),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
             Case_Price,CAST((SUM(total)) AS DECIMAL(12,5)) AS Total_Spent,location_id,start_date,end_date
              FROM ( 
-                    SELECT P.id ,
+                    SELECT P.id , O.id as orderId
                     P.sku,
                     P.num_items,
                     T1.order_type,O.order_type_id,
