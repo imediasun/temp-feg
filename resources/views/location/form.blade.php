@@ -477,23 +477,33 @@
             return false;
         }
     }
-    $('#location_id').on('blur', function () {
-        var location_id = $(this).val();
-        $.ajax({
-            url: '{{url()}}/location/is-location-available/' + location_id,
-            method: 'get',
-            dataType: 'json',
-            success: function (result) {
-                if (result.status == "error") {
-                    $('#location_available').css('color', 'red');
+    $('#location_id').on('change', function () {
+        var location_id = parseInt($(this).val(),10);
+        if(isNaN(location_id))
+        {
+            $('#location_available').css('color', 'red');
+            $('#location_available').show('500');
+            $("#location_available").text('Please enter correct ID');
+        }
+        else
+        {
+            $.ajax({
+                url: '{{url()}}/location/is-location-available/' + location_id,
+                method: 'get',
+                dataType: 'json',
+                success: function (result) {
+                    if (result.status == "error") {
+                        $('#location_available').css('color', 'red');
+                    }
+                    else {
+                        $('#location_available').css('color', 'green');
+                    }
+                    $('#location_available').show('500');
+                    $("#location_available").text(result.message);
                 }
-                else {
-                    $('#location_available').css('color', 'green');
-                }
-                $('#location_available').show('500');
-                $("#location_available").text(result.message);
-            }
-        });
+            });
+        }
+
     });
     $('#location_id').on('focus', function () {
         $('#location_available').hide();
