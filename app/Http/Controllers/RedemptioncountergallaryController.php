@@ -217,6 +217,8 @@ class RedemptioncountergallaryController extends Controller
                 } else {
                     $extension = '';
                 }
+                $data['extension'] = substr($extension, 1);
+
                 $id = $this->model->insertRow($data, NULL);
                 $img->save('./uploads/gallary/' . $id . $extension);
                 $img->resize(101, 150);
@@ -269,21 +271,23 @@ class RedemptioncountergallaryController extends Controller
     {
         $id = $request->get('id');
         $angle = $request->get('angle');
+        $extension = $request->get('extension');
+
         $db_angle=(int)$angle;
         if (abs($angle) == 90) {
             $angle = -$angle;
         }
-// Load the image
-        $img = Image::make('./uploads/gallary/' . $id . '.jpg');
-        $imgThumb = Image::make('./uploads/gallary/' . $id . '_thumb.jpg');
-// Rotate
+        // Load the image
+        $img = Image::make('./uploads/gallary/' . $id . '.'.$extension);
+        $imgThumb = Image::make('./uploads/gallary/' . $id . '_thumb.'.$extension);
+        // Rotate
         $img->rotate((int)$angle);
         $imgThumb->rotate((int)$angle);
-//and save it on your server...
-        if($img->save('./uploads/gallary/' . $id .'_rotated.jpg'))
+        //And save it on your server...
+        if($img->save('./uploads/gallary/' . $id .'_rotated.'.$extension))
         {
             \DB::update("UPDATE img_uploads SET img_rotation=$db_angle WHERE id=$id");
-            $imgThumb->save('./uploads/gallary/' . $id .'_thumb_rotated.jpg');
+            $imgThumb->save('./uploads/gallary/' . $id .'_thumb_rotated.'.$extension);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('Image Rotated Successfully')));
