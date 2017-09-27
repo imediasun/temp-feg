@@ -18,6 +18,7 @@ width: 75%">
             <option value="photopaper" data-active="0">Photo Paper</option>
             <option value="debitcards" data-active="0">Debit Cards</option>
             <option value="productsindevelopment" data-active="0">Products In Development</option>
+            <option value="advancereplacement" data-active="0">Advance Replacement</option>
         </select>
     </div>
     

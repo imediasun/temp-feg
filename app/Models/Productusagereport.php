@@ -103,7 +103,7 @@ class productusagereport extends Sximo  {
             Select OC.id,
                    V.vendor_name as vendor_name,
                    IF(OC.product_id = 0,OC.item_name,P.vendor_description) AS Product,
-                   P.ticket_value,
+                   IF(P.ticket_value = 0, '', P.ticket_value) AS ticket_value,
 				   P.num_items,
 				   ROUND(P.case_price / P.num_items,2) AS Unit_Price,
 				   SUM(OC.qty) AS Cases_Ordered,
@@ -141,7 +141,7 @@ class productusagereport extends Sximo  {
                            JOIN orders O ON O.id = OC.order_id
                            LEFT JOIN requests ON OC.request_id = requests.id
 						   LEFT JOIN location L ON L.id = O.location_id
-						   LEFT JOIN products P ON P.id = requests.product_id 
+						   LEFT JOIN products P ON P.id = OC.product_id 
 						   LEFT JOIN vendor V ON V.id = O.vendor_id 
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
