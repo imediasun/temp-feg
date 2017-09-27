@@ -118,7 +118,7 @@ class inventoryreport extends Sximo  {
             vendor_name,Product,max(ticket_value) as ticket_value
             ,Unit_Price,
             IF(order_type_id IN (".$casePriceCats."),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
-            Case_Price,CAST((SUM(total)) AS DECIMAL(12,5)) AS Total_Spent,location_id,start_date,end_date
+            Case_Price,TRUNCATE( SUM( TRUNCATE(total,3)) ,3) AS Total_Spent,location_id,start_date,end_date
              FROM ( 
                     SELECT P.id , O.id as orderId,
                     P.sku,
