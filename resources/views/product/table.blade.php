@@ -104,7 +104,7 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;
            		?>
-                <tr class="editable" onkeyup="calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
+                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
 					<input type="hidden" name="numberOfItems" value="{{$row->num_items}}" />
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
@@ -330,6 +330,10 @@ $('a[data-original-title="Upload Image"]').click(function () {
 
 $(document).on("blur", "input[name='case_price']", function () {
 	$(this).val($(this).fixDecimal());
+});
+
+$(document).on("keyup", "input[name='case_price']", function () {
+	calculateUnitPrice($(this).parents('tr').data('id'));
 });
 
 $(document).on("blur", "input[name='unit_price']", function () {
