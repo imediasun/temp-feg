@@ -1183,6 +1183,19 @@ function getCartTotal()
     });
 }
 
+jQuery.fn.fixDecimal = function(places) {
+    places = places || 5;
+    var val = $.trim($(this).val());
+    if(val.indexOf(',') > -1) {
+        val = val.replace(',', '.');
+    }
+    var num = val.slice(0, (val.indexOf("."))+1+places);
+    if(isNaN(num)) {
+        num = '';
+    }
+    return num;
+};
+
 $(document).ready(function(){
     getCartTotal();
 });
