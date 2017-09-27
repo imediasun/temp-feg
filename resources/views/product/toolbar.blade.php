@@ -5,20 +5,21 @@
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
             <option value="select" data-active="0" selected>------------ Select Type --------------</option>
+            <option value="advancereplacement" data-active="0">Advanced Replacement</option>
+            <option value="debitcards" data-active="0">Debit Cards</option>
             <option value="graphics" data-active="0">Graphics</option>
             <option value="instant" data-active="0">Instant Win Prizes</option>
             <option value="officesupplies" data-active="0">Office Supplies - Products List</option>
             <option value="parts" data-active="0">Parts - Products List</option>
             <option value="party" data-active="0">Party Supplies</option>
+            <option value="photopaper" data-active="0">Photo Paper</option>
+            <option value="productsindevelopment" data-active="0">Products In Development</option>
             <option value="redemption" data-active="0">Redemption Prizes</option>
            {{-- <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>--}}
             <option value="tickets" data-active="0">Tickets</option>
             <option value="tokens" data-active="0">Tokens</option>
             <option value="uniforms" data-active="0">Uniforms</option>
-            <option value="photopaper" data-active="0">Photo Paper</option>
-            <option value="debitcards" data-active="0">Debit Cards</option>
-            <option value="productsindevelopment" data-active="0">Products In Development</option>
-            <option value="advancereplacement" data-active="0">Advance Replacement</option>
+
         </select>
     </div>
     

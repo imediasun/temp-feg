@@ -968,6 +968,7 @@ abstract class Controller extends BaseController
             'fields' => $fields,
             'rows' => $rows,
             'title' => $this->data['pageTitle'],
+            'excelExcludeFormatting' => isset($results['excelExcludeFormatting'])?$results['excelExcludeFormatting']:[]
         );
 
         if ($t == 'word') {
