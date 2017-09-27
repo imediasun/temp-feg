@@ -35,7 +35,7 @@ class CurrencyHelpers
              $decimalSection = $dec_point.substr($decimalSection, 0, $decimalPlaces);
          }
          $decimalPlaces = 0;
-         $formattedValue .= number_format($split[0],$decimalPlaces,$dec_point , $thousands_sep);
+         $formattedValue .= number_format((double)$split[0],$decimalPlaces,$dec_point , $thousands_sep);
          return $formattedValue.$decimalSection;
      }
 
