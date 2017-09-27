@@ -306,7 +306,8 @@ initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 		var quantity = $('#form-'+id+' input[name = "numberOfItems"]').val();
 		var unit_price = case_price/quantity;
 		if(quantity != 0 && unit_price != 0) {
-			$('#form-'+id+' input[name = "unit_price"]').val(unit_price.toFixed(3));
+			$('#form-'+id+' input[name = "unit_price"]').val(unit_price);
+			$('#form-'+id+' input[name = "unit_price"]').blur();
 		}
 		else
 		{

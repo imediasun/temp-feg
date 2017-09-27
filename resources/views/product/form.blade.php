@@ -607,7 +607,8 @@
         var quantity = $("#qty_input").val();
         var unit_price = case_price/quantity;
         if(quantity != 0 && unit_price != 0) {
-            $('#unit_price_input').val(unit_price.toFixed(3));
+            $('#unit_price_input').val(unit_price);
+            $('#unit_price_input').blur();
         }
         else
         {
