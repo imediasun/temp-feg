@@ -3404,7 +3404,7 @@ margin-left: 15px;
   .navbar .navbar-top-links li a {
     font-size: 10px;
     min-height: 50px;
-    padding: 15px 1px;
+    padding: 12px 15px;
   }
   
   .page-content {
@@ -3417,6 +3417,12 @@ margin-left: 15px;
 
 .text-left-xs {
   text-align: left;
+}
+
+.count-info .label {
+  position: relative;
+  right: 5px;
+  top: 0;
 }
 
 
