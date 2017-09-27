@@ -331,12 +331,12 @@
                         </td>
 
                         <td><br/> <input type='number' name='price[]' id="price"
-                                         class='calculate form-control' min="0.000" step=".001" placeholder="0.000"
+                                         class='calculate form-control fixDecimal' min="0.000" step=".001" placeholder="0.000"
                                          style="width: 85px"
                                          required></td>
                         <td>
                             <br/> <input type='number' name='case_price[]' id="case_price"
-                                         class='calculate form-control' min="0.000" step=".001" placeholder="0.000"
+                                         class='calculate form-control fixDecimal' min="0.000" step=".001" placeholder="0.000"
                                          style="width: 85px"
                                          required></td>
                         <td><br/> <input type='number' name='qty[]' placeholder='0' autocomplete="off"
@@ -1764,6 +1764,10 @@
         if(mode == 'SID'){
             getNotesOfSIDProducts();
         }
+    });
+
+    $(document).on("blur", ".fixDecimal", function () {
+        $(this).val($(this).fixDecimal());
     });
 
 </script>
