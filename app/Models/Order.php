@@ -367,7 +367,7 @@ class order extends Sximo
 											  R.location_id,
 											  L.company_id,
 											  P.prod_type_id,
-										  SUM(R.qty*P.case_price) AS total,
+										  TRUNCATE(SUM(R.qty*P.case_price),3) AS total,
 									   CONCAT(P.vendor_description," (SKU-",P.sku,")",IF(R.notes = "", "", CONCAT(" **note: ",R.notes,"**"))) AS description
 										 FROM requests R
 									LEFT JOIN products P ON P.id = R.product_id

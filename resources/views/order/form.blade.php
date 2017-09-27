@@ -331,12 +331,12 @@
                         </td>
 
                         <td><br/> <input type='number' name='price[]' id="price"
-                                         class='calculate form-control' min="0.000" step=".001" placeholder="0.000"
+                                         class='calculate form-control fixDecimal' min="0.000" step=".001" placeholder="0.000"
                                          style="width: 85px"
                                          required></td>
                         <td>
                             <br/> <input type='number' name='case_price[]' id="case_price"
-                                         class='calculate form-control' min="0.000" step=".001" placeholder="0.000"
+                                         class='calculate form-control fixDecimal' min="0.000" step=".001" placeholder="0.000"
                                          style="width: 85px"
                                          required></td>
                         <td><br/> <input type='number' name='qty[]' placeholder='0' autocomplete="off"
@@ -352,7 +352,7 @@
                         <input type='hidden' name='order_content_id[]' class="order_content">
 
                         <td><br/><input type="text" name="total" value="" placeholder="0.000" readonly
-                                        class="form-control"/></td>
+                                        class="form-control fixDecimal"/></td>
                         <td align="center" class="remove-container"><br/>
 
                             <p id="hide-button" data-id=""
@@ -391,7 +391,7 @@
                 <td colspan="6" class="text-left"><strong> Subtotal($) </strong></td>
                 <td><input type="text" name="Subtotal"
                            value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
-                           class="form-control"/></td>
+                           class="form-control fixDecimal"/></td>
                 </div>
                 </div>
             </div>

@@ -327,6 +327,17 @@ $('a[data-original-title="Upload Image"]').click(function () {
 	showAction();
 });
 
+$(document).on("blur", "input[name='case_price']", function () {
+	$(this).val($(this).fixDecimal());
+});
+
+$(document).on("blur", "input[name='unit_price']", function () {
+	$(this).val($(this).fixDecimal());
+});
+
+$(document).on("blur", "input[name='retail_price']", function () {
+	$(this).val($(this).fixDecimal());
+});
 </script>
 
 <style>
