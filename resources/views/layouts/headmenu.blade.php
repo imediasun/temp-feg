@@ -23,10 +23,11 @@
                 $cart_value=isset($cart_value)?$cart_value:0;
                 $cartObj = new \App\Http\Controllers\AddtocartController();
                 $cartData = $cartObj->getCartdata(false);
+                $shopping_cart_total = ($cartData['shopping_cart_total'] == '')? '$ 0.000' : '$ '.$cartData['shopping_cart_total'];
             ?>
 
             <li>
-                <span class="notif-alert label label-danger" id="nav_cart_total">$ {{$cartData['shopping_cart_total']}}</span>
+                <span class="notif-alert label label-danger" id="nav_cart_total">{{$shopping_cart_total}}</span>
             </li>
 
             <li>
