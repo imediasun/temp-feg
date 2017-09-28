@@ -227,7 +227,7 @@
 
                         <div class="col-md-8" style="padding-left: 15px !important;">
                             <input  type="text" name="order_total" id="total_cost"
-                                   class="form-control" value="{{ $data['order_total'] }}" maxlength="8"/>
+                                   class="form-control fixDecimal" value="{{ $data['order_total'] }}" maxlength="8"/>
                         </div>
                     </div>
                     
