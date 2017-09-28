@@ -429,7 +429,12 @@
                     htmlVal = 'No Data';
                 }
                 if(cellFormattedValue[0] == '$'){
-                    htmlVal = '$ '+htmlVal;
+                    var val = $.trim(htmlVal);
+                    var num = val.slice(0, (val.indexOf("."))+4);
+                    if(isNaN(num)) {
+                        num = '';
+                    }
+                    htmlVal = '$ '+num;
                 }
                 var cellOriginalHTML = config.originalHtmlValue = htmlVal,
                 cellOriginalDomElements = config.cellOriginalValue = cell.data('original-value-elments');
