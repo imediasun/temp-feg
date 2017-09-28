@@ -1184,5 +1184,5 @@ function getCartTotal()
 }
 
 $(document).ready(function(){
-    getCartTotal();
+    //getCartTotal();
 });
