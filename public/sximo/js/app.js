@@ -1197,5 +1197,5 @@ jQuery.fn.fixDecimal = function(places) {
 };
 
 $(document).ready(function(){
-    getCartTotal();
+    //getCartTotal();
 });
