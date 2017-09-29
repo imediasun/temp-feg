@@ -196,7 +196,8 @@ class inventoryreport extends Sximo  {
             'message' => $message,
             'rows'=> $rows,
             'categories'=> $rawCats,
-            'total' => $total
+            'total' => $total,
+            'excelExcludeFormatting' => ['Unit Price','Case Price','Total Spent']
         );
 
 

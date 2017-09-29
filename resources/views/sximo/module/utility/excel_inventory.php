@@ -330,6 +330,24 @@ $objSheet->getPageSetup()->setFitToHeight(0);
 $objSheet->getPageMargins()->setRight(0.3);
 $objSheet->getPageMargins()->setLeft(0.3);
 
+if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
+{
+	foreach ($cellIterator as $cell) {
+		if(in_array($cell->getValue(),$excelExcludeFormatting))
+		{
+			$serialColumn = $cell->getColumn();
+			//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
+			$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
+			$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . (count($rows)+2));
+
+			$objPHPExcel->getActiveSheet()->getStyle($colString)
+				->getNumberFormat()
+				->setFormatCode(0);
+		}
+	}
+}
+
+
 //$objSheet->protectCells('A1:B1', 'PHP');//password protected
 // Delete temporary file
 unlink($path);
