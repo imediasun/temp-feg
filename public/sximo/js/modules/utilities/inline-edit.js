@@ -403,7 +403,6 @@
    };
 
     window.saveSilentInlineForm = saveSilentInlineForm = function (rowDomId, event, element,actionColumnHidden) {
-        console.log('let debug');
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {
             event.preventDefault();
         }
@@ -425,16 +424,21 @@
                 cellFormattedValue = config.formattedValue = cell.data('format'),
             //cellOriginalHTML = config.originalHtmlValue = cell.data('original-value-html'),
                 htmlVal = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val();//cell.data('original-value-html'),
-                if(htmlVal == '' || htmlVal == '0' || htmlVal == ' -- Select  -- '){
-                    htmlVal = 'No Data';
-                }
+                console.log('dollar value test: '+htmlVal)
+
                 if(cellFormattedValue[0] == '$'){
-                    var val = $.trim(htmlVal);
-                    var num = val.slice(0, (val.indexOf("."))+4);
-                    if(isNaN(num)) {
-                        num = '';
+                    if(htmlVal == '0'){
+                        htmlVal = '$ 0.000';
+                    }else{
+                        var val = $.trim(htmlVal);
+                        var num = val.slice(0, (val.indexOf("."))+4);
+                        if(isNaN(num)) {
+                            num = '';
+                        }
+                        htmlVal = '$ '+num;
                     }
-                    htmlVal = '$ '+num;
+                }else if(htmlVal == '' || htmlVal == '0' || htmlVal == ' -- Select  -- '){
+                    htmlVal = 'No Data';
                 }
                 var cellOriginalHTML = config.originalHtmlValue = htmlVal,
                 cellOriginalDomElements = config.cellOriginalValue = cell.data('original-value-elments');
