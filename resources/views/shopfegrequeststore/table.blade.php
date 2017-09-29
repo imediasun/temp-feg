@@ -294,7 +294,43 @@
         params.data.force['type'] = 'store';
         params.data.force['active_inactive'] = 'active';
         
-    });    
+    });
+
+    console.log('debug me');
+    function calculateUnitPrice(id){
+        var case_price = $('#form-'+id+' input[name = "case_price"]').val();
+        var quantity = $('#form-'+id+' input[name = "num_items"]').val();
+        var unit_price = case_price/quantity;
+        if(quantity != 0 && unit_price != 0) {
+            $('#form-'+id+' input[name = "unit_price"]').val(unit_price);
+            $('#form-'+id+' input[name = "unit_price"]').blur();
+        }
+        else
+        {
+            $('#form-'+id+' input[name = "unit_price"]').val(0.000);
+        }
+
+    }
+
+    $(document).on("blur", "input[name='case_price']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+
+    $(document).on("keyup", "input[name='case_price']", function () {
+        calculateUnitPrice($(this).parents('tr').data('id'));
+    });
+
+    $(document).on("keyup", "input[name='num_items']", function () {
+        calculateUnitPrice($(this).parents('tr').data('id'));
+    });
+
+    $(document).on("blur", "input[name='unit_price']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+
+    $(document).on("blur", "input[name='retail_price']", function () {
+        $(this).val($(this).fixDecimal());
+    });
 </script>
 <style>
     .table th.right {
