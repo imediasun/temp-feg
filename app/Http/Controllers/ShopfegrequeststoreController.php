@@ -414,7 +414,11 @@ class ShopfegrequeststoreController extends Controller
         $total_cart = $this->addToCartModel->totallyRecordInCart();
         if ($current_total_cart == $total_cart[0]->total) {
 
-            $message = \Lang::get('core.already_add_to_cart');
+            $existingQty = \DB::select("SELECT qty FROM requests WHERE product_id = $productId AND request_user_id = ".\Session::get('uid')." AND status_id = 4 AND location_id = ".\Session::get('selected_location'));
+            $newQty = $existingQty[0]->qty + $qty;
+            \DB::update("UPDATE requests SET qty = $newQty WHERE product_id = $productId AND request_user_id = ".\Session::get('uid')." AND status_id = 4 AND location_id = ".\Session::get('selected_location'));
+            $message = \Lang::get('core.add_qty_to_cart');
+
         } else {
             $message = \Lang::get('core.add_to_cart');
         }
