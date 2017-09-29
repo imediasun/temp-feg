@@ -39,7 +39,7 @@ class ProductController extends Controller
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'inactive' => '']);
         $skipFilters = ['search_all_fields'];
         $mergeFilters = [];
         extract($globalSearchFilter); //search_all_fields
@@ -71,8 +71,12 @@ class ProductController extends Controller
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
+        $activeInactive = '';
+        if($inactive != ''){
+            $activeInactive = " AND products.inactive = $inactive";
+        }
 
-        return $filter;
+        return $filter.$activeInactive;
     }
     
     public function getIndex()
