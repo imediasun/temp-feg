@@ -332,6 +332,7 @@ $objSheet->getPageMargins()->setLeft(0.3);
 
 if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
 {
+	dd($endOn);
 	foreach ($cellIterator as $cell) {
 		if(in_array($cell->getValue(),$excelExcludeFormatting))
 		{
