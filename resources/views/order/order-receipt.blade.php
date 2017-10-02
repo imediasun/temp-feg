@@ -93,7 +93,7 @@
                         </table>
 
                         <div class="collapse" id="editItemsPan">
-                            <hr><b><h3>Edit Receipt:</h3></b>
+                            <b><h3>Edit Receipt:</h3></b>
                             <table id="editItemTable" class="display table" cellspacing="0" width="100%">
                                 <thead>
                                 <tr>
@@ -153,7 +153,6 @@
                             <br><hr><br>
                         </div>
 
-                        <br>
 
                         <div class="collapse in" id="receiveItemsPan">
                             <b><h3>Receive Items:</h3></b>
