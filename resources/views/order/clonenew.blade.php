@@ -245,7 +245,7 @@
                 <td class="game"></td>
                 <td> </td>
                 <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
-                <td> <input type="text" name="Subtotal" value="{{ CurrencyHelpers::formatCurrency($data['order_total']) }}" readonly
+                <td> <input type="text" name="Subtotal" value="{{ CurrencyHelpers::formatPrice($data['order_total'],  \App\Models\Order::ORDER_PERCISION) }}" readonly
                             class="form-control"/></td>
 
 

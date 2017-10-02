@@ -48,7 +48,7 @@
                                     !!}</td></tr>
                             <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
-                            <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
+                            <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatPrice($data['order_total'],\App\Models\Order::ORDER_PERCISION ) }}</td></tr>
                             <tr><td><b></b></td> <td> {{--<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button>--}}
                                    <input type='checkbox' name="toggle_trigger" data-handle-width="100px" data-size="mini" data-on-text="Edit Receipt" data-off-text="Receive Items" id="toggle_trigger" onSwitchChange="trigger()" /> </td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
@@ -106,7 +106,7 @@
                                     <th>Qty</th>
                                     <th>Received Qty</th>
                                     {{--<th>Update Qty</th>--}}
-                                    <th>Qty</th>
+                                    <th>Edit Received Qty</th>
                                     <th>Total($)</th>
                                 </tr>
                                 </thead>
@@ -125,8 +125,8 @@
                                             @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)
                                                 <td> {{ $order_item->game_name }}</td>
                                             @endif
-                                            <td>{{CurrencyHelpers::formatCurrency(number_format($order_item->price , \App\Models\Order::ORDER_PERCISION)) }}</td>
-                                            <td> {{ CurrencyHelpers::formatCurrency( number_format( $order_item->case_price , \App\Models\Order::ORDER_PERCISION)) }}</td>
+                                            <td>{{CurrencyHelpers::formatPrice($order_item->price , \App\Models\Order::ORDER_PERCISION) }}</td>
+                                            <td> {{ CurrencyHelpers::formatPrice($order_item->case_price , \App\Models\Order::ORDER_PERCISION) }}</td>
 
                                             <td>{{ $order_item->qty }}
                                                 <input type="hidden" name="updateOrigQty[]" value="{{$order_item->qty}}">
@@ -142,7 +142,7 @@
                                             <td>
                                                 <input type="number" class="updateQtyInput parsley-validated" id="updateItemText{{ $order_item->id }}" name="updateQty[]" value="{{$order_item->item_received}}" max="{!! $order_item->qty !!}" min="0" />
                                             </td>
-                                            <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
+                                            <td> {{CurrencyHelpers::formatPrice($order_item->total,\App\Models\Order::ORDER_PERCISION) }}
                                             </td>
 
                                         </tr>
@@ -187,8 +187,8 @@
                                         @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)
                                         <td> {{ $order_item->game_name }}</td>
                                         @endif
-                                        <td>{{CurrencyHelpers::formatCurrency(number_format($order_item->price , \App\Models\Order::ORDER_PERCISION)) }}</td>
-                                        <td> {{ CurrencyHelpers::formatCurrency( number_format( $order_item->case_price , \App\Models\Order::ORDER_PERCISION)) }}</td>
+                                        <td>{{CurrencyHelpers::formatPrice( $order_item->price , \App\Models\Order::ORDER_PERCISION) }}</td>
+                                        <td> {{ CurrencyHelpers::formatPrice( $order_item->case_price , \App\Models\Order::ORDER_PERCISION) }}</td>
 
                                         <td>{{ $order_item->qty }}</td>
                                         <td>
@@ -202,7 +202,7 @@
                                         <td>
                                             <input type="number"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" max="{!! $order_item->qty - $order_item->item_received !!}" min="0" readonly="readonly" />
                                         </td>
-                                      <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
+                                      <td> {{CurrencyHelpers::formatPrice( $order_item->total,\App\Models\Order::ORDER_PERCISION) }}
                                         </td>
 
                             </tr>
