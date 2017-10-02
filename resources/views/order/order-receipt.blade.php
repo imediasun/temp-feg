@@ -106,7 +106,7 @@
                                     <th>Qty</th>
                                     <th>Received Qty</th>
                                     {{--<th>Update Qty</th>--}}
-                                    <th>Qty</th>
+                                    <th>Edit Received Qty</th>
                                     <th>Total($)</th>
                                 </tr>
                                 </thead>
