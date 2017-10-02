@@ -108,8 +108,8 @@ class productusagereport extends Sximo  {
                 $date_end_stamp = $t;
             }
             $mainQuery = "select OCID,id,orderId,sku,num_items,Order_Type,Product_Type,Product_Sub_Type,ticket_value,
-            (select price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId) as Unit_Price,
-            (select case_price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId) as Case_Price,
+            (select price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId limit 1) as Unit_Price,
+            (select case_price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId limit 1) as Case_Price,
             Cases_Ordered,vendor_name,Product,Case_Price_Group,Total_Spent,location_id,start_date,end_date from (
             
             SELECT max(OCID) as OCID,
