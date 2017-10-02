@@ -114,10 +114,10 @@ class productusagereport extends Sximo  {
             GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
             GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
-            ,(select price from order_contents OC where OC.order_id = max(orderId) order by OC.id desc limit 1) as Unit_Price,
+            ,(select price from order_contents OC where OC.order_id = max(orderId) and OC.product_id = max(id) order by OC.id desc limit 1) as Unit_Price,
             SUM(qty) AS Cases_Ordered,
             IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
-            (select case_price from order_contents OC where OC.order_id = max(orderId) order by OC.id desc limit 1) as Case_Price,TRUNCATE((SUM(TRUNCATE(total, 3))),3) AS Total_Spent,location_id,start_date,end_date
+            (select case_price from order_contents OC where OC.order_id = max(orderId) and OC.product_id = max(id) order by OC.id desc limit 1) as Case_Price,TRUNCATE((SUM(TRUNCATE(total, 3))),3) AS Total_Spent,location_id,start_date,end_date
              FROM (
             Select O.id as orderId,
                    P.id,
