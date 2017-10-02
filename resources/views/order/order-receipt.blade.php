@@ -529,6 +529,7 @@
                 //$('#update_receipt_btn').toggle();
                 //$('#submit_btn').toggle();
                 $('#editItemsPan').toggle();
+                $('#receiveItemsPan').toggle();
                 if($('#toggle_trigger').is(":checked")){
                     $('#mode').val('update');
                     //$('#receiveItemsPan').collapse('hide');
