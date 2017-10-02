@@ -338,7 +338,7 @@ if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
 			$serialColumn = $cell->getColumn();
 			//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
 			$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
-			$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . (count($rows)+2));
+			$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . $endOn);
 
 			$objPHPExcel->getActiveSheet()->getStyle($colString)
 				->getNumberFormat()
