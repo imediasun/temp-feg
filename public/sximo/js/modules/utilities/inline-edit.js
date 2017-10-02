@@ -431,7 +431,16 @@
                         htmlVal = '$ 0.000';
                     }else{
                         var val = $.trim(htmlVal);
-                        var num = val.slice(0, (val.indexOf("."))+4);
+                        var vals = val.split('.'), before = vals[1];
+
+                        if(before === undefined){
+                            before = '0';
+                        }else{
+                            before = vals[1];
+                        }
+                        before = before + '0000';
+                        var num = vals[0]+'.'+before.substr(0,3);
+
                         if(isNaN(num)) {
                             num = '';
                         }
