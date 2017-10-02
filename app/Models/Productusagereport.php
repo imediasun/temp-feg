@@ -108,19 +108,20 @@ class productusagereport extends Sximo  {
                 $date_end_stamp = $t;
             }
             $mainQuery = "
-            SELECT 
+            SELECT max(OCID) as OCID,
             max(id) as id,GROUP_CONCAT(DISTINCT orderId) as orderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
             GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
             GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
-            ,Unit_Price,
+            ,(select price from order_contents OC where OC.id = max(OCId)) as Unit_Price,
             SUM(qty) AS Cases_Ordered,
             IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
-            Case_Price,CAST((SUM(total)) AS DECIMAL(12,5)) AS Total_Spent,location_id,start_date,end_date
+            (select case_price from order_contents OC where OC.id = max(OCId)) as Case_Price,TRUNCATE((SUM(TRUNCATE(total, 3))),3) AS Total_Spent,location_id,start_date,end_date
              FROM (
             Select O.id as orderId,
                    P.id,
+                   OC.id as OCID,
                    P.sku,
                    V.vendor_name as vendor_name,
                    OC.item_name AS Product,
@@ -175,7 +176,7 @@ class productusagereport extends Sximo  {
             $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
 
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
-                ' ORDER BY V.vendor_name, P.prod_type_id, P.vendor_description ';
+                ' ORDER BY vendor_name, Product_Type ';
 
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $orderConditional $limitConditional";
             \Log::info("Product Usage final Data query \n ".$finalDataQuery);
