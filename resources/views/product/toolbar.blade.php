@@ -5,7 +5,7 @@
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
             <option value="select" data-active="0" selected>------------ Select Type --------------</option>
-            <option value="advancereplacement" data-active="0">Advanced Replacement</option>
+            <option value="advancereplacement" data-active="0">Advance Replacement</option>
             <option value="debitcards" data-active="0">Debit Cards</option>
             <option value="graphics" data-active="0">Graphics</option>
             <option value="instant" data-active="0">Instant Win Prizes</option>
