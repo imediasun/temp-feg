@@ -113,28 +113,16 @@
                         </label>
 
                         <div class="col-md-6">
-                            @if(empty($row['id']))
-                            <select name='prod_type_id[]' rows='5' id='prod_type_id'
-                                    required='required' multiple>
-                                @foreach(\DB::table('order_type')->where('can_request',1)->get() as $type )
-                                    <optgroup label="{{$type->order_type}}" id="prod_type_id-{{$type->id}}">
-                                        <option value="{{$type->id}}_0">{{$type->order_type}} </option>
-                                        @foreach(\DB::table('product_type')->where('request_type_id',$type->id)->get() as $subType)
-                                            <option value="{{$type->id}}_{{$subType->id}}">{{$subType->type_description}}</option>
-                                        @endforeach
-                                    </optgroup>
-                                @endforeach
-                            </select>
-                            @else
-                            <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 '
+
+                            <select name='prod_type_id' rows='5' id='prod_type_id_1' class='select2 '
                                     required='required'></select>
-                            @endif
+
                         </div>
                         <div class="col-md-2">
 
                         </div>
                     </div>
-                    @if(!empty($row['id']))
+
                     <div class="form-group  ">
                         <label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Product Subtype',
@@ -143,7 +131,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2 '></select>
+                            <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id_1' class='select2 '></select>
                         </div>
                         <div class="col-md-2">
 
@@ -154,13 +142,15 @@
                             {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('expense_category', $row['expense_category'],array('class'=>'form-control', 'placeholder'=>'','parsley-type'=>"number", 'required'=>'true', 'id'=>'expense_category'  )) !!}
+                            <input class="form-control" placeholder="" parsley-type="number" required="required" id="expense_category_1" name="expense_category[]" type="text" value="{{$row['expense_category']}}">
                         </div>
                         <div class="col-md-2">
                         </div>
                     </div>
-                    @endif
+                    <span id="more_types_container">
 
+                    </span>
+                    <a id="add_more_types" class="btn btn-primary">Add More</a>
                     <div class="form-group  ">
                         <label for="SKU" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('SKU', (isset($fields['sku']['language'])?
@@ -391,7 +381,9 @@
 
 //
 <script type="text/javascript">
+    var types_counter = 1;
     $(document).ready(function () {
+
         numberFieldValidationChecks($("#qty_input"));
         var form = $('#productFormAjax');
 
@@ -400,29 +392,24 @@
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue'
         });
-        @if(empty($row['id']))
-            $("#prod_type_id").multiselect({
-            enableFiltering: true,
-            enableCaseInsensitiveFiltering: true
-        });
-        @else
-            $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
+
+            $("#prod_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
             {selected_value: '{{ $row["prod_type_id"] }}'});
-        @endif
+
         renderDropdown($(".select2"), {width: "100%"});
         if('{{ $row["prod_type_id"] }}')
         {
-            $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
+            $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
         }
-        $("#prod_type_id").click(function () {
-            $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id').val()+"",
+        $("#prod_type_id_1").click(function () {
+            $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id_1').val()+"",
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
             if($(this).val()) {
                 //need to uncomment after discussion
-                getExpenseCategory($(this).val());
+                getExpenseCategory($(this).val(),null,1);
             }
-            if($('#prod_type_id').val() == 1 || $('#prod_type_id').val() == 4 || $('#prod_type_id').val() == 20)
+            if($('#prod_type_id_1').val() == 1 || $('#prod_type_id_1').val() == 4 || $('#prod_type_id_1').val() == 20)
             {
                 form.parsley().destroy();
                 $('input[name="sku"]').removeAttr('required');
@@ -454,10 +441,10 @@
                 $("#ticket_value").removeAttr('required');
             }
         });
-        $("#prod_sub_type_id").click(function () {
+        $("#prod_sub_type_id_1").click(function () {
             if($(this).val()) {
                 //need to uncomment after discussion
-                //getExpenseCategory($("#prod_type_id").val(),$(this).val());
+                //getExpenseCategory($("#prod_type_id_1").val(),$(this).val(),1);
             }
         });
 
@@ -543,12 +530,12 @@
             $('#unit_price_input').val(0.000);
         }
     });
-    $("#prod_type_id").click(function () {
+    $("#prod_type_id_1").click(function () {
 
     });
-    function getExpenseCategory(order_type_id,product_type_id)
+    function getExpenseCategory(order_type_id,product_type_id,count)
     {
-        $("#expense_category").val('');
+        $("#expense_category_"+count).val('');
         if(product_type_id === null)
         {
             product_type_id="";
@@ -556,10 +543,52 @@
         $.get('product/expense-category',{'order_type':order_type_id,'product_type':product_type_id},function(data){
             if(data.expense_category)
             {
-                $("#expense_category").val(data.expense_category);
+                $("#expense_category_"+count).val(data.expense_category);
             }
         },'json');
     }
+
+
+    $("#add_more_types").click(function () {
+        types_counter++;
+        var more_types_html = '<span id="remove_me_'+types_counter+'" style="border:1px solid black;float: left;width: 100%;margin: 10px 0;padding-top: 10px;margin-left: -10px;padding-left: 10px;"><div class="form-group  "> ' +
+                '<label for="Prod Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Type", (isset($fields["prod_type_id"]["language"])? $fields["prod_type_id"]["language"] : array())) !!}</label> ' +
+                '<div class="col-md-6"> <select name="prod_type_id[]" rows="5" id="prod_type_id_'+types_counter+'" class="select2 "required="required"></select>' +
+                ' </div> <div class="col-md-2"> </div> </div> <div class="form-group  "> ' +
+                '<label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Subtype",(isset($fields["prod_sub_type_id"]["language"])? $fields["prod_sub_type_id"]["language"] : array())) !!} </label>' +
+                ' <div class="col-md-6"> <select name="prod_sub_type_id[]" rows="5" id="prod_sub_type_id_'+types_counter+'" class="select2 "></select>' +
+                ' </div> <div class="col-md-2"> </div> </div> ' +
+                '<div class="form-group"> <label for="Expense Category" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Expense Category", (isset($fields["expense_category"]["language"])? $fields["expense_category"]["language"] : array())) !!}</label> ' +
+                '<div class="col-md-6"><input class="form-control" placeholder="" parsley-type="number" required="true" id="expense_category_'+types_counter+'" name="expense_category[]" type="text" value=""> ' +
+                '</div> <div class="col-md-2"><button data-count="'+types_counter+'" class="remove_me">Remove this '+(types_counter-1)+'</button> </div> </div></span>';
+        console.log(more_types_html);
+        $("#more_types_container").append(more_types_html);
+
+        $("#prod_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}");
+
+        renderDropdown($(".select2"), {width: "100%"});
+        console.log('debug');
+        console.log(types_counter);
+        $("#prod_type_id_"+types_counter).on('click',function () {
+            $("#prod_sub_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id_'+types_counter).val()+"");
+            if($(this).val()) {
+                //need to uncomment after discussion
+                getExpenseCategory($(this).val(),null,types_counter);
+            }
+        });
+        $("#prod_sub_type_id_"+types_counter).on('click',function () {
+            if($(this).val()) {
+                //need to uncomment after discussion
+                //getExpenseCategory($("#prod_type_id_"+types_counter).val(),$(this).val(),types_counter);
+            }
+        });
+    });
+    $(document).on('click',".remove_me",function(){
+        count = $(this).attr('data-count');
+        count = "#remove_me_"+count;
+        console.log(count);
+        $(count).remove();
+    });
 </script>
 <style>
     /*
