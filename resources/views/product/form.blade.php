@@ -149,6 +149,8 @@
 
                         </div>
                     </div>
+                    @endif
+
                     <div class="form-group">
                         <label for="Expense Category" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
@@ -160,7 +162,6 @@
                         <div class="col-md-2">
                         </div>
                     </div>
-                    @endif
 
                     <div class="form-group  ">
                         <label for="SKU" class=" control-label col-md-4 text-left">
