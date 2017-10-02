@@ -13,6 +13,10 @@
         .dataTables_info{
             float: left !important;
         }
+        .bootstrap-switch{
+            float: right;
+            margin-top: 15px;
+        }
     </style>
     <div class="page-content row">
     <div class="page-header">
@@ -45,8 +49,8 @@
                             <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
                             <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
-                            <tr><td><b>Edit Receipt:</b></td> <td> {{--<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button>--}}
-                                   <input type='checkbox' name="toggle_trigger" data-handle-width="100px" data-size="mini" data-on-text="Active" data-off-text="Inactive" id="toggle_trigger" onSwitchChange="trigger()" style="float: right;margin-top: 19px;" /> </td></tr>
+                            <tr><td><b></b></td> <td> {{--<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button>--}}
+                                   <input type='checkbox' name="toggle_trigger" data-handle-width="100px" data-size="mini" data-on-text="Edit Receipt" data-off-text="Receive Items" id="toggle_trigger" onSwitchChange="trigger()" /> </td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
