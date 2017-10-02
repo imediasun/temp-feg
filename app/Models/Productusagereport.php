@@ -107,17 +107,21 @@ class productusagereport extends Sximo  {
                 $date_start_stamp = $date_end_stamp;
                 $date_end_stamp = $t;
             }
-            $mainQuery = "
+            $mainQuery = "select OCID,id,orderId,sku,num_items,Order_Type,Product_Type,Product_Sub_Type,ticket_value,
+            (select price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId) as Unit_Price,
+            (select case_price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId) as Case_Price,
+            Cases_Ordered,vendor_name,Product,Case_Price_Group,Total_Spent,location_id,start_date,end_date from (
+            
             SELECT max(OCID) as OCID,
-            max(id) as id,GROUP_CONCAT(DISTINCT orderId) as orderId, max(sku) as sku, max(num_items) as num_items,
+            max(id) as id,GROUP_CONCAT(DISTINCT orderId) as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
             GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
             GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
-            ,(select price from order_contents OC where OC.order_id = max(orderId) and OC.product_id = max(id) order by OC.id desc limit 1) as Unit_Price,
+            , Unit_Price,
             SUM(qty) AS Cases_Ordered,
             IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
-            (select case_price from order_contents OC where OC.order_id = max(orderId) and OC.product_id = max(id) order by OC.id desc limit 1) as Case_Price,TRUNCATE((SUM(TRUNCATE(total, 3))),3) AS Total_Spent,location_id,start_date,end_date
+            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 3))),3) AS Total_Spent,location_id,start_date,end_date
              FROM (
             Select O.id as orderId,
                    P.id,
@@ -140,6 +144,7 @@ class productusagereport extends Sximo  {
 				   O.date_ordered AS end_date 
                         ";
             $mainQueryEnd  = " ) AS t ";
+            $mainQueryEnd2  = " ) AS m ";
 
             $fromQuery = " FROM order_contents OC 
                            JOIN orders O ON O.id = OC.order_id 
@@ -163,7 +168,7 @@ class productusagereport extends Sximo  {
             $groupQuery = " GROUP BY Product ";
 //            $groupQuery = " GROUP BY P.id ";
 
-            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery";
+            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $mainQueryEnd2";
             $totalRows = \DB::select($finalTotalQuery);
             if (!empty($totalRows)) {
                 $total = count($totalRows);
@@ -178,7 +183,7 @@ class productusagereport extends Sximo  {
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
                 ' ORDER BY vendor_name, Product_Type ';
 
-            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $orderConditional $limitConditional";
+            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $mainQueryEnd2 $orderConditional $limitConditional";
             \Log::info("Product Usage final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
             $rows = self::processRows($rawRows);
