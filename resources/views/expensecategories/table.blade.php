@@ -22,6 +22,10 @@
                 </div>                        
             @endforeach		
             {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
+				<div class="sscol-submit col-md-3 col-sm-3" style="margin-top: 4px;"><br>
+				<input type='checkbox' name="filter_trigger" data-size="mini" data-handle-width="40px" data-on-text="ON" data-off-text="OFF" id="filter_trigger" onSwitchChange="trigger()" />
+				<span>&nbsp; Display Product Types Only</span>
+				</div>
         </div>
         @endif
         @endif
@@ -261,6 +265,17 @@ $(document).ready(function() {
 			}
 		});
 
+	});
+
+	$('#filter_trigger').iCheck('destroy');
+	$("#filter_trigger").bootstrapSwitch('state',{{\Session::get('filter_toggle')}});
+	$("#filter_trigger").on('switchChange.bootstrapSwitch', function(event, state) {
+		console.log(state);
+		if(state){
+			reloadData('#{{ $pageModule }}','expensecategories/data?display_filter=yes&return={{ $return }}');
+		}else{
+			reloadData('#{{ $pageModule }}','expensecategories/data?display_filter=no&return={{ $return }}');
+		}
 	});
 });
 </script>

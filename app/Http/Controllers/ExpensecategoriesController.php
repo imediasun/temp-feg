@@ -63,10 +63,20 @@ class ExpensecategoriesController extends Controller {
         }
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+		if(!is_null($request->input('display_filter'))){
+			if($request->input('display_filter') == 'yes'){
+				\Session::put('filter_toggle', true);
+			}else if($request->input('display_filter') == 'no'){
+				\Session::put('filter_toggle', false);
+			}
+		}
 		// End Filter sort and order for query
 		// Filter Search for query
 		//$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 		$filter = $this->getSearchFilterQuery();
+		if(\Session::get('filter_toggle')){
+			$filter = $filter." AND expense_category_mapping.order_type IS NOT NULL AND expense_category_mapping.product_type IS NULL ";
+		}
 
 		$page = $request->input('page', 1);
 		$params = array(
@@ -79,6 +89,21 @@ class ExpensecategoriesController extends Controller {
 		);
 		// Get Query
 		$results = $this->model->getRows( $params );
+
+		//Filter results
+		if(\Session::get('filter_toggle') == 'true'){
+			$results['rows'] = array_map(function($row){
+				unset($row->product_type);
+				return $row;
+			},$results['rows']);
+
+			$this->info['config']['grid'] = array_map(function($row){
+				if($row['field'] != 'product_type'){
+					return $row;
+				}
+			},$this->info['config']['grid']);
+		}
+
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
@@ -96,6 +121,9 @@ class ExpensecategoriesController extends Controller {
 		$this->data['pagination']	= $pagination;
 		// Build pager number and append current param GET
 		$this->data['pager'] 		= $this->injectPaginate();
+		if(\Session::get('filter_toggle') == 'true'){
+			$this->data['pager'] = ['display_filter' => 'yes'];
+		}
 		// Row grid Number
 		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
 		// Grid Configuration
@@ -112,7 +140,8 @@ class ExpensecategoriesController extends Controller {
         if ($this->data['config_id'] != 0 && !empty($config)) {
         $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
-// Render into template
+		//dd($this->data);
+		// Render into template
 		return view('expensecategories.table',$this->data);
 
 	}
@@ -268,10 +297,7 @@ class ExpensecategoriesController extends Controller {
 				'message'=> "Expense category has been updated successfully!"
 			));
 
-
-
 		} else {
-
 			$message = $this->validateListError(  $validator->getMessageBag()->toArray() );
 			return response()->json(array(
 				'message'	=> $message,
@@ -344,11 +370,11 @@ class ExpensecategoriesController extends Controller {
 		\DB::delete("DELETE FROM expense_category_mapping WHERE mapped_expense_category = 0");
 		echo "<H4>ALL UNUSED MAPPED CATEGORIES(0) DELETED AND RECREATED</H4>";
 		$order_types = \DB::select("SELECT * FROM order_type");
-		$product_types = \DB::select("SELECT * FROM product_type");
 
 		$order_type_logs = '';
 		$combined_type_logs = '';
-		//Process one
+
+		//Process One///////////
 		foreach ($order_types as $key => $order_type){
 			$expense = '0';
 			$check = \DB::select("SELECT mapped_expense_category FROM expense_category_mapping WHERE order_type = $order_type->id AND product_type IS NULL");
@@ -360,7 +386,8 @@ class ExpensecategoriesController extends Controller {
 				$order_type_logs .= "Entry for order_type: <b>$order_type->id</b> with expense_category = $expense is <b style='background-color:#fd9c9c'>already exist</b><br>";
 			}
 
-			//Process two
+			//Process Two//////////
+			$product_types = \DB::select("SELECT * FROM product_type WHERE request_type_id = $order_type->id");
 			foreach ($product_types as $key => $product_type){
 				$checkCombined = \DB::select("SELECT mapped_expense_category FROM expense_category_mapping WHERE order_type = $order_type->id AND product_type = $product_type->id");
 				if(empty($checkCombined)){
