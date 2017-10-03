@@ -1,3 +1,4 @@
+
 /*
  *
  *   Sximo Builder  - PHP WEB GENERATOR
@@ -50,6 +51,10 @@ h3,h4,h5 {
   font-weight: 500;
   font-size:11px;
   padding: 14px 20px 14px 25px;
+}
+.middle-box .nav > li > a
+{
+  font-size:10px;
 }
 .nav.navbar-right > li > a {
   color: #999c9e;
@@ -1240,11 +1245,16 @@ body.body-small .footer.fixed {
   background: #1ab394;
   border-color: #1ab394 #1ab394 rgba(0, 0, 0, 0);
   border-bottom: #1ab394;
-  border-image: none; font-weight:600;
+  border-image: none;
+  font-weight:600;
   border-style: solid;
   border-width: 1px;
   color: #ffffff;
   cursor: default;
+}
+.middle-box .nav-tabs > li.active > a, .middle-box .nav-tabs > li.active > a:hover, .middle-box .nav-tabs > li.active > a:focus
+{
+  font-size: 10px;
 }
 .nav.nav-tabs li {
   background: none;
@@ -1256,7 +1266,16 @@ border-radius:0;
   color: #A7B5C2;
   font-weight: 500;
   background-color: #e6e6e6;
-  padding: 5px 15px 5px 20px;
+  padding: 5px 15px;
+  text-align: center;
+}
+.middle-box .nav-tabs > li > a {
+  padding: 5px 0;
+}
+.no-padding
+{
+  padding: 0;
+  margin: 0;
 }
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus {
@@ -3294,7 +3313,6 @@ position: relative;
   margin-bottom: 5px;
 }
 
-
 .c-margin .col-md-12 select,
 .c-margin .col-md-11 select,
 .c-margin .col-md-10 select,
@@ -3463,3 +3481,6 @@ span.order_custom_error ~ ul.parsley-error-list
   font-weight: bold;
 }
 
+.btn:focus {
+    color: inherit !important;
+}

@@ -18,7 +18,8 @@ return array(
 	"conewpassword" => "Confirm Password",
 	"notepassword" => "Leave blank if you don't want to change current password", // updated apidevlab	
 	"submit" => "Submit",
-	"signin" => "Sign In",
+	"signin" => "Partner Login",
+	"social" => "Social Login",
 	"signup" => "Sign Up",
 	"language" => "Language",	
 	"firstname" => "First Name",
