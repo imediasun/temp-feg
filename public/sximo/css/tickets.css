@@ -95,6 +95,7 @@ font-size: 12px;
 line-height: 12px;
 margin: 0 5px 5px;
 padding: 2px 5px;
+white-space: normal;
 }
 .headerTitleContainer h2 {
     margin: 5px 0 5px;
