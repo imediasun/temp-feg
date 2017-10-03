@@ -165,7 +165,7 @@ class productusagereport extends Sximo  {
                             AND requests.process_date <= '$date_end'
                              $whereLocation $whereVendor $whereOrderType $whereProdType ";*/
 
-            $groupQuery = " GROUP BY Product ";
+            $groupQuery = " GROUP BY Product , sku";
 //            $groupQuery = " GROUP BY P.id ";
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $mainQueryEnd2";
