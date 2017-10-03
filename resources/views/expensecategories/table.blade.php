@@ -268,13 +268,13 @@ $(document).ready(function() {
 	});
 
 	$('#filter_trigger').iCheck('destroy');
-	$("#filter_trigger").bootstrapSwitch('state',{{$filter_toggle}});
+	$("#filter_trigger").bootstrapSwitch('state',{{\Session::get('filter_toggle')}});
 	$("#filter_trigger").on('switchChange.bootstrapSwitch', function(event, state) {
 		console.log(state);
 		if(state){
 			reloadData('#{{ $pageModule }}','expensecategories/data?display_filter=yes&return={{ $return }}');
 		}else{
-			reloadData('#{{ $pageModule }}','expensecategories/data?return={{ $return }}');
+			reloadData('#{{ $pageModule }}','expensecategories/data?display_filter=no&return={{ $return }}');
 		}
 	});
 });

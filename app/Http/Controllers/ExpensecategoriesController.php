@@ -63,15 +63,19 @@ class ExpensecategoriesController extends Controller {
         }
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+		if(!is_null($request->input('display_filter'))){
+			if($request->input('display_filter') == 'yes'){
+				\Session::put('filter_toggle', true);
+			}else if($request->input('display_filter') == 'no'){
+				\Session::put('filter_toggle', false);
+			}
+		}
 		// End Filter sort and order for query
 		// Filter Search for query
 		//$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 		$filter = $this->getSearchFilterQuery();
-		if(!is_null($request->input('display_filter')) && $request->input('display_filter') == 'yes'){
+		if(\Session::get('filter_toggle')){
 			$filter = $filter." AND expense_category_mapping.order_type IS NOT NULL AND expense_category_mapping.product_type IS NULL ";
-			$this->data['filter_toggle'] = 'true';
-		}else{
-			$this->data['filter_toggle'] = 'false';
 		}
 
 		$page = $request->input('page', 1);
@@ -87,7 +91,7 @@ class ExpensecategoriesController extends Controller {
 		$results = $this->model->getRows( $params );
 
 		//Filter results
-		if($this->data['filter_toggle'] == 'true'){
+		if(\Session::get('filter_toggle') == 'true'){
 			$results['rows'] = array_map(function($row){
 				unset($row->product_type);
 				return $row;
@@ -117,6 +121,9 @@ class ExpensecategoriesController extends Controller {
 		$this->data['pagination']	= $pagination;
 		// Build pager number and append current param GET
 		$this->data['pager'] 		= $this->injectPaginate();
+		if(\Session::get('filter_toggle') == 'true'){
+			$this->data['pager'] = ['display_filter' => 'yes'];
+		}
 		// Row grid Number
 		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
 		// Grid Configuration
@@ -133,6 +140,7 @@ class ExpensecategoriesController extends Controller {
         if ($this->data['config_id'] != 0 && !empty($config)) {
         $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
+		//dd($this->data);
 		// Render into template
 		return view('expensecategories.table',$this->data);
 
