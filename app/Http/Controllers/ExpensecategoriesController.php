@@ -297,10 +297,7 @@ class ExpensecategoriesController extends Controller {
 				'message'=> "Expense category has been updated successfully!"
 			));
 
-
-
 		} else {
-
 			$message = $this->validateListError(  $validator->getMessageBag()->toArray() );
 			return response()->json(array(
 				'message'	=> $message,
@@ -373,11 +370,11 @@ class ExpensecategoriesController extends Controller {
 		\DB::delete("DELETE FROM expense_category_mapping WHERE mapped_expense_category = 0");
 		echo "<H4>ALL UNUSED MAPPED CATEGORIES(0) DELETED AND RECREATED</H4>";
 		$order_types = \DB::select("SELECT * FROM order_type");
-		$product_types = \DB::select("SELECT * FROM product_type");
 
 		$order_type_logs = '';
 		$combined_type_logs = '';
-		//Process one
+
+		//Process One///////////
 		foreach ($order_types as $key => $order_type){
 			$expense = '0';
 			$check = \DB::select("SELECT mapped_expense_category FROM expense_category_mapping WHERE order_type = $order_type->id AND product_type IS NULL");
@@ -389,7 +386,8 @@ class ExpensecategoriesController extends Controller {
 				$order_type_logs .= "Entry for order_type: <b>$order_type->id</b> with expense_category = $expense is <b style='background-color:#fd9c9c'>already exist</b><br>";
 			}
 
-			//Process two
+			//Process Two//////////
+			$product_types = \DB::select("SELECT * FROM product_type WHERE request_type_id = $order_type->id");
 			foreach ($product_types as $key => $product_type){
 				$checkCombined = \DB::select("SELECT mapped_expense_category FROM expense_category_mapping WHERE order_type = $order_type->id AND product_type = $product_type->id");
 				if(empty($checkCombined)){
