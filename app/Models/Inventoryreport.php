@@ -157,8 +157,8 @@ class inventoryreport extends Sximo  {
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
             // both group by quires are same
-            $groupQuery = " GROUP BY OC.item_name,OC.case_price ";
-            $groupQuery2 = " GROUP BY Product,Case_Price ";
+            $groupQuery = " GROUP BY OC.item_name,OC.case_price,O.order_type_id ";
+            $groupQuery2 = " GROUP BY Product,Case_Price,Order_Type ";
 
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
