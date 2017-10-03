@@ -67,6 +67,12 @@ class ExpensecategoriesController extends Controller {
 		// Filter Search for query
 		//$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 		$filter = $this->getSearchFilterQuery();
+		if(!is_null($request->input('display_filter')) && $request->input('display_filter') == 'yes'){
+			$filter = $filter." AND expense_category_mapping.order_type IS NOT NULL AND expense_category_mapping.product_type IS NULL ";
+			$this->data['filter_toggle'] = 'true';
+		}else{
+			$this->data['filter_toggle'] = 'false';
+		}
 
 		$page = $request->input('page', 1);
 		$params = array(
@@ -79,6 +85,21 @@ class ExpensecategoriesController extends Controller {
 		);
 		// Get Query
 		$results = $this->model->getRows( $params );
+
+		//Filter results
+		if($this->data['filter_toggle'] == 'true'){
+			$results['rows'] = array_map(function($row){
+				unset($row->product_type);
+				return $row;
+			},$results['rows']);
+
+			$this->info['config']['grid'] = array_map(function($row){
+				if($row['field'] != 'product_type'){
+					return $row;
+				}
+			},$this->info['config']['grid']);
+		}
+
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
@@ -112,7 +133,7 @@ class ExpensecategoriesController extends Controller {
         if ($this->data['config_id'] != 0 && !empty($config)) {
         $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
-// Render into template
+		// Render into template
 		return view('expensecategories.table',$this->data);
 
 	}
