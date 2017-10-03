@@ -877,7 +877,7 @@ class MylocationgameController extends Controller
         $filterQuery = empty($request['footerfiters']) ? '' : $request['footerfiters'];
         parse_str(@$request['footerfiters'], $querystring);
         $searchQuery = empty($querystring['search']) ? null : $querystring['search'];
-        $filter = $this->getSearchFilterQuery($searchQuery);
+        $filter = $this->getSearchFilterQuery($searchQuery, true);
         $q = "SELECT id from game WHERE id IS NOT NULL $filter";
         $data = \DB::select($q);
         $assets = [];
