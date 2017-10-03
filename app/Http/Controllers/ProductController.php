@@ -290,48 +290,48 @@ class ProductController extends Controller
         if ($validator->passes()) {
             if ($id == 0) {
                 $data = $this->validatePost('products');
-                $data['netsuite_description'] = "$id...".$data['vendor_description'];
-                foreach ($product_categories as $category)
-                {
-                    $data['retail_price'] = $retail_price;
-                    $category = explode('_',$category);
-                    $data['prod_type_id'] = $category[0];
-                    $data['prod_sub_type_id'] = $category[1];
-                    $myRequest = new Request();
-                    $myRequest->merge(['order_type'=>$category[0],'product_type'=>$category[1]]);
-                    $expence_cat = $this->getExpenseCategory($myRequest);
-                    $expence_cat = json_decode($expence_cat);
-                    $data['expense_category'] = $expence_cat->expense_category == NULL ? 0 :$expence_cat->expense_category;
-                    /*
-                     * commented as per Gabe request on 9/13/2017
-                    if($data['prod_type_id'] != 8){
-                        $data['retail_price'] = 0.000;
-                    }*/
-                    $id = $this->model->insertRow($data, $request->input('id'));
-                }
-            } else {
-
+            }
+            else {
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
-                $data['netsuite_description'] = "$id...".$data['vendor_description'];
-                $data['retail_price']=$retail_price;
-                $id = $this->model->insertRow($data, $id);
             }
-            /*
-			$updates = array();
-            if ($request->hasFile('img')) {
-                $file = $request->file('img');
-                $destinationPath = './uploads/products/';
-                $filename = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-                $newfilename = $id . '.' . $extension;
-                $uploadSuccess = $file->move($destinationPath, $newfilename);
-                if ($uploadSuccess) {
-                    $updates['img'] = $newfilename;
+
+            $data['netsuite_description'] = "$id...".$data['vendor_description'];
+            $ids = [];
+            foreach ($product_categories as $key =>$category)
+            {
+                $data['retail_price'] = isset($retail_price[$key])?$retail_price[$key]:0;
+                $data['ticket_value'] = isset($data['ticket_value'][$key])?$data['ticket_value'][$key]:0;
+                $data['prod_type_id'] = $category;
+                $data['prod_sub_type_id'] = isset($data['prod_sub_type_id'][$key])?$data['prod_sub_type_id'][$key]:0;
+                $data['expense_category'] = isset($data['expense_category'][$key])?$data['expense_category'][$key]:0;
+                /*
+                 * commented as per Gabe request on 9/13/2017
+                if($data['prod_type_id'] != 8){
+                    $data['retail_price'] = 0.000;
+                }*/
+                $ids[] = $this->model->insertRow($data, $id);
+            }
+            foreach ($ids as $id)
+            {
+                $updates = array();
+                $updates['netsuite_description'] = "$id...".$data['vendor_description'];
+                if ($request->hasFile('img')) {
+                    $file = $request->file('img');
+                    $destinationPath = public_path('uploads\products\\');
+                    $filename = $file->getClientOriginalName();
+                    $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+                    $newfilename = $id . '.' . $extension;
+
+                    $uploadSuccess = $file->move($destinationPath, $newfilename);
+                    if ($uploadSuccess) {
+                        $updates['img'] = $newfilename;
+                    }
+
                 }
                 $this->model->insertRow($updates, $id);
             }
-			*/
+            
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')

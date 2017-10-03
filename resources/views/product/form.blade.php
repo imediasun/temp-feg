@@ -114,7 +114,7 @@
 
                         <div class="col-md-6">
 
-                            <select name='prod_type_id' rows='5' id='prod_type_id_1' class='select2 '
+                            <select name='prod_type_id[]' rows='5' data-counter="1" id='prod_type_id_1' class='select2 prod_type'
                                     required='required'></select>
 
                         </div>
@@ -131,7 +131,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id_1' class='select2 '></select>
+                            <select name='prod_sub_type_id[1]' data-counter="1" rows='5' id='prod_sub_type_id_1' class='select2 prod_sub_type'></select>
                         </div>
                         <div class="col-md-2">
 
@@ -142,15 +142,49 @@
                             {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <input class="form-control" placeholder="" parsley-type="number" required="required" id="expense_category_1" name="expense_category[]" type="text" value="{{$row['expense_category']}}">
+                            <input class="form-control" placeholder="" parsley-type="number" required="required" id="expense_category_1" name="expense_category[1]" type="text" value="{{$row['expense_category']}}">
                         </div>
                         <div class="col-md-2">
                         </div>
                     </div>
-                    <span id="more_types_container">
+                    <div class="form-group" id="retail_price_1">
+                        <label for="Retail Price" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])?
+                            $fields['retail_price']['language'] : array())) !!}
+                        </label>
 
-                    </span>
-                    <a id="add_more_types" class="btn btn-primary">Add More</a>
+                        <div class="col-md-6">
+                            <div class="input-group ig-full">
+                                <span class="input-group-addon">$</span>
+                                {!! Form::text('retail_price[1]',
+                                $row['retail_price'] == ''?'':(double)$row['retail_price'],array('class'=>'form-control',
+                                'placeholder'=>'0.00','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'retail_input_1' )) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group  " id="ticket_value_1">
+                        <label for="Ticket Value" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])?
+                            $fields['ticket_value']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            {!! Form::text('ticket_value[1]', $row['ticket_value'],array('class'=>'form-control',
+                            'placeholder'=>'','id'=>'ticket_input_1')) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    @if(!$id)
+                        <span id="more_types_container">
+
+                        </span>
+                        <a id="add_more_types" class="btn btn-primary pull-right" style="margin-right: 10px">Add More</a>
+                    @endif
                     <div class="form-group  ">
                         <label for="SKU" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('SKU', (isset($fields['sku']['language'])?
@@ -197,38 +231,6 @@
                                 'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1', 'id'=>'unit_price_input' ))
                                 !!}
                             </div>
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-                    <div class="form-group" id="retail_price">
-                        <label for="Retail Price" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])?
-                            $fields['retail_price']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            <div class="input-group ig-full">
-                                <span class="input-group-addon">$</span>
-                                {!! Form::text('retail_price',
-                                $row['retail_price'] == ''?'':(double)$row['retail_price'],array('class'=>'form-control',
-                                'placeholder'=>'0.00','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'retail_input' )) !!}
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-                    <div class="form-group  " id="ticket_value">
-                        <label for="Ticket Value" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])?
-                            $fields['ticket_value']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            {!! Form::text('ticket_value', $row['ticket_value'],array('class'=>'form-control',
-                            'placeholder'=>'','id'=>'ticket_input')) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -402,7 +404,7 @@
             $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
         }
-        $("#prod_type_id_1").click(function () {
+        /*$("#prod_type_id_1").click(function () {
             $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id_1').val()+"",
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
             if($(this).val()) {
@@ -423,30 +425,30 @@
             }
 
             if ($(this).val() == "8") {
-                $("#retail_price").show(300);
-                $("#retail_price").attr('required','required');
+                $("#retail_price_1").show(300);
+                $("#retail_input_1").attr('required','required');
             }
             else {
-                $("#retail_price").hide(300);
-                $("#retail_price").removeAttr('required');
+                $("#retail_price_1").hide(300);
+                $("#retail_input_1").removeAttr('required');
             }
             if ($(this).val() == "7") {
-                $("#ticket_value").show(300);
-                $("#ticket_value").attr('required','required');
+                $("#ticket_value_1").show(300);
+                $("#ticket_input_1").attr('required','required');
             }else if($(this).val() == "8"){
-                $("#ticket_value").show(300);
+                $("#ticket_value_1").show(300);
             }
             else {
-                $("#ticket_value").hide(300);
-                $("#ticket_value").removeAttr('required');
+                $("#ticket_value_1").hide(300);
+                $("#ticket_input_1").removeAttr('required');
             }
-        });
-        $("#prod_sub_type_id_1").click(function () {
-            if($(this).val()) {
-                //need to uncomment after discussion
-                //getExpenseCategory($("#prod_type_id_1").val(),$(this).val(),1);
-            }
-        });
+        });*/
+        //need to uncomment after discussion
+//        $("#prod_sub_type_id_1").click(function () {
+//            if($(this).val()) {
+//                getExpenseCategory($("#prod_type_id_1").val(),$(this).val(),1);
+//            }
+//        });
 
         $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '{{ $row["vendor_id"] }}' ,
@@ -454,20 +456,20 @@
                 });
         // for Redemption Prizes show Ticket Value
         if ("{{$row["prod_type_id"] }}" == 7) {
-            $("#ticket_value").show();
-            $("#ticket_input").attr('required','required');
+            $("#ticket_value_1").show();
+            $("#ticket_input_1").attr('required','required');
         }
 
         // for Instant win Prizes show Retail Price
         if ("{{$row["prod_type_id"] }}" == 8) {
-            $("#retail_price").show();
-            $("#retail_input").attr('required','required');
+            $("#retail_price_1").show();
+            $("#retail_input_1").attr('required','required');
         }
 
         // for Instant win Prizes show Ticket Value
         if ("{{$row["prod_type_id"] }}" == 8) {
-            $("#ticket_value").show();
-            //$("#ticket_input").attr('required','required');
+            $("#ticket_value_1").show();
+            //$("#ticket_input_1").attr('required','required');
         }
 
         $('.editor').summernote();
@@ -499,6 +501,71 @@
                 return false;
             }
 
+        });
+
+        $(document).on('change',"select.prod_type",function(){
+            console.log('here');
+            var previous = $(this).attr('data-previous');
+            var selectedType = $(this).val();
+            var counter = $(this).attr('data-counter');
+            if(selectedType && selectedType != previous){
+                console.log('val = '+selectedType);
+                $(this).parents('.product_types').find("select.prod_sub_type").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+selectedType+"");
+                //renderDropdown($(".select2"), {width: "100%"});
+
+                getExpenseCategory(selectedType,null,counter);
+                var sku = 'input[name="sku"]';
+                var retail_price = '#retail_input_'+counter;
+                var retail_price_div = '#retail_price_'+counter;
+                var ticket_input = '#ticket_input_'+counter;
+                var ticket_input_div = '#ticket_value_'+counter;
+                if(selectedType == 1 || selectedType == 4 || selectedType == 20)
+                {
+                    form.parsley().destroy();
+                    $(sku).removeAttr('required');
+                    form.parsley();
+                }
+                else
+                {
+                    form.parsley().destroy();
+                    $(sku).attr('required','required');
+                    form.parsley();
+                }
+
+                if (selectedType == "8") {
+                    $(retail_price_div).show(300);
+                    $(retail_price).attr('required','required');
+                }
+                else {
+                    $(retail_price_div).hide(300);
+                    $(retail_price).removeAttr('required');
+                }
+                if (selectedType == "7") {
+                    $(ticket_input_div).show(300);
+                    $(ticket_input).attr('required','required');
+                }
+                else if(selectedType == "8"){
+                    $(ticket_input_div).show(300);
+                }
+                else {
+                    $(ticket_input_div).hide(300);
+                    $(ticket_input).removeAttr('required');
+                }
+            }
+            $(this).attr('data-previous' , selectedType);
+        });
+        //need to uncomment after discussion
+//    $(document).on('change',"select.prod_sub_type",function(){
+//        console.log('here2');
+//        if($(this).val()) {
+//            getExpenseCategory($("#prod_type_id_"+$(this).attr('data-counter')).val(),$(this).val(),types_counter);
+//        }
+//    });
+        $(document).on('click',".remove_me",function(){
+            count = $(this).attr('data-count');
+            count = "#remove_me_"+count;
+            console.log(count);
+            $(count).remove();
         });
     });
 
@@ -551,16 +618,23 @@
 
     $("#add_more_types").click(function () {
         types_counter++;
-        var more_types_html = '<span id="remove_me_'+types_counter+'" style="border:1px solid black;float: left;width: 100%;margin: 10px 0;padding-top: 10px;margin-left: -10px;padding-left: 10px;"><div class="form-group  "> ' +
+        var more_types_html = '<span class="product_types" id="remove_me_'+types_counter+'" style="border:1px solid #ccc;float: left;width: 100%;margin: 10px 0;padding-top: 10px;margin-left: -10px;padding-left: 10px;"><div class="form-group  "> ' +
                 '<label for="Prod Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Type", (isset($fields["prod_type_id"]["language"])? $fields["prod_type_id"]["language"] : array())) !!}</label> ' +
-                '<div class="col-md-6"> <select name="prod_type_id[]" rows="5" id="prod_type_id_'+types_counter+'" class="select2 "required="required"></select>' +
-                ' </div> <div class="col-md-2"> </div> </div> <div class="form-group  "> ' +
+                '<div class="col-md-6"> <select data-previous="0" name="prod_type_id[]" rows="5" data-counter="'+types_counter+'" id="prod_type_id_'+types_counter+'" class="prod_type select2 "required="required"></select>' +
+                ' </div> <div class="col-md-2"> <button style="margin-right: 10px;" data-count="'+types_counter+'" class="remove_me pull-right btn btn-xs btn-danger"><i class="fa fa fa-times"></i></button></div> </div> <div class="form-group  "> ' +
                 '<label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Subtype",(isset($fields["prod_sub_type_id"]["language"])? $fields["prod_sub_type_id"]["language"] : array())) !!} </label>' +
-                ' <div class="col-md-6"> <select name="prod_sub_type_id[]" rows="5" id="prod_sub_type_id_'+types_counter+'" class="select2 "></select>' +
+                ' <div class="col-md-6"> <select name="prod_sub_type_id['+types_counter+']" rows="5" data-counter="'+types_counter+'" id="prod_sub_type_id_'+types_counter+'" class="prod_sub_type select2 "></select>' +
                 ' </div> <div class="col-md-2"> </div> </div> ' +
                 '<div class="form-group"> <label for="Expense Category" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Expense Category", (isset($fields["expense_category"]["language"])? $fields["expense_category"]["language"] : array())) !!}</label> ' +
-                '<div class="col-md-6"><input class="form-control" placeholder="" parsley-type="number" required="true" id="expense_category_'+types_counter+'" name="expense_category[]" type="text" value=""> ' +
-                '</div> <div class="col-md-2"><button data-count="'+types_counter+'" class="remove_me">Remove this '+(types_counter-1)+'</button> </div> </div></span>';
+                '<div class="col-md-6"><input class="form-control" placeholder="" parsley-type="number" required="true" id="expense_category_'+types_counter+'" name="expense_category['+types_counter+']" type="text" value=""> ' +
+                '</div> <div class="col-md-2"></div> </div>' +
+                '<div class="form-group" id="retail_price_'+types_counter+'"> <label for="Retail Price" class="control-label col-md-4 text-left addcolon">Retail Price </label> ' +
+                '<div class="col-md-6"> ' +
+                '<div class="input-group ig-full"> <span class="input-group-addon">$</span> <input class="form-control parsley-validated retail_prices" placeholder="0.00" type="text" parsley-min="0" step="1" id="retail_input_'+types_counter+'" name="retail_price['+types_counter+']" value=""> </div> </div>' +
+                ' <div class="col-md-2"> </div> </div>' +
+                '<div class="form-group ticket_values " id="ticket_value_'+types_counter+'"> <label for="Ticket Value" class="control-label col-md-4 text-left addcolon">Ticket Value </label> ' +
+                '<div class="col-md-6"> <input class="form-control" placeholder="" id="ticket_input_'+types_counter+'" name="ticket_value['+types_counter+']" type="text" value=""> </div> <div class="col-md-2">  </div> </div>' +
+                '</span>';
         console.log(more_types_html);
         $("#more_types_container").append(more_types_html);
 
@@ -569,25 +643,6 @@
         renderDropdown($(".select2"), {width: "100%"});
         console.log('debug');
         console.log(types_counter);
-        $("#prod_type_id_"+types_counter).on('click',function () {
-            $("#prod_sub_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id_'+types_counter).val()+"");
-            if($(this).val()) {
-                //need to uncomment after discussion
-                getExpenseCategory($(this).val(),null,types_counter);
-            }
-        });
-        $("#prod_sub_type_id_"+types_counter).on('click',function () {
-            if($(this).val()) {
-                //need to uncomment after discussion
-                //getExpenseCategory($("#prod_type_id_"+types_counter).val(),$(this).val(),types_counter);
-            }
-        });
-    });
-    $(document).on('click',".remove_me",function(){
-        count = $(this).attr('data-count');
-        count = "#remove_me_"+count;
-        console.log(count);
-        $(count).remove();
     });
 </script>
 <style>
