@@ -304,6 +304,7 @@ class ProductController extends Controller
             $ids = [];
             foreach ($product_categories as $key =>$category)
             {
+                $key = $key+1;
                 $data['retail_price'] = isset($retail_price[$key])?$retail_price[$key]:0;
                 $data['ticket_value'] = isset($data['ticket_value'][$key])?$data['ticket_value'][$key]:0;
                 $data['prod_type_id'] = $category;
