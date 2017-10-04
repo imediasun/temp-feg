@@ -285,7 +285,7 @@ class ProductController extends Controller
         //$rules['sku'] = 'required';
         if($id != 0)
         {
-            $rules['expense_category'] = 'required|numeric|min:0';
+            $rules['expense_category'] = 'required';
         }
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
