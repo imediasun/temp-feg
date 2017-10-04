@@ -409,7 +409,8 @@
             $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
         }
-        $("#expense_category").jCombo("{{ URL::to('product/expense-category-groups') }}",
+
+        $("#expense_category_1").jCombo("{{ URL::to('product/expense-category-groups') }}",
                 {selected_value: '{{ $row["expense_category"] }}'});
         /*$("#prod_type_id_1").click(function () {
             $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id_1').val()+"",
@@ -420,11 +421,15 @@
             }
             if($('#prod_type_id_1').val() == 1 || $('#prod_type_id_1').val() == 4 || $('#prod_type_id_1').val() == 20)
             {
+                form.parsley().destroy();
                 $('input[name="sku"]').removeAttr('required');
+                form.parsley();
             }
             else
             {
+                form.parsley().destroy();
                 $('input[name="sku"]').attr('required','required');
+                form.parsley();
             }
 
             if ($(this).val() == "8") {
@@ -607,7 +612,9 @@
     });
     function getExpenseCategory(order_type_id,product_type_id,count)
     {
-        $("#expense_category_"+count).val('');
+        var expence_field = $("#expense_category_"+count);
+        expence_field.val('');
+        expence_field.trigger('change');
         if(product_type_id === null)
         {
             product_type_id="";
@@ -615,7 +622,8 @@
         $.get('product/expense-category',{'order_type':order_type_id,'product_type':product_type_id},function(data){
             if(data.expense_category)
             {
-                $("#expense_category_"+count).val(data.expense_category);
+                expence_field.val(data.expense_category);
+                expence_field.trigger('change');
             }
         },'json');
     }
@@ -631,7 +639,7 @@
                 ' <div class="col-md-6"> <select name="prod_sub_type_id['+types_counter+']" rows="5" data-counter="'+types_counter+'" id="prod_sub_type_id_'+types_counter+'" class="prod_sub_type select2 "></select>' +
                 ' </div> <div class="col-md-2"> </div> </div> ' +
                 '<div class="form-group"> <label for="Expense Category" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Expense Category", (isset($fields["expense_category"]["language"])? $fields["expense_category"]["language"] : array())) !!}</label> ' +
-                '<div class="col-md-6"><input class="form-control" placeholder="" parsley-type="number" required="true" id="expense_category_'+types_counter+'" name="expense_category['+types_counter+']" type="text" value=""> ' +
+                '<div class="col-md-6"><select name="expense_category['+types_counter+']" rows="5" id="expense_category_'+types_counter+'" class="select2"></select> ' +
                 '</div> <div class="col-md-2"></div> </div>' +
                 '<div class="form-group" id="retail_price_'+types_counter+'"> <label for="Retail Price" class="control-label col-md-4 text-left addcolon">Retail Price </label> ' +
                 '<div class="col-md-6"> ' +
@@ -644,7 +652,7 @@
         $("#more_types_container").append(more_types_html);
 
         $("#prod_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}");
-
+        $("#expense_category_"+types_counter).jCombo("{{ URL::to('product/expense-category-groups') }}");
         renderDropdown($(".select2"), {width: "100%"});
         console.log('debug');
         console.log(types_counter);
