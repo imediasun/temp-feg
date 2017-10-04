@@ -110,6 +110,7 @@
 
                         </div>
                     </div>
+                    <span class="product_types">
                     <div class="form-group  ">
                         <label for="Prod Type Id" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Product Type', (isset($fields['prod_type_id']['language'])?
@@ -184,6 +185,7 @@
 
                         </div>
                     </div>
+                    </span>
                     @if(!$id)
                         <span id="more_types_container">
 
