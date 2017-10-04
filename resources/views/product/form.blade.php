@@ -119,7 +119,7 @@
 
                         <div class="col-md-6">
 
-                            <select name='prod_type_id[]' rows='5' data-counter="1" id='prod_type_id_1' class='select2 prod_type'
+                            <select name='prod_type_id[]' data-previous="{{$row['prod_type_id']}}" rows='5' data-counter="1" id='prod_type_id_1' class='select2 prod_type'
                                     required='required'></select>
 
                         </div>
