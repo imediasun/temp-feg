@@ -113,7 +113,7 @@ class productusagereport extends Sximo  {
             Cases_Ordered,vendor_name,Product,Case_Price_Group,Total_Spent,location_id,start_date,end_date from (
             
             SELECT max(OCID) as OCID,
-            max(id) as id,GROUP_CONCAT(DISTINCT orderId) as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
+            max(id) as id,GROUP_CONCAT(DISTINCT orderId SEPARATOR '-') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
             GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
             GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,
@@ -198,7 +198,7 @@ class productusagereport extends Sximo  {
             'message' => $message,
             'rows'=> $rows,
             'total' => $total,
-            'excelExcludeFormatting' => ['OrderId','Unit Price','Case Price','Total Spent']
+            'excelExcludeFormatting' => ['Unit Price','Case Price','Total Spent']
         );
 
 
