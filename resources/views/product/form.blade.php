@@ -5,8 +5,12 @@
             overflow-y: scroll;
             height: 300px;
         }
-        .input-group span.input-group-addon {
+        .multiselect-item .input-group span.input-group-addon
+        {
             float: none !important;
+        }
+        .input-group span.input-group-addon {
+            /*float: none !important;*/
             width: 4.5%;
             padding: 8px 10px;
         }
@@ -142,7 +146,8 @@
                             {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <input class="form-control" placeholder="" parsley-type="number" required="required" id="expense_category_1" name="expense_category[1]" type="text" value="{{$row['expense_category']}}">
+                            <select name='expense_category[1]' rows='5' id='expense_category_1' class='select2'></select>
+                            {{--<input class="form-control" placeholder="" parsley-type="number" required="required" id="expense_category_1" name="expense_category[1]" type="text" value="{{$row['expense_category']}}">--}}
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -208,7 +213,7 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('case_price',
-                                $row['case_price'] == ''?'':(double)$row['case_price'],array('class'=>'form-control',
+                                $row['case_price'] == ''?'':(double)$row['case_price'],array('class'=>'form-control fixDecimal',
                                 'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'case_price_input' ))
                                 !!}
                             </div>
@@ -227,7 +232,7 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('unit_price',
-                                $row['unit_price'] == ''?'':(double)$row['unit_price'],array('class'=>'form-control',
+                                $row['unit_price'] == ''?'':(double)$row['unit_price'],array('class'=>'form-control fixDecimal',
                                 'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1', 'id'=>'unit_price_input' ))
                                 !!}
                             </div>
@@ -367,7 +372,7 @@
                 <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm "><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
-                    <button type="button" onclick="cancelAction();" class="btn btn-success btn-sm">
+                    <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}');" class="btn btn-success btn-sm">
                         <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
                 </div>
             </div>
@@ -404,6 +409,8 @@
             $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
         }
+        $("#expense_category_1").jCombo("{{ URL::to('product/expense-category-groups') }}",
+                {selected_value: '{{ $row["expense_category"] }}'});
         /*$("#prod_type_id_1").click(function () {
             $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id_1').val()+"",
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
@@ -567,6 +574,7 @@
             console.log(count);
             $(count).remove();
         });
+        $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
     });
 
     function showRequest() {
@@ -590,7 +598,8 @@
         var quantity = $("#qty_input").val();
         var unit_price = case_price/quantity;
         if(quantity != 0 && unit_price != 0) {
-            $('#unit_price_input').val(unit_price.toFixed(3));
+            $('#unit_price_input').val(unit_price);
+            $('#unit_price_input').blur();
         }
         else
         {
@@ -602,7 +611,9 @@
     });
     function getExpenseCategory(order_type_id,product_type_id,count)
     {
-        $("#expense_category_"+count).val('');
+        var expence_field = $("#expense_category_"+count);
+        expence_field.val('');
+        expence_field.trigger('change');
         if(product_type_id === null)
         {
             product_type_id="";
@@ -610,7 +621,8 @@
         $.get('product/expense-category',{'order_type':order_type_id,'product_type':product_type_id},function(data){
             if(data.expense_category)
             {
-                $("#expense_category_"+count).val(data.expense_category);
+                expence_field.val(data.expense_category);
+                expence_field.trigger('change');
             }
         },'json');
     }
@@ -626,7 +638,7 @@
                 ' <div class="col-md-6"> <select name="prod_sub_type_id['+types_counter+']" rows="5" data-counter="'+types_counter+'" id="prod_sub_type_id_'+types_counter+'" class="prod_sub_type select2 "></select>' +
                 ' </div> <div class="col-md-2"> </div> </div> ' +
                 '<div class="form-group"> <label for="Expense Category" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Expense Category", (isset($fields["expense_category"]["language"])? $fields["expense_category"]["language"] : array())) !!}</label> ' +
-                '<div class="col-md-6"><input class="form-control" placeholder="" parsley-type="number" required="true" id="expense_category_'+types_counter+'" name="expense_category['+types_counter+']" type="text" value=""> ' +
+                '<div class="col-md-6"><select name="expense_category['+types_counter+']" rows="5" id="expense_category_'+types_counter+'" class="select2"></select> ' +
                 '</div> <div class="col-md-2"></div> </div>' +
                 '<div class="form-group" id="retail_price_'+types_counter+'"> <label for="Retail Price" class="control-label col-md-4 text-left addcolon">Retail Price </label> ' +
                 '<div class="col-md-6"> ' +
@@ -639,17 +651,20 @@
         $("#more_types_container").append(more_types_html);
 
         $("#prod_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}");
-
+        $("#expense_category_"+types_counter).jCombo("{{ URL::to('product/expense-category-groups') }}");
         renderDropdown($(".select2"), {width: "100%"});
         console.log('debug');
         console.log(types_counter);
     });
+    $(".fixDecimal").blur(function () {
+        $(this).val($(this).fixDecimal());
+    });
 </script>
 <style>
-    /*
+
     #ticket_value, #retail_price {
         display: none;
-    }*/
+    }
     .form-horizontal .control-label, .form-horizontal .radio, .form-horizontal .checkbox, .form-horizontal .radio-inline, .form-horizontal .checkbox-inline {
         padding-top: 0px;
         margin-top: 0;
