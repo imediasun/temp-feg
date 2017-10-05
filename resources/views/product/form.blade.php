@@ -22,6 +22,18 @@
         .multiselect-search{
             height: 35px;
         }
+        .productTypeBox:first-child
+        {
+            border-top: 3px solid black;
+            padding-top: 14px;
+        }
+        .productTypeBox
+        {
+            border-bottom: 3px solid black;
+            float: left;
+            width: 100%;
+            margin-bottom: 14px;
+        }
     </style>
     <div class="sbox">
         <div class="sbox-title">
@@ -633,7 +645,7 @@
 
     $("#add_more_types").click(function () {
         types_counter++;
-        var more_types_html = '<span class="product_types" id="remove_me_'+types_counter+'" style="border:1px solid #ccc;float: left;width: 100%;margin: 10px 0;padding-top: 10px;margin-left: -10px;padding-left: 10px;"><div class="form-group  "> ' +
+        var more_types_html = '<span class="product_types productTypeBox" id="remove_me_'+types_counter+'"><div class="form-group  "> ' +
                 '<label for="Prod Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Type", (isset($fields["prod_type_id"]["language"])? $fields["prod_type_id"]["language"] : array())) !!}</label> ' +
                 '<div class="col-md-6"> <select data-previous="0" name="prod_type_id[]" rows="5" data-counter="'+types_counter+'" id="prod_type_id_'+types_counter+'" class="prod_type select2 "required="required"></select>' +
                 ' </div> <div class="col-md-2"> <button style="margin-right: 10px;" data-count="'+types_counter+'" class="remove_me pull-right btn btn-xs btn-danger"><i class="fa fa fa-times"></i></button></div> </div> <div class="form-group  "> ' +
