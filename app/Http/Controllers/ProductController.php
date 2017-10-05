@@ -302,20 +302,22 @@ class ProductController extends Controller
 
             $data['netsuite_description'] = "$id...".$data['vendor_description'];
             $ids = [];
-            foreach ($product_categories as $key =>$category)
+            $count = 1;
+            $prodData = $data;
+            foreach ($product_categories as $category)
             {
-                $key = $key+1;
-                $data['retail_price'] = isset($retail_price[$key])?$retail_price[$key]:0;
-                $data['ticket_value'] = isset($data['ticket_value'][$key])?$data['ticket_value'][$key]:0;
-                $data['prod_type_id'] = $category;
-                $data['prod_sub_type_id'] = isset($data['prod_sub_type_id'][$key])?$data['prod_sub_type_id'][$key]:0;
-                $data['expense_category'] = isset($data['expense_category'][$key])?$data['expense_category'][$key]:0;
+                $prodData['retail_price'] = (isset($retail_price[$count]) && !empty($retail_price[$count]))?$retail_price[$count]:0;
+                $prodData['ticket_value'] = (isset($data['ticket_value'][$count]) && !empty($data['ticket_value'][$count]))?$data['ticket_value'][$count]:0;
+                $prodData['prod_type_id'] = $category;
+                $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count]))?$data['prod_sub_type_id'][$count]:0;
+                $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count]))?$data['expense_category'][$count]:0;
+                $count++;
                 /*
                  * commented as per Gabe request on 9/13/2017
                 if($data['prod_type_id'] != 8){
                     $data['retail_price'] = 0.000;
                 }*/
-                $ids[] = $this->model->insertRow($data, $id);
+                $ids[] = $this->model->insertRow($prodData, $id);
             }
             foreach ($ids as $id)
             {
