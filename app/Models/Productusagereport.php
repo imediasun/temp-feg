@@ -126,7 +126,7 @@ class productusagereport extends Sximo  {
             Select O.id as orderId,
                    P.id,
                    OC.id as OCID,
-                   P.sku,
+                   IF(OC.sku = '' OR OC.sku IS NULL,P.sku,OC.sku) AS sku,
                    V.vendor_name as vendor_name,
                    OC.item_name AS Product,
                    IF(P.ticket_value = 0, '', P.ticket_value) AS ticket_value,
