@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect,Image;
 
 class ProductController extends Controller
 {
@@ -325,20 +325,27 @@ class ProductController extends Controller
                 $updates['netsuite_description'] = "$id...".$data['vendor_description'];
                 if ($request->hasFile('img')) {
                     $file = $request->file('img');
-                    $destinationPath = public_path('uploads\products\\');
-                    $filename = $file->getClientOriginalName();
-                    $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-                    $newfilename = $id . '.' . $extension;
 
-                    $uploadSuccess = $file->move($destinationPath, $newfilename);
-                    if ($uploadSuccess) {
-                        $updates['img'] = $newfilename;
+                    $img = Image::make($file->getRealPath());
+                    $mime = $img->mime();
+                    if ($mime == 'image/jpeg') {
+                        $extension = '.jpg';
+                    } elseif ($mime == 'image/png') {
+                        $extension = '.png';
+                    } elseif ($mime == 'image/gif') {
+                        $extension = '.gif';
+                    } else {
+                        $extension = '';
                     }
+                    $newfilename = $id . '' . $extension;
+                    $img_path='./uploads/products/' . $newfilename;
+                    $img->save($img_path);
+                    $updates['img'] = $newfilename;
 
                 }
                 $this->model->insertRow($updates, $id);
             }
-            
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
