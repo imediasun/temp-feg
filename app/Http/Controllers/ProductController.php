@@ -280,6 +280,22 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        if ($request->hasFile('img'))
+        {
+            $file = $request->file('img');
+            $img = Image::make($file->getRealPath());
+            $mime = $img->mime();
+            if ($mime == 'image/jpeg') {
+                $extension = '.jpg';
+            } elseif ($mime == 'image/png') {
+                $extension = '.png';
+            } elseif ($mime == 'image/gif') {
+                $extension = '.gif';
+            } else {
+                $extension = '';
+            }
+        }
+
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
@@ -323,20 +339,8 @@ class ProductController extends Controller
             {
                 $updates = array();
                 $updates['netsuite_description'] = "$id...".$data['vendor_description'];
-                if ($request->hasFile('img')) {
-                    $file = $request->file('img');
+                if (isset($img)) {
 
-                    $img = Image::make($file->getRealPath());
-                    $mime = $img->mime();
-                    if ($mime == 'image/jpeg') {
-                        $extension = '.jpg';
-                    } elseif ($mime == 'image/png') {
-                        $extension = '.png';
-                    } elseif ($mime == 'image/gif') {
-                        $extension = '.gif';
-                    } else {
-                        $extension = '';
-                    }
                     $newfilename = $id . '' . $extension;
                     $img_path='./uploads/products/' . $newfilename;
                     $img->save($img_path);
