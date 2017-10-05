@@ -369,7 +369,7 @@ class ExpensecategoriesController extends Controller {
 	{
 		\DB::delete("DELETE FROM expense_category_mapping WHERE mapped_expense_category = 0");
 		echo "<H4>ALL UNUSED MAPPED CATEGORIES(0) DELETED AND RECREATED</H4>";
-		$order_types = \DB::select("SELECT * FROM order_type");
+		$order_types = \DB::select("SELECT * FROM order_type WHERE can_request = 1");
 
 		$order_type_logs = '';
 		$combined_type_logs = '';
