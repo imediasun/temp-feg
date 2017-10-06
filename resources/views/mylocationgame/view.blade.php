@@ -59,9 +59,11 @@
     $lastEditedDetails = implode(' on ', $lastEditedDetailsDate);
     
     $hasManual = $game->has_manual === 1;
-    $manualDetails = $hasManual ? "<a href='uploads/games/manuals/{$gameTitleId}.pdf' target='_blank'>Click to View</a>" : '';
+    $manualUrl = url('/manual/download/'.$gameTitleId);
+    $manualDetails = $hasManual ? "<a href='{$manualUrl}' target='_blank'>Click to View</a>" : '';
     $hasServiceBulletin = $game->has_servicebulletin === 1;
-    $serviceBulletinDetails = $hasServiceBulletin ? "<a href='uploads/games/bulletins/{$gameTitleId}.pdf' target='_blank'>Click to View</a>" : '';
+    $bulletins = url('/bulletin/download/'.$gameTitleId);
+    $serviceBulletinDetails = $hasServiceBulletin ? "<a href='{$bulletins}' target='_blank'>Click to View</a>" : '';
 
     $containerClass = 'game-status-'. ($isSold ? 'sold' : 
             preg_replace('/\W/', '', strtolower($statusName)));
