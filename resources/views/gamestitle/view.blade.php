@@ -49,7 +49,7 @@
 						<td width='30%' class='label-view text-right'>
 							Manual
 						</td>
-						<td> @if($row[0]->has_manual=="Yes")<a href="uploads/games/manuals/{{ $row[0]->id }}.pdf"  target="_blank">Manual</a>@else <a href="{{ URL::to('gamestitle/upload/'.$row[0]->id.'?type=2')}}">Upload manual</a>@endif</td>
+						<td> @if($row[0]->has_manual=="Yes")<a href="{{url('/manual/download/'.$row[0]->id)}}"  target="_blank">Manual</a>@else <a href="{{ URL::to('gamestitle/upload/'.$row[0]->id.'?type=2')}}">Upload manual</a>@endif</td>
 
 					</tr>
 
@@ -57,7 +57,7 @@
 						<td width='30%' class='label-view text-right'>
                             Service Bulletin
 						</td>
-						<td> @if($row[0]->has_servicebulletin=="Yes")  <a href="uploads/games/bulletins/{{ $row[0]->id }}.pdf"  target="_blank">Bulletin</a>@else  <a href="{{ URL::to('gamestitle/upload/'.$row[0]->id.'?type=3')}}">Upload Bulletin</a>@endif</td>
+						<td> @if($row[0]->has_servicebulletin=="Yes")  <a href="{{url('/bulletin/download/'.$row[0]->id)}}"  target="_blank">Bulletin</a>@else  <a href="{{ URL::to('gamestitle/upload/'.$row[0]->id.'?type=3')}}">Upload Bulletin</a>@endif</td>
 
 					</tr>
 
