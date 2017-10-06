@@ -1197,7 +1197,7 @@ class SiteHelpers
 
                         if ($option['lookup_table'] == 'order_type') {
                             $data = $query->where('can_request', '=', '1')
-                                ->orderby($option['lookup_key'])
+                                ->orderby($option['lookup_value'])
                                 ->groupby($option['lookup_key']);
                         } else {
                             if (count($fields) > 1) {
