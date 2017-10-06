@@ -60,7 +60,8 @@ class inventoryreport extends Sximo  {
         $prod_type_id = @$filters['Product_Type'];
         $prod_sub_type_id = @$filters['Product_Sub_Type'];
         if (empty($location_id)) {
-            $location_id = \Session::get('selected_location');
+            $forAllLocations = true;
+            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
         }
         if (empty($location_id)) {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
@@ -79,7 +80,7 @@ class inventoryreport extends Sximo  {
             $whereProdType = "";
             $whereProdSubType = "";
             if (!empty($location_id)) {
-                $whereLocation = "AND O.location_id = ($location_id) ";
+                $whereLocation = "AND O.location_id IN ($location_id) ";
             }
             if (!empty($vendor_id)) {
                 $whereVendor = "AND V.id IN ($vendor_id) ";
@@ -148,6 +149,7 @@ class inventoryreport extends Sximo  {
 						   LEFT JOIN location L ON L.id = O.location_id
 						   LEFT JOIN vendor V ON V.id = O.vendor_id 
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
+						   LEFT JOIN order_type T ON T.id = P.prod_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
 						   
 						   ";
@@ -186,8 +188,12 @@ class inventoryreport extends Sximo  {
             $rows = self::processRows($rawRows);
 
             $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
-            $location = Location::find($location_id)->location_name;
-            $topMessage = "Inventory Report $humanDateRange $location $location_id";
+            $location = Location::whereIn('id',explode(',',$location_id))->lists('location_name')->implode(', ');
+            if(isset($forAllLocations))
+            {
+                $location_id = 'All Locations';
+            }
+            $topMessage = "Inventory Report $humanDateRange ($location_id)";
         }
 
         return $results = array(
