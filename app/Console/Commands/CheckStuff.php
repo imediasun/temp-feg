@@ -41,6 +41,17 @@ class CheckStuff extends Command
         if (!env('ENABLE_CHECK_STUFF', false)) {
             return;
         }
+
+        //Testing manuals
+        $manuals = \DB::select("SELECT * FROM game_title WHERE has_manual = 1");
+        $log = 'All Files Exists! except: '.PHP_EOL;
+        foreach ($manuals as $manual){
+            if(!file_exists(base_path('public/uploads/games/manuals/'.$manual->id.'.pdf'))){
+                $log .= $manual->id.'.pdf '.PHP_EOL;
+            }
+        }
+        echo $log; return;
+
         $recipients = ["to" => env('CHECK_STUFF_EMAILS', [])];
 
         // Check Duplicate PO's
