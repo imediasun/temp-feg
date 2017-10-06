@@ -304,7 +304,7 @@ if(isset($pass["Users With Limited Access"]))
 
 	$objSheet->getProtection()->setPassword('passwordhareherehere');
 	$objSheet->getStyle($UnitInventoryColumn."3:".$UnitInventoryColumn.$endOn)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);//unlocked column L
-	$objSheet->getStyle("B$hold:B$endOn")->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);//unlocked column L
+	//$objSheet->getStyle("B$hold:B$endOn")->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);//unlocked column L
 	$objSheet->getProtection()->setSheet(true);//locked sheet
 	//$worksheet->getProtection()->setInsertRows(true);
 	$objSheet->getProtection()->setDeleteRows(false);
