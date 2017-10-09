@@ -12,7 +12,7 @@ class order extends Sximo
     protected $table = 'orders';
     protected $primaryKey = 'id';
     const OPENID1 = 1, OPENID2 = 3, OPENID3 = 4, FIXED_ASSET_ID = 9, CLOSEID1 = 2, CLOSEID2 = 5;
-    const ORDER_PERCISION = 3;
+    const ORDER_PERCISION = 2;
     const ORDER_TYPE_PART_GAMES = 1;
     const ORDER_VOID_STATUS = 9;
     const ORDER_CLOSED_STATUS = [2,6];
