@@ -156,7 +156,7 @@ class addtocart extends Sximo
                 $data['total_cart_items'] += $row['cart_items'];
 
             }
-            $data['shopping_cart_total'] = \CurrencyHelpers::formatPrice($data['shopping_cart_total'], Order::ORDER_PERCISION, false);
+            $data['shopping_cart_total'] = \CurrencyHelpers::formatPrice($data['shopping_cart_total'], Order::ORDER_PERCISION, true);
             $data['amt_short_message']=$amt_short_message;
             if(isset($array))
             {
