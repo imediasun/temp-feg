@@ -28,9 +28,6 @@ class CurrencyHelpers
      }
      public static function formatPrice($value,$decimalPlaces=2,$isDollarSign=true, $thousands_sep = ',',$dec_point = '.'  ){
          $formattedValue= ($isDollarSign === true)?'$ ':"";
-         if($isDollarSign === false){
-             $thousands_sep = '';
-         }
          if (strpos($value, '.') === false) {
              $value = $value.'.0';
          }
