@@ -27,40 +27,48 @@ $content .= '</tr>';
 
 $rows = collect($rows);
 $counters = array();
-
+$excludeCats = [];
 foreach ($categories as $key=>$category)
 {
 	$counts = 1;
-	foreach ($rows->where('Product_Type',$category->order_type) as $row)
+	$loopData = $rows->where('Product_Type',$category->order_type);
+	if(count($loopData))
 	{
-		$content .= '<tr>';
-		foreach($fields as $f )
+		foreach ($loopData as $row)
 		{
-			$nodata = 1;
-			if($f['download'] =='1'):
-				if(isset($f['attribute']['formater']))
-				{
-					$f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':3:false:';
-				}
-				unset($f['attribute']['hyperlink']);
-				$conn = (isset($f['conn']) ? $f['conn'] : array() );
-				if($f['field'] == 'ticket_value')
-				{
-					$nodata = 0;
-				}
-				$a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$nodata)));
-				$b = str_replace( ',', '', $a );
-				$c = str_replace('$','',$b);
-				if( is_numeric( $c ) ) {
-					$a = $c;
-				}
-				$content .= '<td> '. strip_tags(($a)) . '</td>';
-			endif;
+			$content .= '<tr>';
+			foreach($fields as $f )
+			{
+				$nodata = 1;
+				if($f['download'] =='1'):
+					if(isset($f['attribute']['formater']))
+					{
+						$f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':3:false:';
+					}
+					unset($f['attribute']['hyperlink']);
+					$conn = (isset($f['conn']) ? $f['conn'] : array() );
+					if($f['field'] == 'ticket_value')
+					{
+						$nodata = 0;
+					}
+					$a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$nodata)));
+					$b = str_replace( ',', '', $a );
+					$c = str_replace('$','',$b);
+					if( is_numeric( $c ) ) {
+						$a = $c;
+					}
+					$content .= '<td> '. strip_tags(($a)) . '</td>';
+				endif;
+			}
+			$content .= '</tr>';
+			$counters[$key] = $counts;
+			$counts++;
 		}
-		$content .= '</tr>';
-		$counters[$key] = $counts;
-		$counts++;
 	}
+	else{
+		$excludeCats[] = $key;
+	}
+
 }
 $content .= '</table>';
 $path = "../storage/app/".time().".html";
@@ -164,8 +172,8 @@ $totalsCells = array();
 $totalCounters = count($counters);
 for($i = 0;$i < $totalCounters;$i++)
 {
-	if(isset($counters[$i+1]))
-	{
+	/*if(isset($counters[$i+1]))
+	{*/
 		$objSheet->insertNewRowBefore($endOn, 1);
 		$objSheet->setCellValue(
 			"$TotalColumn".$endOn,
@@ -195,15 +203,7 @@ for($i = 0;$i < $totalCounters;$i++)
 		{
 			$endOn = count($rows);
 		}
-	}
-}
-$loopcounter = 0;
-foreach ($counters as $key=>$counter)
-{
-	$dummy = $totalsCells[$loopcounter];
-	unset($totalsCells[$loopcounter]);
-	$totalsCells[$key] = $dummy;
-	$loopcounter++;
+	/*}*/
 }
 $objSheet->getStyle($TotalColumn.'3:'.$TotalColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 $objSheet->getStyle($TotalSpentColumn.'3:'.$TotalSpentColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
@@ -238,7 +238,7 @@ $objSheet->setCellValue(
 
 foreach($categories as $key=>$category)
 {
-	if(isset($totalsCells[$key]))
+	if(!in_array($key,$excludeCats))
 	{
 		$endOn++;
 		$objSheet->insertNewRowBefore($endOn, 1);
