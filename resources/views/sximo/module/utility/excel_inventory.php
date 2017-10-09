@@ -70,6 +70,7 @@ foreach ($categories as $key=>$category)
 	}
 
 }
+$counters = array_values($counters);
 $content .= '</table>';
 $path = "../storage/app/".time().".html";
 file_put_contents($path, $content);
@@ -172,38 +173,35 @@ $totalsCells = array();
 $totalCounters = count($counters);
 for($i = 0;$i < $totalCounters;$i++)
 {
-	/*if(isset($counters[$i+1]))
-	{*/
-		$objSheet->insertNewRowBefore($endOn, 1);
-		$objSheet->setCellValue(
-			"$TotalColumn".$endOn,
-			"=SUM($TotalColumn$startFrom:$TotalColumn".($endOn-1).")"
-		);
-		$totalsCells[] = "$TotalColumn".$endOn;
-		$objSheet->getStyle("A$endOn:$TotalColumn".$endOn)->applyFromArray(
-			array(
-				'fill' => array(
-					'type' => PHPExcel_Style_Fill::FILL_SOLID,
-					'color' => array('rgb' => '000000')
-				),
-				'font'  => array(
-					//'bold'  => true,
-					'color' => array('rgb' => 'FFFFFF'),
-					//'size'  => 15,
-					//'name'  => 'Verdana'
-				)
+	$objSheet->insertNewRowBefore($endOn, 1);
+	$objSheet->setCellValue(
+		"$TotalColumn".$endOn,
+		"=SUM($TotalColumn$startFrom:$TotalColumn".($endOn-1).")"
+	);
+	$totalsCells[] = "$TotalColumn".$endOn;
+	$objSheet->getStyle("A$endOn:$TotalColumn".$endOn)->applyFromArray(
+		array(
+			'fill' => array(
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				'color' => array('rgb' => '000000')
+			),
+			'font'  => array(
+				//'bold'  => true,
+				'color' => array('rgb' => 'FFFFFF'),
+				//'size'  => 15,
+				//'name'  => 'Verdana'
 			)
-		);
-		$startFrom = ($endOn+1);
-		if(($i+1) != count($counters))
-		{
-			$endOn = $startFrom + $counters[$i+1];
-		}
-		else
-		{
-			$endOn = count($rows);
-		}
-	/*}*/
+		)
+	);
+	$startFrom = ($endOn+1);
+	if (($i + 1) != $totalCounters)
+	{
+		$endOn = $startFrom + $counters[$i + 1];
+	}
+	else
+	{
+		$endOn = count($rows);
+	}
 }
 $objSheet->getStyle($TotalColumn.'3:'.$TotalColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 $objSheet->getStyle($TotalSpentColumn.'3:'.$TotalSpentColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
@@ -235,7 +233,7 @@ $objSheet->setCellValue(
 	"A".$totalsRowStart,
 	"TOTALS"
 );
-
+$loopCounter = 0;
 foreach($categories as $key=>$category)
 {
 	if(!in_array($key,$excludeCats))
@@ -248,9 +246,10 @@ foreach($categories as $key=>$category)
 		);
 		$objSheet->setCellValue(
 			"B".$endOn,
-			"=$totalsCells[$key]"
+			"=$totalsCells[$loopCounter]"
 		);
 		$objSheet->getStyle("B$endOn")->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+		$loopCounter++;
 	}
 }
 $objPHPExcel->getActiveSheet()->getStyle("B$endOn")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
@@ -355,7 +354,7 @@ if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
 
 			$objPHPExcel->getActiveSheet()->getStyle($colString)
 				->getNumberFormat()
-				->setFormatCode('0.000');
+				->setFormatCode('0.00000');
 		}
 	}
 }
