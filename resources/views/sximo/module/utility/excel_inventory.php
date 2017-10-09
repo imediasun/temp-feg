@@ -231,17 +231,20 @@ $objSheet->setCellValue(
 
 foreach($categories as $key=>$category)
 {
-	$endOn++;
-	$objSheet->insertNewRowBefore($endOn, 1);
-	$objSheet->setCellValue(
-		"A".$endOn,
-		"$category->order_type"
-	);
-	$objSheet->setCellValue(
-		"B".$endOn,
-		"=$totalsCells[$key]"
-	);
-	$objSheet->getStyle("B$endOn")->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+	if(isset($totalsCells[$key]))
+	{
+		$endOn++;
+		$objSheet->insertNewRowBefore($endOn, 1);
+		$objSheet->setCellValue(
+			"A".$endOn,
+			"$category->order_type"
+		);
+		$objSheet->setCellValue(
+			"B".$endOn,
+			"=$totalsCells[$key]"
+		);
+		$objSheet->getStyle("B$endOn")->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+	}
 }
 $objPHPExcel->getActiveSheet()->getStyle("B$endOn")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 $endOn++;
