@@ -354,7 +354,7 @@ if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
 
 			$objPHPExcel->getActiveSheet()->getStyle($colString)
 				->getNumberFormat()
-				->setFormatCode('0.000');
+				->setFormatCode('0.00000');
 		}
 	}
 }

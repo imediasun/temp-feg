@@ -122,7 +122,7 @@ class inventoryreport extends Sximo  {
             Case_Price,SUM(total) AS Total_Spent,location_id,start_date,end_date
              FROM ( 
                     SELECT P.id , O.id as orderId,
-                    P.sku,
+                    IF(OC.sku = '' OR OC.sku IS NULL,P.sku,OC.sku) AS sku,
                     P.num_items,
                     T.order_type as product_type,
                     T1.order_type,O.order_type_id,
