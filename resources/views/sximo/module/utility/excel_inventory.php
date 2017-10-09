@@ -187,7 +187,10 @@ for($i = 0;$i < $totalCounters;$i++)
 	$startFrom = ($endOn+1);
 	if(($i+1) != count($counters))
 	{
-		$endOn = $startFrom + $counters[$i+1];
+		if(isset($counters[$i+1]))
+		{
+			$endOn = $startFrom + $counters[$i+1];
+		}
 	}
 	else
 	{
