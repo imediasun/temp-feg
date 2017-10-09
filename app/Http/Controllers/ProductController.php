@@ -523,6 +523,10 @@ class ProductController extends Controller
             ->groupBy('mapped_expense_category')->get();
         $items = [];
         foreach ($expense_category as $key => $category){
+            if($category->mapped_expense_category == 0)
+            {
+                $category->mapped_expense_category = "N/A";
+            }
             $items[] = [$category->id, $category->mapped_expense_category];
         }
         return $items;
