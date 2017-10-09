@@ -227,7 +227,7 @@
 
                         <div class="col-md-8" style="padding-left: 15px !important;">
                             <input  type="text" name="order_total" id="total_cost"
-                                   class="form-control fixDecimal" value="{{ $data['order_total'] }}" maxlength="8"/>
+                                   class="form-control fixDecimal" value="{{ \CurrencyHelpers::formatPrice($data['order_total'], Order::ORDER_PERCISION, false) }}" maxlength="8"/>
                         </div>
                     </div>
                     
@@ -390,7 +390,7 @@
                 <td></td>
                 <td colspan="6" class="text-left"><strong> Subtotal($) </strong></td>
                 <td><input type="text" name="Subtotal"
-                           value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
+                           value="{{\CurrencyHelpers::formatPrice($data['order_total'],\App\Models\Order::ORDER_PERCISION, false) }}" readonly
                            class="form-control fixDecimal"/></td>
                 </div>
                 </div>
