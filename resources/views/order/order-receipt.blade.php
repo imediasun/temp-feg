@@ -17,6 +17,9 @@
             float: right;
             margin-top: 15px;
         }
+        .info_table tr td:first-child {
+            width: 110px;
+        }
     </style>
     <div class="page-content row">
     <div class="page-header">
@@ -40,7 +43,7 @@
                     <h3>Order Receipt</h3>
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
 
-                        <table class="table">
+                        <table class="table info_table">
                             <tr><td  style="border: none;" ><b>PO #</b></td><td  style="border: none;" >{{ $data['po_number'] }}</td></tr>
                             <tr><td><b>Ordered By:</b></td><td>{{ $data['order_user_name'] }}</td></tr>
                             <tr><td><b>Location: </b></td><td>{{ $data['location_id'] ." |" }} {!!
