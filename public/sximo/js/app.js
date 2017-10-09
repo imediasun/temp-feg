@@ -1183,17 +1183,25 @@ function getCartTotal()
     });
 }
 
+String.prototype.rtrim = function() {
+    var trimmed = this.replace(/0+$/g, '');
+    return trimmed;
+};
+
 jQuery.fn.fixDecimal = function(places) {
-    places = places || 5;
+    places = places || 2;
     var val = $.trim($(this).val());
-    if(val.indexOf(',') > -1) {
-        val = val.replace(',', '.');
+    val = val.split('.');
+    var number = 0;
+    if(val[1]){
+        var fixed = val[1].substring(0, places);
+        var decimalSection = (val[1].substring(places)).rtrim();
+        number = val[0]+'.'+fixed+''+decimalSection;
+    }else{
+        number = val[0];
     }
-    var num = val.slice(0, (val.indexOf("."))+1+places);
-    if(isNaN(num)) {
-        num = '';
-    }
-    return num;
+    number = number.slice(0, (number.indexOf("."))+6)
+    return number;
 };
 
 $(document).ready(function(){
