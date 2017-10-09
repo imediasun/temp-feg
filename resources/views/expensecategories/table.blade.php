@@ -5,6 +5,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','expensecategories/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','expensecategories/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			<?php echo "<script> var switch_filters = '$return';</script>" ?>
 			@if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
@@ -270,11 +271,11 @@ $(document).ready(function() {
 	$('#filter_trigger').iCheck('destroy');
 	$("#filter_trigger").bootstrapSwitch('state',{{\Session::get('filter_toggle')}});
 	$("#filter_trigger").on('switchChange.bootstrapSwitch', function(event, state) {
-		console.log(state);
+		console.log(state+': {{ $return }}');
 		if(state){
-			reloadData('#{{ $pageModule }}','expensecategories/data?display_filter=yes&return={{ $return }}');
+			reloadData('#{{ $pageModule }}','expensecategories/data?display_filter=yes&return='+switch_filters);
 		}else{
-			reloadData('#{{ $pageModule }}','expensecategories/data?display_filter=no&return={{ $return }}');
+			reloadData('#{{ $pageModule }}','expensecategories/data?display_filter=no&return='+switch_filters);
 		}
 	});
 });
