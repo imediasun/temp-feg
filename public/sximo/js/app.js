@@ -1195,6 +1195,7 @@ jQuery.fn.fixDecimal = function(places) {
         val = val+'.00000';
     }
     val = val+'00';
+    val = val.slice(0, (val.indexOf("."))+6);
     val = val.split('.');
     var number = 0;
     if(val[1]){
@@ -1204,7 +1205,6 @@ jQuery.fn.fixDecimal = function(places) {
     }else{
         number = val[0];
     }
-    number = number.slice(0, (number.indexOf("."))+6)
     return number;
 };
 

@@ -331,12 +331,12 @@
                         </td>
 
                         <td><br/> <input type='number' name='price[]' id="price"
-                                         class='calculate form-control fixDecimal' min="0.000" step=".001" placeholder="0.000"
+                                         class='calculate form-control fixDecimal' min="0.00" step=".001" placeholder="0.00"
                                          style="width: 85px"
                                          required></td>
                         <td>
                             <br/> <input type='number' name='case_price[]' id="case_price"
-                                         class='calculate form-control fixDecimal' min="0.000" step=".001" placeholder="0.000"
+                                         class='calculate form-control fixDecimal' min="0.00" step=".001" placeholder="0.00"
                                          style="width: 85px"
                                          required></td>
                         <td><br/> <input type='number' name='qty[]' placeholder='0' autocomplete="off"
@@ -351,7 +351,7 @@
                         <input type='hidden' name='item_received[]'>
                         <input type='hidden' name='order_content_id[]' class="order_content">
 
-                        <td><br/><input type="text" name="total" value="" placeholder="0.000" readonly
+                        <td><br/><input type="text" name="total" value="" placeholder="0.00" readonly
                                         class="form-control fixDecimal"/></td>
                         <td align="center" class="remove-container"><br/>
 
@@ -880,7 +880,6 @@
                 });
 
             }
-
         });
 
 
@@ -1135,7 +1134,7 @@
                                 $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                                 $('.itemstable .clonedInput:first-child textarea').val('');
                                 $('#total_cost').val(0.00);
-                                $('input[name="Subtotal"]').val(0.000);
+                                $('input[name="Subtotal"]').val(0.00);
                             },
                             cancel:function(){
 
@@ -1543,7 +1542,7 @@
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
                             $('#total_cost').val(0.00);
-                            $('input[name="Subtotal"]').val(0.000);
+                            $('input[name="Subtotal"]').val(0.00);
                         }
                         else{
                             currentElm.data('status','enabled');
@@ -1559,7 +1558,7 @@
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
                             $('#total_cost').val(0.00);
-                            $('input[name="Subtotal"]').val(0.000);
+                            $('input[name="Subtotal"]').val(0.00);
                             reInitParcley();
                         }
                     }
