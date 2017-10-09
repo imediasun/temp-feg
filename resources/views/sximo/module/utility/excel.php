@@ -23,7 +23,7 @@
 				}
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
-                $a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn)));
+                $a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$f['nodata'])));
                 $b = str_replace( ',', '', $a );
                 $c = str_replace('$','',$b);
                 if( is_numeric( $c) ) {
@@ -51,17 +51,23 @@
 	$row = $objPHPExcel->getActiveSheet()->getRowIterator(2)->current();
 	$cellIterator = $row->getCellIterator();
 	$cellIterator->setIterateOnlyExistingCells(false);
+if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
+{
 	foreach ($cellIterator as $cell) {
+		if(in_array($cell->getValue(),$excelExcludeFormatting))
+		{
+			$serialColumn = $cell->getColumn();
+			//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
+			$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
+			$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . (count($rows)+2));
 
-		$serialColumn = $cell->getColumn();
-		//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
-		$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
-		$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . (count($rows)+2));
-
-		$objPHPExcel->getActiveSheet()->getStyle($colString)
-			->getNumberFormat()
-			->setFormatCode('0');
+			$objPHPExcel->getActiveSheet()->getStyle($colString)
+				->getNumberFormat()
+				->setFormatCode('0.000');
+		}
 	}
+}
+
 
 	/*$objPHPExcel->getActiveSheet(0)->getStyle('P1:P97')
 	->getNumberFormat()

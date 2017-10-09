@@ -91,17 +91,16 @@
                 @for($i=0;$i < count($data[0]['orderDescriptionArray']);$i++)
                     <tr>
                         <td style="padding:8px;border:1px dotted #000; border-top:none">  {{ $data[0]['orderDescriptionArray'][$i] }} <br/></td>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none;text-align: right">  {{CurrencyHelpers::formatCurrency(number_format($data[0]['orderItemsPriceArray'][$i], \App\Models\Order::ORDER_PERCISION)) }} <br/></td>
+                        <td style="padding:8px;border:1px dotted #000;border-top:none;text-align: right">  {{ \CurrencyHelpers::formatPrice($data[0]['orderItemsPriceArray'][$i], \App\Models\Order::ORDER_PERCISION) }} <br/></td>
                         <td style="padding:8px;border:1px dotted  #000;border-top:none;text-align: center">  {{ $data[0]['orderQtyArray'][$i] }} <br/></td>
-                        <td style="padding:2px;border:1px dotted  #000;border-top:none;border-right:1px dotted #000;text-align: right ">  $ {{number_format($data[0]['orderItemsPriceArray'][$i]* $data[0]['orderQtyArray'][$i], \App\Models\Order::ORDER_PERCISION) }}  <br/></td>
-<td></td>
+                        <td style="padding:2px;border:1px dotted  #000;border-top:none;border-right:1px dotted #000;text-align: right ">  {{ \CurrencyHelpers::formatPrice($data[0]['orderItemsPriceArray'][$i] * $data[0]['orderQtyArray'][$i], \App\Models\Order::ORDER_PERCISION) }}  <br/></td>
+                        <td></td>
                     </tr>
                 @endfor
                 <tr style="">
-                    <td colspan="2" style="text-align: left;padding:8px;border:1px dotted  #000;border-top:none;">Shipping
-                        Method: {{ $data[0]['freight_type'] }}</td>
+                    <td colspan="2" style="text-align: left;padding:8px;border:1px dotted  #000;border-top:none;">Shipping Method: {{ $data[0]['freight_type'] }}</td>
                     <td colspan="1" style="padding:8px;border:1px dotted #000;border-left:1px solid #000;text-align: right">Order Total</td>
-                    <td colspan="1" style="padding:8px;border:1px dotted #000;text-align: right">$  {{ number_format($data[0]['order_total_cost'],\App\Models\Order::ORDER_PERCISION) }}</td>
+                    <td colspan="1" style="padding:8px;border:1px dotted #000;text-align: right">{{ \CurrencyHelpers::formatPrice($data[0]['order_total_cost'], \App\Models\Order::ORDER_PERCISION) }}</td>
                 <td></td>
                 </tr>
                 @else
@@ -110,7 +109,7 @@
                   </tr>
                     <tr>
                         <td style="padding:8px;border:1px dotted #000;border-top:none;">{{ $data[0]['order_description'] }}</td>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none;border-left:1px solid ">   {{CurrencyHelpers::formatCurrency(number_format($data[0]['order_total'],\App\Models\Order::ORDER_PERCISION)) }}</td>
+                        <td style="padding:8px;border:1px dotted #000;border-top:none;border-left:1px solid "> {{ \CurrencyHelpers::formatPrice($data[0]['order_total'],\App\Models\Order::ORDER_PERCISION) }}</td>
                         <td></td>
                     </tr>
                 @endif
@@ -120,7 +119,5 @@
     </div>
 </div>
 <script>
-
-
 
 </script>

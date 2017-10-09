@@ -104,7 +104,7 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;
            		?>
-                <tr class="editable" onkeyup="calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
+                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
 					<input type="hidden" name="numberOfItems" value="{{$row->num_items}}" />
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
@@ -305,7 +305,8 @@ initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 		var quantity = $('#form-'+id+' input[name = "numberOfItems"]').val();
 		var unit_price = case_price/quantity;
 		if(quantity != 0 && unit_price != 0) {
-			$('#form-'+id+' input[name = "unit_price"]').val(unit_price.toFixed(3));
+			$('#form-'+id+' input[name = "unit_price"]').val(unit_price);
+			$('#form-'+id+' input[name = "unit_price"]').blur();
 		}
 		else
 		{
@@ -327,6 +328,21 @@ $('a[data-original-title="Upload Image"]').click(function () {
 	showAction();
 });
 
+$(document).on("blur", "input[name='case_price']", function () {
+	$(this).val($(this).fixDecimal());
+});
+
+$(document).on("keyup", "input[name='case_price']", function () {
+	calculateUnitPrice($(this).parents('tr').data('id'));
+});
+
+$(document).on("blur", "input[name='unit_price']", function () {
+	$(this).val($(this).fixDecimal());
+});
+
+$(document).on("blur", "input[name='retail_price']", function () {
+	$(this).val($(this).fixDecimal());
+});
 </script>
 
 <style>

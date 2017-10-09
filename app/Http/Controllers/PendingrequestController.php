@@ -123,6 +123,77 @@ class PendingrequestController extends Controller
 
     }
 
+    public function getExport($t = 'excel')
+    {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+
+        $info = $this->model->makeInfo($this->module);
+        //$master  	= $this->buildMasterDetail();
+        if (method_exists($this, 'getSearchFilterQuery')) {
+            $filter = $this->getSearchFilterQuery();
+        }
+        else {
+            $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+        }
+
+        //following script is used to avoid conflict of vendor_id in search
+        $filter = str_replace('vendor.vendor_id','vendor.id',$filter);
+
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby'];
+        $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];
+        $params = array(
+            'params' => '',
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
+        );
+
+
+        $results = $this->model->getRows($params);
+
+        $fields = $info['config']['grid'];
+        $rows = $results['rows'];
+
+        $rows = $this->updateDateInAllRows($rows);
+
+        $content = array(
+            'exportID' => $exportSessionID,
+            'fields' => $fields,
+            'rows' => $rows,
+            'title' => $this->data['pageTitle'],
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('sximo.module.utility.excel', $content);
+        }
+    }
 
     function getUpdate(Request $request, $id = null)
     {
