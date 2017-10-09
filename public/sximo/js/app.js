@@ -1174,7 +1174,7 @@ function getCartTotal()
         url: siteUrl + '/addtocart/cartdata',
         method:'get',
         success:function(data){
-            var total = data['shopping_cart_total'] || "0.000";
+            var total = data['shopping_cart_total'] || "0.00";
             $('#nav_cart_total').text('$ '+total);
             if(data['total_cart_items'] > 0){
                 $("#update_text_to_add_cart").text(data['total_cart_items']);
