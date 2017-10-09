@@ -227,7 +227,7 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('case_price',
-                                $row['case_price'] == ''?'':(double)$row['case_price'],array('class'=>'form-control fixDecimal',
+                                $row['case_price'] == ''?'':\CurrencyHelpers::formatPrice($row['case_price'], \App\Models\Order::ORDER_PERCISION, false),array('class'=>'form-control fixDecimal',
                                 'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'case_price_input' ))
                                 !!}
                             </div>
@@ -246,10 +246,42 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('unit_price',
-                                $row['unit_price'] == ''?'':(double)$row['unit_price'],array('class'=>'form-control fixDecimal',
+                                $row['unit_price'] == ''?'':\CurrencyHelpers::formatPrice($row['unit_price'], \App\Models\Order::ORDER_PERCISION, false),array('class'=>'form-control fixDecimal',
                                 'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1', 'id'=>'unit_price_input' ))
                                 !!}
                             </div>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group" id="retail_price">
+                        <label for="Retail Price" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])?
+                            $fields['retail_price']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <div class="input-group ig-full">
+                                <span class="input-group-addon">$</span>
+                                {!! Form::text('retail_price',
+                                $row['retail_price'] == ''?'':\CurrencyHelpers::formatPrice($row['retail_price'], \App\Models\Order::ORDER_PERCISION, false),array('class'=>'form-control fixDecimal',
+                                'placeholder'=>'0.00','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'retail_input' )) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group  " id="ticket_value">
+                        <label for="Ticket Value" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])?
+                            $fields['ticket_value']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            {!! Form::text('ticket_value', $row['ticket_value'],array('class'=>'form-control',
+                            'placeholder'=>'','id'=>'ticket_input')) !!}
                         </div>
                         <div class="col-md-2">
 
