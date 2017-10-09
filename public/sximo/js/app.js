@@ -1191,6 +1191,10 @@ String.prototype.rtrim = function() {
 jQuery.fn.fixDecimal = function(places) {
     places = places || 2;
     var val = $.trim($(this).val());
+    if(val.indexOf('.') == -1){
+        val = val+'.00000';
+    }
+    val = val+'00';
     val = val.split('.');
     var number = 0;
     if(val[1]){
