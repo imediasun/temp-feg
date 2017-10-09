@@ -17,6 +17,9 @@
             float: right;
             margin-top: 15px;
         }
+        .info_table tr td:first-child {
+            width: 110px;
+        }
     </style>
     <div class="page-content row">
     <div class="page-header">
@@ -40,51 +43,82 @@
                     <h3>Order Receipt</h3>
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
 
-                        <table class="table">
-                            <tr><td  style="border: none;" ><b>PO #</b></td><td  style="border: none;" >{{ $data['po_number'] }}</td></tr>
-                            <tr><td><b>Ordered By:</b></td><td>{{ $data['order_user_name'] }}</td></tr>
-                            <tr><td><b>Location: </b></td><td>{{ $data['location_id'] ." |" }} {!!
+                        <table class="table info_table">
+                            <tr>
+                                <td style="border: none;"><b>PO #</b></td>
+                                <td style="border: none;">{{ $data['po_number'] }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Ordered By:</b></td>
+                                <td>{{ $data['order_user_name'] }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Location: </b></td>
+                                <td>{{ $data['location_id'] ." |" }} {!!
                                     SiteHelpers::gridDisplayView($data['location_id'],'location_id','1:location:id:location_name')
-                                    !!}</td></tr>
-                            <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
-                            <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
-                            <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
-                            <tr><td><b></b></td> <td> {{--<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button>--}}
-                                   <input type='checkbox' name="toggle_trigger" data-handle-width="100px" data-size="mini" data-on-text="Edit Receipt" data-off-text="Receive Items" id="toggle_trigger" onSwitchChange="trigger()" /> </td></tr>
+                                    !!}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Vendor:</b></td>
+                                <td>{{ $data['vendor_name'] }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Description:</b></td>
+                                <td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Total Cost:</b></td>
+                                <td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td>
+                            </tr>
+                            <tr>
+                                <td><b></b></td>
+                                <td> {{--<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button>--}}
+                                    <input type='checkbox' name="toggle_trigger" data-handle-width="100px"
+                                           data-size="mini" data-on-text="Edit Receipt" data-off-text="Receive Items"
+                                           id="toggle_trigger" onSwitchChange="trigger()"/></td>
+                            </tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
-                            @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
+                            @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)
+                                //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL
+                                WE INTRODUCE PRIZE ALLOCATION
 
-                            <tr style="margin-top:10px;display: none;">
-                                <td width="4%" style="border:thin black solid; padding:2px">IMG</td>
-                                <td width="78%" style="border:thin black solid; padding:2px">Item Description</td>
-                                <td width="5%" style="border:thin black solid; text-align:center; padding:2px">Case QTY</td>
-                                <td width="13%" style="border:thin black solid; text-align:center; padding:2px">Apply Prizes</td>
-                            </tr>
-
-                            @for ($i=1; $i<=$data['item_count']; $i++)
-                                <tr>
-                                    <td style="border:thin white dotted;">
-                                        <?php
-                                        $product_id="product_id_".$i;
-                                        echo SiteHelpers::showUploadedFile($data[$product_id],'/uploads/products/', 40,false)
-                                        ?>
+                                <tr style="margin-top:10px;display: none;">
+                                    <td width="4%" style="border:thin black solid; padding:2px">IMG</td>
+                                    <td width="78%" style="border:thin black solid; padding:2px">Item Description</td>
+                                    <td width="5%" style="border:thin black solid; text-align:center; padding:2px">Case
+                                        QTY
                                     </td>
-                                    <td style="border:thin white dotted; padding:2px">{{ $data['order_description_' . $i] }}</td>
-                                    <td style="border:thin white dotted; padding:2px; text-align:center;">{{  $data['order_qty_'.$i] }}</td>
-                                    <td style="border:thin white dotted; padding:2px; text-align:center;">
-                                        <?php if(!empty($game_options)):?>
-                                        <select name='game_{{$i}}' id='game_{{$i}}'>
-                                            @foreach($game_options as $key=>$value)
-                                                <option value="{{ $key }}"> {{ $value }} </option>
-                                            @endforeach
-                                        </select>
-                                        <?php endif; ?>
+                                    <td width="13%" style="border:thin black solid; text-align:center; padding:2px">
+                                        Apply Prizes
                                     </td>
                                 </tr>
-                                <input type="hidden" name='order_qty_{{$i}}' value="{{ $data['order_qty_'.$i] }}" id='order_qty_{{$i}}'/>
-                                <input type="hidden" name='product_id_{{$i}}' value="{{ $data['product_id_'.$i] }}" id='product_id_{{$i}}'/>
-                            @endfor
+
+                                @for ($i=1; $i<=$data['item_count']; $i++)
+                                    <tr>
+                                        <td style="border:thin white dotted;">
+                                            <?php
+                                            $product_id="product_id_".$i;
+                                            echo SiteHelpers::showUploadedFile($data[$product_id],'/uploads/products/', 40,false)
+                                            ?>
+                                        </td>
+                                        <td style="border:thin white dotted; padding:2px">{{ $data['order_description_' . $i] }}</td>
+                                        <td style="border:thin white dotted; padding:2px; text-align:center;">{{  $data['order_qty_'.$i] }}</td>
+                                        <td style="border:thin white dotted; padding:2px; text-align:center;">
+                                            <?php if(!empty($game_options)):?>
+                                            <select name='game_{{$i}}' id='game_{{$i}}'>
+                                                @foreach($game_options as $key=>$value)
+                                                    <option value="{{ $key }}"> {{ $value }} </option>
+                                                @endforeach
+                                            </select>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <input type="hidden" name='order_qty_{{$i}}' value="{{ $data['order_qty_'.$i] }}"
+                                           id='order_qty_{{$i}}'/>
+                                    <input type="hidden" name='product_id_{{$i}}' value="{{ $data['product_id_'.$i] }}"
+                                           id='product_id_{{$i}}'/>
+                                @endfor
 
                             @else
 
