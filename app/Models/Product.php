@@ -18,10 +18,10 @@ class product extends Sximo  {
 		
 		return "SELECT products.*, O.order_type AS `prod_type`,vendor.vendor_name AS `vendor`,
  IF(products.hot_item = 1,CONCAT('',products.vendor_description,' **HOT ITEM**'),
- products.vendor_description) AS `prod_description`,TRUNCATE(products.case_price/num_items,3) AS
+ products.vendor_description) AS `prod_description`,TRUNCATE(products.case_price/num_items,5) AS
   `unit_pricing`,T.type_description AS `product_type`,IF(products.inactive = 1,'NOT AVAIL.',CONCAT('Add to Cart'))
   AS `add`,CONCAT('Details') AS `addldetails`,products.id AS `product_id`,
-  IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,3),products.retail_price) AS `retail_price`,
+  IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price) AS `retail_price`,
   O.order_type AS prod_type_id,
   T.type_description AS prod_sub_type_id
   FROM `products` LEFT JOIN vendor ON (products.vendor_id = vendor.id)

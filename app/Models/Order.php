@@ -256,25 +256,25 @@ class order extends Sximo
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
                     $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
-                    $orderPriceArray[] = $row->price;
+                    $orderPriceArray[] = \CurrencyHelpers::formatPrice($row->price, Order::ORDER_PERCISION, false);
                     if(in_array($data['order_type'],$case_price_categories))
                     {
-                        $orderItemsPriceArray[] = $row->case_price;
+                        $orderItemsPriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, Order::ORDER_PERCISION, false);
                     }
                     elseif(in_array($data['order_type'],$case_price_if_no_unit_categories))
                     {
-                        $orderItemsPriceArray[] = ($row->price == 0.00)?$row->case_price:$row->price;
+                        $orderItemsPriceArray[] = ($row->price == 0.00)? \CurrencyHelpers::formatPrice($row->case_price, Order::ORDER_PERCISION, false) : \CurrencyHelpers::formatPrice($row->price, Order::ORDER_PERCISION, false);
                     }
                     else
                     {
-                        $orderItemsPriceArray[] = $row->price;
+                        $orderItemsPriceArray[] = \CurrencyHelpers::formatPrice($row->price, Order::ORDER_PERCISION, false);
                     }
                     $orderQtyArray[] = $row->qty;
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
                     $skuNumArray[] = $row->sku;
-                    $orderitemcasepriceArray[] = $row->case_price;
-                    $orderretailpriceArray[]= $row->retail_price;
+                    $orderitemcasepriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, Order::ORDER_PERCISION, false);
+                    $orderretailpriceArray[]= \CurrencyHelpers::formatPrice($row->retail_price, Order::ORDER_PERCISION, false);
                     $ordergameidsArray[] = $row->game_id;
                     $ordergamenameArray[] = $row->game_name;
 
@@ -367,7 +367,7 @@ class order extends Sximo
 											  R.location_id,
 											  L.company_id,
 											  P.prod_type_id,
-										  TRUNCATE(SUM(R.qty*P.case_price),3) AS total,
+										  TRUNCATE(SUM(R.qty*P.case_price),5) AS total,
 									   CONCAT(P.vendor_description," (SKU-",P.sku,")",IF(R.notes = "", "", CONCAT(" **note: ",R.notes,"**"))) AS description
 										 FROM requests R
 									LEFT JOIN products P ON P.id = R.product_id
@@ -391,15 +391,15 @@ class order extends Sximo
                     $data['order_freight_id'] = "";
 
                     $orderDescriptionArray[] = $query[0]->description;
-                    $orderPriceArray[] = $query[0]->unit_price;
+                    $orderPriceArray[] = \CurrencyHelpers::formatPrice($query[0]->unit_price, Order::ORDER_PERCISION, false);
                     $orderQtyArray[] = $query[0]->qty;
 
                     $skuNumArray[] = $query[0]->sku;
                     $orderProductIdArray[] = $query[0]->product_id;
                  //   $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
                     $item_name_array[] = $query[0]->vendor_description;
-                    $item_case_price[] = $query[0]->case_price;
-                    $item_retail_price[]=$query[0]->retail_price;
+                    $item_case_price[] = \CurrencyHelpers::formatPrice($query[0]->case_price, Order::ORDER_PERCISION, false);
+                    $item_retail_price[]= \CurrencyHelpers::formatPrice($query[0]->retail_price, Order::ORDER_PERCISION, false);
                     $orderRequestIdArray[] = ${'SID' . $i};
                 }
 

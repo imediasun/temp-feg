@@ -1616,10 +1616,17 @@ class OrderController extends Controller
         $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . $vendor_description . "'");
         $json = [];
         if (!empty($row)) {
-            $row = Order::hydrate($row);
-            $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
+            //$row = Order::hydrate($row);
+            $json = array(
+                'sku' => $row[0]->sku,
+                'item_description' => $row[0]->item_description,
+                'unit_price' => \CurrencyHelpers::formatPrice($row[0]->unit_price, Order::ORDER_PERCISION, false),
+                'case_price' => \CurrencyHelpers::formatPrice($row[0]->case_price, Order::ORDER_PERCISION, false),
+                'retail_price' => \CurrencyHelpers::formatPrice($row[0]->retail_price, Order::ORDER_PERCISION, false),
+                'id' => $row[0]->id
+            );
         }
-        echo json_encode($json);
+        return json_encode($json);
     }
 
     function updateRequestAndProducts($item_count, $SID_new)
