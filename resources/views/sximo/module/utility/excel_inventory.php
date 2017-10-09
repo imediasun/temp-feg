@@ -31,7 +31,7 @@ $counters = array();
 foreach ($categories as $key=>$category)
 {
 	$counts = 1;
-	foreach ($rows->where('Order_Type',$category->order_type) as $row)
+	foreach ($rows->where('Product_Type',$category->order_type) as $row)
 	{
 		$content .= '<tr>';
 		foreach($fields as $f )
