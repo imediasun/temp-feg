@@ -171,7 +171,7 @@ for($i = 0;$i < $totalCounters;$i++)
 			"$TotalColumn".$endOn,
 			"=SUM($TotalColumn$startFrom:$TotalColumn".($endOn-1).")"
 		);
-		$totalsCells[] = "$TotalColumn".$endOn;
+		$totalsCells[$i+1] = "$TotalColumn".$endOn;
 		$objSheet->getStyle("A$endOn:$TotalColumn".$endOn)->applyFromArray(
 			array(
 				'fill' => array(
