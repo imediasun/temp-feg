@@ -164,39 +164,38 @@ $totalsCells = array();
 $totalCounters = count($counters);
 for($i = 0;$i < $totalCounters;$i++)
 {
-	$objSheet->insertNewRowBefore($endOn, 1);
-	$objSheet->setCellValue(
-		"$TotalColumn".$endOn,
-		"=SUM($TotalColumn$startFrom:$TotalColumn".($endOn-1).")"
-	);
-	$totalsCells[] = "$TotalColumn".$endOn;
-	$objSheet->getStyle("A$endOn:$TotalColumn".$endOn)->applyFromArray(
-		array(
-			'fill' => array(
-				'type' => PHPExcel_Style_Fill::FILL_SOLID,
-				'color' => array('rgb' => '000000')
-			),
-			'font'  => array(
-				//'bold'  => true,
-				'color' => array('rgb' => 'FFFFFF'),
-				//'size'  => 15,
-				//'name'  => 'Verdana'
-			)
-		)
-	);
-	$startFrom = ($endOn+1);
-	if(($i+1) != count($counters))
+	if(isset($counters[$i+1]))
 	{
-		if(isset($counters[$i+1]))
+		$objSheet->insertNewRowBefore($endOn, 1);
+		$objSheet->setCellValue(
+			"$TotalColumn".$endOn,
+			"=SUM($TotalColumn$startFrom:$TotalColumn".($endOn-1).")"
+		);
+		$totalsCells[] = "$TotalColumn".$endOn;
+		$objSheet->getStyle("A$endOn:$TotalColumn".$endOn)->applyFromArray(
+			array(
+				'fill' => array(
+					'type' => PHPExcel_Style_Fill::FILL_SOLID,
+					'color' => array('rgb' => '000000')
+				),
+				'font'  => array(
+					//'bold'  => true,
+					'color' => array('rgb' => 'FFFFFF'),
+					//'size'  => 15,
+					//'name'  => 'Verdana'
+				)
+			)
+		);
+		$startFrom = ($endOn+1);
+		if(($i+1) != count($counters))
 		{
 			$endOn = $startFrom + $counters[$i+1];
 		}
+		else
+		{
+			$endOn = count($rows);
+		}
 	}
-	else
-	{
-		$endOn = count($rows);
-	}
-
 }
 $objSheet->getStyle($TotalColumn.'3:'.$TotalColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 $objSheet->getStyle($TotalSpentColumn.'3:'.$TotalSpentColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
