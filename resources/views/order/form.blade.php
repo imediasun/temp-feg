@@ -572,7 +572,7 @@
                             cancelButton: {addClass: 'hide'},
                             container: '.custom-container',
                             confirm: function () {
-                                // Feature removed as per instruction or Gabe
+                                // Feature removed as per instruction of Gabe. Bug#68 comment:21
                                 /*forceRemoveOrderContentIds.push(value);
                                 $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
                                 if (counter <= 1) {
