@@ -14,8 +14,11 @@
             float: left !important;
         }
         .bootstrap-switch{
-            float: right;
-            margin-top: 15px;
+            /*float right;*/
+            margin-top: 2px;
+        }
+        .info_table tr td:first-child {
+            width: 110px;
         }
     </style>
     <div class="page-content row">
@@ -40,7 +43,7 @@
                     <h3>Order Receipt</h3>
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
 
-                        <table class="table">
+                        <table class="table info_table">
                             <tr><td  style="border: none;" ><b>PO #</b></td><td  style="border: none;" >{{ $data['po_number'] }}</td></tr>
                             <tr><td><b>Ordered By:</b></td><td>{{ $data['order_user_name'] }}</td></tr>
                             <tr><td><b>Location: </b></td><td>{{ $data['location_id'] ." |" }} {!!
@@ -48,9 +51,9 @@
                                     !!}</td></tr>
                             <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
-                            <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatPrice($data['order_total'],\App\Models\Order::ORDER_PERCISION ) }}</td></tr>
-                            <tr><td><b></b></td> <td> {{--<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button>--}}
-                                   <input type='checkbox' name="toggle_trigger" data-handle-width="100px" data-size="mini" data-on-text="Edit Receipt" data-off-text="Receive Items" id="toggle_trigger" onSwitchChange="trigger()" /> </td></tr>
+                            <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
+                            <tr><td><b>Edit Receipt:</b></td> <td> {{--<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button>--}}
+                                   <input type='checkbox' name="toggle_trigger" data-handle-width="100px" data-size="mini" data-on-text="Active" data-off-text="Inactive" id="toggle_trigger" onSwitchChange="trigger()" /> </td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
@@ -63,7 +66,7 @@
                             </tr>
 
                             @for ($i=1; $i<=$data['item_count']; $i++)
-                                <tr>
+                                <tr style="display: none;">
                                     <td style="border:thin white dotted;">
                                         <?php
                                         $product_id="product_id_".$i;
@@ -516,11 +519,11 @@
             if($('#update_receipt_btn').is(":visible")){
                 $('#mode').val('update');
                 $('#receiveItemsPan').collapse('hide');
-                $('#edit_receipt_btn').html('<i class="fa fa-truck"></i> Receive Items')
+                $('#edit_receipt_btn').html('<i class="fa fa-truck"></i> Inactive')
             }else{
                 $('#mode').val('receive');
                 $('#receiveItemsPan').collapse('show');
-                $('#edit_receipt_btn').html('<i class="fa fa-edit"></i> Edit Receipt')
+                $('#edit_receipt_btn').html('<i class="fa fa-edit"></i> Active')
             }
         });
 
