@@ -59,6 +59,8 @@
 		'Unit Price',
 		'Case Price',
 		'Total Spent',
+		'Retail Price',
+		'Total Cost',
 		'Price'
 	],$excelExcludeFormatting);
 
