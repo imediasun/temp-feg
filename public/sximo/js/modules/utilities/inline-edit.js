@@ -429,22 +429,6 @@
                     if(htmlVal == '0'){
                         htmlVal = '$ 0.00';
                     }else{
-                        /*var val = $.trim(htmlVal);
-                        var vals = val.split('.'), before = vals[1];
-
-                        if(before === undefined){
-                            before = '0';
-                        }else{
-                            before = vals[1];
-                        }
-                        before = before + '0000';
-                        var num = vals[0]+'.'+before.substr(0,2);
-
-                        if(isNaN(num)) {
-                            num = '';
-                        }
-                        htmlVal = '$ '+num;*/
-
                         var val = $.trim(htmlVal), places = 2;
                         if(val.indexOf('.') == -1){
                             val = val+'.00000';
