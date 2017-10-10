@@ -568,7 +568,8 @@
                         $('.custom_overlay').show();
                         App.notyConfirm({
                             message: "<b>***WARNING***</b><br> Recieved products may not be removed from an order. <br>",
-                            confirmButtonText: 'Yes',
+                            confirmButtonText: 'OK',
+                            cancelButton: {addClass: 'hide'},
                             container: '.custom-container',
                             confirm: function () {
                                 // Feature removed as per instruction or Gabe
@@ -1711,6 +1712,8 @@
             var element = $(this);
             $('.custom_overlay').show();
             App.notyConfirm({
+                confirmButtonText: 'OK',
+                cancelButton: {addClass: 'hide'},
                 container: '.custom-container',
                 message: "<b>***WARNING***</b></b></b><br> Product quantities may not be reduced to an amount inferior to the quantities which have already been received. <br></b>",
                 confirm: function () {
