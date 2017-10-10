@@ -963,6 +963,31 @@ abstract class Controller extends BaseController
 
         }
 
+        if ($this->module == 'merchandisebudget'){
+            $results['excelExcludeFormatting'] = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+            ];
+        }
+
+        if ($this->module == 'merchandiseexpensesreport'){
+            $results['excelExcludeFormatting'] = [
+                'Merch Budget',
+                'Merch Expense',
+                'Utilization',
+            ];
+        }
+
         $content = array(
             'exportID' => $exportSessionID,
             'fields' => $fields,
