@@ -38,19 +38,19 @@ class CheckStuff extends Command
      */
     public function handle()
     {
-        if (!env('ENABLE_CHECK_STUFF', false)) {
+        /*if (!env('ENABLE_CHECK_STUFF', false)) {
             return;
-        }
+        }*/
 
-        /*//Testing manuals
+        //Testing manuals
         $manuals = \DB::select("SELECT * FROM game_title WHERE has_manual = 1");
         $log = 'All Files Exists! except: '.PHP_EOL;
         foreach ($manuals as $manual){
-            if(!file_exists(base_path('public/uploads/games/manuals/'.$manual->id.'.pdf'))){
+            if(!file_exists(base_path('public/uploads/games/manuals/'.$manual->id.'.pdf')) || !file_exists(base_path('public/uploads/games/manuals/'.$manual->id.'.PDF'))){
                 $log .= $manual->id.'.pdf '.PHP_EOL;
             }
         }
-        echo $log; return;*/
+        echo $log; return;
 
         $recipients = ["to" => env('CHECK_STUFF_EMAILS', [])];
 
