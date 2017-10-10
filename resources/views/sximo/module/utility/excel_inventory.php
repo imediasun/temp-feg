@@ -43,7 +43,7 @@ foreach ($categories as $key=>$category)
 				if($f['download'] =='1'):
 					if(isset($f['attribute']['formater']))
 					{
-						$f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':3:false:';
+						$f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':2:false:';
 					}
 					unset($f['attribute']['hyperlink']);
 					$conn = (isset($f['conn']) ? $f['conn'] : array() );
