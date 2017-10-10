@@ -317,37 +317,44 @@ class ProductController extends Controller
             }
 
             $data['netsuite_description'] = "$id...".$data['vendor_description'];
-            $ids = [];
-            $count = 1;
-            $prodData = $data;
-            foreach ($product_categories as $category)
+            if(is_array($product_categories))
             {
-                $prodData['retail_price'] = (isset($retail_price[$count]) && !empty($retail_price[$count]))?$retail_price[$count]:0;
-                $prodData['ticket_value'] = (isset($data['ticket_value'][$count]) && !empty($data['ticket_value'][$count]))?$data['ticket_value'][$count]:0;
-                $prodData['prod_type_id'] = $category;
-                $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count]))?$data['prod_sub_type_id'][$count]:0;
-                $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count]))?$data['expense_category'][$count]:0;
-                $count++;
-                /*
-                 * commented as per Gabe request on 9/13/2017
-                if($data['prod_type_id'] != 8){
-                    $data['retail_price'] = 0.000;
-                }*/
-                $ids[] = $this->model->insertRow($prodData, $id);
-            }
-            foreach ($ids as $id)
-            {
-                $updates = array();
-                $updates['netsuite_description'] = "$id...".$data['vendor_description'];
-                if (isset($img)) {
-
-                    $newfilename = $id . '' . $extension;
-                    $img_path='./uploads/products/' . $newfilename;
-                    $img->save($img_path);
-                    $updates['img'] = $newfilename;
-
+                $ids = [];
+                $count = 1;
+                $prodData = $data;
+                foreach ($product_categories as $category)
+                {
+                    $prodData['retail_price'] = (isset($retail_price[$count]) && !empty($retail_price[$count]))?$retail_price[$count]:0;
+                    $prodData['ticket_value'] = (isset($data['ticket_value'][$count]) && !empty($data['ticket_value'][$count]))?$data['ticket_value'][$count]:0;
+                    $prodData['prod_type_id'] = $category;
+                    $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count]))?$data['prod_sub_type_id'][$count]:0;
+                    $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count]))?$data['expense_category'][$count]:0;
+                    $count++;
+                    /*
+                     * commented as per Gabe request on 9/13/2017
+                    if($data['prod_type_id'] != 8){
+                        $data['retail_price'] = 0.000;
+                    }*/
+                    $ids[] = $this->model->insertRow($prodData, $id);
                 }
-                $this->model->insertRow($updates, $id);
+                foreach ($ids as $id)
+                {
+                    $updates = array();
+                    $updates['netsuite_description'] = "$id...".$data['vendor_description'];
+                    if (isset($img)) {
+
+                        $newfilename = $id . '' . $extension;
+                        $img_path='./uploads/products/' . $newfilename;
+                        $img->save($img_path);
+                        $updates['img'] = $newfilename;
+
+                    }
+                    $this->model->insertRow($updates, $id);
+                }
+            }
+            else
+            {
+                $this->model->insertRow($data, $id);
             }
 
             return response()->json(array(

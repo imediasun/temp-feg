@@ -24,12 +24,12 @@
         }
         .productTypeBox:first-child
         {
-            border-top: 3px solid black;
+            border-top: 1px solid #ddd;
             padding-top: 14px;
         }
         .productTypeBox
         {
-            border-bottom: 3px solid black;
+            border-bottom: 1px solid #ddd;
             float: left;
             width: 100%;
             margin-bottom: 14px;
@@ -202,7 +202,7 @@
                         <span id="more_types_container">
 
                         </span>
-                        <a id="add_more_types" class="btn btn-primary pull-right" style="margin-right: 10px">Add More</a>
+                        <a id="add_more_types" class="btn btn-primary pull-right">Add More</a>
                     @endif
                     <div class="form-group  ">
                         <label for="SKU" class=" control-label col-md-4 text-left">
@@ -680,7 +680,7 @@
         var more_types_html = '<span class="product_types productTypeBox" id="remove_me_'+types_counter+'"><div class="form-group  "> ' +
                 '<label for="Prod Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Type", (isset($fields["prod_type_id"]["language"])? $fields["prod_type_id"]["language"] : array())) !!}</label> ' +
                 '<div class="col-md-6"> <select data-previous="0" name="prod_type_id[]" rows="5" data-counter="'+types_counter+'" id="prod_type_id_'+types_counter+'" class="prod_type select2 "required="required"></select>' +
-                ' </div> <div class="col-md-2"> <button style="margin-right: 10px;" data-count="'+types_counter+'" class="remove_me pull-right btn btn-xs btn-danger"><i class="fa fa fa-times"></i></button></div> </div> <div class="form-group  "> ' +
+                ' </div> <div class="col-md-2"> <button data-count="'+types_counter+'" class="remove_me pull-right btn btn-xs btn-danger"><i class="fa fa fa-times"></i></button></div> </div> <div class="form-group  "> ' +
                 '<label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Subtype",(isset($fields["prod_sub_type_id"]["language"])? $fields["prod_sub_type_id"]["language"] : array())) !!} </label>' +
                 ' <div class="col-md-6"> <select name="prod_sub_type_id['+types_counter+']" rows="5" data-counter="'+types_counter+'" id="prod_sub_type_id_'+types_counter+'" class="prod_sub_type select2 "></select>' +
                 ' </div> <div class="col-md-2"> </div> </div> ' +
