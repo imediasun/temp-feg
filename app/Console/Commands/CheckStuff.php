@@ -46,7 +46,7 @@ class CheckStuff extends Command
         $manuals = \DB::select("SELECT * FROM game_title WHERE has_manual = 1");
         $log = 'All Files Exists! except: '.PHP_EOL;
         foreach ($manuals as $manual){
-            if(!file_exists(base_path('public/uploads/games/manuals/'.$manual->id.'.pdf')) || !file_exists(base_path('public/uploads/games/manuals/'.$manual->id.'.PDF'))){
+            if(!file_exists(base_path('public/uploads/games/manuals/'.$manual->id.'.pdf')) && file_exists(base_path('public/uploads/games/manuals/'.$manual->id.'.PDF'))){
                 $log .= $manual->id.'.pdf '.PHP_EOL;
             }
         }
