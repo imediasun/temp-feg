@@ -429,7 +429,7 @@
                     if(htmlVal == '0'){
                         htmlVal = '$ 0.00';
                     }else{
-                        var val = $.trim(htmlVal);
+                        /*var val = $.trim(htmlVal);
                         var vals = val.split('.'), before = vals[1];
 
                         if(before === undefined){
@@ -443,7 +443,24 @@
                         if(isNaN(num)) {
                             num = '';
                         }
-                        htmlVal = '$ '+num;
+                        htmlVal = '$ '+num;*/
+
+                        var val = $.trim(htmlVal), places = 2;
+                        if(val.indexOf('.') == -1){
+                            val = val+'.00000';
+                        }
+                        val = val+'00';
+                        val = val.slice(0, (val.indexOf("."))+6);
+                        val = val.split('.');
+                        var number = 0;
+                        if(val[1]){
+                            var fixed = val[1].substring(0, places);
+                            var decimalSection = (val[1].substring(places)).rtrim();
+                            number = val[0]+'.'+fixed+''+decimalSection;
+                        }else{
+                            number = val[0];
+                        }
+                        htmlVal = '$ '+number;
                     }
                 }else if(htmlVal == '' || htmlVal == '0' || htmlVal == ' -- Select  -- '){
                     htmlVal = 'No Data';
