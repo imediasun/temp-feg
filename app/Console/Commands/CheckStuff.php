@@ -54,10 +54,6 @@ class CheckStuff extends Command
 
                 $log .= $manual->id.'.pdf '.PHP_EOL;
             }
-            
-            /*if(!file_exists(base_path('public/uploads/games/manuals/'.$manual->id.'.pdf')) && file_exists(base_path('public/uploads/games/manuals/'.$manual->id.'.PDF'))){
-                $log .= $manual->id.'.pdf '.PHP_EOL;
-            }*/
         }
         echo $log; return;
 
