@@ -424,11 +424,10 @@
                 cellFormattedValue = config.formattedValue = cell.data('format'),
             //cellOriginalHTML = config.originalHtmlValue = cell.data('original-value-html'),
                 htmlVal = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val();//cell.data('original-value-html'),
-                console.log('dollar value test: '+htmlVal)
 
                 if(cellFormattedValue[0] == '$'){
                     if(htmlVal == '0'){
-                        htmlVal = '$ 0.000';
+                        htmlVal = '$ 0.00';
                     }else{
                         var val = $.trim(htmlVal);
                         var vals = val.split('.'), before = vals[1];
@@ -439,7 +438,7 @@
                             before = vals[1];
                         }
                         before = before + '0000';
-                        var num = vals[0]+'.'+before.substr(0,3);
+                        var num = vals[0]+'.'+before.substr(0,2);
 
                         if(isNaN(num)) {
                             num = '';
