@@ -126,61 +126,37 @@ Route::get('/restric',function(){
 
 });
 
-Route::get('/manual/download/{id}',function($id){
+/**
+ * single route for /manual/downloads/23 & /bulletins/downloads/23
+ */
+Route::get('/{type}/download/{id}',function($type,$id){
+    $allowedTypes = ['bulletin','manual'];
+    if(in_array($type, $allowedTypes)){
+        /**
+         * manual => manuals
+         * bulletin => bulletins
+         */
+        $typeFolder = $type.'s';
 
-    if(file_exists(base_path("public/uploads/games/manuals/$id.pdf"))) {
-
-        //return redirect("/uploads/games/manuals/$id.pdf");
-        $filename = "$id.pdf";
-        $path = base_path("public/uploads/games/manuals/$filename");
-        return \Response::make(file_get_contents($path), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$filename.'"'
-        ]);
-
-    }else if(file_exists(base_path('public/uploads/games/manuals/'.$id.'.PDF'))){
-
-        //return redirect("/uploads/games/manuals/$id.PDF");
-        $filename = "$id.pdf";
-        $path = base_path("public/uploads/games/manuals/$filename");
-        return \Response::make(file_get_contents($path), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$filename.'"'
-        ]);
-
-    }else{
-        return ['File not found!'];
+        $pathPattern = base_path("public/uploads/games/$typeFolder/$id.*");
+        if(($filePath = glob($pathPattern)) != false && isset($filePath[0]))
+        {
+            $filename = "$id.pdf";
+            return \Response::make(file_get_contents($filePath[0]), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="'.$filename.'"'
+            ]);
+        }
+        else{
+            return ['File not found!'];
+        }
     }
-
+    else
+    {
+        return "file not found";
+    }
 });
 
-Route::get('/bulletin/download/{id}',function($id){
-
-    if(file_exists(base_path("public/uploads/games/bulletins/$id.pdf"))) {
-
-        //return redirect("/uploads/games/bulletins/$id.pdf");
-        $filename = "$id.pdf";
-        $path = base_path("public/uploads/games/bulletins/$filename");
-        return \Response::make(file_get_contents($path), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$filename.'"'
-        ]);
-
-    }else if(file_exists(base_path('public/uploads/games/bulletins/'.$id.'.PDF'))){
-
-        //return redirect("/uploads/games/bulletins/$id.PDF");
-        $filename = "$id.pdf";
-        $path = base_path("public/uploads/games/bulletins/$filename");
-        return \Response::make(file_get_contents($path), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$filename.'"'
-        ]);
-
-    }else{
-        return ['File not found!'];
-    }
-
-});
 
 //Route::resource('sximoapi', 'SximoapiController');
 Route::group(['middleware' => 'auth'], function()
