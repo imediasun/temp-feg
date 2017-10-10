@@ -571,10 +571,11 @@
                         $('.custom_overlay').show();
                         App.notyConfirm({
                             message: "<b>***WARNING***</b><br> Recieved products may not be removed from an order. <br>",
-                            confirmButtonText: 'Yes',
+                            confirmButtonText: 'OK',
+                            cancelButton: {addClass: 'hide'},
                             container: '.custom-container',
                             confirm: function () {
-                                // Feature removed as per instruction or Gabe
+                                // Feature removed as per instruction of Gabe. Bug#68 comment:21
                                 /*forceRemoveOrderContentIds.push(value);
                                 $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
                                 if (counter <= 1) {
@@ -1713,6 +1714,8 @@
             var element = $(this);
             $('.custom_overlay').show();
             App.notyConfirm({
+                confirmButtonText: 'OK',
+                cancelButton: {addClass: 'hide'},
                 container: '.custom-container',
                 message: "<b>***WARNING***</b></b></b><br> Product quantities may not be reduced to an amount inferior to the quantities which have already been received. <br></b>",
                 confirm: function () {

@@ -95,7 +95,7 @@ App.notyConfirm = function (options)
         cancelCallback = options.cancel || UNFN,
         buttons = options.buttons || [
                 {   addClass: 'btn btn-primary btn-sm',
-                    text: options.confirmButtonText || 'Ok',
+                    text: options.confirmButtonText || 'OK',
                     onClick: function ($noty) {
                         $noty.close();
                         confirmCallback($noty);
