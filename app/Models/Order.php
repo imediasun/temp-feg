@@ -791,6 +791,7 @@ class order extends Sximo
             else {
                 $updateData['api_created_at'] = $now;
             }
+            \DB::update("UPDATE order_received SET api_created_at = '$now' WHERE order_id = $id");
             return self::where('id', $id)->update($updateData);
         }
         return false;
