@@ -129,7 +129,15 @@
 					 </div>
 					 <div class="col-md-2"></div>
                 </div>
-
+				<div class="form-group  " >
+					<label for="phone" class=" control-label col-md-4 text-left">
+						{!! SiteHelpers::activeLang('Best Phone Number to Contact Me', (isset($fields['phone']['language'])? $fields['phone']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+						{!! Form::text('phone', $row['phone'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
+					</div>
+					<div class="col-md-2"></div>
+				</div>
                 <div class="form-group  " >
                     <label for="Date Needed" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
