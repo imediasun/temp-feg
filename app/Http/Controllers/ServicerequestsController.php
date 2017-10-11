@@ -463,6 +463,7 @@ class servicerequestsController extends Controller
         //$rules = $this->validateForm();
         $isAdd = empty($id);
         $rules = $this->validateForm();
+        $phone = $request->get('phone');
         unset($rules['department_id']);
        //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
         //unset($rules['debit_card']);
@@ -493,7 +494,8 @@ class servicerequestsController extends Controller
                 $data['Created'] = date('Y-m-d H:i:s');                
             }
             
-            unset($data['oldStatus']);   
+            unset($data['oldStatus']);
+            $data['phone'] = $phone;
             $id = $this->model->insertRow($data, $id);
                         
             $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
