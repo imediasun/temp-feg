@@ -493,7 +493,7 @@ class servicerequestsController extends Controller
                 $data['Created'] = date('Y-m-d H:i:s');                
             }
             
-            unset($data['oldStatus']);    dd($data);
+            unset($data['oldStatus']);   
             $id = $this->model->insertRow($data, $id);
                         
             $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
