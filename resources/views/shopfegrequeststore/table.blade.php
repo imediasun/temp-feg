@@ -159,7 +159,7 @@
                                 <input type="number" title="Quantity" value="1" min="1" onkeyup="if(!this.checkValidity()){this.value='';alert('Please Enter a Non Zero Number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}" min="0"  />
                                 <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-sm btn-white pull-right"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
                             @else
-                                Not Avail.
+                                <span>Not Avail.</span>
                             @endif</td>
 
                     </tr>
