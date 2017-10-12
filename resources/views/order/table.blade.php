@@ -271,6 +271,20 @@ usort($tableGrid, "SiteHelpers::_sort");
 
 <script>
     $(document).ready(function() {
+        $( document ).ajaxComplete(function( event, xhr, settings ) {
+            console.log(xhr);
+            console.log(settings);
+            var $urlArray = settings.url.split('/');
+            if(typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null)
+            {
+                if ( settings.url === "order/save/"+$urlArray[2] ) {
+                    var data = JSON.parse(xhr.responseText);
+                    var selector = 'tr[data-id='+$urlArray[2]+'] td[data-field="order_total"]';
+                    console.log(selector);
+                    $(selector).attr('data-format','$ '+data.total).attr('data-values', data.total).text('$ '+data.total);
+                }
+            }
+        });
     $('.tips').tooltip();
         $('select[name="status_id"] option:first-child').text('All');
         $('select[name="status_id"]').change();

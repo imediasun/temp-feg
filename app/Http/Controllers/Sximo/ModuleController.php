@@ -2193,6 +2193,16 @@ class ModuleController extends Controller
             $item['config_name'] = "module.$moduleName.special.".snake_case($item['config_title']);
             try {
                 $status = \FEGSPass::updatePass($id, $item);
+                // this code is updating historical data that should not update in any case
+                /*if($item['config_title'] == "calculate price according to case price")
+                {
+                    $sql="UPDATE order_contents JOIN orders ON orders.id = order_contents.order_id SET order_contents.total = (order_contents.qty * order_contents.price)  WHERE orders.order_type_id NOT IN (".$item['data_options'].")";
+                        \DB::update($sql);
+                    $sql="UPDATE order_contents JOIN orders ON orders.id = order_contents.order_id SET order_contents.total = (order_contents.qty * order_contents.case_price)  WHERE orders.order_type_id IN (".$item['data_options'].")";
+                        \DB::update($sql);
+                    $sql="UPDATE orders SET order_total = (SELECT SUM(total) FROM order_contents o WHERE o.order_id = orders.id)";
+                        \DB::update($sql);
+                }*/
             }
             catch (Exception $ex) {
                 \DB::rollBack();
