@@ -1053,6 +1053,7 @@ class OrderController extends Controller
         if (!empty($search_all_fields)) {
             $searchFields = [
                 'orders.id',
+                'OC.item_name',
                 'U.username',
                 'L.location_name',
                 'V.vendor_name',
