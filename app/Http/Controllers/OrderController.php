@@ -1016,6 +1016,7 @@ class OrderController extends Controller
             $searchFields = [
                 'orders.id',
                 'OC.item_name',
+                'OC.product_description',
                 'U.username',
                 'L.location_name',
                 'V.vendor_name',
