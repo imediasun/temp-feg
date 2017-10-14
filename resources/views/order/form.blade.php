@@ -515,7 +515,7 @@
                 $("#ship_address").hide();
         }
         function calculateSum() {
-            console.log('Calculating Sum');
+            //console.log('Calculating Sum');
             var Subtotal = 0.00;
             var Price = 0.00;
             $('table tr.clone ').each(function (i) {
@@ -539,7 +539,8 @@
                 {
                     Price = unitPrice;
                 }
-                sum = Qty * Price;
+                sum = (Qty * Price).toFixed(6);
+                console.log("sum calculated "+sum);
                 Subtotal += sum;
                 //sum = sum.toFixed(PRECISION);
                 $(this).find("input[name*='total']").val(sum);
