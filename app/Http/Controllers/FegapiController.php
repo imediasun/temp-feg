@@ -104,6 +104,11 @@ class FegapiController extends Controller
                             $rows[$table['field']] = $row->$table['field'];
                         }
                     }
+                    //removing exclude export field for netsuite from product -> bug-161
+                    if(isset($rows['exclude_export']))
+                    {
+                        unset($rows['exclude_export']);
+                    }
                     $json[] = $rows;
                 }
             }
