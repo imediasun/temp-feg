@@ -36,6 +36,10 @@ foreach ($categories as $key=>$category)
 		$content .= '<tr>';
 		foreach($fields as $f )
 		{
+			if(!isset($f['nodata']))
+			{
+				$nodata = 0;
+			}
 			$nodata = 1;
 			if($f['download'] =='1'):
 				if(isset($f['attribute']['formater']))
