@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect,Image;
 
 class ProductController extends Controller
 {
@@ -39,7 +39,7 @@ class ProductController extends Controller
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'inactive' => '']);
         $skipFilters = ['search_all_fields'];
         $mergeFilters = [];
         extract($globalSearchFilter); //search_all_fields
@@ -71,8 +71,12 @@ class ProductController extends Controller
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
+        $activeInactive = '';
+        if($inactive != ''){
+            $activeInactive = " AND products.inactive = $inactive";
+        }
 
-        return $filter;
+        return $filter.$activeInactive;
     }
     
     public function getIndex()
@@ -276,44 +280,83 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        if ($request->hasFile('img'))
+        {
+            $file = $request->file('img');
+            $img = Image::make($file->getRealPath());
+            $mime = $img->mime();
+            if ($mime == 'image/jpeg') {
+                $extension = '.jpg';
+            } elseif ($mime == 'image/png') {
+                $extension = '.png';
+            } elseif ($mime == 'image/gif') {
+                $extension = '.gif';
+            } else {
+                $extension = '';
+            }
+        }
+
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
-        $rules['expense_category'] = 'required|numeric|min:0';
+        if($id != 0)
+        {
+            $rules['expense_category'] = 'required';
+        }
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
-        if($request->get('prod_type_id') != 8)
-        {
-            $retail_price=0.000;
-        }
+
+        $product_categories = $request->get('prod_type_id');
         if ($validator->passes()) {
             if ($id == 0) {
                 $data = $this->validatePost('products');
-                $data['retail_price']=$retail_price;
-                $id = $this->model->insertRow($data, $request->input('id'));
-            } else {
-
+            }
+            else {
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
+            }
 
-                $data['retail_price']=$retail_price;
-                $id = $this->model->insertRow($data, $id);
-            }
-            /*
-			$updates = array();
-            if ($request->hasFile('img')) {
-                $file = $request->file('img');
-                $destinationPath = './uploads/products/';
-                $filename = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-                $newfilename = $id . '.' . $extension;
-                $uploadSuccess = $file->move($destinationPath, $newfilename);
-                if ($uploadSuccess) {
-                    $updates['img'] = $newfilename;
+            $data['netsuite_description'] = "$id...".$data['vendor_description'];
+            if(is_array($product_categories))
+            {
+                $ids = [];
+                $count = 1;
+                $prodData = $data;
+                foreach ($product_categories as $category)
+                {
+                    $prodData['retail_price'] = (isset($retail_price[$count]) && !empty($retail_price[$count]))?$retail_price[$count]:0;
+                    $prodData['ticket_value'] = (isset($data['ticket_value'][$count]) && !empty($data['ticket_value'][$count]))?$data['ticket_value'][$count]:0;
+                    $prodData['prod_type_id'] = $category;
+                    $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count]))?$data['prod_sub_type_id'][$count]:0;
+                    $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count]))?$data['expense_category'][$count]:0;
+                    $count++;
+                    /*
+                     * commented as per Gabe request on 9/13/2017
+                    if($data['prod_type_id'] != 8){
+                        $data['retail_price'] = 0.000;
+                    }*/
+                    $ids[] = $this->model->insertRow($prodData, $id);
                 }
-                $this->model->insertRow($updates, $id);
+                foreach ($ids as $id)
+                {
+                    $updates = array();
+                    $updates['netsuite_description'] = "$id...".$data['vendor_description'];
+                    if (isset($img)) {
+
+                        $newfilename = $id . '' . $extension;
+                        $img_path='./uploads/products/' . $newfilename;
+                        $img->save($img_path);
+                        $updates['img'] = $newfilename;
+
+                    }
+                    $this->model->insertRow($updates, $id);
+                }
             }
-			*/
+            else
+            {
+                $this->model->insertRow($data, $id);
+            }
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -464,21 +507,35 @@ class ProductController extends Controller
             ));
         }
     }
-function getExpenseCategory(Request $request)
+
+    function getExpenseCategory(Request $request)
 {
     $order_type_id=$request->get('order_type');
     $product_type_id=$request->get('product_type');
     $expense_category="";
     if(!empty($product_type_id))
     {
-
         $expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->where('product_type',$product_type_id)->pluck('mapped_expense_category');
     }
     else
     {
         $expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->pluck('mapped_expense_category');
     }
-return json_encode(array('expense_category'=>$expense_category));
+    return json_encode(array('expense_category'=>$expense_category));
 }
 
+    function getExpenseCategoryGroups(){
+        $expense_category=\DB::table('expense_category_mapping')
+            ->select('mapped_expense_category as id', 'mapped_expense_category')
+            ->groupBy('mapped_expense_category')->get();
+        $items = [];
+        foreach ($expense_category as $key => $category){
+            if($category->mapped_expense_category == 0)
+            {
+                $category->mapped_expense_category = "N/A";
+            }
+            $items[] = [$category->id, $category->mapped_expense_category];
+        }
+        return $items;
+    }
 }

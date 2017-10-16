@@ -112,7 +112,7 @@ class addtocart extends Sximo
 
             // SHOPPING CART TOTALS (SHOWN ABOVE CART) START
             $data['total_cart_items'] = '';
-            $data['shopping_cart_total'] = '';
+            $data['shopping_cart_total'] = 0;
             $data['amt_short'] = '';
             $data['amt_short_message'] = '';
 
@@ -137,10 +137,11 @@ class addtocart extends Sximo
                 $row = array(
                     'vendor_name' => $row->vendor_name,
                     'vendor_id' => $row->vendor_id,
-                    'vendor_min_order_amt' => $this->parseNumber($row->min_order_amt),
-                    'vendor_total' => $this->parseNumber($row->total),
+                    'vendor_min_order_amt' => \CurrencyHelpers::formatPrice($row->min_order_amt, Order::ORDER_PERCISION, false),
+                    'vendor_total' => \CurrencyHelpers::formatPrice($row->total, Order::ORDER_PERCISION, false),
                     'cart_items' => $row->cart_items,
-                    'amt_short' => $this->parseNumber($row->amt_short)
+                    'total'=>$row->total,
+                    'amt_short' => \CurrencyHelpers::formatPrice($row->amt_short, Order::ORDER_PERCISION, false)
                 );
 
                 $array[] = $row;
@@ -151,10 +152,11 @@ class addtocart extends Sximo
                     $amt_short_message  .= $data['amt_short_message'].$row['vendor_name'].' order is short by $'.$row['amt_short'].'. ';
                 }
 
-                $data['shopping_cart_total'] = $this->parseNumber($data['shopping_cart_total'] + $row['vendor_total']);
+                $data['shopping_cart_total'] = ($data['shopping_cart_total'] + $row['total']);
                 $data['total_cart_items'] += $row['cart_items'];
 
             }
+            $data['shopping_cart_total'] = \CurrencyHelpers::formatPrice($data['shopping_cart_total'], Order::ORDER_PERCISION, false);
             $data['amt_short_message']=$amt_short_message;
             if(isset($array))
             {

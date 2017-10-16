@@ -624,6 +624,18 @@ class OrderController extends Controller
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
             }
+            //// UPDATE STATUS TO APPROVED AND PROCESSED
+            //don't put this code in loop below
+            $now = $this->model->get_local_time('date');
+            if (!empty($where_in))
+            {
+                \DB::update('UPDATE requests
+							 SET status_id = 2,
+							 	 process_user_id = ' . \Session::get('uid') . ',
+								 process_date = "' . $now . '",
+								 blocked_at = null
+						   WHERE id IN(' . $where_in . ')');
+            }
             for ($i = 0; $i < $num_items_in_array; $i++) {
 
                 if (empty($productIdArray[$i])) {
@@ -691,15 +703,6 @@ class OrderController extends Controller
                 }
                 if (!empty($where_in)) {
                     $redirect_link = "managefegrequeststore";
-                    //// UPDATE STATUS TO APPROVED AND PROCESSED
-                    $now = $this->model->get_local_time('date');
-
-                    \DB::update('UPDATE requests
-							 SET status_id = 2,
-							 	 process_user_id = ' . \Session::get('uid') . ',
-								 process_date = "' . $now . '",
-								 blocked_at = null
-						   WHERE id IN(' . $where_in . ')');
                     $request_qty = \DB::select('SELECT qty FROM requests WHERE id='.$request_id);
                     empty($request_qty)? $request_qty=0 : $request_qty=$request_qty[0]->qty;
                     $restore_qty = $request_qty - $qtyArray[$i];
