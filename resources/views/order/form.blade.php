@@ -721,6 +721,8 @@
 
             $(".calculate").keyup(function () {
                 calculateSum();
+            }).blur(function () {
+                calculateSum();
             });
             $('.remove').click(function () {
                 calculateSum();
