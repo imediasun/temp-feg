@@ -142,7 +142,7 @@ class inventoryreport extends Sximo  {
             $mainQueryEnd  = " ) AS t ";
             //$orderBy = " ORDER BY P.id ASC LIMIT 0 , 20000000000000";
 
-            $catQuery = "Select distinct IF(P.id IS NULL OR P.id = '', T1.order_type,T.order_type) AS order_type";
+            $catQuery = "Select distinct IF(P.id IS NULL OR P.id = '', T1.order_type,T.order_type) AS order_type,IF(OC.sku = '' OR OC.sku IS NULL,P.sku,OC.sku) AS sku ";
 
             $fromQuery = " FROM order_contents OC 
                            LEFT JOIN products P ON P.id = OC.product_id 
@@ -160,8 +160,8 @@ class inventoryreport extends Sximo  {
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
             // both group by quires are same
-            $groupQuery = " GROUP BY OC.item_name,OC.case_price,OC.price,order_type ";
-            $groupQuery2 = " GROUP BY Product,Case_Price,Unit_Price,Product_Type ";
+            $groupQuery = " GROUP BY OC.item_name,OC.case_price,OC.price,order_type,sku ";
+            $groupQuery2 = " GROUP BY Product,Case_Price,Unit_Price,Product_Type,sku ";
 
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
