@@ -165,15 +165,17 @@ class GamestitleController extends Controller
         if ($row) {
 
             $manualPath = "uploads/games/manuals/{$row[0]->id }.pdf";
+            $manualPath2 = "uploads/games/manuals/{$row[0]->id }.PDF";
             $bulletinPath = "uploads/games/bulletins/{$row[0]->id}.pdf";
+            $bulletinPath2 = "uploads/games/bulletins/{$row[0]->id}.PDF";
 
-            if ($row[0]->has_manual == 1 && file_exists($manualPath)) {
+            if ($row[0]->has_manual == 1 && (file_exists($manualPath) || file_exists($manualPath2) )) {
                 $row[0]->has_manual = "Yes";
 
             } else {
                 $row[0]->has_manual = "No";
             }
-            if ($row[0]->has_servicebulletin == 1 && file_exists($bulletinPath)) {
+            if ($row[0]->has_servicebulletin == 1 && (file_exists($bulletinPath) || file_exists($bulletinPath2))) {
                 $row[0]->has_servicebulletin = "Yes";
 
             } else {
@@ -426,15 +428,15 @@ class GamestitleController extends Controller
                 $destinationPath .= '/images';
                 break;
             case 2:
-                $rules = array('file' => 'required|mimes:pdf'); //mimepdf
+                $rules = array('file' => 'required|mimes:pdf,PDF'); //mimepdf
                 $destinationPath .= '/manuals';
                 break;
             case 3:
-                $rules = array('file' => 'required|mimes:pdf'); //mimpdf
+                $rules = array('file' => 'required|mimes:pdf,PDF'); //mimpdf
                 $destinationPath .= '/bulletins';
                 break;
             default:
-                $rules = array('file' => 'required|mimes:pdf'); //mimpdf
+                $rules = array('file' => 'required|mimes:pdf,PDF'); //mimpdf
                 $destinationPath .= '/images';
 
         }
