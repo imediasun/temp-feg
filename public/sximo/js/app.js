@@ -1192,7 +1192,8 @@ String.prototype.rtrim = function() {
 
 jQuery.fn.fixDecimal = function(places) {
     places = places || 2;
-    var val = $.trim($(this).val());
+    var val = getFlooredFixed($.trim($(this).val()),5);
+
     if(val.indexOf('.') == -1){
         val = val+'.00000';
     }
@@ -1209,6 +1210,10 @@ jQuery.fn.fixDecimal = function(places) {
     }
     return number;
 };
+
+function getFlooredFixed(v, d){
+    return (Math.floor(v * Math.pow(10, d)) / Math.pow(10, d)).toFixed(d);
+}
 
 $(document).ready(function(){
     //getCartTotal();
