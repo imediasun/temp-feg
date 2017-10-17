@@ -114,7 +114,7 @@ class inventoryreport extends Sximo  {
             max(id) as id,GROUP_CONCAT(DISTINCT orderId) as orderId, max(sku) as sku, max(num_items) as num_items, 
             '' AS unit_inventory_count,'' AS total_inventory_value,
             GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
-            IF(id IS NULL OR id = '', order_type,product_type) AS Product_Type,
+            Product_Type,
             type_description AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
             ,Unit_Price,
@@ -124,7 +124,7 @@ class inventoryreport extends Sximo  {
                     SELECT P.id , O.id as orderId,
                     IF(OC.sku = '' OR OC.sku IS NULL,P.sku,OC.sku) AS sku,
                     P.num_items,
-                    T.order_type as product_type,
+                    IF(P.id IS NULL OR P.id = '', T1.order_type,T.order_type) AS Product_Type,
                     T1.order_type,O.order_type_id,
                     P.prod_type_id,
                     D.type_description,
