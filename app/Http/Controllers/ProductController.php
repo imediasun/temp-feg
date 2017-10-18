@@ -280,7 +280,7 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        if(is_array($request->prod_sub_type_id))
+        if(is_array($request->prod_sub_type_id) && $id == 0)
         {
             if(count(array_unique($request->prod_sub_type_id))<count($request->prod_sub_type_id))
             {
@@ -290,6 +290,25 @@ class ProductController extends Controller
                     'status' => 'error'
                 ));
             }
+        }
+        else
+        {
+            $type = is_array($request->prod_type_id)?$request->prod_type_id[0]:$request->prod_type_id;
+            $subtype = is_array($request->prod_sub_type_id)?$request->prod_sub_type_id[1]:$request->prod_sub_type_id;
+            $duplicate = Product::
+            where('prod_type_id',$type)
+            ->where('prod_sub_type_id',$subtype)
+            ->where('sku',$request->sku)
+            ->where('id','!=',$id)
+            ->where('vendor_description',$request->vendor_description)->first();
+            if($duplicate)
+            {
+                return response()->json(array(
+                    'message' => "A product with same Product Type & Sub Type already exist",
+                    'status' => 'error'
+                ));
+            }
+        ;
         }
         if ($request->hasFile('img'))
         {
