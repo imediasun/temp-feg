@@ -67,7 +67,7 @@ class inventoryreport extends Sximo  {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }
 
-        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'date_ordered');
+        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'date_ordered','id != 11224');// excluding this order because it has wrong ordered_date
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         if (empty($date_start) || empty($date_end)) {
             $message = "To view the contents of this report, please select a date range and other search filter.";
@@ -158,7 +158,6 @@ class inventoryreport extends Sximo  {
             $whereQuery = " WHERE O.status_id != ".order::ORDER_VOID_STATUS ." AND O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
-            $whereQuery .= " AND O.id != 11224"; // excluding this order because it has wrong ordered_date
 
             // both group by quires are same
             $groupQuery = " GROUP BY OC.item_name,OC.case_price,OC.price,order_type ";
