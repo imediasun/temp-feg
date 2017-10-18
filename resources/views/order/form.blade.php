@@ -539,9 +539,10 @@
                 {
                     Price = unitPrice;
                 }
-                sum = Qty * Price;
-                Subtotal += sum;
-                sum = sum.toFixed(PRECISION);
+                sum = (Qty * Price).toFixed(6);
+                console.log("sum calculated "+sum);
+                Subtotal += parseFloat(sum);
+                //sum = sum.toFixed(PRECISION);
                 $(this).find("input[name*='total']").val(sum);
             });
 
