@@ -541,7 +541,7 @@
                 }
                 sum = (Qty * Price).toFixed(6);
                 console.log("sum calculated "+sum);
-                Subtotal += sum;
+                Subtotal += parseFloat(sum);
                 //sum = sum.toFixed(PRECISION);
                 $(this).find("input[name*='total']").val(sum);
                 $(this).find("input[name*='total']").blur();
