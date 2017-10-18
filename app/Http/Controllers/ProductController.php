@@ -280,13 +280,16 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        if(count(array_unique($request->prod_sub_type_id))<count($request->prod_sub_type_id))
+        if(is_array($request->prod_sub_type_id))
         {
-            // Array has duplicates
-            return response()->json(array(
-                'message' => "Please Select Unique Combinations of Product Type & Sub Type",
-                'status' => 'error'
-            ));
+            if(count(array_unique($request->prod_sub_type_id))<count($request->prod_sub_type_id))
+            {
+                // Array has duplicates
+                return response()->json(array(
+                    'message' => "Please Select Unique Combinations of Product Type & Sub Type",
+                    'status' => 'error'
+                ));
+            }
         }
         if ($request->hasFile('img'))
         {
