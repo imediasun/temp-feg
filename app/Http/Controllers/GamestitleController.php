@@ -225,6 +225,23 @@ class GamestitleController extends Controller
         ));
     }
 
+    public static function removeUnnecessaryFiles($name,$destinationPath,$extension = 'pdf')
+    {
+        if($extension == 'PDF')
+        {
+            $unncessoryFile = glob($destinationPath.'/'.$name . '.[p][d][f]');
+        }
+        else
+        {
+            $unncessoryFile = glob($destinationPath.'/'.$name . '.[P][D][F]');
+
+        }
+        if(isset($unncessoryFile[0]))
+        {
+            unlink($unncessoryFile[0]);
+        }
+    }
+
     function postSave(Request $request, $id = null)
     {
         $rules = $this->validateForm();
@@ -276,6 +293,7 @@ class GamestitleController extends Controller
                 $destinationPath = './uploads/games/manuals';
                 $uploadSuccess = $request->file('manual')->move($destinationPath, $newfilename);
                 if ($uploadSuccess) {
+                    $this::removeUnnecessaryFiles($id,$destinationPath,$extension);
                     $manualFlag=true;
                     $updates['manual'] = $newfilename;
                     $updates['has_manual'] = '1';
@@ -289,6 +307,7 @@ class GamestitleController extends Controller
                 $destinationPath1 = './uploads/games/bulletins';
                 $uploadSuccess1 = $request->file('service_bulletin')->move($destinationPath1, $newfilename1);
                 if ($uploadSuccess1) {
+                    $this::removeUnnecessaryFiles($id,$destinationPath1,$extension1);
                     $serviceFlag=true;
                     $updates['bulletin'] = $newfilename1;
                     $updates['has_servicebulletin'] = '1';
@@ -455,6 +474,10 @@ class GamestitleController extends Controller
             $newfilename = $id . '.' . $extension;
             $uploadSuccess = $request->file('avatar')->move($destinationPath, $newfilename);
             if ($uploadSuccess) {
+                if($type == 2 || $type == 3)
+                {
+                    $this::removeUnnecessaryFiles($id,$destinationPath,$extension);
+                }
                 if ($type == 1) {
                     $updates['img'] = $newfilename;
                 } elseif ($type == 2) {
