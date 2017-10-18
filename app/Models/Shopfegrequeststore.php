@@ -21,6 +21,7 @@ class shopfegrequeststore extends Sximo  {
 	}
    public  function queryWhere($cond=null){
        $return=" WHERE products.id IS NOT NULL";
+       $return .=" AND products.exclude_export = 0";//bug-161 excluded products will not be visible in shop
 		if(is_array($cond))
         {
             $cond= array_filter($cond);
