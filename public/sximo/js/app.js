@@ -1212,7 +1212,12 @@ jQuery.fn.fixDecimal = function(places) {
 };
 
 function getFlooredFixed(v, d){
-    return (Math.floor(v * Math.pow(10, d)) / Math.pow(10, d)).toFixed(d);
+    console.log("original number received : "+v);
+   var num = (Math.floor((v * Math.pow(10, d)).toFixed(d)) / Math.pow(10, d));
+    console.log("original number : "+num);
+    var num2 = num.toFixed(d);
+    console.log("after toFixed number : "+num2);
+    return num2;
 }
 
 $(document).ready(function(){
