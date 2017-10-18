@@ -1178,11 +1178,44 @@ function getCartTotal()
             $('#nav_cart_total').text('$ '+total);
             if(data['total_cart_items'] > 0){
                 $("#update_text_to_add_cart").text(data['total_cart_items']);
-            }else{
-                $("#update_text_to_add_cart").text('');
             }
         }
     });
+}
+
+String.prototype.rtrim = function() {
+    var trimmed = this.replace(/0+$/g, '');
+    return trimmed;
+};
+
+jQuery.fn.fixDecimal = function(places) {
+    places = places || 2;
+    var val = getFlooredFixed($.trim($(this).val()),5);
+
+    if(val.indexOf('.') == -1){
+        val = val+'.00000';
+    }
+    val = val+'00';
+    val = val.slice(0, (val.indexOf("."))+6);
+    val = val.split('.');
+    var number = 0;
+    if(val[1]){
+        var fixed = val[1].substring(0, places);
+        var decimalSection = (val[1].substring(places)).rtrim();
+        number = val[0]+'.'+fixed+''+decimalSection;
+    }else{
+        number = val[0];
+    }
+    return number;
+};
+
+function getFlooredFixed(v, d){
+    console.log("original number received : "+v);
+   var num = (Math.floor((v * Math.pow(10, d)).toFixed(d)) / Math.pow(10, d));
+    console.log("original number : "+num);
+    var num2 = num.toFixed(d);
+    console.log("after toFixed number : "+num2);
+    return num2;
 }
 
 $(document).ready(function(){

@@ -864,6 +864,8 @@
 
             $(".calculate").keyup(function () {
                 calculateSum();
+            }).blur(function () {
+                calculateSum();
             });
             calculateSum();
             if (game_ids_array.length > 0) {
@@ -1187,6 +1189,8 @@
 
             handleItemCount('add');
             $(".calculate").keyup(function () {
+                calculateSum();
+            }).blur(function () {
                 calculateSum();
             });
             var location_id = $("#location_id").val();
@@ -1769,6 +1773,11 @@
         if(mode == 'SID'){
             getNotesOfSIDProducts();
         }
+    });
+
+    $(document).on("blur", ".fixDecimal", function () {
+        console.log("blur of .fixDecimal value :"+ $(this).val());
+        $(this).val($(this).fixDecimal());
     });
 
 </script>
