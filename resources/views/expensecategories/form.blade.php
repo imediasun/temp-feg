@@ -18,7 +18,7 @@
 						</label>
 						<div class="col-md-6">
 							<input type="hidden" name="mapped_expense_category" value="{{ $row['mapped_expense_category'] }}" >
-							<input class="form-control parsley-validated" placeholder="" parsley-type="number" required="true" id="expense_category" name="mapped_expense_category" type="text" value="{{ $row['mapped_expense_category'] }}">
+							<input class="form-control parsley-validated" placeholder="" parsley-type="number" id="expense_category" name="mapped_expense_category" type="text" value="{{ $row['mapped_expense_category'] }}">
 						</div>
 						<div class="col-md-2">
 						</div>

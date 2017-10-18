@@ -254,7 +254,7 @@ class ExpensecategoriesController extends Controller {
 	function postSave( Request $request, $id =0)
 	{
 		$rules = $this->validateForm();
-		$rules['mapped_expense_category'] = 'integer|required';
+		//$rules['mapped_expense_category'] = 'integer|required';
 		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes() && $id != 0) {
 
