@@ -6,6 +6,7 @@ return array(
 	"create" => "Create New",
 	"add_to_cart" => "Item added to cart",
 	"already_add_to_cart" => "Item already added to cart",
+	"add_qty_to_cart" => "Quantity added to cart",
 	// General , Login Info & Signup
 	"home" => "Home",
 	"group" => "Group",
