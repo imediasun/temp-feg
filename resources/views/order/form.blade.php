@@ -567,18 +567,20 @@
                     if(data.available == 'true'){
                         $('.custom_overlay').show();
                         App.notyConfirm({
-                            message: "<b>***WARNING***</b><br> Are you sure to remove already received item.<br>",
-                            confirmButtonText: 'Yes',
+                            message: "<b>***WARNING***</b><br> Recieved products may not be removed from an order. <br>",
+                            confirmButtonText: 'OK',
+                            cancelButton: {addClass: 'hide'},
                             container: '.custom-container',
                             confirm: function () {
-                                forceRemoveOrderContentIds.push(value);
+                                // Feature removed as per instruction of Gabe. Bug#68 comment:21
+                                /*forceRemoveOrderContentIds.push(value);
                                 $('#force_remove_items').val(forceRemoveOrderContentIds.join(','));
                                 if (counter <= 1) {
                                     beforeLastRemove(id);
                                 }else{
                                     $("#" + id).parents('.clonedInput').remove();
                                     decreaseCounter();
-                                }
+                                }*/
                                 $('.custom_overlay').slideUp(500);
                             },
                             cancel:function(){
@@ -1710,8 +1712,10 @@
             var element = $(this);
             $('.custom_overlay').show();
             App.notyConfirm({
+                confirmButtonText: 'OK',
+                cancelButton: {addClass: 'hide'},
                 container: '.custom-container',
-                message: "<b>***WARNING***</b></b></b><br>You can not set quantity equal or lower than it already been received.<br></b>",
+                message: "<b>***WARNING***</b></b></b><br> Product quantities may not be reduced to an amount inferior to the quantities which have already been received. <br></b>",
                 confirm: function () {
                     $('.custom_overlay').slideUp(500);
                     element.css({'border': '1px solid #e5e6e7'});
