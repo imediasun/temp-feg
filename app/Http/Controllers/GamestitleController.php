@@ -250,15 +250,15 @@ class GamestitleController extends Controller
                 unset($data['img']);
 
                 //updating Manufacturer in all dependent games
-                if(!empty($request->get('mfg_old')))
+                /*if(!empty($request->get('mfg_old')))
                 {
                     if($request->get('mfg_old') != $request->get('mfg_id'))
-                    {
+                    {*/
                         //dd($request->get('mfg_id') );
                         $mfg_id = $request->get('mfg_id');
                         \DB::update("UPDATE game set mfg_id = $mfg_id WHERE game_title_id = $id");
-                    }
-                }
+                    /*}
+                }*/
             }
             $data['game_title'] = trim($data['game_title']);
             unset($data['has_servicebulletin']);
