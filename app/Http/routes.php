@@ -126,6 +126,38 @@ Route::get('/restric',function(){
 
 });
 
+/**
+ * single route for /manual/downloads/23 & /bulletins/downloads/23
+ */
+Route::get('/{type}/download/{id}',function($type,$id){
+    $allowedTypes = ['bulletin','manual'];
+    if(in_array($type, $allowedTypes)){
+        /**
+         * manual => manuals
+         * bulletin => bulletins
+         */
+        $typeFolder = $type.'s';
+
+        $pathPattern = base_path("public/uploads/games/$typeFolder/$id.*");
+        if(($filePath = glob($pathPattern)) != false && isset($filePath[0]))
+        {
+            $filename = "$id.pdf";
+            return \Response::make(file_get_contents($filePath[0]), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="'.$filename.'"'
+            ]);
+        }
+        else{
+            return ['File not found!'];
+        }
+    }
+    else
+    {
+        return "file not found";
+    }
+});
+
+
 //Route::resource('sximoapi', 'SximoapiController');
 Route::group(['middleware' => 'auth'], function()
 {
