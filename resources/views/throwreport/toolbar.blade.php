@@ -9,13 +9,15 @@
 			@endif
 			{{--<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>--}}
 
+				<div class="float-margin">
                 <label>Week Date Range</label>
 				<input type="text" class="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px" } />
-
+                    </div>
 		@if(SiteHelpers::isModuleEnabled($pageModule))
         <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
         @if(!empty($colconfigs))
-        <select class="form-control height-set" style="width:auto!important;display:inline; top: 1px !important;" name="col-config"
+        <select class="form-control float-margin height-set" style="width:auto!important;display:inline; top: 1px !important;" name="col-config"
+
                 id="col-config">
             <option value="0">Select Column Arrangement</option>
             @foreach( $colconfigs as $configs )

@@ -82,7 +82,9 @@
                    onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Arrange
                     Columns</a>
                 @if(!empty($colconfigs))
-                    <select style="margin-top: 0px;" class="form-control float-margin" name="col-config"
+
+                    <select class="form-control height-set float-margin" name="col-config"
+
                             id="col-config">
                         <option value="0">Select Column Arrangement</option>
                         @foreach($colconfigs as $configs )

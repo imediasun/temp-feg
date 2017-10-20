@@ -3317,6 +3317,7 @@ position: relative;
   margin-bottom: 5px;
 }
 
+
 .c-margin .col-md-12 select,
 .c-margin .col-md-11 select,
 .c-margin .col-md-10 select,
@@ -3494,13 +3495,22 @@ span.order_custom_error ~ ul.parsley-error-list
 .btn:focus {
     color: inherit !important;
 }
-li.multiselect-item.multiselect-group + li a label {
-  font-weight: bold !important;
+
+
+.float-margin{
+  float: left;
+  margin-right: 1px
 }
-.multiselect-container>li>a>label>input[type=checkbox] {
-  margin-top: 6px;
+/* for FireFox*/
+@-moz-document url-prefix() { .height-set{ margin-top: -1px !important;  } }
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  /* Safari and Chrome */
+  .height-set {
+    margin-top: -1px !important;
+  }
+  select {
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
+  }
 }
-.multiselect-container>li.multiselect-group label
-{
-  color:black;
-}
+
