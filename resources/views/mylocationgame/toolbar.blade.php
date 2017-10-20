@@ -83,8 +83,7 @@
                     Columns</a>
                 @if(!empty($colconfigs))
 
-                    <select class="form-control height-set float-margin" name="col-config"
-
+                    <select style="margin-top: 0px;" class="form-control float-margin" name="col-config"
                             id="col-config">
                         <option value="0">Select Column Arrangement</option>
                         @foreach($colconfigs as $configs )

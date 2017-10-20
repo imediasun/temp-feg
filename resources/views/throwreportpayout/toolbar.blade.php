@@ -20,7 +20,7 @@
                 <input type="text" class="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px" } />
                     </div>
         @if(SiteHelpers::isModuleEnabled($pageModule))
-        <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+        <a style="height:28px !important; " href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
         @if(!empty($colconfigs))
         <select class="form-control float-margin height-set" style="width:auto!important;display:inline;" name="col-config"
 
