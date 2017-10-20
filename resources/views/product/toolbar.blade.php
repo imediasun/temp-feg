@@ -1,22 +1,29 @@
 
 <div class="row">
     
-    <div class="col-md-3 sm13">
+    <div class="col-md-3 sm13" style="display: none;">
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
             <option value="select" data-active="0" selected>------------ Select Type --------------</option>
+            <option value="advancereplacement" data-active="0">Advance Replacement</option>
+            <option value="debitcards" data-active="0">Debit Cards</option>
             <option value="graphics" data-active="0">Graphics</option>
             <option value="instant" data-active="0">Instant Win Prizes</option>
             <option value="officesupplies" data-active="0">Office Supplies - Products List</option>
             <option value="parts" data-active="0">Parts - Products List</option>
             <option value="party" data-active="0">Party Supplies</option>
-            <option value="redemption" data-active="0">Redemption Prizes</option>
-            <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
+            <option value="photopaper" data-active="0">Photo Paper</option>
             <option value="productsindevelopment" data-active="0">Products In Development</option>
+            <option value="redemption" data-active="0">Redemption Prizes</option>
+           {{-- <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>--}}
+            <option value="tickets" data-active="0">Tickets</option>
+            <option value="tokens" data-active="0">Tokens</option>
+            <option value="uniforms" data-active="0">Uniforms</option>
+
         </select>
     </div>
     
-    <div class="col-md-3">
+    <div class="col-md-3" style="display: none;">
        <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'>  </select>
     </div>
 
@@ -39,32 +46,28 @@ width: 75%">
     <div class="row c-margin" style="margin-left:0px; margin-right:0px;">
         
         <div class="col-md-9">
-
             @if($access['is_add'] ==1)
-                <div class="float-margin">
-                    {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
-                </div>
+                {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
             @endif
-
             @if($setting['disableactioncheckbox']=='false')
             @if($access['is_add'] ==1)
-                <a href="javascript://ajax" class="btn btn-sm btn-white float-margin"
+                <a href="javascript://ajax" class="btn btn-sm btn-white"
                    onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
             @endif
             @if($access['is_remove'] ==1)
-                <a href="javascript://ajax" class="btn btn-sm btn-white float-margin"
+                <a href="javascript://ajax" class="btn btn-sm btn-white"
                    onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i
                             class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
             @endif
             @endif
-            <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white float-margin"
+            <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
                onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
             @if(SiteHelpers::isModuleEnabled($pageModule))
-                <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin"
+                <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white"
                    onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Arrange
                     Columns</a>
                 @if(!empty($colconfigs))
-                    <select class="form-control float-margin height-set" style="width:auto!important;display:inline-block;box-sizing: border-box" name="col-config"
+                    <select class="form-control" style="width:auto!important;display:inline-block;box-sizing: border-box" name="col-config"
                             id="col-config">
                         <option value="0">Select Column Arrangement</option>
                         @foreach( $colconfigs as $configs )
@@ -73,9 +76,9 @@ width: 75%">
                         @endforeach
                     </select>
                         @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
-                            <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips float-margin"
+                            <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
                                onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit column arrangement">  <i class="fa fa-pencil-square-o"></i></a>
-                            <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips float-margin" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
+                            <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
                         @endif
                     @endif
             @endif
@@ -180,7 +183,7 @@ width: 75%">
             var val = $("#product_list_type").val();
             var active = $(this).find('option:selected').attr('data-active');
             if (val) {
-                 var footer_filters=getFooterFilters();
+                 var footer_filters=getFooterFilters({'page': true});
                 if(footer_filters.indexOf('sub_type') != -1)
                 {
                     footer_filters = footer_filters.replace( /sub_type.*?&/, '' );
@@ -199,7 +202,7 @@ width: 75%">
             var type="{{\Session::get('product_type')}}";
             var url="{{ $pageModule }}/data?";
             var active="0";
-            url +='&active=' + active + getFooterFilters();
+            url +='&active=' + active + getFooterFilters({'page': true});
             if(type != "")
             {
                 url += "&prod_list_type="+type;

@@ -1,20 +1,20 @@
 <div class="row c-margin">
 	<div class="col-md-9">
         @if($access['is_add'] ==1)
-            <a href="{{ URL::to('core/users/update') }}" class="tips btn btn-sm btn-white float-margin"  title="{{ Lang::get('core.btn_create') }}">
+            <a href="{{ URL::to('core/users/update') }}" class="tips btn btn-sm btn-white"  title="{{ Lang::get('core.btn_create') }}">
                 <i class="fa fa-plus "></i>&nbsp;{{ Lang::get('core.btn_create') }}</a>
         @endif
         @if($setting['disableactioncheckbox']=='false')
 			@if($access['is_remove'] ==1)
-			<a href="javascript://ajax"  onclick="SximoDelete();" class="tips btn btn-sm btn-white float-margin" title="{{ Lang::get('core.btn_remove') }}">
+			<a href="javascript://ajax"  onclick="SximoDelete();" class="tips btn btn-sm btn-white" title="{{ Lang::get('core.btn_remove') }}">
 			<i class="fa fa-trash-o"></i>&nbsp;{{ Lang::get('core.btn_remove') }}</a>
 			@endif
         @endif
-			<a href="{{ URL::to( $pageUrl .'/search') }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
+			<a href="{{ URL::to( $pageUrl .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
                 @if(SiteHelpers::isModuleEnabled($pageModule))
-                    <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+                    <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
                     @if(!empty($colconfigs))
-                        <select class="form-control float-margin height-set" style="width:auto!important;display:inline;" name="col-config"
+                        <select class="form-control" style="width:auto!important;display:inline;" name="col-config"
                                 id="col-config">
                             <option value="0">Select Column Arrangement</option>
                             @foreach( $colconfigs as $configs )
@@ -23,9 +23,9 @@
                             @endforeach
                         </select>
                         @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
-                            <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="float-margin btn btn-sm btn-white tips"
+                            <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
                                onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit column arrangement">  <i class="fa fa-pencil-square-o"></i></a>
-                            <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="float-margin btn btn-sm btn-white tips" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
+                            <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
                         @endif
                 @endif
             @endif

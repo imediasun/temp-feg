@@ -1,17 +1,15 @@
 <div class="row c-margin">
     <div class="col-md-4">
         @if($access['is_add'] ==1)
-            <div class="float-margin">
         {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
-                </div>
         @endif
-        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
+        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
     </div>
     <div class="col-md-4">
         <?php
             $years=SiteHelpers::getBudgetYears()
         ?>
-        <select name="budget_year" id="budget_year" class="selectpicker1 show-menu-arrow float-margin height-set" data-header="Select Year" data-style="btn-default">
+        <select name="budget_year" id="budget_year" class="selectpicker1 show-menu-arrow" data-header="Select Year" data-style="btn-default">
             @foreach($years as $year)
                 <option @if( $year->year == \Session::get('budget_year')) selected
                                                                           @endif value="{{ $year->year }}">{{ $year->year }}</option>

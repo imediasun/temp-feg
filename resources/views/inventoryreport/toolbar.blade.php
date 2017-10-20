@@ -1,19 +1,17 @@
 <div class="row c-margin">
 	<div class="col-md-9">
         @if($access['is_add'] ==1)
-            <div class="float-margin">
         {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
-                </div>
-        <a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
+        <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
         @endif
         @if($access['is_remove'] ==1)
-        <a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+        <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
         @endif
-        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
+        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
-        <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+        <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
         @if(!empty($colconfigs))
-        <select class="form-control float-margin height-set" style="width:auto!important;display:inline;" name="col-config"
+        <select class="form-control" style="width:auto!important;display:inline;" name="col-config"
                 id="col-config">
             <option value="0">Select Column Arrangement</option>
             @foreach( $colconfigs as $configs )
@@ -21,7 +19,7 @@
             @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
             @endforeach
         </select>
-        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="float-margin btn btn-sm btn-white"
+        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
         @endif
         @endif
