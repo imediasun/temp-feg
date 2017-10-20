@@ -3317,6 +3317,7 @@ position: relative;
   margin-bottom: 5px;
 }
 
+
 .c-margin .col-md-12 select,
 .c-margin .col-md-11 select,
 .c-margin .col-md-10 select,
@@ -3503,4 +3504,21 @@ li.multiselect-item.multiselect-group + li a label {
 .multiselect-container>li.multiselect-group label
 {
   color:black;
+}
+
+.float-margin{
+  float: left;
+  margin-right: 1px
+}
+/* for FireFox*/
+@-moz-document url-prefix() { .height-set{ margin-top: -1px !important;  } }
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  /* Safari and Chrome */
+  .height-set {
+    margin-top: -1px !important;
+  }
+  select {
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
+  }
 }
