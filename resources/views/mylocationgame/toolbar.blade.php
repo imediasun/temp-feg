@@ -55,6 +55,7 @@
 
     <div class="col-md-7 form-inline">
         @if($access['is_add'] ==1)
+            <div class="float-margin">
             {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
         @endif
         @if($setting['disableactioncheckbox']=='false')
@@ -68,19 +69,20 @@
                    onclick="ajaxGameDispose('#{{ $pageModule }}','{{ $pageUrl }}');"><i
                 class="fa fa-trash-o "></i> Dispose </a>
             @endif
+            </div>
             @endif
-            <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
+            <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white float-margin"
                onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced
                 Search</a>
        
         
         @if(SiteHelpers::isModuleEnabled($pageModule))
             
-                <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white"
+                <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin"
                    onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Arrange
                     Columns</a>
                 @if(!empty($colconfigs))
-                    <select class="form-control" name="col-config"
+                    <select class="form-control height-set float-margin" name="col-config"
                             id="col-config">
                         <option value="0">Select Column Arrangement</option>
                         @foreach($colconfigs as $configs )

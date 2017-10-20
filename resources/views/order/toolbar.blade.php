@@ -8,22 +8,24 @@
 <div class="row c-margin" style="margin-bottom: 1px;">
     
 	<div class="col-md-9" style="padding-left: 0px !important">
+        <div class="float-margin">
         @if($access['is_add'] ==1)
             {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
         @endif
+            </div>
             @if($setting['disableactioncheckbox']=='false')
               {{--  @if($access['is_add'] ==1)
                 <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
                 @endif --}}
                 @if($access['is_remove'] ==1 || !empty($pass['Can remove order']))
-                <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+                <a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
                 @endif
             @endif
-			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
+			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
                 @if(SiteHelpers::isModuleEnabled($pageModule))
-                    <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+                    <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
                     @if(!empty($colconfigs))
-                        <select class="form-control" style="width:auto!important;display:inline;" name="col-config"
+                        <select class="form-control height-set float-margin" style="width:auto!important;float: left;" name="col-config"
                                 id="col-config">
                             <option value="0">Select Column Arrangement</option>
                             @foreach( $colconfigs as $configs )
