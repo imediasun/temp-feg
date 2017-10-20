@@ -230,6 +230,8 @@ return array(
     "order_receive_error_api_not_exposed"  => "This Purchase Order has not yet been submitted to Netsuite. Please contact the Merchandise team to be able to receive this order.",
 
     "order_clone_successful"  => "This Purchase Order has been duplicated.",
+    "order_invoice_verify_error"  => "An Error Occurred.",
+    "order_invoice_verify_success"  => "Invoice Verified Successfully",
     "order_clone_void_successful"  => "This Purchase Order has been voided successfully. A duplicate Purchase Order has been created.",
     "order_voided_receipt_alert"  => "This Purchase Order has been voided and is not receivable any more.",
     "order_voided_receipt_alert"  => "This Purchase Order has been voided and is not receivable any more.",
