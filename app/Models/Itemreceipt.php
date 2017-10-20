@@ -16,7 +16,7 @@ class itemreceipt extends Sximo  {
 
     public static function querySelect(){
 
-        return " SELECT orders.*,order_received.order_id FROM orders INNER JOIN order_received ON
+        return " SELECT orders.*,orders.api_created_at as api_received_at, order_received.order_id FROM orders INNER JOIN order_received ON
 orders.id=order_received.order_id ";
 
 
