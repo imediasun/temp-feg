@@ -339,12 +339,13 @@
             });
         }
         var el = "tr#form-0" + ' select[name=expense_category]';
+        if ($(el).length > 0) {
+            $(el + " option:contains('N/A')").remove();
+            $(el).find('option').get(0).remove();
 
-        $(el+ " option:contains('N/A')").remove();
-        $(el).find('option').get(0).remove();
-
-        $(el).prepend('<option value=0>N/A</option>');
-        $(el).prepend('<option value="0"> -- Select -- </option>');
+            $(el).prepend('<option value=0>N/A</option>');
+            $(el).prepend('<option value="0"> -- Select -- </option>');
+        }
 
     };
     window.saveInlineForm = saveInlineForm = function (rowDomId, event, element, options) {
