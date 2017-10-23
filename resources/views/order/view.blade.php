@@ -336,7 +336,7 @@ if(!empty($order_data['orderQtyArray'])){
                 <fieldset>
                     <legend> Order Items</legend>
                     <?php
-                    $dataOptions = explode(',',$case_price_permission['calculate price according to case price']->data_options);
+                    $dataOptions = explode(',',$case_price_permission->data_options);
                     $case = in_array($order_data['order_type'],$dataOptions );
                     ?>
             <table class="table">
