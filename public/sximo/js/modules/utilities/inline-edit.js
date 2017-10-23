@@ -455,7 +455,7 @@
                         }
                         htmlVal = '$ '+number;
                     }
-                }else if(htmlVal == '' || htmlVal == '0' || htmlVal == ' -- Select  -- '){
+                }else if(htmlVal == '' || htmlVal == '0' || htmlVal == ' -- Select  -- ' || htmlVal == 'N/A'){
                     htmlVal = 'No Data';
                 }
                 var cellOriginalHTML = config.originalHtmlValue = htmlVal,
