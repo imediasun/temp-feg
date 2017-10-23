@@ -110,7 +110,7 @@ class productusagereport extends Sximo  {
             $mainQuery = "select OCID,id,orderId,sku,num_items,Order_Type,Product_Type,Product_Sub_Type,ticket_value,
             (select price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId limit 1) as Unit_Price,
             (select case_price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId limit 1) as Case_Price,
-            Cases_Ordered,vendor_name,Product,Case_Price_Group,Total_Spent,location_id,start_date,end_date from (
+            Cases_Ordered,vendor_name,Product,Case_Price_Group,Total_Spent,location_id,location_name,start_date,end_date from (
             
             SELECT max(OCID) as OCID,
             max(id) as id,GROUP_CONCAT(DISTINCT orderId SEPARATOR '-') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
@@ -121,7 +121,7 @@ class productusagereport extends Sximo  {
             , Unit_Price,
             SUM(qty) AS Cases_Ordered,
             IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
-            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,start_date,end_date
+            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,GROUP_CONCAT(DISTINCT location_name) as location_name,start_date,end_date
              FROM (
             Select O.id as orderId,
                    P.id,
@@ -140,6 +140,7 @@ class productusagereport extends Sximo  {
 				   P.prod_type_id,
 				   D.type_description,
 				   O.location_id,
+				   L.location_name,
 				   O.date_ordered AS start_date,
 				   O.date_ordered AS end_date 
                         ";
