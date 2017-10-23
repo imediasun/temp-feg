@@ -374,8 +374,6 @@ if(!empty($order_data['orderQtyArray'])){
                         <td>{{  \DateHelpers::formatStringValue($order_data['skuNumArray'][$i])}}</td>
                         <td>{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
                         <td>{{  \DateHelpers::formatStringValue($order_data['orderDescriptionArray'][$i]) }}</td>
-                        // we were using orderItemsPriceArray instead of itemCasePrice
-                        {{--<td>{{CurrencyHelpers::formatCurrency(number_format($order_data['orderItemsPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}</td>--}}
                         <td>
                                 {{CurrencyHelpers::formatCurrency(number_format($order_data['itemCasePrice'][$i],\App\Models\Order::ORDER_PERCISION)) }}
 
