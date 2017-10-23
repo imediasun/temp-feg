@@ -152,7 +152,6 @@
                 <div class="col-md-11" style="background: #FFF;box-shadow: 1px 1px 10px gray;box-sizing: border-box">
                 <fieldset>
                     <legend> Order Details</legend>
-
                     <div>
                         <label class=" label-control col-md-4 text-left">
                             {{ SiteHelpers::activeLang('Order Type', (isset($fields['order_type_id']['language'])? $fields['order_type_id']['language'] : array())) }}
@@ -336,6 +335,10 @@ if(!empty($order_data['orderQtyArray'])){
             <div class="table-responsive col-md-12" style="box-shadow: 1px 1px 10px gray;background: #fff;padding:10px 10px 0px">
                 <fieldset>
                     <legend> Order Items</legend>
+                    <?php
+                    $dataOptions = explode(',',$case_price_permission['calculate price according to case price']->data_options);
+                    $case = in_array($order_data['order_type'],$dataOptions );
+                    ?>
             <table class="table">
                 <thead>
                 <tr>
@@ -343,7 +346,16 @@ if(!empty($order_data['orderQtyArray'])){
                 <th>SKU #</th>
                 <th>Item Name</th>
                 <th>Item Description</th>
-                <th>Item Price</th>
+                <th>Case Price
+                    @if($case == 1)
+                        *
+                    @endif
+                </th>
+                    <th>Unit Price
+                        @if($case == 0)
+                            *
+                        @endif
+                    </th>
                 <th>Item Quantity </th>
                 <th>Items Received</th>
                 @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
@@ -362,7 +374,16 @@ if(!empty($order_data['orderQtyArray'])){
                         <td>{{  \DateHelpers::formatStringValue($order_data['skuNumArray'][$i])}}</td>
                         <td>{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
                         <td>{{  \DateHelpers::formatStringValue($order_data['orderDescriptionArray'][$i]) }}</td>
-                        <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['orderItemsPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}</td>
+                        // we were using orderItemsPriceArray instead of itemCasePrice
+                        {{--<td>{{CurrencyHelpers::formatCurrency(number_format($order_data['orderItemsPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}</td>--}}
+                        <td>
+                                {{CurrencyHelpers::formatCurrency(number_format($order_data['itemCasePrice'][$i],\App\Models\Order::ORDER_PERCISION)) }}
+
+                        </td>
+                        <td>
+                                {{CurrencyHelpers::formatCurrency(number_format($order_data['orderPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}
+
+                        </td>
                         <td>{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
                         <td>{{ $order_data['receivedItemsArray'][$i] }}</td>
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
