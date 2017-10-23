@@ -113,7 +113,7 @@ class productusagereport extends Sximo  {
             Cases_Ordered,vendor_name,Product,Case_Price_Group,Total_Spent,location_id,location_name,start_date,end_date from (
             
             SELECT max(OCID) as OCID,
-            max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId SEPARATOR '-') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
+            max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR '-') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
             GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
             GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,
