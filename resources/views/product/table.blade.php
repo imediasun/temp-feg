@@ -104,7 +104,8 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;
            		?>
-                <tr class="editable" onkeyup="calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
+				{{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
+                <tr class="editable" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
 					<input type="hidden" name="numberOfItems" value="{{$row->num_items}}" />
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
@@ -327,6 +328,22 @@ $('a[data-original-title="Upload Image"]').click(function () {
 	showAction();
 });
 
+$( document ).ajaxComplete(function( event, xhr, settings ) {
+	console.log(settings);
+	var $urlArray = settings.url.split('/');
+	console.log($urlArray);
+	if(typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null)
+	{
+		if ( settings.url === "product/save/"+$urlArray[2] ) {
+			var detailText =$('#form-'+$urlArray[2]).children('td[data-field="details"]').text();
+			if(detailText.length >= 20){
+				var new_details = detailText.substr(0, 20)+'<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
+				$('#form-'+$urlArray[2]).children('td[data-field="details"]').empty();
+				$('#form-'+$urlArray[2]).children('td[data-field="details"]').html(new_details);
+			}
+		}
+	}
+});
 </script>
 
 <style>
