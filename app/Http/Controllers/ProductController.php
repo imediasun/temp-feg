@@ -329,10 +329,10 @@ class ProductController extends Controller
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
-        if($id != 0)
+        /*if($id != 0)
         {
-            $rules['expense_category'] = 'required';
-        }
+            $rules['expense_category'] = 'required|numeric|min:0';
+        }*/
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
