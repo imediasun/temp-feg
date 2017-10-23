@@ -107,13 +107,13 @@ class productusagereport extends Sximo  {
                 $date_start_stamp = $date_end_stamp;
                 $date_end_stamp = $t;
             }
-            $mainQuery = "select OCID,id,orderId,sku,num_items,Order_Type,Product_Type,Product_Sub_Type,ticket_value,
+                $mainQuery = "select OCID,id,orderId,sku,num_items,Order_Type,Product_Type,Product_Sub_Type,ticket_value,
             (select price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId limit 1) as Unit_Price,
             (select case_price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId limit 1) as Case_Price,
             Cases_Ordered,vendor_name,Product,Case_Price_Group,Total_Spent,location_id,location_name,start_date,end_date from (
             
             SELECT max(OCID) as OCID,
-            max(id) as id,GROUP_CONCAT(DISTINCT orderId SEPARATOR '-') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
+            max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId SEPARATOR '-') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
             GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
             GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,
@@ -121,7 +121,7 @@ class productusagereport extends Sximo  {
             , Unit_Price,
             SUM(qty) AS Cases_Ordered,
             IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
-            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,GROUP_CONCAT(DISTINCT location_name) as location_name,start_date,end_date
+            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name) as location_name,start_date,end_date
              FROM (
             Select O.id as orderId,
                    P.id,
