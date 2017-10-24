@@ -656,14 +656,16 @@ class OrderController extends Controller
                 }
                 if($product_id != 0)
                 {
-                    $prodData = \DB::select("SELECT prod_type_id,prod_sub_type_id from products where id =$product_id");
+                    $prodData = \DB::select("SELECT prod_type_id,prod_sub_type_id,num_items from products where id =$product_id");
                     $prodType = $prodData[0]->prod_type_id;
                     $prodSubtype = $prodData[0]->prod_sub_type_id;
+                    $qty_per_case = $prodData[0]->num_items;
                 }
                 else
                 {
                     $prodType = $order_type;
                     $prodSubtype = 0;
+                    $qty_per_case = 1;
                 }
 
                 $contentsData = array(
@@ -680,6 +682,7 @@ class OrderController extends Controller
                     'sku' => $sku_num,
                     'prod_type_id' => $prodType,
                     'prod_sub_type_id' => $prodSubtype,
+                    'qty_per_case' => $qty_per_case,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
                 if ($editmode == "clone") {
