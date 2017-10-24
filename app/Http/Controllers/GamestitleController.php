@@ -165,15 +165,17 @@ class GamestitleController extends Controller
         if ($row) {
 
             $manualPath = "uploads/games/manuals/{$row[0]->id }.pdf";
+            $manualPath2 = "uploads/games/manuals/{$row[0]->id }.PDF";
             $bulletinPath = "uploads/games/bulletins/{$row[0]->id}.pdf";
+            $bulletinPath2 = "uploads/games/bulletins/{$row[0]->id}.PDF";
 
-            if ($row[0]->has_manual == 1 && file_exists($manualPath)) {
+            if ($row[0]->has_manual == 1 && (file_exists($manualPath) || file_exists($manualPath2) )) {
                 $row[0]->has_manual = "Yes";
 
             } else {
                 $row[0]->has_manual = "No";
             }
-            if ($row[0]->has_servicebulletin == 1 && file_exists($bulletinPath)) {
+            if ($row[0]->has_servicebulletin == 1 && (file_exists($bulletinPath) || file_exists($bulletinPath2))) {
                 $row[0]->has_servicebulletin = "Yes";
 
             } else {
@@ -221,6 +223,23 @@ class GamestitleController extends Controller
             'status' => 'success',
             'message' => \Lang::get('core.note_success')
         ));
+    }
+
+    public static function removeUnnecessaryFiles($name,$destinationPath,$extension = 'pdf')
+    {
+        if($extension == 'PDF')
+        {
+            $unncessoryFile = glob($destinationPath.'/'.$name . '.[p][d][f]');
+        }
+        else
+        {
+            $unncessoryFile = glob($destinationPath.'/'.$name . '.[P][D][F]');
+
+        }
+        if(isset($unncessoryFile[0]))
+        {
+            unlink($unncessoryFile[0]);
+        }
     }
 
     function postSave(Request $request, $id = null)
@@ -274,6 +293,7 @@ class GamestitleController extends Controller
                 $destinationPath = './uploads/games/manuals';
                 $uploadSuccess = $request->file('manual')->move($destinationPath, $newfilename);
                 if ($uploadSuccess) {
+                    $this::removeUnnecessaryFiles($id,$destinationPath,$extension);
                     $manualFlag=true;
                     $updates['manual'] = $newfilename;
                     $updates['has_manual'] = '1';
@@ -287,6 +307,7 @@ class GamestitleController extends Controller
                 $destinationPath1 = './uploads/games/bulletins';
                 $uploadSuccess1 = $request->file('service_bulletin')->move($destinationPath1, $newfilename1);
                 if ($uploadSuccess1) {
+                    $this::removeUnnecessaryFiles($id,$destinationPath1,$extension1);
                     $serviceFlag=true;
                     $updates['bulletin'] = $newfilename1;
                     $updates['has_servicebulletin'] = '1';
@@ -426,15 +447,15 @@ class GamestitleController extends Controller
                 $destinationPath .= '/images';
                 break;
             case 2:
-                $rules = array('file' => 'required|mimes:pdf'); //mimepdf
+                $rules = array('file' => 'required|mimes:pdf,PDF'); //mimepdf
                 $destinationPath .= '/manuals';
                 break;
             case 3:
-                $rules = array('file' => 'required|mimes:pdf'); //mimpdf
+                $rules = array('file' => 'required|mimes:pdf,PDF'); //mimpdf
                 $destinationPath .= '/bulletins';
                 break;
             default:
-                $rules = array('file' => 'required|mimes:pdf'); //mimpdf
+                $rules = array('file' => 'required|mimes:pdf,PDF'); //mimpdf
                 $destinationPath .= '/images';
 
         }
@@ -453,6 +474,10 @@ class GamestitleController extends Controller
             $newfilename = $id . '.' . $extension;
             $uploadSuccess = $request->file('avatar')->move($destinationPath, $newfilename);
             if ($uploadSuccess) {
+                if($type == 2 || $type == 3)
+                {
+                    $this::removeUnnecessaryFiles($id,$destinationPath,$extension);
+                }
                 if ($type == 1) {
                     $updates['img'] = $newfilename;
                 } elseif ($type == 2) {
