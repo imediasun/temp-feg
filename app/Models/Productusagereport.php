@@ -56,7 +56,7 @@ class productusagereport extends Sximo  {
         $location_id = @$filters['location_id'];
         $vendor_id = @$filters['vendor_id'];
         $order_type_id = @$filters['Order_Type'];
-        $prod_type_id = @$filters['Product_Type'];
+        $prod_type_id = @$filters['prod_type_id'];
         $prod_sub_type_id = @$filters['Product_Sub_Type'];
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
@@ -107,16 +107,17 @@ class productusagereport extends Sximo  {
                 $date_start_stamp = $date_end_stamp;
                 $date_end_stamp = $t;
             }
-                $mainQuery = "select OCID,id,orderId,sku,num_items,Order_Type,Product_Type,Product_Sub_Type,ticket_value,
+                $mainQuery = "select OCID,id,orderId,sku,num_items,Order_Type,prod_type_id,Product_Type,Product_Sub_Type,ticket_value,
             (select price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId limit 1) as Unit_Price,
             (select case_price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId limit 1) as Case_Price,
             Cases_Ordered,vendor_name,Product,Case_Price_Group,Total_Spent,location_id,location_name,start_date,end_date from (
             
             SELECT max(OCID) as OCID,
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR '-') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
-            GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
-            GROUP_CONCAT(DISTINCT prod_type_id) AS Product_Type,
-            GROUP_CONCAT(DISTINCT type_description) AS Product_Sub_Type,
+            GROUP_CONCAT(DISTINCT order_type ORDER BY order_type ) AS Order_Type,
+            prod_type_id,
+            GROUP_CONCAT(DISTINCT product_type ORDER BY product_type ) AS Product_Type,
+            GROUP_CONCAT(DISTINCT type_description ORDER BY type_description ) AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
             , Unit_Price,
             SUM(qty) AS Cases_Ordered,
@@ -137,6 +138,7 @@ class productusagereport extends Sximo  {
 				   OC.case_price AS Case_Price,
 				   OC.total,
 				   T1.order_type,
+				   T.order_type as product_type,
 				   P.prod_type_id,
 				   D.type_description,
 				   O.location_id,
@@ -153,6 +155,7 @@ class productusagereport extends Sximo  {
 						   LEFT JOIN products P ON P.id = OC.product_id 
 						   LEFT JOIN vendor V ON V.id = O.vendor_id 
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
+						   LEFT JOIN order_type T ON T.id = P.prod_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
 						   
 						   
