@@ -344,7 +344,7 @@
             $(el).find('option').get(0).remove();
 
             $(el).prepend('<option value="">N/A</option>');
-            $(el).prepend('<option value=""> -- Select -- </option>');
+            $(el).prepend('<option value=""> -- Select  -- </option>');
         }
 
     };
