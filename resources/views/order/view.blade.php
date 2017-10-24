@@ -392,9 +392,9 @@ if(!empty($order_data['orderQtyArray'])){
                     @endfor
                 <tr>
                     @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
-                        <td colspan="6">&nbsp;</td>
+                        <td colspan="7">&nbsp;</td>
                     @else
-                        <td colspan="5">&nbsp;</td>
+                        <td colspan="6">&nbsp;</td>
                     @endif
                     <td  colspan="2"><b>Sub Total ($)</b></td>
                     <td colspan="1"><b>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</b></td>
