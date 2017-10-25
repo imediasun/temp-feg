@@ -15,10 +15,15 @@ class inventoryreport extends Sximo  {
     const OFFICE_SUPPLIES = 6;
     const PARTY_SUPPLIES = 17;
     const REDEMPTION_PRICES = 7;
-    protected static $orderTypes = [
+    protected static $orderTypesForNetSuite = [
         self::INSTANT_WIN,
         self::OFFICE_SUPPLIES,
         self::PARTY_SUPPLIES,
+        self::REDEMPTION_PRICES
+    ];
+    protected static $orderTypesForUnitPrice = [
+        self::INSTANT_WIN,
+        self::OFFICE_SUPPLIES,
         self::REDEMPTION_PRICES
     ];
     public function __construct() {
@@ -142,7 +147,7 @@ class inventoryreport extends Sximo  {
                     V.vendor_name AS vendor_name,
                     OC.item_name AS Product,
                     P.ticket_value,
-                    TRUNCATE(OC.case_price/OC.qty_per_case,5) AS Unit_Price,
+                    IF(O.order_type_id in (".implode(',',self::$orderTypesForUnitPrice)."),TRUNCATE(OC.case_price/OC.qty_per_case,5),OC.price) AS Unit_Price,
                     OC.qty,
                     OC.qty_per_case,
                     OC.case_price AS Case_Price,
@@ -172,13 +177,13 @@ class inventoryreport extends Sximo  {
             {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
-            $orderTypes = implode(',',self::$orderTypes);
+            $orderTypesForNetSuite = implode(',',self::$orderTypesForNetSuite);
             $whereQuery = " WHERE O.status_id != ".order::ORDER_VOID_STATUS ." AND O.status_id IN ($closeOrderStatus) AND O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
                             AND (
-                                    (O.order_type_id IN ($orderTypes) AND is_api_visible = 1 )
+                                    (O.order_type_id IN ($orderTypesForNetSuite) AND is_api_visible = 1 )
                                    OR
-                                    (O.order_type_id NOT IN ($orderTypes) AND is_api_visible IN (1,0))
+                                    (O.order_type_id NOT IN ($orderTypesForNetSuite) AND is_api_visible IN (1,0))
                                  )
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
