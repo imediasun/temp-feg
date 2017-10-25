@@ -147,7 +147,7 @@ class inventoryreport extends Sximo  {
                     V.vendor_name AS vendor_name,
                     OC.item_name AS Product,
                     P.ticket_value,
-                    IF(O.order_type_id in (".implode(',',self::$orderTypesForUnitPrice)."),TRUNCATE(OC.case_price/OC.qty_per_case,5),OC.price) AS Unit_Price,
+                    IF(OC.prod_type_id in (".implode(',',self::$orderTypesForUnitPrice)."),TRUNCATE(OC.case_price/OC.qty_per_case,5),OC.price) AS Unit_Price,
                     OC.qty,
                     OC.qty_per_case,
                     OC.case_price AS Case_Price,
@@ -212,7 +212,7 @@ class inventoryreport extends Sximo  {
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2 $orderConditional $limitConditional ";
             $finalCatQuery = "$catQuery $fromQuery $whereQuery $groupQuery";
             \Log::info("Inventory Report final Data query \n ".$finalDataQuery);
-            \Log::info("Inventory Report final Cat query \n ".$finalCatQuery);
+            //\Log::info("Inventory Report final Cat query \n ".$finalCatQuery);
             $rawRows = \DB::select($finalDataQuery);
             $rawCats = \DB::select($finalCatQuery);
             $rows = self::processRows($rawRows);
