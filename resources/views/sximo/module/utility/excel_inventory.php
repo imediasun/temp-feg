@@ -239,6 +239,7 @@ $objSheet->getColumnDimension($LocationColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductTypeColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductSubTypeColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductColumn)->setWidth(25);
+$objSheet->getColumnDimension('A')->setWidth(30);
 $objSheet->mergeCells("A1:".$TotalColumn."1");
 $objSheet->getStyle("A1")->getAlignment()->setWrapText(true);
 $objSheet->getStyle("A1")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -249,6 +250,7 @@ $objSheet->getStyle($CasePackColumn."3:".$CasePackColumn.($lastRow+$totalCounter
 $objSheet->getStyle($QuantityOrderedColumn."3:".$QuantityOrderedColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 //$objSheet->getColumnDimension($serialColumn)->setWidth(50);
 $endOn = $lastRow+$totalCounters+2;
+//$objSheet->getStyle("A3:A".($endOn-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $objSheet->insertNewRowBefore($endOn, 1);
 $totalsRowStart = $endOn;
 $objSheet->setCellValue(
