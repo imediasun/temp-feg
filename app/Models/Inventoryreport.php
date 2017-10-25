@@ -11,7 +11,16 @@ class inventoryreport extends Sximo  {
 
     protected $table = 'orders';
     protected $primaryKey = 'id';
-
+    const INSTANT_WIN = 8;
+    const OFFICE_SUPPLIES = 6;
+    const PARTY_SUPPLIES = 17;
+    const REDEMPTION_PRICES = 7;
+    protected static $orderTypes = [
+        self::INSTANT_WIN,
+        self::OFFICE_SUPPLIES,
+        self::PARTY_SUPPLIES,
+        self::REDEMPTION_PRICES
+    ];
     public function __construct() {
         parent::__construct();
 
@@ -113,13 +122,14 @@ class inventoryreport extends Sximo  {
             SELECT 
             max(id) as id,GROUP_CONCAT(DISTINCT orderId) as orderId, max(sku) as sku, max(num_items) as num_items, 
             '' AS unit_inventory_count,'' AS total_inventory_value,
-            GROUP_CONCAT(DISTINCT order_type) AS Order_Type,
+            GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ' ) AS Order_Type,
+            GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' , ' ) AS location_id,
             Product_Type,
             type_description AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
             ,Unit_Price,
             IF(order_type_id IN (".$casePriceCats."),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
-            Case_Price,SUM(IF(order_type_id IN (".$casePriceCats."),(Case_Price * qty),(Unit_Price*qty))) AS Total_Spent,location_id,start_date,end_date
+            Case_Price,SUM(IF(order_type_id IN (".$casePriceCats."),(Case_Price * qty),(Unit_Price*qty))) AS Total_Spent,start_date,end_date
             ,qty_per_case
              FROM ( 
                     SELECT P.id , O.id as orderId,
@@ -138,6 +148,7 @@ class inventoryreport extends Sximo  {
                     OC.case_price AS Case_Price,
                     OC.total,
                     O.location_id,
+                    L.location_name,
                     O.date_ordered AS start_date,
                     O.date_ordered AS end_date
                         ";
@@ -161,8 +172,14 @@ class inventoryreport extends Sximo  {
             {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
+            $orderTypes = implode(',',self::$orderTypes);
             $whereQuery = " WHERE O.status_id != ".order::ORDER_VOID_STATUS ." AND O.status_id IN ($closeOrderStatus) AND O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
+                            AND (
+                                    (O.order_type_id IN ($orderTypes) AND is_api_visible = 1 )
+                                   OR
+                                    (O.order_type_id NOT IN ($orderTypes) AND is_api_visible IN (1,0))
+                                 )
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
             // both group by quires are same
