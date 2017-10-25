@@ -232,6 +232,15 @@ class OrderController extends Controller
        // \Session::put('filter_before_redirect',false);
         //\Session::put('params',$params);
          $results = $this->model->getRows($params, $order_selected);
+        foreach($results['rows'] as  &$rs){
+            $result = $this->model->getProductInfo($rs->id);
+            $info = '';
+            foreach($result as $r){
+                $info = $info .' '. $r->info;
+            }
+            $rs->productInfo = $info;
+        }
+
         if (count($results['rows']) == 0 and $page != 1) {
             $params['limit'] = $this->info['setting']['perpage'];
             $results = $this->model->getRows($params, $order_selected);
