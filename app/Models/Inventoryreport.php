@@ -125,7 +125,7 @@ class inventoryreport extends Sximo  {
             }
             $mainQuery = "
             SELECT 
-            max(id) as id,GROUP_CONCAT(DISTINCT orderId) as orderId, max(sku) as sku, max(num_items) as num_items, 
+            max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ' ) as orderId, max(sku) as sku, max(num_items) as num_items, 
             '' AS unit_inventory_count,'' AS total_inventory_value,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ' ) AS Order_Type,
             GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' , ' ) AS location_id,
