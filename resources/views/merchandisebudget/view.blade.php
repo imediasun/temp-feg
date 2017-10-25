@@ -8,6 +8,7 @@
 
 	<div class="sbox-content">
 
+        <div class="table-responsive">
 
 		<table class="table table-striped table-bordered" >
 			<tbody>
@@ -96,7 +97,7 @@
 
 			</tbody>
 		</table>
-
+</div>
 
 
 @if($setting['form-method'] =='native')
