@@ -104,7 +104,20 @@ $cellIterator->setIterateOnlyExistingCells(false);
 
 $objSheet->getRowDimension(1)->setRowHeight(50);
 $objSheet->getRowDimension(2)->setRowHeight(80);
-
+$ProductColumn = 'Z';
+$VendorColumn = 'Z';
+$SkuColumn = 'Z';
+$CasePackColumn = 'Z';
+$TicketValueColumn = 'Z';
+$UnitPriceColumn = 'Z';
+$CasePriceColumn = 'Z';
+$QuantityOrderedColumn = 'Z';
+$TotalSpentColumn = 'Z';
+$OrderTypeColumn = 'Z';
+$ProductTypeColumn = 'Z';
+$ProductSubTypeColumn = 'Z';
+$UnitInventoryColumn = 'Z';
+$LocationColumn = 'Z';
 foreach ($cellIterator as $cell) {
 	$column = $cell->getColumn();
 	$objSheet->getStyle($column."2")->getAlignment()->setWrapText(true);
@@ -163,6 +176,10 @@ foreach ($cellIterator as $cell) {
 	{
 		$UnitInventoryColumn = $cell->getColumn();
 	}
+	else if($cell->getValue() == 'Location')
+	{
+		$LocationColumn = $cell->getColumn();
+	}
 }
 $TotalColumn = $objSheet->getHighestColumn();
 $lastRow = $objSheet->getHighestRow();
@@ -218,14 +235,15 @@ $objSheet->getColumnDimension($UnitPriceColumn)->setWidth(12);
 $objSheet->getColumnDimension($UnitInventoryColumn)->setWidth(12);
 $objSheet->getColumnDimension($CasePriceColumn)->setWidth(12);
 $objSheet->getColumnDimension($OrderTypeColumn)->setWidth(20);
+$objSheet->getColumnDimension($LocationColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductTypeColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductSubTypeColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductColumn)->setWidth(25);
-$objSheet->mergeCells($ProductColumn."1:".$TotalColumn."1");
-$objSheet->getStyle($ProductColumn."1")->getAlignment()->setWrapText(true);
-$objSheet->getStyle($ProductColumn."1")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-$objSheet->getStyle($ProductColumn."1")->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-$objSheet->getStyle($ProductColumn."1")->getFont()->setSize(18);
+$objSheet->mergeCells("A1:".$TotalColumn."1");
+$objSheet->getStyle("A1")->getAlignment()->setWrapText(true);
+$objSheet->getStyle("A1")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$objSheet->getStyle("A1")->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+$objSheet->getStyle("A1")->getFont()->setSize(18);
 $objSheet->getStyle($SkuColumn."3:".$SkuColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $objSheet->getStyle($CasePackColumn."3:".$CasePackColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $objSheet->getStyle($QuantityOrderedColumn."3:".$QuantityOrderedColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
