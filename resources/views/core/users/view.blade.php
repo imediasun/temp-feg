@@ -28,15 +28,19 @@
 		</div>
 <div class="sbox animated fadeInRight">
 	<div class="sbox-title"> <h4> <i class="fa fa-eye"></i> <?php echo $pageTitle ;?></h4></div>
+	
 	<div class="sbox-content"> 	
 
 
+<div class="table-responsive">
 	
 	<table class="table table-striped table-bordered" >
+		
 		<tbody>	
 	
 					<tr>
-						<td width='30%' class='label-view text-right'>Avatar</td>
+						<td width='40%' class='label-view text-right'>Avatar</td>
+						
 						<td>
 							<?php if( file_exists( './uploads/users/'.$row->avatar) && $row->avatar !='') { ?>
 							<img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="40" class="img-circle" />
@@ -48,51 +52,51 @@
 					</tr>
 				
 					<tr>
-						<td width='30%' class='label-view text-right'>Group</td>
+						<td width='40%' class='label-view text-right'>Group</td>
 						<td>{{ SiteHelpers::gridDisplayView($row->group_id,'group_id','1:tb_groups:group_id:name',$nodata['group_id']) }} </td>
 						
 					</tr>
 				
 					<tr>
-						<td width='30%' class='label-view text-right'>Username</td>
+						<td width='40%' class='label-view text-right'>Username</td>
 						<td>{{ \DateHelpers::formatStringValue($row->username) }} </td>
 						
 					</tr>
 				
 					<tr>
-						<td width='30%' class='label-view text-right'>First Name</td>
+						<td width='40%' class='label-view text-right'>First Name</td>
 						<td>{{ \DateHelpers::formatStringValue($row->first_name) }} </td>
 						
 					</tr>
 				
 					<tr>
-						<td width='30%' class='label-view text-right'>Last Name</td>
+						<td width='40%' class='label-view text-right'>Last Name</td>
 						<td>{{ \DateHelpers::formatStringValue($row->last_name) }} </td>
 						
 					</tr>
 				
 					<tr>
-						<td width='30%' class='label-view text-right'>Email</td>
+						<td width='40%' class='label-view text-right'>Email</td>
 						<td>{{ \DateHelpers::formatStringValue($row->email) }} </td>
 						
 					</tr>
 				
 
 					<tr>
-						<td width='30%' class='label-view text-right'>Last Login</td>
+						<td width='40%' class='label-view text-right'>Last Login</td>
 						<td>	{{  \DateHelpers::formatDateTime($row->last_login)  }} </td>
 
 
 					</tr>
 				
 					<tr>
-						<td width='30%' class='label-view text-right'>Updated On</td>
+						<td width='40%' class='label-view text-right'>Updated On</td>
 						<td>	{{  \DateHelpers::formatDateTime($row->updated_at)  }} </td>
 						
 					</tr>
 				
 					<tr>
-						<td width='30%' class='label-view text-right'>Active</td>
+						<td width='40%' class='label-view text-right'>Active</td>
 						<td>{!! ($row->active ==1 ? '<lable class="label label-success">Active</label>' : '<lable class="label label-danger">Inactive</label>')  !!} </td>
 						
 					</tr>
@@ -100,8 +104,12 @@
 		</tbody>
 
 	</table>
-        <h3>Locations:</h3>
+</div>
 
+
+        <h3>Locations:</h3>
+        
+<div class="table-responsive">
         <table class="table table-striped table-bordered table-hover" >
             <thead>
                 <tr>
@@ -131,7 +139,7 @@
 
             </tbody>
         </table>
-
+     </div>
 	</div>
 </div>	
 

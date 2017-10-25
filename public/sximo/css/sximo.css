@@ -3311,6 +3311,8 @@ position: relative;
 .c-margin .col-md-8,
 .c-margin .col-md-7{
   margin-bottom: 5px;
+  
+  
 }
 
 .c-margin .col-md-12 select,
@@ -3412,6 +3414,36 @@ margin-left: 15px;
 .navbar .navbar-top-links .dropdown-menu li {
   margin-left: 0;
 }
+
+
+.table-responsive .table {
+  min-width: 765px;
+}
+
+.table-responsive > .table > thead > tr > th,
+.table-responsive > .table > tbody > tr > th,
+.table-responsive > .table > tfoot > tr > th,
+.table-responsive > .table > thead > tr > td,
+.table-responsive > .table > tbody > tr > td,
+.table-responsive > .table > tfoot > tr > td {
+  white-space: normal;
+}
+
+.nogallary.gameImageContainer {
+    background: #fff none repeat scroll 0 0;
+    box-shadow: 1px 1px 5px gray;
+    margin: 30px 15px 0;
+    padding: 30px 15px 15px;
+}
+
+.nogallary.gameImageContainer img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  width: auto;
+}
+
+
 
 }
 
