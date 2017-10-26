@@ -3490,9 +3490,12 @@ span.order_custom_error ~ ul.parsley-error-list
     color: inherit !important;
 }
 
-.float-margin{
+.btn-white{
+  margin-right: 2px !important;
   float: left;
-  margin-right: 1px
+}
+.float-margin{
+
 }
 /* for FireFox*/
 @-moz-document url-prefix() { .height-set{ margin-top: -1px !important;  } }
