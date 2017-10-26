@@ -81,7 +81,7 @@ class inventoryreport extends Sximo  {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }
 
-        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'date_ordered','id != 11224');// excluding this order because it has wrong ordered_date
+        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'date_ordered');
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         if (empty($date_start) || empty($date_end)) {
             $message = "To view the contents of this report, please select a date range and other search filter.";
