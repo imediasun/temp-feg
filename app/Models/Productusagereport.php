@@ -165,7 +165,7 @@ class productusagereport extends Sximo  {
             {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
-            $orderTypesForNetSuite = implode(',',inventoryreport::$orderTypesForNetSuite);
+            $orderTypesForNetSuite = implode(',',Inventoryreport::$orderTypesForNetSuite);
             $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
                             AND (
