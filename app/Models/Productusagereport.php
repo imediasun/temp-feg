@@ -84,13 +84,13 @@ class productusagereport extends Sximo  {
                 $whereVendor = "AND V.id IN ($vendor_id) ";
             }
             if (!empty($prod_type_id)) {
-                $whereProdType = "AND P.prod_type_id IN ($prod_type_id) ";
+                $whereProdType = "AND OC.prod_type_id IN ($prod_type_id) ";
             }
             if (!empty($order_type_id)) {
                 $whereOrderType = "AND O.order_type_id IN ($order_type_id) ";
             }
             if (!empty($prod_sub_type_id)) {
-                $whereProdSubType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
+                $whereProdSubType = "AND OC.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
 
             $module_id = Module::name2id('order');
@@ -113,16 +113,16 @@ class productusagereport extends Sximo  {
             Cases_Ordered,vendor_name,Product,Case_Price_Group,Total_Spent,location_id,location_name,start_date,end_date from (
             
             SELECT max(OCID) as OCID,
-            max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR '-') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
-            GROUP_CONCAT(DISTINCT order_type ORDER BY order_type ) AS Order_Type,
+            max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
+            GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ') AS Order_Type,
             prod_type_id,
-            GROUP_CONCAT(DISTINCT product_type ORDER BY product_type ) AS Product_Type,
-            GROUP_CONCAT(DISTINCT type_description ORDER BY type_description ) AS Product_Sub_Type,
+            GROUP_CONCAT(DISTINCT product_type ORDER BY product_type SEPARATOR ' , ') AS Product_Type,
+            GROUP_CONCAT(DISTINCT type_description ORDER BY type_description SEPARATOR ' , ') AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
             , Unit_Price,
             SUM(qty) AS Cases_Ordered,
             IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
-            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name) as location_name,start_date,end_date
+            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' , ') as location_name,start_date,end_date
              FROM (
             Select O.id as orderId,
                    P.id,
@@ -131,7 +131,7 @@ class productusagereport extends Sximo  {
                    V.vendor_name as vendor_name,
                    OC.item_name AS Product,
                    IF(P.ticket_value = 0, '', P.ticket_value) AS ticket_value,
-                   IF(P.num_items = '' OR P.num_items IS NULL, 0, P.num_items) AS num_items,
+                   IF(OC.qty_per_case = '' OR OC.qty_per_case IS NULL, 0, OC.qty_per_case) AS num_items,
 				   OC.price AS Unit_Price,
 				   OC.qty,
 				   O.order_type_id,
@@ -139,7 +139,7 @@ class productusagereport extends Sximo  {
 				   OC.total,
 				   T1.order_type,
 				   T.order_type as product_type,
-				   P.prod_type_id,
+				   OC.prod_type_id,
 				   D.type_description,
 				   O.location_id,
 				   L.location_name,
@@ -155,8 +155,8 @@ class productusagereport extends Sximo  {
 						   LEFT JOIN products P ON P.id = OC.product_id 
 						   LEFT JOIN vendor V ON V.id = O.vendor_id 
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
-						   LEFT JOIN order_type T ON T.id = P.prod_type_id
-						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
+						   LEFT JOIN order_type T ON T.id = OC.prod_type_id
+						   LEFT JOIN product_type D ON D.id = OC.prod_sub_type_id
 						   
 						   
 						   ";
@@ -169,7 +169,7 @@ class productusagereport extends Sximo  {
                             AND requests.process_date <= '$date_end'
                              $whereLocation $whereVendor $whereOrderType $whereProdType ";*/
 
-            $groupQuery = " GROUP BY Product , sku";
+            $groupQuery = " GROUP BY Product ,num_items ,Case_Price,Product_Type, sku";
 //            $groupQuery = " GROUP BY P.id ";
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $mainQueryEnd2";
