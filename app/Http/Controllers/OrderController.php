@@ -654,6 +654,19 @@ class OrderController extends Controller
                 } else {
                     $items_received_qty = $item_received[$i];
                 }
+                if($product_id != 0)
+                {
+                    $prodData = \DB::select("SELECT prod_type_id,prod_sub_type_id,num_items from products where id =$product_id");
+                    $prodType = $prodData[0]->prod_type_id;
+                    $prodSubtype = $prodData[0]->prod_sub_type_id;
+                    $qty_per_case = $prodData[0]->num_items;
+                }
+                else
+                {
+                    $prodType = $order_type;
+                    $prodSubtype = 0;
+                    $qty_per_case = 1;
+                }
 
                 $contentsData = array(
                     'order_id' => $order_id,
@@ -667,6 +680,9 @@ class OrderController extends Controller
                     'case_price' => $casePriceArray[$i],
                     'item_received' => $items_received_qty,
                     'sku' => $sku_num,
+                    'prod_type_id' => $prodType,
+                    'prod_sub_type_id' => $prodSubtype,
+                    'qty_per_case' => $qty_per_case,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
                 if ($editmode == "clone") {
