@@ -160,9 +160,19 @@ class productusagereport extends Sximo  {
 						   
 						   
 						   ";
-
-            $whereQuery = " WHERE O.date_ordered >= '$date_start'
+            $closeOrderStatus = order::ORDER_CLOSED_STATUS;
+            if(is_array($closeOrderStatus))
+            {
+                $closeOrderStatus = implode(',',$closeOrderStatus);
+            }
+            $orderTypesForNetSuite = implode(',',inventoryreport::$orderTypesForNetSuite);
+            $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
+                            AND (
+                                    (O.order_type_id IN ($orderTypesForNetSuite) AND is_api_visible = 1 )
+                                   OR
+                                    (O.order_type_id NOT IN ($orderTypesForNetSuite) AND is_api_visible IN (1,0))
+                                 )
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
             /*$whereQuery = " WHERE requests.status_id = 2
                             AND requests.process_date >= '$date_start'
