@@ -9,7 +9,7 @@
 
     </div>
         @if($view=="open")
-            <div class="abc" id="number_requests" >
+            <div class="abc col-md-3" id="number_requests" >
                 <p style="color:red;  font-weight: bold">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
             </div>
 
