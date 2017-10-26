@@ -27,41 +27,50 @@ $content .= '</tr>';
 
 $rows = collect($rows);
 $counters = array();
-
+$excludeCats = [];
 foreach ($categories as $key=>$category)
 {
 	$counts = 1;
-	foreach ($rows->where('Order_Type',$category->order_type) as $row)
+	$loopData = $rows->where('Product_Type',$category->order_type);
+	if(count($loopData))
 	{
-		$content .= '<tr>';
-		foreach($fields as $f )
+		foreach ($loopData as $row)
 		{
-			$nodata = 1;
-			if($f['download'] =='1'):
-				if(isset($f['attribute']['formater']))
-				{
-					$f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':3:false:';
-				}
-				unset($f['attribute']['hyperlink']);
-				$conn = (isset($f['conn']) ? $f['conn'] : array() );
-				if($f['field'] == 'ticket_value')
-				{
-					$nodata = 0;
-				}
-				$a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$nodata)));
-				$b = str_replace( ',', '', $a );
-				$c = str_replace('$','',$b);
-				if( is_numeric( $c ) ) {
-					$a = $c;
-				}
-				$content .= '<td> '. strip_tags(($a)) . '</td>';
-			endif;
+			$content .= '<tr>';
+			foreach($fields as $f )
+			{
+				$nodata = 1;
+				if($f['download'] =='1'):
+					if(isset($f['attribute']['formater']))
+					{
+						$f['attribute']['formater']['value'] = $f['attribute']['formater']['value'].':2:false:';
+					}
+					unset($f['attribute']['hyperlink']);
+					$conn = (isset($f['conn']) ? $f['conn'] : array() );
+					if($f['field'] == 'ticket_value')
+					{
+						$nodata = 0;
+					}
+					$a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$nodata)));
+					$b = str_replace( ',', '', $a );
+					$c = str_replace('$','',$b);
+					if( is_numeric( $c ) ) {
+						$a = $c;
+					}
+					$content .= '<td> '. strip_tags(($a)) . '</td>';
+				endif;
+			}
+			$content .= '</tr>';
+			$counters[$key] = $counts;
+			$counts++;
 		}
-		$content .= '</tr>';
-		$counters[$key] = $counts;
-		$counts++;
 	}
+	else{
+		$excludeCats[] = $key;
+	}
+
 }
+$counters = array_values($counters);
 $content .= '</table>';
 $path = "../storage/app/".time().".html";
 file_put_contents($path, $content);
@@ -91,7 +100,20 @@ $cellIterator->setIterateOnlyExistingCells(false);
 
 $objSheet->getRowDimension(1)->setRowHeight(50);
 $objSheet->getRowDimension(2)->setRowHeight(80);
-
+$ProductColumn = 'Z';
+$VendorColumn = 'Z';
+$SkuColumn = 'Z';
+$CasePackColumn = 'Z';
+$TicketValueColumn = 'Z';
+$UnitPriceColumn = 'Z';
+$CasePriceColumn = 'Z';
+$QuantityOrderedColumn = 'Z';
+$TotalSpentColumn = 'Z';
+$OrderTypeColumn = 'Z';
+$ProductTypeColumn = 'Z';
+$ProductSubTypeColumn = 'Z';
+$UnitInventoryColumn = 'Z';
+$LocationColumn = 'Z';
 foreach ($cellIterator as $cell) {
 	$column = $cell->getColumn();
 	$objSheet->getStyle($column."2")->getAlignment()->setWrapText(true);
@@ -150,6 +172,10 @@ foreach ($cellIterator as $cell) {
 	{
 		$UnitInventoryColumn = $cell->getColumn();
 	}
+	else if($cell->getValue() == 'Location')
+	{
+		$LocationColumn = $cell->getColumn();
+	}
 }
 $TotalColumn = $objSheet->getHighestColumn();
 $lastRow = $objSheet->getHighestRow();
@@ -185,15 +211,14 @@ for($i = 0;$i < $totalCounters;$i++)
 		)
 	);
 	$startFrom = ($endOn+1);
-	if(($i+1) != count($counters))
+	if (($i + 1) != $totalCounters)
 	{
-		$endOn = $startFrom + $counters[$i+1];
+		$endOn = $startFrom + $counters[$i + 1];
 	}
 	else
 	{
 		$endOn = count($rows);
 	}
-
 }
 $objSheet->getStyle($TotalColumn.'3:'.$TotalColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 $objSheet->getStyle($TotalSpentColumn.'3:'.$TotalSpentColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
@@ -206,39 +231,46 @@ $objSheet->getColumnDimension($UnitPriceColumn)->setWidth(12);
 $objSheet->getColumnDimension($UnitInventoryColumn)->setWidth(12);
 $objSheet->getColumnDimension($CasePriceColumn)->setWidth(12);
 $objSheet->getColumnDimension($OrderTypeColumn)->setWidth(20);
+$objSheet->getColumnDimension($LocationColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductTypeColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductSubTypeColumn)->setWidth(20);
 $objSheet->getColumnDimension($ProductColumn)->setWidth(25);
-$objSheet->mergeCells($ProductColumn."1:".$TotalColumn."1");
-$objSheet->getStyle($ProductColumn."1")->getAlignment()->setWrapText(true);
-$objSheet->getStyle($ProductColumn."1")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-$objSheet->getStyle($ProductColumn."1")->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-$objSheet->getStyle($ProductColumn."1")->getFont()->setSize(18);
+$objSheet->getColumnDimension('A')->setWidth(30);
+$objSheet->mergeCells("A1:".$TotalColumn."1");
+$objSheet->getStyle("A1")->getAlignment()->setWrapText(true);
+$objSheet->getStyle("A1")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$objSheet->getStyle("A1")->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+$objSheet->getStyle("A1")->getFont()->setSize(18);
 $objSheet->getStyle($SkuColumn."3:".$SkuColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $objSheet->getStyle($CasePackColumn."3:".$CasePackColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $objSheet->getStyle($QuantityOrderedColumn."3:".$QuantityOrderedColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 //$objSheet->getColumnDimension($serialColumn)->setWidth(50);
 $endOn = $lastRow+$totalCounters+2;
+//$objSheet->getStyle("A3:A".($endOn-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $objSheet->insertNewRowBefore($endOn, 1);
 $totalsRowStart = $endOn;
 $objSheet->setCellValue(
 	"A".$totalsRowStart,
 	"TOTALS"
 );
-
+$loopCounter = 0;
 foreach($categories as $key=>$category)
 {
-	$endOn++;
-	$objSheet->insertNewRowBefore($endOn, 1);
-	$objSheet->setCellValue(
-		"A".$endOn,
-		"$category->order_type"
-	);
-	$objSheet->setCellValue(
-		"B".$endOn,
-		"=$totalsCells[$key]"
-	);
-	$objSheet->getStyle("B$endOn")->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+	if(!in_array($key,$excludeCats))
+	{
+		$endOn++;
+		$objSheet->insertNewRowBefore($endOn, 1);
+		$objSheet->setCellValue(
+			"A".$endOn,
+			"$category->order_type"
+		);
+		$objSheet->setCellValue(
+			"B".$endOn,
+			"=$totalsCells[$loopCounter]"
+		);
+		$objSheet->getStyle("B$endOn")->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+		$loopCounter++;
+	}
 }
 $objPHPExcel->getActiveSheet()->getStyle("B$endOn")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 $endOn++;
@@ -304,7 +336,7 @@ if(isset($pass["Users With Limited Access"]))
 
 	$objSheet->getProtection()->setPassword('passwordhareherehere');
 	$objSheet->getStyle($UnitInventoryColumn."3:".$UnitInventoryColumn.$endOn)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);//unlocked column L
-	$objSheet->getStyle("B$hold:B$endOn")->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);//unlocked column L
+	//$objSheet->getStyle("B$hold:B$endOn")->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);//unlocked column L
 	$objSheet->getProtection()->setSheet(true);//locked sheet
 	//$worksheet->getProtection()->setInsertRows(true);
 	$objSheet->getProtection()->setDeleteRows(false);
@@ -329,6 +361,24 @@ $objSheet->getPageSetup()->setFitToWidth(1);
 $objSheet->getPageSetup()->setFitToHeight(0);
 $objSheet->getPageMargins()->setRight(0.3);
 $objSheet->getPageMargins()->setLeft(0.3);
+
+if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
+{
+	foreach ($cellIterator as $cell) {
+		if(in_array($cell->getValue(),$excelExcludeFormatting))
+		{
+			$serialColumn = $cell->getColumn();
+			//$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
+			$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
+			$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . $endOn);
+
+			$objPHPExcel->getActiveSheet()->getStyle($colString)
+				->getNumberFormat()
+				->setFormatCode('0.00###');
+		}
+	}
+}
+
 
 //$objSheet->protectCells('A1:B1', 'PHP');//password protected
 // Delete temporary file
