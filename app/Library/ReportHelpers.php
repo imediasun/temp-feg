@@ -1320,7 +1320,7 @@ class ReportHelpers
      * @param type $format
      * @return type
      */
-    public static function humanifydate($date, $format = "l, F d Y") {
+    public static function humanifydate($date, $format = "l, F d, Y") {
         $ret = "";
         if (!empty($date)) {
             $ret = date($format, strtotime($date));
@@ -1335,7 +1335,7 @@ class ReportHelpers
      * @param type $format
      * @return type
      */
-    public static function humanifyDateRangeMessage($dateStart, $dateEnd = "", $format = "l, F d Y") {
+    public static function humanifyDateRangeMessage($dateStart, $dateEnd = "", $format = "l, F d, Y") {
         $ret = "";
         $dateStartHuman = self::humanifydate($dateStart, $format);
         $dateEndHuman = self::humanifydate($dateEnd, $format);

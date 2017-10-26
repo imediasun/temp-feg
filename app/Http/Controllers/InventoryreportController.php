@@ -298,6 +298,7 @@ class InventoryreportController extends Controller {
 			'categories' => $results['categories'],
 			'title' => $this->data['pageTitle'],
 			'topMessage' => $results['topMessage'],
+			'excelExcludeFormatting' => $results['excelExcludeFormatting']
 		);
 
 		if ($t == 'word') {
