@@ -135,6 +135,9 @@
 					</label>
 					<div class="col-md-6">
 						{!! Form::text('phone', $row['phone'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
+						<ul id="parsley-8881212123219" class="parsley-error-list" style="display: none;">
+							<li class="required" style="display: list-item;">Please enter valid phone number</li>
+						</ul>
 					</div>
 					<div class="col-md-2"></div>
 				</div>
@@ -244,13 +247,31 @@ $(document).ready(function() {
 		$.get(removeUrl,function(response){});
 		$(this).parent('div').empty();	
 		return false;
-	});		
-    
+	});
+	function validatePhone() {
+		var phone_pattern = /^((\+)?[1-9]{1,2})?([-\s\.])?((\(\d{1,4}\))|\d{1,4})(([-\s\.])?[0-9]{1,12}){1,2}$/;
+		var phone = $("input[name=phone]").val();
+		var digits = phone.replace(/[^0-9]/g,"").length;
+		var alphabets = phone.replace(/[^a-zA-Z]/g,"").length;
+		var valid =(phone_pattern.test( phone ) && digits == 10 && alphabets == 0 );
+		if(valid && phone.length == 0)
+		{
+			$("#parsley-8881212123219").hide()
+		}
+		else
+		{
+			$("#parsley-8881212123219").show()
+		}
+		return valid;
+	}
+	$("input[name=phone]").keyup(function () {
+		validatePhone()
+	});
 	var form = $('#sbticketFormAjax'); 
 	form.parsley();
 	form.submit(function(){
-		
-		if(form.parsley('isValid') == true){			
+		var valid = validatePhone();
+		if(form.parsley('isValid') == true && valid){
 			var options = { 
 				dataType:      'json', 
 				beforeSubmit :  showRequest,
