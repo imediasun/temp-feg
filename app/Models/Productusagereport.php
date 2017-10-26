@@ -6,6 +6,7 @@ use SiteHelpers;
 use App\Library\ReportHelpers;
 use App\Library\DBHelpers;
 use \App\Models\Sximo\Module;
+use App\Models\inventoryreport;
 class productusagereport extends Sximo  {
 
     protected $table = 'orders';
