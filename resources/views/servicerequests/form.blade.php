@@ -254,11 +254,11 @@ $(document).ready(function() {
 		var digits = phone.replace(/[^0-9]/g,"").length;
 		var alphabets = phone.replace(/[^a-zA-Z]/g,"").length;
 		var valid =(phone_pattern.test( phone ) && digits == 10 && alphabets == 0 );
-		if(valid && phone.length == 0)
+		if(valid)
 		{
 			$("#parsley-8881212123219").hide()
 		}
-		else
+		else if(phone.length > 0)
 		{
 			$("#parsley-8881212123219").show()
 		}
