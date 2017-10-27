@@ -348,7 +348,7 @@ $(document).on("blur", "input[name='case_price']", function () {
 	$(this).val($(this).fixDecimal());
 });
 
-$(document).on("keyup", "input[name='case_price']", function () {
+$(document).on("keyup change", "input[name='case_price']", function () {
 	calculateUnitPrice($(this).parents('tr').data('id'));
 });
 
