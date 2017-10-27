@@ -1185,4 +1185,12 @@ function getCartTotal()
 
 $(document).ready(function(){
     getCartTotal();
+
+    //to open the link in new tab (Pages)
+    var check = $('div[id$="Grid"]');
+    if (check.length == 0){
+        $('a').each(function(){
+            this.setAttribute('target', '_blank')
+        })
+    }
 });
