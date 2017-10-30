@@ -65,7 +65,7 @@ class productusagereport extends Sximo  {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }
 
-        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'date_ordered');
+        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'created_at');
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         if (empty($date_start) || empty($date_end)) {
             $message = "To view the contents of this report, please select a date range and other search filter.";
@@ -122,29 +122,29 @@ class productusagereport extends Sximo  {
             , Unit_Price,
             SUM(qty) AS Cases_Ordered,
             IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
-            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' , ') as location_name,start_date,end_date
+            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' <br><br> ') as location_name,start_date,end_date
              FROM (
             Select O.id as orderId,
                    P.id,
                    OC.id as OCID,
-                   IF(OC.sku = '' OR OC.sku IS NULL,P.sku,OC.sku) AS sku,
+                   IF(P.sku = '' OR P.sku IS NULL,OC.sku,P.sku) AS sku,
                    V.vendor_name as vendor_name,
                    OC.item_name AS Product,
                    IF(P.ticket_value = 0, '', P.ticket_value) AS ticket_value,
-                   IF(OC.qty_per_case = '' OR OC.qty_per_case IS NULL, 0, OC.qty_per_case) AS num_items,
-				   OC.price AS Unit_Price,
+                   IF(P.num_items = '' OR P.num_items IS NULL, 0, P.num_items) AS num_items,
+				   P.unit_price AS Unit_Price,
 				   OC.qty,
 				   O.order_type_id,
-				   OC.case_price AS Case_Price,
+				   P.case_price AS Case_Price,
 				   OC.total,
 				   T1.order_type,
 				   T.order_type as product_type,
-				   OC.prod_type_id,
+				   P.prod_type_id,
 				   D.type_description,
 				   O.location_id,
 				   L.location_name,
-				   O.date_ordered AS start_date,
-				   O.date_ordered AS end_date 
+				   O.created_at AS start_date,
+				   O.created_at AS end_date 
                         ";
             $mainQueryEnd  = " ) AS t ";
             $mainQueryEnd2  = " ) AS m ";
@@ -153,10 +153,10 @@ class productusagereport extends Sximo  {
                            JOIN orders O ON O.id = OC.order_id 
 						   LEFT JOIN location L ON L.id = O.location_id
 						   LEFT JOIN products P ON P.id = OC.product_id 
-						   LEFT JOIN vendor V ON V.id = O.vendor_id 
+						   LEFT JOIN vendor V ON V.id = P.vendor_id 
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
-						   LEFT JOIN order_type T ON T.id = OC.prod_type_id
-						   LEFT JOIN product_type D ON D.id = OC.prod_sub_type_id
+						   LEFT JOIN order_type T ON T.id = P.prod_type_id
+						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
 						   
 						   
 						   ";
@@ -165,19 +165,10 @@ class productusagereport extends Sximo  {
             {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
-            $orderTypesForNetSuite = implode(',',Inventoryreport::$orderTypesForNetSuite);
-            $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.date_ordered >= '$date_start'
-                            AND O.date_ordered <= '$date_end' 
-                            AND (
-                                    (O.order_type_id IN ($orderTypesForNetSuite) AND is_api_visible = 1 )
-                                   OR
-                                    (O.order_type_id NOT IN ($orderTypesForNetSuite) AND is_api_visible IN (1,0))
-                                 )
+
+            $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
+                            AND O.created_at <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
-            /*$whereQuery = " WHERE requests.status_id = 2
-                            AND requests.process_date >= '$date_start'
-                            AND requests.process_date <= '$date_end'
-                             $whereLocation $whereVendor $whereOrderType $whereProdType ";*/
 
             $groupQuery = " GROUP BY Product ,num_items ,Case_Price,Product_Type, sku";
 //            $groupQuery = " GROUP BY P.id ";
