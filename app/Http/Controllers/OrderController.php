@@ -1579,7 +1579,7 @@ class OrderController extends Controller
     public function getProductdata()
     {
         $vendor_description = Input::get('product_id');
-        $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . $vendor_description . "'");
+        $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . mysql_real_escape_string($vendor_description) . "'");
         $json = [];
         if (!empty($row)) {
             $row = Order::hydrate($row);
