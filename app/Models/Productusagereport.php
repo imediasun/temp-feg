@@ -107,12 +107,7 @@ class productusagereport extends Sximo  {
                 $date_start_stamp = $date_end_stamp;
                 $date_end_stamp = $t;
             }
-                $mainQuery = "select OCID,id,orderId,sku,num_items,Order_Type,prod_type_id,Product_Type,Product_Sub_Type,ticket_value,
-            (select price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId limit 1) as Unit_Price,
-            (select case_price from order_contents OC where OC.item_name = Product AND OC.order_id = maxOrderId limit 1) as Case_Price,
-            Cases_Ordered,vendor_name,Product,Case_Price_Group,Total_Spent,location_id,location_name,start_date,end_date from (
-            
-            SELECT max(OCID) as OCID,
+                $mainQuery = "SELECT max(OCID) as OCID,
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ') AS Order_Type,
             prod_type_id,
@@ -147,7 +142,6 @@ class productusagereport extends Sximo  {
 				   O.created_at AS end_date 
                         ";
             $mainQueryEnd  = " ) AS t ";
-            $mainQueryEnd2  = " ) AS m ";
 
             $fromQuery = " FROM order_contents OC 
                            JOIN orders O ON O.id = OC.order_id 
@@ -173,7 +167,7 @@ class productusagereport extends Sximo  {
             $groupQuery = " GROUP BY Product ,num_items ,Case_Price,Product_Type, sku";
 //            $groupQuery = " GROUP BY P.id ";
 
-            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $mainQueryEnd2";
+            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery ";
             $totalRows = \DB::select($finalTotalQuery);
             if (!empty($totalRows)) {
                 $total = count($totalRows);
@@ -188,7 +182,7 @@ class productusagereport extends Sximo  {
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
                 ' ORDER BY vendor_name, Product_Type ';
 
-            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $mainQueryEnd2 $orderConditional $limitConditional";
+            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $orderConditional $limitConditional";
             \Log::info("Product Usage final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
             $rows = self::processRows($rawRows);
