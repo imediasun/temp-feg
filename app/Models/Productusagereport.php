@@ -117,7 +117,7 @@ class productusagereport extends Sximo  {
             , Unit_Price,
             SUM(qty) AS Cases_Ordered,
             IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
-            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' <br><br> ') as location_name,start_date,end_date
+            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' <br> ') as location_name,start_date,end_date
              FROM (
             Select O.id as orderId,
                    P.id,
