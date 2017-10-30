@@ -81,16 +81,16 @@ class productusagereport extends Sximo  {
                 $whereLocation = "AND O.location_id IN ($location_id) ";
             }
             if (!empty($vendor_id)) {
-                $whereVendor = "AND V.id IN ($vendor_id) ";
+                $whereVendor = "AND P.vendor_id IN ($vendor_id) OR O.vendor_id IN ($vendor_id) ";
             }
             if (!empty($prod_type_id)) {
-                $whereProdType = "AND P.prod_type_id IN ($prod_type_id) ";
+                $whereProdType = "AND P.prod_type_id IN ($prod_type_id) OR OC.product_type_id IN ($prod_type_id) ";
             }
             if (!empty($order_type_id)) {
                 $whereOrderType = "AND O.order_type_id IN ($order_type_id) ";
             }
             if (!empty($prod_sub_type_id)) {
-                $whereProdSubType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
+                $whereProdSubType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) OR OC.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
 
             $module_id = Module::name2id('order');
@@ -113,7 +113,7 @@ class productusagereport extends Sximo  {
             prod_type_id,
             GROUP_CONCAT(DISTINCT product_type ORDER BY product_type SEPARATOR ' , ') AS Product_Type,
             GROUP_CONCAT(DISTINCT type_description ORDER BY type_description SEPARATOR ' , ') AS Product_Sub_Type,
-            vendor_name,Product,max(ticket_value) as ticket_value
+            vendor_id,Product,max(ticket_value) as ticket_value
             , Unit_Price,
             SUM(qty) AS Cases_Ordered,
             IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
@@ -123,19 +123,19 @@ class productusagereport extends Sximo  {
                    P.id,
                    OC.id as OCID,
                    IF(P.sku = '' OR P.sku IS NULL,OC.sku,P.sku) AS sku,
-                   V.vendor_name as vendor_name,
+                   IF(P.vendor_id = '' OR P.vendor_id IS NULL,O.vendor_id,P.vendor_id) AS vendor_id,
                    OC.item_name AS Product,
                    IF(P.ticket_value = 0, '', P.ticket_value) AS ticket_value,
-                   IF(P.num_items = '' OR P.num_items IS NULL, 0, P.num_items) AS num_items,
-				   P.unit_price AS Unit_Price,
+                   IF(P.num_items = '' OR P.num_items IS NULL, IF(OC.qty_per_case = '' OR OC.qty_per_case IS NULL , 0,OC.qty_per_case), P.num_items) AS num_items,
+				   IF(P.unit_price = '' OR P.unit_price IS NULL,OC.price,P.unit_price) AS Unit_Price,
 				   OC.qty,
 				   O.order_type_id,
-				   P.case_price AS Case_Price,
+				   IF(P.case_price = '' OR P.case_price IS NULL , OC.case_price , P.case_price) AS Case_Price,
 				   OC.total,
 				   T1.order_type,
-				   T.order_type as product_type,
+				   IF(PT.order_type = '' OR PT.order_type IS NULL,OCT.order_type,PT.order_type) AS product_type,
 				   P.prod_type_id,
-				   D.type_description,
+				   IF(D.type_description = '' OR D.type_description IS NULL, OCD.type_description,D.type_description) AS type_description,
 				   O.location_id,
 				   L.location_name,
 				   O.created_at AS start_date,
@@ -146,11 +146,12 @@ class productusagereport extends Sximo  {
             $fromQuery = " FROM order_contents OC 
                            JOIN orders O ON O.id = OC.order_id 
 						   LEFT JOIN location L ON L.id = O.location_id
-						   LEFT JOIN products P ON P.id = OC.product_id 
-						   LEFT JOIN vendor V ON V.id = P.vendor_id 
+						   LEFT JOIN products P ON P.id = OC.product_id  
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
-						   LEFT JOIN order_type T ON T.id = P.prod_type_id
+						   LEFT JOIN order_type PT ON PT.id = P.prod_type_id
+						   LEFT JOIN order_type OCT ON OCT.id = OC.prod_type_id
 						   LEFT JOIN product_type D ON D.id = P.prod_sub_type_id
+						   LEFT JOIN product_type OCD ON OCD.id = OC.prod_sub_type_id
 						   
 						   
 						   ";
@@ -180,7 +181,7 @@ class productusagereport extends Sximo  {
             $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
 
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
-                ' ORDER BY vendor_name, Product_Type ';
+                ' ORDER BY Product ';
 
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $orderConditional $limitConditional";
             \Log::info("Product Usage final Data query \n ".$finalDataQuery);
