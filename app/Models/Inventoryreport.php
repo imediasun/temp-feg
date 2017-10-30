@@ -15,13 +15,13 @@ class inventoryreport extends Sximo  {
     const OFFICE_SUPPLIES = 6;
     const PARTY_SUPPLIES = 17;
     const REDEMPTION_PRICES = 7;
-    protected static $orderTypesForNetSuite = [
+    public static $orderTypesForNetSuite = [
         self::INSTANT_WIN,
         self::OFFICE_SUPPLIES,
         self::PARTY_SUPPLIES,
         self::REDEMPTION_PRICES
     ];
-    protected static $orderTypesForUnitPrice = [
+    public static $orderTypesForUnitPrice = [
         self::INSTANT_WIN,
         self::OFFICE_SUPPLIES,
         self::REDEMPTION_PRICES
