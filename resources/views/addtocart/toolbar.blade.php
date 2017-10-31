@@ -97,4 +97,10 @@
         });
     }
 
+    $(document).ajaxComplete(function(event, xhr, options) {
+        if(options.url == siteUrl+'/addtocart/delete'){
+            getCartTotal();
+        }
+    });
+
 </script>

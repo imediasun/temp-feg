@@ -7,29 +7,32 @@
             <span class="navbar-minimalize minimalize-btn text-gray page-title">@if(isset($pageTitle)){{ $pageTitle }}@endif</span>
         </div>
         <ul class="nav navbar-top-links navbar-right">
-                <?php if(!empty(\Session::get('return_id'))): ?>
-                <?php $impersonatePath = FEGFormat::usersToNames(array_reverse(\Session::get('return_id')), "", ' → '); ?>
-                <li >
-                    <a class="exit-admin tips"
-                       title="{!! $impersonatePath !!}"
-                       data-placement="auto"
-                       style="color: #428bca;"
-                       href="{{ URL::to('core/users/play/back')}}">Exit to Admin</a>
-                </li>
-                <?php endif; ?>
+            <?php if(!empty(\Session::get('return_id'))): ?>
+            <?php $impersonatePath = FEGFormat::usersToNames(array_reverse(\Session::get('return_id')), "", ' → '); ?>
+            <li >
+                <a class="exit-admin tips"
+                   title="{!! $impersonatePath !!}"
+                   data-placement="auto"
+                   style="color: #428bca;"
+                   href="{{ URL::to('core/users/play/back')}}">Exit to Admin</a>
+            </li>
+            <?php endif; ?>
+
+            <?php
+                $cart_value=\Session::get('total_cart');
+                $cart_value=isset($cart_value)?$cart_value:0;
+                $cartObj = new \App\Http\Controllers\AddtocartController();
+                $cartData = $cartObj->getCartdata(false);
+                $shopping_cart_total = ($cartData['shopping_cart_total'] == '')? '$ 0.000' : '$ '.$cartData['shopping_cart_total'];
+            ?>
 
             <li>
-                <span class="notif-alert label label-danger" id="nav_cart_total">$ -.---</span>
+                <span class="notif-alert label label-danger" id="nav_cart_total">{{$shopping_cart_total}}</span>
             </li>
 
             <li>
                 <a href="{{url()}}/addtocart"  class="dropdown-toggle count-info">
-                    <?php
-                        $cart_value=\Session::get('total_cart');
-                        $cart_value=isset($cart_value)?$cart_value:0;
-                    ?>
-                    <i class="fa fa-shopping-cart"></i> <span class="notif-alert label label-danger" id="update_text_to_add_cart"></span>
-
+                    <i class="fa fa-shopping-cart"></i> <span class="notif-alert label label-danger" id="update_text_to_add_cart">{{$cartData['total_cart_items']}}</span>
                 </a>
             </li>
 
