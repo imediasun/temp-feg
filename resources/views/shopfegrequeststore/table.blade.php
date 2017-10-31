@@ -159,7 +159,7 @@
                                 <input type="number" title="Quantity" value="1" min="1" onkeyup="if(!this.checkValidity()){this.value='';alert('Please Enter a Non Zero Number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}" min="0"  />
                                 <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-sm btn-white pull-right"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
                             @else
-                                Not Avail.
+                                <span>Not Avail.</span>
                             @endif</td>
 
                     </tr>
@@ -294,7 +294,42 @@
         params.data.force['type'] = 'store';
         params.data.force['active_inactive'] = 'active';
         
-    });    
+    });
+    console.log('debug me');
+    function calculateUnitPrice(id){
+        var case_price = $('#form-'+id+' input[name = "case_price"]').val();
+        var quantity = $('#form-'+id+' input[name = "num_items"]').val();
+        var unit_price = case_price/quantity;
+        if(quantity != 0 && unit_price != 0) {
+            $('#form-'+id+' input[name = "unit_price"]').val(unit_price);
+            $('#form-'+id+' input[name = "unit_price"]').blur();
+        }
+        else
+        {
+            $('#form-'+id+' input[name = "unit_price"]').val(0.000);
+        }
+
+    }
+
+    $(document).on("blur", "input[name='case_price']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+
+    $(document).on("keyup change", "input[name='case_price']", function () {
+        calculateUnitPrice($(this).parents('tr').data('id'));
+    });
+
+    $(document).on("keyup", "input[name='num_items']", function () {
+        calculateUnitPrice($(this).parents('tr').data('id'));
+    });
+
+    $(document).on("blur", "input[name='unit_price']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+
+    $(document).on("blur", "input[name='retail_price']", function () {
+        $(this).val($(this).fixDecimal());
+    });
 </script>
 <style>
     .table th.right {
