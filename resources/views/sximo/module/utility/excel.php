@@ -55,8 +55,19 @@
 	$row = $objPHPExcel->getActiveSheet()->getRowIterator(2)->current();
 	$cellIterator = $row->getCellIterator();
 	$cellIterator->setIterateOnlyExistingCells(false);
-if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
-{
+
+	if(!isset($excelExcludeFormatting)) {
+		$excelExcludeFormatting = [];
+	}
+	$excelExcludeFormatting = array_merge([
+		'Unit Price',
+		'Case Price',
+		'Total Spent',
+		'Retail Price',
+		'Total Cost',
+		'Price'
+	],$excelExcludeFormatting);
+
 	foreach ($cellIterator as $cell) {
 		if(in_array($cell->getValue(),$excelExcludeFormatting))
 		{
@@ -70,7 +81,6 @@ if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
 				->setFormatCode('0.00###');
 		}
 	}
-}
 
 
 	/*$objPHPExcel->getActiveSheet(0)->getStyle('P1:P97')

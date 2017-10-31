@@ -227,7 +227,7 @@
 
                         <div class="col-md-8" style="padding-left: 15px !important;">
                             <input  type="text" name="order_total" id="total_cost"
-                                   class="form-control" value="{{ $data['order_total'] }}" maxlength="8"/>
+                                   class="form-control fixDecimal" value="{{ \CurrencyHelpers::formatPrice($data['order_total'], Order::ORDER_PERCISION, false) }}" maxlength="8"/>
                         </div>
                     </div>
                     
@@ -331,12 +331,12 @@
                         </td>
 
                         <td><br/> <input type='number' name='price[]' id="price"
-                                         class='calculate form-control' min="0.000" step=".001" placeholder="0.000"
+                                         class='calculate form-control fixDecimal' min="0.00" step=".001" placeholder="0.00"
                                          style="width: 85px"
                                          required></td>
                         <td>
                             <br/> <input type='number' name='case_price[]' id="case_price"
-                                         class='calculate form-control' min="0.000" step=".001" placeholder="0.000"
+                                         class='calculate form-control fixDecimal' min="0.00" step=".001" placeholder="0.00"
                                          style="width: 85px"
                                          required></td>
                         <td><br/> <input type='number' name='qty[]' placeholder='0' autocomplete="off"
@@ -351,8 +351,8 @@
                         <input type='hidden' name='item_received[]'>
                         <input type='hidden' name='order_content_id[]' class="order_content">
 
-                        <td><br/><input type="text" name="total" value="" placeholder="0.000" readonly
-                                        class="form-control"/></td>
+                        <td><br/><input type="text" name="total" value="" placeholder="0.00" readonly
+                                        class="form-control fixDecimal"/></td>
                         <td align="center" class="remove-container"><br/>
 
                             <p id="hide-button" data-id=""
@@ -390,8 +390,8 @@
                 <td></td>
                 <td colspan="6" class="text-left"><strong> Subtotal($) </strong></td>
                 <td><input type="text" name="Subtotal"
-                           value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
-                           class="form-control"/></td>
+                           value="{{\CurrencyHelpers::formatPrice($data['order_total'],\App\Models\Order::ORDER_PERCISION, false) }}" readonly
+                           class="form-control fixDecimal"/></td>
                 </div>
                 </div>
             </div>
@@ -544,11 +544,14 @@
                 Subtotal += parseFloat(sum);
                 //sum = sum.toFixed(PRECISION);
                 $(this).find("input[name*='total']").val(sum);
+                $(this).find("input[name*='total']").blur();
             });
 
-            Subtotal = Subtotal.toFixed(PRECISION);
+            //Subtotal = Subtotal.toFixed(PRECISION);
             $("input[name='Subtotal']").val(Subtotal);
+            $("input[name='Subtotal']").blur();
             $("#total_cost").val(Subtotal);
+            $("#total_cost").blur();
         }
         var games_options_js = "{{ json_encode($games_options) }}";
         //console.log(JSON.stringify(games_options_js));
@@ -884,7 +887,6 @@
                 });
 
             }
-
         });
 
 
@@ -1139,7 +1141,7 @@
                                 $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                                 $('.itemstable .clonedInput:first-child textarea').val('');
                                 $('#total_cost').val(0.00);
-                                $('input[name="Subtotal"]').val(0.000);
+                                $('input[name="Subtotal"]').val(0.00);
                             },
                             cancel:function(){
 
@@ -1549,7 +1551,7 @@
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
                             $('#total_cost').val(0.00);
-                            $('input[name="Subtotal"]').val(0.000);
+                            $('input[name="Subtotal"]').val(0.00);
                         }
                         else{
                             currentElm.data('status','enabled');
@@ -1565,7 +1567,7 @@
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
                             $('#total_cost').val(0.00);
-                            $('input[name="Subtotal"]').val(0.000);
+                            $('input[name="Subtotal"]').val(0.00);
                             reInitParcley();
                         }
                     }

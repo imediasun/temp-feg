@@ -151,7 +151,7 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('case_price',
-                                $row['case_price'] == ''?'':(double)$row['case_price'],array('class'=>'form-control',
+                                $row['case_price'] == ''?'':\CurrencyHelpers::formatPrice($row['case_price'], \App\Models\Order::ORDER_PERCISION, false),array('class'=>'form-control fixDecimal',
                                 'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'case_price_input' ))
                                 !!}
                             </div>
@@ -170,7 +170,7 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('unit_price',
-                                $row['unit_price'] == ''?'':(double)$row['unit_price'],array('class'=>'form-control',
+                                $row['unit_price'] == ''?'':\CurrencyHelpers::formatPrice($row['unit_price'], \App\Models\Order::ORDER_PERCISION, false),array('class'=>'form-control fixDecimal',
                                 'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1', 'id'=>'unit_price_input' ))
                                 !!}
                             </div>
@@ -189,7 +189,7 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('retail_price',
-                                $row['retail_price'] == ''?'':(double)$row['retail_price'],array('class'=>'form-control',
+                                $row['retail_price'] == ''?'':\CurrencyHelpers::formatPrice($row['retail_price'], \App\Models\Order::ORDER_PERCISION, false),array('class'=>'form-control fixDecimal',
                                 'placeholder'=>'0.00','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'retail_input' )) !!}
                             </div>
                         </div>
@@ -512,7 +512,8 @@
         var quantity = $("#qty_input").val();
         var unit_price = case_price/quantity;
         if(quantity != 0 && unit_price != 0) {
-            $('#unit_price_input').val(unit_price.toFixed(3));
+            $('#unit_price_input').val(unit_price);
+            $('#unit_price_input').blur();
         }
         else
         {
@@ -536,6 +537,11 @@
             }
         },'json');
     }
+
+    $(".fixDecimal").blur(function () {
+        $(this).val($(this).fixDecimal());
+    });
+
 </script>
 <style>
     /*
