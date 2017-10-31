@@ -332,6 +332,22 @@
 
                     </div>
                 </div>
+                <div class="form-group  ">
+                    <label for="Exclude From Export" class=" control-label col-md-4 text-left">
+                        {!! SiteHelpers::activeLang('Exclude From Export', (isset($fields['exclude_export']['language'])?
+                        $fields['exclude_export']['language'] : array())) !!}
+                    </label>
+                    <div class="col-md-6 check-no">
+                        <label class='checked checkbox-inline'>
+                            <input type="hidden" name="exclude_export" value="0"/>
+                            <input type='checkbox' name='exclude_export' value="1" class=''
+                                   @if($row['exclude_export'] == 1)checked @endif
+                            /> </label>
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+                </div>
                 </fieldset>
             </div>
 

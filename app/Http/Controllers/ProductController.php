@@ -468,7 +468,31 @@ class ProductController extends Controller
             ));
         }
     }
-function getExpenseCategory(Request $request)
+
+    public function postExclude(Request $request)
+    {
+        $excludeExport = $request->get('excludeExport');
+        $productId = $request->get('productId');
+        if ($excludeExport == "true") {
+            $update = \DB::update('update products set exclude_export = 1 where id=' . $productId);
+        }
+        else
+        {
+            $update = \DB::update('update products set exclude_export = 0 where id=' . $productId);
+        }
+        if ($update) {
+            return response()->json(array(
+                'status' => 'success'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred while excluding from export'
+            ));
+        }
+    }
+
+    function getExpenseCategory(Request $request)
 {
     $order_type_id=$request->get('order_type');
     $product_type_id=$request->get('product_type');

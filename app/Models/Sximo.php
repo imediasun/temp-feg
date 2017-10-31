@@ -672,6 +672,7 @@ class Sximo extends Model {
 						   LEFT JOIN order_type O ON O.id = P.prod_type_id
 						   LEFT JOIN yes_no Y on Y.id = P.inactive
                            WHERE P.vendor_id=$vendor_id
+                           AND P.exclude_export = 0 
 							ORDER BY P.vendor_description");
         return $row;
     }
