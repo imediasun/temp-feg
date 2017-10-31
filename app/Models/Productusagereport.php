@@ -84,7 +84,7 @@ class productusagereport extends Sximo  {
                 $whereVendor = "AND P.vendor_id IN ($vendor_id) OR O.vendor_id IN ($vendor_id) ";
             }
             if (!empty($prod_type_id)) {
-                $whereProdType = "AND P.prod_type_id IN ($prod_type_id) OR OC.product_type_id IN ($prod_type_id) ";
+                $whereProdType = "AND P.prod_type_id IN ($prod_type_id) OR OC.prod_type_id IN ($prod_type_id) ";
             }
             if (!empty($order_type_id)) {
                 $whereOrderType = "AND O.order_type_id IN ($order_type_id) ";
