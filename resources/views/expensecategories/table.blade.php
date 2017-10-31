@@ -5,6 +5,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','expensecategories/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','expensecategories/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			<?php echo "<script> var switch_filters = '$return';</script>" ?>
 			@if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
@@ -22,6 +23,10 @@
                 </div>                        
             @endforeach		
             {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
+				<div class="sscol-submit col-md-3 col-sm-3" style="margin-top: 4px;"><br>
+				<input type='checkbox' name="filter_trigger" data-size="mini" data-handle-width="40px" data-on-text="ON" data-off-text="OFF" id="filter_trigger" onSwitchChange="trigger()" />
+				<span>&nbsp; Display Product Types Only</span>
+				</div>
         </div>
         @endif
         @endif
@@ -123,7 +128,7 @@
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
-								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{!!  ($field['field'] == 'mapped_expense_category')?$field['field']:'' !!}" data-format="{{ htmlentities($value) }}">
 									{!! $value !!}
 								 </td>
 							@endif
@@ -135,7 +140,7 @@
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('expensecategories',$access,$id ,$setting) !!}
 
-					 <a href="javascript:void(0)"
+					{{-- <a href="javascript:void(0)"
 						data-id="{{$row->id}}"
 						data-ordertype = "{{$row->order_type}}"
 						data-producttype = "{{$row->product_type}}"
@@ -144,7 +149,7 @@
 						class="tips btn btn-xs btn-white expenseCategoryDeleteRequest"
 						title="Delete Expense Category">
 						 <i class="fa fa-trash-o " aria-hidden="true"></i>
-					 </a>
+					 </a>--}}
                  </td>
                 @endif
                 </tr>
@@ -261,6 +266,17 @@ $(document).ready(function() {
 			}
 		});
 
+	});
+
+	$('#filter_trigger').iCheck('destroy');
+	$("#filter_trigger").bootstrapSwitch('state',{{\Session::get('filter_toggle')}});
+	$("#filter_trigger").on('switchChange.bootstrapSwitch', function(event, state) {
+		console.log(state+': {{ $return }}');
+		if(state){
+			reloadData('#{{ $pageModule }}','expensecategories/data?display_filter=yes&return='+switch_filters);
+		}else{
+			reloadData('#{{ $pageModule }}','expensecategories/data?display_filter=no&return='+switch_filters);
+		}
 	});
 });
 </script>
