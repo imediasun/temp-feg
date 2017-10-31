@@ -683,12 +683,16 @@ class OrderController extends Controller
                     $prodType = $prodData[0]->prod_type_id;
                     $prodSubtype = $prodData[0]->prod_sub_type_id;
                     $qty_per_case = $prodData[0]->num_items;
+                    $prodTicketValue = $prodData[0]->ticket_value;
+                    $prodVendorId = $prodData[0]->vendor_id;
                 }
                 else
                 {
                     $prodType = $order_type;
                     $prodSubtype = 0;
                     $qty_per_case = 1;
+                    $prodTicketValue = '';
+                    $prodVendorId = $vendor_id;
                 }
 
                 $contentsData = array(
@@ -706,6 +710,8 @@ class OrderController extends Controller
                     'prod_type_id' => $prodType,
                     'prod_sub_type_id' => $prodSubtype,
                     'qty_per_case' => $qty_per_case,
+                    'ticket_value' => $prodTicketValue,
+                    'vendor_id' => $prodVendorId,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
                 if ($editmode == "clone") {
