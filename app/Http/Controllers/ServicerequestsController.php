@@ -463,6 +463,7 @@ class servicerequestsController extends Controller
         //$rules = $this->validateForm();
         $isAdd = empty($id);
         $rules = $this->validateForm();
+        $phone = $request->get('phone');
         unset($rules['department_id']);
        //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
         //unset($rules['debit_card']);
@@ -493,7 +494,8 @@ class servicerequestsController extends Controller
                 $data['Created'] = date('Y-m-d H:i:s');                
             }
             
-            unset($data['oldStatus']);            
+            unset($data['oldStatus']);
+            $data['phone'] = $phone;
             $id = $this->model->insertRow($data, $id);
                         
             $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
@@ -520,7 +522,10 @@ class servicerequestsController extends Controller
             if($isAdd){
                 Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
                 $message = nl2br($data['Description']);
-                
+                if(isset($data['phone']))
+                {
+                    $message .= "<br>Requester's Phone Number: ".$data['phone']."<br>";
+                }
                 $message .= \View::make('servicerequests.email.commentviewlink', [
                     'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($id),
                 ])->render();

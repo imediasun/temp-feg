@@ -37,6 +37,9 @@
                     @if (!empty($updatedOnWithTime))
                     <span class="ticketUpdatedOnText hasPrefixSeparator">Last updated on {{ $updatedOnWithTime }}</span>
                     @endif
+                    @if(!empty($row['phone']))
+                        <span class="ticketCreatedOnText hasPrefixSeparator">Requester's Phone Number: {{$row['phone']}}</span>
+                    @endif
                 </div>
 
             </div>
