@@ -128,8 +128,8 @@ class inventoryreport extends Sximo  {
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ' ) as orderId, max(sku) as sku, max(num_items) as num_items, 
             '' AS unit_inventory_count,'' AS total_inventory_value,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ' ) AS Order_Type,
-            GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' , ' ) AS location_id,
-            Product_Type,
+            GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' <br> ' ) AS location_id,
+            Product_Type,is_api_visible,
             type_description AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
             ,Unit_Price,
@@ -146,11 +146,12 @@ class inventoryreport extends Sximo  {
                     D.type_description,
                     V.vendor_name AS vendor_name,
                     OC.item_name AS Product,
-                    P.ticket_value,
+                    OC.ticket_value,
                     IF(OC.prod_type_id in (".implode(',',self::$orderTypesForUnitPrice)."),TRUNCATE(OC.case_price/OC.qty_per_case,5),OC.price) AS Unit_Price,
                     OC.qty,
                     OC.qty_per_case,
-                    OC.case_price AS Case_Price,
+                    O.is_api_visible,
+                    IF(O.is_api_visible = 1 , OC.case_price,'') AS Case_Price,
                     OC.total,
                     O.location_id,
                     L.location_name,
@@ -166,7 +167,7 @@ class inventoryreport extends Sximo  {
                            LEFT JOIN products P ON P.id = OC.product_id 
                            JOIN orders O ON O.id = OC.order_id
 						   LEFT JOIN location L ON L.id = O.location_id
-						   LEFT JOIN vendor V ON V.id = O.vendor_id 
+						   LEFT JOIN vendor V ON V.id = OC.vendor_id 
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
 						   LEFT JOIN order_type T ON T.id = OC.prod_type_id
 						   LEFT JOIN product_type D ON D.id = OC.prod_sub_type_id
@@ -177,19 +178,13 @@ class inventoryreport extends Sximo  {
             {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
-            $orderTypesForNetSuite = implode(',',self::$orderTypesForNetSuite);
             $whereQuery = " WHERE O.status_id != ".order::ORDER_VOID_STATUS ." AND O.status_id IN ($closeOrderStatus) AND O.date_ordered >= '$date_start'
                             AND O.date_ordered <= '$date_end' 
-                            AND (
-                                    (O.order_type_id IN ($orderTypesForNetSuite) AND is_api_visible = 1 )
-                                   OR
-                                    (O.order_type_id NOT IN ($orderTypesForNetSuite) AND is_api_visible IN (1,0))
-                                 )
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
             // both group by quires are same
             $groupQuery = " GROUP BY OC.item_name,OC.case_price,OC.qty_per_case,order_type ";
-            $groupQuery2 = " GROUP BY Product,Case_Price,qty_per_case,Product_Type,sku ";
+            $groupQuery2 = " GROUP BY Product,Case_Price,qty_per_case,Product_Type,sku,is_api_visible ";
 
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
