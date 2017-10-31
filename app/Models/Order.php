@@ -33,6 +33,7 @@ class order extends Sximo
                 LEFT OUTER JOIN vendor V ON orders.vendor_id=V.id
                 LEFT OUTER JOIN users U ON orders.user_id=U.id
                 LEFT OUTER JOIN order_type OT ON orders.order_type_id=OT.id
+                LEFT OUTER JOIN order_contents OC ON orders.id=OC.order_id
                 LEFT OUTER JOIN order_status OS ON orders.status_id=OS.id
                 LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id";
     }

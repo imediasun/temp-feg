@@ -1066,6 +1066,8 @@ class OrderController extends Controller
         if (!empty($search_all_fields)) {
             $searchFields = [
                 'orders.id',
+                'OC.item_name',
+                'OC.product_description',
                 'U.username',
                 'L.location_name',
                 'V.vendor_name',
@@ -1640,7 +1642,7 @@ class OrderController extends Controller
     public function getProductdata()
     {
         $vendor_description = Input::get('product_id');
-        $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . $vendor_description . "'");
+        $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . addslashes($vendor_description) . "'");
         $json = [];
         if (!empty($row)) {
             $row = Order::hydrate($row);
