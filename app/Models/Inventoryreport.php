@@ -81,7 +81,7 @@ class inventoryreport extends Sximo  {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }
 
-        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'date_ordered');
+        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'created_at');
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         if (empty($date_start) || empty($date_end)) {
             $message = "To view the contents of this report, please select a date range and other search filter.";
@@ -155,8 +155,8 @@ class inventoryreport extends Sximo  {
                     OC.total,
                     O.location_id,
                     L.location_name,
-                    O.date_ordered AS start_date,
-                    O.date_ordered AS end_date
+                    O.created_at AS start_date,
+                    O.created_at AS end_date
                         ";
             $mainQueryEnd  = " ) AS t ";
             //$orderBy = " ORDER BY P.id ASC LIMIT 0 , 20000000000000";
@@ -178,8 +178,8 @@ class inventoryreport extends Sximo  {
             {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
-            $whereQuery = " WHERE O.status_id != ".order::ORDER_VOID_STATUS ." AND O.status_id IN ($closeOrderStatus) AND O.date_ordered >= '$date_start'
-                            AND O.date_ordered <= '$date_end' 
+            $whereQuery = " WHERE O.status_id != ".order::ORDER_VOID_STATUS ." AND O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
+                            AND O.created_at <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
             // both group by quires are same
