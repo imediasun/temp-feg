@@ -81,16 +81,16 @@ class productusagereport extends Sximo  {
                 $whereLocation = "AND O.location_id IN ($location_id) ";
             }
             if (!empty($vendor_id)) {
-                $whereVendor = "AND P.vendor_id IN ($vendor_id) OR O.vendor_id IN ($vendor_id) ";
+                $whereVendor = "AND CASE when (P.vendor_id is null or P.vendor_id = '') then O.vendor_id IN ($vendor_id) ELSE P.vendor_id IN ($vendor_id) END ";
             }
             if (!empty($prod_type_id)) {
-                $whereProdType = "AND P.prod_type_id IN ($prod_type_id) OR OC.prod_type_id IN ($prod_type_id) ";
+                $whereProdType = "AND CASE when (P.prod_type_id is null or P.prod_type_id = '') THEN OC.prod_type_id IN ($prod_type_id) ELSE P.prod_type_id IN ($prod_type_id) END ";
             }
             if (!empty($order_type_id)) {
                 $whereOrderType = "AND O.order_type_id IN ($order_type_id) ";
             }
             if (!empty($prod_sub_type_id)) {
-                $whereProdSubType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) OR OC.prod_sub_type_id IN ($prod_sub_type_id) ";
+                $whereProdSubType = "AND CASE when (P.prod_sub_type_id is null or P.prod_sub_type_id = '') THEN OC.prod_sub_type_id IN ($prod_sub_type_id) ELSE P.prod_sub_type_id IN ($prod_sub_type_id) END  ";
             }
 
             $module_id = Module::name2id('order');
