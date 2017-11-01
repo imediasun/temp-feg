@@ -29,11 +29,11 @@ width: 75%">
     <div class="col-md-6">
         {!! Form::open(array('url'=> url().'/product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
         <div class="col-md-2 col-sm-1 col-xs-2"><h3> Export </h3></div>
-        <div class="col-md-6 sm13  col-sm-6 col-xs-6">
+        <div class="col-md-6 sm13  col-sm-6 col-xs-8">
             <input name="exportID" value="{{ uniqid('vendorFromProducts', true) }}" type="hidden"/>
             <select name='vendor_id' rows='5' id='vendor_id' class='select3'></select>
         </div>
-        <div class="col-md-2 col-sm-2 col-xs-2">
+        <div class="col-md-2 col-sm-2 col-xs-12">
             <button disabled id="submit-btn" type="submit" class="btn btn-primary">Export To CSV</button>
         </div>
 
