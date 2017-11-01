@@ -2994,7 +2994,11 @@ table.table-striped tr th
 .datepickerHandleButton {
     cursor: pointer;
 }
-
+.simpleSearchContainer
+{
+  display: flex;
+  flex-wrap: wrap;
+}
 .simpleSearchContainer,
 .simpleBoxContainer {
     background: #fefefe;
