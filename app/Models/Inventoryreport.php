@@ -137,12 +137,17 @@ class inventoryreport extends Sximo  {
                 $date_end_stamp = $t;
             }
             $UserFill = $forExcel?"USER":"";
+            $separator = "' <br> '";
+            if(isset($forExcel) && $forExcel == 1)
+            {
+                $separator = "' , '";
+            }
             $mainQuery = "
             SELECT 
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ' ) as orderId, max(sku) as sku, max(num_items) as num_items, 
             '' AS unit_inventory_count,'' AS total_inventory_value,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ' ) AS Order_Type,
-            GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' <br> ' ) AS location_id,
+            GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR $separator ) AS location_id,
             Product_Type,is_api_visible,
             type_description AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
