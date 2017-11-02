@@ -107,6 +107,11 @@ class productusagereport extends Sximo  {
                 $date_start_stamp = $date_end_stamp;
                 $date_end_stamp = $t;
             }
+            $separator = "' <br> '";
+            if(isset($forExcel) && $forExcel == 1)
+            {
+                $separator = "' , '";
+            }
                 $mainQuery = "SELECT max(OCID) as OCID,
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ') AS Order_Type,
@@ -117,7 +122,7 @@ class productusagereport extends Sximo  {
             , Unit_Price,
             SUM(qty) AS Cases_Ordered,
             IF(order_type_id IN(".$casePriceCats."), Case_Price,Unit_Price) AS Case_Price_Group,
-            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' <br> ') as location_name,start_date,end_date
+            Case_Price,TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS Total_Spent,location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR $separator) as location_name,start_date,end_date
              FROM (
             Select O.id as orderId,
                    P.id,
