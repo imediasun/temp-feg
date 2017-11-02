@@ -49,6 +49,12 @@ class inventoryreport extends Sximo  {
     {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
+        $forExcel = 0;
+        if($cond == "ForExcel")
+        {
+            $forExcel = 1;
+            $cond = null;
+        }
         $topMessage = "";
         $bottomMessage = "";
         $message = "";
@@ -123,6 +129,7 @@ class inventoryreport extends Sximo  {
                 $date_start_stamp = $date_end_stamp;
                 $date_end_stamp = $t;
             }
+            $UserFill = $forExcel?"USER":"";
             $mainQuery = "
             SELECT 
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ' ) as orderId, max(sku) as sku, max(num_items) as num_items, 
@@ -151,7 +158,7 @@ class inventoryreport extends Sximo  {
                     OC.qty,
                     OC.qty_per_case,
                     O.is_api_visible,
-                    IF(O.is_api_visible = 1 , OC.case_price,'') AS Case_Price,
+                    IF(O.is_api_visible = 1 , OC.case_price,'$UserFill') AS Case_Price,
                     OC.total,
                     O.location_id,
                     L.location_name,
@@ -183,8 +190,8 @@ class inventoryreport extends Sximo  {
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
             // both group by quires are same
-            $groupQuery = " GROUP BY OC.item_name,OC.case_price,OC.qty_per_case,order_type ";
-            $groupQuery2 = " GROUP BY Product,Case_Price,qty_per_case,Product_Type,sku,is_api_visible ";
+            $groupQuery = " GROUP BY OC.item_name,CASE WHEN O.is_api_visible = 1 THEN OC.case_price ELSE OC.price END,OC.qty_per_case,order_type ";
+            $groupQuery2 = " GROUP BY Product,CASE when is_api_visible = 1 THEN Case_Price ELSE Unit_Price END,qty_per_case,Product_Type,sku,is_api_visible ";
 
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
