@@ -249,7 +249,7 @@ $objSheet->getStyle($SkuColumn."3:".$SkuColumn.($lastRow+$totalCounters))->getAl
 $objSheet->getStyle($CasePackColumn."3:".$CasePackColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $objSheet->getStyle($QuantityOrderedColumn."3:".$QuantityOrderedColumn.($lastRow+$totalCounters))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 //$objSheet->getColumnDimension($serialColumn)->setWidth(50);
-$endOn = $lastRow+$totalCounters+2;
+$lastDataEntry = $endOn = $lastRow+$totalCounters+2;
 //$objSheet->getStyle("A3:A".($endOn-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $objSheet->insertNewRowBefore($endOn, 1);
 $totalsRowStart = $endOn;
@@ -376,9 +376,34 @@ if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
 			$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
 			$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . $endOn);
 
-			$objPHPExcel->getActiveSheet()->getStyle($colString)
-				->getNumberFormat()
-				->setFormatCode('0.00###');
+			if($cell->getValue() == "Case Price")
+			{
+				for ($row = 3; $row <= $lastDataEntry; $row++) {
+					$customCell = $objSheet->getCell($serialColumn.$row);
+					$value = $customCell->getValue();
+					if($value == "USER")
+					{
+						$objPHPExcel->getActiveSheet()->getStyle($serialColumn.$row)
+							->getNumberFormat()
+							->setFormatCode('');
+						$customCell->setValue('USER');
+						$objSheet->getStyle($serialColumn.$row)->getAlignment()
+							->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+					}
+					else
+					{
+						$objPHPExcel->getActiveSheet()->getStyle($serialColumn.$row)
+							->getNumberFormat()
+							->setFormatCode('0.00###');
+					}
+				}
+			}
+			else
+			{
+				$objPHPExcel->getActiveSheet()->getStyle($colString)
+					->getNumberFormat()
+					->setFormatCode('0.00###');
+			}
 		}
 	}
 }

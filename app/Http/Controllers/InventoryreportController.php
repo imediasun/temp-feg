@@ -284,7 +284,7 @@ class InventoryreportController extends Controller {
 			'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
 		);
 
-		$results = $this->model->getRows($params);
+		$results = $this->model->getRows($params,'ForExcel');
 		$fields = $info['config']['grid'];
 		$rows = $results['rows'];
 
