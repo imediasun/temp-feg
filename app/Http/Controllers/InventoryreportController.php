@@ -281,7 +281,8 @@ class InventoryreportController extends Controller {
 			'sort' => $sort,
 			'order' => $order,
 			'params' => $filter,
-			'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
+			'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0),
+			'forExcel' => 1
 		);
 
 		$results = $this->model->getRows($params,'ForExcel');
