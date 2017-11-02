@@ -203,8 +203,8 @@ class inventoryreport extends Sximo  {
 
             $groupByTypes = implode(',',self::$orderTypesForGroupBy);
             // both group by quires are same
-            $groupQuery = " GROUP BY OC.item_name,CASE WHEN OC.prod_type_id IN (".$groupByTypes.") THEN OC.case_price ELSE OC.price END,OC.qty_per_case,order_type ";
-            $groupQuery2 = " GROUP BY Product,CASE when Product_Type IN (".$groupByTypes.") THEN Case_Price ELSE Unit_Price END,qty_per_case,Product_Type,sku,is_api_visible ";
+            $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type ,CASE WHEN OC.prod_type_id IN (".$groupByTypes.") THEN OC.case_price ELSE OC.price END";
+            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,is_api_visible,CASE when Product_Type IN (".$groupByTypes.") THEN Case_Price ELSE Unit_Price END ";
 
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
