@@ -15,6 +15,7 @@ class inventoryreport extends Sximo  {
     const OFFICE_SUPPLIES = 6;
     const PARTY_SUPPLIES = 17;
     const REDEMPTION_PRICES = 7;
+    const ADVANCE_REPLACEMENT = 2;
     public static $orderTypesForNetSuite = [
         self::INSTANT_WIN,
         self::OFFICE_SUPPLIES,
@@ -25,6 +26,12 @@ class inventoryreport extends Sximo  {
         self::INSTANT_WIN,
         self::OFFICE_SUPPLIES,
         self::REDEMPTION_PRICES
+    ];
+    public static $orderTypesForGroupBy = [
+        self::INSTANT_WIN,
+        self::OFFICE_SUPPLIES,
+        self::REDEMPTION_PRICES,
+        self::ADVANCE_REPLACEMENT
     ];
     public function __construct() {
         parent::__construct();
@@ -189,9 +196,10 @@ class inventoryreport extends Sximo  {
                             AND O.created_at <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
+            $groupByTypes = implode(',',self::$orderTypesForGroupBy);
             // both group by quires are same
-            $groupQuery = " GROUP BY OC.item_name,CASE WHEN O.is_api_visible = 1 THEN OC.case_price ELSE OC.price END,OC.qty_per_case,order_type ";
-            $groupQuery2 = " GROUP BY Product,CASE when is_api_visible = 1 THEN Case_Price ELSE Unit_Price END,qty_per_case,Product_Type,sku,is_api_visible ";
+            $groupQuery = " GROUP BY OC.item_name,CASE WHEN OC.prod_type_id IN (".$groupByTypes.") THEN OC.case_price ELSE OC.price END,OC.qty_per_case,order_type ";
+            $groupQuery2 = " GROUP BY Product,CASE when Product_Type IN (".$groupByTypes.") THEN Case_Price ELSE Unit_Price END,qty_per_case,Product_Type,sku,is_api_visible ";
 
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
