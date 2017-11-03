@@ -233,7 +233,7 @@ class inventoryreport extends Sximo  {
             //\Log::info("Inventory Report final Cat query \n ".$finalCatQuery);
             $rawRows = \DB::select($finalDataQuery);
             $rawCats = \DB::select($finalCatQuery);
-            $rows = self::processRows($rawRows);dd($rows);
+            $rows = self::processRows($rawRows);
 
             $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
             $location = Location::whereIn('id',explode(',',$location_id))->lists('location_name')->implode(', ');
