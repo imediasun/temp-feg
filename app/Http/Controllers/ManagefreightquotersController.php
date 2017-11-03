@@ -583,7 +583,7 @@ class ManagefreightquotersController extends Controller
 							<b style="color:red">NOTES</b><br>
 							<b>' . $notes . '</b>';
             }
-            $message = $fromMessage . $toMessage . $forMessage;dd($message);
+            $message = $fromMessage . $toMessage . $forMessage;
             $from = \Session::get('eid');
             $sender_name = \Session::get('fname');
             $sender_name .= \Session::get('lname');
