@@ -260,7 +260,7 @@
 	{
 		margin-top: 0;
 	}
-	.note-editable > p {
+	.note-editable > p,.note-editable > br {
 		display: none;
 	}
 </style>
