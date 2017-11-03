@@ -71,7 +71,7 @@ class ReportHelpers
                     E.location_id as id, 
                     L.location_name_short as location_name, 
                     E.date_played as not_reporting_date,
-                    (SELECT date_played FROM report_locations WHERE id < E.id AND report_status = 1 AND location_id = E.location_id ORDER BY id DESC LIMIT 1) AS date_last_reported,
+                    (SELECT date_played FROM report_locations WHERE id < E.id AND report_status = 1 AND location_id = E.location_id ORDER BY date_played DESC LIMIT 1) AS date_last_reported,
                     DATEDIFF(E.date_played, E.date_last_played) as days_not_reporting,
                     A.notes as not_reporting_status,
                     L.debit_type_id,
