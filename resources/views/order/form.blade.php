@@ -949,6 +949,9 @@
             $(this).attr('lastSelected', $(this).val());
         });
         $("#vendor_id").on('change', function() {
+            if ($('#is_freehand').val() == 0){
+
+
             vendor = $(this);
             if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
             {
@@ -1014,6 +1017,19 @@
             }
             else
             {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url() }}/order/bill-account",
+                    data: {'vendor': vendor.val()},
+                    success: function (data) {
+                        if(data.length>0){
+                            $('#bil_ac_num').val(data[0].bill_account_num);
+                        }
+                    }
+                });
+            }
+            }else{
+                console.log('free hand order');
                 $.ajax({
                     type: "GET",
                     url: "{{ url() }}/order/bill-account",
