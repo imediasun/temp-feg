@@ -143,6 +143,7 @@ class inventoryreport extends Sximo  {
                 $separator = "' , '";
             }
             $groupByTypes = implode(',',self::$orderTypesForGroupBy);
+            $specificTypes = implode(',',self::$orderTypesForUnitPrice);
             $mainQuery = "
             SELECT 
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ' ) as orderId, max(sku) as sku, max(num_items) as num_items, 
@@ -152,7 +153,7 @@ class inventoryreport extends Sximo  {
             Product_Type,is_api_visible,
             type_description AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
-            ,Unit_Price,
+            ,Unit_Price,Posted,Case_Unit_Group,
             IF(order_type_id IN ( $casePriceCats),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
             Case_Price,SUM(IF(order_type_id IN ($casePriceCats),(Case_Price * qty),(Unit_Price*qty))) AS Total_Spent,start_date,end_date
             ,qty_per_case
@@ -167,11 +168,12 @@ class inventoryreport extends Sximo  {
                     V.vendor_name AS vendor_name,
                     OC.item_name AS Product,
                     OC.ticket_value,
-                    IF(OC.prod_type_id in (".implode(',',self::$orderTypesForUnitPrice)."),TRUNCATE(OC.case_price/OC.qty_per_case,5),OC.price) AS Unit_Price,
+                    IF(OC.prod_type_id in ($specificTypes),TRUNCATE(OC.case_price/OC.qty_per_case,5),OC.price) AS Unit_Price,
                     OC.qty,
                     OC.qty_per_case,
                     O.is_api_visible,
-                    IF(O.is_api_visible = 1 , OC.case_price,'$UserFill') AS Case_Price,
+                    IF((O.is_api_visible = 0 AND  OC.prod_type_id IN ($specificTypes)) , 0,1 ) AS Posted,
+                    IF((O.is_api_visible = 0 AND  OC.prod_type_id IN ($specificTypes)),'$UserFill', OC.case_price) AS Case_Price,
                     CASE WHEN OC.prod_type_id IN ($groupByTypes) THEN OC.case_price ELSE OC.price END AS Case_Unit_Group,
                     OC.total,
                     O.location_id,
@@ -205,7 +207,7 @@ class inventoryreport extends Sximo  {
 
             // both group by quires are same
             $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type";
-            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,is_api_visible,Case_Unit_Group ";
+            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,Posted,Case_Unit_Group ";
 
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
@@ -231,7 +233,7 @@ class inventoryreport extends Sximo  {
             //\Log::info("Inventory Report final Cat query \n ".$finalCatQuery);
             $rawRows = \DB::select($finalDataQuery);
             $rawCats = \DB::select($finalCatQuery);
-            $rows = self::processRows($rawRows);
+            $rows = self::processRows($rawRows);dd($rows);
 
             $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
             $location = Location::whereIn('id',explode(',',$location_id))->lists('location_name')->implode(', ');
