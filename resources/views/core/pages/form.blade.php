@@ -244,7 +244,26 @@
 		  </div>
 	  </div>
   </div>
-
+<style>
+	.page-content-wrapper,.sbox-content {
+		float: left;
+		width: 100%;
+		height: 100%;
+	}
+	.clearfix
+	{
+		width: 0;
+		height:0;
+		display: none;
+	}
+	.page-content-wrapper
+	{
+		margin-top: 0;
+	}
+	.note-editable > p {
+		display: none;
+	}
+</style>
   <script>
 	  function upload_pdf() {
 		  $('#pdf_upload').text('Uploading...');
