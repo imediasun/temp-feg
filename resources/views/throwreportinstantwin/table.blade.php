@@ -125,9 +125,12 @@
 									 @if($field['field']=='product_id')
 										 <?php
 										 $product_ids = json_decode($value);
-										 foreach ($product_ids as $index => $product_id) {
-											 if(!empty($product_id))
-											 	echo ++$index . '. ' . \SiteHelpers::getProductName($product_id) . '<br/>';
+										 if(!empty($product_ids))
+										 {
+											 foreach ($product_ids as $index => $product_id) {
+												 if(!empty($product_id))
+													 echo ++$index . '. ' . \SiteHelpers::getProductName($product_id) . '<br/>';
+											 }
 										 }
 										 ?>
 											 @elseif($field['field']=='product_cogs_1')
