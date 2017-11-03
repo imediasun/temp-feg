@@ -548,7 +548,7 @@ class ManagefreightquotersController extends Controller
                     }
                     $toMessage.= '<br>' ;
                 if (!empty($to_contact_full_name)) {
-                    $toMessage = $to_contact_full_name;
+                    $toMessage .= $to_contact_full_name;
                 }
                 if(!empty($to_contact_phone))
                 {
@@ -583,7 +583,7 @@ class ManagefreightquotersController extends Controller
 							<b style="color:red">NOTES</b><br>
 							<b>' . $notes . '</b>';
             }
-            $message = $fromMessage . $toMessage . $forMessage;
+            $message = $fromMessage . $toMessage . $forMessage;dd($message);
             $from = \Session::get('eid');
             $sender_name = \Session::get('fname');
             $sender_name .= \Session::get('lname');
