@@ -664,6 +664,9 @@ abstract class Controller extends BaseController
 
         return;
     }
+    public static function isDate($x) {
+        return (date('Y-m-d', strtotime($x)) == $x);
+    }
 
     function buildSearch($customSearchString = null)
     {
@@ -793,11 +796,26 @@ abstract class Controller extends BaseController
                                 $param .= " AND " . $col . " IS NOT NULL ";
 
                             } else if ($operate == 'between') {
+                                if(self::isDate($keys[2]) && strlen($keys[2]) == 10)
+                                {
+                                    $keys[2] = $keys[2].' 00:00:00';
+                                }
+                                if(self::isDate($keys[3]) && strlen($keys[3]) == 10)
+                                {
+                                    $keys[3] = $keys[3].' 23:59:59';
+                                }
                                 $param .= " AND (" . $col . " BETWEEN '" . addslashes($keys[2]) . "' AND '" . ($keys[3]) . "' ) ";
-                            } else {
-
-                                $param .= " AND " . $col . " " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
-
+                            }
+                            else
+                            {
+                                if(self::isDate($keys[2]) && strlen($keys[2]) == 10)
+                                {
+                                    $param .= " AND DATE(" . $col . ") " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
+                                }
+                                else
+                                {
+                                    $param .= " AND " . $col . " " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
+                                }
                             }
                         }
                     }
@@ -883,7 +901,8 @@ abstract class Controller extends BaseController
             'sort' => $sort,
             'order' => $order,
             'params' => $filter,
-            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0),
+            'forExcel'=>1
         );
 
 
