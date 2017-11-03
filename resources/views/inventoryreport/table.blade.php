@@ -118,9 +118,14 @@
 						<?php foreach ($tableGrid as $field) :
 						if($field['view'] =='1') :
 						$conn = (isset($field['conn']) ? $field['conn'] : array() );
-
-
-						$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,$field['nodata']);
+							if($field['field']=='Case_Price' && empty($row->$field['field']))
+							{
+								$value = $row->$field['field'];
+							}
+							else
+							{
+								$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,$field['nodata']);
+							}
 						?>
 						<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))

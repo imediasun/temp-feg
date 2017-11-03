@@ -15,6 +15,7 @@ class inventoryreport extends Sximo  {
     const OFFICE_SUPPLIES = 6;
     const PARTY_SUPPLIES = 17;
     const REDEMPTION_PRICES = 7;
+    const ADVANCE_REPLACEMENT = 2;
     public static $orderTypesForNetSuite = [
         self::INSTANT_WIN,
         self::OFFICE_SUPPLIES,
@@ -25,6 +26,12 @@ class inventoryreport extends Sximo  {
         self::INSTANT_WIN,
         self::OFFICE_SUPPLIES,
         self::REDEMPTION_PRICES
+    ];
+    public static $orderTypesForGroupBy = [
+        self::INSTANT_WIN,
+        self::OFFICE_SUPPLIES,
+        self::REDEMPTION_PRICES,
+        self::ADVANCE_REPLACEMENT
     ];
     public function __construct() {
         parent::__construct();
@@ -49,6 +56,12 @@ class inventoryreport extends Sximo  {
     {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
+        $forExcel = 0;
+        if($cond == "ForExcel")
+        {
+            $forExcel = 1;
+            $cond = null;
+        }
         $topMessage = "";
         $bottomMessage = "";
         $message = "";
@@ -81,7 +94,7 @@ class inventoryreport extends Sximo  {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }
 
-        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'date_ordered');
+        $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'created_at');
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         if (empty($date_start) || empty($date_end)) {
             $message = "To view the contents of this report, please select a date range and other search filter.";
@@ -123,18 +136,26 @@ class inventoryreport extends Sximo  {
                 $date_start_stamp = $date_end_stamp;
                 $date_end_stamp = $t;
             }
+            $UserFill = $forExcel?"USER":"";
+            $separator = "' <br> '";
+            if(isset($forExcel) && $forExcel == 1)
+            {
+                $separator = "' , '";
+            }
+            $groupByTypes = implode(',',self::$orderTypesForGroupBy);
+            $specificTypes = implode(',',self::$orderTypesForUnitPrice);
             $mainQuery = "
             SELECT 
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ' ) as orderId, max(sku) as sku, max(num_items) as num_items, 
             '' AS unit_inventory_count,'' AS total_inventory_value,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ' ) AS Order_Type,
-            GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR ' , ' ) AS location_id,
-            Product_Type,
+            GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR $separator ) AS location_id,
+            Product_Type,is_api_visible,
             type_description AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
-            ,Unit_Price,
-            IF(order_type_id IN (".$casePriceCats."),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
-            Case_Price,SUM(IF(order_type_id IN (".$casePriceCats."),(Case_Price * qty),(Unit_Price*qty))) AS Total_Spent,start_date,end_date
+            ,Unit_Price,Posted,Case_Unit_Group,
+            IF(order_type_id IN ( $casePriceCats),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
+            Case_Price,SUM(IF(order_type_id IN ($casePriceCats),(Case_Price * qty),(Unit_Price*qty))) AS Total_Spent,start_date,end_date
             ,qty_per_case
              FROM ( 
                     SELECT P.id , O.id as orderId,
@@ -146,16 +167,19 @@ class inventoryreport extends Sximo  {
                     D.type_description,
                     V.vendor_name AS vendor_name,
                     OC.item_name AS Product,
-                    P.ticket_value,
-                    IF(OC.prod_type_id in (".implode(',',self::$orderTypesForUnitPrice)."),TRUNCATE(OC.case_price/OC.qty_per_case,5),OC.price) AS Unit_Price,
+                    OC.ticket_value,
+                    IF(OC.prod_type_id in ($specificTypes),TRUNCATE(OC.case_price/OC.qty_per_case,5),OC.price) AS Unit_Price,
                     OC.qty,
                     OC.qty_per_case,
-                    OC.case_price AS Case_Price,
+                    O.is_api_visible,
+                    IF((O.is_api_visible = 0 AND  OC.prod_type_id IN ($specificTypes)) , 0,1 ) AS Posted,
+                    IF((O.is_api_visible = 0 AND  OC.prod_type_id IN ($specificTypes)),'$UserFill', OC.case_price) AS Case_Price,
+                    CASE WHEN OC.prod_type_id IN ($groupByTypes) THEN OC.case_price ELSE OC.price END AS Case_Unit_Group,
                     OC.total,
                     O.location_id,
                     L.location_name,
-                    O.date_ordered AS start_date,
-                    O.date_ordered AS end_date
+                    O.created_at AS start_date,
+                    O.created_at AS end_date
                         ";
             $mainQueryEnd  = " ) AS t ";
             //$orderBy = " ORDER BY P.id ASC LIMIT 0 , 20000000000000";
@@ -166,7 +190,7 @@ class inventoryreport extends Sximo  {
                            LEFT JOIN products P ON P.id = OC.product_id 
                            JOIN orders O ON O.id = OC.order_id
 						   LEFT JOIN location L ON L.id = O.location_id
-						   LEFT JOIN vendor V ON V.id = O.vendor_id 
+						   LEFT JOIN vendor V ON V.id = OC.vendor_id 
 						   LEFT JOIN order_type T1 ON T1.id = O.order_type_id
 						   LEFT JOIN order_type T ON T.id = OC.prod_type_id
 						   LEFT JOIN product_type D ON D.id = OC.prod_sub_type_id
@@ -177,19 +201,13 @@ class inventoryreport extends Sximo  {
             {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
-            $orderTypesForNetSuite = implode(',',self::$orderTypesForNetSuite);
-            $whereQuery = " WHERE O.status_id != ".order::ORDER_VOID_STATUS ." AND O.status_id IN ($closeOrderStatus) AND O.date_ordered >= '$date_start'
-                            AND O.date_ordered <= '$date_end' 
-                            AND (
-                                    (O.order_type_id IN ($orderTypesForNetSuite) AND is_api_visible = 1 )
-                                   OR
-                                    (O.order_type_id NOT IN ($orderTypesForNetSuite) AND is_api_visible IN (1,0))
-                                 )
+            $whereQuery = " WHERE O.status_id != ".order::ORDER_VOID_STATUS ." AND O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
+                            AND O.created_at <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
             // both group by quires are same
-            $groupQuery = " GROUP BY OC.item_name,OC.case_price,OC.qty_per_case,order_type ";
-            $groupQuery2 = " GROUP BY Product,Case_Price,qty_per_case,Product_Type,sku ";
+            $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type";
+            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,Posted,Case_Unit_Group ";
 
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
