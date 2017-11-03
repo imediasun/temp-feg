@@ -142,6 +142,7 @@ class inventoryreport extends Sximo  {
             {
                 $separator = "' , '";
             }
+            $groupByTypes = implode(',',self::$orderTypesForGroupBy);
             $mainQuery = "
             SELECT 
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ' ) as orderId, max(sku) as sku, max(num_items) as num_items, 
@@ -152,7 +153,7 @@ class inventoryreport extends Sximo  {
             type_description AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
             ,Unit_Price,
-            IF(order_type_id IN ($casePriceCats),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
+            IF(order_type_id IN ( $casePriceCats),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
             Case_Price,SUM(IF(order_type_id IN ($casePriceCats),(Case_Price * qty),(Unit_Price*qty))) AS Total_Spent,start_date,end_date
             ,qty_per_case
              FROM ( 
@@ -171,6 +172,7 @@ class inventoryreport extends Sximo  {
                     OC.qty_per_case,
                     O.is_api_visible,
                     IF(O.is_api_visible = 1 , OC.case_price,'$UserFill') AS Case_Price,
+                    CASE WHEN OC.prod_type_id IN ($groupByTypes) THEN OC.case_price ELSE OC.price END AS Case_Unit_Group,
                     OC.total,
                     O.location_id,
                     L.location_name,
@@ -201,10 +203,9 @@ class inventoryreport extends Sximo  {
                             AND O.created_at <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
-            $groupByTypes = implode(',',self::$orderTypesForGroupBy);
             // both group by quires are same
-            $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type ,IF( OC.prod_type_id IN (".$groupByTypes."), OC.case_price , OC.price )";
-            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,is_api_visible,IF( Product_Type IN (".$groupByTypes.") , Case_Price , Unit_Price ) ";
+            $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type";
+            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,is_api_visible,Case_Unit_Group ";
 
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
