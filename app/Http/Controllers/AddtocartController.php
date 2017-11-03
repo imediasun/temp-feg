@@ -200,7 +200,7 @@ class AddtocartController extends Controller
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('requests');
+            $data = $this->validatePost('requests',true);
 
             $id = $this->model->insertRow($data, $id);
 
