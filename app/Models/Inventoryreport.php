@@ -152,8 +152,8 @@ class inventoryreport extends Sximo  {
             type_description AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
             ,Unit_Price,
-            IF(order_type_id IN (".$casePriceCats."),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
-            Case_Price,SUM(IF(order_type_id IN (".$casePriceCats."),(Case_Price * qty),(Unit_Price*qty))) AS Total_Spent,start_date,end_date
+            IF(order_type_id IN ($casePriceCats),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
+            Case_Price,SUM(IF(order_type_id IN ($casePriceCats),(Case_Price * qty),(Unit_Price*qty))) AS Total_Spent,start_date,end_date
             ,qty_per_case
              FROM ( 
                     SELECT P.id , O.id as orderId,
@@ -203,8 +203,8 @@ class inventoryreport extends Sximo  {
 
             $groupByTypes = implode(',',self::$orderTypesForGroupBy);
             // both group by quires are same
-            $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type ,CASE WHEN OC.prod_type_id IN (".$groupByTypes.") THEN OC.case_price ELSE OC.price END";
-            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,is_api_visible,CASE when Product_Type IN (".$groupByTypes.") THEN Case_Price ELSE Unit_Price END ";
+            $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type ,IF( OC.prod_type_id IN (".$groupByTypes."), OC.case_price , OC.price )";
+            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,is_api_visible,IF( Product_Type IN (".$groupByTypes.") , Case_Price , Unit_Price ) ";
 
 
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
