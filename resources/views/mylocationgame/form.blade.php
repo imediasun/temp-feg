@@ -268,7 +268,7 @@
 					@endif
 					<div class="form-group  " >
 						<label for="sale_price" class=" control-label col-md-4 text-left">
-							{!! SiteHelpers::activeLang('Sale Price', (isset($fields['sale_price']['language'])? $fields['sale_price']['language'] : array())) !!}
+							{!! SiteHelpers::activeLang('Wholesale Price', (isset($fields['sale_price']['language'])? $fields['sale_price']['language'] : array())) !!}
 						</label>
 						<div class="col-md-6">
 							<div class="input-group">
