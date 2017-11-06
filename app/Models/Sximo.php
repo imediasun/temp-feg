@@ -606,6 +606,22 @@ class Sximo extends Model {
         return $row;
     }
 
+    public function calculateRetail($rows = [])
+    {
+        foreach ($rows  as &$row)
+        {
+            $lastTwoDigits = substr("$row->Retail", -2);
+            $rest = substr("$row->Retail", 0, -2);
+            $rest .= 95;
+            if((int)$lastTwoDigits < 50)
+            {
+                $rest = (int)$rest - 100;
+            }
+            $row->Retail = $rest;
+        }
+        return $rows;
+    }
+
     function getPendingList($asset_id = null) {
         $rows = \DB::Select("SELECT 
                     V.vendor_name AS Manufacturer, 
@@ -628,17 +644,7 @@ class Sximo extends Model {
                 AND G.sold = 0" . 
                 (empty($asset_id)? "": " AND G.id IN ($asset_id)"). 
             " ORDER BY T.game_title ASC, G.location_id");
-        foreach ($rows  as &$row)
-        {
-            $lastTwoDigits = substr("$row->Retail", -2);
-            $rest = substr("$row->Retail", 0, -2);
-            $rest .= 95;
-            if((int)$lastTwoDigits < 50)
-            {
-                $rest = (int)$rest - 100;
-            }
-            $row->Retail = $rest;
-        }
+        $rows = $this->calculateRetail($rows);
         return $rows;
     }
 
@@ -654,10 +660,7 @@ class Sximo extends Model {
                     L.city, 
                     L.state, 
                     G.sale_price AS Wholesale,
-                    IF(G.sale_price >= 1000,
-                        ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
-                        (G.sale_price+100)
-                        ) AS Retail
+                    TRUNCATE(IF(G.sale_price > 1000,(G.sale_price*1.1),(G.sale_price+100)),0) AS Retail
                 FROM game G
                 LEFT JOIN game_title T ON G.game_title_id = T.id
                 LEFT JOIN vendor V ON V.id = T.mfg_id
@@ -668,6 +671,7 @@ class Sximo extends Model {
                 AND G.sold = 0" . 
                 (empty($asset_id)? "": " AND G.id IN ($asset_id)"). 
             " ORDER BY T.game_title ASC, G.location_id");
+        $rows = $this->calculateRetail($rows);
         return $rows;
     }
 
