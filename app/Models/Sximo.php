@@ -632,7 +632,7 @@ class Sximo extends Model {
                     G.location_id, 
                     L.city, 
                     L.state, 
-                    G.sale_price AS Wholesale,
+                    TRUNCATE(G.sale_price,0) AS Wholesale,
                     TRUNCATE(IF(G.sale_price > 1000,(G.sale_price*1.1),(G.sale_price+100)),0) AS Retail, 
                     G.notes 
             FROM game G  
@@ -659,7 +659,7 @@ class Sximo extends Model {
                     G.location_id, 
                     L.city, 
                     L.state, 
-                    G.sale_price AS Wholesale,
+                    TRUNCATE(G.sale_price,0) AS Wholesale,
                     TRUNCATE(IF(G.sale_price > 1000,(G.sale_price*1.1),(G.sale_price+100)),0) AS Retail
                 FROM game G
                 LEFT JOIN game_title T ON G.game_title_id = T.id
