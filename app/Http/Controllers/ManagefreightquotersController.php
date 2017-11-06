@@ -548,7 +548,7 @@ class ManagefreightquotersController extends Controller
                     }
                     $toMessage.= '<br>' ;
                 if (!empty($to_contact_full_name)) {
-                    $toMessage = $to_contact_full_name;
+                    $toMessage .= $to_contact_full_name;
                 }
                 if(!empty($to_contact_phone))
                 {
