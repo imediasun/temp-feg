@@ -83,16 +83,57 @@ class productusagereport extends Sximo  {
             if (!empty($vendor_id)) {
                 $whereVendor = "AND CASE when (P.vendor_id is null or P.vendor_id = '') then O.vendor_id IN ($vendor_id) ELSE P.vendor_id IN ($vendor_id) END ";
             }
-            if (!empty($prod_type_id)) {
-                $whereProdType = "AND CASE when (P.prod_type_id is null or P.prod_type_id = '') THEN OC.prod_type_id IN ($prod_type_id) ELSE P.prod_type_id IN ($prod_type_id) END ";
-            }
             if (!empty($order_type_id)) {
                 $whereOrderType = "AND O.order_type_id IN ($order_type_id) ";
             }
-            if (!empty($prod_sub_type_id)) {
+            if (!empty($prod_sub_type_id) && !empty($prod_type_id)) {
+                $types = explode(',',$prod_type_id);
+                $subTypes = explode(',',$prod_sub_type_id);
+                $parentTypes = \DB::table('product_type')->whereIn('id',$subTypes)->get();
+                array_walk($parentTypes,function(&$type){
+                    $type = $type->request_type_id;
+                });
+                $parentTypes = array_unique($parentTypes);
+                if(empty(array_diff($types,$parentTypes)) || count($types) == 1)
+                {
+                    $operator = "AND";
+                }
+                else
+                {
+                    $operator = "OR";
+                }
+                $processedTypes = [];
+                $counter = 1;
+                foreach ($subTypes as $subType)
+                {
+                    $subTypeParent = \DB::table('product_type')->where('id',$subType)->pluck('request_type_id');
+                    if(in_array($subTypeParent,$types))
+                    {
+                        $processedTypes[] = $subTypeParent;
+
+                        $whereProdSubType .= " $operator (( CASE when (P.prod_sub_type_id is null or P.prod_sub_type_id = '') THEN OC.prod_sub_type_id = $subType ELSE P.prod_sub_type_id = $subType END ) AND ( CASE when (P.prod_type_id is null or P.prod_type_id = '') THEN OC.prod_type_id = $subTypeParent ELSE P.prod_type_id = $subTypeParent END ) )";
+                        $counter++;
+                    }
+                    else
+                    {
+                        //TODO code for subtypes which are not related of selected types
+                    }
+                    $operator = "OR";
+                }
+                $types = array_diff($types, $processedTypes);//removing processed types
+                if(!empty($types))
+                {
+                    $types = implode(',',$types);
+                    $whereProdSubType = "AND CASE when (P.prod_type_id is null or P.prod_type_id = '') THEN OC.prod_type_id IN ($types) ELSE P.prod_type_id IN ($types) END ".$whereProdSubType;
+                }
+            }
+            else if (!empty($prod_type_id)) {
+                $whereProdType = "AND CASE when (P.prod_type_id is null or P.prod_type_id = '') THEN OC.prod_type_id IN ($prod_type_id) ELSE P.prod_type_id IN ($prod_type_id) END ";
+            }
+            else if(!empty($prod_sub_type_id))
+            {
                 $whereProdSubType = "AND CASE when (P.prod_sub_type_id is null or P.prod_sub_type_id = '') THEN OC.prod_sub_type_id IN ($prod_sub_type_id) ELSE P.prod_sub_type_id IN ($prod_sub_type_id) END  ";
             }
-
             $module_id = Module::name2id('order');
             $case_price_permission = \FEGSPass::getPasses($module_id,'module.order.special.calculatepriceaccordingtocaseprice',false);
             $casePriceCats = $case_price_permission["calculate price according to case price"]->data_options;
@@ -191,7 +232,7 @@ class productusagereport extends Sximo  {
                 ' ORDER BY Product ';
 
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $orderConditional $limitConditional";
-            \Log::info("Product Usage final Data query \n ".$finalDataQuery);
+            print_r($finalDataQuery);dd();\Log::info("Product Usage final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
             $rows = self::processRows($rawRows);
 
