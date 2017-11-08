@@ -351,6 +351,9 @@ $objSheet->getStyle("A$totalsRowStart:B$endOn")->applyFromArray(
 		)
 	)
 );
+$objPHPExcel->getActiveSheet()->getStyle("B$totalsRowStart:B$endOn")
+	->getNumberFormat()
+	->setFormatCode('0.00###');
 $objPHPExcel->getDefaultStyle()
 	->getAlignment()
 	->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
