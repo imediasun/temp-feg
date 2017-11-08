@@ -641,7 +641,10 @@ class ManagefreightquotersController extends Controller
             die;
         }
 // delete multipe rows
-        if (count($request->input('ids')) >= 1) {
+        $ids = $request->input('ids');
+        if (count($ids) >= 1) {
+            \DB::table('freight_location_to')->whereIn('freight_order_id',$ids)->delete();
+            \DB::table('freight_pallet_details')->whereIn('freight_order_id',$ids)->delete();
             $this->model->destroy($request->input('ids'));
 
             return response()->json(array(
