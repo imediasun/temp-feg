@@ -260,12 +260,8 @@
 	{
 		margin-top: 0;
 	}
-	.note-editable > *,.page-content-wrapper > *,.sbox > * {
+	.note-editable > *:not(.page-content-wrapper),.page-content-wrapper > *:not(.sbox),.sbox > *:not(.sbox-content) {
 		display: none;
-	}
-	.note-editable > .page-content-wrapper,.page-content-wrapper > .sbox, .sbox > .sbox-content
-	{
-		display: block !important;
 	}
 </style>
   <script>
