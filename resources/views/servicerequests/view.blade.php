@@ -6,7 +6,9 @@
     }
 </style>
 @if($setting['view-method'] =='native')
+
 	<div class="sbox">
+	    
 		<div class="ticketHeaderContainer clearfix">
             <div class="closeButtonContainer">
 				<a href="javascript:void(0)" 
@@ -55,7 +57,8 @@
                     {!! Form::hidden('Priority', $row['Priority']) !!}
                 {!! Form::close() !!}
                 {!! Form::open(array('url'=>'servicerequests/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'servicerequestsFormAjax')) !!}
-                <div class="ticketLeftSidebarContainer" >
+               
+                <div class="ticketLeftSidebarContainer col-sm-4 col-lg-3">
                     <div class="ticketLeftSidebar">
                         <!--<h2 class="sidebarTicketIDText sidebarText" data-caption="Ticket ID: #">{{$ticketID}}</h2>-->
                         <div class="clearfix">
@@ -99,29 +102,38 @@
 
                     </div>
                 </div>
-                <div class="ticketMainViewContainer">
+                
+                <div class="ticketMainViewContainer col-sm-8 col-lg-9">
+                    
                     <div class="ticketHeaderAddonsContainer"></div>
+                    
                     <div class="ticketReplyContainer">
+                        
                         <div class="myUserProfileImageContainer img-avatar-container tips"
                                 data-toggle="tooltip" data-placement="top" 
                                 title="{{ $myUserTooltip }}"
                                  >
                                 <img alt="" src="{{  $myUserAvatar }}" width="45" 
                                      class="img-avatar img-circle tips" border="0"/>
-                        </div>                        
+                        </div>  
+                        
                         <div class="ticketReplyInputsContainer" >
+                            
                             <div class="ticketReplyMainContainer" >
+                                
                                 <div class="replyLabel">Reply</div>
+                                
                                 <div class="ticketReplyFieldContainer">
+                                    
                                     <textarea name='Comments' rows='5' 
                                         id='Comments' class='form-control ' 
-                                            required  ></textarea>                                
+                                            required  ></textarea>   
+                                            
                                     <div class="toolControls form-inline">
-                                        <button type="submit" 
-                                                class="btn btn-primary btn-sm pull-right submitButton"
-                                                ><i class="fa  fa-save "></i> Update</button>
+                                        
+                                        
                                         @if ($canChangeStatus) 
-                                        <div class="selectStatusDropdownContainer">
+                                        <div class="selectStatusDropdownContainer col-md-4 col-sm-6">
                                             <input type='hidden' name='oldStatus' value='{{ $ticketStatus }}' />
                                             <select name='Status' required class='Status '>
                                                 @foreach($statusOptions as $key => $val)
@@ -132,7 +144,8 @@
                                             </select>                                            
                                         </div>
                                         @endif
-                                        <div class="selectPriorityDropdownContainer">
+                                        
+                                        <div class="selectPriorityDropdownContainer col-md-4 col-sm-6">
                                             <select name='Priority' required class='Priority '>
                                                 @foreach($priorityOptions as $key => $val)
                                                     <option  value ='{{ $key }}' 
@@ -140,21 +153,40 @@
                                                     >{{ $val }}</option>";
                                                 @endforeach
                                             </select>                                            
-                                        </div>                                        
+                                        </div>
+                                        
+                                        <div class="col-md-4 col-sm-12">
+                                            <button type="submit" class="btn btn-primary btn-sm pull-right submitButton">
+                                                <i class="fa  fa-save "></i> Update
+                                            </button>
+                                        </div>
+                                        
+                                       
                                         
                                     </div>
+                                    
                                 </div>
+                                
                             </div>                          
                         </div>
+                        
                     </div>
+                    
                     <div class="ticketCommentsContainer clearfix">
+                        
+                        
                         <div class="ticketCommentsHeaderContainer " >
+                            
                             <span class="">Comments</span>
+                            
                             <span class="badge tips" 
                                   data-toggle="tooltip" data-placement="top" 
                                 title="{{ $conversationCount }} comments"
-                                  >{{$conversationCount}}</span>
-                        </div>                        
+                                  >{{$conversationCount}}
+                            </span>
+                            
+                        </div>   
+                        
                         {{--*/ $commentsCountIndex = $commentsCount /*--}}
                         @foreach ($comments as $comment)                            
                             @include('servicerequests.commentview', [
@@ -175,8 +207,11 @@
                                 'userProfile' => $creatorProfile,
                             ])
                     </div>
+                    
                     <div class="ticketFooterContainer"></div>
+                    
                 </div>
+                
                 {!! Form::hidden('UserID', $uid) !!}                
                 {!! Form::hidden('TicketID', $row['TicketID']) !!}
                 {!! Form::hidden('Subject', $row->Subject) !!}
@@ -193,8 +228,10 @@
 			</div>
 			@if($setting['form-method'] =='native')
 		</div>
+		
 	</div>
 @endif
+
 <script type="text/javascript">
     
     var mainUrl = '{{ $pageUrl }}',

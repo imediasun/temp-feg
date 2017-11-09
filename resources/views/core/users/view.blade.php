@@ -15,7 +15,7 @@
 	 </div>  
 	 
 	 
- 	<div class="page-content-wrapper">   
+ 	<div class="page-content-wrapper">
 	   <div class="toolbar-line">
 	   		<a href="{{ URL::to('core/users?return='.$return) }}" class="tips btn btn-xs btn-default" title="{{ Lang::get('core.btn_back') }}"><i class="fa fa-arrow-circle-left"></i>&nbsp;{{ Lang::get('core.btn_back') }}</a>
 			@if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN && $row->group_id == \App\Models\Core\Groups::SUPPER_ADMIN)
@@ -28,13 +28,10 @@
 		</div>
 <div class="sbox animated fadeInRight">
 	<div class="sbox-title"> <h4> <i class="fa fa-eye"></i> <?php echo $pageTitle ;?></h4></div>
-	<div class="sbox-content"> 	
-
-
-	
-	<table class="table table-striped table-bordered" >
-		<tbody>	
-	
+	<div class="sbox-content">
+<div class="table-responsive">
+	<table class="table table-striped table-bordered ">
+		<tbody>
 					<tr>
 						<td width='30%' class='label-view text-right'>Avatar</td>
 						<td>
@@ -131,11 +128,10 @@
 
             </tbody>
         </table>
-
+</div>
 	</div>
 </div>	
 
 	</div>
 </div>
-	  
 @stop
