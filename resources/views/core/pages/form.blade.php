@@ -265,7 +265,7 @@
 	}
 	.note-editable > .page-content-wrapper,.page-content-wrapper > .sbox, .sbox > .sbox-content
 	{
-		display: block;
+		display: block !important;
 	}
 </style>
   <script>
