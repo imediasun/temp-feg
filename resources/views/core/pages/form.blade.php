@@ -260,7 +260,7 @@
 	{
 		margin-top: 0;
 	}
-	.note-editable > p,.note-editable > br {
+	.note-editable > *:not(.page-content-wrapper),.page-content-wrapper > *:not(.sbox.animated.fadeInRight),.sbox.animated.fadeInRight > *:not(.sbox-content) {
 		display: none;
 	}
 </style>

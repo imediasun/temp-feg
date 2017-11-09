@@ -460,7 +460,7 @@ class ReportGenerator
                     $readerId = $row['reader_id'];
                     $gameTotal = $row['game_total'];
                     $gameId = $row['Asset ID'];
-                    $reportUnknownAssetIds[] = "$location - $locationName - <b> $readerId</b> - <b>Asset ID: $gameId</b>" .
+                    $reportUnknownAssetIds[] = "<b>Reader ID: $readerId</b> - <b>Asset ID: $gameId</b>" .
                         "<span  style='color:black'> [Game Title: $locationGameName".
                         " - <em>Earnings: \${$gameTotal}</em>]</span><br>";;
 

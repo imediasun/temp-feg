@@ -611,13 +611,20 @@ class Sximo extends Model {
         foreach ($rows  as &$row)
         {
             $lastTwoDigits = substr("$row->Retail", -2);
-            $rest = substr("$row->Retail", 0, -2);
-            $rest .= 95;
-            if((int)$lastTwoDigits < 50)
+            if($lastTwoDigits != "95")
             {
-                $rest = (int)$rest - 100;
+                $rest = substr("$row->Retail", 0, -2);
+                $rest .= 95;
+                if((int)$lastTwoDigits < 50)
+                {
+                    $rest = (int)$rest - 100;
+                }
+                else if((int)$lastTwoDigits > 95)
+                {
+                    $rest = (int)$rest + 100;
+                }
+                $row->Retail = $rest;
             }
-            $row->Retail = $rest;
         }
         return $rows;
     }
