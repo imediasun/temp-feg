@@ -260,8 +260,12 @@
 	{
 		margin-top: 0;
 	}
-	.note-editable > p,.note-editable > br {
+	.note-editable > *,.page-content-wrapper > *,.sbox > * {
 		display: none;
+	}
+	.note-editable > .page-content-wrapper,.page-content-wrapper > .sbox, .sbox > .sbox-content
+	{
+		display: block;
 	}
 </style>
   <script>
