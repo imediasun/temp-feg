@@ -34,7 +34,7 @@ class Users extends Sximo  {
 	}
 	
 	public static function queryGroup(){
-		return "      ";
+		return "GROUP BY users.id";
 	}
 
 	/**

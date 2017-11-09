@@ -122,11 +122,23 @@ class UsersController extends Controller
 
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+
+        //if location searched then All locations should be in end
+        // and searched locations will become first
+        if (strpos($request->input('search'),'location_id' )!== false)
+        {
+            $sort = 'has_all_locations';
+            $order = 'DESC';
+        }
+
+
         // End Filter sort and order for query
         // Filter Search for query
+
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
         //@todo check if that condition is needed in future
         //$filter .= " AND tb_users.group_id >= '".\Session::get('gid')."'" ;
+
 
 
         $page = $request->input('page', 1);
