@@ -245,7 +245,7 @@
 	  </div>
   </div>
 <style>
-	.page-content-wrapper,.sbox-content {
+	.page-content-wrapper.m-t,.sbox-content {
 		float: left;
 		width: 100%;
 		height: 100%;
@@ -256,11 +256,11 @@
 		height:0;
 		display: none;
 	}
-	.page-content-wrapper
+	.page-content-wrapper.m-t
 	{
 		margin-top: 0;
 	}
-	.note-editable > *:not(.page-content-wrapper),.page-content-wrapper > *:not(.sbox.animated.fadeInRight),.sbox.animated.fadeInRight > *:not(.sbox-content) {
+	.note-editable > *:not(.page-content-wrapper.m-t),.page-content-wrapper.m-t > *:not(.sbox.animated.fadeInRight),.sbox.animated.fadeInRight > *:not(.sbox-content) {
 		display: none;
 	}
 </style>
