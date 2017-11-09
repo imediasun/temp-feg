@@ -109,20 +109,16 @@ class productusagereport extends Sximo  {
                     $subTypeParent = \DB::table('product_type')->where('id',$subType)->pluck('request_type_id');
                     if(in_array($subTypeParent,$types))
                     {
-                        if($counter == 1)
-                        {
-                            $operator = "AND";
-                        }
                         $processedTypes[] = $subTypeParent;
 
                         $whereProdSubType .= " $operator (( CASE when (P.prod_sub_type_id is null or P.prod_sub_type_id = '') THEN OC.prod_sub_type_id = $subType ELSE P.prod_sub_type_id = $subType END ) AND ( CASE when (P.prod_type_id is null or P.prod_type_id = '') THEN OC.prod_type_id = $subTypeParent ELSE P.prod_type_id = $subTypeParent END ) )";
                         $counter++;
+                        $operator = "OR";
                     }
                     else
                     {
                         //TODO code for subtypes which are not related of selected types
                     }
-                    $operator = "OR";
                 }
                 $types = array_diff($types, $processedTypes);//removing processed types
                 if(!empty($types))
