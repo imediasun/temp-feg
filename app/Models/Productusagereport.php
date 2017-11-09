@@ -236,7 +236,7 @@ class productusagereport extends Sximo  {
                 ' ORDER BY Product ';
 
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $orderConditional $limitConditional";
-            print_r($finalDataQuery);dd();\Log::info("Product Usage final Data query \n ".$finalDataQuery);
+            \Log::info("Product Usage final Data query \n ".$finalDataQuery);
             $rawRows = \DB::select($finalDataQuery);
             $rows = self::processRows($rawRows);
 
