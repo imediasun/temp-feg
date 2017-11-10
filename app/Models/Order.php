@@ -4,6 +4,7 @@ use App\Http\Controllers\OrderController;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
+use Illuminate\Support\Facades\DB;
 use Log;
 
 class order extends Sximo
@@ -37,7 +38,10 @@ class order extends Sximo
                 LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id";
     }
     public static function getProductInfo($id){
-        $select ="SELECT order_contents.qty,order_contents.item_name,order_contents.total FROM order_contents WHERE order_id = ".$id;
+
+        $select ="SELECT products.sku, order_contents.qty,order_contents.item_name,order_contents.total FROM order_contents
+        LEFT OUTER JOIN products ON products.id=order_contents.product_id
+        WHERE order_id = ".$id;
         $result = \DB::select($select );
         return $result;
     }
