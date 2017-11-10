@@ -37,6 +37,11 @@ class order extends Sximo
                 LEFT OUTER JOIN order_status OS ON orders.status_id=OS.id
                 LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id";
     }
+    public static function getProductInfo($id){
+        $select ="SELECT order_contents.qty,order_contents.item_name,order_contents.total FROM order_contents WHERE order_id = ".$id;
+        $result = \DB::select($select );
+        return $result;
+    }
 
     public static function processApiData($json,$param=null)
     {
