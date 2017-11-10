@@ -236,8 +236,13 @@ class OrderController extends Controller
             $result = $this->model->getProductInfo($rs->id);
             $info = '';
             foreach($result as $r){
+                if(!isset($r->sku)){
+                    $sku = ' ( SKU-No Data) ';
+                }else{
+                    $sku = "(SKU-".$r->sku.")";
+                }
 
-                $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).' ( SKU-'.$r->sku.') '.';';
+                $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).$sku. ';';
             }
             $rs->productInfo = $info;
         }
