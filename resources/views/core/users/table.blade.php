@@ -136,6 +136,8 @@
                                        id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
                             @elseif($field['field'] =='date')
                                 {{  DateHelpers::formatDate($value) }}
+                            @elseif($field['field'] =='has_all_locations')
+                                <?php echo $value; ?>
                             @elseif($field['field'] =='last_login')
                                 {{  DateHelpers::formatDateTime($value) }}
                             @elseif($field['field'] =='last_activity')
