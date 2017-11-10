@@ -358,12 +358,30 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 	if(typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null)
 	{
 		if ( settings.url === "product/save/"+$urlArray[2] ) {
-			var detailText =$('#form-'+$urlArray[2]).children('td[data-field="details"]').text();
+			var mainRow = $('#form-'+$urlArray[2]);
+			var detailText =mainRow.children('td[data-field="details"]').text();
 			if(detailText.length >= 20){
 				var new_details = detailText.substr(0, 20)+'<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
-				$('#form-'+$urlArray[2]).children('td[data-field="details"]').empty();
-				$('#form-'+$urlArray[2]).children('td[data-field="details"]').html(new_details);
+				mainRow.children('td[data-field="details"]').empty();
+				mainRow.children('td[data-field="details"]').html(new_details);
 			}
+			$(document).find("tr").each(function(key,row){
+				row = $(row);
+				if(row.attr('id') != undefined)
+				{
+					console.log(row.find('td[data-field="vendor_description"]').text(),mainRow.children('td[data-field="vendor_description"]').text());
+					console.log(row.find('td[data-field="sku"]').text(),mainRow.children('td[data-field="sku"]').text());
+					if($.trim(row.find('td[data-field="vendor_description"]').text()) == $.trim(mainRow.children('td[data-field="vendor_description"]').text()))
+					{
+						if($.trim(row.find('td[data-field="sku"]').text()) == $.trim(mainRow.children('td[data-field="sku"]').text()))
+						{
+							row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
+							row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
+							row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').text()));
+						}
+					}
+				}
+			});
 		}
 	}
 });
