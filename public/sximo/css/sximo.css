@@ -3239,8 +3239,11 @@ position: relative;
 }
 .sbox-content
 {
-  float: left;
   width: 100%;
+}
+.page-content-wrapper
+{
+  padding-bottom: 15px;
 }
 .merch-gallery{
   /*float:left;*/
