@@ -279,6 +279,12 @@
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue'
         });
+        $(".pagination a").each(function(a)
+        {
+            var url = $(this).attr("href");
+            url = url+"&simplesearch=1";
+            $(this).attr("href",url);
+        });
     });
 </script>
 <style>
