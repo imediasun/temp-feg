@@ -347,7 +347,26 @@ class ProductController extends Controller
             }
 
             $data['netsuite_description'] = "$id...".$data['vendor_description'];
-            if(is_array($product_categories))
+            if(is_array($product_categories) && $id > 0){
+
+                $products_combined = $this->model->checkProducts($id);
+                $data_attached_products= $data;
+
+                foreach($products_combined as $pc){
+                    if($pc->id ===$id){
+                        $this->model->insertRow($data, $id);
+                    }else{
+
+                        unset($data_attached_products['prod_type_id']);
+                        unset($data_attached_products['prod_sub_type_id']);
+                        unset($data_attached_products['expense_category']);
+                        unset($data_attached_products['retail_price']);
+                        unset($data_attached_products['ticket_value']);
+
+                        $this->model->insertRow($data_attached_products,$pc->id);
+                    }
+                }
+            }elseif(is_array($product_categories))
             {
                 $ids = [];
                 $count = 1;
@@ -384,7 +403,25 @@ class ProductController extends Controller
             }
             else
             {
-                $this->model->insertRow($data, $id);
+
+                $products_combined = $this->model->checkProducts($id);
+                $data_attached_products= $data;
+                foreach($products_combined as $pc){
+                    if($pc->id ===$id){
+                        $this->model->insertRow($data, $id);
+                    }else{
+
+                        unset($data_attached_products['prod_type_id']);
+                        unset($data_attached_products['prod_sub_type_id']);
+                        unset($data_attached_products['expense_category']);
+                        unset($data_attached_products['retail_price']);
+                        unset($data_attached_products['ticket_value']);
+
+                        $this->model->insertRow($data_attached_products,$pc->id);
+                    }
+                }
+
+
             }
 
             return response()->json(array(
