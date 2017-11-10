@@ -160,7 +160,7 @@ orders.id=order_received.order_id ";
             $order_ids[]=$record->id;
         }
         if(!empty($param['createdFrom'])){
-            $where .= " AND order_received.created_at BETWEEN '".$param['createdFrom']."' AND '".$param['createdTo']."'";
+            $where .= " AND order_received.api_created_at BETWEEN '".$param['createdFrom']."' AND '".$param['createdTo']."'";
             $createdFlag = true;
         }
         $qry_in_string=implode(',',$order_ids);
@@ -193,6 +193,7 @@ orders.id=order_received.order_id ";
                         'received_by' => $record->received_by,
                         'date_received' => $record->date_received,
                         'created_at' => $record->created_at,
+                        'api_created_at' => $record->api_created_at,
                         'notes' => $record->notes,
                         'status' => $record->status
                     ];
