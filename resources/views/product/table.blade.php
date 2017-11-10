@@ -378,6 +378,14 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 							row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
 							row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
 							row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').text()));
+							row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
+							row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
+							row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
+							row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
+							row.find('td[data-field="details"]').text($.trim(mainRow.children('td[data-field="details"]').text()));
+							row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
+							row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
+							row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
 						}
 					}
 				}
