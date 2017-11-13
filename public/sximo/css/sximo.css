@@ -3262,11 +3262,8 @@ position: relative;
 }
 .sbox-content
 {
+  float: left;
   width: 100%;
-}
-.page-content-wrapper
-{
-  padding-bottom: 15px;
 }
 .merch-gallery{
   /*float:left;*/
@@ -3318,10 +3315,7 @@ position: relative;
 .c-margin .col-md-8,
 .c-margin .col-md-7{
   margin-bottom: 5px;
-  
-  
 }
-
 
 .c-margin .col-md-12 select,
 .c-margin .col-md-11 select,
@@ -3423,36 +3417,6 @@ margin-left: 15px;
   margin-left: 0;
 }
 
-
-.table-responsive .table {
-  min-width: 765px;
-}
-
-.table-responsive > .table > thead > tr > th,
-.table-responsive > .table > tbody > tr > th,
-.table-responsive > .table > tfoot > tr > th,
-.table-responsive > .table > thead > tr > td,
-.table-responsive > .table > tbody > tr > td,
-.table-responsive > .table > tfoot > tr > td {
-  white-space: normal;
-}
-
-.nogallary.gameImageContainer {
-    background: #fff none repeat scroll 0 0;
-    box-shadow: 1px 1px 5px gray;
-    margin: 30px 15px 0;
-    padding: 30px 15px 15px;
-}
-
-.nogallary.gameImageContainer img {
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-  width: auto;
-}
-
-
-
 }
 
 
@@ -3539,24 +3503,4 @@ li.multiselect-item.multiselect-group + li a label {
 .multiselect-container>li.multiselect-group label
 {
   color:black;
-}
-
-.btn-white{
-  margin-right: 2px !important;
-  float: left;
-}
-.float-margin{
-
-}
-/* for FireFox*/
-@-moz-document url-prefix() { .height-set{ margin-top: -1px !important;  } }
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  /* Safari and Chrome */
-  .height-set {
-    margin-top: -1px !important;
-  }
-  select {
-    -webkit-appearance: none;
-    -webkit-border-radius: 0px;
-  }
 }
