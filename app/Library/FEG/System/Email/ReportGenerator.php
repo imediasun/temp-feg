@@ -147,7 +147,10 @@ class ReportGenerator
         FEGSystemHelper::logit($reportingLocations, $lf, $lp);
         
         FEGSystemHelper::logit("Missing Asset IDs:", $lf, $lp);
-        FEGSystemHelper::logit(self::$reportCache['missingAssetIdsPerLocation'], $lf, $lp);        
+        FEGSystemHelper::logit(self::$reportCache['missingAssetIdsPerLocation'], $lf, $lp);
+
+        FEGSystemHelper::logit("Unknown Asset IDs:", $lf, $lp);
+        FEGSystemHelper::logit(self::$reportCache['UnknownAssetIds'], $lf, $lp);
         
         FEGSystemHelper::logit("Games Not Played:", $lf, $lp);
         FEGSystemHelper::logit(self::$reportCache['gamesNotPlayedPerLocation'], $lf, $lp);        
@@ -341,14 +344,19 @@ class ReportGenerator
                     self::$reportCache['missingAssetIdsPerLocation'] : array();
             $missingAssetIds = isset($missingAssetIdsAll[$location]) ? $missingAssetIdsAll[$location] : 
                 array();//self::getMissingAssetIds($params);
-
-            $gamesNotPlayedAll = isset(self::$reportCache['gamesNotPlayedPerLocation']) ? 
+            $unknownAssetIdsAll = isset(self::$reportCache['UnknownAssetIds']) ? self::$reportCache['UnknownAssetIds'] :
+                array();
+            $unknownAssetIds = isset($unknownAssetIdsAll[$location])?$unknownAssetIdsAll[$location]:
+                array();
+            $gamesNotPlayedAll = isset(self::$reportCache['gamesNotPlayedPerLocation']) ?
                     self::$reportCache['gamesNotPlayedPerLocation'] : array();
             $gamesNotPlayed = isset($gamesNotPlayedAll[$location]) ? $gamesNotPlayedAll[$location] : 
                 array();//self::getGamesNotPlayed($params);
             
             FEGSystemHelper::logit("Missing Asset ID for Location $location", $lf, $lp);
             FEGSystemHelper::logit($missingAssetIds, $lf, $lp);
+            FEGSystemHelper::logit("Unknown Asset ID for Location $location", $lf, $lp);
+            FEGSystemHelper::logit($unknownAssetIds, $lf, $lp);
             FEGSystemHelper::logit("Games Not Played for Location $location", $lf, $lp);
             FEGSystemHelper::logit($gamesNotPlayed, $lf, $lp);
             
@@ -439,6 +447,43 @@ class ReportGenerator
                 $report[] = "<br><b><u>Readers Used for Game Accessories or Non-FEG Equipment</u></b>
 							   <br>$nonFEGReadersString";
             }            
+            if(empty($unknownAssetIds))
+            {
+                $report2 = '<b style="color:green">No Unknown Asset ID Found! Thank you.</b><br><br>';
+            }
+            else
+            {
+                $reportUnknownAssetIds = array();
+                foreach($unknownAssetIds as $index => $row) {
+                    $locationGameName = $row['loc_game_title'];
+                    $locationName = $row['location_name'];
+                    $readerId = $row['reader_id'];
+                    $gameTotal = $row['game_total'];
+                    $gameId = $row['Asset ID'];
+                    $reportUnknownAssetIds[] = "<b>Reader ID: $readerId</b> - <b>Asset ID: $gameId</b>" .
+                        "<span  style='color:black'> [Game Title: $locationGameName".
+                        " - <em>Earnings: \${$gameTotal}</em>]</span><br>";;
+
+                }
+
+                $reportUnknownAssetIds = implode("", $reportUnknownAssetIds);
+                $report2 = '<b><u>Unknown Asset IDs :</u></b>
+                        <b style="color:red"> ADDRESS IMMEDIATELY!</b> <br> 
+                        <em>The following Locations have reported data with Asset IDs not matching in FEG Admin. Please update the respective games based on the reader ids or the game names at location with correct Asset ID</em> <br> <b
+                        style="color:red">' . $reportUnknownAssetIds . ' </b> <br>';
+                $hasReport2 = true;
+            }
+            if(isset($report2))
+            {
+                self::sendEmailReport( array(
+                    'to' => 'element5@fegllc.com',
+                    'cc' => 'stanlymarian@gmail.com',
+                    'bcc' => '',
+                    'subject' => "Unknown Asset IDs for location  $location - ".date('Y-m-d', strtotime('-1 day')),
+                    'message' => $report2,
+                    'isTest' => 0
+                ));
+            }
 
         }
         $reportString = implode("", $report);
@@ -1123,7 +1168,7 @@ class ReportGenerator
 
         //self::$reportCache['missingAssetIdsPerLocation'] = $missingAssetIdData;
         //self::$reportCache['missingAssetIds'] = $missingAssetIdFlatData;
-
+        self::$reportCache['UnknownAssetIds'] = $missingAssetIdData;
         $reportString = '<br>';
         if (!empty($report)) {
             $reportString = implode("", $report);
