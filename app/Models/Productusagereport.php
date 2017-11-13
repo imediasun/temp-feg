@@ -86,7 +86,7 @@ class productusagereport extends Sximo  {
             if (!empty($order_type_id)) {
                 $whereOrderType = "AND O.order_type_id IN ($order_type_id) ";
             }
-            if (!empty($prod_sub_type_id) && !empty($prod_type_id)) {
+            /*if (!empty($prod_sub_type_id) && !empty($prod_type_id)) {
                 $types = explode(',',$prod_type_id);
                 $subTypes = explode(',',$prod_sub_type_id);
                 $parentTypes = \DB::table('product_type')->whereIn('id',$subTypes)->get();
@@ -126,11 +126,11 @@ class productusagereport extends Sximo  {
                     $types = implode(',',$types);
                     $whereProdSubType = "AND CASE when (P.prod_type_id is null or P.prod_type_id = '') THEN OC.prod_type_id IN ($types) ELSE P.prod_type_id IN ($types) END ".$whereProdSubType;
                 }
-            }
-            else if (!empty($prod_type_id)) {
+            }*/
+            if (!empty($prod_type_id)) {
                 $whereProdType = "AND CASE when (P.prod_type_id is null or P.prod_type_id = '') THEN OC.prod_type_id IN ($prod_type_id) ELSE P.prod_type_id IN ($prod_type_id) END ";
             }
-            else if(!empty($prod_sub_type_id))
+            if(!empty($prod_sub_type_id))
             {
                 $whereProdSubType = "AND CASE when (P.prod_sub_type_id is null or P.prod_sub_type_id = '') THEN OC.prod_sub_type_id IN ($prod_sub_type_id) ELSE P.prod_sub_type_id IN ($prod_sub_type_id) END  ";
             }
