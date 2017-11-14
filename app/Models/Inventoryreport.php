@@ -136,7 +136,7 @@ class inventoryreport extends Sximo  {
                 $date_start_stamp = $date_end_stamp;
                 $date_end_stamp = $t;
             }
-            $UserFill = $forExcel?"USER":"";
+            $UserFill = "____";
             $separator = "' <br> '";
             if(isset($forExcel) && $forExcel == 1)
             {

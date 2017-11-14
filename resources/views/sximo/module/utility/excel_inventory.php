@@ -379,12 +379,12 @@ if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
 			$serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
 			$colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . $endOn);
 
-			if($cell->getValue() == "Case Price")
+			if($cell->getValue() == "Case Price" || $cell->getValue() == "Unit Price")
 			{
 				for ($row = 3; $row <= $lastDataEntry; $row++) {
 					$customCell = $objSheet->getCell($serialColumn.$row);
 					$value = $customCell->getValue();
-					if($value == "USER")
+					if($value == "____")
 					{
 						$objPHPExcel->getActiveSheet()->getStyle($serialColumn.$row)
 							->getNumberFormat()
