@@ -145,7 +145,7 @@ class inventoryreport extends Sximo  {
             $groupByTypes = implode(',',self::$orderTypesForGroupBy);
             $specificTypes = implode(',',self::$orderTypesForUnitPrice);
             $mainQuery = "
-            SELECT 
+            SELECT UUID() as unique_column,
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ' ) as orderId, max(sku) as sku, max(num_items) as num_items, 
             '' AS unit_inventory_count,'' AS total_inventory_value,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ' ) AS Order_Type,
@@ -277,7 +277,7 @@ class inventoryreport extends Sximo  {
         $types = explode(',',$prod_type_ids);
         $subTypes = explode(',',$prod_sub_type_ids);
         $rowCollection = collect($rows);
-        $rowCollection = $rowCollection->keyBy('Product');
+        $rowCollection = $rowCollection->keyBy('unique_column');
         if (!empty($prod_sub_type_ids) && !empty($prod_type_ids)) {
             foreach ($types as $prodType)
             {
