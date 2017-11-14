@@ -291,7 +291,7 @@ class inventoryreport extends Sximo  {
                         {
                             if(in_array($row->prod_sub_type_id,$prodSubTypes) || empty($row->prod_sub_type_id) || !in_array($row->prod_sub_type_id,$subTypes))
                             {
-                                $rowCollection->forget($row->Product);
+                                $rowCollection->forget($row->unique_column);
                             }
                         }
 
