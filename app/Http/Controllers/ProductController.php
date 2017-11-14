@@ -4,6 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\DB;
 use Validator, Input, Redirect,Image;
 
 class ProductController extends Controller
@@ -30,6 +31,19 @@ class ProductController extends Controller
             'return' => self::returnUrl()
         );
 
+
+    }
+
+    public function getModify(){
+        $query ="SELECT products.*  FROM `products` WHERE vendor_description REGEXP '[ ]{2,}'";
+        $products = DB::select($query);
+
+        foreach($products as $pro){
+            $vendor_desc = trim(preg_replace('/\s+/',' ', $pro->vendor_description));
+            DB::table('products')
+                ->where('id', $pro->id)
+                ->update(['vendor_description' => $vendor_desc]);
+        }
 
     }
     
@@ -280,6 +294,9 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        //to remove the extra spaces im between the string
+        $request->vendor_description = trim(preg_replace('/\s+/',' ', $request->vendor_description));
+
         if(is_array($request->prod_sub_type_id) && $id == 0)
         {
             if(count(array_unique($request->prod_sub_type_id))<count($request->prod_sub_type_id))
