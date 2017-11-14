@@ -230,7 +230,15 @@ class productusagereport extends Sximo  {
                 $page = ceil($total/$limit);
                 $offset = ($page-1) * $limit ;
             }
-            $rawRows = self::customLimit($totalRows,$limit,$page);
+            if($limit != 0)
+            {
+                $rawRows = self::customLimit($totalRows,$limit,$page);
+            }
+            else
+            {
+                $rawRows = $totalRows;
+            }
+
             $rows = self::processRows($rawRows);
 
             $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
