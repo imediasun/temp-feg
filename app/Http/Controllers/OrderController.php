@@ -237,9 +237,9 @@ class OrderController extends Controller
             $info = '';
             foreach($result as $r){
                 if(!isset($r->sku)){
-                    $sku = ' ( SKU-No Data) ';
+                    $sku = " (SKU: No Data) ";
                 }else{
-                    $sku = "(SKU-".$r->sku.")";
+                    $sku = " (SKU: ".$r->sku.")";
                 }
 
                 $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).$sku. ';';
