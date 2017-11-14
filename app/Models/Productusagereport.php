@@ -130,7 +130,7 @@ class productusagereport extends Sximo  {
             if (!empty($prod_type_id)) {
                 $whereProdType = "AND CASE when (P.prod_type_id is null or P.prod_type_id = '') THEN OC.prod_type_id IN ($prod_type_id) ELSE P.prod_type_id IN ($prod_type_id) END ";
             }
-            if(!empty($prod_sub_type_id))
+            if(!empty($prod_sub_type_id) && empty($prod_type_id))
             {
                 $whereProdSubType = "AND CASE when (P.prod_sub_type_id is null or P.prod_sub_type_id = '') THEN OC.prod_sub_type_id IN ($prod_sub_type_id) ELSE P.prod_sub_type_id IN ($prod_sub_type_id) END  ";
             }
@@ -156,7 +156,7 @@ class productusagereport extends Sximo  {
                 $mainQuery = "SELECT max(OCID) as OCID,
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ') AS Order_Type,
-            prod_type_id,
+            prod_type_id,prod_sub_type_id,
             GROUP_CONCAT(DISTINCT product_type ORDER BY product_type SEPARATOR ' , ') AS Product_Type,
             GROUP_CONCAT(DISTINCT type_description ORDER BY type_description SEPARATOR ' , ') AS Product_Sub_Type,
             vendor_id,Product,max(ticket_value) as ticket_value
@@ -179,10 +179,11 @@ class productusagereport extends Sximo  {
 				   OC.qty,
 				   O.order_type_id,
 				   IF(P.case_price = '' OR P.case_price IS NULL , OC.case_price , P.case_price) AS Case_Price,
+				   IF(P.prod_type_id = '' OR P.prod_type_id IS NULL , OC.prod_type_id , P.prod_type_id) AS prod_type_id,
+				   IF(D.id = '' OR D.id IS NULL , OCD.id , D.id) AS prod_sub_type_id,
 				   OC.total,
 				   T1.order_type,
 				   IF(PT.order_type = '' OR PT.order_type IS NULL,OCT.order_type,PT.order_type) AS product_type,
-				   P.prod_type_id,
 				   IF(D.type_description = '' OR D.type_description IS NULL, OCD.type_description,D.type_description) AS type_description,
 				   O.location_id,
 				   L.location_name,
@@ -215,9 +216,12 @@ class productusagereport extends Sximo  {
 
             $groupQuery = " GROUP BY Product ,num_items ,Case_Price,Product_Type, sku";
 //            $groupQuery = " GROUP BY P.id ";
-
-            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery ";
-            $totalRows = \DB::select($finalTotalQuery);
+            $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
+                ' ORDER BY Product ';
+            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $orderConditional";
+            \Log::info("Product Usage final Data query \n ".$finalTotalQuery);
+            $allRows = \DB::select($finalTotalQuery);
+            $totalRows = self::subTypeFilter($allRows,$prod_type_id,$prod_sub_type_id);
             if (!empty($totalRows)) {
                 $total = count($totalRows);
             }
@@ -226,14 +230,7 @@ class productusagereport extends Sximo  {
                 $page = ceil($total/$limit);
                 $offset = ($page-1) * $limit ;
             }
-            $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
-
-            $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
-                ' ORDER BY Product ';
-
-            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $orderConditional $limitConditional";
-            \Log::info("Product Usage final Data query \n ".$finalDataQuery);
-            $rawRows = \DB::select($finalDataQuery);
+            $rawRows = self::customLimit($totalRows,$limit,$page);
             $rows = self::processRows($rawRows);
 
             $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
@@ -252,6 +249,42 @@ class productusagereport extends Sximo  {
 
     }
 
+    public static function subTypeFilter($rows,$prod_type_ids,$prod_sub_type_ids)
+    {
+        $types = explode(',',$prod_type_ids);
+        $subTypes = explode(',',$prod_sub_type_ids);
+        $rowCollection = collect($rows);
+        $rowCollection = $rowCollection->keyBy('Product');
+        if (!empty($prod_sub_type_ids) && !empty($prod_type_ids)) {
+            foreach ($types as $prodType)
+            {
+                $haveSubTypes = \DB::table('product_type')->where('request_type_id',$prodType)->whereIn('id',$subTypes)->lists('id');
+                if(!empty($haveSubTypes))
+                {
+                    $prodSubTypes = \DB::table('product_type')->where('request_type_id',$prodType)->whereNotIN('id',$subTypes)->lists('id');
+                    foreach ($rowCollection as $row)
+                    {
+                        if($row->prod_type_id == $prodType)
+                        {
+                            if(in_array($row->prod_sub_type_id,$prodSubTypes) || empty($row->prod_sub_type_id) || !in_array($row->prod_sub_type_id,$subTypes))
+                            {
+                                $rowCollection->forget($row->Product);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        $results = $rowCollection->toArray();
+        return $results;
+    }
+    public static function customLimit($rows,$limit,$page)
+    {
+        $rowCollection = collect($rows);
+        $rowCollection = $rowCollection->forPage($page,$limit);
+        return $rowCollection->toArray();
+    }
     public static function processRows( $rows ){
         $newRows = array();
         foreach($rows as $row) {
