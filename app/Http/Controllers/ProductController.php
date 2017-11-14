@@ -357,10 +357,12 @@ class ProductController extends Controller
         if ($validator->passes()) {
             if ($id == 0) {
                 $data = $this->validatePost('products');
+                $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
             }
             else {
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
+                $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
             }
 
             $data['netsuite_description'] = "$id...".$data['vendor_description'];
