@@ -151,7 +151,7 @@ class inventoryreport extends Sximo  {
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ' ) AS Order_Type,
             GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR $separator ) AS location_id,
             Product_Type,is_api_visible,
-            type_description AS Product_Sub_Type,
+            GROUP_CONCAT(DISTINCT type_description ORDER BY type_description SEPARATOR ' , ') AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
             ,Unit_Price,Posted,Case_Unit_Group,
             IF(order_type_id IN ( $casePriceCats),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
