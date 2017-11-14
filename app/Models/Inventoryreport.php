@@ -77,7 +77,7 @@ class inventoryreport extends Sximo  {
 
         $rows = array();
         $total = 0;
-
+        $rawCats = array();
         $filters = self::getSearchFilters();
         $date_start = @$filters['start_date'];
         $date_end = @$filters['end_date'];
@@ -118,7 +118,7 @@ class inventoryreport extends Sximo  {
             if (!empty($prod_type_id)) {
                 $whereProdType = "AND OC.prod_type_id IN ($prod_type_id) ";
             }
-            if (!empty($prod_sub_type_id)) {
+            if (!empty($prod_sub_type_id) && empty($prod_type_id)) {
                 $whereProdSubType = "AND OC.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
             $module_id = Module::name2id('order');
@@ -156,19 +156,20 @@ class inventoryreport extends Sximo  {
             ,Unit_Price,Posted,Case_Unit_Group,
             IF(order_type_id IN ( $casePriceCats),IF(max(num_items) is null OR MAX(num_items) = 0  , SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
             Case_Price,SUM(IF(order_type_id IN ($casePriceCats),(Case_Price_ORIGNAL * qty),(Unit_Price_ORIGNAL*qty))) AS Total_Spent,start_date,end_date
-            ,qty_per_case
+            ,qty_per_case,prod_type_id,prod_sub_type_id
              FROM ( 
                     SELECT P.id , O.id as orderId,
                     IF(OC.sku = '' OR OC.sku IS NULL,P.sku,OC.sku) AS sku,
                     P.num_items,
                     T.order_type Product_Type,
                     T1.order_type,O.order_type_id,
-                    OC.prod_type_id,
+                    T.id AS prod_type_id,
+                    D.id AS prod_sub_type_id,
                     D.type_description,
                     V.vendor_name AS vendor_name,
                     OC.item_name AS Product,
                     OC.ticket_value,
-                    IF(OC.prod_type_id in ($specificTypes),'$UserFill',OC.price) AS Unit_Price,
+                    IF(OC.prod_type_id IN ($specificTypes),IF(O.is_api_visible = 0,'$UserFill',TRUNCATE(OC.case_price/OC.qty_per_case,5)),OC.price) AS Unit_Price,
                     OC.price AS Unit_Price_ORIGNAL,
                     OC.qty,
                     OC.qty_per_case,
@@ -203,7 +204,7 @@ class inventoryreport extends Sximo  {
             {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
-            $whereQuery = " WHERE O.status_id != ".order::ORDER_VOID_STATUS ." AND O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
+            $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
                             AND O.created_at <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
@@ -211,9 +212,12 @@ class inventoryreport extends Sximo  {
             $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type";
             $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,Posted,Case_Unit_Group ";
 
-
-            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2";
-            $totalRows = \DB::select($finalTotalQuery);
+            $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
+                ' ORDER BY Unit_Price ';
+            $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2 $orderConditional";
+            \Log::info("Inventory Report final Data query \n ".$finalTotalQuery);
+            $allRows = \DB::select($finalTotalQuery);
+            $totalRows = self::subTypeFilter($allRows,$prod_type_id,$prod_sub_type_id);
             if (!empty($totalRows)) {
                 $total = count($totalRows);
             }
@@ -222,20 +226,10 @@ class inventoryreport extends Sximo  {
                 $page = ceil($total/$limit);
                 $offset = ($page-1) * $limit ;
             }
-            $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
-
-            $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
-                ' ORDER BY Unit_Price ';
-
-            // order by before group by will show the product List item instead of freehand item if both with same name and case price exists
-
-            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery2 $orderConditional $limitConditional ";
-            $finalCatQuery = "$catQuery $fromQuery $whereQuery $groupQuery";
-            \Log::info("Inventory Report final Data query \n ".$finalDataQuery);
-            //\Log::info("Inventory Report final Cat query \n ".$finalCatQuery);
-            $rawRows = \DB::select($finalDataQuery);
-            $rawCats = \DB::select($finalCatQuery);
+            $rawRows = self::customLimit($totalRows,$limit,$page);
             $rows = self::processRows($rawRows);
+            $finalCatQuery = "$catQuery $fromQuery $whereQuery $groupQuery";
+            $rawCats = \DB::select($finalCatQuery);
 
             $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
             $location = Location::whereIn('id',explode(',',$location_id))->lists('location_name')->implode(', ');
@@ -269,5 +263,42 @@ class inventoryreport extends Sximo  {
             $newRows[] = $row;
         }
         return $newRows;
+    }
+
+    public static function subTypeFilter($rows,$prod_type_ids,$prod_sub_type_ids)
+    {
+        $types = explode(',',$prod_type_ids);
+        $subTypes = explode(',',$prod_sub_type_ids);
+        $rowCollection = collect($rows);
+        $rowCollection = $rowCollection->keyBy('Product');
+        if (!empty($prod_sub_type_ids) && !empty($prod_type_ids)) {
+            foreach ($types as $prodType)
+            {
+                $haveSubTypes = \DB::table('product_type')->where('request_type_id',$prodType)->whereIn('id',$subTypes)->lists('id');
+                if(!empty($haveSubTypes))
+                {
+                    $prodSubTypes = \DB::table('product_type')->where('request_type_id',$prodType)->whereNotIN('id',$subTypes)->lists('id');
+                    foreach ($rowCollection as $row)
+                    {
+                        if($row->prod_type_id == $prodType)
+                        {
+                            if(in_array($row->prod_sub_type_id,$prodSubTypes) || empty($row->prod_sub_type_id) || !in_array($row->prod_sub_type_id,$subTypes))
+                            {
+                                $rowCollection->forget($row->Product);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        $results = $rowCollection->toArray();
+        return $results;
+    }
+    public static function customLimit($rows,$limit,$page)
+    {
+        $rowCollection = collect($rows);
+        $rowCollection = $rowCollection->forPage($page,$limit);
+        return $rowCollection->toArray();
     }
 }
