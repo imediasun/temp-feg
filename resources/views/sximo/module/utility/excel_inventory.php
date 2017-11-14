@@ -55,11 +55,19 @@ foreach ($categories as $key=>$category)
 					{
 						$nodata = 0;
 					}
-					$a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$nodata)));
-					$b = str_replace( ',', '', $a );
-					$c = str_replace('$','',$b);
-					if( is_numeric( $c ) ) {
-						$a = $c;
+					$a = '';
+					if(($f['field']=='Case_Price' || $f['field']=='Unit_Price') && $row->$f['field'] == "____")
+					{
+						$a = '____';
+					}
+					else
+					{
+						$a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$nodata)));
+						$b = str_replace( ',', '', $a );
+						$c = str_replace('$','',$b);
+						if( is_numeric( $c ) ) {
+							$a = $c;
+						}
 					}
 					$content .= '<td> '. strip_tags(($a)) . '</td>';
 				endif;
@@ -226,8 +234,8 @@ for($i = 0;$i < $totalCounters;$i++)
 }
 $objSheet->getStyle($TotalColumn.'3:'.$TotalColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 $objSheet->getStyle($TotalSpentColumn.'3:'.$TotalSpentColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
-$objSheet->getStyle($UnitPriceColumn.'3:'.$UnitPriceColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
-$objSheet->getStyle($CasePriceColumn.'3:'.$CasePriceColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+$objSheet->getStyle($UnitPriceColumn.'3:'.$UnitPriceColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode('General');
+$objSheet->getStyle($CasePriceColumn.'3:'.$CasePriceColumn.($lastRow+$totalCounters))->getNumberFormat()->setFormatCode('General');
 $objSheet->getColumnDimension($TotalColumn)->setWidth(15);
 $objSheet->getColumnDimension($TotalSpentColumn)->setWidth(12);
 $objSheet->getColumnDimension($VendorColumn)->setWidth(15);
@@ -384,7 +392,7 @@ if(isset($excelExcludeFormatting) && !empty($excelExcludeFormatting))
 				for ($row = 3; $row <= $lastDataEntry; $row++) {
 					$customCell = $objSheet->getCell($serialColumn.$row);
 					$value = $customCell->getValue();
-					if($value == "____")
+					if($value === "____")
 					{
 						$objPHPExcel->getActiveSheet()->getStyle($serialColumn.$row)
 							->getNumberFormat()
