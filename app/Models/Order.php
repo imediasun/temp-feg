@@ -178,8 +178,8 @@ class order extends Sximo
             $select .= " AND status_id='$status_id'";
         }
 
-        Log::info($select . " {$params} ". " {$orderConditional}  {$limitConditional} ");
-        $result = \DB::select($select . " {$params} ". " {$orderConditional}  {$limitConditional} ");
+        Log::info($select . " {$params} ". self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
+        $result = \DB::select($select . " {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
 
         if ($key == '') {
             $key = '*';
