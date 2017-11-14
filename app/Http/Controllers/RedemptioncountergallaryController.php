@@ -194,7 +194,7 @@ class RedemptioncountergallaryController extends Controller
     function postSave(Request $request, $id = null)
     {
 
-        $rules = array('redemption_image' => 'required', 'location' => 'required');
+        $rules = array('redemption_image' => 'required|mimes:jpeg,png,gif', 'location' => 'required');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data['loc_id'] = $request->get('location');
