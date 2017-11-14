@@ -479,7 +479,7 @@ class ReportGenerator
                     'to' => 'element5@fegllc.com',
                     'cc' => 'stanlymarian@gmail.com',
                     'bcc' => '',
-                    'subject' => "Unknown Asset IDs for location  $location - ".date('Y-m-d', strtotime('-1 day')),
+                    'subject' => "Unknown Asset IDs for location  $location - ".date('l, F d Y', strtotime('-1 day')),
                     'message' => $report2,
                     'isTest' => 0
                 ));
