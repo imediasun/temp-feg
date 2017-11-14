@@ -153,7 +153,7 @@ class productusagereport extends Sximo  {
             {
                 $separator = "' , '";
             }
-                $mainQuery = "SELECT max(OCID) as OCID,
+                $mainQuery = "SELECT UUID() as unique_column, max(OCID) as OCID,
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ') AS Order_Type,
             prod_type_id,prod_sub_type_id,
@@ -262,7 +262,7 @@ class productusagereport extends Sximo  {
         $types = explode(',',$prod_type_ids);
         $subTypes = explode(',',$prod_sub_type_ids);
         $rowCollection = collect($rows);
-        $rowCollection = $rowCollection->keyBy('Product');
+        $rowCollection = $rowCollection->keyBy('unique_column');
         if (!empty($prod_sub_type_ids) && !empty($prod_type_ids)) {
             foreach ($types as $prodType)
             {
