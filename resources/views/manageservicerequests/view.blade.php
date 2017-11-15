@@ -1,7 +1,7 @@
 <style>
 
-	.table tr td {
-		white-space: normal !important;
+	#description_td {
+		white-space: pre-wrap !important;
 	}
 </style>
 @if($setting['view-method'] =='native')
@@ -67,7 +67,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Description', (isset($fields['problem']['language'])? $fields['problem']['language'] : array())) }}
 						</td>
-						<td>{{ DateHelpers::formatStringValue($row->problem,$nodata['problem']) }} </td>
+						<td id="description_td">{{ DateHelpers::formatStringValue($row->problem,$nodata['problem']) }} </td>
 						
 					</tr>
 				
