@@ -194,7 +194,7 @@ class RedemptioncountergallaryController extends Controller
     function postSave(Request $request, $id = null)
     {
 
-        $rules = array('redemption_image' => 'required|mimes:jpeg,png,gif', 'location' => 'required');
+        $rules = array('redemption_image' => 'required', 'location' => 'required');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data['loc_id'] = $request->get('location');
@@ -204,6 +204,19 @@ class RedemptioncountergallaryController extends Controller
             $data['batch'] = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
             $files = $request->file('redemption_image');
+            $typesArray = [
+                "image/png","image/jpeg","image/jpg","image/gif"
+            ];
+            foreach ($files as $file)
+            {
+                if(!in_array($file->getMimeType(),$typesArray))
+                {
+                    return response()->json(array(
+                        'message' => "The redemption image must be a file of type: jpeg, png, gif",
+                        'status' => 'error'
+                    ));
+                }
+            }
             $i=0;
             foreach($files as $file) {
                 $img = Image::make($file->getRealPath());
