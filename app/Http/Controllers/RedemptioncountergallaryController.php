@@ -252,7 +252,7 @@ class RedemptioncountergallaryController extends Controller
 
     }
 
-    public function getDelete(Request $request, $id = null)
+    public function getDelete(Request $request, $id = null,$extension = null)
     {
 
         if ($this->access['is_remove'] == 0) {
@@ -265,7 +265,7 @@ class RedemptioncountergallaryController extends Controller
         }
         // delete multipe rows
         if ($id) {
-            $image_path = array(public_path() . '/uploads/gallary/' . $id . ".jpg", public_path() . '/uploads/gallary/' . $id . "_thumb.jpg");
+            $image_path = array(public_path() . '/uploads/gallary/' . $id . ".".$extension, public_path() . '/uploads/gallary/' . $id . "_thumb.".$extension);
             foreach ($image_path as $img) {
                 if (file_exists($img)) {
                     unlink($img);
