@@ -1,3 +1,9 @@
+<style>
+
+	#description_td {
+		white-space: pre-wrap !important;
+	}
+</style>
 @if($setting['view-method'] =='native')
 <div class="sbox">
 	<div class="sbox-title">  
@@ -8,8 +14,9 @@
 	 </div>
 
 	<div class="sbox-content"> 
-@endif	
+@endif
 
+		<div class="table-responsive">
 		<table class="table table-striped table-bordered" >
 			<tbody>	
 				
@@ -60,7 +67,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Description', (isset($fields['problem']['language'])? $fields['problem']['language'] : array())) }}
 						</td>
-						<td>{{ DateHelpers::formatStringValue($row->problem,$nodata['problem']) }} </td>
+						<td id="description_td">{{ DateHelpers::formatStringValue($row->problem,$nodata['problem']) }} </td>
 						
 					</tr>
 				
@@ -124,7 +131,7 @@
 				
 			</tbody>	
 		</table>  
-			
+			</div>
 		 	
 
 @if($setting['form-method'] =='native')
@@ -136,4 +143,5 @@
 $(document).ready(function(){
 
 });
-</script>	
+</script>
+
