@@ -102,13 +102,14 @@ $(document).ready(function() {
             title=$this.attr('title').replace(/'/g,""),
             rotation=$this.data('rotation'),
             rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180&deg</buton><button id="rotate_save" onclick="saveRotateImg(this)" class="btn btn-info btn-xs"  data-rotation='+rotation+' id=save_btn_'+id+'  data-id='+id+'>Save</button></div>',
-            deleteLink = '@if($access['is_remove'] ==1)<a href="javascript:void(0);" onclick="confirmDelete('+ id +',\''+title+'\');" >Delete</a>@endif',
+            deleteLink = '@if($access['is_remove'] ==1)<a href="javascript:void(0);" onclick="confirmDelete('+ id +');" >Delete</a>@endif',
             fancyTitle =  '<div>'+rotatebtns + title + '<br>' + deleteLink + '</div>';
             $this.data('fancybox-title', fancyTitle);
     });
 });
-function confirmDelete(id, title)
+function confirmDelete(id)
 {
+    var title = $("#gallery_img_"+id).attr('title');
     if(confirm('Are you sure you want to delete '+title))
     {
         location.href="{{ url() }}/merchindisetheminggallary/delete/"+id;
