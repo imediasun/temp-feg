@@ -82,6 +82,15 @@
                          </div>
                       </div> --}}
                     <div class="form-group  ">
+                        <label for="Store ID" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Store ID', (isset($fields['store_id']['language'])? $fields['store_id']['language'] : array())) !!}
+                        </label>
+                        <div class="col-md-6">
+                            {!! Form::text('store_id', $row['store_id'],array('class'=>'form-control', 'placeholder'=>'','id'=>'store_id'  )) !!}
+
+                        </div>
+                    </div>
+                    <div class="form-group  ">
                         <label for="Location Name" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Location Name', (isset($fields['location_name']['language'])? $fields['location_name']['language'] : array())) !!}
                         </label>
@@ -348,7 +357,7 @@
 
                     <div class="form-group  ">
                         <label for="reporting" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Reporting', (isset($fields['reporting']['language'])? $fields['reporting']['language'] : array())) !!}
+                            {!! SiteHelpers::activeLang('Reporting/On Debit', (isset($fields['reporting']['language'])? $fields['reporting']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6 check-no">
                             <input type="text" value="0" name="reporting" style="display:none"/>
