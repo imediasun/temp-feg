@@ -118,9 +118,9 @@
 						<?php foreach ($tableGrid as $field) :
 						if($field['view'] =='1') :
 						$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							if($field['field']=='Case_Price' && empty($row->$field['field']))
+							if(($field['field']=='Case_Price' || $field['field']=='Unit_Price') && $row->$field['field'] == "____")
 							{
-								$value = $row->$field['field'];
+								$value = '';
 							}
 							else
 							{
