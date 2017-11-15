@@ -158,9 +158,22 @@ class order extends Sximo
             $select .= " AND status_id='$status_id'";
         }
 
-        Log::info($select . " {$params} ". " {$orderConditional}  {$limitConditional} ");
-        $result = \DB::select($select . " {$params} ". " {$orderConditional}  {$limitConditional} ");
+        Log::info($select . " {$params} ". self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
+        $result = \DB::select($select . " {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
+        foreach($result as  &$rs){
+            $results = self::getProductInfo($rs->id);
+            $info = '';
+            foreach($results as $r){
+                if(!isset($r->sku)){
+                    $sku = " (SKU: No Data) ";
+                }else{
+                    $sku = " (SKU: ".$r->sku.")";
+                }
 
+                $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).$sku. ';';
+            }
+            $rs->productInfo = $info;
+        }
         if ($key == '') {
             $key = '*';
         } else {
