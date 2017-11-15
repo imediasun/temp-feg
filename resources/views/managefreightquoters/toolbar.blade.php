@@ -6,7 +6,7 @@
 			@endif
                 @if($setting['disableactioncheckbox']=='false')
                 @if($access['is_remove'] == 1)
-                    <a id="removeFright" href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemoveCustom('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+                    <a id="removeFright" href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
                 @endif
             @endif
             </div>
@@ -29,38 +29,4 @@
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?status='+freight_type+'&config_id='+$("#col-config").val()+ getFooterFilters());
 
     });
-    function ajaxRemoveCustom( id, url )
-    {
-        var datas = $( id +'Table :input').serialize();
-        if($(".ids:checked").length > 0) {
-            var freight_type = $("#status").val();
-            if(freight_type == 'archive')
-            {
-                notyMessageError("You cannot delete Archived Freight Orders!");
-            }
-            else
-            {
-                if(confirm('Are you sure you want to delete the selected row(s)?')) {
-
-                    $.post( url+'/delete' ,datas,function( data ) {
-
-                        if(data.status =='success')
-                        {
-                            //console.log("called succes");
-                            notyMessage(data.message);
-                            ajaxFilter( id ,url+'/data' );
-                        } else {
-                            //console.log("called error");
-                            notyMessageError(data.message);
-                        }
-                    });
-
-                }
-            }
-        }
-        else
-        {
-            notyMessageError("Please select one or more rows.");
-        }
-    }
 </script>
