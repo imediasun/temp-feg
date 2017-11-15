@@ -1,3 +1,9 @@
+<style>
+
+	.table tr td {
+		white-space: normal !important;
+	}
+</style>
 @if($setting['view-method'] =='native')
 <div class="sbox">
 	<div class="sbox-title">  
@@ -8,8 +14,9 @@
 	 </div>
 
 	<div class="sbox-content"> 
-@endif	
+@endif
 
+		<div class="table-responsive">
 		<table class="table table-striped table-bordered" >
 			<tbody>	
 				
@@ -124,7 +131,7 @@
 				
 			</tbody>	
 		</table>  
-			
+			</div>
 		 	
 
 @if($setting['form-method'] =='native')
@@ -136,4 +143,5 @@
 $(document).ready(function(){
 
 });
-</script>	
+</script>
+
