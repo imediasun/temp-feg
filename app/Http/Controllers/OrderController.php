@@ -242,7 +242,7 @@ class OrderController extends Controller
                     $sku = " (SKU: ".$r->sku.")";
                 }
 
-                $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).$sku. ';';
+                $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).$sku. '; ';
             }
             $rs->productInfo = $info;
         }
