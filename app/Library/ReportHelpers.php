@@ -2,6 +2,7 @@
 namespace App\Library;
 
 use App\Library\MyLog;
+use App\Models\order;
 
 class ReportHelpers
 {
@@ -914,6 +915,7 @@ class ReportHelpers
                         WHERE date_ordered >= '$dateStart' 
                             and date_ordered <= '$dateEnd' 
                             AND order_type_id IN(7,8) 
+                            AND status_id IN('".implode(',',order::ORDER_CLOSED_STATUS)."') 
                         GROUP BY location_id) O 
                     ON L.id = O.location_id
                 LEFT JOIN (
