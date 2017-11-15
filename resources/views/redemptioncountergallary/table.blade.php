@@ -113,9 +113,10 @@
     });
     function confirmDelete(id)
     {
+        var extension = $("#gallery_img_"+id).data('extension');
         if(confirm('Are you sure you want to delete this image from gallery?'))
        {
-         location.href="{{ url() }}/redemptioncountergallary/delete/"+id;
+         location.href="{{ url() }}/redemptioncountergallary/delete/"+id+"/"+extension;
        }
     }
     var angle=0;
@@ -137,16 +138,16 @@
                     success: function (data) {
                         if (data.status == 'success') {
                             notyMessage(data.message);
-                            $("#gallery_img_" + id).attr('href', './uploads/gallary/' + id + '_rotated.jpg?time=' + Math.floor(Date.now()));
+                            $("#gallery_img_" + id).attr('href', './uploads/gallary/' + id + '_rotated.'+extension+'?time=' + Math.floor(Date.now()));
                             console.log(angle);
                             $("#gallery_img_" + id).attr('data-rotation', angle);
                             $("#save_btn_" + id).attr('data-rotation', angle);
-                            $('#img_thumb_' + id).attr('src', './uploads/gallary/' + id + '_thumb_rotated.jpg?time=' + Math.floor(Date.now()));
+                            $('#img_thumb_' + id).attr('src', './uploads/gallary/' + id + '_thumb_rotated.'+extension+'?time=' + Math.floor(Date.now()));
                             //  $('#img_thumb_'+$(ele).data('id')).css({'transform': 'rotate(' + angle + 'deg)'});
                             angle = 0;
                             $('.ajaxLoading').hide();
                             $.fancybox.close();
-                            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?return={{ $return }}');
+                            //reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?return={{ $return }}');
                             //window.location.reload(true);
                         } else {
                             notyMessageError(data.message);
