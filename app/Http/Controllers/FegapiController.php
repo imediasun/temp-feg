@@ -169,6 +169,11 @@ class FegapiController extends Controller
         $config = $class1::makeInfo($class);
         $tables = $config['config']['grid'];
         $jsonData = $class1::getRow($id);
+        if($class == "Itemreceipt")
+        {
+            $jsonData = $class1::processApiData($jsonData,['id'=>$id , 'for_api' => 1]);
+            $jsonData = isset($jsonData[0])?$jsonData[0]:$jsonData;
+        }
         if (!empty($jsonData)) {
             return \Response::json($jsonData, 200);
         } else {
