@@ -224,14 +224,40 @@
 	  <p> <strong>Tips !</strong> Drag and drop rows to re ordering lists </p>	
 	</div>	
 					
-			<button type="submit" class="btn btn-primary"> Save Changes </button>
+			<button id="tableSave" type="submit" class="btn btn-primary"> Save Changes </button>
 			<input type="hidden" name="module_id" value="{{ $row->module_id }}" />
 	{!! Form::close() !!}
 		
 	</div>	
 </div></div>
 </div>
-<script>
+  <style>
+	  .noty_message
+	  {
+		  text-align: justify !important;
+	  }
+	  .noty_message span {
+		  text-align: center !important;
+	  }
+  </style>
+  <script>
+	  $("#tableSave").click(function (e) {
+		  $(this).attr('disabled','disabled');
+		  e.preventDefault();
+		  App.notyConfirm({
+			  message: "Are you sure you want to update Table for this module?<br><span style='width:100%;float: left;'><b>***Warning***</b></span><br>Saving Table will update all labels in table Columns arrangement could get effected. Related tables data can get effected. Make sure you understand all risk then press Yes otherwise press No to review",
+			  confirmButtonText: 'Yes',
+			  cancelButtonText: 'No',
+			  model: true,
+			  confirm: function () {
+				  $("form.form-horizontal").submit();
+			  },
+			  cancel: function () {
+				  $("#tableSave").removeAttr("disabled");
+			  }
+		  });
+	  });
+
 $(document).ready(function() {
 
 
