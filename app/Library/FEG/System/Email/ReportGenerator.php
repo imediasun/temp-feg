@@ -449,7 +449,7 @@ class ReportGenerator
             }            
             if(empty($unknownAssetIds))
             {
-                $report[] = '<b style="color:green">No Unknown Asset ID Found! Thank you.</b><br><br>';
+                $report[] = '<br><br><b style="color:green">No Unknown Asset ID Found! Thank you.</b><br><br>';
             }
             else
             {
@@ -467,7 +467,7 @@ class ReportGenerator
                 }
 
                 $reportUnknownAssetIds = implode("", $reportUnknownAssetIds);
-                $report[] = '<b><u>Unknown Asset IDs :</u></b>
+                $report[] = '<br><br><b><u>Unknown Asset IDs :</u></b>
                         <b style="color:red"> ADDRESS IMMEDIATELY!</b> <br> 
                         <em>The following Locations have reported data with Asset IDs not matching in FEG Admin. Please update the respective games based on the reader ids or the game names at location with correct Asset ID</em> <br> <b
                         style="color:red">' . $reportUnknownAssetIds . ' </b> <br>';
