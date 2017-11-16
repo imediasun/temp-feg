@@ -256,7 +256,7 @@ class MerchindisetheminggallaryController extends Controller
         if ($id) {
             $this->model->destroy($id);
             $image_path = array(public_path() . '/uploads/gallary/' . $id . ".".$extension, public_path() . '/uploads/gallary' . $id . "_thumb.".$extension);
-            dd($image_path);foreach ($image_path as $img) {
+            foreach ($image_path as $img) {
                 if (file_exists($img)) {
                     unlink($img);
                 }
