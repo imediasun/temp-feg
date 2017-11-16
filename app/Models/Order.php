@@ -174,6 +174,7 @@ class order extends Sximo
             }
             $rs->productInfo = $info;
         }
+
         if ($key == '') {
             $key = '*';
         } else {
