@@ -45,12 +45,12 @@
                         }
                         $rel="gallery".$row->loc_id;
                         $check_mul=$row->loc_id;
-                        $originalFile="./uploads/gallary/". $row->id.".jpg";
-                        $rotatedFile="./uploads/gallary/". $row->id."_rotated.jpg";
-                        $originalThumbFile="./uploads/gallary/". $row->id."_thumb.jpg";
-                        $rotatedThumbFile="./uploads/gallary/".$row->id."_thumb_rotated.jpg";
+                        $originalFile="./uploads/gallary/". $row->id.".".$row->extension;
+                        $rotatedFile="./uploads/gallary/". $row->id."_rotated.".$row->extension;
+                        $originalThumbFile="./uploads/gallary/". $row->id."_thumb.".$row->extension;
+                        $rotatedThumbFile="./uploads/gallary/".$row->id."_thumb_rotated.".$row->extension;
                         ?>
-                        <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title=" {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}" id="gallery_img_{{ $row->id }}"  rel="{{$rel}}" data-rotation="{{ $row->img_rotation }}" data-id="{{ $row->id }}"
+                        <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title=" {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}" id="gallery_img_{{ $row->id }}"  rel="{{$rel}}" data-rotation="{{ $row->img_rotation }}" data-id="{{ $row->id }}" data-extension="{{ $row->extension }}"
                         @if(file_exists($rotatedFile))
                            href="{{ $rotatedFile }}?time={{ time() }}"
                            @else
@@ -100,9 +100,10 @@
                 $this = $(elm),
                 id=$this.data('id'),
                 rotation=$this.data('rotation'),
+                extension=$this.data('extension'),
                 href=$this.attr('href'),
                 title=$this.attr('title'),
-                rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180&deg</buton><button id="rotate_save" onclick="saveRotateImg(this)" class="btn btn-info btn-xs" data-rotation='+rotation+' id=save_btn_'+id+'  data-id='+id+'>Save</button></div>',
+                rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180&deg</buton><button id="rotate_save" onclick="saveRotateImg(this)" class="btn btn-info btn-xs" data-rotation='+rotation+' id=save_btn_'+id+'  data-id='+id+' data-extension='+extension+'>Save</button></div>',
                 deleteLink = "@if($access['is_remove'] ==1)<a href='javascript:void(0);' onclick='confirmDelete("+ id +")' >Delete</a>@endif",
                 fancyTitle =  '<div>'+rotatebtns + title + '<br />' + deleteLink + '</div>';
                 
@@ -112,9 +113,10 @@
     });
     function confirmDelete(id)
     {
+        var extension = $("#gallery_img_"+id).data('extension');
         if(confirm('Are you sure you want to delete this image from gallery?'))
        {
-         location.href="{{ url() }}/redemptioncountergallary/delete/"+id;
+         location.href="{{ url() }}/redemptioncountergallary/delete/"+id+"/"+extension;
        }
     }
     var angle=0;
@@ -125,25 +127,27 @@
     function saveRotateImg(ele) {
         $('.ajaxLoading').show();
         var id = $(ele).data('id');
+        var extension = $(ele).data('extension');
         var rotation = $("#gallery_img_" + id).attr('data-rotation');
         angle = parseInt(angle) + parseInt(rotation);
         $.ajax(
                 {
                     type: 'POST',
                     url: 'redemptioncountergallary/rotate',
-                    data: {id: id, angle: angle},
+                    data: {id: id, angle: angle, extension:extension},
                     success: function (data) {
                         if (data.status == 'success') {
                             notyMessage(data.message);
-                            $("#gallery_img_" + id).attr('href', './uploads/gallary/' + id + '_rotated.jpg?time=' + Math.floor(Date.now()));
+                            $("#gallery_img_" + id).attr('href', './uploads/gallary/' + id + '_rotated.'+extension+'?time=' + Math.floor(Date.now()));
                             console.log(angle);
                             $("#gallery_img_" + id).attr('data-rotation', angle);
                             $("#save_btn_" + id).attr('data-rotation', angle);
-                            $('#img_thumb_' + id).attr('src', './uploads/gallary/' + id + '_thumb_rotated.jpg?time=' + Math.floor(Date.now()));
+                            $('#img_thumb_' + id).attr('src', './uploads/gallary/' + id + '_thumb_rotated.'+extension+'?time=' + Math.floor(Date.now()));
                             //  $('#img_thumb_'+$(ele).data('id')).css({'transform': 'rotate(' + angle + 'deg)'});
                             angle = 0;
                             $('.ajaxLoading').hide();
                             $.fancybox.close();
+                            //reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?return={{ $return }}');
                             //window.location.reload(true);
                         } else {
                             notyMessageError(data.message);
