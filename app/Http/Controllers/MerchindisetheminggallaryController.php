@@ -197,19 +197,6 @@ class MerchindisetheminggallaryController extends Controller
             $data['image_category'] = "mer";
             $data['batch'] = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
             $files = $request->file('merch_image');
-            $typesArray = [
-                "image/png","image/jpeg","image/jpg","image/gif"
-            ];
-            foreach ($files as $file)
-            {
-                if(!in_array($file->getMimeType(),$typesArray))
-                {
-                    return response()->json(array(
-                        'message' => "The image must be a file of type: jpeg, png, gif",
-                        'status' => 'error'
-                    ));
-                }
-            }
             $i = 0;
             foreach ($files as $file) {
                 $img = Image::make($file->getRealPath());
@@ -223,7 +210,6 @@ class MerchindisetheminggallaryController extends Controller
                 } else {
                     $extension = '';
                 }
-                $data['extension'] = substr($extension, 1);
                 $id = $this->model->insertRow($data, NULL);
                 $img->save('./uploads/gallary/' . $id . $extension);
                 $img->resize(101, 150);
@@ -243,7 +229,7 @@ class MerchindisetheminggallaryController extends Controller
         }
     }
 
-    public function getDelete(Request $request, $id = null,$extension = null)
+    public function getDelete(Request $request, $id = null)
     {
         if ($this->access['is_remove'] == 0) {
             return response()->json(array(
@@ -255,7 +241,7 @@ class MerchindisetheminggallaryController extends Controller
 
         if ($id) {
             $this->model->destroy($id);
-            $image_path = array(public_path() . '/uploads/gallary/' . $id . ".".$extension, public_path() . '/uploads/gallary' . $id . "_thumb.".$extension);
+            $image_path = array(public_path() . '/uploads/gallary/' . $id . ".jpg", public_path() . '/uploads/gallary' . $id . "_thumb.jpg");
             foreach ($image_path as $img) {
                 if (file_exists($img)) {
                     unlink($img);
@@ -273,22 +259,21 @@ class MerchindisetheminggallaryController extends Controller
     {
         $id = $request->get('id');
         $angle = $request->get('angle');
-        $extension = $request->get('extension');
         $db_angle=(int)$angle;
         if (abs($angle) == 90) {
             $angle = -$angle;
         }
 // Load the image
-        $img = Image::make('./uploads/gallary/' . $id . '.'.$extension);
-        $imgThumb = Image::make('./uploads/gallary/' . $id . '_thumb.'.$extension);
+        $img = Image::make('./uploads/gallary/' . $id . '.jpg');
+        $imgThumb = Image::make('./uploads/gallary/' . $id . '_thumb.jpg');
 // Rotate
         $img->rotate((int)$angle);
         $imgThumb->rotate((int)$angle);
 //and save it on your server...
-        if($img->save('./uploads/gallary/' . $id .'_rotated.'.$extension))
+        if($img->save('./uploads/gallary/' . $id .'_rotated.jpg'))
         {
             \DB::update("UPDATE img_uploads SET img_rotation=$db_angle WHERE id=$id");
-            $imgThumb->save('./uploads/gallary/' . $id .'_thumb_rotated.'.$extension);
+            $imgThumb->save('./uploads/gallary/' . $id .'_thumb_rotated.jpg');
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('Image rotated successfully')));
