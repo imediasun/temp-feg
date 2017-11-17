@@ -388,7 +388,8 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 						row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
 						row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
 						row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
-
+						$('#vd-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
+						$('#sku-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="sku"]').text()));
 					}
 				}
 			});
