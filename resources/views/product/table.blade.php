@@ -106,6 +106,8 @@
            		?>
                 <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
 					<input type="hidden" name="numberOfItems" value="{{$row->num_items}}" />
+					<input id = "sku-{{ $row->id }}" type="hidden" name="old-sku" value="{{$row->sku}}" />
+					<input id = "vd-{{ $row->id }}"type="hidden" name="old-vd" value="{{$row->vendor_description}}" />
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
@@ -365,26 +367,27 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 				mainRow.children('td[data-field="details"]').empty();
 				mainRow.children('td[data-field="details"]').html(new_details);
 			}
+			var old_sku  = $('#sku-'+$urlArray[2]).val();
+			var old_vd  = $('#vd-'+$urlArray[2]).val();
+
+			var count = 1;
 			$(document).find("tr").each(function(key,row){
 				row = $(row);
 				if(row.attr('id') != undefined)
 				{
-					console.log(row.find('td[data-field="vendor_description"]').text(),mainRow.children('td[data-field="vendor_description"]').text());
-					console.log(row.find('td[data-field="sku"]').text(),mainRow.children('td[data-field="sku"]').text());
-					if($.trim(row.find('td[data-field="vendor_description"]').text()) == $.trim(mainRow.children('td[data-field="vendor_description"]').text())
-					||$.trim(row.find('td[data-field="sku"]').text()) == $.trim(mainRow.children('td[data-field="sku"]').text()))
+					if($.trim(row.find('td[data-field="vendor_description"]').text()) == old_vd && $.trim(row.find('td[data-field="sku"]').text()) == old_sku )
 					{
-							row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-							row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
-							row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').text()));
-							row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
-							row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
-							row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
-							row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
-							row.find('td[data-field="details"]').text($.trim(mainRow.children('td[data-field="details"]').text()));
-							row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
-							row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
-							row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
+						row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
+						row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
+						row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').text()));
+						row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
+						row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
+						row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
+						row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
+						row.find('td[data-field="details"]').text($.trim(mainRow.children('td[data-field="details"]').text()));
+						row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
+						row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
+						row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
 
 					}
 				}
