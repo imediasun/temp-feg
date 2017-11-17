@@ -353,7 +353,7 @@ class ProductController extends Controller
                 $data_attached_products= $data;
 
                 foreach($products_combined as $pc){
-                    if($pc->id ===$id){
+                    if($pc->id == $id){
                         $this->model->insertRow($data, $id);
                     }else{
 
@@ -407,7 +407,7 @@ class ProductController extends Controller
                 $products_combined = $this->model->checkProducts($id);
                 $data_attached_products= $data;
                 foreach($products_combined as $pc){
-                    if($pc->id ===$id){
+                    if($pc->id == $id){
                         $this->model->insertRow($data, $id);
                     }else{
 
