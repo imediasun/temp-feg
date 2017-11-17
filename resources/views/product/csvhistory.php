@@ -27,7 +27,8 @@ foreach ($rows as $row) {
         $row->Ticket_Value,
         $row->Order_Type,
         $row->Product_Type,
-        $row->INACTIVE
+        $row->INACTIVE,
+        $row->Reserved_Qty
     );
     fputcsv($fp, $data);
 }
