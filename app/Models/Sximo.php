@@ -666,7 +666,7 @@ class Sximo extends Model {
     function getVendorPorductlist($vendor_id) {
         $row = \DB::Select("SELECT V.vendor_name AS Vendor, P.vendor_description AS Description, P.sku, ROUND(P.case_price/P.num_items,2) AS Unit_Price,
 									 P.num_items AS Items_Per_Case, P.case_price AS Case_Price, P.ticket_value AS Ticket_Value, O.order_type AS Order_Type,
-									 T.type_description AS Product_Type,  Y.yesno AS INACTIVE FROM products P
+									 T.type_description AS Product_Type,  Y.yesno AS INACTIVE, P.reserved_qty AS Reserved_Qty FROM products P
 						   LEFT JOIN vendor V ON V.id = P.vendor_id
 						   LEFT JOIN product_type T ON T.id = P.prod_sub_type_id
 						   LEFT JOIN order_type O ON O.id = P.prod_type_id
