@@ -383,6 +383,7 @@ function ajaxViewClose( id , elm, options)
     }
 
 	view.html('');
+    
     if($('.simpleSearchContainer').find('.bootstrap-switch-wrapper').length > 0 || $('.table.datagrid').find('.bootstrap-switch-wrapper').length > 0 || id == '#managefreightquoters')
     {
         var url = id+'/data';
