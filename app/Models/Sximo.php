@@ -230,7 +230,7 @@ class Sximo extends Model {
     }
 
     public function cleanData($data){
-        return array_map('trim',$data);
+        return array_walk_recursive($data,'trim');
     }
 
     public  function insertRow($data, $id = null) {
