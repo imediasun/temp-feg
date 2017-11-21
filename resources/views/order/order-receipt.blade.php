@@ -253,6 +253,8 @@
                                     <textarea class="form-control" name="tracking_number" id="tracking_number" required>{{ $data['tracking_number'] }}</textarea>
                                 </div>
                             </div>
+                            @else
+                            <input type="hidden" name='tracking_number' value="{{ $data['tracking_number'] }}" id='tracking_number'/>
                         @endif
 
                         {{--<div class="form-group clearfix" id="tracking_numberdiv" style="displaynone">
