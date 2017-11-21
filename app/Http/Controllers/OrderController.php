@@ -244,7 +244,7 @@ class OrderController extends Controller
 
                 $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total,3,true,',','.' , true ).$sku. '; ';
             }
-            $rs->productInfo = $info;
+            $rs->productInfo = rtrim($info,'; ');
         }
 
         if (count($results['rows']) == 0 and $page != 1) {
@@ -304,7 +304,7 @@ class OrderController extends Controller
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
-        $this->data['order_selected'] = $order_selected;
+        $this->data['order_selected'] = $order_selected;dd($this->data);
         // Render into template
         return view('order.table', $this->data);
 
