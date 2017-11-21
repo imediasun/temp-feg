@@ -230,7 +230,18 @@ class Sximo extends Model {
     }
 
     public function cleanData($data){
-        return array_map('trim',$data);
+        foreach ($data as &$item)
+        {
+            if(is_array($item))
+            {
+                array_map('trim',$item);
+            }
+            else
+            {
+                $item = trim($item);
+            }
+        }
+        return $data;
     }
 
     public  function insertRow($data, $id = null) {
