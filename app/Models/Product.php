@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Log;
 
 class product extends Sximo  {
@@ -213,6 +214,13 @@ class product extends Sximo  {
 
     }
 
+    public function checkProducts($id){
+        $product = DB::table('products')->where(['id'=>$id])->first();
+
+        $products = DB::table('products')->where(['vendor_description'=>$product->vendor_description,'sku'=>$product->sku])->get();
+
+        return $products;
+    }
 
 
 }
