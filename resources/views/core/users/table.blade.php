@@ -136,6 +136,8 @@
                                        id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
                             @elseif($field['field'] =='date')
                                 {{  DateHelpers::formatDate($value) }}
+                            @elseif($field['field'] =='has_all_locations')
+                                <?php echo $value; ?>
                             @elseif($field['field'] =='last_login')
                                 {{  DateHelpers::formatDateTime($value) }}
                             @elseif($field['field'] =='last_activity')
@@ -278,6 +280,12 @@
         $('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue'
+        });
+        $(".pagination a").each(function(a)
+        {
+            var url = $(this).attr("href");
+            url = url+"&simplesearch=1";
+            $(this).attr("href",url);
         });
     });
 </script>

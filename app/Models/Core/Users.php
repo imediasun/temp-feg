@@ -16,12 +16,13 @@ class Users extends Sximo  {
 		
 	}
 
-	public static function querySelect(  ){
-		
-		return " SELECT  users.*,  tb_groups.name, users.group_id, users.username,
-                IF(has_all_locations = 0,(SELECT GROUP_CONCAT(DISTINCT location_name SEPARATOR ', ') FROM user_locations JOIN location ON location.id = user_locations.location_id WHERE user_id = users.id GROUP BY user_id) ,\"All Locations\") AS has_all_locations
-                FROM users LEFT JOIN tb_groups ON tb_groups.group_id = users.group_id ";
-	}	
+    public static function querySelect(  ){
+
+        return ' SELECT  users.*,  tb_groups.name, users.group_id, users.username,user_locations.location_id,
+                IF(has_all_locations = 0,(SELECT GROUP_CONCAT(DISTINCT location_name order by location_name SEPARATOR "<br>") FROM user_locations JOIN location ON location.id = user_locations.location_id WHERE user_id = users.id GROUP BY user_id) ,\'All Locations\') AS has_all_locations
+                FROM users LEFT JOIN tb_groups ON tb_groups.group_id = users.group_id
+                LEFT JOIN user_locations ON user_locations.user_id = users.id ';
+    }
 
 	public static function queryWhere( $id = null ){
         $return ="Where users.id is not null ";
@@ -33,7 +34,7 @@ class Users extends Sximo  {
 	}
 	
 	public static function queryGroup(){
-		return "      ";
+		return "GROUP BY users.id";
 	}
 
 	/**
