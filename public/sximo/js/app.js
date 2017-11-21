@@ -1220,4 +1220,15 @@ function getFlooredFixed(v, d){
 
 $(document).ready(function(){
     //getCartTotal();
+
+    //to open the link in new tab (Pages)
+    var check = $('div[id$="Grid"]');
+    if (check.length == 0){
+        var url = $(location).attr('href');
+        if (url.toLowerCase().indexOf('feg') != -1 || url.toLowerCase().indexOf('core') != -1) {
+            $('.sbox-content a').each(function () {
+                this.setAttribute('target', '_blank')
+            })
+        }
+    }
 });
