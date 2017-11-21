@@ -155,9 +155,21 @@ orders.id=order_received.order_id ";
         $order_ids=array();
 
         $where="";
-        foreach($data as $record)
+        if(is_array($data))
         {
-            $order_ids[]=$record->id;
+            foreach($data as $record)
+            {
+                $order_ids[]=$record->id;
+            }
+        }
+        else
+        {
+            $order_ids[]=$data->id;
+        }
+
+
+        if(!empty($param['id']) && $param['for_api'] == 1){
+            $where .= " AND order_received.id = '".$param['id']."'";
         }
         if(!empty($param['createdFrom'])){
             $where .= " AND order_received.created_at BETWEEN '".$param['createdFrom']."' AND '".$param['createdTo']."'";
@@ -170,21 +182,48 @@ orders.id=order_received.order_id ";
         $order_received_ids=\DB::select("select order_id from order_received where order_id in($qry_in_string) $where group by order_id");
        // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
         //all order contents place them in relevent order
-        foreach($data as $order_data) {
+        if(is_array($data))
+        {
+            foreach($data as $order_data) {
 
                 foreach ($order_received_ids as $order_ids) {
                     if ($order_ids->order_id == $order_data->id) {
-                            $result[$order_data->id] = (array)$order_data;
-                            $result[$order_data->id]['id'] = $order_data->id;
-                        }
+                        $result[$order_data->id] = (array)$order_data;
+                        $result[$order_data->id]['id'] = $order_data->id;
                     }
-            
+                }
 
-            /* unset($result[$record->order_id]['order_id']);
-             unset($result[$record->order_id]['order_line_item_id']);
-             unset($result[$record->order_id]['status']);*/
+
+                /* unset($result[$record->order_id]['order_id']);
+                 unset($result[$record->order_id]['order_line_item_id']);
+                 unset($result[$record->order_id]['status']);*/
+                foreach ($order_received_data as $record) {
+                    if ($order_data->id == $record->order_id) {
+                        $result[$record->order_id]['receipts'][] = [
+                            'id' => $record->id,
+                            'order_id' => $record->order_id,
+                            'order_line_item_id' => $record->order_line_item_id,
+                            'quantity' => $record->quantity,
+                            'received_by' => $record->received_by,
+                            'date_received' => $record->date_received,
+                            'created_at' => $record->created_at,
+                            'notes' => $record->notes,
+                            'status' => $record->status
+                        ];
+                    }
+                }
+            }
+        }
+        else
+        {
+            foreach ($order_received_ids as $order_ids) {
+                if ($order_ids->order_id == $data->id) {
+                    $result[$data->id] = (array)$data;
+                    $result[$data->id]['id'] = $data->id;
+                }
+            }
             foreach ($order_received_data as $record) {
-                if ($order_data->id == $record->order_id) {
+                if ($data->id == $record->order_id) {
                     $result[$record->order_id]['receipts'][] = [
                         'id' => $record->id,
                         'order_id' => $record->order_id,
@@ -193,6 +232,7 @@ orders.id=order_received.order_id ";
                         'received_by' => $record->received_by,
                         'date_received' => $record->date_received,
                         'created_at' => $record->created_at,
+                        'api_created_at' => $record->api_created_at,
                         'notes' => $record->notes,
                         'status' => $record->status
                     ];
