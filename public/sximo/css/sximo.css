@@ -3262,7 +3262,6 @@ position: relative;
 }
 .sbox-content
 {
-  float: left;
   width: 100%;
 }
 .merch-gallery{
@@ -3498,11 +3497,13 @@ span.order_custom_error ~ ul.parsley-error-list
 
 
 .btn-white{
-  margin-right: 2px !important;
+  margin-right: 1px !important;
+  margin-left: 1px !important;
   float: left;
 }
-.float-margin{
-
+.height-set{
+  margin-right: 1px !important;
+  margin-left: 1px !important;
 }
 /* for FireFox*/
 @-moz-document url-prefix() { .height-set{ margin-top: -1px !important;  } }
