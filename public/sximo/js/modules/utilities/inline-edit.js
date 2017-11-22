@@ -419,10 +419,37 @@
                 cell = cellHookParams.cell = $(this),
 
             //cellOriginalValue = config.originalValue = cell.data('values'),
-                cellOriginalValue = config.originalValue = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val(),//cell.data('values'),
+                orgVal = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val(),//cell.data('values'),
+                cellOriginalValue = config.originalValue = orgVal,
                 cellFormattedValue = config.formattedValue = cell.data('format'),
             //cellOriginalHTML = config.originalHtmlValue = cell.data('original-value-html'),
-                cellOriginalHTML = config.originalHtmlValue = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val(),//cell.data('original-value-html'),
+                htmlVal = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val();//cell.data('original-value-html'),
+
+                if(cellFormattedValue[0] == '$'){
+                    if(htmlVal == '0'){
+                        htmlVal = '$ 0.00';
+                    }else{
+                        var val = $.trim(htmlVal), places = 2;
+                        if(val.indexOf('.') == -1){
+                            val = val+'.00000';
+                        }
+                        val = val+'00';
+                        val = val.slice(0, (val.indexOf("."))+6);
+                        val = val.split('.');
+                        var number = 0;
+                        if(val[1]){
+                            var fixed = val[1].substring(0, places);
+                            var decimalSection = (val[1].substring(places)).rtrim();
+                            number = val[0]+'.'+fixed+''+decimalSection;
+                        }else{
+                            number = val[0];
+                        }
+                        htmlVal = '$ '+number;
+                    }
+                }else if(htmlVal == '' || htmlVal == '0' || htmlVal == ' -- Select  -- '){
+                    htmlVal = 'No Data';
+                }
+                var cellOriginalHTML = config.originalHtmlValue = htmlVal,
                 cellOriginalDomElements = config.cellOriginalValue = cell.data('original-value-elments');
 
             cell.data('values', cell.find("[name='"+cell.data('field')+"']").val());
