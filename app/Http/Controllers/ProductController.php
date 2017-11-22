@@ -354,6 +354,11 @@ class ProductController extends Controller
 
                 foreach($products_combined as $pc){
                     if($pc->id == $id){
+                        $data['prod_type_id'] = $data['prod_type_id'][0];
+                        $data['prod_sub_type_id'] = $data['prod_sub_type_id'][1];
+                        $data['expense_category'] = $data['expense_category'][1];
+                        $data['retail_price'] = $data['retail_price'][1];
+                        $data['ticket_value'] = $data['ticket_value'][1];
                         $this->model->insertRow($data, $id);
                     }else{
 
