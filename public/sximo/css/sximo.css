@@ -3505,12 +3505,10 @@ li.multiselect-item.multiselect-group + li a label {
 }
 
 .btn-white{
-  margin-right: 1px !important;
   margin-left: 1px !important;
   float: left;
 }
 .height-set{
-  margin-right: 1px !important;
   margin-left: 1px !important;
 }
 /* for FireFox*/
