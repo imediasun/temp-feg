@@ -3520,12 +3520,14 @@ select#col-config{
   top: 0px !important;
 }
 /* for FireFox*/
-@-moz-document url-prefix() { .height-set{ margin-top: -1px !important;  } }
+@-moz-document url-prefix() {
+  /* .height-set{ margin-top: -1px !important; } */
+}
 @media screen and (-webkit-min-device-pixel-ratio:0) {
-  /* Safari and Chrome */
+  /* Safari and Chrome
   .height-set {
     margin-top: -1px !important;
-  }
+  } */
   select {
 
     -webkit-border-radius: 0px;
