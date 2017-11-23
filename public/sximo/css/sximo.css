@@ -3510,8 +3510,14 @@ li.multiselect-item.multiselect-group + li a label {
   margin-left: 2px !important;
   float: left;
 }
-.height-set{
+/* .height-set{
   margin-left: 2px !important;
+  left:2px;
+}
+*/
+select#col-config{
+  left: 2px !important;
+  top: 0px !important;
 }
 /* for FireFox*/
 @-moz-document url-prefix() { .height-set{ margin-top: -1px !important;  } }

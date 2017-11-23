@@ -11,7 +11,7 @@
             @endif
             </div>
 			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
-                <select class="form-control float-margin height-set" id="status" style="display:inline;width:auto;position:relative;top:1px;">
+                <select class="form-control float-margin height-set" id="status" style="display:inline;width:auto;position:relative;top:0px; left:2px;">
                     <option @if($selected_status == 'requested') selected @endif value="requested" selected>Requested Freight Quotes</option>
                     <option @if($selected_status == 'booked') selected @endif value="booked" >Booked Freight Quotes</option>
                     <option @if($selected_status == 'archive') selected @endif value="archive">Freight Order Archive</option>
