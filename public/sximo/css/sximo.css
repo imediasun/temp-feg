@@ -3503,13 +3503,15 @@ li.multiselect-item.multiselect-group + li a label {
 {
   color:black;
 }
-
+.sbox-tools>a.btn-white{
+  margin-left: 7px !important;
+}
 .btn-white{
-  margin-left: 1px !important;
+  margin-left: 2px !important;
   float: left;
 }
 .height-set{
-  margin-left: 1px !important;
+  margin-left: 2px !important;
 }
 /* for FireFox*/
 @-moz-document url-prefix() { .height-set{ margin-top: -1px !important;  } }
@@ -3519,7 +3521,7 @@ li.multiselect-item.multiselect-group + li a label {
     margin-top: -1px !important;
   }
   select {
-    -webkit-appearance: none;
+
     -webkit-border-radius: 0px;
   }
 }
