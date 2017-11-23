@@ -3316,7 +3316,6 @@ position: relative;
   margin-bottom: 5px;
 }
 
-
 .c-margin .col-md-12 select,
 .c-margin .col-md-11 select,
 .c-margin .col-md-10 select,
@@ -3494,7 +3493,16 @@ span.order_custom_error ~ ul.parsley-error-list
 .btn:focus {
     color: inherit !important;
 }
-
+li.multiselect-item.multiselect-group + li a label {
+  font-weight: bold !important;
+}
+.multiselect-container>li>a>label>input[type=checkbox] {
+  margin-top: 6px;
+}
+.multiselect-container>li.multiselect-group label
+{
+  color:black;
+}
 
 .btn-white{
   margin-right: 1px !important;
@@ -3517,4 +3525,3 @@ span.order_custom_error ~ ul.parsley-error-list
     -webkit-border-radius: 0px;
   }
 }
-
