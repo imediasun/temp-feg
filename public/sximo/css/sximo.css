@@ -3518,6 +3518,7 @@ li.multiselect-item.multiselect-group + li a label {
 select#col-config{
   left: 2px !important;
   top: 0px !important;
+  margin-right:2px;
 }
 /* for FireFox*/
 @-moz-document url-prefix() {
