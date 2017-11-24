@@ -3534,14 +3534,7 @@ select#col-config{
     -webkit-border-radius: 0px;
   }
 }
-/*
-.sbox-content .row.c-margin .col-md-9 a,
-.sbox-content .row.c-margin .col-md-9 select,
-.sbox-content .row.c-margin .col-md-9 button,
-.sbox-content .row.c-margin .col-md-8 a,
-.sbox-content .row.c-margin .col-md-8 select,
-.sbox-content .row.c-margin .col-md-8 button{
-
+.simpleSearchContainer + .row div:not(:last-child) *{
     margin:0px !important;
     left: 0px !important;
     top: 0px !important;
@@ -3549,18 +3542,8 @@ select#col-config{
     margin-left:0px !important;
     margin-bottom: 3px !important;
 }
-.sbox-content .row.c-margin .col-md-4 a,
-.sbox-content .row.c-margin .col-md-4 button,
-.sbox-content .row.c-margin .col-md-3 a,
-.sbox-content .row.c-margin .col-md-3 button{
 
-    margin:0px !important;
-    left: 0px !important;
-    top: 0px !important;
-    margin-right:0px !important;
-    margin-left:3px !important;
-    margin-bottom: 3px !important;
-}*/
+/*
 .alignment-left-fixed{
 
     margin:0px !important;
@@ -3578,4 +3561,4 @@ select#col-config{
     margin-right:0px !important;
     margin-left:3px !important;
     margin-bottom: 3px !important;
-}
+}*/
