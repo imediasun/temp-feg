@@ -25,17 +25,17 @@
     <div class="col-md-8">
         @if($setting['disableactioncheckbox']=='false')
         @if($access['is_remove'] ==1)
-            <a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+            <a href="javascript://ajax" class="btn btn-sm btn-white alignment-left-fixed" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
         @endif
         @endif
-        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white float-margin"
+        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
-            <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin"
+            <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white alignment-left-fixed"
                onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Arrange
                 Columns</a>
             @if(!empty($colconfigs))
-                <select class="form-control float-margin height-set" style="width:auto!important;display:inline;" name="col-config"
+                <select class="form-control alignment-left-fixed" style="width:auto!important;display:inline;" name="col-config"
                         id="col-config">
                     <option value="0">Select Column Arrangement</option>
                     @foreach( $colconfigs as $configs )
@@ -44,7 +44,7 @@
                     @endforeach
                 </select>
                 @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
-                    <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white float-margin tips"
+                    <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips alignment-left-fixed"
                        onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit column arrangement">  <i class="fa fa-pencil-square-o"></i></a>
                     <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
                 @endif
@@ -53,7 +53,7 @@
     </div>
     <div class="col-md-4">
         <div class="pull-right">
-            <a href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-sm btn-primary"> Request Custom Graphic</a>
+            <a href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-sm btn-primary alignment-right-fixed"> Request Custom Graphic</a>
         </div>
     </div>
 
@@ -118,7 +118,8 @@
         type = $("#active_inactive").val();
         order_type = $("#order_type").val();
         product_type = $("#product_type").val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?&type=store'+ getFooterFilters()+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
+        console.log(getFooterFilters({'page': true}));
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?&type=store'+ getFooterFilters({'page': true})+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
     });
 
     /* todo refactor code
