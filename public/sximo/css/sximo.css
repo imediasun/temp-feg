@@ -3519,6 +3519,7 @@ select#col-config{
   /*left: 2px !important;  */
     /*top: 0px !important;*/
   /*margin-right:2px;*/
+
 }
 /* for FireFox*/
 @-moz-document url-prefix() {
@@ -3534,22 +3535,7 @@ select#col-config{
     -webkit-border-radius: 0px;
   }
 }
-.simpleSearchContainer + .row div:not(:last-child) *{
-    margin:0px !important;
-    left: 0px !important;
-    top: 0px !important;
-    margin-right:3px !important;
-    margin-left:0px !important;
-    margin-bottom: 3px !important;
-}
-.sbox-content .row div:not(:last-child) *{
-    margin:0px !important;
-    left: 0px !important;
-    top: 0px !important;
-    margin-right:3px !important;
-    margin-left:0px !important;
-    margin-bottom: 3px !important;
-}
+
 .sbox-content .pull-right .btn{
     margin:0px !important;
     left: 0px !important;
@@ -3558,7 +3544,22 @@ select#col-config{
     margin-left:0px !important;
     margin-bottom: 3px !important;
 }
-
+.sbox-content .c-margin select{
+    position:initial !important;
+    float: left ;
+}
+.sbox-content .c-margin .btn,
+.sbox-content .c-margin select{
+    margin:0px !important;
+    left: 0px !important;
+    top: 0px !important;
+    margin-right:3px !important;
+    margin-left:0px !important;
+    margin-bottom: 3px !important;
+}
+.floatnone{
+    float:none !important;
+}
 /*
 .alignment-left-fixed{
 
