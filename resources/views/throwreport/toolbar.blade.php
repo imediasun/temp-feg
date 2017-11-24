@@ -11,7 +11,7 @@
 				<label>Week Date Range</label>
 				<input type="text" class="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px; margin-right:3px;" } />
 		@if(SiteHelpers::isModuleEnabled($pageModule))
-        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white alignment-left-fixed floatnone" style="    margin-top: 3px !important;" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white alignment-left-fixed floatnone" style="    margin-top: 3px !important; margin-left:3px !important;" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
         @if(!empty($colconfigs))
         <select class="form-control alignment-left-fixed floatnone" style="width:auto!important;display:inline; top:2px !important;     margin-top: 3px !important;" name="col-config"
                 id="col-config">
