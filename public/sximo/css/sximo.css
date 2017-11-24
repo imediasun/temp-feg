@@ -3542,7 +3542,7 @@ select#col-config{
     margin-left:0px !important;
     margin-bottom: 3px !important;
 }
-.sbox-content  .row div:not(:last-child) *{
+.sbox-content .row div:not(:last-child) *{
     margin:0px !important;
     left: 0px !important;
     top: 0px !important;
@@ -3550,6 +3550,15 @@ select#col-config{
     margin-left:0px !important;
     margin-bottom: 3px !important;
 }
+.sbox-content .pull-right .btn{
+    margin:0px !important;
+    left: 0px !important;
+    top: 0px !important;
+    margin-right:3px !important;
+    margin-left:0px !important;
+    margin-bottom: 3px !important;
+}
+
 /*
 .alignment-left-fixed{
 
