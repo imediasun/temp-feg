@@ -56,7 +56,7 @@
 </div> 
 <div class="form-group">
 <label for="ipt" class=" control-label"></label>
-<button type="submit" class="btn btn-primary"> Save SQL </button>
+<button id="sqlSave" type="submit" class="btn btn-primary"> Save SQL </button>
 </div> 	
 
  <input type="hidden" name="module_id" value="{{ $row->module_id }}" />
@@ -68,5 +68,31 @@
 	
 </div>	</div>
 <div class="clr"></div>
-
+  <style>
+      .noty_message
+      {
+          text-align: justify !important;
+      }
+      .noty_message span {
+          text-align: center !important;
+      }
+  </style>
+<script>
+    $("#sqlSave").click(function (e) {
+        $(this).attr('disabled','disabled');
+       e.preventDefault();
+        App.notyConfirm({
+            message: "Are you sure you want to save SQL for this module?<br><span style='width:100%;float: left;'><b>***Warning***</b></span><br>Saving SQL will update all labels in table and forms section. Any new added/removed column from table will start showing/hide from table grid. Make sure you understand all risk then press Yes otherwise press No to review ",
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
+            model: true,
+            confirm: function () {
+                $("form.form-vertical").submit();
+            },
+            cancel: function () {
+                $("#sqlSave").removeAttr("disabled");
+            }
+        });
+    });
+</script>
 @stop

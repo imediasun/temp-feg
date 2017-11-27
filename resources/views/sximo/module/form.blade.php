@@ -185,7 +185,7 @@
   <p> <strong>Note !</strong> Your primary key must be <strong>show</strong> and in <strong>hidden</strong> type   </p>	
 </div>
 
-		<button type="submit" class="btn btn-primary submitSearchConfigurations"> Save Changes </button>
+		<button id="formSave" type="submit" class="btn btn-primary submitSearchConfigurations"> Save Changes </button>
 
  {!! Form::close() !!}		
 	
@@ -193,7 +193,32 @@
 </div>
 </div>
 </div>
-<script>
+  <style>
+      .noty_message
+      {
+          text-align: justify !important;
+      }
+      .noty_message span {
+          text-align: center !important;
+      }
+  </style>
+  <script>
+      $("#formSave").click(function (e) {
+          $(this).attr('disabled','disabled');
+          e.preventDefault();
+          App.notyConfirm({
+              message: "Are you sure you want to update Form for this module?<br><span style='width:100%;float: left;'><b>***Warning***</b></span><br>Saving Form will update simple search and advanced search. Related tables data can get effected. Make sure you understand all risk then press Yes otherwise press No to review",
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'No',
+              model: true,
+              confirm: function () {
+                  $("form.form-horizontal").submit();
+              },
+              cancel: function () {
+                  $("#formSave").removeAttr("disabled");
+              }
+          });
+      });
 $(document).ready(function() {
     $('.date').datepicker({ format: 'mm/dd/yyyy', autoclose: true })
     $('.datetime').datetimepicker({ format: 'mm/dd/yyyy hh:ii:ss' });
