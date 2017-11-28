@@ -3566,6 +3566,13 @@ select#col-config{
   display:inline-block !important;
   left: -3px !important;
 }
+.sbox-content .c-margin .btn:nth-last-child(-n+3) .fa-pencil-square-o,
+.sbox-content .c-margin .btn:nth-last-child(-n+3) .fa-trash-o{
+    margin-right: initial !important;
+    position: relative !important;
+    display:inline-block !important;
+    left: 0px !important;
+}
 /*
 .alignment-left-fixed{
 
