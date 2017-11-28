@@ -3540,7 +3540,7 @@ select#col-config{
     margin:0px !important;
     left: 0px !important;
     top: 0px !important;
-    margin-right:2px !important;
+    margin-right:3px !important;
     margin-left:0px !important;
     margin-bottom: 3px !important;
 }
@@ -3553,12 +3553,19 @@ select#col-config{
     margin:0px !important;
     left: 0px !important;
     top: 0px !important;
-    margin-right:2px !important;
+    margin-right:3px !important;
     margin-left:0px !important;
     margin-bottom: 3px !important;
 }
 .floatnone{
     float:none !important;
+}
+.btn.btn-sm .fa {
+  margin-right: initial !important;
+  position: relative !important;
+  display:inline-block !important;
+  vertical-align: middle;
+  left: -3px !important;
 }
 /*
 .alignment-left-fixed{
