@@ -64,13 +64,13 @@
 <script>
     $(document).ready(function(){
 
-        $('select[name=prod_type_id]').children('option[value=4]').attr('value', '22,23,24,25,26');
+        /*$('select[name=prod_type_id]').children('option[value=4]').attr('value', '22,23,24,25,26');
         $('select[name=prod_type_id]').children('option[value=22]').remove();
         $('select[name=prod_type_id]').children('option[value=23]').remove();
         $('select[name=prod_type_id]').children('option[value=24]').remove();
         $('select[name=prod_type_id]').children('option[value=25]').remove();
-        $('select[name=prod_type_id]').children('option[value=26]').remove();
-
+        $('select[name=prod_type_id]').children('option[value=26]').remove();*/
+        $('select[name=prod_type_id]').children('option[value=4]').remove();
         var config_id=$("#col-config").val();
         if(config_id ==0 )
         {
