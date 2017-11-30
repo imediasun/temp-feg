@@ -43,6 +43,8 @@ class ReportGenerator
             'noDailyGameSummaryClosed' => 0,
             'noDailyGameSummaryDownGames' => 0,
             'noDailyGameSummaryTop25' => 0,
+
+             'noGameLocationChangeReport'=>0,
              
             '_task' => array(),
             '_logger' => null,
@@ -139,6 +141,7 @@ class ReportGenerator
             $__logger->log("End Game Earnings DB Transfer Report for $date");
         }
 
+
         $reportingLocations = isset(self::$reportCache['locationsReportingIds']) ? 
                 self::$reportCache['locationsReportingIds'] : self::getLocationsReportingIds($params);
         
@@ -219,6 +222,13 @@ class ReportGenerator
             unset($params['finalGameSummaryReport']);
             $__logger->log("    END sending EMAIL of Final Games Summary Report for $date");        
             $__logger->log("END Final Games Summary Report for $date");
+        }
+
+        // If a game is recorded in location or zone A but found to be reported in location or zone B,
+        // then a report/alert needs to be sent
+
+        if($noGameLocationChangeReport !=1){
+            self::sendLocationChangeReports($isTest);
         }
         
         $__logger->log("END Generate Daily Email Reports $date");
@@ -2007,6 +2017,53 @@ class ReportGenerator
         $options['from'] = "support@fegllc.com";
         $options['fromName'] = "FEG Reports";
         FEGSystemHelper::sendSystemEmail($options);
+    }
+    public static function sendLocationChangeReports($isTest=1){
+        $report_date = date("Y-m-d",strtotime("-1 day"));
+
+
+        $sql ="SELECT
+  game.id          AS game_id,
+  game.game_name,
+  game.location_id AS location_A_id,
+  LA.location_name AS location_A_name,
+  GE.loc_id        AS location_B_id,
+  LB.location_name AS location_B_name,
+  GE.debit_type_id
+FROM game
+  INNER JOIN game_earnings GE
+    ON GE.game_id = game.id
+  LEFT JOIN location LA
+    ON LA.id = game.location_id
+  LEFT JOIN location LB
+    ON LB.id = GE.loc_id
+ WHERE DATE_FORMAT(GE.date_start,'%Y %m %d') = DATE_FORMAT('2017-11-28','%Y %m %d')
+    AND game.location_id !=  GE.loc_id GROUP BY game.id";
+
+        $result = \DB::select($sql);
+        if(count($result)>0) {
+            $message = '<div style="font-weight:600; font-size:14px; margin-bottom:10px; text-decoration: underline; ">Game Location Change Report</div>';
+            $i=1;
+            foreach ($result as $row) {
+                $message .= "<strong>".$i.'.) Asset ID :  ' . $row->game_id . '  is assigned to Location ' . $row->location_A_id . ' ( ' . (!empty($row->location_A_name) ? $row->location_A_name : 'Unknown') . ') but <span style="color:red;"><i>reporting in Location ' . $row->location_B_id . ' ( ' . (!empty($row->location_B_name) ? $row->location_B_name : 'Unknown') . ')</i> </span></strong><br>';
+                $i++;
+            }
+
+            $humanDateRange = FEGSystemHelper::getHumanDate($report_date);
+            $configName = "Game Location Change Reports";
+
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
+
+
+            ReportGenerator::sendEmailReport(array_merge($emailRecipients, array(
+                'subject' => "Game Location Change Reports | $humanDateRange",
+                'message' => $message,
+                'isTest' => $isTest,
+                'configName' => $configName,
+                'configNameSuffix' => $humanDateRange,
+            )));
+
+        }
     }
     
 }
