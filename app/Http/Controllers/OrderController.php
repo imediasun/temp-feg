@@ -151,10 +151,11 @@ class OrderController extends Controller
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
         \App\Library\FEG\System\Sync::generateDailySummary();
         \App\Library\FEG\System\Email\Report::daily();
-        \App\Library\FEG\System\Email\Report::missingDataReport();*/
+        \App\Library\FEG\System\Email\Report::missingDataReport();
+        \App\Library\FEG\System\Email\ReportGenerator::sendLocationChangeReports();*/
         //echo "done transfer";
-      //  exit;
 
+      //  exit;
 
 
         if ($this->access['is_view'] == 0)
@@ -1946,48 +1947,6 @@ class OrderController extends Controller
         $notes = \DB::table('requests')->select('notes')->whereIn('id', $request->sids)->get();
         return $notes;
     }
-    public function getReports(){
-        $report_date = date("Y-m-d",strtotime("-1 day"));
 
-
-        $sql ="SELECT
-  game.id          AS game_id,
-  game.game_name,
-  game.location_id AS location_A_id,
-  LA.location_name AS location_A_name,
-  GE.loc_id        AS location_B_id,
-  LB.location_name AS location_B_name,
-  GE.debit_type_id
-FROM game
-  INNER JOIN game_earnings GE
-    ON GE.game_id = game.id
-  LEFT JOIN location LA
-    ON LA.id = game.location_id
-  LEFT JOIN location LB
-    ON LB.id = GE.loc_id
- WHERE DATE_FORMAT(GE.date_start,'%Y %m %d') = DATE_FORMAT('2017-11-28','%Y %m %d')
-    AND game.location_id !=  GE.loc_id GROUP BY game.id";
-
-        $result = \DB::select($sql);
-
-        $message = '';
-        foreach ($result as $row)
-        {
-            $message .= 'Asset ID :  '.$row->game_id.' ('.$row->game_name.') was assigned to Location ID: '.$row->location_A_id.' ( '.(!empty($row->location_A_name) ? $row->location_A_name:'Unknown').') but reporting in Location ID: '.$row->location_B_id.' ( '.(!empty($row->location_B_name) ? $row->location_B_name:'Unknown').')<br>';
-        }
-
-        $humanDateRange = FEGSystemHelper::getHumanDate($report_date);
-        $configName = "Game Location Change Reports";
-
-        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
-        ReportGenerator::sendEmailReport(array_merge($emailRecipients, array(
-            'subject' => "Game Location Change Reports | $humanDateRange",
-            'message' => $message,
-            'isTest' => 1,
-            'configName' => $configName,
-            'configNameSuffix' => $humanDateRange,
-        )));
-        die;
-    }
 
 }
