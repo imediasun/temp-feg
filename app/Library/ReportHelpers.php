@@ -1620,4 +1620,34 @@ class ReportHelpers
             );
         return $result; 
     }
+    public static function getDailyGameLocationChangeQuery($date){
+
+
+
+        $query = " SELECT 
+               game.id  AS game_id,
+               game.game_name,
+               game.location_id AS source_location_id,
+               LA.location_name AS source_location_name,
+               GE.loc_id        AS changed_location_id,
+               LB.location_name AS changed_location_name,
+                GE.debit_type_id";
+
+        $query .= " FROM game ";
+
+        $query .= "
+        INNER JOIN game_earnings GE
+        ON GE.game_id = game.id
+        LEFT JOIN location LA
+        ON LA.id = game.location_id
+        LEFT JOIN location LB
+        ON LB.id = GE.loc_id ";
+
+        $query .= "
+         WHERE DATE_FORMAT(GE.date_start,'%Y %m %d') = DATE_FORMAT('$date','%Y %m %d')
+         AND game.location_id !=  GE.loc_id GROUP BY game.id ";
+
+        return $query;
+
+    }
 }
