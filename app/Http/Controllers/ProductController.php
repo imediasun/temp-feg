@@ -386,6 +386,9 @@ class ProductController extends Controller
                         unset($data_attached_products['expense_category']);
                         unset($data_attached_products['retail_price']);
                         unset($data_attached_products['ticket_value']);
+                        unset($data_attached_products['inactive']);
+                        unset($data_attached_products['in_development']);
+                        unset($data_attached_products['hot_item']);
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
