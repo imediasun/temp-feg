@@ -2537,10 +2537,17 @@ class SiteHelpers
     static function configureSimpleSearchForm($data)
     {
         $newArray = array();
+        $flag=true;
         foreach ($data as $item) {
             if (isset($item['simplesearch']) && $item['simplesearch'] == '1') {
                 $item['generatingSimpleSearch'] = true;
-                $item['simplesearchfieldwidth']="col-xs-12 col-sm-3 col-md-4 col-lg-2";
+                if($flag==true){
+                    $item['simplesearchfieldwidth']="col-xs-12 col-sm-12 col-md-3 col-lg-2";
+                    $flag=false;
+                }else{
+                    $item['simplesearchfieldwidth']="col-xs-12 col-sm-12 col-md-3 col-lg-3";
+                }
+              //
                 $newArray[] = $item;
             }
         }
@@ -2665,7 +2672,7 @@ class SiteHelpers
            // $buttonStyle = "width: 100%;";
             $buttonStyle = "";
         }
-        $button = '<div class="sscol-submit col-sm-3 col-md-3  col-lg-2' . $widthClass . '"
+        $button = '<div class="sscol-submit col-sm-12 col-md-2  col-lg-1 ' . $widthClass . '"
             style="' . $widthStyle . '"><br/>
             <button type="button" name="search" style="' . $buttonStyle . '"
                     class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
