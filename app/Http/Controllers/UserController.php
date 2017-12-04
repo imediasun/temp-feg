@@ -449,6 +449,10 @@ class UserController extends Controller
                         } else {
                             \Session::put('lang', 'en');
                         }
+                        if(strpos(session('url.intended'),'servicerequests') )
+                        {
+                            return Redirect::to(session('url.intended'));
+                        }
                         if (!empty($row->redirect_link)) {
                             return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
                         } elseif (!empty($group->redirect_link)) {
