@@ -2037,7 +2037,7 @@ FROM game
     ON LA.id = game.location_id
   LEFT JOIN location LB
     ON LB.id = GE.loc_id
- WHERE DATE_FORMAT(GE.date_start,'%Y %m %d') = DATE_FORMAT('2017-11-28','%Y %m %d')
+ WHERE DATE_FORMAT(GE.date_start,'%Y %m %d') = DATE_FORMAT('$report_date','%Y %m %d')
     AND game.location_id !=  GE.loc_id GROUP BY game.id";
 
         $result = \DB::select($sql);
