@@ -153,6 +153,10 @@ usort($tableGrid, "SiteHelpers::_sort");
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
+                            if($row->$field['field'] == '0000-00-00')
+                            {
+                                $value = "No Data";
+                            }
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
