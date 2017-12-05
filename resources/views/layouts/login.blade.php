@@ -105,7 +105,11 @@
         </div>
     </div>
 
-
+<style>
+	.sbox-content{
+		float: left;
+	}
+</style>
 
 </body> 
 </html>

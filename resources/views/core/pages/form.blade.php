@@ -244,7 +244,26 @@
 		  </div>
 	  </div>
   </div>
-
+<style>
+	.page-content-wrapper.m-t,.sbox-content {
+		float: left;
+		width: 100%;
+		height: 100%;
+	}
+	.clearfix
+	{
+		width: 0;
+		height:0;
+		display: none;
+	}
+	.page-content-wrapper.m-t
+	{
+		margin-top: 0;
+	}
+	.note-editable > *:not(.page-content-wrapper),.page-content-wrapper.m-t > *:not(.sbox),.sbox.animated.fadeInRight > *:not(.sbox-content) {
+		display: none;
+	}
+</style>
   <script>
 	  var file_upload_request;
 	  function upload_pdf() {
