@@ -1621,8 +1621,7 @@ class ReportHelpers
         return $result; 
     }
     public static function getDailyGameLocationChangeQuery($date){
-
-
+        // Daily Game Location Change Report Query
 
         $query = " SELECT 
                game.id  AS game_id,

@@ -44,12 +44,12 @@ class ReportGenerator
             'noDailyGameSummaryDownGames' => 0,
             'noDailyGameSummaryTop25' => 0,
 
-             'noGameLocationChangeReport'=>0,
+             'noDailyGameLocationChangeReport'=>0,
              
             '_task' => array(),
             '_logger' => null,
         ), $params));
-        
+
          
         $lf = "daily-transfer.log";
         $lp = "FEGCronTasks/Skim-Daily-Transfer";
@@ -227,20 +227,21 @@ class ReportGenerator
         // If a game is recorded in location or zone A but found to be reported in location or zone B,
         // then a report/alert needs to be sent
 
-        if($noGameLocationChangeReport !=1){
-            $__logger->log("Start Games Location Change Report for $date");
+        if($noDailyGameLocationChangeReport !=1){
+            $__logger->log("Start Daily Games Location Change Report for $date");
             $params['date']=date('Y-m-d', strtotime('-1 day'));
             $gameLocationChangeReport = self::getDailyGameLocationChangeReport($params);
 
-            $__logger->log("    END processing Games Location Change Report for $date");
+            
+            $__logger->log("    END processing Daily Games Location Change Report for $date");
             $params['gameLocationChangeReport'] = $gameLocationChangeReport;
             self::sendDailyGameLocationChangeReport($params);
             sleep($sleepFor);
             unset($params['gameLocationChangeReport']);
-            $__logger->log("    END sending EMAIL of Game Location Change Report for $date");
+            $__logger->log("    END sending EMAIL of Daily Game Location Change Report for $date");
             $__logger->log("END Daily Game Location Change  Report for $date");
 
-          //  self::sendLocationChangeReports($isTest);
+
         }
         
         $__logger->log("END Generate Daily Email Reports $date");
@@ -2030,54 +2031,8 @@ class ReportGenerator
         $options['fromName'] = "FEG Reports";
         FEGSystemHelper::sendSystemEmail($options);
     }
-    public static function sendLocationChangeReports($isTest=1){
-        $report_date = date("Y-m-d",strtotime("-1 day"));
 
-
-        $sql ="SELECT
-  game.id          AS game_id,
-  game.game_name,
-  game.location_id AS source_location_id,
-  LA.location_name AS source_location_name,
-  GE.loc_id        AS changed_location_id,
-  LB.location_name AS changed_location_name,
-  GE.debit_type_id
-FROM game
-  INNER JOIN game_earnings GE
-    ON GE.game_id = game.id
-  LEFT JOIN location LA
-    ON LA.id = game.location_id
-  LEFT JOIN location LB
-    ON LB.id = GE.loc_id
- WHERE DATE_FORMAT(GE.date_start,'%Y %m %d') = DATE_FORMAT('$report_date','%Y %m %d')
-    AND game.location_id !=  GE.loc_id GROUP BY game.id";
-
-        $result = \DB::select($sql);
-        if(count($result)>0) {
-            $message = '<div style="font-weight:600; font-size:14px; margin-bottom:10px; text-decoration: underline; ">Game Location Change Report</div>';
-            $i=1;
-            foreach ($result as $row) {
-                $message .= "<strong>".$i.'.) Asset ID :  ' . $row->game_id . '  is assigned to Location ' . $row->source_location_id . ' ( ' . (!empty($row->source_location_name) ? $row->source_location_name : 'Unknown') . ') but <span style="color:red;"><i>reporting in Location ' . $row->changed_location_id . ' ( ' . (!empty($row->changed_location_name) ? $row->changed_location_name : 'Unknown') . ')</i> </span></strong><br>';
-                $i++;
-            }
-
-            $humanDateRange = FEGSystemHelper::getHumanDate($report_date);
-            $configName = "Game Location Change Reports";
-
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
-
-
-            ReportGenerator::sendEmailReport(array_merge($emailRecipients, array(
-                'subject' => "Game Location Change Reports | $humanDateRange",
-                'message' => $message,
-                'isTest' => $isTest,
-                'configName' => $configName,
-                'configNameSuffix' => $humanDateRange,
-            )));
-
-        }
-    }
-    function getDailyGameLocationChangeReport($params=array())
+   public static function getDailyGameLocationChangeReport($params=array())
     {
         extract(array_merge(array(
             'date' => date('Y-m-d', strtotime('-1 day')),
@@ -2085,29 +2040,35 @@ FROM game
             '_logger' => null,
         ), $params));
         $report = array();
-        $getDailyGameLocationChangeQuery = reportHelper::getDailyGameLocationChangeQuery($date);
+        $getDailyGameLocationChangeQuery = ReportHelpers::getDailyGameLocationChangeQuery($date);
+
 
         $result = \DB::select($getDailyGameLocationChangeQuery);
         $DailyGameLocationChange=array();
 
-            $report[] = '<div style="font-weight:600; font-size:14px; margin-bottom:10px; text-decoration: underline; ">Daily Game Location Change Report</div>';
+            $report = array();
             $i = 1;
             foreach ($result as $row) {
+                if($i==1){
+                    $report[] = '<div style="font-weight:600; font-size:14px; margin-bottom:10px; text-decoration: underline; ">Daily Game Location Change Report</div>';
+                }
                 $report[]= "<strong>" . $i . '.) Asset ID :  ' . $row->game_id . '  is assigned to Location ' . $row->source_location_id . ' ( ' . (!empty($row->source_location_name) ? $row->source_location_name : 'Unknown') . ') but <span style="color:red;"><i>reporting in Location ' . $row->changed_location_id . ' ( ' . (!empty($row->changed_location_name) ? $row->changed_location_name : 'Unknown') . ')</i> </span></strong><br>';
                 $i++;
                 $DailyGameLocationChange[] = array(
                     "game_id"=>$row->game_id,
                     "source_location_id"=>$row->source_location_id,
                     "source_location_name"=> $row->source_location_name,
-                    "change_location_id"=> $row->change_location_id,
-                    "change_location_name"=> $row->change_location_name
+                    "changed_location_id"=> $row->changed_location_id,
+                    "changed_location_name"=> $row->changed_location_name
                 );
             }
         self::$reportCache['DailyGameLocationChange'] = $DailyGameLocationChange;
+
         $reportString=implode("",$report);
-return $reportString;
+
+        return $reportString;
     }
-    function sendDailyGameLocationChangeReport($params){
+   public static function sendDailyGameLocationChangeReport($params){
 
         global $__logger;
         extract(array_merge(array(
@@ -2125,7 +2086,8 @@ return $reportString;
 
 
             $humanDateRange = FEGSystemHelper::getHumanDate($date);
-            $configName = "Game Location Change Reports";
+            $configName = "Daily Game Location Change Reports";
+
 
             $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
 
