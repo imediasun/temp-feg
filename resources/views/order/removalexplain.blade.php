@@ -88,16 +88,6 @@
                 return false;
             }
         }
-        function validateReason(){
-
-            var obj = $("#explaination");
-            if((obj.val()).length <10){
-                var html = '<ul id="parsley-15829651775452813" class="parsley-error-list"><li class="required" style="display: list-item;">You have to enter minimum 10 chara.</li></ul>';
-                $("#txtarea").append(html);
-                return false;
-            }
-            return true;
-        }
 
     </script>
 
