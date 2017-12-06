@@ -1131,7 +1131,11 @@ class OrderController extends Controller
                 if($statusIdFilter == 6){
                     $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."' OR (orders.status_id = '2' AND orders.tracking_number!='') ";
                 }else{
-                    $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."'";
+                    if($statusIdFilter=="removed") {
+                        $orderStatusCondition = "AND orders.deleted_at is not null ";
+                    }else{
+                        $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "' ";
+                    }
                 }
             }
 
@@ -1139,15 +1143,26 @@ class OrderController extends Controller
             if(!empty($statusIdFilter)){
                 if($statusIdFilter == 6){
                     $orderStatusCondition = " OR (orders.status_id = '2' AND orders.tracking_number!='') ";
+                }elseif($statusIdFilter=="removed") {
+                    $orderStatusCondition = "AND orders.deleted_at is not null  ";
+                }else{
+                    $orderStatusCondition = "AND (orders.status_id = '2' AND  orders.tracking_number!='') ";
                 }
             }
         }
 
+        if($statusIdFilter=="removed") {
+
+            $searchInput= str_replace("status_id:equal:removed|","",$searchInput);
+
+        }
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
+
+
         return $filter;
     }
 

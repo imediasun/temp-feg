@@ -420,6 +420,16 @@ usort($tableGrid, "SiteHelpers::_sort");
             });
             $('.tooltip').hide();
         });
+
+       // setTimeout(function(){
+        $("select").each(function(){
+
+            if($(this).attr('name')=='status_id'){
+                $(this).append('<option value="removed"> Removed</option>')
+            }
+
+        });
+      //  },500);
 });
 </script>
 
