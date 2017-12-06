@@ -257,8 +257,11 @@ class MylocationgameController extends Controller
         if ($row) {
             $row->game_status = \DB::table('game_status')->where('id',$row->status_id)->pluck('game_status');
             if (!empty($row->product_id)) {
-                $row->product_id = json_decode($row->product_id);
+
+                $row->product_id = json_decode($row->product_id,true);
+            if(is_array($row->product_id)) {
                 $row->product_id = implode(',', $row->product_id);
+            }
             }
             /*
             $products = \DB::table('game_product')
@@ -302,10 +305,18 @@ class MylocationgameController extends Controller
         $productIds = $row[0]->product_ids_json;
         $products = [];
         if (!empty($productIds)) {
-            $productIds = json_decode($productIds, true);
+
+                $productIds = json_decode($productIds, true);
+
+            if(!is_array($productIds)){
+                $productIds=[$productIds];
+            }
+
             $products = \App\Models\product::select('vendor_description')
                 ->whereIn('id', $productIds)->get();
+
         }
+
         $this->data['products'] = $products;
         $row['service_history'] = $this->model->getServiceHistory($id);
         $row['move_history'] = $this->model->getMoveHistory($id);
@@ -320,6 +331,7 @@ class MylocationgameController extends Controller
         $this->data['setting'] = $this->info['setting'];
         $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+
         return view('mylocationgame.view', $this->data);
     }
 
