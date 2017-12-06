@@ -149,18 +149,9 @@
         {
             if($(".ids:checked").length >0)
             {
-               /* ids.each(function () {
-                    if ($(this).is(":checked")) {
-                        if (order_ids == "") {
-                            order_ids = $(this).val();
-                        } else {
-                            order_ids += "," + $(this).val();
-                        }
-                    }
-                });
-                alert(order_ids);*/
                $("#SximoTable").submit();
-            } else
+            }
+            else
                 {
                     notyMessageError("Please select one or more rows.");
                 }
