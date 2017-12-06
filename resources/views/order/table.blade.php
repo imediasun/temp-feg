@@ -61,7 +61,7 @@ usort($tableGrid, "SiteHelpers::_sort");
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 			<div class="sbox-content" style="border: medium none; padding-top: 15px;">
             @if ($access['is_remove'] ==1 || !empty($pass['Can remove order']))
-                <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+                <?php echo Form::open(array('url'=>'order/removeorderexplaination/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
             @endif
 <div class="table-responsive">
 	@if(count($rowData)>=1)
@@ -136,7 +136,8 @@ usort($tableGrid, "SiteHelpers::_sort");
                     $eid = \SiteHelpers::encryptID($id);
            		?>
 
-                <tr  class="editable" data-id="{{ $row->id }}" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
+
+                <tr  @if(empty($row->deleted_at)) class="editable" @endif data-id="{{ $row->id }}" id="form-{{ $row->id }}" @if(($setting['inline']!='false' && $setting['disablerowactions']=='false') || empty($row->deleted_at))  ondblclick="showFloatingCancelSave(this)" @endif>
 
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
@@ -161,9 +162,14 @@ usort($tableGrid, "SiteHelpers::_sort");
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                            @if($field['field']=='status_id' && !empty($row->deleted_at))
 
+                                    {!! "Removed" !!}
+
+                                @else
 							{!! $value !!}
-							</td>
+                                @endif
+							 </td>
 							@endif
 						 <?php endif;
 						endforeach;
@@ -171,6 +177,8 @@ usort($tableGrid, "SiteHelpers::_sort");
 
 
                     <td data-values="action" data-key="<?php echo $row->id ;?>">
+
+                        @if(empty($row->deleted_at))
                         {!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
                         <a href="{{ URL::to('order/po/'.$row->id)}}"
                             data-id="{{$eid}}"
@@ -203,6 +211,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                         @endif
 
                         @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
+
                             <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
                                data-id="{{$eid}}"
                                data-action="removal"
@@ -210,6 +219,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                title="Request Removal">
                                 <i class="fa fa-trash-o " aria-hidden="true"></i>
                             </a>
+
                         @endif
 
                         @if($canPostToNetSuit  && !$isApified && Order::isApiable($id, $row, true))
@@ -231,8 +241,19 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-check-square-o" aria-hidden="true"></i>
                             </a>
                         @endif
+                            @else
+                            <a href="{{ URL::to('order/restoreorder/'.$row->id)}}"
+                               data-id="{{$eid}}"
+                               data-action="removal"
+                               class="tips btn btn-xs btn-white orderRemovalRequestAction"
+                               title="Restore Order">
+                                <i class="fa fa-refresh " aria-hidden="true"></i>
+                            </a>
+                        @endif
 					</td>
                 </tr>
+
+
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
                 	<td class="number"></td>

@@ -996,35 +996,43 @@ class OrderController extends Controller
         }
     }
 
+    public function getRestoreorder($id=0){
+        $this->data['ids'] = $id;
+        return view("order.restorereasonexplain",$this->data);
+    }
+   public function postRestoreorder(Request $request){
+
+       $id = $request->input('ids');
+       $explaination = $request->input('explaination');
+       $result  = \DB::update("update orders set notes = concat(notes,'<br>','$explaination'), deleted_at=null, deleted_by=null where id in($id) ");
+
+       if($result){
+           return Redirect::to('order')->with('messagetext', 'Order has been restored successfully!')->with('msgstatus', 'success');
+       }else{
+           return Redirect::to('order')->with('messagetext', 'This order has already been restored!')->with('msgstatus', 'error');
+       }
+}
+    public function postRemoveorderexplaination(Request $request){
+        $this->data['ids'] = implode(",",$request->input('ids'));
+
+        return view("order.removalreasonexplain",$this->data);
+    }
     public function postDelete(Request $request)
     {
+        // set order status as deleted for multipe rows
+            $ids = $request->input('ids');
+            $explaination = $request->input('explaination');
+            $uid = \Session::get('uid');
 
-        if ($this->access['is_remove'] == 0) {
-            return response()->json(array(
-                'status' => 'error',
-                'message' => \Lang::get('core.note_restric')
-            ));
+            $result  = \DB::update("update orders set notes = concat(notes,'<br>','$explaination'), deleted_at=NOW(), deleted_by=$uid where id in($ids) ");
+            if($result){
+                return Redirect::to('order')->with('messagetext', 'Order status has ben set as removed successfully!')->with('msgstatus', 'success');
+            }else{
+                return Redirect::to('order')->with('messagetext', 'This order has already been removed!')->with('msgstatus', 'error');
+            }
 
-
-        }
-        // delete multipe rows
-        if (count($request->input('ids')) >= 1) {
-            $this->model->destroy($request->input('ids'));
-
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success_delete')
-            ));
-        } else {
-            return response()->json(array(
-                'status' => 'error',
-                'message' => \Lang::get('core.note_error')
-            ));
-
-        }
 
     }
-
     function getRemovalrequest($po_number = null)
     {
         $this->data['po_number'] = $po_number;
@@ -1955,3 +1963,5 @@ class OrderController extends Controller
 
 
 }
+/*$dataArray =["deleted_at"=>date("Y-m-d H:i:s"),'deleted_by'=>\Session::get('uid')];
+$result=\DB::table('orders')->where('po_number', $poNumber)->update($dataArray);*/
