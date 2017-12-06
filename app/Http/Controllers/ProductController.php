@@ -346,10 +346,10 @@ class ProductController extends Controller
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
-        if($id != 0)
+        /*if($id != 0)
         {
             $rules['expense_category'] = 'required';
-        }
+        }*/
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
@@ -386,6 +386,9 @@ class ProductController extends Controller
                         unset($data_attached_products['expense_category']);
                         unset($data_attached_products['retail_price']);
                         unset($data_attached_products['ticket_value']);
+                        unset($data_attached_products['inactive']);
+                        unset($data_attached_products['in_development']);
+                        unset($data_attached_products['hot_item']);
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }

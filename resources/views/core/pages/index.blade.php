@@ -147,7 +147,13 @@
 	</div>
 </div>	
 	</div>	  
-</div>	
+</div>
+<style>
+    .btn-white
+    {
+        float: none;
+    }
+</style>
 <script>
 $(document).ready(function(){
 
