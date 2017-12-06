@@ -1020,9 +1020,9 @@ class OrderController extends Controller
 
             $result  = \DB::update("update orders set notes = concat(notes,'<br>','$explaination'), deleted_at=NOW(), deleted_by=$uid where id in($ids) ");
             if($result){
-                return Redirect::to('order')->with('messagetext', 'Order status has ben set as removed successfully!')->with('msgstatus', 'success');
+                return Redirect::to('order')->with('messagetext', 'Order status has been updated as removed.')->with('msgstatus', 'success');
             }else{
-                return Redirect::to('order')->with('messagetext', 'This order has already been removed!')->with('msgstatus', 'error');
+                return Redirect::to('order')->with('messagetext', 'This order status has already been removed!')->with('msgstatus', 'error');
             }
 
 

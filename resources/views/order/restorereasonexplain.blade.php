@@ -30,7 +30,7 @@
                                 <input type="hidden" value="{{$ids }}" name="ids"/>
                             </div>
                             <div class="form-group" style="text-align: center;">
-                                <button type="submit" name="submit" class="btn btn-primary btn-sm"><i class="fa  fa-save "></i>  Send Request </button>
+                                <button type="submit" name="submit" class="btn btn-primary btn-sm"><i class="fa  fa-save "></i>  Submit </button>
                                 <button type="button" onclick="location.href='{{ URL::to('order?return='.$return) }}' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 
                             </div>
