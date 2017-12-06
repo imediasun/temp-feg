@@ -237,6 +237,8 @@ class OrderController extends Controller
        // \Session::put('filter_before_redirect',false);
         //\Session::put('params',$params);
          $results = $this->model->getRows($params, $order_selected);
+
+
         foreach($results['rows'] as  &$rs){
             $result = $this->model->getProductInfo($rs->id);
             $info = '';
@@ -1137,23 +1139,24 @@ class OrderController extends Controller
                 if($statusIdFilter == 6){
                     $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."' OR (orders.status_id = '2' AND orders.tracking_number!='') ";
                 }else{
-                    if($statusIdFilter=="removed") {
+                   /* if($statusIdFilter=="removed") {
                         $orderStatusCondition = "AND orders.deleted_at is not null ";
-                    }else{
+                    }else{*/
                         $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "' ";
-                    }
+                   /* }*/
                 }
             }
 
         }else{
             if(!empty($statusIdFilter)){
                 if($statusIdFilter == 6){
-                    $orderStatusCondition = " OR (orders.status_id = '2' AND orders.tracking_number!='') ";
+                    $orderStatusCondition = " OR (orders.status_id = '2' AND orders.tracking_number!='') AND orders.deleted_at is null ";
                 }elseif($statusIdFilter=="removed") {
                     $orderStatusCondition = "AND orders.deleted_at is not null  ";
                 }else{
-                    $orderStatusCondition = "AND (orders.status_id = '2' AND  orders.tracking_number!='') ";
+                    $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter' AND  orders.tracking_number!='') AND orders.deleted_at is null ";
                 }
+
             }
         }
 
@@ -1168,7 +1171,7 @@ class OrderController extends Controller
 
         $filter .= $orderStatusCondition;
 
-
+      //  dd( $filter);
         return $filter;
     }
 
