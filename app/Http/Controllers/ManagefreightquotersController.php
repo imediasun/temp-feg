@@ -405,7 +405,7 @@ class ManagefreightquotersController extends Controller
                 $to_contact_phone = $request->get('to_contact_phone');
                 $to_loading_info = $request->get('to_loading_info');
             }
-            $from_loading_info = $request->get('from_loading_info');
+            
             if (!empty($from_loading_info)) {
                 $from_loading_info = '<b>**' . $from_loading_info . '**</b> <br>';
             }
