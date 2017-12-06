@@ -9,7 +9,8 @@
         <div class="sbox-content">
             @endif
             <div class="row">
-                <div class="col-md-8 col-md-offset-2" style="background-color:#FFF;box-shadow:1px 1px 5px lightgray;padding:40px">
+                <div class="col-md-8 col-md-offset-2">
+                    <div style="background-color:#FFF;box-shadow:1px 1px 5px lightgray;padding:15px">
                     <h1>Add to Merch Gallery</h1>
                     <hr/>
                     {!! Form::open(array('url'=>'merchindisetheminggallary/save', 'class'=>'form-horizontal','files'
@@ -59,12 +60,18 @@
                         </button>
                     </div>
                     {!! Form::close() !!}
-                </div><div class="clearfix"></div>
+                    </div>
+                </div>
+                
+                <div class="clearfix"></div>
+                
+                
                 <ul class="parsley-error-list">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
+                
             </div>
             @if($setting['form-method'] =='native')
         </div>

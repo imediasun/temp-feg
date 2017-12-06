@@ -97,14 +97,15 @@
             </fieldset>
 
 
-                <div class="form-group" style="padding-left: 24px;margin-bottom:50px">
-                        <label class="col-sm-4 text-centre">&nbsp;</label>
-
-                        <button type="submit" id="submitbtn"  class="btn btn-primary btn-sm-5" style="padding-right: 20px;
-                                padding-left: 20px"><i
-                                class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
-
-                    Submitted by <b>{{ \Session::get('fid') }}</b> on <b>{{ date('m/d/Y') }}</b>
+                <div class="form-group" style="margin-bottom:50px">
+                    
+                <label class="col-sm-4 text-centre">&nbsp;</label>
+                
+                <div class="col-md-6">
+                    <button type="submit" id="submitbtn"  class="btn btn-primary btn-sm-5 m-b" style="padding-right: 20px; padding-left: 20px"><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
+                    <p>Submitted by <b>{{ \Session::get('fid') }}</b> on <b>{{ date('m/d/Y') }}</b></p>
+                </div>
+                
                 </div>
 
 

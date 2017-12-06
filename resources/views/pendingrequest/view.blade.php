@@ -94,8 +94,8 @@
 				
 			</tbody>	
 		</table>  
-			
-		 	
+			</div>
+		 
 
 @if($setting['form-method'] =='native')
 	</div>	
