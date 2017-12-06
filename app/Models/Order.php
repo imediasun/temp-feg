@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use App\Http\Controllers\OrderController;
+use App\Models\Sximo\Module;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
@@ -73,6 +74,12 @@ class order extends Sximo
                 break;
             default:
                 $return .= " orders.id IS NOT NULL";
+        }
+        $module_id = Module::name2id('order');
+        $pass = \FEGSPass::getMyPass($module_id);
+        if(empty($pass['Can remove order']))
+        {
+            $return .= " AND orders.deleted_at is null ";
         }
         if($cond == 'only_api_visible')
         {

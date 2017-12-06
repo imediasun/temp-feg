@@ -18,7 +18,7 @@
                 <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
                 @endif --}}
                 @if($access['is_remove'] ==1 || !empty($pass['Can remove order']))
-                <a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+                <a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="showReasonPoup();//ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
                 @endif
             @endif
 			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
@@ -140,6 +140,30 @@
             notyMessageError(data.message);
             $('.ajaxLoading').hide();
             return false;
+        }
+    }
+    function showReasonPoup(){
+        var ids = $(".ids");
+        var order_ids = "";
+        if(confirm('Are you sure you want to delete the selected row(s)?'))
+        {
+            if($(".ids:checked").length >0)
+            {
+               /* ids.each(function () {
+                    if ($(this).is(":checked")) {
+                        if (order_ids == "") {
+                            order_ids = $(this).val();
+                        } else {
+                            order_ids += "," + $(this).val();
+                        }
+                    }
+                });
+                alert(order_ids);*/
+               $("#SximoTable").submit();
+            } else
+                {
+                    notyMessageError("Please select one or more rows.");
+                }
         }
     }
 </script>
