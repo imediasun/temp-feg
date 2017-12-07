@@ -1023,7 +1023,7 @@ class OrderController extends Controller
         $result=false;
         for ($i = 0; $i < count($ids); $i++) {
             $query = "update orders set notes = concat(notes,'<br>','" . $explaination[$i] . "'), deleted_at=NOW(), deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
-            $result = \DB::raw($query);
+            $result = \DB::update($query);
         }
 
         if ($result) {
