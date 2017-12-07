@@ -1,8 +1,7 @@
 <?php
 use App\Models\Order;
 usort($tableGrid, "SiteHelpers::_sort");
-
-echo $trimmed = ltrim("Text text testText test test", "<br>");
+        
 
 ?>
 <div class="sbox">
