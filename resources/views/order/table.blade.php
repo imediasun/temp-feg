@@ -150,14 +150,18 @@ usort($tableGrid, "SiteHelpers::_sort");
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
-					 <?php foreach ($tableGrid as $field) :
+					 <?php dd($tableGrid); foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
                             if($row->$field['field'] == '0000-00-00')
                             {
                                 $value = "No Data";
                             }
+                            else
+                             {
+                                $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
+
+                              }
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
