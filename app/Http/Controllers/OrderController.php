@@ -316,7 +316,6 @@ class OrderController extends Controller
         // Render into template
         $this->data['set_removed'] = "others";
         if (strpos($_SESSION['searchParamsForOrder'], 'status_id:equal:removed|') > 0) {
-            // $is_removed_flag = true;
             $this->data['set_removed'] = 'set_removed';
         }
 
