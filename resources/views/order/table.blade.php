@@ -1,7 +1,7 @@
 <?php
 use App\Models\Order;
 usort($tableGrid, "SiteHelpers::_sort");
-        
+
 
 ?>
 <div class="sbox">
@@ -309,7 +309,14 @@ usort($tableGrid, "SiteHelpers::_sort");
                     var selector = 'tr[data-id='+$urlArray[2]+'] td[data-field="order_total"]';
                     console.log(selector);
                     $(selector).attr('data-format','$ '+data.total).attr('data-values', data.total).text('$ '+data.total);
-                }
+                }else if((settings.url).indexOf('order/data') !==-1){
+
+                    <?php if($set_removed =="set_removed"){ ?>
+
+                    $("select[name='status_id'] option[value='removed']").attr('selected','selected');
+                    $("select[name='status_id']").change();
+                    <?php } ?>
+            }
             }
         });
     $('.tips').tooltip();
@@ -428,12 +435,8 @@ usort($tableGrid, "SiteHelpers::_sort");
         });
 
        // setTimeout(function(){
-        $("select").each(function(){
-
-            if($(this).attr('name')=='status_id'){
-                $(this).append('<option value="removed"> Removed</option>')
-            }
-
+        $("select[name='status_id']").each(function(){
+            $(this).append('<option value="removed"> Removed</option>')
         });
       //  },500);
 });
