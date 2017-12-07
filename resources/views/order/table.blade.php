@@ -315,8 +315,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                     $(selector).attr('data-format','$ '+data.total).attr('data-values', data.total).text('$ '+data.total);
                 }else if((settings.url).indexOf('order/data') !==-1){
 
-                    <?php if($set_removed =="set_removed"){ ?>
-
+                   <?php if($set_removed =="set_removed") { ?>
                     $("select[name='status_id'] option[value='removed']").attr('selected','selected');
                     $("select[name='status_id']").change();
                     <?php } ?>
