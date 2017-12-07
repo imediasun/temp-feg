@@ -1,6 +1,9 @@
 <?php
 use App\Models\Order;
 usort($tableGrid, "SiteHelpers::_sort");
+
+echo $trimmed = ltrim("Text text testText test test", "<br>");
+
 ?>
 <div class="sbox">
 	<div class="sbox-title">
@@ -143,7 +146,7 @@ usort($tableGrid, "SiteHelpers::_sort");
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
 						@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1' || !empty($pass['Can remove order'])))
-						<td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+						<td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->po_number ;?>" />  </td>
 					@endif
 
 
@@ -167,7 +170,11 @@ usort($tableGrid, "SiteHelpers::_sort");
                                     {!! "Removed" !!}
 
                                 @else
-							{!! $value !!}
+                                @if($field['field']=='notes' && !empty($row->notes))
+							                <?php echo ltrim($value,'<br>'); ?>
+                                    @else
+                                             {!! $value !!}
+                                    @endif
                                 @endif
 							 </td>
 							@endif
