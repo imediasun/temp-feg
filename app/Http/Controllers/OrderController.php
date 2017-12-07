@@ -1016,16 +1016,29 @@ class OrderController extends Controller
     public function postDelete(Request $request)
     {
         // set order status as deleted for multipe rows
-            $ids = $request->input('ids');
-            $explaination = $request->input('explaination');
-            $uid = \Session::get('uid');
+        $ids = $request->input('po_number');
+        $explaination = $request->input('explaination');
+        $uid = \Session::get('uid');
+        $query = "";
+        for ($i = 0; $i < count($ids); $i++) {
 
-            $result  = \DB::update("update orders set notes = concat(notes,'<br>','$explaination'), deleted_at=NOW(), deleted_by=$uid where id in($ids) ");
-            if($result){
-                return Redirect::to('order')->with('messagetext', 'Order status has been updated as removed.')->with('msgstatus', 'success');
-            }else{
-                return Redirect::to('order')->with('messagetext', 'This order status has already been removed!')->with('msgstatus', 'error');
-            }
+            $query .= "update orders set notes = concat(notes,'<br>','" . $explaination[$i] . "'), deleted_at=NOW(), deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
+
+        }
+
+        //dd($query);
+        if (!empty($query)) {
+        $result = \DB::raw($query);
+        if ($result) {
+            return Redirect::to('order')->with('messagetext', 'Order status has been updated as removed.')->with('msgstatus', 'success');
+        } else {
+            return Redirect::to('order')->with('messagetext', 'This order status has already been removed!')->with('msgstatus', 'error');
+        }
+    }else{
+            return Redirect::to('order')->with('messagetext', "This order status couldn't be updated as removed!")->with('msgstatus', 'error');
+        }
+
+
 
 
     }
