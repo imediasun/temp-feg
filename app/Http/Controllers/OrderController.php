@@ -270,7 +270,7 @@ class OrderController extends Controller
         $pagination->setPath('order/data');
         $rows = $results['rows'];
         foreach ($rows as $index => $data) {
-            //$rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
+            $rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
             //$location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
            // $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
             $user = \DB::select("Select username FROM users WHERE id = '" . $data->user_id . "'");
@@ -515,7 +515,7 @@ class OrderController extends Controller
                 'vendor_id' => 'required',
                 'order_type_id' => "required",
                 'freight_type_id' => 'required',
-                //'date_ordered' => 'required',
+                'date_ordered' => 'required',
              //   'po_3' => 'required'
             );
         $validator = Validator::make($request->all(), $rules);
@@ -546,8 +546,7 @@ class OrderController extends Controller
             $vendor_id = $request->get('vendor_id');
             $vendor_email = $this->model->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
-            //$date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
-            $date_ordered = '0000-00-00';
+            $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
             $is_freehand = $request->get('is_freehand') == "1" ?1:0;
@@ -966,11 +965,6 @@ class OrderController extends Controller
 
             if ($status == 1)
             {
-                //bug-218 set date ordered when order emailed to vendor!
-                $date_ordered = date("Y-m-d");
-                \DB::update('UPDATE orders
-                         SET date_ordered = "'.$date_ordered.'"
-                       WHERE id = "'.$order_id.'"');
                 return response()->json(array(
                     'message' => \Lang::get('core.mail_sent_success'),
                     'status' => 'success',
