@@ -1020,25 +1020,17 @@ class OrderController extends Controller
         $explaination = $request->input('explaination');
         $uid = \Session::get('uid');
         $query = "";
+        $result=false;
         for ($i = 0; $i < count($ids); $i++) {
-
-            $query .= "update orders set notes = concat(notes,'<br>','" . $explaination[$i] . "'), deleted_at=NOW(), deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
-
+            $query = "update orders set notes = concat(notes,'<br>','" . $explaination[$i] . "'), deleted_at=NOW(), deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
+            $result = \DB::raw($query);
         }
 
-        //dd($query);
-        if (!empty($query)) {
-        $result = \DB::raw($query);
         if ($result) {
             return Redirect::to('order')->with('messagetext', 'Order status has been updated as removed.')->with('msgstatus', 'success');
         } else {
             return Redirect::to('order')->with('messagetext', 'This order status has already been removed!')->with('msgstatus', 'error');
         }
-    }else{
-            return Redirect::to('order')->with('messagetext', "This order status couldn't be updated as removed!")->with('msgstatus', 'error');
-        }
-
-
 
 
     }
