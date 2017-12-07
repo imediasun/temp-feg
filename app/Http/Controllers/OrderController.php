@@ -169,9 +169,11 @@ class OrderController extends Controller
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'order')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         $this->getSearchParamsForRedirect();
-
+//
         session_start();
         $_SESSION['searchParamsForOrder'] = \Session::get('searchParams');
+        //status_id:equal:removed|
+
 
        // echo \Session::get('searchParams');
         if (Input::has('config_id')) {
@@ -313,6 +315,12 @@ class OrderController extends Controller
         }
         $this->data['order_selected'] = $order_selected;
         // Render into template
+        $this->data['set_removed'] = "others";
+        if(strpos($_SESSION['searchParamsForOrder'],'status_id:equal:removed|')>0){
+           // $is_removed_flag = true;
+            $this->data['set_removed'] = 'set_removed';
+        }
+
         return view('order.table', $this->data);
 
     }
@@ -1165,18 +1173,16 @@ class OrderController extends Controller
             }
         }
 
-        if($statusIdFilter=="removed") {
-
-            $searchInput= str_replace("status_id:equal:removed|","",$searchInput);
-
-        }
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
 
-      //  dd( $filter);
+        if($statusIdFilter=="removed") {
+            $filter = str_replace("orders.status_id = 'removed'"," orders.deleted_at is not null ",$filter);
+        }
+       // dd( $filter);
         return $filter;
     }
 
