@@ -2838,9 +2838,10 @@ table.table-striped tr th
     position:relative !important;
     top: 3px;
 }
-#mylocationgameGrid #col-config
-{
-    top: 0;
+
+#mylocationgameGrid #col-config {
+	top: 0;
+	width: auto !important;
 }
 
 #sidemenu.nav .nav > li > a i {
@@ -3086,17 +3087,31 @@ table .btn.btn-xs {
 }
 
 .simpleSearchContainer, .simpleBoxContainer {
-  margin-bottom: 13px;
-}
-
-.c-margin {
   margin-bottom: 15px;
 }
 
-.c-margin .col-md-3 ,.c-margin .col-md-4 {
-  bottom: -2px;
+.sbox .sbox-content .c-margin {
+	margin-bottom: 12px;
 }
 
+.sbox .sbox-content .sbox-content .c-margin {
+	margin-bottom: -3px !important;
+}
+
+.c-margin .col-md-9::before,
+.c-margin .col-md-8::before,
+.c-margin .col-md-7::before {
+	content: "";
+	display: table;
+}
+
+.c-margin .col-md-9::after,
+.c-margin .col-md-8::after,
+.c-margin .col-md-7::after {
+	clear: both;
+	content: "";
+	display: table;
+}
 
 table .btn.btn-xs {
   height: 25px;
@@ -3435,9 +3450,11 @@ margin-left: 15px;
 }
 
 .navbar .navbar-top-links .dropdown-menu li a {
-  font-size: 12px;
-  min-height: 0;
-  padding: 3px 15px;
+	font-size: 12px;
+	min-height: 0;
+	padding: 3px 10px;
+	margin-left: 0;
+	padding-right: 0;
 }
 
 .navbar .navbar-top-links .dropdown-menu li {
@@ -3722,5 +3739,29 @@ select#col-config{
 	width: 23px !important;
 }
 
+#managefegrequeststoreGrid form .col-md-2 #multi-btn {
+	margin-top: 15px !important;
+	margin-left:-3px !important;
+}
 
+.c-margin .col-md-3 .pull-right,
+.c-margin .col-md-4 .pull-right,
+.c-margin .col-md-5 .pull-right{
+	float: left !important;
+}
+
+.c-margin .col-md-9,
+.c-margin .col-md-8,
+.c-margin .col-md-7 {
+	margin-bottom: 5px;
+}
+
+}
+
+.centralMessage {
+	padding: 0 15px;
+}
+
+.doSimpleSearch.btn {
+	min-width: 60px;
 }
