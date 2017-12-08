@@ -199,6 +199,19 @@ class PagesController extends Controller
             $content = preg_replace($patternAddTitleSection, '<div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
             $content = $content."@stop";
 
+            $pattern = '~<iframe.*</iframe>|<embed.*</embed>~';
+            preg_match_all($pattern, $content, $matches);
+
+            foreach ($matches[0] as $match) {
+                // wrap matched iframe with div
+                $wrappedframe = '<div class="embed-responsive embed-responsive-16by9">' . $match . '</div>';
+
+                //replace original iframe with new in content
+                $content = str_replace($match, $wrappedframe, $content);
+            }
+            $content = str_replace("<iframe","<iframe class='embed-responsive-item'",$content);
+
+
             $content = $this->addEditLinkTemplate($content);
             
             $data = $this->validatePost('tb_pages');
