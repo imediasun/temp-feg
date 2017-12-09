@@ -204,12 +204,16 @@ class PagesController extends Controller
 
             foreach ($matches[0] as $match) {
                 // wrap matched iframe with div
-                $wrappedframe = '<div class="embed-responsive embed-responsive-16by9">' . $match . '</div>';
+
+                $wrappedframe = '<div class="embed-responsive embed-responsive-16by9 video-container">' . $match . '</div>';
 
                 //replace original iframe with new in content
-                $content = str_replace($match, $wrappedframe, $content);
+                if(strpos($match,'video-container')==false) {
+                    $content = str_replace($match, $wrappedframe, $content);
+                }
             }
-            $content = str_replace("<iframe","<iframe class='embed-responsive-item'",$content);
+
+           // $content = str_replace("<iframe","<iframe class='embed-responsive-item'",$content);
 
 
             $content = $this->addEditLinkTemplate($content);
