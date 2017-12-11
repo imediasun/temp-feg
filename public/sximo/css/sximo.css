@@ -3507,7 +3507,6 @@ li.multiselect-item.multiselect-group + li a label {
 {
   color:black;
 }
-
 .video-container {
   position:relative;
    /* padding-bottom:56.25%;*/
@@ -3516,7 +3515,6 @@ li.multiselect-item.multiselect-group + li a label {
   height:35vw !important;
   overflow:hidden;
 }
-
 .video-container iframe, .video-container object, .video-container embed {
   position:absolute;
   top:0;
