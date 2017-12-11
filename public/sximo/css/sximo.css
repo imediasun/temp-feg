@@ -3508,19 +3508,45 @@ li.multiselect-item.multiselect-group + li a label {
   color:black;
 }
 .video-container {
-  position:relative;
-   /* padding-bottom:56.25%;*/
+    position:relative;
+    /* padding-bottom:56.25%;*/
     width:58vw;
-  padding-top:30px;
-  height:35vw !important;
-  overflow:hidden;
+    padding-top:30px;
+    height:35vw !important;
+    overflow:hidden;
 }
 .video-container iframe, .video-container object, .video-container embed {
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:35vw !important;
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:35vw !important;
+}
+.sbox-tools>a.btn-white{
+  margin-left: 7px !important;
+}
+.btn-white{
+  margin-left: 2px !important;
+  float: left;
+}
+select#col-config{
+  /*left: 2px !important;  */
+    /*top: 0px !important;*/
+  /*margin-right:2px;*/
+}
+/* for FireFox*/
+@-moz-document url-prefix() {
+  /* .height-set{ margin-top: -1px !important; } */
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  /* Safari and Chrome
+  .height-set {
+    margin-top: -1px !important;
+  } */
+  select {
+
+    -webkit-border-radius: 0px;
+  }
 }
 
 .sbox-content .pull-right .btn{
@@ -3560,24 +3586,3 @@ li.multiselect-item.multiselect-group + li a label {
     display:inline-block !important;
     left: 0px !important;
 }
-/*
-
-.alignment-left-fixed{
-
-    margin:0px !important;
-    left: 0px !important;
-    top: 0px !important;
-    margin-right:3px !important;
-    margin-left:0px !important;
-    margin-bottom: 3px !important;
-}
-.alignment-right-fixed{
-
-    margin:0px !important;
-    left: 0px !important;
-    top: 0px !important;
-    margin-right:0px !important;
-    margin-left:3px !important;
-    margin-bottom: 3px !important;
-}
-*/
