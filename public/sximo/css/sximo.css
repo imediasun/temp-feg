@@ -3509,7 +3509,6 @@ li.multiselect-item.multiselect-group + li a label {
 }
 .video-container {
   position:relative;
-   /* padding-bottom:56.25%;*/
     width:58vw;
   padding-top:30px;
   height:35vw !important;
