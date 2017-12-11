@@ -3510,16 +3510,10 @@ li.multiselect-item.multiselect-group + li a label {
   margin-left: 2px !important;
   float: left;
 }
-/* .height-set{
-  margin-left: 2px !important;
-  left:2px;
-}
-*/
 select#col-config{
   /*left: 2px !important;  */
     /*top: 0px !important;*/
   /*margin-right:2px;*/
-
 }
 /* for FireFox*/
 @-moz-document url-prefix() {
@@ -3573,24 +3567,3 @@ select#col-config{
     display:inline-block !important;
     left: 0px !important;
 }
-/*
-
-.alignment-left-fixed{
-
-    margin:0px !important;
-    left: 0px !important;
-    top: 0px !important;
-    margin-right:3px !important;
-    margin-left:0px !important;
-    margin-bottom: 3px !important;
-}
-.alignment-right-fixed{
-
-    margin:0px !important;
-    left: 0px !important;
-    top: 0px !important;
-    margin-right:0px !important;
-    margin-left:3px !important;
-    margin-bottom: 3px !important;
-}
-*/
