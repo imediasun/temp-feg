@@ -1120,7 +1120,7 @@ class FEGSystemHelper
             $q .= " AND users.id IN ($users)";
         }
 
-        if (!empty($location)) {
+        if (!empty($location)) { // if locationId is not null
             $q .= " AND user_locations.location_id IN ($location)";
         }
         $data = DB::select($q);
