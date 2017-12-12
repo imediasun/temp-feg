@@ -357,6 +357,8 @@ class OrderController extends Controller
    public function getShow($id = null)
     {
 
+        
+        $this->data['case_price_permission'] = $this->pass['calculate price according to case price'];
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
