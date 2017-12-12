@@ -1100,17 +1100,21 @@ class FEGSystemHelper
         if ($skipIfNoUsers && empty($users)) {
             return [];
         }
-        $q = "SELECT DISTINCT email FROM users
-            LEFT JOIN user_locations ON user_locations.user_id = users.id
-            WHERE users.active=1 ";
+        $q = "SELECT DISTINCT email FROM users ";
+       /* if (!empty($location)) {
+            $q .= " LEFT JOIN user_locations ON user_locations.user_id = users.id ";
+        }*/
+       $q .= " WHERE users.active=1 ";
         if (!empty($users)) {
             $q .= " AND users.id IN ($users)";
         }
-        if (!empty($location)) {
+
+      /*  if (!empty($location)) {
             $q .= " AND user_locations.location_id IN ($location)";
-        }
+        }*/
         $data = DB::select($q);
         $emails = array();
+
         foreach($data as $row) {
             $email = $row->email;
             $emails[] = trim($email);
