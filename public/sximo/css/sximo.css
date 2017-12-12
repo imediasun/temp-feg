@@ -4,7 +4,9 @@
  *   Sximo Builder  - PHP WEB GENERATOR
  *   Copyright 2014 sximobuilder.com
  *
- */
+ 
+
+*/
 
  body {
   font-family: 'Lato', sans-serif;
@@ -205,7 +207,7 @@ table.table-striped
 }
 .minimalize-btn {
   padding: 4px 12px;
-  margin: 14px 5px 5px 15px;
+  margin: 14px 5px 5px 20px;
   font-size: 14px;
   float: left;
 }
@@ -1150,7 +1152,6 @@ a:focus {
   position: relative !important;
   background:#eeeeee ;
 }
-
 @media (min-width: 768px) {
   #page-wrapper {
     position: inherit;
@@ -1162,8 +1163,6 @@ a:focus {
         //right:6%;
     }*/
 }
-
-
 .title-action {
   text-align: right;
   padding-top: 30px;
@@ -1260,7 +1259,6 @@ body.body-small .footer.fixed {
 .nav.nav-tabs li {
   background: none;
   border: none;
-  margin-top: 3px;
 }
 .nav-tabs > li > a {
 border-radius:0;
@@ -2365,14 +2363,14 @@ z-index: 2;
 
 }
 .sbox-tools a {
-  color: #c4c4c4;
-  cursor: pointer;
-  margin-left: 5px;
+ color: #c4c4c4;
+    cursor: pointer;
+    margin-left: 5px;
 }
 .sbox-content {
   background-color: #f9f9f9;
   color: inherit;
-  padding: 15px;
+  padding: 20px;
   border-color: #ddd;
   border-image: none;
   border-style: solid solid none;
@@ -2759,10 +2757,9 @@ li.L9 {
     border-top: none;
 }
 
-#advance-search.search-table tr.fieldsearch td:first-child {
+#advance-search.search-table  tr.fieldsearch td:first-child {
 	font-weight: bold;
 	vertical-align: middle;
-	width: 85px;
 }
 
 #asset_available {
@@ -2836,10 +2833,9 @@ table.table-striped tr th
     position:relative !important;
     top: 3px;
 }
-
-#mylocationgameGrid #col-config {
-	top: 0;
-	width: auto !important;
+#mylocationgameGrid #col-config
+{
+    top: 0;
 }
 
 #sidemenu.nav .nav > li > a i {
@@ -2863,12 +2859,9 @@ table.table-striped tr th
 /* game details */
 .gameDetailsContainer {
     background:#FFF;
-	box-shadow: 1px 1px 5px gray;
-	padding: 15px;
-	overflow: hidden;
-	margin: 0 15px;
+    box-shadow:1px 1px 5px gray;
+    padding:15px;    
 }
-
 
 .gameDetailsContainer .titleSection {
     position: relative;
@@ -3085,31 +3078,17 @@ table .btn.btn-xs {
 }
 
 .simpleSearchContainer, .simpleBoxContainer {
+  margin-bottom: 13px;
+}
+
+.c-margin {
   margin-bottom: 15px;
 }
 
-.sbox .sbox-content .c-margin {
-	margin-bottom: 12px;
+.c-margin .col-md-3 ,.c-margin .col-md-4 {
+  bottom: -2px;
 }
 
-.sbox .sbox-content .sbox-content .c-margin {
-	margin-bottom: -3px !important;
-}
-
-.c-margin .col-md-9::before,
-.c-margin .col-md-8::before,
-.c-margin .col-md-7::before {
-	content: "";
-	display: table;
-}
-
-.c-margin .col-md-9::after,
-.c-margin .col-md-8::after,
-.c-margin .col-md-7::after {
-	clear: both;
-	content: "";
-	display: table;
-}
 
 table .btn.btn-xs {
   height: 25px;
@@ -3203,12 +3182,10 @@ position: relative;
   width: 100%;
 }
 
-.input-group {
-	float: left;
-	width: 100%;
+.input-group{
+  float: left;
+  width: 100%;
 }
-
-
 
 
 
@@ -3238,30 +3215,16 @@ position: relative;
   bottom: -25px;
   top: inherit;
 }
-
 .input-group span.input-group-addon {
-	float: left;
-	padding: 8px 10px;
+  float: left;
+  width: 4.5%;
+  padding: 8px 10px;
 }
-
-
-.gameInputsContainer .form-group .input-group {
-	padding-left: 30px;
-}
-
-.gameInputsContainer .form-group .input-group .input-group-addon {
-	width: 30px;
-	position: absolute;
-	left: 0;
-}
-
-
 
 .input-group input.form-control {
-	float: left;
-	width: 100%;
+  float: left;
+  width: 95.5%;
 }
-
 .input-group.input-group-sm span.input-group-addon ,.input-group.m-b span.input-group-addon{
   float: none;
   padding: 6px 10px;
@@ -3448,11 +3411,9 @@ margin-left: 15px;
 }
 
 .navbar .navbar-top-links .dropdown-menu li a {
-	font-size: 12px;
-	min-height: 0;
-	padding: 3px 10px;
-	margin-left: 0;
-	padding-right: 0;
+  font-size: 12px;
+  min-height: 0;
+  padding: 3px 15px;
 }
 
 .navbar .navbar-top-links .dropdown-menu li {
@@ -3479,8 +3440,6 @@ margin-left: 15px;
   padding: 10px;
 }
 
-
-
 .text-left-xs {
   text-align: left;
 }
@@ -3493,63 +3452,12 @@ margin-left: 15px;
 
 
 }
-
-@media only screen and (max-width: 420px){
-
-  .sbox-title {
-	padding: 14px 10px;
-	height: 100%;
-	display:block;
-  }
-
-.sbox-title::before {
-	content: "";
-	display: table;
-}
-
-.sbox-title::after {
-	clear: both;
-	content: "";
-	display: table;
-}
-
-.sbox-title h5{
-  display:block;
-  width: 100%;
-}
-
-.sbox-tools {
-	display:block;
-	float: left;
-	margin-left: -7px;
-	width: 100%;
-}
-
-#sximo-modal-content {
-	padding: 10px 10px;
-}
-
-}
-
 @media only screen and (max-width: 520px){
   ul.pagination li:not(.show-mobile) {
     display: none;
   }
 
-  #managefreightquotersView .sbox-content .form-group .radio-inline {
-  	display: block;
-  	margin-left: 0;
-  	padding-left: 0;
-  	margin-bottom: 10px;
-  }
-
-  .gameDetailsContainer .headStatus {
-  	position: inherit;
-  }
-
 }
-
-
 .sbox-title small {
   display: none;
 }
@@ -3599,172 +3507,6 @@ li.multiselect-item.multiselect-group + li a label {
 {
   color:black;
 }
-.sbox-tools>a.btn-white{
-  margin-left: 7px !important;
-}
-.btn-white{
-  margin-left: 2px !important;
-  float: left;
-}
-/* .height-set{
-  margin-left: 2px !important;
-  left:2px;
-}
-*/
-select#col-config{
-  /*left: 2px !important;  */
-    /*top: 0px !important;*/
-  /*margin-right:2px;*/
-
-}
-/* for FireFox*/
-@-moz-document url-prefix() {
-  /* .height-set{ margin-top: -1px !important; } */
-}
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  /* Safari and Chrome
-  .height-set {
-    margin-top: -1px !important;
-  } */
-  select {
-
-    -webkit-border-radius: 0px;
-  }
-}
-
-.sbox-content .pull-right .btn{
-    margin:0px !important;
-    left: 0px !important;
-    top: 0px !important;
-    margin-right:3px !important;
-    margin-left:0px !important;
-    margin-bottom: 3px !important;
-}
-.sbox-content .c-margin select{
-    position:initial !important;
-    float: left ;
-}
-.sbox-content .c-margin .btn,
-.sbox-content .c-margin select{
-    margin:0px !important;
-    left: 0px !important;
-    top: 0px !important;
-    margin-right:3px !important;
-    margin-left:0px !important;
-    margin-bottom: 3px !important;
-}
-.floatnone{
-    float:none !important;
-}
-.btn.btn-sm .fa {
-  margin-right: initial !important;
-  position: relative !important;
-  display:inline-block !important;
-  left: -3px !important;
-}
-.sbox-content .c-margin .btn:nth-last-child(-n+3) .fa-pencil-square-o,
-.sbox-content .c-margin .btn:nth-last-child(-n+3) .fa-trash-o{
-    margin-right: initial !important;
-    position: relative !important;
-    display:inline-block !important;
-    left: 0px !important;
-}
 
 /*
-.alignment-left-fixed{
-
-    margin:0px !important;
-    left: 0px !important;
-    top: 0px !important;
-    margin-right:3px !important;
-    margin-left:0px !important;
-    margin-bottom: 3px !important;
-}
-.alignment-right-fixed{
-
-    margin:0px !important;
-    left: 0px !important;
-    top: 0px !important;
-    margin-right:0px !important;
-    margin-left:3px !important;
-    margin-bottom: 3px !important;
-}*/
-
-.gameImageContainer .center-block {
-	max-width: 400px;
-	width: 100% !important;
-}
-
-.gameImageContainer img ,.CoreUserImageContainer img {
-	max-width: 400px !important;
-	width: 100%;
-	height: auto;
-	display: block;
-	margin: 0 auto;
-}
-
-.gameDetailsContainer #cancelNotes {
-	width: 22px !important;
-}
-
-
-#managefreightquotersView .sbox-content .testbtn .clonedInput .btn.remove {
-	width: 24px;
-	margin-top: 5px;
-}
-
-.table-footer .table-actions .select-alt {
-	width: auto !important;
-	min-width: 70px;
-}
-
-
-@media (max-width: 991px) {
-
-#add_more_types{
-	top: -7px;
-	position: relative;
-}
-
-.remove_me {
-	position: relative;
-	top: 15px;
-}
-
-
-.gameImageContainer img {
-	margin-top: 15px;
-}
-
-.gameDetailsContainer #cancelNotes {
-	margin-top: 8px !important;
-	margin-right: 5px;
-	width: 23px !important;
-}
-
-#managefegrequeststoreGrid form .col-md-2 #multi-btn {
-	margin-top: 15px !important;
-	margin-left:-3px !important;
-}
-
-.c-margin .col-md-3 .pull-right,
-.c-margin .col-md-4 .pull-right,
-.c-margin .col-md-5 .pull-right{
-	float: left !important;
-}
-
-.c-margin .col-md-9,
-.c-margin .col-md-8,
-.c-margin .col-md-7 {
-	margin-bottom: 12px;
-}
-
-}
-
-.centralMessage {
-	padding: 0 15px;
-}
-
-.doSimpleSearch.btn {
-	min-width: 60px;
-}
+Test A*/
