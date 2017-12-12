@@ -1,11 +1,11 @@
-<div class="row c-margin">
+<div class="row c-margin" style="margin-left:0;margin-right:0">
         <?php
       //  $cartData=\Session::get('cartData');
         if($cartData['subtotals'])
             {
         ?>
 
-    <div class="col-md-8 col-md-offset-2" style="background: #FFF;box-shadow: 1px 1px 5px lightgray;padding:20px;margin-bottom:12px">
+    <div class="col-md-8 col-md-offset-2 col-sm-12" style="background: #FFF;box-shadow: 1px 1px 5px lightgray;padding:10px 15px 15px 15px;margin-bottom:15px;">
 
         <h1 class="text-center"><img src='{{ url() }}/sximo/images/shopping_cart.png'  /> {{ $cartData['title_2'] }}</h1>
         <div class="table-responsive" style="max-height: 800px;min-height: 100px;">
@@ -14,7 +14,9 @@
                 </table>
         </div>
     </div>
+    
     <?php } ?>
+        <div class="row">
             <div class="col-md-8">
 
                 @if($access['is_remove'] ==1 && $setting['disableactioncheckbox']=='false')
@@ -23,9 +25,11 @@
                 <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
 
             </div>
+            
             <div class="col-md-4 ">
 
             </div>
+        </div>
 </div>
 <script>
     var amt_short_msg=null;

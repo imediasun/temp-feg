@@ -228,15 +228,21 @@ function showBetweenFields(options) {
         previousValue2 = options.previousValue2, 
         dashElement = options.dashElement;
     
-    fieldElm.width('48%')
+    fieldElm.width('45%')
                 .attr('placeholder', 'Start')
-                .addClass('pull-left');
+                .addClass('pull-left')
+                 .css({
+            "margin-right": "5%"
+        });
 
     fieldElm2 = jQuery('<input name="'+field+'_end" class="form-control" />')
                 .insertAfter(fieldElm);
     fieldElm2.attr('placeholder', "End")
             .addClass('pull-left')
-            .width('48%');
+            .width('45%')
+            .css({
+            "margin-left": "5%"
+        });
 
 //            if (fieldElm.hasClass('sel-search-multiple')) {
 //                fieldElm2.addClass('.sel-search-multiple').select2();    
@@ -260,11 +266,15 @@ function showBetweenFields(options) {
     dashElement = jQuery('<div class="betweenseparator"> - </div>')
                     .insertAfter(fieldElm);
     dashElement
-        .addClass('pull-left')
         .css({
-            "margin": "1%",
-            "height": "100%",
-            "line-height": "2em"
+            "height": "auto",
+            "line-height": "30px",
+            "position": "absolute",
+            "left": "0",
+            "right": "0",
+            "text-align": "center",
+            "margin": "0 auto",
+            "width": "8px"
         });    
     
 }

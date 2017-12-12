@@ -46,18 +46,24 @@
                         </div>
                     </div>
 
-                    <div class="form-group  " >
-                    <label for="Notes" class=" control-label col-md-4 text-left">
+                    <div class="form-group" >
+                        
+                    <label for="Notes" class="control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) !!}
                     </label>
+                    
                     <div class="col-md-6">
-					  <textarea name='notes' rows='5' id='notes' class='form-control '
-                                required  >{{ $row['notes'] }}</textarea>
+					  <textarea name='notes' rows='5' id='notes' class='form-control'
+                                required  >{{ $row['notes'] }}
+                        </textarea>
                     </div>
+                    
                     <div class="col-md-2">
 
                     </div>
-            </div>
+                    
+                    </div>
+            
                 </fieldset>
             </div>
             <div style="clear:both"></div>

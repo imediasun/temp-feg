@@ -1,7 +1,7 @@
 
     <div class="table-footer">
 	<div class="row">
-	 <div class="col-sm-5">
+	 <div class="col-sm-5 clearfix">
 	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule;?>Filter">        
 	   {!! Form::open(array('url'=> (isset($pageUrl) ? $pageUrl : $pageModule) .'/filter')) !!}
 		   {{--*/ $pages = array(10,20,30,50,100) /*--}}
@@ -11,6 +11,7 @@
 		<input type="hidden" name="simplesearch" value="<?php if(!is_null(Input::get('simplesearch'))) echo Input::get('simplesearch') ;?>" />
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
         <?php $setRows = isset($pager['rows']) ? $pager['rows'] : @$setting['perpage']; ?>
+        
 		<select name="rows" data-placeholder="{{ Lang::get('core.grid_show') }}" 
                 class="select-alt"  data-setvalue="{{ $setRows }}" >		  
 		  @foreach($pages as $p)
@@ -25,7 +26,7 @@
         @endif
         
         @if(!isset($setting['disablesort']) || $setting['disablesort'] == 'false')
-		<select name="sort" data-placeholder="{{ Lang::get('core.grid_sort') }}" class="select-alt"  >
+		<select  width="110" name="sort" data-placeholder="{{ Lang::get('core.grid_sort') }}" class="select-alt"  style="width:110px">
 		  <option value=""> {{ Lang::get('core.grid_sort') }} </option>	 
 		  @foreach($tableGrid as $field)
 		   @if($field['view'] =='1' && $field['sortable'] =='1') 
@@ -38,6 +39,7 @@
 		  @endforeach
 		 
 		</select>	
+	
 		<select name="order" data-placeholder="{{ Lang::get('core.grid_order') }}" class="select-alt">
 		  <option value=""> {{ Lang::get('core.grid_order') }}</option>
 		   @foreach($orders as $o)

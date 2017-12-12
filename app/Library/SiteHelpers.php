@@ -1585,13 +1585,13 @@ class SiteHelpers
 
                 $path_file = str_replace("./", "", $path);
                 if ($circle) {
-                    $class = "img-circle";
+                    $class = "img-circle img-responsive";
                 } else {
-                    $class = 'img';
+                    $class = 'img img-responsive';
                 }
                 $rel = "gallery" . $id;
                 return '<p><a href="' . url($path_file . $file) . '" target="_blank" class="previewImage fancybox" data-fancybox-group="' . $rel . '"  rel="' . $rel . '">
-				<img style="box-shadow:1px 1px 5px gray" src="' . asset($path_file . $file) . '" border="0" width="' . $width . '" class="' . $class . '"  /></a></p>';
+				<img style="box-shadow:1px 1px 5px gray;max-width: 100%;height: auto" src="' . asset($path_file . $file) . '" border="0" width="' . $width . '" class="' . $class . '"  /></a></p>';
             } else {
                 $path_file = str_replace("./", "", $path);
                 return '<p> <a  href="' . url($path_file . $file) . '" target="_blank"> ' . $file . ' </a>';
