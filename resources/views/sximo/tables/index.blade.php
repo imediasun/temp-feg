@@ -23,12 +23,17 @@
 
 			<div class="sbox">
 
-			<div class="sbox-title"><i class="icon-database"></i> All Tables  
-			<span class="pull-right">	
-				<a href="{{ URL::TO('feg/tables/tableconfig/')}}" class="btn btn-xs btn-primary linkConfig"><i class="fa fa-plus"></i> New Table </a>
-				<a href="{{ URL::TO('feg/tables/mysqleditor/')}}" class="btn btn-xs btn-success linkConfig"><i class="fa fa-pencil"></i> MySQL Editor </a>
-			</span>	
+			<div class="sbox-title">
+				
+				<h5><i class="icon-database"></i> All Tables</h5>
+			
+				<div class="sbox-tools">	
+					<a href="{{ URL::TO('feg/tables/tableconfig/')}}" class="btn btn-xs btn-white linkConfig"><i class="fa fa-plus"></i> New Table </a>
+					<a href="{{ URL::TO('feg/tables/mysqleditor/')}}" class="btn btn-xs btn-white linkConfig"><i class="fa fa-pencil"></i> MySQL Editor </a>
+				</div>	
+				
 			</div>
+			
 			<div class="sbox-content">
 
 			

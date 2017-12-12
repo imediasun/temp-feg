@@ -3,9 +3,18 @@
     background:#195a97;
     color:#FFF;
 }
-.nav > li.active {
+.nav > li.active a {
     background: #0a2347;
 }
+
+.nav-tabs > li:last-child a {
+	margin-right: 0;
+}
+
+.nav-tabs > li > a {
+	margin-right: 5px;
+}
+
 .sbox-content .nav.nav-tabs li.active {
     background: none;
 }

@@ -38,7 +38,7 @@
                         @endforeach
                     </ul>--}}
 
-                    {!! Form::open(array('url'=>'core/users/save?return='.$return, 'id'=>'user_form','class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
+                    {!! Form::open(array('url'=>'core/users/save?return='.$return, 'id'=>'user_form','class'=>'form-horizontal clearfix','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
                     <div class="col-md-6">
 
 
@@ -441,21 +441,25 @@
 
                     <div style="clear:both"></div>
 
+                    <div class="col-sm-12">
+                        
+                        <div class="form-group">
 
-                    <div class="form-group">
-
-                        <div class="col-sm-12 text-center btn-margin text-left-xs">
-                            <button type="submit" name="apply" class="btn btn-info btn-sm"><i
-                                        class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
-                            <button type="submit" name="submit" class="btn btn-primary btn-sm"><i
-                                        class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
-                            <button type="button" onclick="location.href='{{ URL::to('core/users?return='.$return) }}' "
-                                    class="btn btn-success btn-sm "><i
-                                        class="fa  fa-arrow-circle-left "></i> {{ Lang::get('core.sb_cancel') }}
-                            </button>
+                            <div class="col-sm-12 text-center btn-margin text-left-xs">
+                                <button type="submit" name="apply" class="btn btn-info btn-sm"><i
+                                            class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
+                                <button type="submit" name="submit" class="btn btn-primary btn-sm"><i
+                                            class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
+                                <button type="button" onclick="location.href='{{ URL::to('core/users?return='.$return) }}' "
+                                        class="btn btn-success btn-sm "><i
+                                            class="fa  fa-arrow-circle-left "></i> {{ Lang::get('core.sb_cancel') }}
+                                </button>
+                            </div>
+                            
                         </div>
-
+                        
                     </div>
+                    
 
                     {!! Form::close() !!}
                 </div>
