@@ -65,6 +65,7 @@ usort($tableGrid, "SiteHelpers::_sort");
             @endif
 <div class="table-responsive">
 	@if(count($rowData)>=1)
+
     <table class="table table-striped datagrid " id="{{ $pageModule }}Table" style="position:relative">
         <thead>
         <tr class="row-">
@@ -166,17 +167,13 @@ usort($tableGrid, "SiteHelpers::_sort");
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                            @if($field['field']=='status_id' && !empty($row->deleted_at))
 
-                                    {!! "Removed" !!}
-
-                                @else
                                 @if($field['field']=='notes' && !empty($row->notes))
 							                <?php echo ltrim($value,'<br>'); ?>
                                     @else
                                              {!! $value !!}
                                     @endif
-                                @endif
+
 							 </td>
 							@endif
 						 <?php endif;
@@ -317,10 +314,10 @@ usort($tableGrid, "SiteHelpers::_sort");
                     $(selector).attr('data-format','$ '+data.total).attr('data-values', data.total).text('$ '+data.total);
                 }else if((settings.url).indexOf('order/data') !==-1){
 
-                   <?php if($set_removed =="set_removed") { ?>
-                    $("select[name='status_id'] option[value='removed']").attr('selected','selected');
-                    $("select[name='status_id']").change();
-                    <?php } ?>
+                   <?php //if($set_removed =="set_removed") { ?>
+                   // $("select[name='status_id'] option[value='removed']").attr('selected','selected');
+                  //  $("select[name='status_id']").change();
+                    <?php //} ?>
             }
             }
         });
@@ -440,9 +437,9 @@ usort($tableGrid, "SiteHelpers::_sort");
         });
 
        // setTimeout(function(){
-        $("select[name='status_id']").each(function(){
+       /* $("select[name='status_id']").each(function(){
             $(this).append('<option value="removed"> Removed</option>')
-        });
+        });*/
       //  },500);
 });
 </script>

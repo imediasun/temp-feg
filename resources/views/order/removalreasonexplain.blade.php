@@ -10,15 +10,29 @@
         </div>
 
         <div class="page-content-wrapper m-t">
+
+
             <div class="sbox animated fadeInRight">
                 <div class="sbox-title"><h4><i class="fa fa-table"></i> Order Removal Reason </h4></div>
                 <div class="sbox-content">
+                    @if(!empty($msgstatus) && $msgstatus=='error')
+                        <div class="alert alert-danger" id="alert-remove-after-5-sec">
+                            {!! $messagetext !!}
+                        </div>
+                        <script>
+                            $(function(){
+                                setTimeout(function(){ $("#alert-remove-after-5-sec").slideUp('slow'); },5000);
+                            });
+                        </script>
+                    @endif
                     <div class="row">
                         <div class="col-md-8" style="">
                             <h1>Order Removal Reason</h1>
                         </div>
 
+
                         <div class="col-md-7" style="margin-left:16px;">
+
                             {!! Form::open(array('url'=>'order/delete', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>'removalreasonform','onsubmit'=>'return validateReason()')) !!}
                             <?php $po_numbers = explode(",", $ids); ?>
                             @foreach($po_numbers as $po_number)

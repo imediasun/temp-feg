@@ -312,10 +312,10 @@ class OrderController extends Controller
         }
         $this->data['order_selected'] = $order_selected;
         // Render into template
-        $this->data['set_removed'] = "others";
+        /*$this->data['set_removed'] = "others";
         if (strpos($_SESSION['searchParamsForOrder'], 'status_id:equal:removed|') > 0) {
             $this->data['set_removed'] = 'set_removed';
-        }
+        }*/
 
         return view('order.table', $this->data);
 
@@ -977,7 +977,7 @@ class OrderController extends Controller
 
         $id = $request->input('ids');
         $explaination = $request->input('explaination');
-        $result = \DB::update("update orders set notes = concat(notes,'<br>','$explaination'), deleted_at=null, deleted_by=null where id in($id) ");
+        $result = \DB::update("update orders set notes = concat(notes,'<br>','$explaination'), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
 
         if ($result) {
             return Redirect::to('order')->with('messagetext', 'Order has been restored successfully!')->with('msgstatus', 'success');
@@ -989,8 +989,33 @@ class OrderController extends Controller
     public function postRemoveorderexplaination(Request $request)
     {
         $this->data['ids'] = implode(",", $request->input('ids'));
+        $totalIdsCount = count($request->input('ids'));
+        $ids = implode("','", $request->input('ids'));
 
-        return view("order.removalreasonexplain", $this->data);
+        $sql = " select po_number from orders where po_number in ('$ids') and is_api_visible=0";
+
+        $result = \DB::select($sql);
+        $ids = [];
+        foreach($result as $idsObject){
+            $ids[]= $idsObject->po_number;
+        }
+       // dd(implode(",",$ids));
+        $excludedIdsCount = $totalIdsCount-count($ids);
+        $remainIdsCount = count($ids);
+
+        if($remainIdsCount>0){
+            $this->data['ids'] =implode(",",$ids);
+            if($excludedIdsCount>0){
+                $this->data['messagetext'] = "Posted to Netsuite order status cann't be updated as remeved. ". ($excludedIdsCount>1 ? $excludedIdsCount.' orders have been excluded.' : $excludedIdsCount.' order has been excluded.');
+                $this->data['msgstatus'] = "error";
+            }
+           // dd( $this->data['msgstatus']);
+            return view("order.removalreasonexplain", $this->data);
+        }else{
+            return Redirect::to('order')->with('messagetext', "The orders you have selected has been posted to Netsuite. So, It cann't be removed!")->with('msgstatus', 'error');
+        }
+
+
     }
 
     public function postDelete(Request $request)
@@ -1002,7 +1027,7 @@ class OrderController extends Controller
         $query = "";
         $result = false;
         for ($i = 0; $i < count($ids); $i++) {
-            $query = "update orders set notes = concat(notes,'<br>','" . $explaination[$i] . "'), deleted_at=NOW(), deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
+            $query = "update orders set notes = concat(notes,'<br>','" . $explaination[$i] . "'), deleted_at=NOW(), status_id=10, deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
             $result = \DB::update($query);
         }
 
@@ -1132,8 +1157,8 @@ class OrderController extends Controller
             if (!empty($statusIdFilter)) {
                 if ($statusIdFilter == 6) {
                     $orderStatusCondition = " OR (orders.status_id = '2' AND orders.tracking_number!='') AND orders.deleted_at is null ";
-                } elseif ($statusIdFilter == "removed") {
-                    $orderStatusCondition = "AND orders.deleted_at is not null  ";
+                } elseif ($statusIdFilter == 10) {
+                    $orderStatusCondition = " AND orders.deleted_at is not null  ";
                 } else {
                     $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter' AND  orders.tracking_number!='') AND orders.deleted_at is null ";
                 }
@@ -1146,10 +1171,10 @@ class OrderController extends Controller
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
-
-        if ($statusIdFilter == "removed") {
+   // dd($filter);
+        /*if ($statusIdFilter == "removed") {
             $filter = str_replace("orders.status_id = 'removed'", " orders.deleted_at is not null ", $filter);
-        }
+        }*/
         // dd( $filter);
         return $filter;
     }
