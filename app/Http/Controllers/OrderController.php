@@ -1043,7 +1043,7 @@ class OrderController extends Controller
         }
 
         if ($result) {
-            return Redirect::to('order')->with('messagetext', 'Order has been removed successfully.')->with('msgstatus', 'success');
+            return Redirect::to('order')->with('messagetext', 'Order(s) has/have been removed successfully.')->with('msgstatus', 'success');
         } else {
             return Redirect::to('order')->with('messagetext', 'This order status has already been removed!')->with('msgstatus', 'error');
         }
