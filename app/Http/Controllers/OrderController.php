@@ -1012,7 +1012,7 @@ class OrderController extends Controller
            // dd( $this->data['msgstatus']);
             return view("order.removalreasonexplain", $this->data);
         }else{
-            return Redirect::to('order')->with('messagetext', "The orders you have selected has been posted to Netsuite. So, It cann't be removed!")->with('msgstatus', 'error');
+            return Redirect::to('order')->with('messagetext', "Order you have selected has been posted to Netsuite. Order status cann't be updated as removed!")->with('msgstatus', 'error');
         }
 
 
