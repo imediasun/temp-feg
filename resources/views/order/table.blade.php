@@ -171,7 +171,42 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 @if($field['field']=='notes' && !empty($row->notes))
 							                <?php echo ltrim($value,'<br>'); ?>
                                     @else
+
+                                    @if($field['field']=='is_api_visible')
+                                        @if($value=='Yes')
                                              {!! $value !!}
+                                            @else
+                                            {!! 'No' !!}
+                                            @endif
+                                        @else
+                                             @if($field['field']=='invoice_verified')
+                                                 @if($value=='Yes')
+                                                     {!! $value !!}
+                                                 @else
+                                                     {!! 'No' !!}
+                                                 @endif
+                                             @else
+                                                 @if($field['field']=='is_freehand')
+                                                     @if($value=='Yes')
+                                                         {!! $value !!}
+                                                     @else
+                                                         {!! 'No' !!}
+                                                     @endif
+                                                 @else
+                                                     @if($field['field']=='is_partial')
+                                                         @if($value=='Yes')
+                                                             {!! $value !!}
+                                                         @else
+                                                             {!! 'No' !!}
+                                                         @endif
+                                                     @else
+                                                         {!! $value !!}
+                                                     @endif
+                                                 @endif
+                                             @endif
+                                        @endif
+
+
                                     @endif
 
 							 </td>
