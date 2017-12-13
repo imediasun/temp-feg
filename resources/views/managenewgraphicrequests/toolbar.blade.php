@@ -1,24 +1,25 @@
 <div class="row c-margin">
 
-    <div class="col-md-3" style="margin-bottom: 8px;">
-
+    <div class="col-md-3">
         <select name="type" class="select3" id="request_type" style="display:inline-block">
             <option value="open" selected> Open Graphics Requests </option>
             <option value="archive">Graphics Request Archive</option>
         </select>
-
     </div>
-        @if($view=="open")
-            <div class="abc" id="number_requests" >
-                <p style="color:red;  font-weight: bold">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
-            </div>
+    
+    @if($view=="open")
+        <div class="abc" id="number_requests" >
+            <p style="color:red;font-weight: bold;height: 30px;margin-bottom: 0;line-height: 26px;">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
+        </div>
 
-        @endif
-<div class="col-md-9"></div>
-<div class="clearfix"></div>
+    @endif
+        
 
+</div>
 
-    <div class="col-md-9" style="padding-top:8px" >
+<div class="row c-margin">
+
+    <div class="col-md-9">
         @if($access['is_remove'] ==1 && $setting['disableactioncheckbox']=='false')
             <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
         @endif
@@ -43,9 +44,7 @@
         @endif
     </div>
 
-
-
-    <div class="col-md-3 " style="padding-top:8px">
+    <div class="col-md-3">
         <?php
         $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
         $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;
@@ -74,7 +73,9 @@
             </div>
         @endif
     </div>
+    
 </div>
+
 <script>
     $('document').ready(function () {
         setType();

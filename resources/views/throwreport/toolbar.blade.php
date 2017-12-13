@@ -1,6 +1,7 @@
-<div class="row c-margin">
+<div class="row c-margin" style="margin-top: -5px;">
     
 	<div class="col-md-9">
+	    
 	    
 			@if($access['is_add'] ==1)
 {{--			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}--}}

@@ -1,7 +1,9 @@
 
 <div class="row">
     
-    <div class="col-md-3 sm13" style="display: none;">
+    <div class="row c-margin">
+        
+            <div class="col-md-3 sm13" style="display: none;">
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
             <option value="select" data-active="0" selected>------------ Select Type --------------</option>
@@ -26,8 +28,8 @@ width: 75%">
     <div class="col-md-3" style="display: none;">
        <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'>  </select>
     </div>
-
-    <div class="row m-b">
+    
+        
         <div class="col-md-6">
             {!! Form::open(array('url'=> url().'/product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
             
@@ -44,7 +46,9 @@ width: 75%">
     
             {!! Form::close() !!}
         </div>
+        
  </div>   
+ 
     <div class="row c-margin" style="margin-left:0px; margin-right:0px;">
         
         <div class="col-md-9">
@@ -267,4 +271,6 @@ width: 75%">
         }
 
     </script>
+    
 </div>
+ 

@@ -799,12 +799,20 @@ button.dim:active:before {
   border-radius:0;
   -moz-border-radius:0;
 }
-.form-horizontal .control-label, .form-horizontal .radio, .form-horizontal .checkbox, .form-horizontal .radio-inline, .form-horizontal .checkbox-inline,
+.form-horizontal .control-label,
+.form-horizontal .radio,
+.form-horizontal .checkbox,
+.form-horizontal .radio-inline,
+.form-horizontal .checkbox-inline,
 .control-label {
-  
   font-weight: 500 !important; 
-
 }
+
+.form-horizontal .radio, .form-horizontal .checkbox {
+	padding-left:0px;
+}
+
+
 .badge {
   background-color: #d1dade;
   color: #5e5e5e;
@@ -3459,6 +3467,15 @@ margin-left: 15px;
   margin-left: 0;
 }
 
+.table-responsive > .table > thead > tr > th,
+.table-responsive > .table > tbody > tr > th,
+.table-responsive > .table > tfoot > tr > th,
+.table-responsive > .table > thead > tr > td,
+.table-responsive > .table > tbody > tr > td,
+.table-responsive > .table > tfoot > tr > td {
+	white-space: inherit;
+}
+
 }
 
 
@@ -3489,6 +3506,22 @@ margin-left: 15px;
   position: relative;
   right: 5px;
   top: 0;
+}
+
+.radio-inline, .checkbox-inline {
+	display: block;
+	padding-left: 0;
+	margin-left: 0 !important;
+}
+
+#productView .collapse-close.pull-right.btn.btn-xs.btn-danger {
+	top: inherit;
+	float: left !important;
+	margin-top: 15px;
+}
+
+#managefreightquotersView form .col-md-8 {
+	padding: 0 !important;
 }
 
 
@@ -3728,7 +3761,7 @@ select#col-config{
 
 .remove_me {
 	position: relative;
-	top: 15px;
+	top: -58px;
 }
 
 
@@ -3768,3 +3801,15 @@ select#col-config{
 .doSimpleSearch.btn {
 	min-width: 60px;
 }
+
+#productView form .form-group .input-group {
+	padding-left: 30px;
+	position: relative;
+}
+
+#productView form .form-group .input-group .input-group-addon {
+	width: 30px;
+	position: absolute;
+	left: 0;
+}
+
