@@ -2407,7 +2407,12 @@ fieldset { margin:10px 0;}
 fieldset legend { font-size:16px; padding:10px 0; font-weight:500;}
 .table-responsive { background:#fff;  border:solid 1px #ddd; overflow-x:auto; /*padding-bottom:15px;*/}
 .toolbar { margin:10px 0; clear:both; text-align:right;}
-.toolbar-line { margin:6px 0; clear:both; }
+
+.toolbar-line {
+	margin: 0px 0px 15px 0;
+	clear: both;
+}
+
 .page-content-wrapper { padding:0 15px;}
 .ribon-sximo { margin:20px 0;}
 
@@ -3358,6 +3363,11 @@ position: relative;
 /* Mobile Layout: 320px. */
 
 @media only screen and (max-width: 767px) {
+  
+.taskNameText .taskActionText {
+	display: block;
+	word-break: break-all;
+}
 
 .c-margin .col-md-9,
 .c-margin .col-md-8,
@@ -3514,20 +3524,24 @@ margin-left: 15px;
 	margin-left: 0 !important;
 }
 
-#productView .collapse-close.pull-right.btn.btn-xs.btn-danger {
-	top: inherit;
-	float: left !important;
-	margin-top: 15px;
-}
 
 #managefreightquotersView form .col-md-8 {
 	padding: 0 !important;
+}
+
+.sbox-title h4 {
+	font-size: 12px;
 }
 
 
 }
 
 @media only screen and (max-width: 420px){
+
+.label-title {
+	display: block;
+	margin-top: 15px;
+}
 
   .sbox-title {
 	padding: 14px 10px;
@@ -3813,3 +3827,6 @@ select#col-config{
 	left: 0;
 }
 
+.toolbar-line a.btn:first-child {
+	margin-left: 0 !important;
+}
