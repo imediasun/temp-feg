@@ -992,27 +992,35 @@ class OrderController extends Controller
         $totalIdsCount = count($request->input('ids'));
         $ids = implode("','", $request->input('ids'));
 
-        $sql = " select po_number from orders where po_number in ('$ids') and is_api_visible=0";
+        $sql = " select po_number from orders where po_number in ('$ids') and is_api_visible=0 and status_id<>10";
 
         $result = \DB::select($sql);
         $ids = [];
         foreach($result as $idsObject){
             $ids[]= $idsObject->po_number;
         }
-       // dd(implode(",",$ids));
-        $excludedIdsCount = $totalIdsCount-count($ids);
         $remainIdsCount = count($ids);
+        $excludedIdsCount = count($request->input('ids'))-$remainIdsCount;
+        $postedtonetsuitePOIds =[];
+        if(is_array($request->input('ids'))){
+            foreach($request->input('ids') as $requestedIds){
+                if(!in_array($requestedIds,$ids)){
+                    $postedtonetsuitePOIds[] = $requestedIds;
+                }
+            }
+        }
 
         if($remainIdsCount>0){
             $this->data['ids'] =implode(",",$ids);
             if($excludedIdsCount>0){
-                $this->data['messagetext'] = "Posted to Netsuite order status cann't be updated as remeved. ". ($excludedIdsCount>1 ? $excludedIdsCount.' orders have been excluded.' : $excludedIdsCount.' order has been excluded.');
+                $this->data['messagetext'] = "Following POs cannot be removed: <br>".implode("<br>",$postedtonetsuitePOIds);
                 $this->data['msgstatus'] = "error";
             }
-           // dd( $this->data['msgstatus']);
-            return view("order.removalreasonexplain", $this->data);
+           return view("order.removalreasonexplain", $this->data);
+
+
         }else{
-            return Redirect::to('order')->with('messagetext', "Order you have selected has been posted to Netsuite. Order status cann't be updated as removed!")->with('msgstatus', 'error');
+            return Redirect::to('order')->with('messagetext', "Order you have selected has been posted to Netsuite. Order status can not be updated as removed!")->with('msgstatus', 'error');
         }
 
 
@@ -1032,7 +1040,7 @@ class OrderController extends Controller
         }
 
         if ($result) {
-            return Redirect::to('order')->with('messagetext', 'Order status has been updated as removed.')->with('msgstatus', 'success');
+            return Redirect::to('order')->with('messagetext', 'Order has been removed successfully.')->with('msgstatus', 'success');
         } else {
             return Redirect::to('order')->with('messagetext', 'This order status has already been removed!')->with('msgstatus', 'error');
         }

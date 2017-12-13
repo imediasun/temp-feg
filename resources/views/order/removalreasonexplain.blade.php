@@ -16,12 +16,10 @@
                 <div class="sbox-title"><h4><i class="fa fa-table"></i> Order Removal Reason </h4></div>
                 <div class="sbox-content">
                     @if(!empty($msgstatus) && $msgstatus=='error')
-                        <div class="alert alert-danger" id="alert-remove-after-5-sec">
-                            {!! $messagetext !!}
-                        </div>
+
                         <script>
                             $(function(){
-                                setTimeout(function(){ $("#alert-remove-after-5-sec").slideUp('slow'); },5000);
+                                notyMessageError(' {!! $messagetext !!} ');
                             });
                         </script>
                     @endif
