@@ -8,94 +8,96 @@
 	 </div>
 
 	<div class="sbox-content"> 
-@endif
+@endif	
 		<div class="table-responsive">
-		<table class="table table-striped table-bordered" >
-			<tbody>
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
-						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->location) }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Date Requested', (isset($fields['request_date']['language'])? $fields['request_date']['language'] : array())) }}	
-						</td>
-						<td>{{ \DateHelpers::formatDate($row->request_date) }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Requested By', (isset($fields['request_user_id']['language'])? $fields['request_user_id']['language'] : array())) }}	
-						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->request_name)}} </td>
-						
-					</tr>
-
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Product', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) }}
-						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->vendor_description)}} </td>
-
-					</tr>
-
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Supply Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}	
-						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->description) }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Case Qty', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) }}	
-						</td>
-						<td>{{ \DateHelpers::formatZeroValue($row->qty,$nodata['qty']) }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Status', (isset($fields['status_id']['language'])? $fields['status_id']['language'] : array())) }}
-						</td>
-
-						<td>{{ \DateHelpers::formatStringValue($row->status_id)}}</td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Date Processed', (isset($fields['process_date']['language'])? $fields['process_date']['language'] : array())) }}	
-						</td>
-						<td>{{ \DateHelpers::formatDate($row->process_date) }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Process User', (isset($fields['process_user_id']['language'])? $fields['process_user_id']['language'] : array())) }}
-						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->process_name) }} </td>
-						
-					</tr>
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) }}	
-						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->notes) }} </td>
-						
-					</tr>
-				
-			</tbody>	
-		</table>  
-			</div>
-
+			<table class="table table-striped table-bordered" >
+				<tbody>
+						<tr>
+							<td width='30%' class='label-view text-right'>
+								{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
+							</td>
+							<td>{{ \DateHelpers::formatStringValue($row->location) }} </td>
+							
+						</tr>
+					
+						<tr>
+							<td width='30%' class='label-view text-right'>
+								{{ SiteHelpers::activeLang('Date Requested', (isset($fields['request_date']['language'])? $fields['request_date']['language'] : array())) }}	
+							</td>
+							<td>{{ \DateHelpers::formatDate($row->request_date) }} </td>
+							
+						</tr>
+					
+						<tr>
+							<td width='30%' class='label-view text-right'>
+								{{ SiteHelpers::activeLang('Requested By', (isset($fields['request_user_id']['language'])? $fields['request_user_id']['language'] : array())) }}	
+							</td>
+							<td>{{ \DateHelpers::formatStringValue($row->request_name)}} </td>
+							
+						</tr>
+	
+						<tr>
+							<td width='30%' class='label-view text-right'>
+								{{ SiteHelpers::activeLang('Product', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) }}
+							</td>
+							<td>{{ \DateHelpers::formatStringValue($row->vendor_description)}} </td>
+	
+						</tr>
+	
+						<tr>
+							<td width='30%' class='label-view text-right'>
+								{{ SiteHelpers::activeLang('Supply Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}	
+							</td>
+							<td>{{ \DateHelpers::formatStringValue($row->description) }} </td>
+							
+						</tr>
+					
+						<tr>
+							<td width='30%' class='label-view text-right'>
+								{{ SiteHelpers::activeLang('Case Qty', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) }}	
+							</td>
+							<td>{{ \DateHelpers::formatZeroValue($row->qty,$nodata['qty']) }} </td>
+							
+						</tr>
+					
+						<tr>
+							<td width='30%' class='label-view text-right'>
+								{{ SiteHelpers::activeLang('Status', (isset($fields['status_id']['language'])? $fields['status_id']['language'] : array())) }}
+							</td>
+	
+							<td>{{ \DateHelpers::formatStringValue($row->status_id)}}</td>
+							
+						</tr>
+					
+						<tr>
+							<td width='30%' class='label-view text-right'>
+								{{ SiteHelpers::activeLang('Date Processed', (isset($fields['process_date']['language'])? $fields['process_date']['language'] : array())) }}	
+							</td>
+							<td>{{ \DateHelpers::formatDate($row->process_date) }} </td>
+							
+						</tr>
+					
+						<tr>
+							<td width='30%' class='label-view text-right'>
+								{{ SiteHelpers::activeLang('Process User', (isset($fields['process_user_id']['language'])? $fields['process_user_id']['language'] : array())) }}
+							</td>
+							<td>{{ \DateHelpers::formatStringValue($row->process_name) }} </td>
+							
+						</tr>
+						<tr>
+							<td width='30%' class='label-view text-right'>
+								{{ SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) }}	
+							</td>
+							<td>{{ \DateHelpers::formatStringValue($row->notes) }} </td>
+							
+						</tr>
+					
+				</tbody>	
+			</table>  
+		</div>
+	
+	</div>
+		 
 
 @if($setting['form-method'] =='native')
 	</div>	
