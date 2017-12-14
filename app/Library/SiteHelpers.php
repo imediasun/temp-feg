@@ -2553,6 +2553,7 @@ class SiteHelpers
         }
 
         foreach ($newArray as $key => &$item) {
+
             $width = $item['simplesearchfieldwidth'];
             $widthClass = "";
             $widthStyle = "";
@@ -2563,6 +2564,7 @@ class SiteHelpers
             }
             $item['widthClass'] = $widthClass;
             $item['widthStyle'] = $widthStyle;
+
         }
 
         uasort($newArray, function ($a, $b) {
