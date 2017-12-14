@@ -1648,7 +1648,7 @@ class OrderController extends Controller
         //fixing for https://www.screencast.com/t/vwFYE3AlF
         $queries = \DB::select("SELECT *,LOCATE('$term',vendor_description) AS pos
                                 FROM products
-                                WHERE vendor_description LIKE '%$term%' AND products.inactive=0 AND products.exclude_export=0 $whereWithVendorCondition
+                                WHERE vendor_description LIKE '%$term%' AND products.inactive=0  $whereWithVendorCondition
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
                                  Limit 0,10");
