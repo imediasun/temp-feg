@@ -20,8 +20,8 @@ class shopfegrequeststore extends Sximo  {
                 LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id)";
 	}
    public  function queryWhere($cond=null){
-       $return=" WHERE products.id IS NOT NULL";
-       $return .=" AND products.exclude_export = 0";//bug-161 excluded products will not be visible in shop
+       $return=" WHERE products.id IS NOT NULL ";
+
 		if(is_array($cond))
         {
             $cond= array_filter($cond);
