@@ -1585,13 +1585,13 @@ class SiteHelpers
 
                 $path_file = str_replace("./", "", $path);
                 if ($circle) {
-                    $class = "img-circle img-responsive";
+                    $class = "img-circle";
                 } else {
-                    $class = 'img img-responsive';
+                    $class = 'img';
                 }
                 $rel = "gallery" . $id;
                 return '<p><a href="' . url($path_file . $file) . '" target="_blank" class="previewImage fancybox" data-fancybox-group="' . $rel . '"  rel="' . $rel . '">
-				<img style="box-shadow:1px 1px 5px gray;max-width: 100%;height: auto" src="' . asset($path_file . $file) . '" border="0" width="' . $width . '" class="' . $class . '"  /></a></p>';
+				<img style="box-shadow:1px 1px 5px gray" src="' . asset($path_file . $file) . '" border="0" width="' . $width . '" class="' . $class . '"  /></a></p>';
             } else {
                 $path_file = str_replace("./", "", $path);
                 return '<p> <a  href="' . url($path_file . $file) . '" target="_blank"> ' . $file . ' </a>';
@@ -2537,17 +2537,9 @@ class SiteHelpers
     static function configureSimpleSearchForm($data)
     {
         $newArray = array();
-        $flag=true;
         foreach ($data as $item) {
             if (isset($item['simplesearch']) && $item['simplesearch'] == '1') {
                 $item['generatingSimpleSearch'] = true;
-                if($flag==true){
-                    $item['simplesearchfieldwidth']="col-xs-12 col-sm-12 col-md-3 col-lg-2";
-                    $flag=false;
-                }else{
-                    $item['simplesearchfieldwidth']="col-xs-12 col-sm-12 col-md-3 col-lg-3";
-                }
-              //
                 $newArray[] = $item;
             }
         }
