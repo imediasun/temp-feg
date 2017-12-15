@@ -2572,6 +2572,7 @@ fieldset legend { font-size:16px; padding:10px 0; font-weight:500;}
     color: #006600;
   }
 }
+
 /* Specify class=linenums on a pre to get line numbering */
 ol.linenums {
   margin-top: 0;
@@ -3363,7 +3364,16 @@ position: relative;
 /* Mobile Layout: 320px. */
 
 @media only screen and (max-width: 767px) {
-  
+
+.modal .modal-content .modal-body form {
+	overflow-x: auto;
+	width: 100%;
+}
+
+.modal .modal-content .modal-body form #advance-search {
+	min-width: 400px !important;
+}
+
 .taskNameText .taskActionText {
 	display: block;
 	word-break: break-all;
@@ -3489,6 +3499,59 @@ margin-left: 15px;
 }
 
 
+@media only screen and (max-width: 520px){
+  
+  .page-title {
+	margin-right: 0px;
+	font-size: 16px !important;
+	line-height:30px;
+}
+
+
+  ul.pagination li:not(.show-mobile) {
+    display: none;
+  }
+  
+  #managefreightquotersView .sbox-content .form-group .radio-inline {
+  	display: block;
+  	margin-left: 0;
+  	padding-left: 0;
+  	margin-bottom: 10px;
+  }
+
+  .gameDetailsContainer .headStatus {
+  	position: inherit;
+  }
+
+}
+
+
+@media only screen and (max-width: 420px){
+  
+.page-title {
+	margin-right: 0px;
+	font-size: 16px !important;
+	line-height:30px;
+}
+
+
+.page-cms {
+	margin: 0 -15px;
+}
+
+.label-title {
+	display: block;
+	margin-top: 15px;
+}
+
+
+#sximo-modal-content {
+	padding: 10px 10px;
+}
+
+  
+}
+
 
 @media only screen and (max-width: 360px){
   
@@ -3533,68 +3596,21 @@ margin-left: 15px;
 	font-size: 12px;
 }
 
+.page-title {
+	margin-right: 0px;
+	font-size: 14px !important;
+	line-height:30px;
+}
+
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+	padding: 3px 1px;
+	font-size: 12px;
+}
+
 
 }
 
-@media only screen and (max-width: 420px){
-
-.label-title {
-	display: block;
-	margin-top: 15px;
-}
-
-  .sbox-title {
-	padding: 14px 10px;
-	height: 100%;
-	display:block;
-  }
-
-.sbox-title::before {
-	content: "";
-	display: table;
-}
-
-.sbox-title::after {
-	clear: both;
-	content: "";
-	display: table;
-}
-
-.sbox-title h5{
-  display:block;
-  width: 100%;
-}
-
-.sbox-tools {
-	display:block;
-	float: left;
-	margin-left: -7px;
-	width: 100%;
-}
-
-#sximo-modal-content {
-	padding: 10px 10px;
-}
-  
-}
-
-@media only screen and (max-width: 520px){
-  ul.pagination li:not(.show-mobile) {
-    display: none;
-  }
-  
-  #managefreightquotersView .sbox-content .form-group .radio-inline {
-  	display: block;
-  	margin-left: 0;
-  	padding-left: 0;
-  	margin-bottom: 10px;
-  }
-
-  .gameDetailsContainer .headStatus {
-  	position: inherit;
-  }
-
-}
 
 
 .sbox-title small {
@@ -3844,3 +3860,8 @@ select#col-config{
 .toolbar-line a.btn:first-child {
 	margin-left: 0 !important;
 }
+
+.page-cms div a {
+	word-wrap: break-word;
+}
+

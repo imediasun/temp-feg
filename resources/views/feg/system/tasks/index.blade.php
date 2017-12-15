@@ -15,9 +15,12 @@
 	<!-- End Header & Breadcrumb -->
 
 	<!-- Begin Content -->
-    <span class='label label-success'>Now: {!! date('Y-m-d H:i:s') !!}</span>
+    
 	<div class="page-content-wrapper m-t">
-		<div class="resultData"></div>
+	  <span class='label label-success m-b-sm'>Now: {!! date('Y-m-d H:i:s') !!}</span>
+	  
+		<div class="resultData m-b-sm"></div>
+		
 		<div id="{{ $pageModule }}View"></div>			
         <div id="{{ $pageModule }}Grid">
             @include('feg.system.tasks.table') 

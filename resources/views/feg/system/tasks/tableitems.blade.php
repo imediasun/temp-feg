@@ -72,6 +72,7 @@
             </div>
             <div class="panel-body clearfix" style='display:none;'>
                 <div class="">
+                    
                 <div class="taskScheduleContainer col-lg-6">
                     <div class="clearfix cronscheduletext">
                         <strong>Schedule: </strong>
@@ -79,6 +80,7 @@
                                 data-cronstamp="{{ $schedule }}">                                      
                             </span> 
                     </div>
+                    
                     <div class="formContent specialRunBeforeAfter hidden clearfix m-t">
                         <div class="form-inline clearfix cronscheduleinputs">
                             <label><strong>Edit: </strong></label>
@@ -121,27 +123,31 @@
                                 placeholder="Year" class="cronyear croninp">-->
                             <input type="hidden" name="schedule" value="{{ $schedule }}" >
                         </div>
-                        <div class="clearfix m-t">
+                        <div class="row clearfix m-t">
+                            
                             <div class='col-sm-6'>
                             <label>Run before:</label>
-                            <select name="run_before" 
+                            <select style="width: 100%;margin-left: 0;margin-right: 0;" name="run_before" 
                                     data-toggle="tooltip" data-placement="top" 
                                     title="This task will run before the running the task selected from the dropdown"                                     
                                     data-select-runTask="{{ $run_before }}">
                                 <option value="">Select a Task </option>
                             </select>
                             </div>
+                            
                             <div class='col-sm-6'>
                             <label>Run after:</label>
-                            <select name="run_after" 
+                            <select style="width: 100%;margin-left: 0;margin-right: 0;" name="run_after" 
                                     data-toggle="tooltip" data-placement="top" 
                                     title="This task will run after the running the task selected from the dropdown"                                     
                                     data-select-runTask="{{ $run_after }}">
                                 <option value="">Select a Task </option>
                             </select>
                             </div>
+                            
                         </div>
                     </div>
+                    
                     <div class="textContent clearfix taskAttachBeforeAfter">
                         <p class="m-t @if (empty($run_before)) hidden @endif"
                             ><strong>Run Before: </strong>
@@ -155,6 +161,7 @@
                         </p>
                     </div>                    
                 </div>
+                
                 <div class="formContent hidden taskConfig col-lg-6 shade2">
                     <div class="clearfix">
                     <div class="col-sm-3 no-r-padding m-b">

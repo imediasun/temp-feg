@@ -54,7 +54,8 @@
                  <div class="panel-footer">
                  </div>
             </div>
-            <table class="table table-striped table-bordered" id="table">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="table">
                 <thead class="no-border">
                     <tr>
                         <th width="8%">Description</th>
@@ -143,7 +144,8 @@
                                       class="form-control"  >{!! $row['bcc_exclude_emails'] !!}</textarea></td>
                     </tr>
                 </tbody>
-            </table>            
+            </table>   
+            </div>
             <div class="panel white-bg">
                  <div class="panel-heading">
                      <strong>Email recipients while testing</strong>
