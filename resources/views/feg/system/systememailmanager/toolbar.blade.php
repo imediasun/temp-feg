@@ -1,5 +1,5 @@
 <div class="row c-margin">
-	<div class="col-md-9">
+	<div class="col-md-9" style="margin-bottom: 0;">
 		@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageUrl,$setting) !!}
 		@endif

@@ -19,6 +19,7 @@
                     @endif
                 </h3>
             </div>
+            
             <div class="col-md-offset-3 col-md-6">
                 <h1>BILL-BACK SUMMARY:</h1>
                 <div class="table-responsive">
@@ -113,6 +114,7 @@
                     </table>
                     {!! Form::close() !!}
                 </div>
+                
                 <div class="col-md-3">
                     <ul class="parsley-error-list">
                         @foreach($errors->all() as $error)
@@ -159,8 +161,8 @@
             if (val == 1 || val == 2) {
 
                 $(event).parents("tr").next("tr."+remove).remove();
-                var html = '<tr class="'+name1+'test"><td colspan="4"><div class="form-group  col-md-10  col-sm-8"><label class="control-label  col-md-4 col-sm-5">' + label + '</label> <div class=" col-md-5 col-sm-5 "><input  type="text"   name="'+name1+'" value="' + dataval + '" class="form-control"/></div><label class="col-md-2 col-sm-2"> Details</label>' +
-                        '<div col-md-8 col-sm-8><input type="text" name="' + name2+ '" value="'+datadetail+'" class="form-control" /></div></div></td></tr>';
+                var html = '<tr class="'+name1+'test"><td colspan="4"><div class="form-group  col-sm-10 m-t-xs m-b-xs"><label class="control-label col-md-4 col-sm-5">' + label + '</label> <div class="col-md-8 col-sm-7 m-b-xs"><input  type="text"   name="'+name1+'" value="' + dataval + '" class="form-control"/></div><label class="control-label col-md-4 col-sm-5"> Details</label>' +
+                        '<div class="col-md-8 col-sm-7"><input type="text" name="' + name2+ '" value="'+datadetail+'" class="form-control" /></div></div></td></tr>';
             }
             $(event).parents("tr").after(html);
         }
