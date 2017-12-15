@@ -397,19 +397,36 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 	}
 });
 $(document).on("blur", "input[name='case_price']", function () {
-	$(this).val($(this).fixDecimal());
+    $(this).val($(this).fixDecimal());
 });
 
 $(document).on("keyup change", "input[name='case_price']", function () {
-	calculateUnitPrice($(this).parents('tr').data('id'));
+    calculateUnitPrice($(this).parents('tr').data('id'));
 });
 
 $(document).on("blur", "input[name='unit_price']", function () {
-	$(this).val($(this).fixDecimal());
+    $(this).val($(this).fixDecimal());
 });
 
 $(document).on("blur", "input[name='retail_price']", function () {
-	$(this).val($(this).fixDecimal());
+    $(this).val($(this).fixDecimal());
+});
+$(function(){
+
+    $.ajax({
+        type:"GET",
+        data:{DATATEST:1},
+        dataType:"HTML",
+        url:'product/expense-category-ajax',
+        success:function(response){
+            console.log(response);
+            $(".expense_category").html(response);
+            $(".expense_category").change();
+        },
+        error:function(res){
+            console.log(res);
+        }
+    });
 });
 </script>
 

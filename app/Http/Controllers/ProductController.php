@@ -4,6 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Validator, Input, Redirect;
 use Illuminate\Support\Facades\DB;
 use Validator, Input, Redirect,Image;
 
@@ -46,7 +47,7 @@ class ProductController extends Controller
         }
 
     }
-    
+
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
@@ -643,16 +644,55 @@ class ProductController extends Controller
 
     function getExpenseCategoryGroups(){
         $expense_category=\DB::table('expense_category_mapping')
-            ->select('mapped_expense_category as id', 'mapped_expense_category')
+            ->select('mapped_expense_category as id', 'mapped_expense_category','order_type')
             ->groupBy('mapped_expense_category')->get();
         $items = [];
         foreach ($expense_category as $key => $category){
+            $producttypes = "";
             if($category->mapped_expense_category == 0)
             {
                 $category->mapped_expense_category = "N/A";
+            }else
+                {
+                if (!empty($category->order_type) && is_numeric($category->order_type)) {
+
+                    $product_type = \DB::select("select order_type from order_type where id='" . $category->order_type . "'");
+                    foreach($product_type as $key=>$obj)
+                    {
+                        $producttypes .=" | ".$obj->order_type;
+                    }
             }
-            $items[] = [$category->id, $category->mapped_expense_category];
+            }
+            $items[] = [$category->id, $category->mapped_expense_category.$producttypes];
         }
         return $items;
+    }
+    function getExpenseCategoryAjax(Request $request){
+
+        $expense_category=\DB::table('expense_category_mapping')
+            ->select('mapped_expense_category as id', 'mapped_expense_category','order_type')
+            ->groupBy('mapped_expense_category')->get();
+        $items = ['<option value=""> -- Select  -- </option>'];
+        foreach ($expense_category as $key => $category){
+            $producttypes = "";
+            if($category->mapped_expense_category == 0)
+            {
+                $category->mapped_expense_category = "N/A";
+            }else
+            {
+                if (!empty($category->order_type) && is_numeric($category->order_type)) {
+
+                    $product_type = \DB::select("select order_type from order_type where id='" . $category->order_type . "'");
+                    foreach($product_type as $key=>$obj)
+                    {
+                        $producttypes .=" | ".$obj->order_type;
+                    }
+                }
+            }
+            $items[] = '<option value="'.$category->id.'"> '.$category->mapped_expense_category.$producttypes.' </option>';
+
+        }
+        $options = implode("",$items);
+        echo $options;
     }
 }
