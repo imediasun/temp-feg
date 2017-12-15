@@ -29,6 +29,7 @@
         </div>
         
         <div class="col-md-2 col-sm-12 m-b-xs m-t-xs clearfix">
+
             <div class="clearfix" >
                 <button type="submit" class="btn btn-primary submitButton" id="submit" name="submit">Export to Excel</button>
             </div>
