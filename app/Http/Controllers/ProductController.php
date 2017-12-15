@@ -4,7 +4,6 @@ use App\Http\Controllers\controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
 use Illuminate\Support\Facades\DB;
 use Validator, Input, Redirect,Image;
 
