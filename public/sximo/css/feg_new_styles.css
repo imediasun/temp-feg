@@ -3,7 +3,7 @@
     background:#195a97;
     color:#FFF;
 }
-.nav > li.active a {
+.nav > li.active {
     background: #0a2347;
 }
 
