@@ -357,6 +357,15 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 	console.log(settings);
 	var $urlArray = settings.url.split('/');
 	console.log($urlArray);
+    $('tr td[data-field="expense_category"]').each(function(){
+        var ids = $.trim($(this).text());
+        ids = ids.trim();
+        if(ids !=="No Data") {
+           ids = ids.split("|");
+           $(this).text(Number(ids[0]));
+
+        }
+    });
 	if(typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null)
 	{
 		if ( settings.url === "product/save/"+$urlArray[2] ) {
