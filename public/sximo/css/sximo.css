@@ -3361,6 +3361,14 @@ position: relative;
 
 
 @media only screen and (max-width: 767px) {
+  
+.tasksContainer #tasksGrid .taskName,
+.tasksContainer #tasksGrid .taskAction {
+	width: 100% !important;
+	margin-top: 5px !important;
+	font-size: 14px;
+}
+
 
 .modal .modal-content .modal-body form {
 	overflow-x: auto;
@@ -3497,6 +3505,12 @@ margin-left: 15px;
 
 
 @media only screen and (max-width: 520px){
+  
+.tasksContainer #tasksGrid .taskName,
+.tasksContainer #tasksGrid .taskAction {
+	font-size: 12px;
+}
+
   .redemptioncountergallaryupload {
 	padding: 15px;
 }
@@ -3529,6 +3543,20 @@ margin-left: 15px;
 
 @media only screen and (max-width: 420px){
   
+.tasksContainer #tasksGrid .taskName,
+.tasksContainer #tasksGrid .taskAction {
+	font-size: 10px;
+}
+
+.tasksContainer #tasksGrid .cronscheduleinputs label {
+	display: block !important;
+}
+
+.tasksContainer #tasksGrid .cronscheduleinputs input[type="text"] {
+	width: 100% !important;
+	margin-bottom: 5px !important;
+}
+
 .page-title {
 	margin-right: 0px;
 	font-size: 16px !important;
@@ -3606,8 +3634,6 @@ margin-left: 15px;
 
 
 }
-
-
 
 @media (max-width: 991px) {
 
