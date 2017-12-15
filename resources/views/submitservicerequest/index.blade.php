@@ -154,9 +154,6 @@
                                                 {{--class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }}--}}
                                     {{--</button>--}}
                                 </div>
-                            <
-
-
                             {!! Form::close() !!}
                         </div>
                         
