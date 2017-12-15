@@ -90,11 +90,13 @@
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+
 							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
 						@endif
 					@endif
 				@endforeach
+
 				<td >
 					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
 				</td>
@@ -343,7 +345,25 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 			}
 		}
 	}
+
 });
+	$(function(){
+
+        $.ajax({
+            type:"GET",
+            data:{DATATEST:1},
+            dataType:"HTML",
+            url:'product/expense-category-ajax',
+            success:function(response){
+                console.log(response);
+                $(".expense_category").html(response);
+                $(".expense_category").change();
+            },
+            error:function(res){
+                console.log(res);
+            }
+        });
+	});
 </script>
 
 <style>

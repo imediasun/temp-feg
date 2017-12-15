@@ -4,7 +4,8 @@ use App\Http\Controllers\controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Illuminate\Support\Facades\DB;
+use Validator, Input, Redirect,Image;
 
 class ProductController extends Controller
 {
@@ -32,14 +33,27 @@ class ProductController extends Controller
 
 
     }
-    
+
+    public function getModify(){
+        $query ="SELECT products.*  FROM `products` WHERE vendor_description REGEXP '[ ]{2,}'";
+        $products = DB::select($query);
+
+        foreach($products as $pro){
+            $vendor_desc = trim(preg_replace('/\s+/',' ', $pro->vendor_description));
+            DB::table('products')
+                ->where('id', $pro->id)
+                ->update(['vendor_description' => $vendor_desc]);
+        }
+
+    }
+
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'inactive' => '']);
         $skipFilters = ['search_all_fields'];
         $mergeFilters = [];
         extract($globalSearchFilter); //search_all_fields
@@ -71,10 +85,14 @@ class ProductController extends Controller
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
+        $activeInactive = '';
+        if($inactive != ''){
+            $activeInactive = " AND products.inactive = $inactive";
+        }
 
-        return $filter;
+        return $filter.$activeInactive;
     }
-    
+
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
@@ -186,6 +204,7 @@ class ProductController extends Controller
         // Grid Configuration
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['tableForm'] = $this->info['config']['forms'];
+
         $this->data['colspan'] = \SiteHelpers::viewColSpan($this->info['config']['grid']);
         // Group users permission
         $this->data['access'] = $this->access;
@@ -197,6 +216,7 @@ class ProductController extends Controller
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
         // Render into template
+
         return view('product.table', $this->data);
 
     }
@@ -276,6 +296,55 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        //to remove the extra spaces im between the string
+        $request->vendor_description = trim(preg_replace('/\s+/',' ', $request->vendor_description));
+
+        if(is_array($request->prod_sub_type_id) && $id == 0)
+        {
+            if(count(array_unique($request->prod_sub_type_id))<count($request->prod_sub_type_id))
+            {
+                // Array has duplicates
+                return response()->json(array(
+                    'message' => "Please Select Unique Combinations of Product Type & Sub Type",
+                    'status' => 'error'
+                ));
+            }
+        }
+        else
+        {
+            $type = is_array($request->prod_type_id)?$request->prod_type_id[0]:$request->prod_type_id;
+            $subtype = is_array($request->prod_sub_type_id)?$request->prod_sub_type_id[1]:$request->prod_sub_type_id;
+            $duplicate = Product::
+            where('prod_type_id',$type)
+            ->where('prod_sub_type_id',$subtype)
+            ->where('sku',$request->sku)
+            ->where('id','!=',$id)
+            ->where('vendor_description',$request->vendor_description)->first();
+            if($duplicate)
+            {
+                return response()->json(array(
+                    'message' => "A product with same Product Type & Sub Type already exist",
+                    'status' => 'error'
+                ));
+            }
+        ;
+        }
+        if ($request->hasFile('img'))
+        {
+            $file = $request->file('img');
+            $img = Image::make($file->getRealPath());
+            $mime = $img->mime();
+            if ($mime == 'image/jpeg') {
+                $extension = '.jpg';
+            } elseif ($mime == 'image/png') {
+                $extension = '.png';
+            } elseif ($mime == 'image/gif') {
+                $extension = '.gif';
+            } else {
+                $extension = '';
+            }
+        }
+
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
@@ -290,52 +359,100 @@ class ProductController extends Controller
         if ($validator->passes()) {
             if ($id == 0) {
                 $data = $this->validatePost('products');
-                $data['netsuite_description'] = "$id...".$data['vendor_description'];
+                $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
+            }
+            else {
+                //for inline editing all fields do not get saved
+                $data = $this->validatePost('products',true);
+                $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
+            }
+
+            $data['netsuite_description'] = "$id...".$data['vendor_description'];
+            if(is_array($product_categories) && $id > 0){
+
+                $products_combined = $this->model->checkProducts($id);
+                $data_attached_products= $data;
+
+                foreach($products_combined as $pc){
+                    if($pc->id == $id){
+                        $data['prod_type_id'] = $data['prod_type_id'][0];
+                        $data['prod_sub_type_id'] = $data['prod_sub_type_id'][1];
+                        $data['expense_category'] = $data['expense_category'][1];
+                        $data['retail_price'] = $data['retail_price'][1];
+                        $data['ticket_value'] = $data['ticket_value'][1];
+                        $this->model->insertRow($data, $id);
+                    }else{
+
+                        unset($data_attached_products['prod_type_id']);
+                        unset($data_attached_products['prod_sub_type_id']);
+                        unset($data_attached_products['expense_category']);
+                        unset($data_attached_products['retail_price']);
+                        unset($data_attached_products['ticket_value']);
+                        unset($data_attached_products['inactive']);
+                        unset($data_attached_products['in_development']);
+                        unset($data_attached_products['hot_item']);
+
+                        $this->model->insertRow($data_attached_products,$pc->id);
+                    }
+                }
+            }elseif(is_array($product_categories))
+            {
+                $ids = [];
+                $count = 1;
+                $prodData = $data;
                 foreach ($product_categories as $category)
                 {
-                    $data['retail_price'] = $retail_price;
-                    $category = explode('_',$category);
-                    $data['prod_type_id'] = $category[0];
-                    $data['prod_sub_type_id'] = $category[1];
-                    if($request->expense_category == '0'){
-                        $myRequest = new Request();
-                        $myRequest->merge(['order_type'=>$category[0],'product_type'=>$category[1]]);
-                        $expence_cat = $this->getExpenseCategory($myRequest);
-                        $expence_cat = json_decode($expence_cat);
-                        $data['expense_category'] = $expence_cat->expense_category == NULL ? 0 :$expence_cat->expense_category;
-                    }else{
-                        $data['expense_category'] = $request->expense_category;
-                    }
+                    $prodData['retail_price'] = (isset($retail_price[$count]) && !empty($retail_price[$count]))?$retail_price[$count]:0;
+                    $prodData['ticket_value'] = (isset($data['ticket_value'][$count]) && !empty($data['ticket_value'][$count]))?$data['ticket_value'][$count]:0;
+                    $prodData['prod_type_id'] = $category;
+                    $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count]))?$data['prod_sub_type_id'][$count]:0;
+                    $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count]))?$data['expense_category'][$count]:0;
+                    $count++;
                     /*
                      * commented as per Gabe request on 9/13/2017
                     if($data['prod_type_id'] != 8){
                         $data['retail_price'] = 0.000;
                     }*/
-                    $id = $this->model->insertRow($data, $request->input('id'));
+                    $ids[] = $this->model->insertRow($prodData, $id);
                 }
-            } else {
+                foreach ($ids as $id)
+                {
+                    $updates = array();
+                    $updates['netsuite_description'] = "$id...".$data['vendor_description'];
+                    if (isset($img)) {
 
-                //for inline editing all fields do not get saved
-                $data = $this->validatePost('products',true);
-                $data['netsuite_description'] = "$id...".$data['vendor_description'];
-                $data['retail_price']=$retail_price;
-                $id = $this->model->insertRow($data, $id);
-            }
-            /*
-			$updates = array();
-            if ($request->hasFile('img')) {
-                $file = $request->file('img');
-                $destinationPath = './uploads/products/';
-                $filename = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-                $newfilename = $id . '.' . $extension;
-                $uploadSuccess = $file->move($destinationPath, $newfilename);
-                if ($uploadSuccess) {
-                    $updates['img'] = $newfilename;
+                        $newfilename = $id . '' . $extension;
+                        $img_path='./uploads/products/' . $newfilename;
+                        $img->save($img_path);
+                        $updates['img'] = $newfilename;
+
+                    }
+                    $this->model->insertRow($updates, $id);
                 }
-                $this->model->insertRow($updates, $id);
             }
-			*/
+            else
+            {
+
+                $products_combined = $this->model->checkProducts($id);
+                $data_attached_products= $data;
+                foreach($products_combined as $pc){
+                    if($pc->id == $id){
+                        $this->model->insertRow($data, $id);
+                    }else{
+
+                        unset($data_attached_products['prod_type_id']);
+                        unset($data_attached_products['prod_sub_type_id']);
+                        unset($data_attached_products['expense_category']);
+                        unset($data_attached_products['retail_price']);
+                        unset($data_attached_products['ticket_value']);
+
+                        $this->model->insertRow($data_attached_products,$pc->id);
+                    }
+                }
+
+
+            }
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -399,10 +516,10 @@ class ProductController extends Controller
             $exportSessionID = 'export-'.$exportId;
             \Session::put($exportSessionID, microtime(true));
         }
-        
+
         $vendor_id = $request->vendor_id;
         $rows = $this->model->getVendorPorductlist($vendor_id);
-        $fields = array('Vendor', 'Description', 'Sku', 'Unit Price', 'Item Per Case', 'Case Price', 'Ticket Value', 'Order Type', 'Product Type', 'INACTIVE');
+        $fields = array('Vendor', 'Description', 'Sku', 'Unit Price', 'Item Per Case', 'Case Price', 'Ticket Value', 'Order Type', 'Product Type', 'INACTIVE', 'Reserved Qty');
         $this->data['pageTitle'] = 'ProductList_';
         $content = array(
             'exportID' => $exportSessionID,
@@ -487,6 +604,29 @@ class ProductController extends Controller
         }
     }
 
+    public function postExclude(Request $request)
+    {
+        $excludeExport = $request->get('excludeExport');
+        $productId = $request->get('productId');
+        if ($excludeExport == "true") {
+            $update = \DB::update('update products set exclude_export = 1 where id=' . $productId);
+        }
+        else
+        {
+            $update = \DB::update('update products set exclude_export = 0 where id=' . $productId);
+        }
+        if ($update) {
+            return response()->json(array(
+                'status' => 'success'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred while excluding from export'
+            ));
+        }
+    }
+
     function getExpenseCategory(Request $request)
 {
     $order_type_id=$request->get('order_type');
@@ -505,12 +645,55 @@ class ProductController extends Controller
 
     function getExpenseCategoryGroups(){
         $expense_category=\DB::table('expense_category_mapping')
-            ->select('mapped_expense_category as id', 'mapped_expense_category')
+            ->select('mapped_expense_category as id', 'mapped_expense_category','order_type')
             ->groupBy('mapped_expense_category')->get();
         $items = [];
         foreach ($expense_category as $key => $category){
-            $items[] = [$category->id, $category->mapped_expense_category];
+            $producttypes = "";
+            if($category->mapped_expense_category == 0)
+            {
+                $category->mapped_expense_category = "N/A";
+            }else
+                {
+                if (!empty($category->order_type) && is_numeric($category->order_type)) {
+
+                    $product_type = \DB::select("select order_type from order_type where id='" . $category->order_type . "'");
+                    foreach($product_type as $key=>$obj)
+                    {
+                        $producttypes .=" | ".$obj->order_type;
+                    }
+            }
+            }
+            $items[] = [$category->id, $category->mapped_expense_category.$producttypes];
         }
         return $items;
+    }
+    function getExpenseCategoryAjax(Request $request){
+
+        $expense_category=\DB::table('expense_category_mapping')
+            ->select('mapped_expense_category as id', 'mapped_expense_category','order_type')
+            ->groupBy('mapped_expense_category')->get();
+        $items = ['<option value=""> -- Select  -- </option>'];
+        foreach ($expense_category as $key => $category){
+            $producttypes = "";
+            if($category->mapped_expense_category == 0)
+            {
+                $category->mapped_expense_category = "N/A";
+            }else
+            {
+                if (!empty($category->order_type) && is_numeric($category->order_type)) {
+
+                    $product_type = \DB::select("select order_type from order_type where id='" . $category->order_type . "'");
+                    foreach($product_type as $key=>$obj)
+                    {
+                        $producttypes .=" | ".$obj->order_type;
+                    }
+                }
+            }
+            $items[] = '<option value="'.$category->id.'"> '.$category->mapped_expense_category.$producttypes.' </option>';
+
+        }
+        $options = implode("",$items);
+        echo $options;
     }
 }
