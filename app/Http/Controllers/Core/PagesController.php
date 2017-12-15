@@ -196,7 +196,7 @@ class PagesController extends Controller
             $patternAddTitleSection = '/<div.*?class=["\']sbox.*?animated.*?["\']>/im';
 
             $content = "@extends ('layouts.app') @section('content')".$content;
-            $content = preg_replace($patternAddTitleSection, '<div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
+            $content = preg_replace($patternAddTitleSection, '<div class="sbox animated fadeInRight page-cms"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
             $content = $content."@stop";
 
             $content = $this->addEditLinkTemplate($content);

@@ -219,9 +219,8 @@
                     </div>
                 </div>
                 <div class="clearfix form-group text-right">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-9">
-                        <label class="label-control col-md-9 text-right" style="margin-left: 20%;">Send Email Update:
+                    <div class="col-md-9 col-md-offset-3">
+                        <label class="label-control text-right">Send Email Update:
                         @if(!empty($row['contact_email']))
                              to <b style="font-size:1.2em;">{{  $row['contact_email']}}</b>
                         @endif
@@ -233,8 +232,8 @@
                 </div>                
             </div>
              <div class="freightSubmitContainer clearfix">
-                <div class="m-t-f clearfix">
-                    <div class="col-md-offset-5 col-md-2 text-center">
+                <div class="m-t-f form-group clearfix">
+                    <div class="col-md-21 text-center">
                         <button type="submit" class="btn btn-primary btn-sm "><i
                                     class="fa  fa-save "></i> Update </button>
                     </div>
