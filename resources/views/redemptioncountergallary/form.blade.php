@@ -10,7 +10,8 @@
         <div class="sbox-content">
             @endif
             <div class="row">
-                <div class="col-md-8 col-md-offset-2" style="background-color:#FFF;box-shadow:1px 1px 5px lightgray;padding:40px">
+                
+                <div class="col-md-8 col-md-offset-2 redemptioncountergallaryupload" style="background-color:#FFF;box-shadow:1px 1px 5px lightgray;padding:40px">
                     <h1>Add to Redemption Gallery</h1>
                     <hr/>
                     {!! Form::open(array('url'=>'redemptioncountergallary/save?return='.$return, 'class'=>'form-horizontal','files'

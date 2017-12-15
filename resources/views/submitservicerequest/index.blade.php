@@ -139,13 +139,12 @@
                             </div>
 
                         </div>
+                        
                         <div class="form-group  ">
                             <input type="hidden" id="company_id" name="company_id"
                                    value="{{ \Session::get('company_id') }}">
 
-                            <div class="form-group">
-                                <div class="col-sm-4"></div>
-                                <div class="col-sm-6 text-center"><br>
+                                <div class="col-sm-6 col-sm-offset-4"><br>
                                     <button type="submit" class="btn btn-primary btn-sm " ><i
                                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                                     <b class="text-center">&nbsp;Submitted
@@ -155,11 +154,12 @@
                                                 {{--class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }}--}}
                                     {{--</button>--}}
                                 </div>
-                            </div>
+                            <
 
 
                             {!! Form::close() !!}
                         </div>
+                        
 
                     </div>
                     <div class="col-md-6">
