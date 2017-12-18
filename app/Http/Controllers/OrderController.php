@@ -144,6 +144,7 @@ class OrderController extends Controller
 
     public function getIndex()
     {
+
         /*
         \App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
@@ -945,13 +946,16 @@ class OrderController extends Controller
             \Session::put('filter_before_redirect','redirect');
             $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message);
 
-            if ($status == 1)
-            {
+            if ($status == 1) {
                 //bug-218 set date ordered when order emailed to vendor!
                 $date_ordered = date("Y-m-d");
+                $checkorderdate = \DB::select("SELECT id FROM `orders` where id='.$order_id.' and date_ordered='0000-00-00'");
+                if (count($checkorderdate) == 0) {
                 \DB::update('UPDATE orders
-                         SET date_ordered = "'.$date_ordered.'"
-                       WHERE id = "'.$order_id.'"');
+                         SET date_ordered = "' . $date_ordered . '"
+                       WHERE id = "' . $order_id . '"');
+            }
+
                 return response()->json(array(
                     'message' => \Lang::get('core.mail_sent_success'),
                     'status' => 'success',
