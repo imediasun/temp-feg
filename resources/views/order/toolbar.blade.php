@@ -145,7 +145,7 @@
     function showReasonPoup(){
         var ids = $(".ids");
         var order_ids = "";
-        if(confirm('Are you sure you want to delete the selected row(s)?'))
+        if(confirm('You are about to remove the selected order(s).'))
         {
             if($(".ids:checked").length >0)
             {

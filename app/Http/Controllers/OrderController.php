@@ -1023,7 +1023,7 @@ class OrderController extends Controller
 
 
         }else{
-            return Redirect::to('order')->with('messagetext', "Order(s) has/have been posted to Netsuite or order has already been removed.")->with('msgstatus', 'error');
+            return Redirect::to('order')->with('messagetext', "Closed orders may not be removed.")->with('msgstatus', 'error');
         }
 
 
