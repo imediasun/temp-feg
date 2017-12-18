@@ -267,7 +267,8 @@ class OrderController extends Controller
         $pagination->setPath('order/data');
         $rows = $results['rows'];
         foreach ($rows as $index => $data) {
-            $rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
+
+            $rows[$index]->date_ordered = $data->date_ordered;
             //$location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
             // $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
             $user = \DB::select("Select username FROM users WHERE id = '" . $data->user_id . "'");
