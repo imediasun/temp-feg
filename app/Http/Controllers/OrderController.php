@@ -2002,6 +2002,22 @@ class OrderController extends Controller
         $notes = \DB::table('requests')->select('notes')->whereIn('id', $request->sids)->get();
         return $notes;
     }
+    public function  getSendtestingemail()
+    {
+        /*\App\Library\FEG\System\Email\ReportGenerator::getDailyGameLocationChangeReport();*/
+
+
+            $params['date']=date('Y-m-d', strtotime('-1 day'));
+            $gameLocationChangeReport = \App\Library\FEG\System\Email\ReportGenerator::getDailyGameLocationChangeReport($params);
+
+
+
+            $params['gameLocationChangeReport'] = $gameLocationChangeReport;
+        \App\Library\FEG\System\Email\ReportGenerator::sendDailyGameLocationChangeReport($params);
+            sleep(10);
+            unset($params['gameLocationChangeReport']);
+
+    }
 
 
 }
