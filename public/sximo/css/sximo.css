@@ -3844,7 +3844,7 @@ select#col-config{
 /* Responsive Video tag css */
 .video-container {
   position:relative;
-    width:58vw;
+  width:85%;
   padding-top:30px;
   height:45vw !important;
   overflow:hidden;
