@@ -811,8 +811,6 @@ button.dim:active:before {
 .form-horizontal .radio, .form-horizontal .checkbox {
 	padding-left:0px;
 }
-
-
 .badge {
   background-color: #d1dade;
   color: #5e5e5e;
@@ -1158,7 +1156,6 @@ a:focus {
   position: relative !important;
   background:#eeeeee ;
 }
-
 @media (min-width: 768px) {
   #page-wrapper {
     position: inherit;
@@ -1170,8 +1167,6 @@ a:focus {
         //right:6%;
     }*/
 }
-
-
 .title-action {
   text-align: right;
   padding-top: 30px;
@@ -2572,7 +2567,6 @@ fieldset legend { font-size:16px; padding:10px 0; font-weight:500;}
     color: #006600;
   }
 }
-
 /* Specify class=linenums on a pre to get line numbering */
 ol.linenums {
   margin-top: 0;
@@ -2882,7 +2876,6 @@ table.table-striped tr th
 	overflow: hidden;
 	margin: 0 15px;
 }
-
 
 .gameDetailsContainer .titleSection {
     position: relative;
@@ -3225,8 +3218,6 @@ position: relative;
 
 
 
-
-
 .check-no .radio,.check-no .checkbox {
   padding-left: 0px;
 }
@@ -3252,7 +3243,6 @@ position: relative;
   bottom: -25px;
   top: inherit;
 }
-
 .input-group span.input-group-addon {
 	float: left;
 	padding: 8px 10px;
@@ -3275,7 +3265,6 @@ position: relative;
 	float: left;
 	width: 100%;
 }
-
 .input-group.input-group-sm span.input-group-addon ,.input-group.m-b span.input-group-addon{
   float: none;
   padding: 6px 10px;
@@ -3361,7 +3350,7 @@ position: relative;
 
 
 @media only screen and (max-width: 767px) {
-  
+
 .tasksContainer #tasksGrid .taskName,
 .tasksContainer #tasksGrid .taskAction {
 	width: 100% !important;
@@ -3505,7 +3494,7 @@ margin-left: 15px;
 
 
 @media only screen and (max-width: 520px){
-  
+
 .tasksContainer #tasksGrid .taskName,
 .tasksContainer #tasksGrid .taskAction {
 	font-size: 12px;
@@ -3514,8 +3503,8 @@ margin-left: 15px;
   .redemptioncountergallaryupload {
 	padding: 15px;
 }
-  
-  
+
+
   .page-title {
 	margin-right: 0px;
 	font-size: 16px !important;
@@ -3526,7 +3515,7 @@ margin-left: 15px;
   ul.pagination li:not(.show-mobile) {
     display: none;
   }
-  
+
   #managefreightquotersView .sbox-content .form-group .radio-inline {
   	display: block;
   	margin-left: 0;
@@ -3542,7 +3531,7 @@ margin-left: 15px;
 
 
 @media only screen and (max-width: 420px){
-  
+
 .tasksContainer #tasksGrid .taskName,
 .tasksContainer #tasksGrid .taskAction {
 	font-size: 10px;
@@ -3578,7 +3567,7 @@ margin-left: 15px;
 	padding: 10px 10px;
 }
 
-  
+
 }
 
 
@@ -3597,8 +3586,6 @@ margin-left: 15px;
   .page-content .sbox .sbox-content {
   padding: 10px;
 }
-
-
 
 .text-left-xs {
   text-align: left;
@@ -3644,7 +3631,7 @@ margin-left: 15px;
 	margin-left: 15px;
 	margin-right: 15px;
 }
-  
+
 #add_more_types{
 	top: -7px;
 	position: relative;
@@ -3856,18 +3843,18 @@ select#col-config{
 }
 /* Responsive Video tag css */
 .video-container {
-    position:relative;
+  position:relative;
     width:58vw;
-    padding-top:30px;
-    height:35vw !important;
-    overflow:hidden;
+  padding-top:30px;
+  height:45vw !important;
+  overflow:hidden;
 }
 .video-container iframe, .video-container object, .video-container embed {
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:35vw !important;
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:45vw !important;
 }
 
 .centralMessage {
