@@ -543,7 +543,8 @@ class OrderController extends Controller
             $vendor_id = $request->get('vendor_id');
             $vendor_email = $this->model->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
-            $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
+           /* $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));*/
+            $date_ordered = '0000-00-00';
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
             $is_freehand = $request->get('is_freehand') == "1" ? 1 : 0;
