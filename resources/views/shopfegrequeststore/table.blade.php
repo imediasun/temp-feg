@@ -294,7 +294,94 @@
         params.data.force['type'] = 'store';
         params.data.force['active_inactive'] = 'active';
         
-    });    
+    });
+    console.log('debug me');
+    function calculateUnitPrice(id){
+        var case_price = $('#form-'+id+' input[name = "case_price"]').val();
+        var quantity = $('#form-'+id+' input[name = "num_items"]').val();
+        var unit_price = case_price/quantity;
+        if(quantity != 0 && unit_price != 0) {
+            $('#form-'+id+' input[name = "unit_price"]').val(unit_price);
+            $('#form-'+id+' input[name = "unit_price"]').blur();
+        }
+        else
+        {
+            $('#form-'+id+' input[name = "unit_price"]').val(0.000);
+        }
+
+    }
+    var executeonce = true;
+    $( document ).ajaxComplete(function( event, xhr, settings ) {
+        console.log(settings);
+        var $urlArray = settings.url.split('/');
+        console.log($urlArray);
+        $('tr td[data-field="expense_category"]').each(function () {
+            var ids = $.trim($(this).text());
+            ids = ids.trim();
+            if (ids !== "No Data") {
+                ids = ids.split("|");
+                $(this).text(Number(ids[0]));
+
+            }
+        });
+
+        if($('#field_expense_category select[name="expense_category"]').length){
+            $.ajax({
+                type:"GET",
+                data:{DATATEST:1},
+                dataType:"HTML",
+                url:'product/expense-category-ajax',
+                success:function(response){
+                    if(executeonce==true) {
+                        $(this).html(response);
+                        $(this).change();
+                        executeonce=false;
+                    }
+                },
+                error:function(res){
+
+                }
+            });
+        }
+    });
+
+
+    $(function(){
+
+        $.ajax({
+            type:"GET",
+            data:{DATATEST:1},
+            dataType:"HTML",
+            url:'product/expense-category-ajax',
+            success:function(response){
+
+                $(".expense_category").html(response);
+                $(".expense_category").change();
+            },
+            error:function(res){
+
+            }
+        });
+    });
+    $(document).on("blur", "input[name='case_price']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+
+    $(document).on("keyup change", "input[name='case_price']", function () {
+        calculateUnitPrice($(this).parents('tr').data('id'));
+    });
+
+    $(document).on("keyup", "input[name='num_items']", function () {
+        calculateUnitPrice($(this).parents('tr').data('id'));
+    });
+
+    $(document).on("blur", "input[name='unit_price']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+
+    $(document).on("blur", "input[name='retail_price']", function () {
+        $(this).val($(this).fixDecimal());
+    });
 </script>
 <style>
     .table th.right {
