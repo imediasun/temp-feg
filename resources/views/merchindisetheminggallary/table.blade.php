@@ -1,4 +1,8 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<style>
+    .fancybox-nav{
+        display: none !important;}
+</style>
 <div class="sbox">
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i></h5>
@@ -50,7 +54,7 @@
                             $originalThumbFile="./uploads/gallary/". $row->id."_thumb.".$row->extension;
                             $rotatedThumbFile="./uploads/gallary/".$row->id."_thumb_rotated.".$row->extension;
                         ?>
-                <a @if(!$show)) style="display:inline" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" data-rotation="{{ $row->img_rotation }}" id="gallery_img_{{ $row->id }}" data-extension="{{ $row->extension }}"
+                <a @if(!$show)) style="display:inline" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-id="{{ $row->id }}" data-rotation="{{ $row->img_rotation }}" id="gallery_img_{{ $row->id }}" data-extension="{{ $row->extension }}"
                 @if(file_exists($rotatedFile))
                    href="{{ $rotatedFile }}?time={{ time() }}"
                    @else

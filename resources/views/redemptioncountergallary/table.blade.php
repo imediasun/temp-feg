@@ -1,4 +1,8 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<style>
+    .fancybox-nav{
+        display: none !important;}
+</style>
 <div class="sbox">
     <div class="sbox-title">
         <h5> <i class="fa fa-table"></i> </h5>
