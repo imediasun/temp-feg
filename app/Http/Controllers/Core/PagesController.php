@@ -195,26 +195,20 @@ class PagesController extends Controller
 
             $patternAddTitleSection = '/<div.*?class=["\']sbox.*?animated.*?["\']>/im';
 
-            $content = "@extends ('layouts.app') @section('content')".$content;
-            $content = preg_replace($patternAddTitleSection, '<div class="sbox animated fadeInRight page-cms"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
-            $content = $content."@stop";
+            $content = "@extends ('layouts.app') @section('content')" . $content;
+            $content = preg_replace($patternAddTitleSection, '<div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
+            $content = $content . "@stop";
+            $pattern = '~<div class="embed-responsive embed-responsive-16by9 video-container">|<div class="embed-responsive embed-responsive-16by9 video-container ">~';
+            $content = preg_replace($pattern, "<div>", $content);
 
             $pattern = '~<iframe.*</iframe>|<embed.*</embed>~';
             preg_match_all($pattern, $content, $matches);
-
             foreach ($matches[0] as $match) {
                 // wrap matched iframe with div
-
                 $wrappedframe = '<div class="embed-responsive embed-responsive-16by9 video-container">' . $match . '</div>';
-
                 //replace original iframe with new in content
-                if(strpos($match,'video-container')==false) {
                     $content = str_replace($match, $wrappedframe, $content);
-                }
             }
-
-           // $content = str_replace("<iframe","<iframe class='embed-responsive-item'",$content);
-
 
             $content = $this->addEditLinkTemplate($content);
             

@@ -3844,9 +3844,9 @@ select#col-config{
 /* Responsive Video tag css */
 .video-container {
   position:relative;
-  width:100%;
+  width:86%;
   padding-top:30px;
-  height:65vw !important;
+  height:545vw !important;
   overflow:hidden;
 }
 .video-container iframe, .video-container object, .video-container embed {
@@ -3854,7 +3854,7 @@ select#col-config{
   top:0;
   left:0;
   width:100%;
-  height:60vw !important;
+  height:45vw !important;
 }
 
 .centralMessage {
