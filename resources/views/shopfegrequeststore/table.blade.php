@@ -310,7 +310,59 @@
         }
 
     }
+    var executeonce = true;
+    $( document ).ajaxComplete(function( event, xhr, settings ) {
+        console.log(settings);
+        var $urlArray = settings.url.split('/');
+        console.log($urlArray);
+        $('tr td[data-field="expense_category"]').each(function () {
+            var ids = $.trim($(this).text());
+            ids = ids.trim();
+            if (ids !== "No Data") {
+                ids = ids.split("|");
+                $(this).text(Number(ids[0]));
 
+            }
+        });
+
+        if($('#field_expense_category select[name="expense_category"]').length){
+            $.ajax({
+                type:"GET",
+                data:{DATATEST:1},
+                dataType:"HTML",
+                url:'product/expense-category-ajax',
+                success:function(response){
+                    if(executeonce==true) {
+                        $(this).html(response);
+                        $(this).change();
+                        executeonce=false;
+                    }
+                },
+                error:function(res){
+
+                }
+            });
+        }
+    });
+
+
+    $(function(){
+
+        $.ajax({
+            type:"GET",
+            data:{DATATEST:1},
+            dataType:"HTML",
+            url:'product/expense-category-ajax',
+            success:function(response){
+
+                $(".expense_category").html(response);
+                $(".expense_category").change();
+            },
+            error:function(res){
+
+            }
+        });
+    });
     $(document).on("blur", "input[name='case_price']", function () {
         $(this).val($(this).fixDecimal());
     });
