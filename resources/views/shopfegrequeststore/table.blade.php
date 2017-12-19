@@ -318,11 +318,16 @@
         $('tr td[data-field="expense_category"]').each(function () {
             var ids = $.trim($(this).text());
             ids = ids.trim();
-            if (ids !== "No Data") {
+            if(ids =="No Data" || ids=='') {
+                console.log("A"+ids);
+                $(this).text('No Data');
+
+            }else{
+                console.log("B"+ids);
                 ids = ids.split(" ");
                 $(this).text(Number(ids[0]));
-
             }
+
         });
 
         if($('#field_expense_category select[name="expense_category"]').length){
