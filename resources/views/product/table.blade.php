@@ -361,7 +361,7 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
         var ids = $.trim($(this).text());
         ids = ids.trim();
         if(ids !=="No Data") {
-           ids = ids.split("|");
+           ids = ids.split(" ");
            $(this).text(Number(ids[0]));
 
         }

@@ -650,7 +650,7 @@ GROUP BY mapped_expense_category");
         $items = [];
         foreach ($expense_category as  $category){
 
-            $items[] = [$category->id, $category->order_type];
+            $items[] = [$category->mapped_expense_category, $category->order_type];
         }
         return $items;
     }
@@ -665,7 +665,7 @@ GROUP BY mapped_expense_category");
         $items = ['<option value=""> -- Select  -- </option>'];
         foreach ($expense_category as $category){
 
-            $items[] = '<option value="'.$category->id.'"> '.$category->order_type.' </option>';
+            $items[] = '<option value="'.$category->mapped_expense_category.'"> '.$category->order_type.' </option>';
 
         }
         $options = implode("",$items);
