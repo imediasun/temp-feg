@@ -1006,7 +1006,7 @@ class OrderController extends Controller
         $totalIdsCount = count($request->input('ids'));
         $ids = implode("','", $request->input('ids'));
 
-        $sql = " select po_number from orders where po_number in ('$ids') and is_api_visible=0 and status_id<>10";
+        $sql = " select po_number from orders where po_number in ('$ids') and is_api_visible=0 and status_id<>10 and status_id<>2";
 
         $result = \DB::select($sql);
         $ids = [];
@@ -1034,7 +1034,7 @@ class OrderController extends Controller
 
 
         }else{
-            return Redirect::to('order')->with('messagetext', "Closed orders may not be removed.")->with('msgstatus', 'error');
+            return Redirect::to('order')->with('messagetext', "Closed/Removed orders may not be removed.")->with('msgstatus', 'error');
         }
 
 
