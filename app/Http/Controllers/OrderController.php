@@ -953,7 +953,6 @@ class OrderController extends Controller
                 if (strtotime($dateOrdered)==false) {
                 \DB::update('UPDATE orders SET date_ordered = "' . $date_ordered . '"  WHERE id = "' . $order_id . '"');
             }
-
                 return response()->json(array(
                     'message' => \Lang::get('core.mail_sent_success'),
                     'status' => 'success',
