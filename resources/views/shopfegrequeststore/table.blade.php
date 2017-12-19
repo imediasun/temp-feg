@@ -319,7 +319,7 @@
             var ids = $.trim($(this).text());
             ids = ids.trim();
             if(ids =="No Data" || ids=='') {
-console.log("A"+ids);
+                console.log("A"+ids);
                 $(this).text('No Data');
 
             }else{
