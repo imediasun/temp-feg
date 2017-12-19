@@ -68,7 +68,7 @@
 			{!! Form::open(array('url'=>'feg/module/package#', 'class'=>'form-horizontal' ,'ID' =>'SximoTable' )) !!}
 			<div class="table-responsive ibox-content" style="min-height:400px;">
 				@if(count($rowData) >=1)
-					<table class="table table-striped ">
+					<table class="table table-striped " id="module-code-table">
 						<thead>
 						<tr>
 							<th>Action</th>
@@ -177,6 +177,18 @@
 			});
 			var object = element.getBoundingClientRect();
 			var top = object.top;
+            console.log("Scroll Top"+$(window).scrollTop());
+
+            var height = $(window).height();
+            height = height/2;
+            if($(window).scrollTop() < height){
+
+                var moduleTable  =  document.getElementById("module-code-table").getBoundingClientRect().top;
+
+                top = top-moduleTable;
+
+            }
+
 
 			if(top>250){
 
