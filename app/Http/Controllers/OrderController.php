@@ -147,16 +147,13 @@ class OrderController extends Controller
     {
 
         /*
-                                \App\Library\FEG\System\Sync::transferEarnings();
-                                \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
-                                \App\Library\FEG\System\Sync::generateDailySummary();
-                                \App\Library\FEG\System\Email\Report::daily();
-                                \App\Library\FEG\System\Email\Report::missingDataReport();
-             echo "done transfer";
-
-             exit;
-        */
-
+        \App\Library\FEG\System\Sync::transferEarnings();
+        \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
+        \App\Library\FEG\System\Sync::generateDailySummary();
+        \App\Library\FEG\System\Email\Report::daily();
+        \App\Library\FEG\System\Email\Report::missingDataReport();
+        echo "done transfer";
+        exit;*/
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $this->data['sid'] = "";
@@ -374,7 +371,7 @@ class OrderController extends Controller
     public function getShow($id = null)
     {
 
-        
+
         $this->data['case_price_permission'] = $this->pass['calculate price according to case price'];
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
@@ -942,14 +939,14 @@ class OrderController extends Controller
             $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message);
 
             if ($status == 1) {
-
+                //bug-218 set date ordered when order emailed to vendor!
                 $date_ordered = date("Y-m-d");
                 $checkorderdate = \DB::select("SELECT id FROM `orders` where id='.$order_id.' and date_ordered='0000-00-00'");
-                if (count($checkorderdate) == 0) {
-                    \DB::update('UPDATE orders
+                if (count($checkorderdate) == 1) {
+                \DB::update('UPDATE orders
                          SET date_ordered = "' . $date_ordered . '"
                        WHERE id = "' . $order_id . '"');
-                }
+            }
 
                 return response()->json(array(
                     'message' => \Lang::get('core.mail_sent_success'),
