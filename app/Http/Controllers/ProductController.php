@@ -651,8 +651,14 @@ WHERE product_type IS NULL
 GROUP BY mapped_expense_category");
         $items = [];
         foreach ($expense_category as  $category){
+            $orderType = $category->order_type;
+            $categoryId = $category->mapped_expense_category;
+    if( $categoryId==0){
+        $orderType = "N/A";
+        $categoryId = "";
+    }
 
-            $items[] = [$category->mapped_expense_category, $category->order_type];
+            $items[] = [$categoryId, $orderType];
         }
         return $items;
     }
@@ -666,8 +672,13 @@ GROUP BY mapped_expense_category");
 
         $items = ['<option value=""> -- Select  -- </option>'];
         foreach ($expense_category as $category){
-
-            $items[] = '<option value="'.$category->mapped_expense_category.'"> '.$category->order_type.' </option>';
+            $orderType = $category->order_type;
+            $categoryId = $category->mapped_expense_category;
+    if( $categoryId==0){
+        $orderType = "N/A";
+        $categoryId = "";
+    }
+            $items[] = '<option value="'.$categoryId.'"> '.$orderType.' </option>';
 
         }
         $options = implode("",$items);
