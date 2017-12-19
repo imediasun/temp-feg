@@ -3512,7 +3512,7 @@ li.multiselect-item.multiselect-group + li a label {
   position:relative;
   width:86%;
   padding-top:30px;
-  height:545vw !important;
+  height:45vw !important;
   overflow:hidden;
 }
 .video-container iframe, .video-container object, .video-container embed {
@@ -3521,4 +3521,22 @@ li.multiselect-item.multiselect-group + li a label {
   left:0;
   width:100%;
   height:45vw !important;
+}
+
+@media only screen and (max-width: 520px){
+  .video-container {
+    position:relative;
+    width:100%;
+    padding-top:30px;
+    height:45vw !important;
+    overflow:hidden;
+  }
+  .video-container iframe, .video-container object, .video-container embed {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:45vw !important;
+  }
+
 }
