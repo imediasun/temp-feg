@@ -950,7 +950,7 @@ class OrderController extends Controller
                 //bug-218 set date ordered when order emailed to vendor!
                 $date_ordered = date("Y-m-d");
                 $checkorderdate = \DB::select("SELECT id FROM `orders` where id='.$order_id.' and date_ordered='0000-00-00'");
-                if (count($checkorderdate) == 0) {
+                if (count($checkorderdate) == 1) {
                 \DB::update('UPDATE orders
                          SET date_ordered = "' . $date_ordered . '"
                        WHERE id = "' . $order_id . '"');
