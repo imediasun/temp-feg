@@ -346,6 +346,7 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
             ids = ids.split(" ");
             $(this).text(Number(ids[0]));
         }
+
     });
 	if(typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null)
 	{

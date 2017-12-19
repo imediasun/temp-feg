@@ -327,6 +327,7 @@
                 ids = ids.split(" ");
                 $(this).text(Number(ids[0]));
             }
+
         });
 
         if($('#field_expense_category select[name="expense_category"]').length){
