@@ -949,11 +949,9 @@ class OrderController extends Controller
             if ($status == 1) {
                 //bug-218 set date ordered when order emailed to vendor!
                 $date_ordered = date("Y-m-d");
-                $checkorderdate = \DB::select("SELECT id FROM `orders` where id='.$order_id.' and date_ordered='0000-00-00'");
-                if (count($checkorderdate) == 1) {
-                \DB::update('UPDATE orders
-                         SET date_ordered = "' . $date_ordered . '"
-                       WHERE id = "' . $order_id . '"');
+                $dateOrdered = $this->model->find($order_id)->date_ordered;
+                if (strtotime($dateOrdered)==false) {
+                \DB::update('UPDATE orders SET date_ordered = "' . $date_ordered . '"  WHERE id = "' . $order_id . '"');
             }
 
                 return response()->json(array(
