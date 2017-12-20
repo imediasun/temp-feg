@@ -43,7 +43,7 @@ class CurrencyHelpers
          $decimalSection = '';
          if(isset($split[1])){
              $decimalSection = $split[1].'00000';
-             $fixed = substr($decimalSection, 0,5);
+             $fixed = substr($decimalSection, 0,2);
              $decimalSection = $dec_point.$fixed.rtrim(substr($decimalSection, $decimalPlaces), '0');
          }
          $decimalPlaces = 0;
