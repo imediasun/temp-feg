@@ -54,7 +54,7 @@
                             $originalThumbFile="./uploads/gallary/". $row->id."_thumb.".$row->extension;
                             $rotatedThumbFile="./uploads/gallary/".$row->id."_thumb_rotated.".$row->extension;
                         ?>
-                <a @if(!$show)) style="display:inline" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-id="{{ $row->id }}" data-rotation="{{ $row->img_rotation }}" id="gallery_img_{{ $row->id }}" data-extension="{{ $row->extension }}"
+                <a @if(!$show)) style="display:inline" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox image-{{ $row->id }}" data-id="{{ $row->id }}" data-rotation="{{ $row->img_rotation }}" id="gallery_img_{{ $row->id }}" data-extension="{{ $row->extension }}"
                 @if(file_exists($rotatedFile))
                    href="{{ $rotatedFile }}?time={{ time() }}"
                    @else
@@ -118,7 +118,17 @@ function confirmDelete(id)
     var extension = $("#gallery_img_"+id).data('extension');
     if(confirm('Are you sure you want to delete '+title))
     {
-        location.href="{{ url() }}/merchindisetheminggallary/delete/"+id+"/"+extension;
+        $.ajax({
+            type:"GET",
+            url:"{{ url() }}/merchindisetheminggallary/delete/"+id+"/"+extension,
+            success:function(res){
+                $(".fancybox-close").trigger('click');
+                $(".image-"+id).hide('slow');
+                //alert();
+               // console.log(res);
+            }
+        });
+       // location.href="{{ url() }}/merchindisetheminggallary/delete/"+id+"/"+extension;
     }
 }
    var angle=0;
