@@ -15,7 +15,7 @@ foreach($fields as $f )
         $label[]=$f['label'];
     endif;
 }
-//fputcsv($fp,$label);
+fputcsv($fp,$label);
 foreach ($rows as $row)
 {
     $content=array();
