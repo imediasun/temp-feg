@@ -120,7 +120,17 @@
         var extension = $("#gallery_img_"+id).data('extension');
         if(confirm('Are you sure you want to delete this image from gallery?'))
        {
-         location.href="{{ url() }}/redemptioncountergallary/delete/"+id+"/"+extension;
+           $.ajax({
+               type:"GET",
+               url:"{{ url() }}/merchindisetheminggallary/delete/"+id+"/"+extension,
+               success:function(res){
+                   $(".fancybox-close").trigger('click');
+                   $(".image-"+id).hide('slow');
+                   //alert();
+                   // console.log(res);
+               }
+           });
+        // location.href="{{ url() }}/redemptioncountergallary/delete/"+id+"/"+extension;
        }
     }
     var angle=0;
