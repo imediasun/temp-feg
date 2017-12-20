@@ -1654,9 +1654,25 @@ class SiteHelpers
                 $row = $Q[0];
                 $fields = explode("|", $arr['display']);
                 $v = '';
-                $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
+                if (isset($fields[0]) && (empty($row->$fields[0]) || $row->$fields[0]==0)) {
+                    $v="No Data";
+                } else {
+                    $v .= (isset($fields[0]) && $fields[0] !== '' ? $row->$fields[0] . ' ' : '');
+                }
+
+                if (isset($fields[1]) && (empty($row->$fields[1]) || $row->$fields[1]==0)) {
+                    $v="No Data";
+                } else {
+                    $v .= (isset($fields[1]) && $fields[1] !== '' ? $row->$fields[1] . ' ' : '');
+                }
+                if (isset($fields[2]) && (empty($row->$fields[2]) || $row->$fields[2]==0)) {
+                    $v="No Data";
+                } else {
+                    $v .= (isset($fields[2]) && $fields[2] !== '' ? $row->$fields[2] . ' ' : '');
+                }
+            /*    $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
                 $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
-                $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');
+                $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');*/
 
 
                 return $v;
@@ -1664,6 +1680,9 @@ class SiteHelpers
                 return '';
             }
         } else {
+            if(empty($val) || $val==0){
+                $val="No Data";
+            }
             return $val;
         }
     }
