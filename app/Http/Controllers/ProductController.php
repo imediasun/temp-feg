@@ -389,6 +389,7 @@ class ProductController extends Controller
                         unset($data_attached_products['inactive']);
                         unset($data_attached_products['in_development']);
                         unset($data_attached_products['hot_item']);
+                        unset($data_attached_products['exclude_export']);
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
@@ -443,6 +444,7 @@ class ProductController extends Controller
                         unset($data_attached_products['expense_category']);
                         unset($data_attached_products['retail_price']);
                         unset($data_attached_products['ticket_value']);
+                        unset($data_attached_products['hot_item']);
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
@@ -550,12 +552,15 @@ class ProductController extends Controller
             $destinationPath = './uploads/products/';
             $filename = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-            $newfilename = $id . '.' . $extension;
+            $newfilename = $id . mt_rand() . '.' . $extension;
             $uploadSuccess = $request->file('img')->move($destinationPath, $newfilename);
             if ($uploadSuccess) {
-                $updates['img'] = $newfilename;
+                $relatedProducts = $this->model->checkProducts($id);
+                foreach ($relatedProducts as $prod){
+                    $updates['img'] = $newfilename;
+                    $this->model->insertRow($updates, $prod->id);
+                }
             }
-            $this->model->insertRow($updates, $id);
             return Redirect::to('product/upload/' . $id)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
 
         }
