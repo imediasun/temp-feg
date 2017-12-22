@@ -271,6 +271,7 @@ $(document).ready(function() {
 					url:'product/exclude',
 					data:{excludeExport:state,productId:productId},
 					success:function(data){
+						$('.doSimpleSearch').click();
 						/*if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
 						{
 							//window.location.reload();
