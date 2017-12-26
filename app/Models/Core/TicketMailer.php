@@ -48,7 +48,7 @@ class TicketMailer
         $to         = implode(',', $users['to']);
         $bcc         = implode(',', $users['bcc']);
         $reply_to   ='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
-        $subject    = "[Service Request #{$ticketId}][$priority] $locationName, $createdOn, $title" ;
+        $subject    = "$locationName, $title, [Service Request #{$ticketId}][$priority] $createdOn" ;
 //        $headers    = 'MIME-Version: 1.0' . "\r\n";
 //        $headers   .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 //        $headers   .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
@@ -118,7 +118,7 @@ class TicketMailer
     {
         $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $departmentId . "");
         $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
-        $subject = "[Service Request #{$ticketId}] <Location Name>, <Date Created>, <Title>" ;
+        $subject = "<Location Name>, <Title>, [Service Request #{$ticketId}] <Date Created>" ;
         $reply_to='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
         //$headers = 'MIME-Version: 1.0' . "\r\n";
         //$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
