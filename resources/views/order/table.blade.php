@@ -160,14 +160,13 @@ usort($tableGrid, "SiteHelpers::_sort");
                             }
                             else
                              {
-                                $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
+                                 $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
+                             }
 
-                              }
-						 	?>
-						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
+
+						 	 $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-
                                 @if($field['field']=='notes' && !empty($row->notes))
 							                <?php echo ltrim($value,'<br>'); ?>
                                     @else
@@ -214,8 +213,6 @@ usort($tableGrid, "SiteHelpers::_sort");
 						 <?php endif;
 						endforeach;
 					  ?>
-
-
                     <td data-values="action" data-key="<?php echo $row->id ;?>">
 
                         @if(empty($row->deleted_at))
