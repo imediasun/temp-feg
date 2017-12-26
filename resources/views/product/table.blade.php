@@ -104,8 +104,7 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;
            		?>
-				{{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
-                <tr class="editable" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
+                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
 					<input type="hidden" name="numberOfItems" value="{{$row->num_items}}" />
 					<input id = "sku-{{ $row->id }}" type="hidden" name="old-sku" value="{{$row->sku}}" />
 					<input id = "vd-{{ $row->id }}"type="hidden" name="old-vd" value="{{$row->vendor_description}}" />

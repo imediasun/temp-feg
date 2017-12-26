@@ -5,16 +5,16 @@
 
         @endif
         @if($access['is_remove'] ==1)
-        <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+        <a href="javascript://ajax" class="btn btn-sm btn-white alignment-left-fixed" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
         @endif
         @endif
         <!--<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>-->
             <label>Week Date Range</label>
             <input type="text" class="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px" } />
         @if(SiteHelpers::isModuleEnabled($pageModule))
-        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white alignment-left-fixed" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
         @if(!empty($colconfigs))
-        <select class="form-control" style="width:auto!important;display:inline;" name="col-config"
+        <select class="form-control alignment-left-fixed" style="width:auto!important;display:inline;" name="col-config"
                 id="col-config">
             <option value="0">Select Column Arrangement</option>
             @foreach( $colconfigs as $configs )
@@ -22,7 +22,7 @@
             @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
             @endforeach
         </select>
-                            <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
+                            <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white alignment-left-fixed"
                                onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
 
         @else
@@ -43,19 +43,19 @@
 		@if($isExport)
 		<div class="pull-right">
             @if($isExcel)
-			<a href="{{ URL::to( $pageModule .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
+			<a href="{{ URL::to( $pageModule .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white alignment-right-fixed"> Excel</a>
 			@endif
             @if($isCSV)
-			<a href="{{ URL::to( $pageModule .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
+			<a href="{{ URL::to( $pageModule .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-white alignment-right-fixed"> CSV </a>
 			@endif
             @if($isPDF)
-			<a href="{{ URL::to( $pageModule .'/export/pdf?exportID='.uniqid('pdf', true).'&return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
+			<a href="{{ URL::to( $pageModule .'/export/pdf?exportID='.uniqid('pdf', true).'&return='.$return) }}" class="btn btn-sm btn-white alignment-right-fixed"> PDF</a>
 			@endif
             @if($isWord)
-			<a href="{{ URL::to( $pageModule .'/export/word?exportID='.uniqid('word', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
+			<a href="{{ URL::to( $pageModule .'/export/word?exportID='.uniqid('word', true).'&return='.$return) }}" class="btn btn-sm btn-white alignment-right-fixed"> Word</a>
 			@endif
             @if($isPrint)
-			<a href="{{ URL::to( $pageModule .'/export/print?exportID='.uniqid('print', true).'&return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+			<a href="{{ URL::to( $pageModule .'/export/print?exportID='.uniqid('print', true).'&return='.$return) }}" class="btn btn-sm btn-white alignment-right-fixed" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
 			@endif
 		</div>	
 		@endif

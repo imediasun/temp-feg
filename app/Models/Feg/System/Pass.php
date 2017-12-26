@@ -15,13 +15,16 @@ class Pass extends Sximo  {
         return $this->belongsTo('App\Models\Feg\System\PassMaster', 'permission_id');
     }
     
-    public static function getMyPass($moduleId, $user = '', $includeInactive = false) {
-        $data = [];
-        if (empty($user)) {
-            $user = \Session::get('uid');            
-        }
-        if (empty($user)) {
-            return $data;
+    public static function getMyPass($moduleId, $user = '', $includeInactive = false, $bypassLogin = false) {
+        if(!$bypassLogin){
+
+            $data = [];
+            if (empty($user)) {
+                $user = \Session::get('uid');
+            }
+            if (empty($user)) {
+                return $data;
+            }
         }
         
         $query = self::filterPass(null, [

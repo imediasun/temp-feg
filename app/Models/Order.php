@@ -1,9 +1,11 @@
 <?php namespace App\Models;
 
 use App\Http\Controllers\OrderController;
+use App\Models\Sximo\Module;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
+use Illuminate\Support\Facades\DB;
 use Log;
 
 class order extends Sximo
@@ -38,7 +40,10 @@ class order extends Sximo
                 LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id";
     }
     public static function getProductInfo($id){
-        $select ="SELECT order_contents.qty,order_contents.item_name,order_contents.total FROM order_contents WHERE order_id = ".$id;
+
+        $select ="SELECT IF(order_contents.sku IS null OR order_contents.sku = '', products.sku,order_contents.sku) as sku, order_contents.qty,order_contents.item_name,order_contents.total FROM order_contents
+        LEFT OUTER JOIN products ON products.id=order_contents.product_id
+        WHERE order_id = ".$id;
         $result = \DB::select($select );
         return $result;
     }
@@ -70,6 +75,12 @@ class order extends Sximo
             default:
                 $return .= " orders.id IS NOT NULL";
         }
+        $module_id = Module::name2id('order');
+        $pass = \FEGSPass::getMyPass($module_id);
+        if(empty($pass['Can remove order']))
+        {
+            $return .= " AND orders.deleted_at is null ";
+        }
         if($cond == 'only_api_visible')
         {
             $return .= " AND is_api_visible = 1 And api_created_at IS NOT NULL";
@@ -88,11 +99,22 @@ class order extends Sximo
         if(empty($orders)){
             return $data;
         }
-        $query = "SELECT O.*,IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id WHERE O.order_id IN (".implode(',',$orders).")";
+
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $order_types = $pass['calculate price according to case price']->data_options;
+        $condition = '';
+        if($order_types != ''){
+            $condition = "IF(ORD.order_type_id IN($order_types), O.case_price, O.price) AS price,";
+        }
+
+        $query = "SELECT O.*,$condition IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id INNER JOIN orders ORD ON ORD.id = O.order_id WHERE O.order_id IN (".implode(',',$orders).")";
         $result = \DB::select($query);
         //all order contents place them in relevent order
         foreach($result as $item){
             $orderId = $item->order_id;
+            $item->price = \CurrencyHelpers::formatPrice($item->price, 3, false);
+            $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);
             foreach($data as &$record){
                 if($record['id'] == $orderId){
                     break;
@@ -800,6 +822,7 @@ class order extends Sximo
             else {
                 $updateData['api_created_at'] = $now;
             }
+            \DB::update("UPDATE order_received SET api_created_at = '$now' WHERE order_id = $id");
             return self::where('id', $id)->update($updateData);
         }
         return false;

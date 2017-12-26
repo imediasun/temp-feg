@@ -61,10 +61,11 @@ usort($tableGrid, "SiteHelpers::_sort");
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 			<div class="sbox-content" style="border: medium none; padding-top: 15px;">
             @if ($access['is_remove'] ==1 || !empty($pass['Can remove order']))
-                <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+                <?php echo Form::open(array('url'=>'order/removeorderexplaination/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
             @endif
 <div class="table-responsive">
 	@if(count($rowData)>=1)
+
     <table class="table table-striped datagrid " id="{{ $pageModule }}Table" style="position:relative">
         <thead>
         <tr class="row-">
@@ -136,30 +137,79 @@ usort($tableGrid, "SiteHelpers::_sort");
                     $eid = \SiteHelpers::encryptID($id);
            		?>
 
-                <tr  class="editable" data-id="{{ $row->id }}" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
+
+                <tr  @if(empty($row->deleted_at)) class="editable" @endif data-id="{{ $row->id }}" id="form-{{ $row->id }}" @if(($setting['inline']!='false' && $setting['disablerowactions']=='false') || empty($row->deleted_at))  ondblclick="showFloatingCancelSave(this)" @endif>
 
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
 						@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1' || !empty($pass['Can remove order'])))
-						<td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+						<td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->po_number ;?>" />  </td>
 					@endif
 
 
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
-					 <?php foreach ($tableGrid as $field) :
+					 <?php  foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
+                            if($row->$field['field'] == '0000-00-00')
+                            {
+                                $value = "No Data";
+                            }
+                            else
+                             {
+                                $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
+
+                              }
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
-							{!! $value !!}
-							</td>
+                                @if($field['field']=='notes' && !empty($row->notes))
+							                <?php echo ltrim($value,'<br>'); ?>
+                                    @else
+
+                                    @if($field['field']=='is_api_visible')
+                                        @if($value=='Yes')
+                                             {!! $value !!}
+                                            @else
+                                            {!! 'No' !!}
+                                            @endif
+                                        @else
+                                             @if($field['field']=='invoice_verified')
+                                                 @if($value=='Yes')
+                                                     {!! $value !!}
+                                                 @else
+                                                     {!! 'No' !!}
+                                                 @endif
+                                             @else
+                                                 @if($field['field']=='is_freehand')
+                                                     @if($value=='Yes')
+                                                         {!! $value !!}
+                                                     @else
+                                                         {!! 'No' !!}
+                                                     @endif
+                                                 @else
+                                                     @if($field['field']=='is_partial')
+                                                         @if($value=='Yes')
+                                                             {!! $value !!}
+                                                         @else
+                                                             {!! 'No' !!}
+                                                         @endif
+                                                     @else
+                                                         {!! $value !!}
+                                                     @endif
+                                                 @endif
+                                             @endif
+                                        @endif
+
+
+                                    @endif
+
+							 </td>
 							@endif
 						 <?php endif;
 						endforeach;
@@ -167,6 +217,8 @@ usort($tableGrid, "SiteHelpers::_sort");
 
 
                     <td data-values="action" data-key="<?php echo $row->id ;?>">
+
+                        @if(empty($row->deleted_at))
                         {!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
                         <a href="{{ URL::to('order/po/'.$row->id)}}"
                             data-id="{{$eid}}"
@@ -199,6 +251,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                         @endif
 
                         @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
+
                             <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
                                data-id="{{$eid}}"
                                data-action="removal"
@@ -206,6 +259,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                title="Request Removal">
                                 <i class="fa fa-trash-o " aria-hidden="true"></i>
                             </a>
+
                         @endif
 
                         @if($canPostToNetSuit  && !$isApified && Order::isApiable($id, $row, true))
@@ -227,8 +281,19 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-check-square-o" aria-hidden="true"></i>
                             </a>
                         @endif
+                            @else
+                            <a href="{{ URL::to('order/restoreorder/'.$row->id)}}"
+                               data-id="{{$eid}}"
+                               data-action="removal"
+                               class="tips btn btn-xs btn-white orderRemovalRequestAction"
+                               title="Restore Order">
+                                <i class="fa fa-refresh " aria-hidden="true"></i>
+                            </a>
+                        @endif
 					</td>
                 </tr>
+
+
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
                 	<td class="number"></td>
@@ -282,7 +347,13 @@ usort($tableGrid, "SiteHelpers::_sort");
                     var selector = 'tr[data-id='+$urlArray[2]+'] td[data-field="order_total"]';
                     console.log(selector);
                     $(selector).attr('data-format','$ '+data.total).attr('data-values', data.total).text('$ '+data.total);
-                }
+                }else if((settings.url).indexOf('order/data') !==-1){
+
+                   <?php //if($set_removed =="set_removed") { ?>
+                   // $("select[name='status_id'] option[value='removed']").attr('selected','selected');
+                  //  $("select[name='status_id']").change();
+                    <?php //} ?>
+            }
             }
         });
     $('.tips').tooltip();
@@ -399,6 +470,12 @@ usort($tableGrid, "SiteHelpers::_sort");
             });
             $('.tooltip').hide();
         });
+
+       // setTimeout(function(){
+       /* $("select[name='status_id']").each(function(){
+            $(this).append('<option value="removed"> Removed</option>')
+        });*/
+      //  },500);
 });
 </script>
 

@@ -23,6 +23,7 @@
 			<input type="hidden" name="user_claim" value="{{$row->user_claim}}">
 			<input type="hidden" id="is_edit" value="@if(!empty($row->id)) 1 @else 0 @endif">
 		</div>
+		<div class="table-responsive">
 		<table class="table table-striped table-bordered" >
 			<tbody>	
 				
@@ -135,7 +136,7 @@
 				
 			</tbody>	
 		</table>
-
+</div>
 			{!! Form::close() !!}
 
 @if($setting['form-method'] =='native')

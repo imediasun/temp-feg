@@ -18,7 +18,7 @@ class VendorAPI extends Sximo  {
 		return "SELECT vendor.* FROM vendor ";
 	}	
 
-	public static function queryWhere(){
+	public static function queryWhere( ){
 		//
 		return "  WHERE vendor.status = 1 AND vendor.hide = 0 AND id IS NOT NULL";
 	}
