@@ -16,7 +16,7 @@ class itemreceipt extends Sximo  {
 
     public static function querySelect(){
 
-        return " SELECT orders.*,order_received.order_id FROM orders INNER JOIN order_received ON
+        return " SELECT orders.*,orders.api_created_at as api_received_at, order_received.order_id FROM orders INNER JOIN order_received ON
 orders.id=order_received.order_id ";
 
 
@@ -83,8 +83,8 @@ orders.id=order_received.order_id ";
 
         if(!empty($args['createdFrom']) && isset($args['createdFrom'])){
 
-            $cond .= " AND api_created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
-            $cond .= " AND order_received.created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
+            $cond .= " AND orders.api_created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
+            $cond .= " AND order_received.api_created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
 
             $createdFlag = true;
         }
@@ -137,7 +137,7 @@ orders.id=order_received.order_id ";
         }
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
 //echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
-       // die();
+        // die();
         \Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
@@ -172,7 +172,7 @@ orders.id=order_received.order_id ";
             $where .= " AND order_received.id = '".$param['id']."'";
         }
         if(!empty($param['createdFrom'])){
-            $where .= " AND order_received.created_at BETWEEN '".$param['createdFrom']."' AND '".$param['createdTo']."'";
+            $where .= " AND order_received.api_created_at BETWEEN '".$param['createdFrom']."' AND '".$param['createdTo']."'";
             $createdFlag = true;
         }
         $qry_in_string=implode(',',$order_ids);
@@ -180,7 +180,7 @@ orders.id=order_received.order_id ";
             $qry_in_string = "''";
         $order_received_data=\DB::select("select *from order_received where order_id in($qry_in_string) $where");
         $order_received_ids=\DB::select("select order_id from order_received where order_id in($qry_in_string) $where group by order_id");
-       // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
+        // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
         //all order contents place them in relevent order
         if(is_array($data))
         {
