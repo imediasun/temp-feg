@@ -392,19 +392,23 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 				{
 					if($.trim(row.find('td[data-field="vendor_description"]').text()) == old_vd && $.trim(row.find('td[data-field="sku"]').text()) == old_sku )
 					{
-						row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-						row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
-						row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').text()));
-						row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
-						row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
-						row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
-						row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
-						row.find('td[data-field="details"]').text($.trim(mainRow.children('td[data-field="details"]').text()));
-						row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
-						row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
-						row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
-						$('#vd-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-						$('#sku-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="sku"]').text()));
+						//console.log($("select[name='vendor_id'] option:selected").text());
+					//	row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
+					//	row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
+						//expense_category
+						//row.find('td[data-field="expense_category"]').text($.trim(mainRow.children('td[data-field="expense_category"]').attr("data-format")));
+					//	row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').attr("data-format")));
+
+						//row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
+						//row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
+						//row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
+						//row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
+						//row.find('td[data-field="details"]').text($.trim(mainRow.children('td[data-field="details"]').text()));
+						//row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
+					//	row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
+						//row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
+					//	$('#vd-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
+					//	$('#sku-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="sku"]').text()));
 					}
 				}
 			});
