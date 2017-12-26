@@ -1,9 +1,11 @@
 <?php namespace App\Models;
 
 use App\Http\Controllers\OrderController;
+use App\Models\Sximo\Module;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
+use Illuminate\Support\Facades\DB;
 use Log;
 
 class order extends Sximo
@@ -93,6 +95,13 @@ class order extends Sximo
         //all order contents place them in relevent order
         foreach($result as $item){
             $orderId = $item->order_id;
+            $item->price = \CurrencyHelpers::formatPrice($item->price, 3, false);
+            $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);
+            if(!empty($item->po_notes)){
+                if(strlen($item->po_notes) > 300){
+                    $item->po_notes =  \CurrencyHelpers::truncateLongText($item->po_notes,300);
+
+                }
             foreach($data as &$record){
                 if($record['id'] == $orderId){
                     break;
@@ -800,6 +809,7 @@ class order extends Sximo
             else {
                 $updateData['api_created_at'] = $now;
             }
+            \DB::update("UPDATE order_received SET api_created_at = '$now' WHERE order_id = $id");
             return self::where('id', $id)->update($updateData);
         }
         return false;

@@ -7,6 +7,7 @@ use App\Models\Sximo;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Http\Request;
 use App\Library\FEG\System\FEGSystemHelper;
+use Illuminate\Support\Facades\App;
 use Validator, Input, Redirect;
 
 class FegapiController extends Controller
@@ -21,6 +22,7 @@ class FegapiController extends Controller
 
     public function index()
     {
+
         if(env('DISABLE_API',false) === true){
             $jsonData = array(
                 'total' => 0,
@@ -33,6 +35,7 @@ class FegapiController extends Controller
         }
 
         $class = ucwords(Input::get('module'));
+
         if (!empty($class)) {
             if ($class == "Users") {
                 $class1 = "App\\Models\\core\\" . $class;
@@ -158,6 +161,7 @@ class FegapiController extends Controller
 
     public function show($id)
     {
+
         $class = ucwords(Input::get('module'));
         if ($class == "Users") {
             $class1 = "App\\Models\\core\\" . $class;
@@ -174,7 +178,20 @@ class FegapiController extends Controller
             $jsonData = $class1::processApiData($jsonData,['id'=>$id , 'for_api' => 1]);
             $jsonData = isset($jsonData[0])?$jsonData[0]:$jsonData;
         }
+
+        if($class=="Order"){
+
+               if (!empty($jsonData->po_notes)) {
+                   if (strlen($jsonData->po_notes) > 300) {
+                       $jsonData->po_notes =  \CurrencyHelpers::truncateLongText($jsonData->po_notes,300);
+
+                   }
+
+           }
+        }
+
         if (!empty($jsonData)) {
+
             return \Response::json($jsonData, 200);
         } else {
             return \Response::json(array('Status' => \Lang::get('restapi.StatusError'), "Message" => \Lang::get('restapi.NothingFound')));
