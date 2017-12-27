@@ -439,7 +439,7 @@
                                 if (key == "expense_category" && value !== 0 && value !=='') {
                                     var expense_category = value.split(" ");
                                     value = expense_category[0];
-                                    console.log("Expense Category "+value);
+
 
                                 }
                                 if (value == '' || value == 0) {
@@ -459,16 +459,15 @@
                                             if (value1 == '' || value == 0) {
                                                 value1 = "No Data";
                                             }
-
-
-                                           setTimeout(function(){
+                                           //setTimeout(function(){
                                                console.log("Expense Category "+row.find('td[data-field="expense_category"]').text());
                                                row.find('td[data-field="expense_category"]').text($.trim(value1));
                                                console.log("Expense Category 1 "+row.find('td[data-field="expense_category"]').text());
-                                           },3000);
+                                            row.find('td[data-field="expense_category"]').attr("data-field","Test");
+                                         //  },2000);
 
                                         }else {
-                                            console.log($.trim(value));
+
                                             row.find('td[data-field="' + key + '"]').text($.trim(value));
                                         }
                                     }
