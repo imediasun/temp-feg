@@ -459,6 +459,7 @@
                                             if (value == '' || value == 0) {
                                                 value = "No Data";
                                             }
+                                            console.log(row.find('td[data-field="' + key + '"]').length)
 
                                            setTimeout(function(){  console.log("Expense Category "+value); row.find('td[data-field="' + key + '"]').text($.trim(value)); },2000);
 
