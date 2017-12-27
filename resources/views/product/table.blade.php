@@ -439,7 +439,7 @@
                                 if (key == "expense_category" && value !== 0 && value !=='') {
                                     var expense_category = value.split(" ");
                                     value = expense_category[0];
-                                    console.log(value);
+                                    console.log("Expense Category "+value);
 
                                 }
                                 if (value == '' || value == 0) {
