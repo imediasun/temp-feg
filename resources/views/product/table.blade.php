@@ -407,6 +407,7 @@
                                 if (key == "expense_category" && value !== 0 && value !=='') {
                                     var expense_category = value.split(" ");
                                     value =   expense_category[0];
+                                    console.log("here");
 
                                 }
 
