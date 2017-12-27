@@ -459,9 +459,13 @@
                                             if (value == '' || value == 0) {
                                                 value = "No Data";
                                             }
-                                            console.log(row.find('td[data-field="' + key + '"]').length)
 
-                                           setTimeout(function(){  console.log("Expense Category "+value); row.find('td[data-field="' + key + '"]').text($.trim(value)); },2000);
+
+                                           setTimeout(function(){
+                                               console.log("Expense Category "+value);
+                                               row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                               console.log("Expense Category "+row.find('td[data-field="' + key + '"]').text());
+                                           },3000);
 
                                         }else {
                                             console.log($.trim(value));
