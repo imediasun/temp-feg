@@ -317,12 +317,14 @@ class ProductController extends Controller
             ->where('prod_sub_type_id',$subtype)
             ->where('sku',$request->sku)
             ->where('id','!=',$id)
-            ->where('vendor_description',$request->vendor_description)->first();
+          //  ->where('vendor_description',$request->vendor_description)
+                ->first();
 
-        //    dd($duplicate);
-
-
-            if($duplicate)
+            /*return response()->json(array(
+                'message' => "type:".$type." sub type:".$subtype." sku:".$request->sku." id:".$id." AAAAAA:".$duplicate,
+                'status' => 'error'
+            ));*/
+            if(!empty($duplicate))
             {
                 return response()->json(array(
                     'message' => "A product with same Product Type & Sub Type already exist",
