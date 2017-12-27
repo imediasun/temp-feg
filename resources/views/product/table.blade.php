@@ -453,8 +453,19 @@
                                             row.find('td[data-field="' + key + '"]').text($.trim(value));
                                         }
                                     } else {
-                                        console.log($.trim(value));
-                                        row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                        if (key == "expense_category" && value !== 0 && value !=='') {
+                                            var expense_category = value.split(" ");
+                                            value = expense_category[0];
+                                            if (value == '' || value == 0) {
+                                                value = "No Data";
+                                            }
+
+                                           setTimeout(function(){  console.log("Expense Category "+value); row.find('td[data-field="' + key + '"]').text($.trim(value)); },2000);
+
+                                        }else {
+                                            console.log($.trim(value));
+                                            row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                        }
                                     }
                                 }
                             }
