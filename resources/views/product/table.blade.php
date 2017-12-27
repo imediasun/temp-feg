@@ -462,7 +462,7 @@
 
 
                                            setTimeout(function(){
-                                               console.log("Expense Category "+value1);
+                                               console.log("Expense Category "+row.find('td[data-field="expense_category"]').text());
                                                row.find('td[data-field="expense_category"]').text($.trim(value1));
                                                console.log("Expense Category 1 "+row.find('td[data-field="expense_category"]').text());
                                            },3000);
