@@ -436,12 +436,6 @@
                                 if (key == "prod_sub_type_id" && value !== '' && value > 0) {
                                     value = $("select#prod_sub_type_id option[value='" + value + "']").text()
                                 }
-                                if (key == "expense_category" && value !== 0 && value !=='') {
-                                    var expense_category = value.split(" ");
-                                    value = expense_category[0];
-
-
-                                }
                                 if (value == '' || value == 0) {
                                     value = "No Data";
                                 }
@@ -453,23 +447,10 @@
                                             row.find('td[data-field="' + key + '"]').text($.trim(value));
                                         }
                                     } else {
-                                        if (key == "expense_category" && value !== 0 && value !=='') {
-                                            var expense_category = value.split(" ");
-                                            var value1 = expense_category[0];
-                                            if (value1 == '' || value == 0) {
-                                                value1 = "No Data";
-                                            }
-                                           //setTimeout(function(){
-                                               console.log("Expense Category "+row.find('td[data-field="expense_category"]').text());
-                                               row.find('td[data-field="expense_category"]').text($.trim(value1));
-                                               console.log("Expense Category 1 "+row.find('td[data-field="expense_category"]').text());
-                                            row.find('td[data-field="expense_category"]').attr("data-field","Test");
-                                         //  },2000);
 
-                                        }else {
 
                                             row.find('td[data-field="' + key + '"]').text($.trim(value));
-                                        }
+
                                     }
                                 }
                             }
