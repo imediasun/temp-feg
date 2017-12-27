@@ -402,7 +402,7 @@
                                 var requestElement = (requestArray[i]).split("=");
                                 var key = $.trim(requestElement[0]);
                                 var value = requestElement[1].replace(/\+/g, " ");
-                                //  console.log(key + " : " + value);
+                                  console.log(key + " : " + value);
 
                                 if (key == "expense_category" && value !== 0 && value !=='') {
                                     var expense_category = value.split(" ");
