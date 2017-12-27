@@ -46,7 +46,7 @@ class ProductController extends Controller
         }
 
     }
-    
+
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
@@ -312,18 +312,17 @@ class ProductController extends Controller
         {
             $type = is_array($request->prod_type_id)?$request->prod_type_id[0]:$request->prod_type_id;
             $subtype = is_array($request->prod_sub_type_id)?$request->prod_sub_type_id[1]:$request->prod_sub_type_id;
+
+            $productName = Product::find($id)->vendor_description;
+
+
             $duplicate = Product::
             where('prod_type_id',$type)
             ->where('prod_sub_type_id',$subtype)
             ->where('sku',$request->sku)
             ->where('id','!=',$id)
-          //  ->where('vendor_description',$request->vendor_description)
+            ->where('vendor_description',$productName)
                 ->first();
-
-            /*return response()->json(array(
-                'message' => "type:".$type." sub type:".$subtype." sku:".$request->sku." id:".$id." AAAAAA:".$duplicate,
-                'status' => 'error'
-            ));*/
             if(!empty($duplicate))
             {
                 return response()->json(array(
@@ -651,17 +650,44 @@ class ProductController extends Controller
 }
 
     function getExpenseCategoryGroups(){
-        $expense_category=\DB::table('expense_category_mapping')
-            ->select('mapped_expense_category as id', 'mapped_expense_category')
-            ->groupBy('mapped_expense_category')->get();
+        $expense_category = \DB::select("SELECT expense_category_mapping.id,expense_category_mapping.mapped_expense_category,order_type.`order_type`,CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | ')) as order_type
+FROM expense_category_mapping
+JOIN order_type ON order_type.id = expense_category_mapping.order_type
+WHERE product_type IS NULL
+GROUP BY mapped_expense_category");
         $items = [];
-        foreach ($expense_category as $key => $category){
-            if($category->mapped_expense_category == 0)
-            {
-                $category->mapped_expense_category = "N/A";
-            }
-            $items[] = [$category->id, $category->mapped_expense_category];
+        foreach ($expense_category as  $category){
+            $orderType = $category->order_type;
+            $categoryId = $category->mapped_expense_category;
+    if( $categoryId==0){
+        $orderType = "N/A";
+        $categoryId = "";
+    }
+
+            $items[] = [$categoryId, $orderType];
         }
         return $items;
+    }
+    function getExpenseCategoryAjax(Request $request){
+
+        $expense_category = \DB::select("SELECT expense_category_mapping.id,expense_category_mapping.mapped_expense_category,order_type.`order_type`,CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | ')) as order_type
+FROM expense_category_mapping
+JOIN order_type ON order_type.id = expense_category_mapping.order_type
+WHERE product_type IS NULL
+GROUP BY mapped_expense_category");
+
+        $items = ['<option value=""> -- Select  -- </option>'];
+        foreach ($expense_category as $category){
+            $orderType = $category->order_type;
+            $categoryId = $category->mapped_expense_category;
+    if( $categoryId==0){
+        $orderType = "N/A";
+        $categoryId = "";
+    }
+            $items[] = '<option value="'.$categoryId.'"> '.$orderType.' </option>';
+
+        }
+        $options = implode("",$items);
+        echo $options;
     }
 }
