@@ -436,18 +436,19 @@
                                 if (key == "prod_sub_type_id" && value !== '' && value > 0) {
                                     value = $("select#prod_sub_type_id option[value='" + value + "']").text()
                                 }
+                                if (key == "expense_category" && value !== 0 && value !=='') {
+                                    var expense_category = value.split(" ");
+                                    value =   expense_category[0];
+                                    console.log(value);
+
+                                }
                                 if (value == '' || value == 0) {
                                     value = "No Data";
                                 }
 
                                 if (key !== "mycheckbox") {
 
-                                    if (key == "expense_category" && value !== 0 && value !=='') {
-                                        var expense_category = value.split(" ");
-                                        value =   expense_category[0];
-                                        console.log(value);
 
-                                    }
 
                                     if (key == "prod_type_id" || key == "prod_sub_type_id") {
                                         if (row.attr('data-id') == $urlArray[2]) {
