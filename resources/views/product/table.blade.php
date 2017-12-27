@@ -404,6 +404,11 @@
                                 var value = requestElement[1].replace(/\+/g, " ");
                                 //  console.log(key + " : " + value);
 
+                                if (key == "expense_category" && value > 0 && value !=='') {
+                                    var expense_category = value.split(" ");
+                                    value =   expense_category[0];
+                                }
+
                                 if (key == "unit_price" && value > 0) {
                                     value = "$ " + value;
                                 }
