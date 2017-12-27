@@ -374,10 +374,13 @@
     $(document).ajaxComplete(function (event, xhr, settings) {
 
 
+
         var $urlArray = settings.url.split('/');
 //console.log($urlArray);
         if (typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null) {
             if (settings.url === "product/save/" + $urlArray[2]) {
+                var responsetext = JSON.parse(xhr.responseText)
+                if(responsetext.message!=='A product with same Product Type & Sub Type already exist' && responsetext.status !=='error'){
                 var mainRow = $('#form-' + $urlArray[2]);
                 var detailText = mainRow.children('td[data-field="details"]').text();
                 if (detailText.length >= 20) {
@@ -389,6 +392,7 @@
                 var old_vd = $('#vd-' + $urlArray[2]).val();
 
                 var count = 1;
+
                 $(document).find("tr").each(function (key, row) {
                     row = $(row);
                     if (row.attr('id') != undefined) {
@@ -400,63 +404,48 @@
                                 var requestElement = (requestArray[i]).split("=");
                                 var key = $.trim(requestElement[0]);
                                 var value = requestElement[1].replace(/\+/g, " ");
-                              //  console.log(key + " : " + value);
+                                //  console.log(key + " : " + value);
 
-                                if (key == "unit_price" && value > 0)
-                                {
+                                if (key == "unit_price" && value > 0) {
                                     value = "$ " + value;
                                 }
-                                if (key == "retail_price" && value > 0)
-                                {
+                                if (key == "retail_price" && value > 0) {
                                     value = "$ " + value;
                                 }
-                                if (key == "case_price" && value > 0)
-                                {
+                                if (key == "case_price" && value > 0) {
                                     value = "$ " + value;
                                 }
-                                if (key == "is_reserved" && value == 0)
-                                {
+                                if (key == "is_reserved" && value == 0) {
                                     value = "No";
-                                } else if (key == "is_reserved" && value == 1)
-                                {
+                                } else if (key == "is_reserved" && value == 1) {
                                     value = "Yes";
                                 }
                                 //hot_item
-                                if (key == "hot_item" && value == 0)
-                                {
+                                if (key == "hot_item" && value == 0) {
                                     value = "No";
-                                } else if (key == "hot_item" && value == 1)
-                                {
+                                } else if (key == "hot_item" && value == 1) {
                                     value = "Yes";
                                 }
 
-                                if(key=="vendor_id" && value !=='' && value >0)
-                                {
-                                    value = $("select#vendor_id option[value='"+value+"']").text()
+                                if (key == "vendor_id" && value !== '' && value > 0) {
+                                    value = $("select#vendor_id option[value='" + value + "']").text()
                                 }
-                                if(key=="prod_type_id" && value !=='' && value >0)
-                                {
-                                        value = $("select.prod_type_id option[value='" + value + "']").eq(0).text()
+                                if (key == "prod_type_id" && value !== '' && value > 0) {
+                                    value = $("select.prod_type_id option[value='" + value + "']").eq(0).text()
                                 }
-                                if(key=="prod_sub_type_id" && value !=='' && value >0)
-                                {
-                                        value = $("select#prod_sub_type_id option[value='" + value + "']").text()
+                                if (key == "prod_sub_type_id" && value !== '' && value > 0) {
+                                    value = $("select#prod_sub_type_id option[value='" + value + "']").text()
                                 }
-                                if (value == '' || value == 0)
-                                {
+                                if (value == '' || value == 0) {
                                     value = "No Data";
                                 }
 
-                                if (key !== "mycheckbox")
-                                {
-                                    if(key == "prod_type_id" || key=="prod_sub_type_id")
-                                    {
-                                       if(row.attr('data-id')==$urlArray[2])
-                                       {
-                                           row.find('td[data-field="' + key + '"]').text($.trim(value));
-                                       }
-                                    }else
-                                        {
+                                if (key !== "mycheckbox") {
+                                    if (key == "prod_type_id" || key == "prod_sub_type_id") {
+                                        if (row.attr('data-id') == $urlArray[2]) {
+                                            row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                        }
+                                    } else {
                                         row.find('td[data-field="' + key + '"]').text($.trim(value));
                                     }
                                 }
@@ -482,6 +471,7 @@
                     }
                 });
             }
+        }
         }
     });
     $(document).on("blur", "input[name='case_price']", function () {
