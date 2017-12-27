@@ -316,7 +316,8 @@ class ProductController extends Controller
             where('prod_type_id',$type)
             ->where('prod_sub_type_id',$subtype)
             ->where('sku',$request->sku)
-            ->where('id','!=',$id)->first();
+            ->where('id','!=',$id)
+            ->where('vendor_description',$request->vendor_description)->first();
 
         //    dd($duplicate);
 
