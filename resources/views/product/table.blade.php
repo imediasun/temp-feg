@@ -404,8 +404,6 @@
                                 var value = requestElement[1].replace(/\+/g, " ");
                                  // console.log(key + " : " + value);
 
-
-
                                 if (key == "unit_price" && value > 0) {
                                     value = "$ " + value;
                                 }
@@ -447,10 +445,7 @@
                                             row.find('td[data-field="' + key + '"]').text($.trim(value));
                                         }
                                     } else {
-
-
                                             row.find('td[data-field="' + key + '"]').text($.trim(value));
-
                                     }
                                 }
                             }
@@ -502,7 +497,7 @@ $(function(){
         dataType:"HTML",
         url:'product/expense-category-ajax',
         success:function(response){
-            console.log(response);
+           // console.log(response);
             $(".expense_category").html(response);
             $(".expense_category").change();
         },
