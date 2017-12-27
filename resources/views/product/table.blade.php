@@ -438,7 +438,7 @@
                                 }
                                 if (key == "expense_category" && value !== 0 && value !=='') {
                                     var expense_category = value.split(" ");
-                                    value =   expense_category[0];
+                                    value = expense_category[0];
                                     console.log(value);
 
                                 }
@@ -448,13 +448,12 @@
 
                                 if (key !== "mycheckbox") {
 
-
-
                                     if (key == "prod_type_id" || key == "prod_sub_type_id") {
                                         if (row.attr('data-id') == $urlArray[2]) {
                                             row.find('td[data-field="' + key + '"]').text($.trim(value));
                                         }
                                     } else {
+                                        console.log($.trim(value));
                                         row.find('td[data-field="' + key + '"]').text($.trim(value));
                                     }
                                 }
