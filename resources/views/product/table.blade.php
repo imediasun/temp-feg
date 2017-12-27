@@ -455,16 +455,16 @@
                                     } else {
                                         if (key == "expense_category" && value !== 0 && value !=='') {
                                             var expense_category = value.split(" ");
-                                            value = expense_category[0];
-                                            if (value == '' || value == 0) {
-                                                value = "No Data";
+                                            var value1 = expense_category[0];
+                                            if (value1 == '' || value == 0) {
+                                                value1 = "No Data";
                                             }
 
 
                                            setTimeout(function(){
-                                               console.log("Expense Category "+value);
-                                               row.find('td[data-field="' + key + '"]').text($.trim(value));
-                                               console.log("Expense Category "+row.find('td[data-field="' + key + '"]').text());
+                                               console.log("Expense Category "+value1);
+                                               row.find('td[data-field="expense_category"]').text($.trim(value1));
+                                               console.log("Expense Category "+row.find('td[data-field="expense_category"]').text());
                                            },3000);
 
                                         }else {
