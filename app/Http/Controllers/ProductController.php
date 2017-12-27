@@ -318,6 +318,8 @@ class ProductController extends Controller
             ->where('sku',$request->sku)
             ->where('id','!=',$id)->first();
 
+        //    dd($duplicate);
+
 
             if($duplicate)
             {
