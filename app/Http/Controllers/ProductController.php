@@ -319,11 +319,6 @@ class ProductController extends Controller
             ->where('id','!=',$id)
           //  ->where('vendor_description',$request->vendor_description)
                 ->first();
-
-            return response()->json(array(
-                'message' => "type:".$type." sub type:".$subtype." sku:".$request->sku." id:".$id." AAAAAA:".$duplicate,
-                'status' => 'error'
-            ));
             if(!empty($duplicate))
             {
                 return response()->json(array(
