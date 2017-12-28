@@ -217,7 +217,6 @@ class UserController extends Controller
                 \Session::put('total_cart', $total_cart[0]->total);
                 \Session::put('lang', 'en');
 
-               // dd($row->redirect_link);
                 if(strpos(session('url.intended'),'servicerequests') )
                 {
                     return Redirect::to(session('url.intended'));
