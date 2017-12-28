@@ -84,7 +84,11 @@ class FegapiController extends Controller
             if (!is_null($vendor_id)) $param['vendor_id'] = $vendor_id;
             if (!is_null($active)) $param['active'] = $active;
 
-            if($class != 'Order' && $class != "Itemreceipt")
+            if($class == 'Product'){
+                $results = $class1::getRows($param, null, null, null, true);
+                $qry = $class1::$getRowsQuery;
+            }
+            elseif($class != 'Order' && $class != "Itemreceipt")
             {
                 $results = $class1::getRows($param);
                 $qry = $class1::$getRowsQuery;

@@ -30,6 +30,24 @@ class product extends Sximo  {
   LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id)";
 	}
 
+    public static function querySelectAPI(){
+        return "SELECT products.*, 
+                GROUP_CONCAT(O.order_type) AS `prod_type`,
+                GROUP_CONCAT(vendor.vendor_name) AS `vendor`,
+                GROUP_CONCAT(IF(products.hot_item = 1,CONCAT('',products.vendor_description,' **HOT ITEM**'), products.vendor_description)) AS `prod_description`,
+                GROUP_CONCAT(TRUNCATE(products.case_price/num_items,5)) AS `unit_pricing`,
+                GROUP_CONCAT(T.type_description) AS `product_type`,
+                GROUP_CONCAT(products.id) AS `product_id`,
+                GROUP_CONCAT(IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price)) AS `retail_price`,
+                GROUP_CONCAT(O.order_type) AS prod_type_id,
+                GROUP_CONCAT(T.type_description) AS prod_sub_type_id,
+                GROUP_CONCAT(expense_category) AS expense_category
+                
+                FROM `products` LEFT JOIN vendor ON (products.vendor_id = vendor.id)
+                LEFT JOIN order_type O ON (O.id = products.prod_type_id)
+                LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id)";
+    }
+
 	public static function queryWhere($product_list_type=null,$active=0,$sub_type=null){
         $return="WHERE products.id IS NOT NULL";
 
@@ -132,7 +150,12 @@ class product extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
-    public static function getRows( $args,$cond=null,$active=null,$sub_type=null)
+
+    public static function queryGroupAPI(){
+        return " GROUP BY vendor_description, sku ";
+    }
+
+    public static function getRows( $args,$cond=null,$active=null,$sub_type=null, $is_api=false)
     {
 
         $table = with(new static)->table;
@@ -158,7 +181,11 @@ class product extends Sximo  {
         // End Update permission global / own access new ver 1.1
 
         $rows = array();
-        $select=self::querySelect();
+        if($is_api){
+            $select=self::querySelectAPI();
+        }else{
+            $select=self::querySelect();
+        }
 
         $createdFlag = false;
 
@@ -194,8 +221,16 @@ class product extends Sximo  {
             $select .= " AND vendor_id='$vendor_id'";
         }
         //$limitConditional = 'LIMIT 0 , 1';
-        Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
-        $result=\DB::select($select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
+
+        if($is_api){
+            $groupConditions = self::queryGroupAPI();
+        }else{
+            $groupConditions = self::queryGroup();
+        }
+
+
+        Log::info("Query : ".$select . " {$params}  {$groupConditions} {$orderConditional}  {$limitConditional} ");
+        $result=\DB::select($select." {$params} {$groupConditions} {$orderConditional}  {$limitConditional} ");
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
         $counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
         //total query becomes too huge
@@ -206,7 +241,7 @@ class product extends Sximo  {
         else
         {
             $total = \DB::select( $select. "
-				{$params} ". self::queryGroup() ." {$orderConditional}  ");
+				{$params} {$groupConditions} {$orderConditional}  ");
             $total = count($total);
         }
         //$total = 1000;
