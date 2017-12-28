@@ -41,7 +41,9 @@ class product extends Sximo  {
                 GROUP_CONCAT(IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price)) AS `retail_price`,
                 GROUP_CONCAT(O.order_type) AS prod_type_id,
                 GROUP_CONCAT(T.type_description) AS prod_sub_type_id,
-                GROUP_CONCAT(expense_category) AS expense_category
+                GROUP_CONCAT(expense_category) AS expense_category,
+                GROUP_CONCAT(ticket_value) AS ticket_value,
+                GROUP_CONCAT(inactive) AS inactive
                 
                 FROM `products` LEFT JOIN vendor ON (products.vendor_id = vendor.id)
                 LEFT JOIN order_type O ON (O.id = products.prod_type_id)
