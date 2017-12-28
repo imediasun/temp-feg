@@ -540,6 +540,13 @@ class OrderController extends Controller
             $altShipTo = $request->get('alt_ship_to');
             $alt_address = '';
             $order_description = '';
+            $totalQuanity = \DB::select("SELECT SUM(qty) AS total_quantity FROM order_contents WHERE order_id=$order_id")[0]->total_quantity;
+            $orderQuantity =  array_sum($request->qty);
+            $orderQuantity = $orderQuantity - $totalQuanity;
+            //When order quantity will be increase then order status will be updated to open (Partial)
+            if($orderQuantity >0){
+                \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
+            }
             if (!empty($altShipTo)) {
                 $rules = array(
                         'to_add_name' => 'required|max:60',
