@@ -50,5 +50,16 @@ class CurrencyHelpers
          $formattedValue .= number_format((double)$split[0],$decimalPlaces,$dec_point , $thousands_sep);
          return $formattedValue.$decimalSection;
      }
+    public static function truncateLongText($text,$maxLength){
+        if(!empty($text)){
+            if(strlen($text) > $maxLength){
+                $text = substr($text,0,258)."...truncated - full contents in FEG admin.";
+                return $text;
+            }else{
+                return $text;
+            }
+        }
+        return '';
+    }
 
 }
