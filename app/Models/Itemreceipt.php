@@ -137,7 +137,7 @@ orders.id=order_received.order_id ";
         }
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
 //echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
-       // die();
+        // die();
         \Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
@@ -180,7 +180,7 @@ orders.id=order_received.order_id ";
             $qry_in_string = "''";
         $order_received_data=\DB::select("select *from order_received where order_id in($qry_in_string) $where");
         $order_received_ids=\DB::select("select order_id from order_received where order_id in($qry_in_string) $where group by order_id");
-       // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
+        // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
         //all order contents place them in relevent order
         if(is_array($data))
         {
