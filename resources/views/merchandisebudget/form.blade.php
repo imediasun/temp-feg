@@ -290,7 +290,7 @@
     {
         ev.stopPropagation();
         var txt=$(t).prev().val().replace(/[|]/g,"");
-        if ($.number_format(txt)=='') return;
+        if (txt == '' || isNaN(txt) || txt.indexOf(".") >= 0) return;
         var p=$(t).closest('.bootstrap-select').prev();
         var o=$('option', p).eq(-2);
         o.before( $("<option>", { "selected": true, "text": txt}) );
