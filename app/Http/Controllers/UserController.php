@@ -217,6 +217,8 @@ class UserController extends Controller
                 \Session::put('total_cart', $total_cart[0]->total);
                 \Session::put('lang', 'en');
 
+                dd($row->redirect_link);
+
                 if (!empty($row->redirect_link)) {
                     return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
                 } elseif (!empty($group->redirect_link)) {
