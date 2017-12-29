@@ -110,8 +110,13 @@
                         </tr>
                     @endif
 
-                    <?php foreach ($rowData as $row) :
+                    <?php
+                    $vendor_description= "";
+                    foreach ($rowData as $row) :
                     $id = $row->id;
+                            if($vendor_description !=$row->vendor_description){
+
+                            }
                     ?>
                     {{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
                     <tr class="editable" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
@@ -373,10 +378,10 @@
 
     $(document).ajaxComplete(function (event, xhr, settings) {
 
-
-
         var $urlArray = settings.url.split('/');
-//console.log($urlArray);
+
+        console.log('debug me');
+
         if (typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null) {
             if (settings.url === "product/save/" + $urlArray[2]) {
                 var responsetext = JSON.parse(xhr.responseText)
@@ -392,11 +397,27 @@
                 var old_vd = $('#vd-' + $urlArray[2]).val();
 
                 var count = 1;
+                    var updateRecord = 1;
+                    var descriptionname="";
+                    var skudata="";
 
                 $(document).find("tr").each(function (key, row) {
+
                     row = $(row);
                     if (row.attr('id') != undefined) {
-                        if ($.trim(row.find('td[data-field="vendor_description"]').text()) == old_vd && $.trim(row.find('td[data-field="sku"]').text()) == old_sku) {
+                        var tempcompare = "";
+                        var requestdata1 = decodeURIComponent(settings.data);
+                        var requestArray1 = requestdata1.split("&");
+                        for (var i = 0; i < requestArray1.length; i++) {
+                            var requestElement1 = (requestArray1[i]).split("=");
+                            var key1 = $.trim(requestElement1[0]);
+                            var value1 = requestElement1[1].replace(/\+/g, " ");
+                            if(key1=="vendor_description"){
+                                tempcompare = value1;
+                            }
+                        }
+
+                        if ((tempcompare==$.trim(row.find('td[data-field="vendor_description"]').text())) || ($.trim(row.find('td[data-field="vendor_description"]').text()) == old_vd && $.trim(row.find('td[data-field="sku"]').text()) == old_sku)) {
                             var requestdata = decodeURIComponent(settings.data);
                             var requestArray = requestdata.split("&");
                             //	console.log(requestArray);
@@ -442,6 +463,11 @@
                                 if (key == "prod_sub_type_id" && value !== '' && value > 0) {
                                     value = $("select#prod_sub_type_id option[value='" + value + "']").text()
                                 }
+
+                                if (key == "expense_category" && value !== 0 &&  value !== '') {
+                                    value =  value;
+                                }
+
                                 if (value == '' || value == 0) {
                                     value = "No Data";
                                 }
@@ -495,6 +521,24 @@
     $(document).on("blur", "input[name='retail_price']", function () {
         $(this).val($(this).fixDecimal());
     });
+
+$(function(){
+
+    $.ajax({
+        type:"GET",
+        data:{DATATEST:1},
+        dataType:"HTML",
+        url:'product/expense-category-ajax',
+        success:function(response){
+           // console.log(response);
+            $(".expense_category").html(response);
+            $(".expense_category").change();
+        },
+        error:function(res){
+            console.log(res);
+        }
+    });
+});
 </script>
 
 <style>
