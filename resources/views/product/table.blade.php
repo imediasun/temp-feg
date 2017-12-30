@@ -118,7 +118,7 @@
                     if($vendor_description !=$row->vendor_description){
                         $product_id="product-".$id;
                         $vendor_description =$row->vendor_description;
-                            }
+                    }
                     ?>
                     {{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
                     <tr class="editable" product-id="{!! $product_id !!}" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
@@ -259,8 +259,10 @@
 <script>
 
     var EditedProductId=0;
-    function editedProduct(id){
+    var singleRowObjectId=0;
+    function editedProduct(id,singleobject){
         EditedProductId=id;
+        singleRowObjectId=$(singleobject).attr("data-id");
 
     }
 
@@ -392,99 +394,106 @@
             if (settings.url === "product/save/" + $urlArray[2]) {
                 var responsetext = JSON.parse(xhr.responseText)
                 if(responsetext.message!=='A product with same Product Type & Sub Type already exist' && responsetext.status !=='error'){
-                var mainRow = $('#form-' + $urlArray[2]);
-                var detailText = mainRow.children('td[data-field="details"]').text();
-                if (detailText.length >= 20) {
-                    var new_details = detailText.substr(0, 20) + '<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
-                    mainRow.children('td[data-field="details"]').empty();
-                    mainRow.children('td[data-field="details"]').html(new_details);
-                }
-                var old_sku = $('#sku-' + $urlArray[2]).val();
-                var old_vd = $('#vd-' + $urlArray[2]).val();
+                    var mainRow = $('#form-' + $urlArray[2]);
+                    var detailText = mainRow.children('td[data-field="details"]').text();
+                    if (detailText.length >= 20) {
+                        var new_details = detailText.substr(0, 20) + '<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
+                        mainRow.children('td[data-field="details"]').empty();
+                        mainRow.children('td[data-field="details"]').html(new_details);
+                    }
+                    var old_sku = $('#sku-' + $urlArray[2]).val();
+                    var old_vd = $('#vd-' + $urlArray[2]).val();
 
-                var count = 1;
+                    var count = 1;
 
-                $("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
-                    row = $(row);
+                    $("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
+                        row = $(row);
 
-                    if (row.attr('id') != undefined) {
-                        if (1==1) {
-                            var requestdata = decodeURIComponent(settings.data);
-                            var requestArray = requestdata.split("&");
-                            //	console.log(requestArray);
-                            for (var i = 0; i < requestArray.length; i++) {
-                                var requestElement = (requestArray[i]).split("=");
-                                var key = $.trim(requestElement[0]);
-                                var value = requestElement[1].replace(/\+/g, " ");
-                                 // console.log(key + " : " + value);
+                        if (row.attr('id') != undefined) {
+                            if (1==1) {
+                                var requestdata = decodeURIComponent(settings.data);
+                                var requestArray = requestdata.split("&");
+                                //	console.log(requestArray);
+                                for (var i = 0; i < requestArray.length; i++) {
+                                    var requestElement = (requestArray[i]).split("=");
+                                    var key = $.trim(requestElement[0]);
+                                    var value = requestElement[1].replace(/\+/g, " ");
+                                    // console.log(key + " : " + value);
 
-                                if (key == "unit_price" && value > 0) {
-                                    value = "$ " + value;
-                                }
-                                if (key == "retail_price" && value > 0) {
-                                    value = "$ " + value;
-                                }
-                                if (key == "case_price" && value > 0) {
-                                    value = "$ " + value;
-                                }
-                                if (key == "is_reserved" && value == 0) {
-                                    value = "No";
-                                } else if (key == "is_reserved" && value == 1) {
-                                    value = "Yes";
-                                }
-                                //hot_item
-                                if (key == "hot_item" && value == 0) {
-                                    value = "No";
-                                } else if (key == "hot_item" && value == 1) {
-                                    value = "Yes";
-                                }
+                                    if (key == "unit_price" && value > 0) {
+                                        value = "$ " + value;
+                                    }
+                                    if (key == "retail_price" && value > 0) {
+                                        value = "$ " + value;
+                                    }
+                                    if (key == "case_price" && value > 0) {
+                                        value = "$ " + value;
+                                    }
+                                    if (key == "is_reserved" && value == 0) {
+                                        value = "No";
+                                    } else if (key == "is_reserved" && value == 1) {
+                                        value = "Yes";
+                                    }
+                                    //hot_item
+                                    if (key == "hot_item" && value == 0) {
+                                        value = "No";
+                                    } else if (key == "hot_item" && value == 1) {
+                                        value = "Yes";
+                                    }
 
-                                if (key == "vendor_id" && value !== '' && value > 0) {
-                                    value = $("select#vendor_id option[value='" + value + "']").text()
-                                }
-                                if (key == "prod_type_id" && value !== '' && value > 0) {
-                                    value = $("select.prod_type_id option[value='" + value + "']").eq(0).text()
-                                }
-                                if (key == "prod_sub_type_id" && value !== '' && value > 0) {
-                                    value = $("select#prod_sub_type_id option[value='" + value + "']").text()
-                                }
-                                if (value == '' || value == 0) {
-                                    value = "No Data";
-                                }
+                                    if (key == "vendor_id" && value !== '' && value > 0) {
+                                        value = $("select#vendor_id option[value='" + value + "']").text()
+                                    }
+                                    if (key == "prod_type_id" && value !== '' && value > 0) {
+                                        value = $("select.prod_type_id option[value='" + value + "']").eq(0).text()
+                                    }
+                                    if (key == "prod_sub_type_id" && value !== '' && value > 0) {
+                                        value = $("select#prod_sub_type_id option[value='" + value + "']").text()
+                                    }
+                                    if (value == '' || value == 0) {
+                                        value = "No Data";
+                                    }
 
-                                if (key !== "mycheckbox") {
+                                    if (key !== "mycheckbox") {
 
-                                    if (key == "prod_type_id" || key == "prod_sub_type_id") {
-                                        if (row.attr('data-id') == $urlArray[2]) {
+                                        if (key == "prod_type_id" || key == "prod_sub_type_id") {
+                                            if (row.attr('data-id') == $urlArray[2]) {
+                                                row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                            }
+                                        } else {
+                                            if ((key === "expense_category" || key === "ticket_value" || key === "retail_price")) {
+
+                                            if (row.attr("data-id") == singleRowObjectId) {
+                                                row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                            }
+                                        }else{
                                             row.find('td[data-field="' + key + '"]').text($.trim(value));
                                         }
-                                    } else {
-                                            row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                        }
                                     }
                                 }
-                            }
-                            //console.log($("select[name='vendor_id'] option:selected").text());
-                            //	row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-                            //	row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
-                            //expense_category
-                            //row.find('td[data-field="expense_category"]').text($.trim(mainRow.children('td[data-field="expense_category"]').attr("data-format")));
-                            //	row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').attr("data-format")));
+                                //console.log($("select[name='vendor_id'] option:selected").text());
+                                //	row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
+                                //	row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
+                                //expense_category
+                                //row.find('td[data-field="expense_category"]').text($.trim(mainRow.children('td[data-field="expense_category"]').attr("data-format")));
+                                //	row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').attr("data-format")));
 
-                            //row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
-                            //row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
-                            //row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
-                            //row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
-                            //row.find('td[data-field="details"]').text($.trim(mainRow.children('td[data-field="details"]').text()));
-                            //row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
-                            //	row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
-                            //row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
-                            //	$('#vd-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-                            //	$('#sku-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="sku"]').text()));
+                                //row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
+                                //row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
+                                //row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
+                                //row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
+                                //row.find('td[data-field="details"]').text($.trim(mainRow.children('td[data-field="details"]').text()));
+                                //row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
+                                //	row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
+                                //row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
+                                //	$('#vd-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
+                                //	$('#sku-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="sku"]').text()));
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
-        }
         }
     });
     $(document).on("blur", "input[name='case_price']", function () {
@@ -503,23 +512,23 @@
         $(this).val($(this).fixDecimal());
     });
 
-$(function(){
+    $(function(){
 
-    $.ajax({
-        type:"GET",
-        data:{DATATEST:1},
-        dataType:"HTML",
-        url:'product/expense-category-ajax',
-        success:function(response){
-           // console.log(response);
-            $(".expense_category").html(response);
-            $(".expense_category").change();
-        },
-        error:function(res){
-            console.log(res);
-        }
+        $.ajax({
+            type:"GET",
+            data:{DATATEST:1},
+            dataType:"HTML",
+            url:'product/expense-category-ajax',
+            success:function(response){
+                // console.log(response);
+                $(".expense_category").html(response);
+                $(".expense_category").change();
+            },
+            error:function(res){
+                console.log(res);
+            }
+        });
     });
-});
 </script>
 
 <style>
