@@ -333,6 +333,7 @@ if(!empty($order_data['orderQtyArray'])){
             </div>
             <div class="clr clear"></div>
             <br/>
+
             <div class="table-responsive col-md-12" style="box-shadow: 1px 1px 10px gray;background: #fff;padding:10px 10px 0px">
                 <fieldset>
                     <legend> Order Items</legend>
@@ -415,6 +416,7 @@ if(!empty($order_data['orderQtyArray'])){
             </table>
                     </fieldset>
 </div>
+            <div class="clr clear"></div>
         </div>
     </div>
  @if($setting['form-method'] =='native')
