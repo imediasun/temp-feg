@@ -123,7 +123,7 @@
                     {{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
                     <tr class="editable" product-id="{!! $product_id !!}" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
                         data-id="{{ $row->id }}"
-                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this); editedProduct('{!! $product_id !!}');" @endif>
+                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this); editedProduct('{!! $product_id !!}',this);" @endif>
                         <input type="hidden" name="numberOfItems" value="{{$row->num_items}}"/>
                         <input id="sku-{{ $row->id }}" type="hidden" name="old-sku" value="{{$row->sku}}"/>
                         <input id="vd-{{ $row->id }}" type="hidden" name="old-vd" value="{{$row->vendor_description}}"/>
@@ -259,8 +259,10 @@
 <script>
 
     var EditedProductId=0;
-    function editedProduct(id){
+    var singleRowObjectId=0;
+    function editedProduct(id,singleobject){
         EditedProductId=id;
+        singleRowObjectId=$(singleobject).attr("data-id");
 
     }
 
@@ -459,7 +461,14 @@
                                                 row.find('td[data-field="' + key + '"]').text($.trim(value));
                                             }
                                         } else {
+                                            if ((key === "expense_category" || key === "ticket_value" || key === "retail_price")) {
+
+                                            if (row.attr("data-id") == singleRowObjectId) {
+                                                row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                            }
+                                        }else{
                                             row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                        }
                                         }
                                     }
                                 }
