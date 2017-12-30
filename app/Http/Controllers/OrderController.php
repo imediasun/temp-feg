@@ -110,6 +110,7 @@ class OrderController extends Controller
         $rows = $results['rows'];
 
         //$rows = $this->updateDateInAllRows($rows);
+        $rowss=[];
         foreach($rows as $row1) {
             $row1 = (array) $row1;
             $rowss[] = (array)self::array_move('created_at', 3, (array)$row1);
