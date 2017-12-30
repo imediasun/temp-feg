@@ -1003,7 +1003,8 @@ class OrderController extends Controller
 
         $id = $request->input('ids');
         $explaination = $request->input('explaination');
-        $result = \DB::update("update orders set notes = concat(notes,'<br>','$explaination'), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
+
+        $result = \DB::update("update orders set notes = concat(notes,'<br>',".\DB::connection()->getPdo()->quote($explaination)."), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
 
         if ($result) {
             return Redirect::to('order')->with('messagetext', 'Order has been restored successfully!')->with('msgstatus', 'success');
@@ -1061,8 +1062,9 @@ class OrderController extends Controller
         $query = "";
         $result = false;
         for ($i = 0; $i < count($ids); $i++) {
-            $query = "update orders set notes = concat(notes,'<br>','" . $explaination[$i] . "'), deleted_at=NOW(), status_id=10, deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
-            $result = \DB::update($query);
+         // echo  \DB::connection()->getPdo()->quote($explaination[$i]);
+            $query = "update orders set notes = concat(notes,'<br>'," . \DB::connection()->getPdo()->quote($explaination[$i]) . "), deleted_at=NOW(), status_id=10, deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
+           $result = \DB::update($query);
         }
 
         if ($result) {
