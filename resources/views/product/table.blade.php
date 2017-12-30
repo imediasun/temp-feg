@@ -110,14 +110,21 @@
                         </tr>
                     @endif
 
-                    <?php foreach ($rowData as $row) :
+                    <?php
+                    $vendor_description= "";
+                    $product_id = "";
+                    foreach ($rowData as $row) :
                     $id = $row->id;
+                    if($vendor_description !=$row->vendor_description){
+                        $product_id="product-".$id;
+                        $vendor_description =$row->vendor_description;
+                            }
                     ?>
                     {{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
-                    <tr class="editable" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
+                    <tr class="editable" product-id="{!! $product_id !!}" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
                         data-id="{{ $row->id }}"
-                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
-                        <input type="hidden" name="numberOfItems" value="{{$row->num_items}}"/>
+                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this); editedProduct('{!! $product_id !!}');" @endif>
+                    <input type="hidden" name="numberOfItems" value="{{$row->num_items}}"/>
                         <input id="sku-{{ $row->id }}" type="hidden" name="old-sku" value="{{$row->sku}}"/>
                         <input id="vd-{{ $row->id }}" type="hidden" name="old-vd" value="{{$row->vendor_description}}"/>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
@@ -250,6 +257,12 @@
 </div>
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
+
+    var EditedProductId=0;
+    function editedProduct(id){
+        EditedProductId=id;
+
+    }
 
     function showModal(id, obj) {
         $('#myModal').modal('show');
@@ -391,10 +404,11 @@
 
                 var count = 1;
 
-                $(document).find("tr").each(function (key, row) {
+                $("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
                     row = $(row);
+                    alert(row.attr('product-id'));
                     if (row.attr('id') != undefined) {
-                        if ($.trim(row.find('td[data-field="vendor_description"]').text()) == old_vd && $.trim(row.find('td[data-field="sku"]').text()) == old_sku) {
+                        if (1==1) {
                             var requestdata = decodeURIComponent(settings.data);
                             var requestArray = requestdata.split("&");
                             //	console.log(requestArray);
