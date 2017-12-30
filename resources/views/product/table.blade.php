@@ -406,7 +406,7 @@
 
                     $("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
                         row = $(row);
-                        alert(row.attr('product-id'));
+
                         if (row.attr('id') != undefined) {
                             if (1==1) {
                                 var requestdata = decodeURIComponent(settings.data);
