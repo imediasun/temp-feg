@@ -111,13 +111,27 @@ class OrderController extends Controller
         $rows = $results['rows'];
 
         //$rows = $this->updateDateInAllRows($rows);
+        foreach($rows as $row1) {
+            $row1 = (array) $row1;
+            $rowss[] = (array)self::array_move('created_at', 3, (array)$row1);
+        }
+        $rowsobjects = [];
+        foreach($rowss as $rowobj){
+            $rowsobjects[] = (object)$rowobj;
+        }
+
+        $out = array_splice($fields, 27, 1);
+        array_splice($fields, 3, 0, $out);
+
+
 
         $content = array(
             'exportID' => $exportSessionID,
             'fields' => $fields,
-            'rows' => $rows,
+            'rows' => $rowsobjects,
             'title' => $this->data['pageTitle'],
         );
+
 
         if ($t == 'word') {
 
@@ -2033,6 +2047,39 @@ class OrderController extends Controller
 
     }
 
+
+   public static function array_splice_assoc(&$input, $offset, $length, $replacement) {
+        $replacement = (array) $replacement;
+        $key_indices = array_flip(array_keys($input));
+        if (isset($input[$offset]) && is_string($offset)) {
+            $offset = $key_indices[$offset];
+        }
+        if (isset($input[$length]) && is_string($length)) {
+            $length = $key_indices[$length] - $offset;
+        }
+
+        $input = array_slice($input, 0, $offset, TRUE)
+            + $replacement
+            + array_slice($input, $offset + $length, NULL, TRUE);
+    }
+public static function array_move($which, $where, $array)
+    {
+
+        $tmpWhich = $which;
+        $j=0;
+        $keys = array_keys($array);
+
+        for($i=0;$i<count($array);$i++)
+        {
+            if($keys[$i]==$tmpWhich)
+                $tmpWhich = $j;
+            else
+                $j++;
+        }
+        $tmp  = array_splice($array, $tmpWhich, 1);
+        self::array_splice_assoc($array, $where, 0, $tmp);
+        return $array;
+    }
 
 }
 /*$dataArray =["deleted_at"=>date("Y-m-d H:i:s"),'deleted_by'=>\Session::get('uid')];
