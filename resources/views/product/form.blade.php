@@ -43,7 +43,7 @@
                     <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New FEG Store Product
                 @endif &nbsp;&nbsp;
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
-                   onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
+                   onclick="ajaxViewClose('#{{ $pageModule }}');"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
 
@@ -614,7 +614,8 @@
 
         if (data.status == 'success') {
             ajaxViewClose('#{{ $pageModule }}');
-            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+            $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+          //  ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');
         } else {

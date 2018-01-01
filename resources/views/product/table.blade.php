@@ -302,17 +302,19 @@
              console.log("debugger");
 
              var product_id = $("tr[data-id='"+productId+"']").attr("product-id");
-            if(state==false) {
+        /*    if(state==false) {
                 $("tr[product-id='" + product_id + "'] td[data-field='exclude_export'] .toggle").bootstrapSwitch("state", false);
             }else{
                 $("tr[product-id='" + product_id + "'] td[data-field='exclude_export'] .toggle").bootstrapSwitch("state", true);
-            }
+            }*/
             $.ajax(
                     {
                         type: 'POST',
                         url: 'product/exclude',
                         data: {excludeExport: state, productId: productId},
                         success: function (data) {
+
+                            $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
 
                            // $('.doSimpleSearch').click();
                             /*if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
