@@ -747,7 +747,8 @@ class Sximo extends Model {
 										  O.alt_address,
                                           F.freight_type, 
                                           O.new_format,
-                                          O.po_notes
+                                          O.po_notes,
+                                          po_notes_additionaltext
 								     FROM orders O
 								LEFT JOIN company C ON C.id = O.company_id
 								LEFT JOIN location L ON L.id = O.location_id
