@@ -53,6 +53,7 @@ class ConfigController extends Controller
             'CNF_RESTRICIP' => FEGSystemHelper::getOption('CNF_RESTRICIP'),
             'CNF_REPLY_TO' => FEGSystemHelper::getOption('CNF_REPLY_TO'),
             'CNF_REPLY_TO_PASSWORD' => FEGSystemHelper::getOption('CNF_REPLY_TO_PASSWORD'),
+            'PO_NOTE_DEFAULT_TEXT'=>FEGSystemHelper::getOption('PO_NOTE_DEFAULT_TEXT'),
         ];
 
         return view('sximo.config.index', $this->data);

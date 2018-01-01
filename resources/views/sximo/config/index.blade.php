@@ -101,6 +101,18 @@
 			 </div> 
 		  </div>
 
+			<div class="form-group">
+
+				<label for="ipt" class=" control-label col-md-4"> PO Note Additional Text (Default)<br>
+
+				</label>
+				<div class="col-md-8">
+					<textarea name="PO_NOTE_DEFAULT_TEXT" class="form-control" rows="5" placeholder="PO Note Additional Text (Default)">{{ $options['PO_NOTE_DEFAULT_TEXT'] }}</textarea>
+					<b></b>Place <code>EMAIL_ADDRESS</code> this keyword where you want to show the user's email address.</b>
+				</div>
+
+			</div>
+
 
 			<div class="form-group hide">
 		    <label for="ipt" class=" control-label col-md-4"> Development Mode ?   </label>
