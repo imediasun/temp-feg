@@ -405,6 +405,7 @@
 
         if (typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null) {
             if (settings.url === "product/save/" + $urlArray[2]) {
+                singleRowObjectId=$urlArray[2];
                 settings.url = "";
 
                 var responsetext = JSON.parse(xhr.responseText)
@@ -420,31 +421,48 @@
                     var old_vd = $('#vd-' + $urlArray[2]).val();
 
                     var count = 1;
-                    $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+                  //  $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
 
                     $("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
 
+
                         row = $(row);
+                        console.log("debugger");
+
 
                         if (row.attr('id') != undefined) {
+                            //divOverlay_6442
+
+                         //   console.log($("#divOverlay_"+idSplited[1]).children('a[data-original-title="Cancel"]').click())
+                          //  cancelInlineEdit("'"+row.attr('id')+"'", event, this,0)
                             if (1==1) {
                                 var requestdata = decodeURIComponent(settings.data);
                                 var requestArray = requestdata.split("&");
                                 //	console.log(requestArray);
-                            /*    for (var i = 0; i < requestArray.length; i++) {
+                                for (var i = 0; i < requestArray.length; i++) {
                                     var requestElement = (requestArray[i]).split("=");
                                     var key = $.trim(requestElement[0]);
                                     var value = requestElement[1].replace(/\+/g, " ");
                                     // console.log(key + " : " + value);
+                                    var idSplited = (row.attr('id')).split("-");
+                                    if(key=="expense_category") {
+                                        console.log(row.attr("data-id") === singleRowObjectId);
+                                    }
+
+                                //    if(idSplited[1]$urlArray[2]) {
+
+                                        $("#divOverlay_" + idSplited[1]).children('a[data-original-title="Cancel"]').click();
+                                 //   }
 
                                     if (key == "unit_price" && value > 0) {
-                                        value = "$ " + value;
+                                        value = "$ " + parseFloat(value).toFixed(2);
+
                                     }
                                     if (key == "retail_price" && value > 0) {
-                                        value = "$ " + value;
+                                        value = "$ " + parseFloat(value).toFixed(2);
                                     }
                                     if (key == "case_price" && value > 0) {
-                                        value = "$ " + value;
+                                        value = "$ " + parseFloat(value).toFixed(2);
                                     }
                                     if (key == "is_reserved" && value == 0) {
                                         value = "No";
@@ -471,24 +489,31 @@
                                         value = "No Data";
                                     }
 
-                                    if (key !== "mycheckbox") {
 
-                                        if (key == "prod_type_id" || key == "prod_sub_type_id") {
-                                            if (row.attr('data-id') == $urlArray[2]) {
-                                                row.find('td[data-field="' + key + '"]').text($.trim(value));
-                                            }
-                                        } else {
-                                            if ((key === "expense_category" || key === "ticket_value" || key === "retail_price")) {
 
-                                            if (row.attr("data-id") == singleRowObjectId) {
-                                                row.find('td[data-field="' + key + '"]').text($.trim(value));
+
+                                    //if ($(this).children('td[data-field="vendor_description"]').length == 0) {
+
+                                        if (key !== "mycheckbox") {
+
+                                            if (key == "prod_type_id" || key == "prod_sub_type_id") {
+                                                if (row.attr('data-id') == $urlArray[2]) {
+                                                    row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                                }
+                                            } else {
+                                                if ((key === "expense_category" || key === "ticket_value" || key === "retail_price")) {
+
+                                                    if (row.attr("data-id") === singleRowObjectId) {
+
+                                                        row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                                    }
+                                                } else {
+                                                    row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                                }
                                             }
-                                        }else{
-                                            row.find('td[data-field="' + key + '"]').text($.trim(value));
-                                        }
-                                        }
+                                       // }
                                     }
-                                }*/
+                                }
                                 //console.log($("select[name='vendor_id'] option:selected").text());
                                 //	row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
                                 //	row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
