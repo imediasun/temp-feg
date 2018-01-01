@@ -418,6 +418,8 @@
                     var old_vd = $('#vd-' + $urlArray[2]).val();
 
                     var count = 1;
+                    $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+
 
                     $("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
                         row = $(row);
@@ -427,7 +429,7 @@
                                 var requestdata = decodeURIComponent(settings.data);
                                 var requestArray = requestdata.split("&");
                                 //	console.log(requestArray);
-                                for (var i = 0; i < requestArray.length; i++) {
+                            /*    for (var i = 0; i < requestArray.length; i++) {
                                     var requestElement = (requestArray[i]).split("=");
                                     var key = $.trim(requestElement[0]);
                                     var value = requestElement[1].replace(/\+/g, " ");
@@ -484,7 +486,7 @@
                                         }
                                         }
                                     }
-                                }
+                                }*/
                                 //console.log($("select[name='vendor_id'] option:selected").text());
                                 //	row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
                                 //	row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
