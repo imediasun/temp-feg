@@ -130,7 +130,7 @@ width: 75%">
                 }
             });
            var url_for_prod_sub_type="{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}";
-            console.log(url_for_prod_sub_type);
+          // console.log(url_for_prod_sub_type);
             var type="{{ $product_list_type  }}";
 
             if(type != 0 && type != "select")
