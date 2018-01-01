@@ -405,6 +405,8 @@
 
         if (typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null) {
             if (settings.url === "product/save/" + $urlArray[2]) {
+                settings.url = "";
+                console.log("Number of Requests");
                 var responsetext = JSON.parse(xhr.responseText)
                 if(responsetext.message!=='A product with same Product Type & Sub Type already exist' && responsetext.status !=='error'){
                     var mainRow = $('#form-' + $urlArray[2]);
@@ -422,6 +424,7 @@
 
 
                     $("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
+                        console.log("key:",key);
                         row = $(row);
 
                         if (row.attr('id') != undefined) {
