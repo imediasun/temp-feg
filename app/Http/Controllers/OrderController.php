@@ -1205,11 +1205,11 @@ class OrderController extends Controller
           //  $addonPONote = "\r\n Ship Palletized Whenever Possible. ";
             $addonPONote = !empty($data[0]['po_notes_additionaltext']) ? $data[0]['po_notes_additionaltext']:FEGSystemHelper::getOption('PO_NOTE_DEFAULT_TEXT');
             $addonPONote = str_replace("EMAIL_ADDRESS", $data[0]['email'] . (!empty($data[0]['cc_email']) ? $data[0]['cc_email']:"")  . (!empty($data[0]['loc_contact_email'])? $data[0]['loc_contact_email']:""),$addonPONote);
-            if (empty($data[0]['po_notes'])) {
+            /*if (empty($data[0]['po_notes'])) {
                 $data[0]['po_notes'] = " NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . "** \r\n Ship Palletized Whenever Possible. ";
-            } else {
+            } else {*/
                 $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " ".$addonPONote;
-            }
+           // }
             $order_description = $data[0]['order_description'];
             if (substr($order_description, 0, 3) === ' | ') {
                 $order_description = substr($order_description, 3);
