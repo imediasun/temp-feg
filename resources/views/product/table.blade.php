@@ -297,10 +297,7 @@
         });
 
         $("[id^='exclude_export_']").on('switchChange.bootstrapSwitch', function (event, state) {
-
             productId = $(this).data('id');
-             console.log("debugger");
-
              var product_id = $("tr[data-id='"+productId+"']").attr("product-id");
         /*    if(state==false) {
                 $("tr[product-id='" + product_id + "'] td[data-field='exclude_export'] .toggle").bootstrapSwitch("state", false);
@@ -408,6 +405,9 @@
                 singleRowObjectId=$urlArray[2];
                 settings.url = "";
 
+                EditedProductId = $("tr#form-"+$urlArray[2]).attr("product-id");
+
+
                 var responsetext = JSON.parse(xhr.responseText)
                 if(responsetext.message!=='A product with same Product Type & Sub Type already exist' && responsetext.status !=='error'){
                     var mainRow = $('#form-' + $urlArray[2]);
@@ -419,20 +419,11 @@
                     }
                     var old_sku = $('#sku-' + $urlArray[2]).val();
                     var old_vd = $('#vd-' + $urlArray[2]).val();
-
                     var count = 1;
-                  //  $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
-
                     $("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
-
-
                         row = $(row);
-                        console.log("debugger");
-
-
                         if (row.attr('id') != undefined) {
                             //divOverlay_6442
-
                          //   console.log($("#divOverlay_"+idSplited[1]).children('a[data-original-title="Cancel"]').click())
                           //  cancelInlineEdit("'"+row.attr('id')+"'", event, this,0)
                             if (1==1) {
@@ -446,7 +437,7 @@
                                     // console.log(key + " : " + value);
                                     var idSplited = (row.attr('id')).split("-");
                                     if(key=="expense_category") {
-                                        console.log(row.attr("data-id") === singleRowObjectId);
+                                       // console.log(row.attr("data-id") === singleRowObjectId);
                                     }
 
                                 //    if(idSplited[1]$urlArray[2]) {
@@ -488,9 +479,6 @@
                                     if (value == '' || value == 0) {
                                         value = "No Data";
                                     }
-
-
-
 
                                     //if ($(this).children('td[data-field="vendor_description"]').length == 0) {
 
