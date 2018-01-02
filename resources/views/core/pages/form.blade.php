@@ -374,9 +374,13 @@
 
 			var key = e.keyCode || e.charCode;
 			console.log(key);
-			if( key == 8 || key == 46 ){
-				return false;
-			}
+			var text = $(".note-editable .page-content-wrapper .sbox-content .col-md-12").text();
+			if (key == 8 || key == 46) {
+				if($.trim(text)=="" || text.length==0) {
+
+						return false;
+					}
+				}
 
 
 		})
@@ -387,11 +391,15 @@
 			html += '<div class="sbox animated fadeInRight">';
 			html += '<div class="sbox-content">';
 			html += '<div class="col-md-12" style="padding-top: 50px; padding-right: 50px; padding-bottom: 50px; background-color: #ffffff;">';
-			html +='</div></div></div></div>';
-			console.log($(".note-editable .page-content-wrapper").length);
-			if($(".note-editable .page-content-wrapper").length==0){
-			//	$(".note-editable").html("<p><br><p>"+html);
-			}
+			html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
+			setTimeout(function(){
+				console.log("Length "+$(".note-editable .page-content-wrapper").length);
+				if($(".note-editable .page-content-wrapper").length==0){
+						$(".note-editable").html("<p><br><p>"+html);
+					console.log("Length "+$(".note-editable .page-content-wrapper").length);
+				}
+			},700);
+
 
             $("#iGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: "{{ is_object($row)?$row->direct_edit_groups:'' }}"});
