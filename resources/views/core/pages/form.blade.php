@@ -376,7 +376,7 @@
 
 			var text = $(".note-editable .page-content-wrapper .sbox-content .col-md-12").text();
 			if (key == 8 || key == 46) {
-				if($.trim(text)=="" || text.length==0) {
+				if($.trim(text)=="" || text.length<=1) {
 					var html = '<div class="page-content-wrapper m-t">';
 					html += '<div class="sbox animated fadeInRight">';
 					html += '<div class="sbox-content">';
