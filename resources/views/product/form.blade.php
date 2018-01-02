@@ -541,7 +541,7 @@
         });
 
         $(document).on('change',"select.prod_type",function(){
-            console.log('here');
+
             var previous = $(this).attr('data-previous');
             var selectedType = $(this).val();
             var counter = $(this).attr('data-counter');
@@ -615,6 +615,7 @@
         if (data.status == 'success') {
             ajaxViewClose('#{{ $pageModule }}');
             $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+
           //  ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');
