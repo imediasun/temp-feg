@@ -110,13 +110,20 @@
                         </tr>
                     @endif
 
-                    <?php foreach ($rowData as $row) :
+                    <?php
+                    $vendor_description= "";
+                    $product_id = "";
+                    foreach ($rowData as $row) :
                     $id = $row->id;
+                    if($vendor_description !=$row->vendor_description){
+                        $product_id="product-".$id;
+                        $vendor_description =$row->vendor_description;
+                    }
                     ?>
                     {{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
-                    <tr class="editable" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
+                    <tr class="editable" product-id="{!! $product_id !!}" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
                         data-id="{{ $row->id }}"
-                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
+                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this); editedProduct('{!! $product_id !!}',this);" @endif>
                         <input type="hidden" name="numberOfItems" value="{{$row->num_items}}"/>
                         <input id="sku-{{ $row->id }}" type="hidden" name="old-sku" value="{{$row->sku}}"/>
                         <input id="vd-{{ $row->id }}" type="hidden" name="old-vd" value="{{$row->vendor_description}}"/>
@@ -251,6 +258,14 @@
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
 
+    var EditedProductId=0;
+    var singleRowObjectId=0;
+    function editedProduct(id,singleobject){
+        EditedProductId=id;
+        singleRowObjectId=$(singleobject).attr("data-id");
+
+    }
+
     function showModal(id, obj) {
         $('#myModal').modal('show');
 
@@ -280,15 +295,25 @@
                     }
             );
         });
+
         $("[id^='exclude_export_']").on('switchChange.bootstrapSwitch', function (event, state) {
             productId = $(this).data('id');
+             var product_id = $("tr[data-id='"+productId+"']").attr("product-id");
+        /*    if(state==false) {
+                $("tr[product-id='" + product_id + "'] td[data-field='exclude_export'] .toggle").bootstrapSwitch("state", false);
+            }else{
+                $("tr[product-id='" + product_id + "'] td[data-field='exclude_export'] .toggle").bootstrapSwitch("state", true);
+            }*/
             $.ajax(
                     {
                         type: 'POST',
                         url: 'product/exclude',
                         data: {excludeExport: state, productId: productId},
                         success: function (data) {
-                            $('.doSimpleSearch').click();
+
+                            $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+
+                           // $('.doSimpleSearch').click();
                             /*if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
                              {
                              //window.location.reload();
@@ -377,100 +402,128 @@
 
         if (typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null) {
             if (settings.url === "product/save/" + $urlArray[2]) {
+                singleRowObjectId=$urlArray[2];
+                settings.url = "";
+
+                EditedProductId = $("tr#form-"+$urlArray[2]).attr("product-id");
+
+
                 var responsetext = JSON.parse(xhr.responseText)
                 if(responsetext.message!=='A product with same Product Type & Sub Type already exist' && responsetext.status !=='error'){
-                var mainRow = $('#form-' + $urlArray[2]);
-                var detailText = mainRow.children('td[data-field="details"]').text();
-                if (detailText.length >= 20) {
-                    var new_details = detailText.substr(0, 20) + '<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
-                    mainRow.children('td[data-field="details"]').empty();
-                    mainRow.children('td[data-field="details"]').html(new_details);
-                }
-                var old_sku = $('#sku-' + $urlArray[2]).val();
-                var old_vd = $('#vd-' + $urlArray[2]).val();
+                    var mainRow = $('#form-' + $urlArray[2]);
+                    var detailText = mainRow.children('td[data-field="details"]').text();
+                    if (detailText.length >= 20) {
+                        var new_details = detailText.substr(0, 20) + '<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
+                        mainRow.children('td[data-field="details"]').empty();
+                        mainRow.children('td[data-field="details"]').html(new_details);
+                    }
+                    var old_sku = $('#sku-' + $urlArray[2]).val();
+                    var old_vd = $('#vd-' + $urlArray[2]).val();
+                    var count = 1;
+                    $("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
+                        row = $(row);
+                        if (row.attr('id') != undefined) {
+                            //divOverlay_6442
+                         //   console.log($("#divOverlay_"+idSplited[1]).children('a[data-original-title="Cancel"]').click())
+                          //  cancelInlineEdit("'"+row.attr('id')+"'", event, this,0)
+                            if (1==1) {
+                                var requestdata = decodeURIComponent(settings.data);
+                                var requestArray = requestdata.split("&");
+                                //	console.log(requestArray);
+                                for (var i = 0; i < requestArray.length; i++) {
+                                    var requestElement = (requestArray[i]).split("=");
+                                    var key = $.trim(requestElement[0]);
+                                    var value = requestElement[1].replace(/\+/g, " ");
+                                    // console.log(key + " : " + value);
+                                    var idSplited = (row.attr('id')).split("-");
+                                    if(key=="expense_category") {
+                                       // console.log(row.attr("data-id") === singleRowObjectId);
+                                    }
 
-                var count = 1;
+                                //    if(idSplited[1]$urlArray[2]) {
 
-                $(document).find("tr").each(function (key, row) {
-                    row = $(row);
-                    if (row.attr('id') != undefined) {
-                        if ($.trim(row.find('td[data-field="vendor_description"]').text()) == old_vd && $.trim(row.find('td[data-field="sku"]').text()) == old_sku) {
-                            var requestdata = decodeURIComponent(settings.data);
-                            var requestArray = requestdata.split("&");
-                            //	console.log(requestArray);
-                            for (var i = 0; i < requestArray.length; i++) {
-                                var requestElement = (requestArray[i]).split("=");
-                                var key = $.trim(requestElement[0]);
-                                var value = requestElement[1].replace(/\+/g, " ");
-                                 // console.log(key + " : " + value);
+                                        $("#divOverlay_" + idSplited[1]).children('a[data-original-title="Cancel"]').click();
+                                 //   }
 
-                                if (key == "unit_price" && value > 0) {
-                                    value = "$ " + value;
-                                }
-                                if (key == "retail_price" && value > 0) {
-                                    value = "$ " + value;
-                                }
-                                if (key == "case_price" && value > 0) {
-                                    value = "$ " + value;
-                                }
-                                if (key == "is_reserved" && value == 0) {
-                                    value = "No";
-                                } else if (key == "is_reserved" && value == 1) {
-                                    value = "Yes";
-                                }
-                                //hot_item
-                                if (key == "hot_item" && value == 0) {
-                                    value = "No";
-                                } else if (key == "hot_item" && value == 1) {
-                                    value = "Yes";
-                                }
+                                    if (key == "unit_price" && value > 0) {
+                                        value = "$ " + parseFloat(value).toFixed(2);
 
-                                if (key == "vendor_id" && value !== '' && value > 0) {
-                                    value = $("select#vendor_id option[value='" + value + "']").text()
-                                }
-                                if (key == "prod_type_id" && value !== '' && value > 0) {
-                                    value = $("select.prod_type_id option[value='" + value + "']").eq(0).text()
-                                }
-                                if (key == "prod_sub_type_id" && value !== '' && value > 0) {
-                                    value = $("select#prod_sub_type_id option[value='" + value + "']").text()
-                                }
-                                if (value == '' || value == 0) {
-                                    value = "No Data";
-                                }
+                                    }
+                                    if (key == "retail_price" && value > 0) {
+                                        value = "$ " + parseFloat(value).toFixed(2);
+                                    }
+                                    if (key == "case_price" && value > 0) {
+                                        value = "$ " + parseFloat(value).toFixed(2);
+                                    }
+                                    if (key == "is_reserved" && value == 0) {
+                                        value = "No";
+                                    } else if (key == "is_reserved" && value == 1) {
+                                        value = "Yes";
+                                    }
+                                    //hot_item
+                                    if (key == "hot_item" && value == 0) {
+                                        value = "No";
+                                    } else if (key == "hot_item" && value == 1) {
+                                        value = "Yes";
+                                    }
 
-                                if (key !== "mycheckbox") {
+                                    if (key == "vendor_id" && value !== '' && value > 0) {
+                                        value = $("select#vendor_id option[value='" + value + "']").text()
+                                    }
+                                    if (key == "prod_type_id" && value !== '' && value > 0) {
+                                        value = $("select.prod_type_id option[value='" + value + "']").eq(0).text()
+                                    }
+                                    if (key == "prod_sub_type_id" && value !== '' && value > 0) {
+                                        value = $("select#prod_sub_type_id option[value='" + value + "']").text()
+                                    }
+                                    if (value == '' || value == 0) {
+                                        value = "No Data";
+                                    }
 
-                                    if (key == "prod_type_id" || key == "prod_sub_type_id") {
-                                        if (row.attr('data-id') == $urlArray[2]) {
-                                            row.find('td[data-field="' + key + '"]').text($.trim(value));
-                                        }
-                                    } else {
-                                            row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                    //if ($(this).children('td[data-field="vendor_description"]').length == 0) {
+
+                                        if (key !== "mycheckbox") {
+
+                                            if (key == "prod_type_id" || key == "prod_sub_type_id") {
+                                                if (row.attr('data-id') == $urlArray[2]) {
+                                                    row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                                }
+                                            } else {
+                                                if ((key === "expense_category" || key === "ticket_value" || key === "retail_price")) {
+
+                                                    if (row.attr("data-id") === singleRowObjectId) {
+
+                                                        row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                                    }
+                                                } else {
+                                                    row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                                }
+                                            }
+                                       // }
                                     }
                                 }
-                            }
-                            //console.log($("select[name='vendor_id'] option:selected").text());
-                            //	row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-                            //	row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
-                            //expense_category
-                            //row.find('td[data-field="expense_category"]').text($.trim(mainRow.children('td[data-field="expense_category"]').attr("data-format")));
-                            //	row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').attr("data-format")));
+                                //console.log($("select[name='vendor_id'] option:selected").text());
+                                //	row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
+                                //	row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
+                                //expense_category
+                                //row.find('td[data-field="expense_category"]').text($.trim(mainRow.children('td[data-field="expense_category"]').attr("data-format")));
+                                //	row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').attr("data-format")));
 
-                            //row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
-                            //row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
-                            //row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
-                            //row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
-                            //row.find('td[data-field="details"]').text($.trim(mainRow.children('td[data-field="details"]').text()));
-                            //row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
-                            //	row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
-                            //row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
-                            //	$('#vd-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-                            //	$('#sku-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="sku"]').text()));
+                                //row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
+                                //row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
+                                //row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
+                                //row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
+                                //row.find('td[data-field="details"]').text($.trim(mainRow.children('td[data-field="details"]').text()));
+                                //row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
+                                //	row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
+                                //row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
+                                //	$('#vd-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
+                                //	$('#sku-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="sku"]').text()));
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
-        }
         }
     });
     $(document).on("blur", "input[name='case_price']", function () {
@@ -489,23 +542,23 @@
         $(this).val($(this).fixDecimal());
     });
 
-$(function(){
+    $(function(){
 
-    $.ajax({
-        type:"GET",
-        data:{DATATEST:1},
-        dataType:"HTML",
-        url:'product/expense-category-ajax',
-        success:function(response){
-           // console.log(response);
-            $(".expense_category").html(response);
-            $(".expense_category").change();
-        },
-        error:function(res){
-            console.log(res);
-        }
+        $.ajax({
+            type:"GET",
+            data:{DATATEST:1},
+            dataType:"HTML",
+            url:'product/expense-category-ajax',
+            success:function(response){
+                // console.log(response);
+                $(".expense_category").html(response);
+                $(".expense_category").change();
+            },
+            error:function(res){
+                console.log(res);
+            }
+        });
     });
-});
 </script>
 
 <style>

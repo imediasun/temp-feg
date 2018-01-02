@@ -381,6 +381,9 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
+        if(empty($this->data['row']['po_notes_additionaltext'])){
+            $this->data['row']['po_notes_additionaltext'] = FEGSystemHelper::getOption('PO_NOTE_DEFAULT_TEXT');
+        }
 
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -391,7 +394,8 @@ class OrderController extends Controller
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
-        return view('order.form', $this->data)->with('fromStore', $fromStore);
+
+        return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
     public function getShow($id = null)
@@ -577,6 +581,7 @@ class OrderController extends Controller
             $po_3 = $request->get('po_3');
             $po = $po_1 . '-' . $po_2 . '-' . $po_3;
             $altShipTo = $request->get('alt_ship_to');
+
             $alt_address = '';
             $order_description = '';
             $totalQuanity = \DB::select("SELECT SUM(qty) AS total_quantity FROM order_contents WHERE order_id=$order_id")[0]->total_quantity;
@@ -619,6 +624,7 @@ class OrderController extends Controller
             $item_received = $request->get('item_received');
             $item_received = $request->get('item_received');
             $denied_SIDs = $request->get('denied_SIDs');
+            $po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
@@ -644,7 +650,8 @@ class OrderController extends Controller
                     'freight_id' => $freight_type_id,
                     'alt_address' => $alt_address,
                     'request_ids' => $where_in,
-                    'po_notes' => $notes
+                    'po_notes' => $notes,
+                    'po_notes_additionaltext'=>$po_notes_additionaltext,
                 );
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
@@ -669,7 +676,8 @@ class OrderController extends Controller
                     'request_ids' => $where_in,
                     'new_format' => 1,
                     'is_freehand' => $is_freehand,
-                    'po_notes' => $notes
+                    'po_notes' => $notes,
+                    'po_notes_additionaltext'=>$po_notes_additionaltext,
                 );
                 if ($editmode == "clone") {
                     $id = 0;
@@ -1018,7 +1026,8 @@ class OrderController extends Controller
 
         $id = $request->input('ids');
         $explaination = $request->input('explaination');
-        $result = \DB::update("update orders set notes = concat(notes,'<br>','$explaination'), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
+
+        $result = \DB::update("update orders set notes = concat(notes,'<br>',".\DB::connection()->getPdo()->quote($explaination)."), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
 
         if ($result) {
             return Redirect::to('order')->with('messagetext', 'Order has been restored successfully!')->with('msgstatus', 'success');
@@ -1076,8 +1085,9 @@ class OrderController extends Controller
         $query = "";
         $result = false;
         for ($i = 0; $i < count($ids); $i++) {
-            $query = "update orders set notes = concat(notes,'<br>','" . $explaination[$i] . "'), deleted_at=NOW(), status_id=10, deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
-            $result = \DB::update($query);
+         // echo  \DB::connection()->getPdo()->quote($explaination[$i]);
+            $query = "update orders set notes = concat(notes,'<br>'," . \DB::connection()->getPdo()->quote($explaination[$i]) . "), deleted_at=NOW(), status_id=10, deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
+           $result = \DB::update($query);
         }
 
         if ($result) {
@@ -1234,7 +1244,8 @@ class OrderController extends Controller
         if (isset($_GET['mode']) && !empty($_GET['mode'])) {
             $mode = $_GET['mode'];
         }
-        $data = $this->model->getOrderData($order_id, $this->data['pass']);
+        $data = $this->model->getOrderData($order_id,$this->data['pass']);
+
         if (empty($data)) {
 
         } else {
@@ -1257,7 +1268,7 @@ class OrderController extends Controller
                 $data[0]['loc_contact_email'] = $data[0]['loc_merch_contact_email'];
             }
 
-            if ($data[0]['email'] != $data[0]['loc_contact_email']) {
+            if ($data[0]['email'] != $data[0]['loc_contact_email'] && !empty($data[0]['loc_contact_email'])) {
                 $data[0]['loc_contact_email'] = ' AND ' . $data[0]['loc_contact_email'];
             } else {
                 $data[0]['loc_contact_email'] = '';
@@ -1270,12 +1281,14 @@ class OrderController extends Controller
             if (!empty($data[0]['po_attn'])) {
                 $data[0]['po_location'] = $data[0]['po_location'] . "\n" . $data[0]['po_attn'];
             }
-            $addonPONote = "\r\n Ship Palletized Whenever Possible. ";
-            if (empty($data[0]['po_notes'])) {
-                $data[0]['po_notes'] = " NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . "**" . $addonPONote;
-            } else {
-                $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " (Email Questions to " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . ")" . $addonPONote;
-            }
+          //  $addonPONote = "\r\n Ship Palletized Whenever Possible. ";
+            $addonPONote = !empty($data[0]['po_notes_additionaltext']) ? $data[0]['po_notes_additionaltext']:FEGSystemHelper::getOption('PO_NOTE_DEFAULT_TEXT');
+            $addonPONote = str_replace("EMAIL_ADDRESS", $data[0]['email'] . (!empty($data[0]['cc_email']) ? $data[0]['cc_email']:"")  . (!empty($data[0]['loc_contact_email'])? $data[0]['loc_contact_email']:""),$addonPONote);
+            /*if (empty($data[0]['po_notes'])) {
+                $data[0]['po_notes'] = " NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . "** \r\n Ship Palletized Whenever Possible. ";
+            } else {*/
+                $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " ".$addonPONote;
+           // }
             $order_description = $data[0]['order_description'];
             if (substr($order_description, 0, 3) === ' | ') {
                 $order_description = substr($order_description, 3);
