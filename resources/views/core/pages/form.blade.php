@@ -370,7 +370,29 @@
 
     <script>
 		superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
+		$(document).on("keydown",".note-editable",function(e){
+
+			var key = e.keyCode || e.charCode;
+			console.log(key);
+			if( key == 8 || key == 46 ){
+				return false;
+			}
+
+
+		})
         $(document).ready(function(){
+
+        	$('button.btn[data-event="codeview"]').remove();
+			var html = '<div class="page-content-wrapper m-t">';
+			html += '<div class="sbox animated fadeInRight">';
+			html += '<div class="sbox-content">';
+			html += '<div class="col-md-12" style="padding-top: 50px; padding-right: 50px; padding-bottom: 50px; background-color: #ffffff;">';
+			html +='</div></div></div></div>';
+			console.log($(".note-editable .page-content-wrapper").length);
+			if($(".note-editable .page-content-wrapper").length==0){
+			//	$(".note-editable").html("<p><br><p>"+html);
+			}
+
             $("#iGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: "{{ is_object($row)?$row->direct_edit_groups:'' }}"});
             $("#iUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
