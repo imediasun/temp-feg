@@ -615,7 +615,7 @@
         if (data.status == 'success') {
             ajaxViewClose('#{{ $pageModule }}');
             $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
-            console.log("Reload Triggered");
+
           //  ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');

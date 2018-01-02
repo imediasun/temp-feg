@@ -387,7 +387,7 @@ function ajaxViewClose( id , elm, options) {
     if ($('.simpleSearchContainer').find('.bootstrap-switch-wrapper').length > 0 || $('.table.datagrid').find('.bootstrap-switch-wrapper').length > 0 || id == '#managefreightquoters') {
         if (id === "#product")
         {
-            console.log("Reloading Data ajaxSximo.js");
+
             $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
         } else {
 
