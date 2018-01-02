@@ -92,6 +92,7 @@ class PagesController extends Controller
     function getUpdate(Request $request, $id = null)
     {
 
+
         if ($id == '') {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -191,16 +192,12 @@ class PagesController extends Controller
 
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $content1 = $request->input('content');
+            $content = $request->input('content');
 
             $patternAddTitleSection = '/<div.*?class=["\']sbox.*?animated.*?["\']>/im';
 
-            $content = "@extends ('pages.pageslayout.pagescontent') @section('pagecontent')";
-          //  $content .= '<div class="page-content-wrapper m-t"><div class="sbox animated fadeInRight"><div class="sbox-content"><div class="col-md-12" style="padding-top: 50px; padding-right:0px;  padding-bottom: 50px; background-color: rgb(255, 255, 255);">';
-            $content .=$content1;
-          //  $content .= '</div><div class="clearfix"></div></div></div> </div>';
+            $content = "@extends ('layouts.app') @section('content')" . $content;
             $content = preg_replace($patternAddTitleSection, '<div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
-
             $content = $content . "@stop";
             $pattern = '~<div class="embed-responsive embed-responsive-16by9 video-container">|<div class="embed-responsive embed-responsive-16by9 video-container ">~';
             $content = preg_replace($pattern, "<div>", $content);
