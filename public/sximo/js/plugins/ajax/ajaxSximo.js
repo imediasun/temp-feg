@@ -387,10 +387,8 @@ function ajaxViewClose( id , elm, options) {
     if ($('.simpleSearchContainer').find('.bootstrap-switch-wrapper').length > 0 || $('.table.datagrid').find('.bootstrap-switch-wrapper').length > 0 || id == '#managefreightquoters') {
         if (id === "#product")
         {
-
             $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
         } else {
-
         var url = id + '/data';
         url = url.replace('#', '');
         reloadData(id, url);
