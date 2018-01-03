@@ -210,6 +210,7 @@ class PagesController extends Controller
                 //replace original iframe with new in content
                     $content = str_replace($match, $wrappedframe, $content);
             }
+            $content = str_replace(array("http://www.","https://www.","http://","https://"),"//",$content);
 
             $content = $this->addEditLinkTemplate($content);
             
