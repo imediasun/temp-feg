@@ -1645,11 +1645,9 @@ class SiteHelpers
         return base64_decode($val);
     }
 
-    public static function gridDisplay($val, $field, $arr,$cmsPages=0)
+    public static function gridDisplay($val, $field, $arr)
     {
-        if($cmsPages==1){
-            return (!empty($val)? $val:"No Data");
-        }else {
+
 
             if (isset($arr['valid']) && $arr['valid'] == 1) {
                 $fields = str_replace("|", ",", $arr['display']);
@@ -1684,12 +1682,12 @@ class SiteHelpers
                     return '';
                 }
             } else {
-                if (empty($val) || $val == 0) {
+                if (empty($val)) {
                     $val = "No Data";
                 }
                 return $val;
             }
-        }
+
     }
 
     public static function gridDisplayView($val, $field, $arr,$nodata=0)
