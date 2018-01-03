@@ -1645,45 +1645,50 @@ class SiteHelpers
         return base64_decode($val);
     }
 
-    public static function gridDisplay($val, $field, $arr)
+    public static function gridDisplay($val, $field, $arr,$cmsPages=0)
     {
-        if (isset($arr['valid']) && $arr['valid'] == 1) {
-            $fields = str_replace("|", ",", $arr['display']);
-            $Q = DB::select(" SELECT " . $fields . " FROM " . $arr['db'] . " WHERE " . $arr['key'] . " = '" . $val . "' ");
-            if (count($Q) >= 1) {
-                $row = $Q[0];
-                $fields = explode("|", $arr['display']);
-                $v = '';
-                if (isset($fields[0]) && (empty($row->$fields[0]) || $row->$fields[0]==0)) {
-                    $v="No Data";
-                } else {
-                    $v .= (isset($fields[0]) && $fields[0] !== '' ? $row->$fields[0] . ' ' : '');
-                }
+        if($cmsPages==1){
+            return (!empty($val)? $val:"No Data");
+        }else {
 
-                if (isset($fields[1]) && (empty($row->$fields[1]) || $row->$fields[1]==0)) {
-                    $v="No Data";
-                } else {
-                    $v .= (isset($fields[1]) && $fields[1] !== '' ? $row->$fields[1] . ' ' : '');
-                }
-                if (isset($fields[2]) && (empty($row->$fields[2]) || $row->$fields[2]==0)) {
-                    $v="No Data";
-                } else {
-                    $v .= (isset($fields[2]) && $fields[2] !== '' ? $row->$fields[2] . ' ' : '');
-                }
-            /*    $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
-                $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
-                $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');*/
+            if (isset($arr['valid']) && $arr['valid'] == 1) {
+                $fields = str_replace("|", ",", $arr['display']);
+                $Q = DB::select(" SELECT " . $fields . " FROM " . $arr['db'] . " WHERE " . $arr['key'] . " = '" . $val . "' ");
+                if (count($Q) >= 1) {
+                    $row = $Q[0];
+                    $fields = explode("|", $arr['display']);
+                    $v = '';
+                    if (isset($fields[0]) && (empty($row->$fields[0]) || $row->$fields[0] == 0)) {
+                        $v = "No Data";
+                    } else {
+                        $v .= (isset($fields[0]) && $fields[0] !== '' ? $row->$fields[0] . ' ' : '');
+                    }
+
+                    if (isset($fields[1]) && (empty($row->$fields[1]) || $row->$fields[1] == 0)) {
+                        $v = "No Data";
+                    } else {
+                        $v .= (isset($fields[1]) && $fields[1] !== '' ? $row->$fields[1] . ' ' : '');
+                    }
+                    if (isset($fields[2]) && (empty($row->$fields[2]) || $row->$fields[2] == 0)) {
+                        $v = "No Data";
+                    } else {
+                        $v .= (isset($fields[2]) && $fields[2] !== '' ? $row->$fields[2] . ' ' : '');
+                    }
+                    /*    $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
+                        $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
+                        $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');*/
 
 
-                return $v;
+                    return $v;
+                } else {
+                    return '';
+                }
             } else {
-                return '';
+                if (empty($val) || $val == 0) {
+                    $val = "No Data";
+                }
+                return $val;
             }
-        } else {
-            if(empty($val) || $val==0){
-                $val="No Data";
-            }
-            return $val;
         }
     }
 

@@ -112,7 +112,7 @@
 							{!! SiteHelpers::showUploadedFile($row->$field['field'],$field['attribute']['image']['path']) !!}
 						@else	
 							{{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array() ) /*--}}
-							{!! SiteHelpers::gridDisplay($row->$field['field'],$field['field'],$conn) !!}	
+							{!! SiteHelpers::gridDisplay($row->$field['field'],$field['field'],$conn,1) !!}
 						@endif						 
 					 </td>
 					 @endif					 
