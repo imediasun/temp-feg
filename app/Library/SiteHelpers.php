@@ -1682,7 +1682,7 @@ class SiteHelpers
                     return '';
                 }
             } else {
-                if (empty($val) && $val===0) {
+                if (empty($val) || $val===0) {
                     $val = "No Data";
                 }
                 return $val;
