@@ -1101,12 +1101,47 @@ class OrderController extends Controller
 
     function getRemoveorder($poNumber = "")
     {
-        $result = \DB::table('orders')->where('po_number', $poNumber)->delete();
-        if ($result) {
-            return Redirect::to('order')->with('messagetext', 'Po  removed successfully!')->with('msgstatus', 'success');
-        } else {
-            return Redirect::to('order')->with('messagetext', 'This PO has already been removed!')->with('msgstatus', 'error');
+        $this->data['ids'] = $poNumber;
+        $totalIdsCount = 1;
+        $ids = $poNumber;
+
+        $sql = " select po_number from orders where po_number in ('$ids') and is_api_visible=0 and status_id<>10 and status_id<>2";
+
+        $result = \DB::select($sql);
+        $ids = [];
+        foreach($result as $idsObject){
+            $ids[]= $idsObject->po_number;
         }
+        $remainIdsCount = count($ids);
+        $excludedIdsCount = count(array($poNumber))-$remainIdsCount;
+        $postedtonetsuitePOIds =[];
+        if(is_array(array($poNumber))){
+            foreach(array($poNumber) as $requestedIds){
+                if(!in_array($requestedIds,$ids)){
+                    $postedtonetsuitePOIds[] = $requestedIds;
+                }
+            }
+        }
+
+        if($remainIdsCount>0){
+            $this->data['ids'] =implode(",",$ids);
+            if($excludedIdsCount>0){
+                $this->data['messagetext'] = "Following POs cannot be removed: <br>".implode("<br>",$postedtonetsuitePOIds);
+                $this->data['msgstatus'] = "error";
+            }
+
+            return view("order.removalreasonexplain", $this->data);
+
+
+        }else{
+            return Redirect::to('order')->with('messagetext', "Closed/Removed orders may not be removed.")->with('msgstatus', 'error');
+        }
+//        $result = \DB::table('orders')->where('po_number', $poNumber)->delete();
+//        if ($result) {
+//            return Redirect::to('order')->with('messagetext', 'Po  removed successfully!')->with('msgstatus', 'success');
+//        } else {
+//            return Redirect::to('order')->with('messagetext', 'This PO has already been removed!')->with('msgstatus', 'error');
+//        }
         //\Session::flash('success', 'Po  deleted successfully!');
     }
 
