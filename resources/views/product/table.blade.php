@@ -496,7 +496,13 @@
                                                         row.find('td[data-field="' + key + '"]').text($.trim(value));
                                                     }
                                                 } else {
-                                                    row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                                    if(key=="details" && $.trim(value).length>19){
+                                                        row.find('td[data-field="' + key + '"]').attr({"data-values":$.trim(value),"data-format":$.trim(value)});
+                                                        value  = $.trim(value).slice(0,19)+'<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
+                                                        row.find('td[data-field="' + key + '"]').html(value);
+                                                    }else {
+                                                        row.find('td[data-field="' + key + '"]').text($.trim(value));
+                                                    }
                                                 }
                                             }
                                        // }
