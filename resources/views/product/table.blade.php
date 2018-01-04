@@ -433,7 +433,7 @@
                                 for (var i = 0; i < requestArray.length; i++) {
                                     var requestElement = (requestArray[i]).split("=");
                                     var key = $.trim(requestElement[0]);
-                                    var value = requestElement[1].replace(/\+/g, " ");
+                                    var value = (requestElement[1]).replace(/\+/g, " ");
                                     // console.log(key + " : " + value);
                                     var idSplited = (row.attr('id')).split("-");
                                     if(key=="expense_category") {
