@@ -444,16 +444,17 @@
 
                                         $("#divOverlay_" + idSplited[1]).children('a[data-original-title="Cancel"]').click();
                                  //   }
+                                    console.log(key+" = "+value);
 
                                     if (key == "unit_price" && value > 0) {
-                                        value = "$ " + parseFloat(value).toFixed(2);
+                                        value = "$ " + (value).fixDecimal();
 
                                     }
                                     if (key == "retail_price" && value > 0) {
-                                        value = "$ " + parseFloat(value).toFixed(2);
+                                        value = "$ " + (value).fixDecimal();
                                     }
                                     if (key == "case_price" && value > 0) {
-                                        value = "$ " + parseFloat(value).toFixed(2);
+                                        value = "$ " + (value).fixDecimal();
                                     }
                                     if (key == "is_reserved" && value == 0) {
                                         value = "No";
