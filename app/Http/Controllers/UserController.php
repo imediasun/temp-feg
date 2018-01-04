@@ -223,12 +223,9 @@ class UserController extends Controller
                 }
                 if(strpos(session('url.intended'),'removeorder') )
                 {
-                    return Redirect::to(session('url.intended'));
-                }
 
-                if(strpos(session('url.intended'),'servicerequests') )
-                {
                     return Redirect::to(session('url.intended'));
+
                 }
 
                 if (!empty($row->redirect_link)) {
@@ -470,7 +467,9 @@ class UserController extends Controller
                         }
                         if(strpos(session('url.intended'),'removeorder') )
                         {
+
                             return Redirect::to(session('url.intended'));
+
                         }
                         if (!empty($row->redirect_link)) {
                             return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
