@@ -444,7 +444,7 @@
 
                                         $("#divOverlay_" + idSplited[1]).children('a[data-original-title="Cancel"]').click();
                                  //   }
-                                    console.log(key+" = "+value);
+                                   // console.log(key+" = "+value);
 
                                     if (key == "unit_price" && value > 0) {
                                         value = "$ " + fixdeci(value);
@@ -456,12 +456,16 @@
                                     if (key == "case_price" && value > 0) {
                                         value = "$ " + fixdeci(value);
                                     }
+                                    if((key == "hot_item" || key == "is_reserved") && value===""){
+                                        value="No Data";
+                                    }
                                     if (key == "is_reserved" && value == 0) {
                                         value = "No";
                                     } else if (key == "is_reserved" && value == 1) {
                                         value = "Yes";
                                     }
                                     //hot_item
+
                                     if (key == "hot_item" && value == 0) {
                                         value = "No";
                                     } else if (key == "hot_item" && value == 1) {
@@ -477,7 +481,7 @@
                                     if (key == "prod_sub_type_id" && value !== '' && value > 0) {
                                         value = $("select#prod_sub_type_id option[value='" + value + "']").text()
                                     }
-                                    if (value == '' || value == 0) {
+                                    if (value == '' || value == '0') {
                                         value = "No Data";
                                     }
 
