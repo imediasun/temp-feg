@@ -216,6 +216,15 @@ class UserController extends Controller
                 $total_cart = $this->addToCartModel->totallyRecordInCart();
                 \Session::put('total_cart', $total_cart[0]->total);
                 \Session::put('lang', 'en');
+    dd(session('url.intended'));
+                if(strpos(session('url.intended'),'servicerequests') )
+                {
+                    return Redirect::to(session('url.intended'));
+                }
+                if(strpos(session('url.intended'),'removeorder') )
+                {
+                    return Redirect::to(session('url.intended'));
+                }
 
                 if(strpos(session('url.intended'),'servicerequests') )
                 {
@@ -454,7 +463,12 @@ class UserController extends Controller
                         } else {
                             \Session::put('lang', 'en');
                         }
+
                         if(strpos(session('url.intended'),'servicerequests') )
+                        {
+                            return Redirect::to(session('url.intended'));
+                        }
+                        if(strpos(session('url.intended'),'removeorder') )
                         {
                             return Redirect::to(session('url.intended'));
                         }
