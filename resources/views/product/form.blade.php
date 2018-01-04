@@ -546,7 +546,7 @@
             var selectedType = $(this).val();
             var counter = $(this).attr('data-counter');
             if(selectedType && selectedType != previous){
-                console.log('val = '+selectedType);
+
                 $(this).parents('.product_types').find("select.prod_sub_type").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+selectedType+"");
                 //renderDropdown($(".select2"), {width: "100%"});
 
@@ -613,11 +613,10 @@
     function showResponse(data) {
 
         if (data.status == 'success') {
-            ajaxViewClose('#{{ $pageModule }}');
             $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
-
           //  ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
             notyMessage(data.message);
+            ajaxViewClose('#{{ $pageModule }}');
             $('#sximo-modal').modal('hide');
         } else {
             notyMessageError(data.message);
