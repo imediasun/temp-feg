@@ -377,9 +377,13 @@ class ProductController extends Controller
                 $products_combined = $this->model->checkProducts($id);
                 $hot_items=0;
                 if(!empty($request->input('hot_item')) && $request->input('hot_item')>0){
-                    $hot_items = 1;
+                    $hot_items = "'1'";
+                }else if(!empty($request->input('hot_item')) && $request->input('hot_item')==0){
+                    $hot_items = "'0'";
+                }else{
+                    $hot_items = "null";
                 }
-                \DB::update("update products set hot_item='$hot_items' where id='$id'");
+                \DB::update("update products set hot_item=$hot_items where id='$id'");
 
             }
 
