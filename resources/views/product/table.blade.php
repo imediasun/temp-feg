@@ -447,14 +447,14 @@
                                     console.log(key+" = "+value);
 
                                     if (key == "unit_price" && value > 0) {
-                                        value = "$ " + (value).fixDecimal();
+                                        value = "$ " + ((value).fixDecimal());
 
                                     }
                                     if (key == "retail_price" && value > 0) {
-                                        value = "$ " + (value).fixDecimal();
+                                        value = "$ " + ((value).fixDecimal());
                                     }
                                     if (key == "case_price" && value > 0) {
-                                        value = "$ " + (value).fixDecimal();
+                                        value = "$ " + ((value).fixDecimal());
                                     }
                                     if (key == "is_reserved" && value == 0) {
                                         value = "No";
