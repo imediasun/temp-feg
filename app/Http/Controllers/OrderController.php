@@ -591,6 +591,12 @@ class OrderController extends Controller
             if($orderQuantity >0){
                 \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
             }
+
+            $itemReceivedcount = \DB::select("SELECT COUNT(*) AS itemReceivedcount FROM order_contents WHERE order_id=$order_id AND item_received>0")[0]->itemReceivedcount;
+
+            if($itemReceivedcount==0){
+                \DB::update('update orders set status_id=1, is_partial=0 where id="'.$order_id.'"');
+            }
             if (!empty($altShipTo)) {
                 $rules = array(
                     'to_add_name' => 'required|max:60',
