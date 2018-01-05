@@ -590,7 +590,10 @@ class OrderController extends Controller
             $orderQuantity =  array_sum($request->qty);
             $orderQuantity = $orderQuantity - $totalQuanity;
             //When order quantity will be increase then order status will be updated to open (Partial)
-            if($orderQuantity >0){
+
+            $received_quantity = \DB::select("SELECT SUM(quantity) as total_received_qty FROM order_received WHERE  order_id=$order_id")[0]->total_received_qty;
+
+            if($orderQuantity >0 || $received_quantity < $totalQuanity){
                 \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
             }
 
