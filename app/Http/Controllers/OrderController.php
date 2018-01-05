@@ -267,9 +267,15 @@ class OrderController extends Controller
 
             //  $vendor = \DB::table('vendor')->where('id', '=', $data->vendor_id)->get(array('vendor_name'));
             //$rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
-
             $order_status = \DB::select("Select status FROM order_status WHERE id = '" . $data->status_id . "'");
-            $partial = $data->is_partial == 1 ? ' (Partial)':'';
+            //  $partial = $data->status_id == 10 ? ' ' : ' (Partial)';
+            $partial =  '';
+            if ($data->is_partial == 1 && $data->status_id == 1)
+            {
+                $partial = ' (Partial)';
+            }else{
+                $partial = ' (Partial)';
+            }
             $rows[$index]->status_value = $rows[$index]->status_id;
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status.$partial : '');
         }
