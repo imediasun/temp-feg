@@ -297,10 +297,12 @@ class OrderController extends Controller
 
             $order_status = \DB::select("Select status FROM order_status WHERE id = '" . $data->status_id . "'");
             //  $partial = $data->status_id == 10 ? ' ' : ' (Partial)';
-            $partial = $data->is_partial == 1 ? ' (Partial)' : '';
-            if ($data->status_id == 10)
+            $partial =  '';
+            if ($data->is_partial == 1 && $data->status_id == 1)
             {
-                $partial = "";
+                $partial = ' (Partial)';
+            }else{
+                $partial = ' ';
             }
             $rows[$index]->status_value = $rows[$index]->status_id;
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
