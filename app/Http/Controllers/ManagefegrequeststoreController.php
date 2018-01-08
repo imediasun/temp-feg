@@ -169,6 +169,16 @@ class ManagefegrequeststoreController extends Controller
             //   } else {
             //        $filter = $this->buildSearch();
             //    }
+            //Updated Code Here 08-01-2018
+           /* $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+            if(!empty($globalSearchFilter['search_all_fields'])){
+                $searchFields = [
+                    'requests.description',
+                    'users.username',
+                ];
+                $searchInput = ['query' => $globalSearchFilter['search_all_fields'],'fields' => $searchFields];
+                $filter = $this->buildSearch($searchInput);
+            }*/
             $filter = $this->getSearchFilterQuery();
             $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3, $filter);
             $this->data['manageRequestInfo'] = $manageRequestInfo;
