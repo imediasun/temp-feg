@@ -23,7 +23,7 @@
 
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Product ', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Item Name ', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) }}
 						</td>
                         <td>{!! SiteHelpers::gridDisplayView($row->product_id,'product_id','1:products:id:vendor_description',$nodata['product_id']) !!} </td>
 
@@ -32,7 +32,7 @@
 
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Item Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}
 						</td>
 						<td>{{ \DateHelpers::formatStringValue($row->description,$nodata['description']) }} </td>
 

@@ -38,7 +38,7 @@
 	
 						<tr>
 							<td width='30%' class='label-view text-right'>
-								{{ SiteHelpers::activeLang('Product', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) }}
+								{{ SiteHelpers::activeLang('Item Name', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) }}
 							</td>
 							<td>{{ \DateHelpers::formatStringValue($row->vendor_description)}} </td>
 	
@@ -46,7 +46,7 @@
 	
 						<tr>
 							<td width='30%' class='label-view text-right'>
-								{{ SiteHelpers::activeLang('Supply Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}	
+								{{ SiteHelpers::activeLang('Item Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}
 							</td>
 							<td>{{ \DateHelpers::formatStringValue($row->description) }} </td>
 							
