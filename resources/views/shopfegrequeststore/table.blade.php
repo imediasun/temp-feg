@@ -132,17 +132,35 @@
                         if($field['view'] == '1') :
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
                         $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
-                        ?>
+
+                            ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                 @if($field['field']=='img')
                                     <?php
-                                    echo SiteHelpers::showUploadedFile($value, '/uploads/products/', 50, false);
+                                    echo SiteHelpers::showUploadedFile($value, '/uploads/products/', 50, false,0,true,$row->details);
                                     ?>
                                 @else
+
+                                    @if($field['field']=="vendor_description")
+                                        <?php
+                                        if ($row->details !='') {
+
+                                            echo $value;
+                                            echo '<br><a href="javascript:void(0)" data-set="'. $row->details.'" onclick="showModal(10,this)">More Detail</a>';
+                                        }
+                                        else{
+
+                                            echo $value;
+                                        }
+                                        ?>
+
+                                        @else
+
                                     {!! $value !!}
+                                        @endif
                                 @endif
                             </td>
                         @endif
@@ -197,10 +215,48 @@
 
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Item Description</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
 
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom: none; padding-bottom: 0px;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4>&nbsp;</h4>
+            </div>
+            <div class="modal-body" style="padding-top: 0px;">
+            <div id="image" style="margin-bottom: 15px;"></div>
+                <div class="image-description">
+                    <p>
+
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
     $(document).ready(function () {
+
         $('.tips').tooltip();
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-blue',
@@ -387,6 +443,27 @@
     $(document).on("blur", "input[name='retail_price']", function () {
         $(this).val($(this).fixDecimal());
     });
+    function showModal(id,obj){
+
+        $('#myModal').modal('show');
+       // var content = $(obj).parent().attr("data-values");
+        var content = $(obj).attr("data-set");
+
+        $('#myModal .modal-body').text(content);
+
+
+
+    }
+    function showImageModal(id,obj){
+        $(".ajaxLoading").show();
+        var src = $(obj).attr("href");
+        var description = $(obj).attr("image-description");
+        var html = '<img src="'+src+'" style="max-width:100%;" />';
+        $('#myImageModal .modal-body #image').html(html);
+        $("#myImageModal .modal-body .image-description p").text(description);
+        $('#myImageModal').modal('show');
+        $(".ajaxLoading").hide();
+    }
 </script>
 <style>
     .table th.right {
