@@ -151,6 +151,16 @@
                                     <?php
                                     echo SiteHelpers::showUploadedFile($value, '/uploads/products/', 50, false, $row->id)
                                     ?>
+                                @elseif($field['field']=='item_description')
+                                    <?php
+                                            if($row->size !='')
+                                            {
+                                            echo $value;
+                                                echo " Size:".$row->size;
+                                            }else{
+                                                echo $value;
+                                            }
+                                            ?>
                                 @elseif($field['field']=='details')
 
                                     <?php
