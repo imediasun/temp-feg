@@ -1574,7 +1574,7 @@ class SiteHelpers
     }
 
 
-    public static function showUploadedFile($file, $path, $width = 50, $circle = true, $id = 0)
+    public static function showUploadedFile($file, $path, $width = 50, $circle = true, $id = 0,$setdescription=false,$description='')
     {
         $files = public_path() . $path . $file;
 
@@ -1590,7 +1590,13 @@ class SiteHelpers
                     $class = 'img';
                 }
                 $rel = "gallery" . $id;
-                return '<p><a href="' . url($path_file . $file) . '" target="_blank" class="previewImage fancybox" data-fancybox-group="' . $rel . '"  rel="' . $rel . '">
+                $onclick="";
+                if($setdescription==true){
+                    $onclick = "onclick='showImageModal(10,this); return false;'";
+                }else{
+                    $onclick=' class="previewImage fancybox" ';
+                }
+                return '<p><a image-description="'.$description.'"  '.$onclick.'  href="' . url($path_file . $file) . '" target="_blank"   data-fancybox-group="' . $rel . '"  rel="' . $rel . '">
 				<img style="box-shadow:1px 1px 5px gray" src="' . asset($path_file . $file) . '" border="0" width="' . $width . '" class="' . $class . '"  /></a></p>';
             } else {
                 $path_file = str_replace("./", "", $path);
