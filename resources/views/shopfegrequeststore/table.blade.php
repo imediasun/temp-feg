@@ -149,7 +149,7 @@
                                         if ($row->details !='') {
 
                                             echo $value;
-                                            echo '<br><a href="javascript:void(0)" data-set="'. $row->details.'" onclick="showModal(10,this)">More Detail</a>';
+                                            echo '... <a href="javascript:void(0)" data-set="'. $row->details.'" onclick="showModal(10,this)">More Detail</a>';
                                         }
                                         else{
 
