@@ -249,13 +249,17 @@ class OrderController extends Controller
          $results = $this->model->getRows($params, $order_selected);
         foreach($results['rows'] as  &$rs){
             $result = $this->model->getProductInfo($rs->id);
-
             $info = '';
             foreach($result as $r){
+                if(!isset($r->sku)){
+                    $sku = " (SKU: No Data) ";
+                }else{
+                    $sku = " (SKU: ".$r->sku.")";
+                }
 
-                $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).';';
+                $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total,3,true,',','.' , true ).$sku. '; ';
             }
-            $rs->productInfo = $info;
+            $rs->productInfo = rtrim($info,'; ');
         }
 
         if (count($results['rows']) == 0 and $page != 1) {
