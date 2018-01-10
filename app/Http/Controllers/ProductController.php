@@ -365,13 +365,14 @@ class ProductController extends Controller
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
             }
 
-            $data['netsuite_description'] = "$id...".$data['vendor_description'];
+
             if(is_array($product_categories) && $id > 0){
 
                 $products_combined = $this->model->checkProducts($id);
                 $data_attached_products= $data;
 
                 foreach($products_combined as $pc){
+                    $data['netsuite_description'] = $pc->id."...".$data['vendor_description'];
                     if($pc->id == $id){
                         $data['prod_type_id'] = $data['prod_type_id'][0];
                         $data['prod_sub_type_id'] = $data['prod_sub_type_id'][1];
@@ -392,6 +393,8 @@ class ProductController extends Controller
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
+                    $netsuite_description['netsuite_description'] = $pc->id."...".$data['vendor_description'];
+                    $this->model->insertRow($netsuite_description, $pc->id);
                 }
             }elseif(is_array($product_categories))
             {
