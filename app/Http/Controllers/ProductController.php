@@ -402,6 +402,7 @@ class ProductController extends Controller
                 }
             }elseif(is_array($product_categories))
             {
+
                 $ids = [];
                 $count = 1;
                 $prodData = $data;
@@ -444,11 +445,13 @@ class ProductController extends Controller
             else
             {
 
+
                 $products_combined = $this->model->checkProducts($id);
                 $data_attached_products= $data;
                 foreach($products_combined as $pc){
                     if($pc->id == $id){
                         $this->model->insertRow($data, $id);
+
                     }else{
 
                         unset($data_attached_products['prod_type_id']);
@@ -459,6 +462,13 @@ class ProductController extends Controller
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
+                    $postedtoNetSuite = $data['vendor_description'];
+
+                    if(strlen( $data['vendor_description'])>53){
+                        $postedtoNetSuite = substr($data['vendor_description'],0.53);
+                    }
+                    $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
+                    $this->model->insertRow($netsuite_description, $pc->id);
                 }
 
 
