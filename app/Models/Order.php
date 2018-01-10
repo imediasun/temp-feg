@@ -866,6 +866,14 @@ class order extends Sximo
             return false;
         }
     }
+    public static function isDeletedAtNull($id){
+        $isdeleted = \DB::select("SELECT COUNT(*) as isdeleted FROM order_received WHERE deleted_at IS NULL AND order_id=$id");
+
+        if($isdeleted[0]->isdeleted > 0){
+            return true;
+        }
+        return false;
+    }
 
     public static function cloneOrder($id, $data = null, $options = array()) {
 

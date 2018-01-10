@@ -186,6 +186,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                         <?php
                         $canPostToNetSuit = Order::canPostToNetSuit($row->id, $row);
                         $isApified = Order::isApified($id, $row);
+                         $isDeletedAtNull = Order::isDeletedAtNull($row->id);
                         ?>
 
                         @if(!$isApified)
@@ -208,7 +209,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                             </a>
                         @endif
 
-                        @if($canPostToNetSuit  && !$isApified && Order::isApiable($id, $row, true))
+                        @if($canPostToNetSuit  && !$isApified && Order::isApiable($id, $row, true) && $isDeletedAtNull==true)
                             <a href="javascript:void(0)"
                                data-id="{{$eid}}"
                                data-action="post"
