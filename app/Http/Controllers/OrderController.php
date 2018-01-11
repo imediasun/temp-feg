@@ -302,7 +302,7 @@ class OrderController extends Controller
             {
                 $partial = ' (Partial)';
             }else{
-                $partial = ' ';
+                $partial = '';
             }
             $rows[$index]->status_value = $rows[$index]->status_id;
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
