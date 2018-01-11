@@ -111,13 +111,28 @@ class OrderController extends Controller
         $rows = $results['rows'];
 
         //$rows = $this->updateDateInAllRows($rows);
+        $rowss=[];
+        foreach($rows as $row1) {
+            $row1 = (array) $row1;
+            $rowss[] = (array)self::array_move('created_at', 3, (array)$row1);
+        }
+        $rowsobjects = [];
+        foreach($rowss as $rowobj){
+            $rowsobjects[] = (object)$rowobj;
+        }
+
+        $out = array_splice($fields, 27, 1);
+        array_splice($fields, 3, 0, $out);
+
+
 
         $content = array(
             'exportID' => $exportSessionID,
             'fields' => $fields,
-            'rows' => $rows,
+            'rows' => $rowsobjects,
             'title' => $this->data['pageTitle'],
         );
+
 
         if ($t == 'word') {
 
@@ -147,16 +162,13 @@ class OrderController extends Controller
     {
 
         /*
-                                \App\Library\FEG\System\Sync::transferEarnings();
-                                \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
-                                \App\Library\FEG\System\Sync::generateDailySummary();
-                                \App\Library\FEG\System\Email\Report::daily();
-                                \App\Library\FEG\System\Email\Report::missingDataReport();
-             echo "done transfer";
-
-             exit;
-        */
-
+        \App\Library\FEG\System\Sync::transferEarnings();
+        \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
+        \App\Library\FEG\System\Sync::generateDailySummary();
+        \App\Library\FEG\System\Email\Report::daily();
+        \App\Library\FEG\System\Email\Report::missingDataReport();
+        echo "done transfer";
+        exit;*/
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $this->data['sid'] = "";
@@ -285,10 +297,12 @@ class OrderController extends Controller
 
             $order_status = \DB::select("Select status FROM order_status WHERE id = '" . $data->status_id . "'");
             //  $partial = $data->status_id == 10 ? ' ' : ' (Partial)';
-            $partial = $data->is_partial == 1 ? ' (Partial)' : '';
-            if ($data->status_id == 10)
+            $partial =  '';
+            if ($data->is_partial == 1 && $data->status_id == 1)
             {
-                $partial = "";
+                $partial = ' (Partial)';
+            }else{
+                $partial = '';
             }
             $rows[$index]->status_value = $rows[$index]->status_id;
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
@@ -326,6 +340,7 @@ class OrderController extends Controller
         // Render into template
         /*$this->data['set_removed'] = "others";
         if (strpos($_SESSION['searchParamsForOrder'], 'status_id:equal:removed|') > 0) {
+            // $is_removed_flag = true;
             $this->data['set_removed'] = 'set_removed';
         }*/
 
