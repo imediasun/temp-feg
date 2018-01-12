@@ -295,10 +295,19 @@ class servicerequestsController extends Controller
         $this->data['entryBy'] = $isAdd ? $userId : $row['entry_by'];
         $this->data['locationId'] = $isAdd ? \Session::get('selected_location') : $row['location_id'];
 
-        $this->data['priorityOptions'] = array(
+        /*$this->data['priorityOptions'] = array(
                                                 'normal' => 'Normal',
                                                 'urgent' => 'Urgent'
-                                                );
+                                                );*/
+        foreach( $this->data['priorityOptions'] as $p_keys =>$p_values){
+            if($p_keys=="sameday"){
+                unset($this->data['priorityOptions'][$p_keys]);
+                $this->data['priorityOptions']['urgent']="Urgent";
+            }
+        }
+        echo "<pre>";
+        print_r($this->data);
+        die;
 
         return view('servicerequests.form', $this->data);
     }
