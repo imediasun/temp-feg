@@ -100,6 +100,10 @@ class order extends Sximo
             $orderId = $item->order_id;
             $item->price = \CurrencyHelpers::formatPrice($item->price, 3, false);
             $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);
+            if($item->id == '57621'){
+                echo strlen($item->po_notes);
+                exit;
+            }
             if(!empty($item->po_notes)) {
                 if (strlen($item->po_notes) > 300) {
                     $item->po_notes = \CurrencyHelpers::truncateLongText($item->po_notes, 300);
