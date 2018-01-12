@@ -856,7 +856,7 @@ class order extends Sximo
      */
     public static function canPostToNetSuit($id, $data = null){
         $order_qty = \DB::select("SELECT SUM(qty) as qty FROM order_contents WHERE order_id=$id");
-        $received_qty = \DB::select("SELECT SUM(quantity) as qty FROM order_received WHERE order_id=$id");
+        $received_qty = \DB::select("SELECT SUM(quantity) as qty FROM order_received WHERE order_id=$id AND deleted_at IS NULL");
         if(empty($data)){
             $data = self::find($id)->toArray();
         }
@@ -881,6 +881,7 @@ class order extends Sximo
             return false;
         }
     }
+
 
     public static function cloneOrder($id, $data = null, $options = array()) {
 
