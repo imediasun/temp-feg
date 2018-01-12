@@ -305,9 +305,6 @@ class servicerequestsController extends Controller
                 $this->data['priorityOptions']['urgent']="Urgent";
             }
         }
-        echo "<pre>";
-        print_r($this->data);
-        die;
 
         return view('servicerequests.form', $this->data);
     }
