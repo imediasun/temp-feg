@@ -87,7 +87,8 @@ class order extends Sximo
     {
         //$poNotes = preg_replace("/[\r\n]+/", " ", $poNotes);
         $poNotes = str_replace(["\r\n","t"]," ",$poNotes);
-        $poNotes = preg_replace('/\t+\n+/', '', $poNotes);
+        $poNotes = preg_replace('/\t+/', '', $poNotes);
+        $poNotes = preg_replace('/\n+/', '', $poNotes);
         if(empty($poNotes) || strlen($poNotes) < $length){
             return $poNotes;
         }
