@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Library\FEG\System\FEGSystemHelper;
 use Illuminate\Support\Facades\App;
 use Validator, Input, Redirect;
+use App\Models\Order;
 
 class FegapiController extends Controller
 {
@@ -187,7 +188,7 @@ class FegapiController extends Controller
 
                if (!empty($jsonData->po_notes)) {
                    if (strlen($jsonData->po_notes) > 300) {
-                       $jsonData->po_notes =  \CurrencyHelpers::truncateLongText($jsonData->po_notes,300);
+                       $jsonData->po_notes =  Order::truncatePoNotes($jsonData->po_notes);
 
                    }
 

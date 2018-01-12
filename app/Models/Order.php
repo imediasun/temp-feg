@@ -83,11 +83,23 @@ class order extends Sximo
         return $return;
     }
 
+    public static function truncatePoNotes($poNotes,$length=300)
+    {
+        //$poNotes = preg_replace("/[\r\n]+/", " ", $poNotes);
+        $poNotes = str_replace(["\r\n","t"]," ",$poNotes);
+        $poNotes = preg_replace('/\t+/', '', $poNotes);
+        if(empty($poNotes) || strlen($poNotes) < $length){
+            return $poNotes;
+        }
+        return \CurrencyHelpers::truncateLongText($poNotes, $length);
+    }
+
     public static function addOrderItems($data){
         $orders = [];
         //extract order id for query to order_contents order_id in (1,2,3)
         foreach($data as &$record){
             $orders[] = $record['id'];
+            $record['po_notes'] = self::truncatePoNotes($record['po_notes']);
             $record['items'] = [];
         }
         if(empty($orders)){
@@ -100,16 +112,6 @@ class order extends Sximo
             $orderId = $item->order_id;
             $item->price = \CurrencyHelpers::formatPrice($item->price, 3, false);
             $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);
-            if($item->id == '57621'){
-                echo strlen($item->po_notes);
-                exit;
-            }
-            if(!empty($item->po_notes)) {
-                if (strlen($item->po_notes) > 300) {
-                    $item->po_notes = \CurrencyHelpers::truncateLongText($item->po_notes, 300);
-
-                }
-            }
             foreach($data as &$record){
                 if($record['id'] == $orderId){
                     break;
@@ -242,7 +244,7 @@ class order extends Sximo
         $data['order_location_id'] = '';
         $data['received_date']="";
         $data['received_by']="";
-       // $data['order_location_name'] = '';
+        // $data['order_location_name'] = '';
         $data['orderItemsPriceArray']="";
         $data['order_freight_id'] = '';
         $data['orderDescriptionArray'] = '';
@@ -273,7 +275,7 @@ class order extends Sximo
                 $data['order_vendor_id'] = $order_query[0]->vendor_id;
                 $data['order_location_id'] = $order_query[0]->location_id;
 
-             //   $data['order_location_name'] = $order_query[0]->location_name;
+                //   $data['order_location_name'] = $order_query[0]->location_name;
                 $data['order_type'] = $order_query[0]->order_type_id;
                 $data['order_company_id'] = $order_query[0]->company_id;
                 $data['order_freight_id'] = $order_query[0]->freight_id;
@@ -287,7 +289,7 @@ class order extends Sximo
 												,O.item_received as item_received,O.game_id FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
 												  LEFT JOIN game g ON g.id = O.game_id
 												  WHERE O.order_id = ' . $order_id);
-            
+
             if ($content_query) {
                 foreach ($content_query as $row) {
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
@@ -319,13 +321,13 @@ class order extends Sximo
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
                 }
                 $order_received_query=\DB::select('select date_received,received_by from order_received where order_id='.$order_id);
-               if($order_received_query)
-               {
-                   foreach($order_received_query as $r) {
-                       $data['received_date'] =$r->date_received;
-                       $data['received_by'] = $r->received_by;
-                   }
-               }
+                if($order_received_query)
+                {
+                    foreach($order_received_query as $r) {
+                        $data['received_date'] =$r->date_received;
+                        $data['received_by'] = $r->received_by;
+                    }
+                }
                 $data['orderDescriptionArray'] = $orderDescriptionArray;
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
@@ -378,7 +380,7 @@ class order extends Sximo
                 $data['prefill_type'] = 'edit';
             }
             $data['today'] = ($mode) && $mode != 'clone' ? $order_query[0]->date_ordered : $this->get_local_time('date');
-            } elseif (substr($mode, 0, 3) == 'SID') {
+        } elseif (substr($mode, 0, 3) == 'SID') {
             $item_count = substr_count($mode, '-');
             $SID_string = $mode;
             $data['SID_string'] = $SID_string;
@@ -417,7 +419,7 @@ class order extends Sximo
                     $data['order_company_id'] = $query[0]->company_id;
                     $data['order_vendor_id'] = $query[0]->vendor_id;
                     $data['order_location_id'] = $query[0]->location_id;
-                   // $data['order_location_name'] = $query[0]->location_name;
+                    // $data['order_location_name'] = $query[0]->location_name;
                     $data['order_type'] = $query[0]->prod_type_id;
                     $data['order_total'] = $query[0]->total;
                     $data['po_2'] = date('mdy');
@@ -433,7 +435,7 @@ class order extends Sximo
 
                     $skuNumArray[] = $query[0]->sku;
                     $orderProductIdArray[] = $query[0]->product_id;
-                 //   $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
+                    //   $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
                     $item_name_array[] = $query[0]->vendor_description;
                     $item_case_price[] = \CurrencyHelpers::formatPrice($query[0]->case_price, Order::ORDER_PERCISION, false);
                     $item_retail_price[]= \CurrencyHelpers::formatPrice($query[0]->retail_price, Order::ORDER_PERCISION, false);
@@ -455,7 +457,7 @@ class order extends Sximo
             $data['prefill_type'] = 'SID';
         }
         $data['where_in_expression'] = substr($where_in_expression, 0, -1);
-          
+
         return $data;
     }
 
@@ -678,7 +680,7 @@ class order extends Sximo
             } /*else {
                 $count = $this->increamentPO($location);
             }*/
-            
+
         }else{
             $count=1;
         }
@@ -725,7 +727,7 @@ class order extends Sximo
     }
 
     public static function isClonable($id, $data = null) {
-        
+
     }
     public static function isEditable($id, $data = null) {
 
@@ -744,12 +746,12 @@ class order extends Sximo
             FROM order_contents
             WHERE order_id ='.$id.
             " GROUP BY order_id");
-        $partial = !empty($record) && 
-                $record[0]->remaining_items > 0 && 
-                $record[0]->remaining_items < $record[0]->total_items;        
+        $partial = !empty($record) &&
+            $record[0]->remaining_items > 0 &&
+            $record[0]->remaining_items < $record[0]->total_items;
         return $partial;
     }
-    
+
     public static function isClosed($id, $data = null) {
         if (!empty($data)) {
             $statusId = is_object($data) ? $data->status_id : $data['status_id'];
@@ -794,7 +796,7 @@ class order extends Sximo
     }
     public static function isApiable($id, $data = null, $ignoreVoid = false) {
         return !self::isFreehand($id, $data) && self::isApiableFromType($id, $data) &&
-                ($ignoreVoid || !self::isVoided($id, $data));
+            ($ignoreVoid || !self::isVoided($id, $data));
     }
     public static function isApified($id, $data = null) {
         if (!empty($data)) {
@@ -834,9 +836,9 @@ class order extends Sximo
 
     /**
      * Conditions for Post to NetSuite Button being visible:
-        1) order fully received;
-        2) order status = Closed;
-        3) Invoice Verified = Yes
+    1) order fully received;
+    2) order status = Closed;
+    3) Invoice Verified = Yes
      * Post to Netsuite button will NOT be visible for freehand orders, ever.
      * After an order has been posted to netsuite, it cannot be edited nor received against.
      * @param $id
@@ -880,11 +882,11 @@ class order extends Sximo
             'resetDate' => null,
             'resetApiable' => true
         ], $options);
-        
+
         $nowTimestamp = strtotime("now");
         $now = date("Y-m-d", $nowTimestamp);
         $nowStamp = date("Y-m-d H:i:s", $nowTimestamp);
-        
+
         if (empty($data)) {
             $data = self::find($id)->toArray();
         }
@@ -950,7 +952,7 @@ class order extends Sximo
             \Log::info("skipping items");
         }
         if (empty($options['skipReceipts'])) {
-             \Log::info("NOT skipping receipts");
+            \Log::info("NOT skipping receipts");
             $sql = "INSERT INTO order_received
                         (order_id,
                         order_line_item_id,
@@ -994,7 +996,7 @@ class order extends Sximo
         return $poNumber;
     }
     public static function relateOrder($rType, $originalOrderID, $targetOrderID) {
-        
+
         $typeIDs = \FEGHelp::getEnumTable('orders_relation_types', 'relation_name', 'id');
         $oOrderData = self::find($originalOrderID);
         $tOrderData = self::find($targetOrderID);
@@ -1018,7 +1020,7 @@ class order extends Sximo
                 'relation_note' => \FEGHelp::stringBuilder(\Lang::get('core.templates.order_replaced_by'), [$oPO, $now]),
             ]];
             \DB::table('orders_relations')->insert($data);
-        }        
+        }
     }
 
     public static function getOrderRelationships($id) {
@@ -1032,6 +1034,3 @@ class order extends Sximo
         return $notes;
     }
 }
-
-
-
