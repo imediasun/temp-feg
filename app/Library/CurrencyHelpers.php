@@ -27,7 +27,7 @@ class CurrencyHelpers
          return '$ '.$value;
      }
      public static function formatPrice($value,$decimalPlaces=2,$isDollarSign=true, $thousands_sep = ',',$dec_point = '.'  ){
-         $formattedValue= ($isDollarSign === true)?'$ ':"";
+         $formattedValue= ($isDollarSign === true)?'$':"";
          if($isDollarSign === false){
              $thousands_sep = '';
          }
