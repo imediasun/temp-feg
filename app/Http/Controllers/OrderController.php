@@ -106,6 +106,22 @@ class OrderController extends Controller
         });
         //$results = $this->model->getExportRows($params);
 
+        foreach($results['rows'] as  &$rs){
+            $result = $this->model->getProductInfo($rs->id);
+            $infoString = '';
+            foreach($result as $r){
+                if(!isset($r->sku)){
+                    $sku = " (SKU: No Data) ";
+                }else{
+                    $sku = " (SKU: ".$r->sku.")";
+                }
+
+                $infoString = $infoString .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total,3,true,',','.' , true ).$sku. '; ';
+            }
+            $rs->productInfo = rtrim($infoString,'; ');
+        }
+
+
         $fields = $info['config']['grid'];
         $rows = $results['rows'];
 
