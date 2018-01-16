@@ -3522,3 +3522,10 @@ label.radio.radio-inline ul.parsley-error-list{
 label.radio.radio-inline ul.parsley-error-list li{
   width:100%;
 }
+.form-group{
+    position: relative;
+}
+.form-group .radio #parsley-status,.form-group .radio #parsley-template{
+    position: absolute;
+    bottom: -28px;
+}
