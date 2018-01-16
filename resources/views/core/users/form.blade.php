@@ -266,7 +266,8 @@
 
                                 <label class='radio radio-inline'>
                                     <input type='radio' name='is_tech_contact' value='0' required
-                                           @if($row['is_tech_contact'] == '0') checked="checked" @endif > No &nbsp;
+                                           @if($row['is_tech_contact'] == '0') checked="checked" @endif > No </label>
+                                <label class='radio radio-inline'>
                                     <input type='radio' name='is_tech_contact' value='1'
                                            @if($row['is_tech_contact'] == '1') checked="checked" @endif > Yes </label>
                             </div>
