@@ -47,12 +47,14 @@ class CurrencyHelpers
      }
     public static function truncateLongText($text,$maxLength){
         if(!empty($text)){
+
             if(strlen($text) > $maxLength){
                 $text = substr($text,0,258)."...truncated - full contents in FEG admin.";
                 return $text;
             }else{
                 return $text;
             }
+
         }
         return '';
     }

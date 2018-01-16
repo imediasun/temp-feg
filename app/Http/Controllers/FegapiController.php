@@ -191,7 +191,6 @@ class FegapiController extends Controller
                        $jsonData->po_notes =  Order::truncatePoNotes($jsonData->po_notes);
 
                    }
-
            }
         }
 
