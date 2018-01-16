@@ -55,8 +55,10 @@
                         {{ SiteHelpers::activeLang('Item Description', (isset($fields['item_description']['language'])? $fields['item_description']['language'] : array())) }}
                     </td>
                     <td>{{ DateHelpers::formatStringValue($row->item_description) }} <br>
+                        <?php if(!empty($row->size)){ ?>
                         {{ SiteHelpers::activeLang('Size', (isset($fields['size']['language'])? $fields['size']['language'] : array())) }}
                         : {{ DateHelpers::formatStringValue($row->size) }}
+                        <?php } ?>
                     </td>
 
                 </tr>
