@@ -393,7 +393,6 @@ class ProductController extends Controller
                         unset($data_attached_products['ticket_value']);
                         unset($data_attached_products['inactive']);
                         unset($data_attached_products['in_development']);
-                        unset($data_attached_products['hot_item']);
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
@@ -573,12 +572,13 @@ class ProductController extends Controller
             $destinationPath = './uploads/products/';
             $filename = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-            $newfilename = $id . '.' . $extension;
+            $newfilename = $id . mt_rand() . '.' . $extension;
             $uploadSuccess = $request->file('img')->move($destinationPath, $newfilename);
             if ($uploadSuccess) {
-                $updates['img'] = $newfilename;
+                $relatedProducts = $this->model->checkProducts($id);
+                $ids = array_map(function($row){return $row->id;}, $relatedProducts);
+                \DB::update('update products set img = "' . $newfilename . '" where id IN(' . implode(",", $ids) .')');
             }
-            $this->model->insertRow($updates, $id);
             return Redirect::to('product/upload/' . $id)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
 
         }
@@ -629,12 +629,15 @@ class ProductController extends Controller
     {
         $excludeExport = $request->get('excludeExport');
         $productId = $request->get('productId');
+        $relatedProducts = $this->model->checkProducts($productId);
+        $ids = array_map(function($row){return $row->id;}, $relatedProducts);
+
         if ($excludeExport == "true") {
-            $update = \DB::update('update products set exclude_export = 1 where id=' . $productId);
+            $update = \DB::update('update products set exclude_export = 1 where id IN(' . implode(',', $ids) . ')');
         }
         else
         {
-            $update = \DB::update('update products set exclude_export = 0 where id=' . $productId);
+            $update = \DB::update('update products set exclude_export = 0 where id IN(' . implode(',', $ids) . ')');
         }
         if ($update) {
             return response()->json(array(
