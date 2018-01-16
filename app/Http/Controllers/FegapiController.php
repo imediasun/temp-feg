@@ -185,19 +185,19 @@ class FegapiController extends Controller
         }
 
         if($class=="Order"){
-/*
+
                if (!empty($jsonData->po_notes)) {
                    if (strlen($jsonData->po_notes) > 300) {
                        $jsonData->po_notes =  Order::truncatePoNotes($jsonData->po_notes);
 
                    }
-           }*/
-            if (!empty($jsonData->po_notes)) {
+           }
+           /* if (!empty($jsonData->po_notes)) {
                 if (strlen($jsonData->po_notes) > 300) {
                     $jsonData->po_notes =  \CurrencyHelpers::truncateLongText($jsonData->po_notes,300);
 
                 }
-            }
+            }*/
         }
 
         if (!empty($jsonData)) {
