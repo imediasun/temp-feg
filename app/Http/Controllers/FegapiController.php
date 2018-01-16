@@ -186,7 +186,6 @@ class FegapiController extends Controller
                        $jsonData->po_notes =  \CurrencyHelpers::truncateLongText($jsonData->po_notes,300);
 
                    }
-
            }
         }
 
