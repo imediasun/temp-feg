@@ -3507,6 +3507,7 @@ li.multiselect-item.multiselect-group + li a label {
 {
   color:black;
 }
+
 label.radio.radio-inline{
   position: relative;
   display: inline-block;
