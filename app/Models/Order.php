@@ -92,7 +92,7 @@ class order extends Sximo
     public static function truncatePoNotes($poNotes,$length=300)
     {
         //$poNotes = preg_replace("/[\r\n]+/", " ", $poNotes);
-        $poNotes = str_replace(["\r\n","t"]," ",$poNotes);
+        $poNotes = str_replace(["\r\n"]," ",$poNotes);
         $poNotes = preg_replace('/\t+/', '', $poNotes);
         $poNotes = preg_replace('/\n+/', '', $poNotes);
         if(empty($poNotes) || strlen($poNotes) < $length){
