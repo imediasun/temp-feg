@@ -1,4 +1,9 @@
 {{--*/      use App\Library\FEG\System\FEGSystemHelper;                   /*--}}
+<style>
+	.form-group{
+		position: static !important;
+	}
+</style>
 @if($setting['form-method'] =='native')
 <div class="sbox">
 		<div class="sbox-title">  
