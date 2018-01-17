@@ -516,6 +516,27 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        echo "<pre>";
+
+        $item_names = $request->input('item_name');
+    $productInformation = [];
+        for($i=0; $i<count($item_names); $i++){
+            $productInformation[]=array(
+                "product_id"=>$request->input('product_id')[$i],
+                "item_name"=>$request->input('item_name')[$i],
+                "sku"=>$request->input('sku')[$i],
+                "item"=>$request->input('item')[$i],
+                "price"=>$request->input('price')[$i],
+                "case_price"=>$request->input('case_price')[$i],
+                "qty"=>$request->input('qty')[$i],
+
+            );
+
+        }
+
+
+
+
         $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
 
         /*$productIdArray = $request->get('product_id');
@@ -671,6 +692,12 @@ class OrderController extends Controller
                 }
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
+                echo "Create Order".$order_id;
+                print_r($productInformation);
+                if($order_id>0 && count($productInformation)>0) {
+                    $manageOrderedProductHistory = self::manageProductReservedQty($productInformation, $order_id);
+                }
+
             }
             //// UPDATE STATUS TO APPROVED AND PROCESSED
             //don't put this code in loop below
@@ -2007,5 +2034,15 @@ public static function array_move($which, $where, $array)
         self::array_splice_assoc($array, $where, 0, $tmp);
         return $array;
     }
-
+    public static function manageProductReservedQty($products=array(),$order_id)
+    {
+            if(count($products)>0)
+            {
+                foreach($products as $iteminfo)
+                {
+                    $product = DB::table('products')->where(['id' => $iteminfo['product_id']])->first();
+                    $items = DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
+                }
+            }
+    }
 }
