@@ -601,7 +601,8 @@
         $(document).on('click',".remove_me",function(){
             count = $(this).attr('data-count');
             count = "#remove_me_"+count;
-            console.log(count);
+           // console.log(count);
+            $("#add_more_types").show();
             $(count).remove();
         });
         $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
@@ -661,6 +662,7 @@
 
     $("#add_more_types").click(function () {
         types_counter++;
+
         var more_types_html = '<span class="product_types productTypeBox" id="remove_me_'+types_counter+'"><div class="form-group  "> ' +
                 '<label for="Prod Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Type", (isset($fields["prod_type_id"]["language"])? $fields["prod_type_id"]["language"] : array())) !!}</label> ' +
                 '<div class="col-md-6"> <select data-previous="0" name="prod_type_id[]" rows="5" data-counter="'+types_counter+'" id="prod_type_id_'+types_counter+'" class="prod_type select2 "required="required"></select>' +
@@ -678,18 +680,26 @@
                 '<div class="form-group ticket_values " id="ticket_value_'+types_counter+'"> <label for="Ticket Value" class="control-label col-md-4 text-left addcolon">Ticket Value </label> ' +
                 '<div class="col-md-6"> <input class="form-control" placeholder="" id="ticket_input_'+types_counter+'" name="ticket_value['+types_counter+']" type="text" value=""> </div> <div class="col-md-2">  </div> </div>' +
                 '</span>';
-        console.log(more_types_html);
+        //console.log(more_types_html);
         $("#more_types_container").append(more_types_html);
 
         $("#prod_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}");
         $("#expense_category_"+types_counter).jCombo("{{ URL::to('product/expense-category-groups') }}");
         renderDropdown($(".select2"), {width: "100%"});
+        <?php $NETSUITE_PRODUCT_MAX_LENGTH = config('app.NETSUITE_PRODUCT_MAX_LENGTH'); ?>
+      <?php if($NETSUITE_PRODUCT_MAX_LENGTH !=''){ ?>
+        if(types_counter >= Number(<?php echo $NETSUITE_PRODUCT_MAX_LENGTH; ?>)){
+            $(this).hide();
+        }
+        <?php } ?>
+
         console.log('debug');
         console.log(types_counter);
     });
     $(".fixDecimal").blur(function () {
         $(this).val($(this).fixDecimal());
     });
+
 </script>
 <style>
 
