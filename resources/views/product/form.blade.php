@@ -1,3 +1,4 @@
+<style> .form-group{ position: static; } </style>
 @if($setting['form-method'] =='native')
     <style>
         .multiselect-container.dropdown-menu
