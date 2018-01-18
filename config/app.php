@@ -221,4 +221,6 @@ return [
         'FEGSPass' => \App\Models\Feg\System\Pass::class,
     ],
 
+    'NETSUITE_PRODUCT_MAX_LENGTH'=>env('NETSUITE_PRODUCT_MAX_LENGTH',10),
+
 ];

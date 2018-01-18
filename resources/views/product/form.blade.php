@@ -685,7 +685,7 @@
         $("#prod_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}");
         $("#expense_category_"+types_counter).jCombo("{{ URL::to('product/expense-category-groups') }}");
         renderDropdown($(".select2"), {width: "100%"});
-        <?php $NETSUITE_PRODUCT_MAX_LENGTH = env('NETSUITE_PRODUCT_MAX_LENGTH',10); ?>
+        <?php $NETSUITE_PRODUCT_MAX_LENGTH = config('app.NETSUITE_PRODUCT_MAX_LENGTH'); ?>
       <?php if($NETSUITE_PRODUCT_MAX_LENGTH !=''){ ?>
         if(types_counter >= Number(<?php echo $NETSUITE_PRODUCT_MAX_LENGTH; ?>)){
             $(this).hide();
