@@ -2031,9 +2031,9 @@ public static function array_move($which, $where, $array)
         $ids = array_map(function($row){
             return $row->aa_id;
         }, $records);
-
-        \DB::table('order_received')->whereIn('order_id', $ids)->update(['deleted_at' => Carbon::now()]);
-
+        //Step 1
+        //\DB::table('order_received')->whereIn('order_id', $ids)->update(['deleted_at' => Carbon::now()]);
+        //Step 2
         foreach ($records as $record){
             $order = Order::find($record->aa_id);
 
@@ -2073,9 +2073,11 @@ public static function array_move($which, $where, $array)
                         'received_by' => '238',
                         'date_received' => Carbon::now(),
                         'api_created_at' => Carbon::now(),
-                        'notes' => '(System generated) All Items Received',
+                        'notes' => '(System generated) Some Items Received',
                         'status' => 1
                     ]);
+
+                    //add content <br>----------------------<br>
                 }
 
                 \DB::table('order_contents')->where('id', $order_content->id)->update(['item_received' => $order_content->qty]);
@@ -2089,7 +2091,7 @@ public static function array_move($which, $where, $array)
             $order->date_received = Carbon::now();
             $order->updated_at = Carbon::now();
             $order->received_by = '238';
-            $order->notes = $order->notes . '(System generated) All Items Received';
+            $order->notes = $order->notes . '<br>(System generated) All Items Received';
             $order->save();
         }
 
