@@ -2028,16 +2028,18 @@ public static function array_move($which, $where, $array)
             HAVING items_ordered < items_received
             ORDER BY aa_id");
 
-        $ids = array_map(function($row){
+        /*$ids = array_map(function($row){
             return $row->aa_id;
-        }, $records);
-        //Step 1
+        }, $records);*/
+
         //\DB::table('order_received')->whereIn('order_id', $ids)->update(['deleted_at' => Carbon::now()]);
-        //Step 2
+
         foreach ($records as $record){
             $order = Order::find($record->aa_id);
 
             $order_contents = \DB::table('order_contents')->where('order_id', $order->id)->get();
+
+            $notes = '';
 
             foreach ($order_contents as $order_content){
                 $order_received = \DB::table('order_received')
@@ -2045,6 +2047,7 @@ public static function array_move($which, $where, $array)
                     ->where('order_line_item_id', $order_content->id)
                     ->whereNull('deleted_at')
                     ->get();
+
 
                 if(empty($order_received)){
                     \DB::table('order_received')->insert([
@@ -2057,7 +2060,11 @@ public static function array_move($which, $where, $array)
                         'notes' => '(System generated) All Items Received',
                         'status' => 1
                     ]);
+
+                    $notes .= '(System generated) All Items Received <br>----------------------<br>';
+
                 }else{
+
                     $qty_received = collect($order_received)->sum('quantity');
 
                     if($qty_received < $order_content->qty){
@@ -2077,7 +2084,7 @@ public static function array_move($which, $where, $array)
                         'status' => 1
                     ]);
 
-                    //add content <br>----------------------<br>
+                    $notes .= '(System generated) Some Items Received <br>----------------------<br>';
                 }
 
                 \DB::table('order_contents')->where('id', $order_content->id)->update(['item_received' => $order_content->qty]);
@@ -2091,7 +2098,7 @@ public static function array_move($which, $where, $array)
             $order->date_received = Carbon::now();
             $order->updated_at = Carbon::now();
             $order->received_by = '238';
-            $order->notes = $order->notes . '<br>(System generated) All Items Received';
+            $order->notes = $notes;
             $order->save();
         }
 
