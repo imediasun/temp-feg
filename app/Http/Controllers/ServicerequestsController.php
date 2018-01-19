@@ -295,6 +295,17 @@ class servicerequestsController extends Controller
         $this->data['entryBy'] = $isAdd ? $userId : $row['entry_by'];
         $this->data['locationId'] = $isAdd ? \Session::get('selected_location') : $row['location_id'];
 
+        /*$this->data['priorityOptions'] = array(
+                                                'normal' => 'Normal',
+                                                'urgent' => 'Urgent'
+                                                );*/
+        foreach( $this->data['priorityOptions'] as $p_keys =>$p_values){
+            if($p_keys=="sameday"){
+                unset($this->data['priorityOptions'][$p_keys]);
+                $this->data['priorityOptions']['urgent']="Urgent";
+            }
+        }
+
         return view('servicerequests.form', $this->data);
     }
 
@@ -412,6 +423,7 @@ class servicerequestsController extends Controller
     {
         $data = $this->validatePost('sb_tickets', true);
         $data = $this->validateDates($data, $request);
+
         unset($data['file_path']);
         if (!ticketsetting::canUserChangeStatus()) {
             unset($data['Status']);
@@ -438,6 +450,7 @@ class servicerequestsController extends Controller
         
  
         $validator = Validator::make($data, $rules);
+
         if ($validator->passes()) {
             $data['updated'] = date("Y-m-d H:i:s");
             $this->model->insertRow($data, $id);

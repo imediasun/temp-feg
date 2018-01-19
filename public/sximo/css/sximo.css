@@ -3900,3 +3900,24 @@ select#col-config{
 .page-cms div a {
     word-wrap: break-word;
 }
+label.radio.radio-inline{
+    position: relative;
+    display: inline-block;
+}
+
+label.radio.radio-inline ul.parsley-error-list{
+    position: absolute;
+    width: 130px;
+    display: block;
+    bottom: -30px;
+}
+label.radio.radio-inline ul.parsley-error-list li{
+    width:100%;
+}
+.form-group{
+    position: relative;
+}
+.form-group .radio #parsley-status,.form-group .radio #parsley-template{
+    position: absolute;
+    bottom: -28px;
+}

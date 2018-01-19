@@ -235,6 +235,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                         <?php
                         $canPostToNetSuit = Order::canPostToNetSuit($row->id, $row);
                         $isApified = Order::isApified($id, $row);
+
                         ?>
 
                         @if(!$isApified)

@@ -44,7 +44,7 @@
 
                 <tr>
                     <td width='30%' class='label-view text-right'>
-                        {{ SiteHelpers::activeLang('Name', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) }}
+                        {{ SiteHelpers::activeLang('Item Name', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) }}
                     </td>
                     <td>{{ DateHelpers::formatStringValue($row->vendor_description) }} </td>
 
@@ -52,20 +52,16 @@
 
                 <tr>
                     <td width='30%' class='label-view text-right'>
-                        {{ SiteHelpers::activeLang('Description', (isset($fields['item_description']['language'])? $fields['item_description']['language'] : array())) }}
+                        {{ SiteHelpers::activeLang('Item Description', (isset($fields['item_description']['language'])? $fields['item_description']['language'] : array())) }}
                     </td>
-                    <td>{{ DateHelpers::formatStringValue($row->item_description) }} </td>
-
-                </tr>
-
-                <tr>
-                    <td width='30%' class='label-view text-right'>
+                    <td>{{ DateHelpers::formatStringValue($row->item_description) }} <br>
+                        <?php if(!empty($row->size)){ ?>
                         {{ SiteHelpers::activeLang('Size', (isset($fields['size']['language'])? $fields['size']['language'] : array())) }}
+                        : {{ DateHelpers::formatStringValue($row->size) }}
+                        <?php } ?>
                     </td>
-                    <td>{{ DateHelpers::formatStringValue($row->size) }} </td>
 
                 </tr>
-
                 <tr>
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Product Type', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) }}

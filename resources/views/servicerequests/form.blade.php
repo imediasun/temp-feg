@@ -1,4 +1,9 @@
 {{--*/      use App\Library\FEG\System\FEGSystemHelper;                   /*--}}
+<style>
+	.form-group{
+		position: static !important;
+	}
+</style>
 @if($setting['form-method'] =='native')
 <div class="sbox">
 		<div class="sbox-title">  
@@ -213,7 +218,7 @@ $(document).ready(function() {
 	$('select[name=Priority]').change(function(){
         var elm = $(this),
             val = elm.val(),
-            isSameDay = val == 'sameday',
+            isSameDay = val == 'urgent',
             date = elm.data('current-date'),
             formattedDate,
             datePicker = $("#my-datepicker"),

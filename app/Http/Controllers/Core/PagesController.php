@@ -92,6 +92,7 @@ class PagesController extends Controller
     function getUpdate(Request $request, $id = null)
     {
 
+
         if ($id == '') {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -209,6 +210,7 @@ class PagesController extends Controller
                 //replace original iframe with new in content
                     $content = str_replace($match, $wrappedframe, $content);
             }
+            $content = str_replace(array("http://www.","https://www.","http://","https://"),"//",$content);
 
             $content = $this->addEditLinkTemplate($content);
             

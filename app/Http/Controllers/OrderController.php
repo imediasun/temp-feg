@@ -107,6 +107,22 @@ class OrderController extends Controller
         });
         //$results = $this->model->getExportRows($params);
 
+        foreach($results['rows'] as  &$rs){
+            $result = $this->model->getProductInfo($rs->id);
+            $infoString = '';
+            foreach($result as $r){
+                if(!isset($r->sku)){
+                    $sku = " (SKU: No Data) ";
+                }else{
+                    $sku = " (SKU: ".$r->sku.")";
+                }
+
+                $infoString = $infoString .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total,3,true,',','.' , true ).$sku. '; ';
+            }
+            $rs->productInfo = rtrim($infoString,'; ');
+        }
+
+
         $fields = $info['config']['grid'];
         $rows = $results['rows'];
 
@@ -297,10 +313,12 @@ class OrderController extends Controller
 
             $order_status = \DB::select("Select status FROM order_status WHERE id = '" . $data->status_id . "'");
             //  $partial = $data->status_id == 10 ? ' ' : ' (Partial)';
-            $partial = $data->is_partial == 1 ? ' (Partial)' : '';
-            if ($data->status_id == 10)
+            $partial =  '';
+            if ($data->is_partial == 1 && $data->status_id == 1)
             {
-                $partial = "";
+                $partial = ' (Partial)';
+            }else{
+                $partial = '';
             }
             $rows[$index]->status_value = $rows[$index]->status_id;
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
@@ -588,8 +606,17 @@ class OrderController extends Controller
             $orderQuantity =  array_sum($request->qty);
             $orderQuantity = $orderQuantity - $totalQuanity;
             //When order quantity will be increase then order status will be updated to open (Partial)
-            if($orderQuantity >0){
+
+            $received_quantity = \DB::select("SELECT SUM(quantity) as total_received_qty FROM order_received WHERE  order_id=$order_id")[0]->total_received_qty;
+
+            if($orderQuantity >0 || $received_quantity < $totalQuanity){
                 \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
+            }
+
+            $itemReceivedcount = \DB::select("SELECT COUNT(*) AS itemReceivedcount FROM order_contents WHERE order_id=$order_id AND item_received>0")[0]->itemReceivedcount;
+
+            if($itemReceivedcount==0){
+                \DB::update('update orders set status_id=1, is_partial=0 where id="'.$order_id.'"');
             }
             if (!empty($altShipTo)) {
                 $rules = array(
@@ -1145,12 +1172,47 @@ class OrderController extends Controller
 
     function getRemoveorder($poNumber = "")
     {
-        $result = \DB::table('orders')->where('po_number', $poNumber)->delete();
-        if ($result) {
-            return Redirect::to('order')->with('messagetext', 'Po  removed successfully!')->with('msgstatus', 'success');
-        } else {
-            return Redirect::to('order')->with('messagetext', 'This PO has already been removed!')->with('msgstatus', 'error');
+        $this->data['ids'] = $poNumber;
+        $totalIdsCount = 1;
+        $ids = $poNumber;
+
+        $sql = " select po_number from orders where po_number in ('$ids') and is_api_visible=0 and status_id<>10 and status_id<>2";
+
+        $result = \DB::select($sql);
+        $ids = [];
+        foreach($result as $idsObject){
+            $ids[]= $idsObject->po_number;
         }
+        $remainIdsCount = count($ids);
+        $excludedIdsCount = count(array($poNumber))-$remainIdsCount;
+        $postedtonetsuitePOIds =[];
+        if(is_array(array($poNumber))){
+            foreach(array($poNumber) as $requestedIds){
+                if(!in_array($requestedIds,$ids)){
+                    $postedtonetsuitePOIds[] = $requestedIds;
+                }
+            }
+        }
+
+        if($remainIdsCount>0){
+            $this->data['ids'] =implode(",",$ids);
+            if($excludedIdsCount>0){
+                $this->data['messagetext'] = "Following POs cannot be removed: <br>".implode("<br>",$postedtonetsuitePOIds);
+                $this->data['msgstatus'] = "error";
+            }
+
+            return view("order.removalreasonexplain", $this->data);
+
+
+        }else{
+            return Redirect::to('order')->with('messagetext', "Closed/Removed orders may not be removed.")->with('msgstatus', 'error');
+        }
+//        $result = \DB::table('orders')->where('po_number', $poNumber)->delete();
+//        if ($result) {
+//            return Redirect::to('order')->with('messagetext', 'Po  removed successfully!')->with('msgstatus', 'success');
+//        } else {
+//            return Redirect::to('order')->with('messagetext', 'This PO has already been removed!')->with('msgstatus', 'error');
+//        }
         //\Session::flash('success', 'Po  deleted successfully!');
     }
 

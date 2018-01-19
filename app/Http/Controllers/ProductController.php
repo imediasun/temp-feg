@@ -372,9 +372,25 @@ class ProductController extends Controller
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
+
             }
 
+
             $data['netsuite_description'] = "$id...".$data['vendor_description'];
+            if($id>0) {
+                $products_combined = $this->model->checkProducts($id);
+                $hot_items=0;
+                if(!empty($request->input('hot_item')) && $request->input('hot_item')>0){
+                    $hot_items = "'1'";
+                }else if(!empty($request->input('hot_item')) && $request->input('hot_item')==0){
+                    $hot_items = "'0'";
+                }else{
+                    $hot_items = "null";
+                }
+                \DB::update("update products set hot_item=$hot_items where id='$id'");
+
+            }
+
             if(is_array($product_categories) && $id > 0){
 
                 $products_combined = $this->model->checkProducts($id);
@@ -435,9 +451,11 @@ class ProductController extends Controller
                     }
                     $this->model->insertRow($updates, $id);
                 }
+
             }
             else
             {
+
 
                 $products_combined = $this->model->checkProducts($id);
                 $data_attached_products= $data;

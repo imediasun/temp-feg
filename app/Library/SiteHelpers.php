@@ -1574,7 +1574,7 @@ class SiteHelpers
     }
 
 
-    public static function showUploadedFile($file, $path, $width = 50, $circle = true, $id = 0)
+    public static function showUploadedFile($file, $path, $width = 50, $circle = true, $id = 0,$setdescription=false,$description='')
     {
         $files = public_path() . $path . $file;
 
@@ -1590,7 +1590,13 @@ class SiteHelpers
                     $class = 'img';
                 }
                 $rel = "gallery" . $id;
-                return '<p><a href="' . url($path_file . $file) . '" target="_blank" class="previewImage fancybox" data-fancybox-group="' . $rel . '"  rel="' . $rel . '">
+                $onclick="";
+                if($setdescription==true){
+                    $onclick = "onclick='showImageModal(10,this); return false;'";
+                }else{
+                    $onclick=' class="previewImage fancybox" ';
+                }
+                return '<p><a image-description="'.$description.'"  '.$onclick.'  href="' . url($path_file . $file) . '" target="_blank"   data-fancybox-group="' . $rel . '"  rel="' . $rel . '">
 				<img style="box-shadow:1px 1px 5px gray" src="' . asset($path_file . $file) . '" border="0" width="' . $width . '" class="' . $class . '"  /></a></p>';
             } else {
                 $path_file = str_replace("./", "", $path);
@@ -1647,44 +1653,47 @@ class SiteHelpers
 
     public static function gridDisplay($val, $field, $arr)
     {
-        if (isset($arr['valid']) && $arr['valid'] == 1) {
-            $fields = str_replace("|", ",", $arr['display']);
-            $Q = DB::select(" SELECT " . $fields . " FROM " . $arr['db'] . " WHERE " . $arr['key'] . " = '" . $val . "' ");
-            if (count($Q) >= 1) {
-                $row = $Q[0];
-                $fields = explode("|", $arr['display']);
-                $v = '';
-                if (isset($fields[0]) && (empty($row->$fields[0]) || $row->$fields[0]==0)) {
-                    $v="No Data";
-                } else {
-                    $v .= (isset($fields[0]) && $fields[0] !== '' ? $row->$fields[0] . ' ' : '');
-                }
-
-                if (isset($fields[1]) && (empty($row->$fields[1]) || $row->$fields[1]==0)) {
-                    $v="No Data";
-                } else {
-                    $v .= (isset($fields[1]) && $fields[1] !== '' ? $row->$fields[1] . ' ' : '');
-                }
-                if (isset($fields[2]) && (empty($row->$fields[2]) || $row->$fields[2]==0)) {
-                    $v="No Data";
-                } else {
-                    $v .= (isset($fields[2]) && $fields[2] !== '' ? $row->$fields[2] . ' ' : '');
-                }
-            /*    $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
-                $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
-                $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');*/
 
 
-                return $v;
+            if (isset($arr['valid']) && $arr['valid'] == 1) {
+                $fields = str_replace("|", ",", $arr['display']);
+                $Q = DB::select(" SELECT " . $fields . " FROM " . $arr['db'] . " WHERE " . $arr['key'] . " = '" . $val . "' ");
+                if (count($Q) >= 1) {
+                    $row = $Q[0];
+                    $fields = explode("|", $arr['display']);
+                    $v = '';
+                    if (isset($fields[0]) && (empty($row->$fields[0]) || $row->$fields[0] == 0)) {
+                        $v = "No Data";
+                    } else {
+                        $v .= (isset($fields[0]) && $fields[0] !== '' ? $row->$fields[0] . ' ' : '');
+                    }
+
+                    if (isset($fields[1]) && (empty($row->$fields[1]) || $row->$fields[1] == 0)) {
+                        $v = "No Data";
+                    } else {
+                        $v .= (isset($fields[1]) && $fields[1] !== '' ? $row->$fields[1] . ' ' : '');
+                    }
+                    if (isset($fields[2]) && (empty($row->$fields[2]) || $row->$fields[2] == 0)) {
+                        $v = "No Data";
+                    } else {
+                        $v .= (isset($fields[2]) && $fields[2] !== '' ? $row->$fields[2] . ' ' : '');
+                    }
+                    /*    $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
+                        $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
+                        $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');*/
+
+
+                    return $v;
+                } else {
+                    return '';
+                }
             } else {
-                return '';
+                if (empty($val) || $val===0) {
+                    $val = "No Data";
+                }
+                return $val;
             }
-        } else {
-            if(empty($val) || $val==0){
-                $val="No Data";
-            }
-            return $val;
-        }
+
     }
 
     public static function gridDisplayView($val, $field, $arr,$nodata=0)

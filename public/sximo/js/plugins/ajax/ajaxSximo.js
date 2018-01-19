@@ -366,13 +366,12 @@ function ajaxViewDetail( id , url )
     
 }
 
-function ajaxViewClose( id , elm, options)
-{
+function ajaxViewClose( id , elm, options) {
     options = options || {};
-    var view = $(id+'View'),
-        grid = $(id+'Grid'),
+    var view = $(id + 'View'),
+        grid = $(id + 'Grid'),
         $elm = elm && $(elm) || [];
-    
+
     if ($elm.length) {
         if (!view.length) {
             view = $elm.closest('.moduleView');
@@ -382,14 +381,19 @@ function ajaxViewClose( id , elm, options)
         }
     }
 
-	view.html('');
-    
-    if($('.simpleSearchContainer').find('.bootstrap-switch-wrapper').length > 0 || $('.table.datagrid').find('.bootstrap-switch-wrapper').length > 0 || id == '#managefreightquoters')
-    {
-        var url = id+'/data';
-        url = url.replace('#','');
-        reloadData(id,url);
+
+    view.html('');
+
+    if ($('.simpleSearchContainer').find('.bootstrap-switch-wrapper').length > 0 || $('.table.datagrid').find('.bootstrap-switch-wrapper').length > 0 || id == '#managefreightquoters') {
+        if (id === "#product")
+        {
+            $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+        } else {
+        var url = id + '/data';
+        url = url.replace('#', '');
+        reloadData(id, url);
     }
+}
     else
     {
         grid.show();
