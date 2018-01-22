@@ -3914,7 +3914,7 @@ label.radio.radio-inline ul.parsley-error-list{
 label.radio.radio-inline ul.parsley-error-list li{
     width:100%;
 }
-.form-group{
+#user_form .form-group, #pageCMS .form-group{
     position: relative;
 }
 .form-group .radio #parsley-status,.form-group .radio #parsley-template{
