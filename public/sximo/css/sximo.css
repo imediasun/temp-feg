@@ -3510,13 +3510,12 @@ li.multiselect-item.multiselect-group + li a label {
 #user_form .form-group, #pageCMS .form-group{
   position: relative;
 }
+label.radio.radio-inline ul.parsley-error-list {
+    position: absolute;
+    width: 130px;
+    display: block;
+}
 .form-group .radio #parsley-status,.form-group .radio #parsley-template{
   position: absolute;
   bottom: -28px;
-}
-label.radio.radio-inline ul.parsley-error-list {
-  position: absolute;
-  width: 130px;
-  display: block;
-  bottom: -30px;
 }
