@@ -3507,6 +3507,10 @@ li.multiselect-item.multiselect-group + li a label {
 {
   color:black;
 }
-#user_form {
-
+#user_form .form-group, #pageCMS .form-group{
+  position: relative;
+}
+.form-group .radio #parsley-status,.form-group .radio #parsley-template{
+  position: absolute;
+  bottom: -28px;
 }
