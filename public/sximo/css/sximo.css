@@ -3514,3 +3514,9 @@ li.multiselect-item.multiselect-group + li a label {
   position: absolute;
   bottom: -28px;
 }
+label.radio.radio-inline ul.parsley-error-list {
+  position: absolute;
+  width: 130px;
+  display: block;
+  bottom: -30px;
+}
