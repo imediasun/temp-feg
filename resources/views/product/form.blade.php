@@ -43,7 +43,7 @@
                     <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New FEG Store Product
                 @endif &nbsp;&nbsp;
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
-                   onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
+                   onclick="ajaxViewClose('#{{ $pageModule }}');"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
 
@@ -541,12 +541,12 @@
         });
 
         $(document).on('change',"select.prod_type",function(){
-            console.log('here');
+
             var previous = $(this).attr('data-previous');
             var selectedType = $(this).val();
             var counter = $(this).attr('data-counter');
             if(selectedType && selectedType != previous){
-                console.log('val = '+selectedType);
+
                 $(this).parents('.product_types').find("select.prod_sub_type").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+selectedType+"");
                 //renderDropdown($(".select2"), {width: "100%"});
 
@@ -613,9 +613,10 @@
     function showResponse(data) {
 
         if (data.status == 'success') {
-            ajaxViewClose('#{{ $pageModule }}');
-            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+            $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+          //  ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
             notyMessage(data.message);
+            ajaxViewClose('#{{ $pageModule }}');
             $('#sximo-modal').modal('hide');
         } else {
             notyMessageError(data.message);
