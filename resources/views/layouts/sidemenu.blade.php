@@ -119,8 +119,8 @@ $selected_loc=\Session::get('selected_location');?>
                 $class = Request::url() == $mUrl ? "active" : "";
                 ?>
                 <li class="{{$class}}" >
-                    <a  href="{{ $mUrl }}" id="{{$moduleId}}"
-                    @if(count($menu['childs']) > 0 ) class="expand level-closed" @endif>
+                    <a  href="{{ $mUrl }}"
+                    @if(true || count($menu['childs']) > 0 ) class="expand level-closed" @endif>
                         <i class="{{$menu['menu_icons']}}"></i> <span class="nav-label">
 					
 					@if(CNF_MULTILANG ==1 && isset($menu['menu_lang']['title'][Session::get('lang')]))
