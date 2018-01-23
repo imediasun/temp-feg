@@ -596,6 +596,22 @@ class OrderController extends Controller
             $altShipTo = $request->get('alt_ship_to');
             $alt_address = '';
             $order_description = '';
+            $totalQuanity = \DB::select("SELECT SUM(qty) AS total_quantity FROM order_contents WHERE order_id=$order_id")[0]->total_quantity;
+            $orderQuantity =  array_sum($request->qty);
+            $orderQuantity = $orderQuantity - $totalQuanity;
+            //When order quantity will be increase then order status will be updated to open (Partial)
+
+            $received_quantity = \DB::select("SELECT SUM(quantity) as total_received_qty FROM order_received WHERE  order_id=$order_id")[0]->total_received_qty;
+
+            if($orderQuantity >0 || $received_quantity < $totalQuanity){
+                \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
+            }
+
+            $itemReceivedcount = \DB::select("SELECT COUNT(*) AS itemReceivedcount FROM order_contents WHERE order_id=$order_id AND item_received>0")[0]->itemReceivedcount;
+
+            if($itemReceivedcount==0){
+                \DB::update('update orders set status_id=1, is_partial=0 where id="'.$order_id.'"');
+            }
             if (!empty($altShipTo)) {
                 $rules = array(
                     'to_add_name' => 'required|max:60',
@@ -732,6 +748,7 @@ class OrderController extends Controller
                 if ($product_id != 0) {
                     $prodData = \DB::select("SELECT * from products where id =$product_id");
                     $prodType = $prodData[0]->prod_type_id;
+
                     $prodSubtype = $prodData[0]->prod_sub_type_id;
                     $qty_per_case = $prodData[0]->num_items;
                     $prodTicketValue = $prodData[0]->ticket_value;
