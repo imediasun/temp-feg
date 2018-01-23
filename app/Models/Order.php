@@ -75,6 +75,12 @@ class order extends Sximo
             default:
                 $return .= " orders.id IS NOT NULL";
         }
+        $module_id = Module::name2id('order');
+        $pass = \FEGSPass::getMyPass($module_id);
+        if(empty($pass['Can remove order']))
+        {
+            $return .= " AND orders.deleted_at is null ";
+        }
         if($cond == 'only_api_visible')
         {
             $return .= " AND is_api_visible = 1 And api_created_at IS NOT NULL";
@@ -106,7 +112,16 @@ class order extends Sximo
         if(empty($orders)){
             return $data;
         }
-        $query = "SELECT O.*,IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id WHERE O.order_id IN (".implode(',',$orders).")";
+
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $order_types = $pass['calculate price according to case price']->data_options;
+        $condition = '';
+        if($order_types != ''){
+            $condition = "IF(ORD.order_type_id IN($order_types), O.case_price, O.price) AS price,";
+        }
+
+        $query = "SELECT O.*,$condition IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id INNER JOIN orders ORD ON ORD.id = O.order_id WHERE O.order_id IN (".implode(',',$orders).")";
         $result = \DB::select($query);
         //all order contents place them in relevent order
         foreach($result as $item){

@@ -371,7 +371,7 @@
                                 class="fa fa-plus"></i>
                         New Item</a>
                 @if($show_freehand == 1)
-                        <a href="javascript:void(0);" class="btn btn-xs btn-info enabled" 
+                        <a href="javascript:void(0);" style="display: none;" class="btn btn-xs btn-info enabled"
                            data-status="{{ $isFreeHand ? "enabled": "disabled" }}"
                            id="can-freehand">
                             <i class="fa fa-times fa-check-circle-o" aria-hidden="true"></i>
@@ -515,7 +515,7 @@
                 $("#ship_address").hide();
         }
         function calculateSum() {
-            console.log('Calculating Sum');
+            //console.log('Calculating Sum');
             var Subtotal = 0.00;
             var Price = 0.00;
             $('table tr.clone ').each(function (i) {

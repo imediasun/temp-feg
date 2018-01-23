@@ -4,7 +4,7 @@
             {!! AjaxHelpers::buttonActionCreate($pageModule,$setting,'Add Video Link22') !!}
         @endif
 
-                <a  href="{{ url('core/pages/update/'.$pageModule.'?return='.$return) }}" class="tips btn btn-xs btn-white editButtonOnGridRow" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
+                <a  href="{{ url('core/pages/update/'.$pageModule.'?return='.$return) }}" class="tips btn btn-xs btn-white alignment-left-fixed editButtonOnGridRow" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
 
     </div>
 

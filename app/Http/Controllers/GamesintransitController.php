@@ -286,20 +286,23 @@ class GamesintransitController extends Controller
         if ($validator->passes()) {
             $serial = $request->get('serial');
             $game_title_id = $request->get('game_title');
-            $game_type_id = \DB::table('game_title')->where('id', $game_title_id)->pluck('game_type_id');
+            $game_title_data = \DB::table('game_title')->where('id', $game_title_id)->select('game_type_id', 'mfg_id')->get();
             $asset_number = $request->get('asset_number');
             $notes = $request->get('notes');
             $test_piece = $request->get('test_piece');
+
             $insert = array(
                 'id' => $asset_number,
                 'game_title_id' => $game_title_id,
-                'game_type_id' => $game_type_id,
+                'game_type_id' => $game_title_data[0]->game_type_id,
                 'serial' => $serial,
                 'status_id' => 3,
                 'test_piece' => $test_piece,
                 'notes' => $notes,
+                'mfg_id' => $game_title_data[0]->mfg_id,
                 'last_edited_on' => date('Y-m-d H:i:s'),
             );
+
             \DB::table('game')->insert($insert);
 
             return response()->json(array(

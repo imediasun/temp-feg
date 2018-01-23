@@ -58,6 +58,11 @@ jQuery(function(){
 
     initiateSearchFormFields($('#{{$pageModule}}Search'));
     renderDropdown($("select.select3 "), { width:"100%"});
+	/*if('{{ $pageModule }}'=='order') {
+		$("#orderSearch .table #field_status_id select[name='status_id']").each(function () {
+			$(this).append('<option  value="removed"> Removed</option>')
+		});
+	}*/
 	$('.doSearch').click(function(event){
         var ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
         $('#sximo-modal').modal('hide');
