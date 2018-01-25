@@ -300,10 +300,12 @@ class servicerequestsController extends Controller
                                                 'urgent' => 'Urgent'
                                                 );*/
         foreach( $this->data['priorityOptions'] as $p_keys =>$p_values){
-            if($p_keys=="sameday"){
+            if($p_keys=="sameday" || strtolower($p_keys)=="urgent"){
                 unset($this->data['priorityOptions'][$p_keys]);
                 $this->data['priorityOptions']['urgent']="URGENT";
+
             }
+
         }
 
         return view('servicerequests.form', $this->data);
