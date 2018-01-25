@@ -3520,3 +3520,10 @@ label.radio.radio-inline ul.parsley-error-list {
   position: absolute;
   bottom: -28px;
 }
+@media only screen and (max-width: 360px) {
+  .radio-inline, .checkbox-inline {
+    display: inline-block;
+    padding-left: 0;
+    margin-left: 0 !important;
+  }
+}
