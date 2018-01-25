@@ -232,6 +232,7 @@ class servicerequestsController extends Controller
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
+
         // Build Pagination
         $this->data['pagination'] = $pagination;
         // Build pager number and append current param GET
