@@ -302,7 +302,7 @@ class servicerequestsController extends Controller
         foreach( $this->data['priorityOptions'] as $p_keys =>$p_values){
             if($p_keys=="sameday"){
                 unset($this->data['priorityOptions'][$p_keys]);
-                $this->data['priorityOptions']['urgent']="Urgent";
+                $this->data['priorityOptions']['urgent']="URGENT";
             }
         }
 
