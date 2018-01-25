@@ -2272,5 +2272,3 @@ public static function array_move($which, $where, $array)
         die("Script Completed!");
     }
 }
-/*$dataArray =["deleted_at"=>date("Y-m-d H:i:s"),'deleted_by'=>\Session::get('uid')];
-$result=\DB::table('orders')->where('po_number', $poNumber)->update($dataArray);*/
