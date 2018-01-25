@@ -213,7 +213,7 @@ $(document).ready(function() {
 	$('select[name=Priority]').change(function(){
         var elm = $(this),
             val = elm.val(),
-            isSameDay = val == 'sameday',
+            isSameDay = val == 'urgent',
             date = elm.data('current-date'),
             formattedDate,
             datePicker = $("#my-datepicker"),
