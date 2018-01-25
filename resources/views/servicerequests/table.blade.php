@@ -133,10 +133,17 @@
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                            <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
-                                data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                {!! $value !!}
-                            </td>
+                                <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
+                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                    @if($field['field']=='urgent')
+                                        <?php
+                                        $value = strtoupper($field['field']);
+                                        ?>
+                                        {!! $value !!}
+                                    @else
+                                        {!! $value !!}
+                                    @endif
+                                </td>
                         @endif
                         <?php endif;
                         endforeach;
