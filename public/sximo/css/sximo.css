@@ -3573,6 +3573,27 @@ select#col-config{
     display:inline-block !important;
     left: 0px !important;
 }
+#user_form .form-group, #pageCMS .form-group{
+    position: relative;
+}
+label.radio.radio-inline ul.parsley-error-list {
+    position: absolute;
+    width: 130px;
+    display: block;
+
+}
+.form-group .radio #parsley-status,.form-group .radio #parsley-template{
+    position: absolute;
+    bottom: -28px;
+}
+@media only screen and (max-width: 360px) {
+    .radio-inline, .checkbox-inline {
+        display: inline-block;
+        padding-left: 0;
+        margin-left: 0 !important;
+    }
+}
+
 /*
 .alignment-left-fixed{
 
