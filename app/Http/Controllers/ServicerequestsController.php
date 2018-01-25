@@ -232,6 +232,7 @@ class servicerequestsController extends Controller
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
+
         // Build Pagination
         $this->data['pagination'] = $pagination;
         // Build pager number and append current param GET
@@ -300,10 +301,12 @@ class servicerequestsController extends Controller
                                                 'urgent' => 'Urgent'
                                                 );*/
         foreach( $this->data['priorityOptions'] as $p_keys =>$p_values){
-            if($p_keys=="sameday"){
+            if($p_keys=="sameday" || strtolower($p_keys)=="urgent"){
                 unset($this->data['priorityOptions'][$p_keys]);
-                $this->data['priorityOptions']['urgent']="Urgent";
+                $this->data['priorityOptions']['urgent']="URGENT";
+
             }
+
         }
 
         return view('servicerequests.form', $this->data);
