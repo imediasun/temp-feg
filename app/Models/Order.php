@@ -133,11 +133,9 @@ class order extends Sximo
             if(in_array($item->order_type_id,$order_types)){
                 $item->price = \CurrencyHelpers::formatPrice(($item->case_price/$item->qty_per_case), 5, false);
                 $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 5, false);
-
             }else{
                 $item->price = \CurrencyHelpers::formatPrice($item->price, 5, false);
                 $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 5, false);
-
             }
 
           /*  $orderId = $item->order_id;
