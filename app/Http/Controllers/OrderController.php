@@ -1994,7 +1994,7 @@ public static function array_move($which, $where, $array)
     }
 
     public function getCorrectOrdersBug242($step = '1'){
-       // die("Script blocked. To run this script please contact your development team. Thanks!");
+        die("Script blocked. To run this script please contact your development team. Thanks!");
 
         $records = \DB::select("SELECT
               orders.id AS aa_id,
@@ -2035,7 +2035,7 @@ public static function array_move($which, $where, $array)
                 return $row->aa_id;
             }, $records);
             \DB::table('order_received')->whereIn('order_id', $ids)->update(['deleted_at' => Carbon::now()]);
-           // die("Step 1 completed!");
+            die("Step 1 completed!");
         }
 
         foreach ($records as $record){
