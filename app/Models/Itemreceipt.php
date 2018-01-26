@@ -207,6 +207,7 @@ orders.id=order_received.order_id ";
                     if ($order_data->id == $record->order_id) {
                         if(in_array($record->order_type_id,$order_types)){
                             $record->quantity = $record->quantity*$record->qty_per_case;
+                            $record->quantity='DDD';
                         }
                         $result[$record->order_id]['receipts'][] = [
                             'id' => $record->id,
