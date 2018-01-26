@@ -179,11 +179,11 @@ orders.id=order_received.order_id ";
         $qry_in_string=implode(',',$order_ids);
         if(empty($qry_in_string))
             $qry_in_string = "''";
-        $order_received_data=\DB::select("select order_received.*,order_contents.qty_per_case from order_received inner join order_contents on order_contents.id=order_received.order_line_item_id where order_received.order_id in($qry_in_string) $where");
+        $order_received_data=\DB::select("select order_received.*,order_contents.qty_per_case,orders.order_type_id from order_received inner join order_contents on order_contents.id=order_received.order_line_item_id inner join orders on orders.id=order_received.order_id where order_received.order_id in($qry_in_string) $where");
         $order_received_ids=\DB::select("select order_id from order_received where order_id in($qry_in_string) $where group by order_id");
         // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
         //all order contents place them in relevent order
-        $module = new OrderController();
+        $module = new \App\Http\Controllers\OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
         $order_types = $pass['calculate price according to case price']->data_options;
         $order_types = explode(",",$order_types);
