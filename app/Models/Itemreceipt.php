@@ -183,7 +183,7 @@ orders.id=order_received.order_id ";
         $order_received_ids=\DB::select("select order_id from order_received where order_id in($qry_in_string) $where group by order_id");
         // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
         //all order contents place them in relevent order
-        $module = new OrderController();
+        $module = new \App\Http\Controllers\OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
         $order_types = $pass['calculate price according to case price']->data_options;
         $order_types = explode(",",$order_types);
