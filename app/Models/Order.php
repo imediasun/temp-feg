@@ -96,7 +96,7 @@ class order extends Sximo
         $order_types = $pass['calculate price according to case price']->data_options;
         $condition = '';
         if($order_types != ''){
-            $condition = "IF(ORD.order_type_id IN($order_types), O.case_price, O.price) AS price,";
+            $condition = "IF(ORD.order_type_id IN($order_types), O.case_price/O.qty, O.price/O.qty) AS price,";
         }
 
         $query = "SELECT O.*,$condition IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id INNER JOIN orders ORD ON ORD.id = O.order_id WHERE O.order_id IN (".implode(',',$orders).")";
