@@ -126,10 +126,20 @@ class order extends Sximo
         // $query = "SELECT O.*,IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id WHERE O.order_id IN (".implode(',',$orders).")";
         $result = \DB::select($query);
         //all order contents place them in relevent order
+        $order_types = explode(",",$order_types);
         foreach($result as $item){
             $orderId = $item->order_id;
+
+            if(in_array(8,$order_types)){
+                $item->price = \CurrencyHelpers::formatPrice(($item->case_price/$item->qty_per_case), 5, false);
+                $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 5, false);
+            }else{
+                $item->price = \CurrencyHelpers::formatPrice($item->price, 3, false);
+                $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);
+            }
+          /*  $orderId = $item->order_id;
             $item->price = \CurrencyHelpers::formatPrice($item->price, 3, false);
-            $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);
+            $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);*/
             if(!empty($item->po_notes)) {
                 if (strlen($item->po_notes) > 300) {
                     $item->po_notes = \CurrencyHelpers::truncateLongText($item->po_notes, 300);
