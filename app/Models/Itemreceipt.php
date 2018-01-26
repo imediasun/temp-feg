@@ -182,8 +182,13 @@ orders.id=order_received.order_id ";
         $order_received_ids=\DB::select("select order_id from order_received where order_id in($qry_in_string) $where group by order_id");
         // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
         //all order contents place them in relevent order
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $order_types = $pass['calculate price according to case price']->data_options;
+        $order_types = explode(",",$order_types);
         if(is_array($data))
         {
+
             foreach($data as $order_data) {
 
                 foreach ($order_received_ids as $order_ids) {
@@ -199,6 +204,9 @@ orders.id=order_received.order_id ";
                  unset($result[$record->order_id]['status']);*/
                 foreach ($order_received_data as $record) {
                     if ($order_data->id == $record->order_id) {
+                        if(in_array($record->order_type_id,$order_types)){
+                            $record->quantity = $record->quantity*$record->qty_per_case;
+                        }
                         $result[$record->order_id]['receipts'][] = [
                             'id' => $record->id,
                             'order_id' => $record->order_id,
@@ -209,7 +217,6 @@ orders.id=order_received.order_id ";
                             'created_at' => $record->created_at,
                             'notes' => $record->notes,
                             'status' => $record->status,
-                            'qty_per_case'=>$record->qty_per_case,
                         ];
                     }
                 }
@@ -225,6 +232,9 @@ orders.id=order_received.order_id ";
             }
             foreach ($order_received_data as $record) {
                 if ($data->id == $record->order_id) {
+                    if(in_array($record->order_type_id,$order_types)){
+                        $record->quantity = $record->quantity*$record->qty_per_case;
+                    }
                     $result[$record->order_id]['receipts'][] = [
                         'id' => $record->id,
                         'order_id' => $record->order_id,
