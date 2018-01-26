@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -178,12 +179,17 @@ orders.id=order_received.order_id ";
         $qry_in_string=implode(',',$order_ids);
         if(empty($qry_in_string))
             $qry_in_string = "''";
-        $order_received_data=\DB::select("select *from order_received where order_id in($qry_in_string) $where");
+        $order_received_data=\DB::select("select order_received.*,order_contents.qty_per_case,orders.order_type_id from order_received inner join order_contents on order_contents.id=order_received.order_line_item_id inner join orders on orders.id=order_received.order_id where order_received.order_id in($qry_in_string) $where");
         $order_received_ids=\DB::select("select order_id from order_received where order_id in($qry_in_string) $where group by order_id");
         // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
         //all order contents place them in relevent order
+        $module = new \App\Http\Controllers\OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $order_types = $pass['calculate price according to case price']->data_options;
+        $order_types = explode(",",$order_types);
         if(is_array($data))
         {
+
             foreach($data as $order_data) {
 
                 foreach ($order_received_ids as $order_ids) {
@@ -199,6 +205,9 @@ orders.id=order_received.order_id ";
                  unset($result[$record->order_id]['status']);*/
                 foreach ($order_received_data as $record) {
                     if ($order_data->id == $record->order_id) {
+                        if(in_array($record->order_type_id,$order_types)){
+                            $record->quantity = $record->quantity*$record->qty_per_case;
+                        }
                         $result[$record->order_id]['receipts'][] = [
                             'id' => $record->id,
                             'order_id' => $record->order_id,
@@ -208,7 +217,7 @@ orders.id=order_received.order_id ";
                             'date_received' => $record->date_received,
                             'created_at' => $record->created_at,
                             'notes' => $record->notes,
-                            'status' => $record->status
+                            'status' => $record->status,
                         ];
                     }
                 }
@@ -224,6 +233,9 @@ orders.id=order_received.order_id ";
             }
             foreach ($order_received_data as $record) {
                 if ($data->id == $record->order_id) {
+                    if(in_array($record->order_type_id,$order_types)){
+                        $record->quantity = $record->quantity*$record->qty_per_case;
+                    }
                     $result[$record->order_id]['receipts'][] = [
                         'id' => $record->id,
                         'order_id' => $record->order_id,

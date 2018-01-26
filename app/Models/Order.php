@@ -117,17 +117,35 @@ class order extends Sximo
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
         $order_types = $pass['calculate price according to case price']->data_options;
         $condition = '';
-        if($order_types != ''){
-            $condition = "IF(ORD.order_type_id IN($order_types), O.case_price, O.price) AS price,";
-        }
+      /*  if($order_types != ''){
+            $condition = "IF(ORD.order_type_id IN($order_types), O.case_price/O.qty, O.price/O.qty) AS price,";
+        }*/
 
-        $query = "SELECT O.*,$condition IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id INNER JOIN orders ORD ON ORD.id = O.order_id WHERE O.order_id IN (".implode(',',$orders).")";
+        $query = "SELECT O.*,ORD.order_type_id,$condition IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id INNER JOIN orders ORD ON ORD.id = O.order_id WHERE O.order_id IN (".implode(',',$orders).")";
+
+        // $query = "SELECT O.*,IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id WHERE O.order_id IN (".implode(',',$orders).")";
         $result = \DB::select($query);
         //all order contents place them in relevent order
+        $order_types = explode(",",$order_types);
         foreach($result as $item){
             $orderId = $item->order_id;
+
+            if(in_array($item->order_type_id,$order_types)){
+                $item->price = \CurrencyHelpers::formatPrice(($item->case_price/$item->qty_per_case), 5, false);
+                $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 5, false);
+            }else{
+                $item->price = \CurrencyHelpers::formatPrice($item->price, 5, false);
+                $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 5, false);
+            }
+          /*  $orderId = $item->order_id;
             $item->price = \CurrencyHelpers::formatPrice($item->price, 3, false);
-            $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);
+            $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);*/
+            if(!empty($item->po_notes)) {
+                if (strlen($item->po_notes) > 300) {
+                    $item->po_notes = \CurrencyHelpers::truncateLongText($item->po_notes, 300);
+
+                }
+            }
             foreach($data as &$record){
                 if($record['id'] == $orderId){
                     break;
