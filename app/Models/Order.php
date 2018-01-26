@@ -121,7 +121,7 @@ class order extends Sximo
             $condition = "IF(ORD.order_type_id IN($order_types), O.case_price/O.qty, O.price/O.qty) AS price,";
         }
 
-        $query = "SELECT O.*,$condition IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id INNER JOIN orders ORD ON ORD.id = O.order_id WHERE O.order_id IN (".implode(',',$orders).")";
+        $query = "SELECT O.*,ORD.order_type_id,$condition IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id INNER JOIN orders ORD ON ORD.id = O.order_id WHERE O.order_id IN (".implode(',',$orders).")";
 
         // $query = "SELECT O.*,IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id WHERE O.order_id IN (".implode(',',$orders).")";
         $result = \DB::select($query);
@@ -130,7 +130,7 @@ class order extends Sximo
         foreach($result as $item){
             $orderId = $item->order_id;
 
-            if(in_array(8,$order_types)){
+            if(in_array($item->order_type_id,$order_types)){
                 $item->price = \CurrencyHelpers::formatPrice(($item->case_price/$item->qty_per_case), 5, false);
                 $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 5, false);
             }else{
