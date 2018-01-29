@@ -103,6 +103,7 @@ $selected_loc=\Session::get('selected_location');?>
             @foreach ($sidebar as $menu)
                 <?php
                 $mName = $menu['menu_name'];
+                $moduleId = str_slug($mName, '-');
                 $mType = $menu['menu_type'];
                 $mIsDivider = $mType == 'divider';
                 $mUrl = trim($menu['url'] .'');
@@ -118,7 +119,7 @@ $selected_loc=\Session::get('selected_location');?>
                 $class = Request::url() == $mUrl ? "active" : "";
                 ?>
                 <li class="{{$class}}" >
-                    <a  href="{{ $mUrl }}"
+                    <a  href="{{ $mUrl }}" id="{{$moduleId}}"
                     @if(count($menu['childs']) > 0 ) class="expand level-closed" @endif>
                         <i class="{{$menu['menu_icons']}}"></i> <span class="nav-label">
 					
