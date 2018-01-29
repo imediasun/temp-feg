@@ -51,7 +51,7 @@
 						  <div class="tab-pane active m-t" id="info">
 							  <div class="form-group  " >
 
-								<div class="" style="background:#fff;"><?php dd($content); ?>
+								<div class="" style="background:#fff;"><?php //dd($content); ?>
 								  <textarea name='content' rows='35' id='content'    class='form-control markItUp editor note-editor note-editable'
 									 >{{ htmlentities($content) }}</textarea>
 								 </div>
