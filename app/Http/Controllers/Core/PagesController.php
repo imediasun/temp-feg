@@ -5,7 +5,7 @@ use App\Models\Core\Pages;
 use App\Models\Core\Groups;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect, Session, Auth, DB;
+use Validator, Input, Redirect, Session, Auth, DB, Log;
 
 
 class PagesController extends Controller
@@ -280,6 +280,16 @@ class PagesController extends Controller
 
     }
 
+    public function removePageFile(Pages $page){
+        $filePath = base_path() . "/resources/views/pages/{$page->filename}.blade.php";
+        if(file_exists($filePath)){
+            unlink($filePath);
+        }
+        else{
+            throw new \Exception("File does not exists");
+        }
+    }
+
     public function postDelete(Request $request)
     {
 
@@ -288,7 +298,18 @@ class PagesController extends Controller
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
+
+            foreach ($request->input('ids') as $id){
+                try{
+                    $this->removePageFile($this->model->find($id));
+                }
+                catch (Exception $e){
+                    Log::error("Page CMS file not deleted ".$e->getMessage());
+                }
+
+            }
             $this->model->destroy($request->input('ids'));
+
 
             self::createRouters();
             return Redirect::to('core/pages')
