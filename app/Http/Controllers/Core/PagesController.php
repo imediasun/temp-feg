@@ -119,12 +119,13 @@ class PagesController extends Controller
         if ($id == '') {
             $this->data['content'] = '';
         } else {
-
-            if ($row->pageID == 1) {
+            if (!is_null($row) && $row->pageID == 1) {
                 $filename = base_path() . "/resources/views/pages/home.blade.php";
                 $this->data['content'] = file_get_contents($filename);
 
-            } else {
+            }
+            else if(!is_null($row))
+            {
 
                 $filename = base_path() . "/resources/views/pages/" . $row->filename . ".blade.php";
                 if (file_exists($filename)) {
@@ -132,6 +133,10 @@ class PagesController extends Controller
                 } else {
                     $this->data['content'] = '';
                 }
+            }
+            else
+            {
+                $this->data['content'] = '';
             }
         }
 
@@ -158,7 +163,8 @@ class PagesController extends Controller
         $patternStop = '/@stop/im';
 
         $this->data['content'] = preg_replace(array($patternExtend, $patternSection, $patternTitle, $patternStop), '', $this->data['content']);
-        
+
+
         return view('core.pages.form', $this->data);
     }
 
