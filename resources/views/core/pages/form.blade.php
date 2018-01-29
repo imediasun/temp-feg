@@ -372,7 +372,23 @@
 
     <script>
 		superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
-
+		$(document).on("keyup",".note-editable",function(e){
+			var key = e.keyCode || e.charCode;
+			if (key == 8 || key == 46) {
+				var text = $(".note-editable .page-content-wrapper .sbox-content .col-md-12").text();
+				if($.trim(text)=="" || text.length==1) {
+					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").text('');
+					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").empty();
+					var html = '<div class="page-content-wrapper m-t">';
+					html += '<div class="sbox animated fadeInRight">';
+					html += '<div class="sbox-content">';
+					html += '<div class="col-md-12" style="padding-top: 50px; padding-right: 50px; padding-bottom: 50px; background-color: #ffffff;">';
+					html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
+							$(".note-editable").html("<p><br><p>"+html);
+						return false;
+					}
+				}
+		})
         $(document).ready(function(){
 
         	$('button.btn[data-event="codeview"]').remove();
