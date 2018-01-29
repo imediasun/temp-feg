@@ -135,6 +135,7 @@ $selected_loc=\Session::get('selected_location');?>
                             @foreach ($menu['childs'] as $menu2)
                                 <?php
                                 $mName2 = $menu2['menu_name'];
+                                $mId = str_slug($mName2, '-');
                                 $mType2 = $menu2['menu_type'];
                                 $mIsDivider2 = $mType2 == 'divider';
                                 $mUrl2 = trim($menu2['url'] .'');
@@ -154,7 +155,7 @@ $selected_loc=\Session::get('selected_location');?>
                                 }
                                 ?>
                                 <li  class="{{$class2}}")>
-                                    <a href="{{ $mUrl2 }}" >
+                                    <a href="{{ $mUrl2 }}" id="{{$mId}}" >
                                         <i class="{{$menu2['menu_icons']}}"></i>
                                         @if(CNF_MULTILANG ==1 && isset($menu2['menu_lang']['title'][Session::get('lang')]))
                                             {{ $menu2['menu_lang']['title'][Session::get('lang')] }}
