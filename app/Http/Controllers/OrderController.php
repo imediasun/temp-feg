@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
-
+use App\Events\ordersEvent;
+use App\Events\Event;
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
@@ -516,12 +517,24 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        echo "<pre>";
+
 
         $item_names = $request->input('item_name');
-    $productInformation = [];
+        $productInformation = [];
         for($i=0; $i<count($item_names); $i++){
-            $productInformation[]=array(
+            $product = \DB::table('products')->where(['id' => $request->input('product_id')[$i],'is_reserved'=>1])->first();
+            if(!empty($product)) {
+                $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
+                foreach($items as $itms){
+                    $itms->item_name=$item_names[$i];
+                    $itms->qty=$request->input('qty')[$i];
+                    $productInformation[]=$itms;
+                }
+            }
+
+
+
+         /*   $productInformation[]=array(
                 "product_id"=>$request->input('product_id')[$i],
                 "item_name"=>$request->input('item_name')[$i],
                 "sku"=>$request->input('sku')[$i],
@@ -530,10 +543,9 @@ class OrderController extends Controller
                 "case_price"=>$request->input('case_price')[$i],
                 "qty"=>$request->input('qty')[$i],
 
-            );
+            );*/
 
         }
-
 
 
 
@@ -549,6 +561,7 @@ class OrderController extends Controller
 
             ));
         }
+
         $rules = array(
               //  'location_id' => "required",
                 'vendor_id' => 'required',
@@ -649,6 +662,9 @@ class OrderController extends Controller
                         . ') ' . $itemsArray[$i] . ' @ $' .
                         $itemsPriceArray[$i] . ' ea.';
             }
+
+
+
             if ($editmode == "edit") {
                 $orderData = array(
                     'company_id' => $company_id,
@@ -668,6 +684,20 @@ class OrderController extends Controller
                 \DB::table('order_contents')->whereIn('id', $force_remove_items)->delete();
                 \DB::table('order_received')->whereIn('order_line_item_id', $force_remove_items)->delete();
             } else {
+
+                $eventResponse = event(new ordersEvent($productInformation));
+
+echo "<pre>";
+                print_r($eventResponse);
+die;
+                if(!empty($eventResponse) && $eventResponse['error']==true){
+                    return response()->json(array(
+                        'message' => $eventResponse['message'],
+                        'status' => 'error',
+
+                    ));
+                }
+
                 $orderData = array(
                     'user_id' => \Session::get('uid'),
                     'company_id' => $company_id,
@@ -692,11 +722,7 @@ class OrderController extends Controller
                 }
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
-                echo "Create Order".$order_id;
-                print_r($productInformation);
-                if($order_id>0 && count($productInformation)>0) {
-                    $manageOrderedProductHistory = self::manageProductReservedQty($productInformation, $order_id);
-                }
+
 
             }
             //// UPDATE STATUS TO APPROVED AND PROCESSED
@@ -2034,15 +2060,5 @@ public static function array_move($which, $where, $array)
         self::array_splice_assoc($array, $where, 0, $tmp);
         return $array;
     }
-    public static function manageProductReservedQty($products=array(),$order_id)
-    {
-            if(count($products)>0)
-            {
-                foreach($products as $iteminfo)
-                {
-                    $product = DB::table('products')->where(['id' => $iteminfo['product_id']])->first();
-                    $items = DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
-                }
-            }
-    }
+
 }

@@ -285,6 +285,24 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label for="allow_negative_reserve_qty" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Allow Negative Reserved Qty', (isset($fields['allow_negative_reserve_qty']['language'])?
+                            $fields['is_reserved']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6 check-no">
+                            <?php $allow_negative_reserve_qty = explode(",", $row['allow_negative_reserve_qty']); ?>
+                            <label class='checked checkbox-inline'>
+                                <input type="hidden" name="allow_negative_reserve_qty" value="0"/>
+                                <input type='checkbox' name='allow_negative_reserve_qty' value='1' class=''
+                                       @if(in_array('1',$allow_negative_reserve_qty))checked @endif
+                                /> </label>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="Reserved Qty" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Reserved Qty', (isset($fields['reserved_qty']['language'])?
                             $fields['reserved_qty']['language'] : array())) !!}
