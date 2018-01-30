@@ -85,9 +85,9 @@
 		 	</div>
 
 		 <div class="col-sm-4" id="cms_bar_id">
-		 	
+
 			<div class="sbox">
-				
+
 				<div class="sbox-title">Page Info </div>
 				<div class="sbox-content">
 				  <div class="form-group hidethis " style="display:none;">
@@ -395,7 +395,7 @@
 			var html = '<div class="page-content-wrapper m-t">';
 			html += '<div class="sbox animated fadeInRight">';
 			html += '<div class="sbox-content">';
-			html += '<div class="col-md-12" style="padding-top: 50px; padding-right: 50px; padding-bottom: 50px; background-color: #ffffff;">';
+			html += '<div class="col-md-12" style="height: auto; min-height:50px; margin-top: -15px; line-height: normal; background-color: #ffffff;">';
 			html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
 			setTimeout(function(){
 				console.log("Length "+$(".note-editable .page-content-wrapper").length);
