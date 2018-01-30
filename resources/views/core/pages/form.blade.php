@@ -31,8 +31,8 @@
 		</ul>
 		 {!! Form::open(array('url'=>'core/pages/save/'.$row['pageID'], 'class'=>'form-vertical row ','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id' => 'pageCMS')) !!}
 
-			<div class="col-sm-8 " style="padding-right: 0px;">
-				<div class="sbox containerBox">
+			<div class="col-sm-8">
+				<div class="sbox containerBox" style="overflow: hidden;">
 					<div class="sbox-title">
 						@if($id)
 							<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Page
@@ -84,8 +84,10 @@
 				</div>
 		 	</div>
 
-		 <div class="col-sm-4 " id="cms_bar_id">
+		 <div class="col-sm-4" id="cms_bar_id">
+
 			<div class="sbox">
+
 				<div class="sbox-title">Page Info </div>
 				<div class="sbox-content">
 				  <div class="form-group hidethis " style="display:none;">
@@ -370,7 +372,40 @@
 
     <script>
 		superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
+		$(document).on("keyup",".note-editable",function(e){
+			var key = e.keyCode || e.charCode;
+			if (key == 8 || key == 46) {
+				var text = $(".note-editable .page-content-wrapper .sbox-content .col-md-12").text();
+				if($.trim(text)=="" || text.length==1) {
+					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").text('');
+					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").empty();
+					var html = '<div class="page-content-wrapper m-t">';
+					html += '<div class="sbox animated fadeInRight">';
+					html += '<div class="sbox-content">';
+					html += '<div class="col-md-12" style="height: auto; min-height:50px; margin-top: -15px; line-height: normal; background-color: #ffffff;">';
+					html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
+							$(".note-editable").html("<p><br><p>"+html);
+						return false;
+					}
+				}
+		})
         $(document).ready(function(){
+
+        	$('button.btn[data-event="codeview"]').remove();
+			var html = '<div class="page-content-wrapper m-t">';
+			html += '<div class="sbox animated fadeInRight">';
+			html += '<div class="sbox-content">';
+			html += '<div class="col-md-12" style="height: auto; min-height:50px; margin-top: -15px; line-height: normal; background-color: #ffffff;">';
+			html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
+			setTimeout(function(){
+				console.log("Length "+$(".note-editable .page-content-wrapper").length);
+				if($(".note-editable .page-content-wrapper").length==0){
+						$(".note-editable").html("<p><br><p>"+html);
+					console.log("Length "+$(".note-editable .page-content-wrapper").length);
+				}
+			},700);
+
+
             $("#iGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: "{{ is_object($row)?$row->direct_edit_groups:'' }}"});
             $("#iUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
