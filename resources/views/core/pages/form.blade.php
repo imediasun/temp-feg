@@ -382,7 +382,7 @@
 					var html = '<div class="page-content-wrapper m-t">';
 					html += '<div class="sbox animated fadeInRight">';
 					html += '<div class="sbox-content">';
-					html += '<div class="col-md-12" style="padding-top: 50px; padding-right: 50px; padding-bottom: 50px; background-color: #ffffff;">';
+					html += '<div class="col-md-12" style="height: auto; min-height:50px; margin-top: -15px; line-height: normal; background-color: #ffffff;">';
 					html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
 							$(".note-editable").html("<p><br><p>"+html);
 						return false;
