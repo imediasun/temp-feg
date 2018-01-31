@@ -29,12 +29,15 @@ class PostOrdersEventHandler
     {
         $ReservedQtyLog = new \App\Models\ReservedQtyLog();
 
-        foreach($event->products as $product){
+        foreach($event->products as $productData){
+
+            $product = $productData['product'];
+            $orderItem = $productData['order_item'];
 
             if($product->is_reserved==1) {
-                $reserve_qty_log_amount=$product->qty;
+                $reserve_qty_log_amount=$orderItem->qty;
                 if ($product->allow_negative_reserve_qty == 1) {
-                    $adjustmentAmount = $product->reserved_qty-$product->qty;
+                    $adjustmentAmount = $product->reserved_qty-$orderItem->qty;
                     //\DB::update("update products set reserved_qty='$adjustmentAmount' where id=".$product->id);
                     $product->reserved_qty=$adjustmentAmount;
                     $product->save();
@@ -50,7 +53,7 @@ class PostOrdersEventHandler
                     $sql .=" VALUES($product_id,$order_id,$reserve_qty_log_amount,$user_id) ";
                     \DB::insert($sql);*/
                 }else{
-                    $adjustmentAmount = $product->reserved_qty-$product->qty;
+                    $adjustmentAmount = $product->reserved_qty-$orderItem->qty;
                    // $inactiveProduct = '';
                     $product->reserved_qty=$adjustmentAmount;
                     if($adjustmentAmount==0){
@@ -70,8 +73,8 @@ class PostOrdersEventHandler
                     $sql .=" VALUES($product_id,$order_id,$reserve_qty_log_amount,$user_id) ";
                     \DB::insert($sql);*/
                 }
-                if($product->reserved_qty_limit>=($product->reserved_qty-$product->qty)){
-                    $message = "<span style='color:red;'> Product reserved quantity limit is ".$product->reserved_qty_limit." and quantity ".($product->reserved_qty-$product->qty)." is available for product <strong>(".$product->item_name.")</strong></span>";
+                if($product->reserved_qty_limit>=($product->reserved_qty-$orderItem->qty)){
+                    $message = "<span style='color:red;'> Product reserved quantity limit is ".$product->reserved_qty_limit." and quantity ".($product->reserved_qty-$orderItem->qty)." is available for product <strong>(".$product->item_name.")</strong></span>";
                     self::sendProductReservedQtyEmail($message);
                     /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
                 }

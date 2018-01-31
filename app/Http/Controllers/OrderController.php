@@ -549,7 +549,7 @@ class OrderController extends Controller
                 foreach($items as $itms){
                     $itms->item_name=$item_names[$i];
                     $itms->qty=$request->input('qty')[$i];
-                    $productInformation[]=$itms;
+                    $productInformation[] = ['order_item' => $itms, 'product' => $product];
                 }
             }
 
