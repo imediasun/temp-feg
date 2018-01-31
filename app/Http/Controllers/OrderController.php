@@ -542,7 +542,6 @@ class OrderController extends Controller
 
         $item_names = $request->input('item_name');
         $productInformation = [];
-        $productItemsArray = [];
         for($i=0; $i<count($item_names); $i++){
             $product = \DB::table('products')->where(['id' => $request->input('product_id')[$i],'is_reserved'=>1])->first();
             if(!empty($product)) {
@@ -550,8 +549,7 @@ class OrderController extends Controller
                 foreach($items as $itms){
                     $itms->item_name=$item_names[$i];
                     $itms->qty=$request->input('qty')[$i];
-                    $productInformation[] = ['order_item' => $itms, 'product' => $product];
-                    $productItemsArray[]=$itms;
+                    $productInformation[]=$itms;
                 }
             }
 
@@ -710,7 +708,7 @@ class OrderController extends Controller
 
 
 
-                $eventResponse = event(new ordersEvent($productItemsArray))[0];
+                $eventResponse = event(new ordersEvent($productInformation))[0];
 
 
 
