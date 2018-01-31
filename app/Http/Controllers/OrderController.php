@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 use App\Events\ordersEvent;
+use App\Events\PostOrdersEvent;
 use App\Events\Event;
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
@@ -685,11 +686,12 @@ class OrderController extends Controller
                 \DB::table('order_received')->whereIn('order_line_item_id', $force_remove_items)->delete();
             } else {
 
-                $eventResponse = event(new ordersEvent($productInformation));
 
-echo "<pre>";
-                print_r($eventResponse);
-die;
+
+                $eventResponse = event(new ordersEvent($productInformation))[0];
+
+
+
                 if(!empty($eventResponse) && $eventResponse['error']==true){
                     return response()->json(array(
                         'message' => $eventResponse['message'],
@@ -722,7 +724,7 @@ die;
                 }
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
-
+                $eventResponse = event(new PostOrdersEvent($productInformation,$order_id));
 
             }
             //// UPDATE STATUS TO APPROVED AND PROCESSED
