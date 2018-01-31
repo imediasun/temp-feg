@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Handlers\Events;
-
 use App\Library\FEG\System\FEGSystemHelper;
-
+use App\Models\ReservedQtyLog;
 use App\Events\PostOrdersEvent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,37 +27,48 @@ class PostOrdersEventHandler
      */
     public function handle(PostOrdersEvent $event)
     {
+        $ReservedQtyLog = new \App\Models\ReservedQtyLog();
 
         foreach($event->products as $product){
 
             if($product->is_reserved==1) {
                 $reserve_qty_log_amount=$product->qty;
                 if ($product->allow_negative_reserve_qty == 1) {
-                    $adjestmentAmount = $product->reserved_qty-$product->qty;
-                    \DB::update("update products set reserved_qty='$adjestmentAmount' where id=".$product->id);
+                    $adjustmentAmount = $product->reserved_qty-$product->qty;
+                    //\DB::update("update products set reserved_qty='$adjustmentAmount' where id=".$product->id);
+                    $product->reserved_qty=$adjustmentAmount;
+                    $product->save();
                     $user= \AUTH::user();
                     $user_id=$user->id;
                     $order_id=$event->order_id;
                     $product_id=$product->id;
 
-                    $sql ='INSERT INTO `reserved_qty_log`(`product_id`, `order_id`, `adjestment_amount`, `adjestment_by`)';
+
+                    $LogData = [product_id=>$product_id,"order_id"=>$order_id,"adjustment_amount"=>$reserve_qty_log_amount,"adjusted_by"=>$user_id];
+                    $ReservedQtyLog->insertRow($LogData);
+                    /*$sql ='INSERT INTO `reserved_qty_log`(`product_id`, `order_id`, `adjustment_amount`, `adjusted_by`)';
                     $sql .=" VALUES($product_id,$order_id,$reserve_qty_log_amount,$user_id) ";
-                    \DB::insert($sql);
+                    \DB::insert($sql);*/
                 }else{
-                    $adjestmentAmount = $product->reserved_qty-$product->qty;
-                    $inactiveProduct = '';
-                    if($adjestmentAmount==0){
-                        $inactiveProduct = ', inactive=1 ';
+                    $adjustmentAmount = $product->reserved_qty-$product->qty;
+                   // $inactiveProduct = '';
+                    $product->reserved_qty=$adjustmentAmount;
+                    if($adjustmentAmount==0){
+                        //$inactiveProduct = ', inactive=1 ';
+                        $product->inactive=1;
                     }
-                    \DB::update("update products set reserved_qty='$adjestmentAmount' $inactiveProduct where id=".$product->id);
+
+                    $product->save();
+                  //  \DB::update("update products set reserved_qty='$adjustmentAmount' $inactiveProduct where id=".$product->id);
                     $user= \AUTH::user();
                     $user_id=$user->id;
                     $order_id=$event->order_id;
                     $product_id=$product->id;
-
-                    $sql ='INSERT INTO `reserved_qty_log`(`product_id`, `order_id`, `adjestment_amount`, `adjestment_by`)';
+                    $LogData = [product_id=>$product_id,"order_id"=>$order_id,"adjustment_amount"=>$reserve_qty_log_amount,"adjusted_by"=>$user_id];
+                    $ReservedQtyLog->insertRow($LogData);
+                    /*$sql ='INSERT INTO `reserved_qty_log`(`product_id`, `order_id`, `adjustment_amount`, `adjusted_by`)';
                     $sql .=" VALUES($product_id,$order_id,$reserve_qty_log_amount,$user_id) ";
-                    \DB::insert($sql);
+                    \DB::insert($sql);*/
                 }
                 if($product->reserved_qty_limit>=($product->reserved_qty-$product->qty)){
                     $message = "<span style='color:red;'> Product reserved quantity limit is ".$product->reserved_qty_limit." and quantity ".($product->reserved_qty-$product->qty)." is available for product <strong>(".$product->item_name.")</strong></span>";
