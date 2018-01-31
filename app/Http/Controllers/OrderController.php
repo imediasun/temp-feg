@@ -2224,7 +2224,7 @@ public static function resetOrderedProductsReservedQty($po_number){
 
 
     if($order_id>0) {
-    $sql = "SELECT DISTINCT product_id,sum(adjestment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
+    $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
     $result = \DB::select($sql);
         $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
         if(!empty($product)) {
@@ -2240,7 +2240,7 @@ public static function resetOrderedProductsReservedQty($po_number){
 }
 public static function changeProductReservedQtyOnRestoreOrder($order_id){
     if($order_id>0) {
-        $sql = "SELECT DISTINCT product_id,sum(adjestment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
+        $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
         $result = \DB::select($sql);
         if(count($result)>0) {
             $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();

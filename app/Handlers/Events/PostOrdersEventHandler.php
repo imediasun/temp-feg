@@ -34,29 +34,29 @@ class PostOrdersEventHandler
             if($product->is_reserved==1) {
                 $reserve_qty_log_amount=$product->qty;
                 if ($product->allow_negative_reserve_qty == 1) {
-                    $adjestmentAmount = $product->reserved_qty-$product->qty;
-                    \DB::update("update products set reserved_qty='$adjestmentAmount' where id=".$product->id);
+                    $adjustmentAmount = $product->reserved_qty-$product->qty;
+                    \DB::update("update products set reserved_qty='$adjustmentAmount' where id=".$product->id);
                     $user= \AUTH::user();
                     $user_id=$user->id;
                     $order_id=$event->order_id;
                     $product_id=$product->id;
 
-                    $sql ='INSERT INTO `reserved_qty_log`(`product_id`, `order_id`, `adjestment_amount`, `adjestment_by`)';
+                    $sql ='INSERT INTO `reserved_qty_log`(`product_id`, `order_id`, `adjustment_amount`, `adjusted_by`)';
                     $sql .=" VALUES($product_id,$order_id,$reserve_qty_log_amount,$user_id) ";
                     \DB::insert($sql);
                 }else{
-                    $adjestmentAmount = $product->reserved_qty-$product->qty;
+                    $adjustmentAmount = $product->reserved_qty-$product->qty;
                     $inactiveProduct = '';
-                    if($adjestmentAmount==0){
+                    if($adjustmentAmount==0){
                         $inactiveProduct = ', inactive=1 ';
                     }
-                    \DB::update("update products set reserved_qty='$adjestmentAmount' $inactiveProduct where id=".$product->id);
+                    \DB::update("update products set reserved_qty='$adjustmentAmount' $inactiveProduct where id=".$product->id);
                     $user= \AUTH::user();
                     $user_id=$user->id;
                     $order_id=$event->order_id;
                     $product_id=$product->id;
 
-                    $sql ='INSERT INTO `reserved_qty_log`(`product_id`, `order_id`, `adjestment_amount`, `adjestment_by`)';
+                    $sql ='INSERT INTO `reserved_qty_log`(`product_id`, `order_id`, `adjustment_amount`, `adjusted_by`)';
                     $sql .=" VALUES($product_id,$order_id,$reserve_qty_log_amount,$user_id) ";
                     \DB::insert($sql);
                 }
