@@ -347,6 +347,7 @@ class PagesController extends Controller
             'Content-type: application/octet-stream',
         );
         return Response::download($file, $fileName, $headers);
+        
     }
 
 }
