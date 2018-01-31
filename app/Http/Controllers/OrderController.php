@@ -1,5 +1,7 @@
 <?php namespace App\Http\Controllers;
-
+use App\Events\ordersEvent;
+use App\Events\PostOrdersEvent;
+use App\Events\Event;
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
@@ -545,6 +547,38 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
+
+        $item_names = $request->input('item_name');
+        $productInformation = [];
+        for($i=0; $i<count($item_names); $i++){
+            $product = \DB::table('products')->where(['id' => $request->input('product_id')[$i],'is_reserved'=>1])->first();
+            if(!empty($product)) {
+                $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
+                foreach($items as $itms){
+                    $itms->item_name=$item_names[$i];
+                    $itms->qty=$request->input('qty')[$i];
+                    $productInformation[]=$itms;
+                }
+            }
+
+
+
+         /*   $productInformation[]=array(
+                "product_id"=>$request->input('product_id')[$i],
+                "item_name"=>$request->input('item_name')[$i],
+                "sku"=>$request->input('sku')[$i],
+                "item"=>$request->input('item')[$i],
+                "price"=>$request->input('price')[$i],
+                "case_price"=>$request->input('case_price')[$i],
+                "qty"=>$request->input('qty')[$i],
+
+            );*/
+
+        }
+
+
+
         $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
 
         /*$productIdArray = $request->get('product_id');
@@ -557,6 +591,7 @@ class OrderController extends Controller
 
             ));
         }
+
         $rules = array(
             //  'location_id' => "required",
             'vendor_id' => 'required',
@@ -659,15 +694,22 @@ class OrderController extends Controller
                 $j = $i + 1;
                 if (in_array($order_type, $case_price_categories)) {
                     $itemsPriceArray[] = $casePriceArray[$i];
-                } elseif (in_array($order_type, $case_price_if_no_unit_categories)) {
-                    $itemsPriceArray[] = ($priceArray[$i] == 0.00) ? $casePriceArray[$i] : $priceArray[$i];
-                } else {
+                }
+                elseif(in_array($order_type,$case_price_if_no_unit_categories))
+                {
+                    $itemsPriceArray[] = ($priceArray[$i] == 0.00)?$casePriceArray[$i]:$priceArray[$i];
+                }
+                else
+                {
                     $itemsPriceArray[] = $priceArray[$i];
                 }
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i]
                     . ') ' . $itemsArray[$i] . ' @ $' .
                     $itemsPriceArray[$i] . ' ea.';
             }
+
+
+
             if ($editmode == "edit") {
                 $orderData = array(
                     'company_id' => $company_id,
@@ -688,6 +730,21 @@ class OrderController extends Controller
                 \DB::table('order_contents')->whereIn('id', $force_remove_items)->delete();
                 \DB::table('order_received')->whereIn('order_line_item_id', $force_remove_items)->delete();
             } else {
+
+
+
+                $eventResponse = event(new ordersEvent($productInformation))[0];
+
+
+
+                if(!empty($eventResponse) && $eventResponse['error']==true){
+                    return response()->json(array(
+                        'message' => $eventResponse['message'],
+                        'status' => 'error',
+
+                    ));
+                }
+
                 $orderData = array(
                     'user_id' => \Session::get('uid'),
                     'company_id' => $company_id,
@@ -713,6 +770,8 @@ class OrderController extends Controller
                 }
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
+                $eventResponse = event(new PostOrdersEvent($productInformation,$order_id));
+
             }
             //// UPDATE STATUS TO APPROVED AND PROCESSED
             //don't put this code in loop below
@@ -1056,7 +1115,7 @@ class OrderController extends Controller
         $explaination = $request->input('explaination');
 
         $result = \DB::update("update orders set notes = concat(notes,'<br>',".\DB::connection()->getPdo()->quote($explaination)."), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
-
+        self::changeProductReservedQtyOnRestoreOrder($id);
         if ($result) {
             return Redirect::to('order')->with('messagetext', 'Order has been restored successfully!')->with('msgstatus', 'success');
         } else {
@@ -1116,6 +1175,9 @@ class OrderController extends Controller
          // echo  \DB::connection()->getPdo()->quote($explaination[$i]);
             $query = "update orders set notes = concat(notes,'<br>'," . \DB::connection()->getPdo()->quote($explaination[$i]) . "), deleted_at=NOW(), status_id=10, deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
            $result = \DB::update($query);
+
+            self::resetOrderedProductsReservedQty($ids[$i]);
+
         }
 
         if ($result) {
@@ -2155,6 +2217,43 @@ public static function array_move($which, $where, $array)
         self::array_splice_assoc($array, $where, 0, $tmp);
         return $array;
     }
+public static function resetOrderedProductsReservedQty($po_number){
+
+    $result = \DB::select("select id from orders where po_number='".$po_number."'");
+    $order_id=$result[0]->id;
+
+
+    if($order_id>0) {
+    $sql = "SELECT DISTINCT product_id,sum(adjestment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
+    $result = \DB::select($sql);
+        $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
+        if(!empty($product)) {
+            $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
+            foreach($items as $itms){
+                $res = \DB::update("update products set reserved_qty=(reserved_qty+".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
+            }
+        }
+
+
+    }
+
+}
+public static function changeProductReservedQtyOnRestoreOrder($order_id){
+    if($order_id>0) {
+        $sql = "SELECT DISTINCT product_id,sum(adjestment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
+        $result = \DB::select($sql);
+        if(count($result)>0) {
+            $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
+            if(!empty($product)) {
+                $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
+                foreach($items as $itms){
+                    $res = \DB::update("update products set reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
+                }
+            }
+           // $res = \DB::update("update products set reserved_qty=(reserved_qty-" . $result[0]->reducedreservedqty . ") where id='" . $result[0]->product_id . "'");
+        }
+    }
+}
 
     public function getCorrectOrdersBug242($step = '1'){
         die("Script blocked. To run this script please contact your development team. Thanks!");
