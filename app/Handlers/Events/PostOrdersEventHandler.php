@@ -46,7 +46,11 @@ class PostOrdersEventHandler
                     \DB::insert($sql);
                 }else{
                     $adjestmentAmount = $product->reserved_qty-$product->qty;
-                    \DB::update("update products set reserved_qty='$adjestmentAmount' where id=".$product->id);
+                    $inactiveProduct = '';
+                    if($adjestmentAmount==0){
+                        $inactiveProduct = ', inactive=1 ';
+                    }
+                    \DB::update("update products set reserved_qty='$adjestmentAmount' $inactiveProduct where id=".$product->id);
                     $user= \AUTH::user();
                     $user_id=$user->id;
                     $order_id=$event->order_id;
