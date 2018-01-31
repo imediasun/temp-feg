@@ -27,15 +27,20 @@ class orderEventsHandler
     public function handle(ordersEvent $event)
     {
         $ProductResponse=['error'=>false,"message"=>''];
+        $error = false;
+        $message='You have attempted to request more product than there is Reserved Quantity available. Your request has been modified to reflect this amount.';
         foreach($event->products as $product){
 
             if($product->allow_negative_reserve_qty==0){
                 if(($product->reserved_qty-$product->qty)<0){
-                    return array_merge($ProductResponse,['error'=>true,"message"=>"Total quantity ".$product->reserved_qty." is available for ".$product->item_name]);
+                    $error=true;
+                    $message .="<br>* Item Name: ".$product->item_name.", SKU: ".$product->sku.", Quantity: ".$product->reserved_qty."";
+                  // $message .= "Total quantity ".$product->reserved_qty." is available for ".$product->item_name."<br />";
                 }
 
             }
         }
-        return $ProductResponse;
+       return array_merge($ProductResponse,['error'=>$error,"message"=>$message]);
+       // return $ProductResponse;
     }
 }

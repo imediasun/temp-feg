@@ -57,7 +57,7 @@ class PostOrdersEventHandler
                     \DB::insert($sql);
                 }
                 if($product->reserved_qty_limit>=($product->reserved_qty-$product->qty)){
-                    $message = "<span style='color:red;'> Product reserved quantity limit is ".$product->reserved_qty_limit." and quantity ".$product->reserved_qty." is available for product <strong>(".$product->item_name.")</strong></span>";
+                    $message = "<span style='color:red;'> Product reserved quantity limit is ".$product->reserved_qty_limit." and quantity ".($product->reserved_qty-$product->qty)." is available for product <strong>(".$product->item_name.")</strong></span>";
                     self::sendProductReservedQtyEmail($message);
                     /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
                 }
