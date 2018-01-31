@@ -303,6 +303,20 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label for="Reserved Qty Limit" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Reserved Qty Limit', (isset($fields['reserved_qty_limit']['language'])?
+                            $fields['reserved_qty_limit']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            {!! Form::text('reserved_qty_limit', $row['reserved_qty_limit'],array('class'=>'form-control',
+                            'placeholder'=>'', )) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="Reserved Qty" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Reserved Qty', (isset($fields['reserved_qty']['language'])?
                             $fields['reserved_qty']['language'] : array())) !!}

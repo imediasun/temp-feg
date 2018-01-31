@@ -306,12 +306,21 @@ class OrderController extends Controller
             //$rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
 
             $order_status = \DB::select("Select status FROM order_status WHERE id = '" . $data->status_id . "'");
-            $partial = $data->is_partial == 1 ? ' (Partial)':'';
+            //  $partial = $data->status_id == 10 ? ' ' : ' (Partial)';
+            $partial =  '';
+            if ($data->is_partial == 1 && $data->status_id == 1)
+            {
+                $partial = ' (Partial)';
+            }else{
+                $partial = '';
+            }
             $rows[$index]->status_value = $rows[$index]->status_id;
-            $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status.$partial : '');
+            $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
+
+
         }
 
-        if($sort == 'OT.order_type'){
+        if ($sort == 'OT.order_type') {
             $params['sort'] = 'order_type_id';
         }
 
@@ -339,6 +348,12 @@ class OrderController extends Controller
         }
         $this->data['order_selected'] = $order_selected;
         // Render into template
+        /*$this->data['set_removed'] = "others";
+        if (strpos($_SESSION['searchParamsForOrder'], 'status_id:equal:removed|') > 0) {
+            // $is_removed_flag = true;
+            $this->data['set_removed'] = 'set_removed';
+        }*/
+
         return view('order.table', $this->data);
 
     }
@@ -378,23 +393,27 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
+        if(empty($this->data['row']['po_notes_additionaltext'])){
+            $this->data['row']['po_notes_additionaltext'] = FEGSystemHelper::getOption('PO_NOTE_DEFAULT_TEXT');
+        }
 
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         $this->data['mode'] = $mode;
         $this->data['isRequestApproveProcess'] = $isRequestApproveProcess;
         $this->data['id'] = $id;
-        $this->data['data'] = $this->model->getOrderQuery($id, $mode,$this->data['pass']);
+        $this->data['data'] = $this->model->getOrderQuery($id, $mode, $this->data['pass']);
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
+
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
-   public function getShow($id = null)
+    public function getShow($id = null)
     {
 
-        
+
         $this->data['case_price_permission'] = $this->pass['calculate price according to case price'];
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
@@ -406,103 +425,104 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
-        $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit',$this->data['pass']);
+        $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit', $this->data['pass']);
 
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
+        $this->data['nodata'] = \SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         return view('order.view', $this->data);
     }
     // Uncomment if Copy functionality is needed for orders
 // it need testing afer commenting.
-/*
-    function postCopy(Request $request)
-    {
-
-        foreach (\DB::select("SHOW COLUMNS FROM orders ") as $column) {
-            if ($column->Field != 'id')
-                $columns[] = $column->Field;
-        }
-        // $toCopy = implode(",", $request->input('ids'));
-        $toCopy=$request->input('ids');
-        foreach($toCopy as $to)
+    /*
+        function postCopy(Request $request)
         {
 
-            $sql = " SELECT " . implode(",", $columns) . " FROM orders WHERE id = " . $to . "";
-            $order_data=\DB::select($sql);
-            $order_data_arr="";
-            foreach($order_data as $od)
+            foreach (\DB::select("SHOW COLUMNS FROM orders ") as $column) {
+                if ($column->Field != 'id')
+                    $columns[] = $column->Field;
+            }
+            // $toCopy = implode(",", $request->input('ids'));
+            $toCopy=$request->input('ids');
+            foreach($toCopy as $to)
             {
 
-                $po_3=$this->validatePO($od->po_number,$od->po_number,$od->location_id);
-                $po_number=$od->location_id.'-'. date("mdy", strtotime(date('mdy'))).'-'.$po_3;
-                $order_data_arr=array(
-                    'user_id'=> $od->user_id,
-                    'company_id' => $od->company_id,
-                    'date_ordered' => $od->date_ordered,
-                    'order_total' => $od->order_total,
-                    'warranty' => $od->warranty,
-                    'location_id' => $od->location_id,
-                    'vendor_id'=>$od->vendor_id,
-                    'order_description'=>$od->order_description,
-                    'status_id'=>$od->status_id,
-                    'order_type_id'=>$od->order_type_id,
-                    'game_id'=>$od->game_id,
-                    'freight_id'=>$od->freight_id,
-                    'po_number'=>$po_number,
-                    'po_notes' => $od->po_notes,
-                    'notes' => $od->notes,
-                    'date_received'=> $od->date_received,
-                    'received_by'=> $od->received_by,
-                    'quantity'=> $od->quantity,
-                    'alt_address'=> $od->alt_address,
-                    'request_ids'=>$od->request_ids,
-                    'game_ids' => $od->game_ids,
-                    'tracking_number'=>$od->tracking_number,
-                    'added_to_inventory'=>$od->added_to_inventory,
-                    'order_content'=>$od->order_content,
-                    'new_format'=>$od->new_format,
-                    'is_partial'=>$od->is_partial,
-                );
-            }
-            \DB::table('orders')->insert($order_data_arr);
-            $new_order_id = \DB::getPdo()->lastInsertId();
-            $contents_sql="select request_id,product_id,product_description,price,qty,game_id,item_name,case_price,total,item_received,sku from order_contents where order_id=$to";
-            $order_contents=\DB::select($contents_sql);
+                $sql = " SELECT " . implode(",", $columns) . " FROM orders WHERE id = " . $to . "";
+                $order_data=\DB::select($sql);
+                $order_data_arr="";
+                foreach($order_data as $od)
+                {
 
-            foreach($order_contents as $oc)
-            {
-                $contents_arr=array(
-                    'order_id'=>$new_order_id,
-                    'request_id'=>$oc->request_id,
-                    'product_description'=>$oc->product_description,
-                    'price'=>$oc->price,
-                    'qty'=>$oc->qty,
-                    'game_id'=>$oc->game_id,
-                    'item_name'=>$oc->item_name,
-                    'case_price'=>$oc->case_price,
-                    'total'=>$oc->total,
-                    'item_received'=>$oc->item_received,
-                    'sku'=>$oc->sku
-                );
-                \DB::table('order_contents')->insert($contents_arr);
+                    $po_3=$this->validatePO($od->po_number,$od->po_number,$od->location_id);
+                    $po_number=$od->location_id.'-'. date("mdy", strtotime(date('mdy'))).'-'.$po_3;
+                    $order_data_arr=array(
+                        'user_id'=> $od->user_id,
+                        'company_id' => $od->company_id,
+                        'date_ordered' => $od->date_ordered,
+                        'order_total' => $od->order_total,
+                        'warranty' => $od->warranty,
+                        'location_id' => $od->location_id,
+                        'vendor_id'=>$od->vendor_id,
+                        'order_description'=>$od->order_description,
+                        'status_id'=>$od->status_id,
+                        'order_type_id'=>$od->order_type_id,
+                        'game_id'=>$od->game_id,
+                        'freight_id'=>$od->freight_id,
+                        'po_number'=>$po_number,
+                        'po_notes' => $od->po_notes,
+                        'notes' => $od->notes,
+                        'date_received'=> $od->date_received,
+                        'received_by'=> $od->received_by,
+                        'quantity'=> $od->quantity,
+                        'alt_address'=> $od->alt_address,
+                        'request_ids'=>$od->request_ids,
+                        'game_ids' => $od->game_ids,
+                        'tracking_number'=>$od->tracking_number,
+                        'added_to_inventory'=>$od->added_to_inventory,
+                        'order_content'=>$od->order_content,
+                        'new_format'=>$od->new_format,
+                        'is_partial'=>$od->is_partial,
+                    );
+                }
+                \DB::table('orders')->insert($order_data_arr);
+                $new_order_id = \DB::getPdo()->lastInsertId();
+                $contents_sql="select request_id,product_id,product_description,price,qty,game_id,item_name,case_price,total,item_received,sku from order_contents where order_id=$to";
+                $order_contents=\DB::select($contents_sql);
+
+                foreach($order_contents as $oc)
+                {
+                    $contents_arr=array(
+                        'order_id'=>$new_order_id,
+                        'request_id'=>$oc->request_id,
+                        'product_description'=>$oc->product_description,
+                        'price'=>$oc->price,
+                        'qty'=>$oc->qty,
+                        'game_id'=>$oc->game_id,
+                        'item_name'=>$oc->item_name,
+                        'case_price'=>$oc->case_price,
+                        'total'=>$oc->total,
+                        'item_received'=>$oc->item_received,
+                        'sku'=>$oc->sku
+                    );
+                    \DB::table('order_contents')->insert($contents_arr);
+                }
             }
+
+            //$sql = "INSERT INTO orders (" . implode(",", $columns) . ") ";
+            //$sql .= " SELECT " . implode(",", $columns) . " FROM orders WHERE id IN (" . $toCopy . ")";
+
+            //\DB::insert($sql);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
         }
-
-        //$sql = "INSERT INTO orders (" . implode(",", $columns) . ") ";
-        //$sql .= " SELECT " . implode(",", $columns) . " FROM orders WHERE id IN (" . $toCopy . ")";
-
-        //\DB::insert($sql);
-        return response()->json(array(
-            'status' => 'success',
-            'message' => \Lang::get('core.note_success')
-        ));
-    }
-  */
-    public function getCheckreceived($id){
+      */
+    public function getCheckreceived($id)
+    {
         $ds = \DB::table('order_received')->where('order_line_item_id', $id)->get();
         if(!empty($ds)){
             return response()->json(array(
@@ -956,39 +976,37 @@ class OrderController extends Controller
 
     public function getSaveOrSendEmail($isPop = null)
     {
-        $order_id=\Session::get('order_id');
-        $order_type = \DB::select('SELECT order_type_id FROM orders WHERE id='.$order_id);
+        $order_id = \Session::get('order_id');
+        $order_type = \DB::select('SELECT order_type_id FROM orders WHERE id=' . $order_id);
         $order_type_id = $order_type[0]->order_type_id;
-        $is_test=env('APP_ENV', 'development') !== 'production'?true:false;
-        if($is_test) {
-            $receipts = FEGSystemHelper::getSystemEmailRecipients("send PO copy",null,true);
-        }
-        else{
+        $is_test = env('APP_ENV', 'development') !== 'production' ? true : false;
+        if ($is_test) {
+            $receipts = FEGSystemHelper::getSystemEmailRecipients("send PO copy", null, true);
+        } else {
             $receipts = FEGSystemHelper::getSystemEmailRecipients("send PO copy");
         }
         extract($receipts);
-        $cc1="";
-       // for Instant Win, Redemption Prize, Tickets, Uniforms and Office Supply categories send a copy of PO to
+        $cc1 = "";
+        // for Instant Win, Redemption Prize, Tickets, Uniforms and Office Supply categories send a copy of PO to
         // marissa sexton,mandee cook,lisa price
-        if(($order_type_id == 7 || $order_type_id == 8 || $order_type_id == 4 || $order_type_id == 6))// && CNF_MODE != "development" )
+        if (($order_type_id == 7 || $order_type_id == 8 || $order_type_id == 4 || $order_type_id == 6))// && CNF_MODE != "development" )
         {
-            $cc1=$cc;
+            $cc1 = $cc;
 
-        }
-        else{
-            $cc1="";
+        } else {
+            $cc1 = "";
         }
         $viewName = empty($isPop) ? 'order.saveorsendemail' : 'order.pop.saveorsendemail';
-        return view($viewName, array('cc'=>$cc1, "pageUrl" => $this->data['pageUrl']));
+        return view($viewName, array('cc' => $cc1, "pageUrl" => $this->data['pageUrl']));
     }
 
     function postSaveorsendemail(Request $request)
     {
         $type = $request->get('type');
-        $from=$request->get('from');
-        $from=!empty($from)?$from:env('MAIL_USERNAME');
+        $from = $request->get('from');
+        $from = !empty($from) ? $from : env('MAIL_USERNAME');
         $order_id = $request->get('order_id');
-        if($type == "send") {
+        if ($type == "send") {
             $to = $request->get('to');
             $to = $this->getMultipleEmails($to);
             $cc = $request->get('cc');
@@ -1017,8 +1035,8 @@ class OrderController extends Controller
             $to[] = "lisa.price@fegllc.com";
         }*/
         $opt = $request->get('opt');
-        $redirect_module=\Session::get('redirect');
-        \Session::put('filter_before_redirect','no');
+        $redirect_module = \Session::get('redirect');
+        \Session::put('filter_before_redirect', 'no');
 
         if (count($to) == 0) {
             //\Session::put('filter_before_redirect',false);
@@ -1027,41 +1045,40 @@ class OrderController extends Controller
                 'status' => 'error',
 
             ));
-            } else {
+        } else {
 
             // Store email recipients for future use through auto-complete suggestion
             OrderSendDetails::saveDetails($order_id, ['emails' =>
                 ["TO" => $to, "CC" => $cc, "BCC" => $bcc]]);
 
-            \Session::put('filter_before_redirect','redirect');
+            \Session::put('filter_before_redirect', 'redirect');
             $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message);
 
-            if ($status == 1)
-            {
+            if ($status == 1) {
+                //bug-218 set date ordered when order emailed to vendor!
+                $date_ordered = date("Y-m-d");
+                $dateOrdered = $this->model->find($order_id)->date_ordered;
+                if ($dateOrdered=="0000-00-00" || $dateOrdered=="") {
+                \DB::update('UPDATE orders SET date_ordered = "' . $date_ordered . '"  WHERE id = "' . $order_id . '"');
+                 }
                 return response()->json(array(
                     'message' => \Lang::get('core.mail_sent_success'),
                     'status' => 'success',
 
                 ));
-               }
-            elseif ($status == 2)
-            {
+            } elseif ($status == 2) {
                 return response()->json(array(
                     'message' => \Lang::get('core.google_account_not_exist'),
                     'status' => 'error',
 
                 ));
-               }
-            elseif ($status == 3)
-            {
+            } elseif ($status == 3) {
                 return response()->json(array(
                     'message' => \Lang::get('core.gmail_smtp_connect_failed'),
                     'status' => 'error',
 
                 ));
-              }
-            elseif ($status == 4)
-            {
+            } elseif ($status == 4) {
                 return response()->json(array(
                     'message' => \Lang::get('core.error_sending_mail'),
                     'status' => 'error',
@@ -1073,32 +1090,90 @@ class OrderController extends Controller
         }
     }
 
-    public function postDelete(Request $request)
+    public function getRestoreorder($id = 0)
+    {
+        $this->data['ids'] = $id;
+        return view("order.restorereasonexplain", $this->data);
+    }
+
+    public function postRestoreorder(Request $request)
     {
 
-        if ($this->access['is_remove'] == 0) {
-            return response()->json(array(
-                'status' => 'error',
-                'message' => \Lang::get('core.note_restric')
-            ));
+        $id = $request->input('ids');
+        $explaination = $request->input('explaination');
 
+        $result = \DB::update("update orders set notes = concat(notes,'<br>',".\DB::connection()->getPdo()->quote($explaination)."), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
 
-        }
-        // delete multipe rows
-        if (count($request->input('ids')) >= 1) {
-            $this->model->destroy($request->input('ids'));
-
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success_delete')
-            ));
+        if ($result) {
+            return Redirect::to('order')->with('messagetext', 'Order has been restored successfully!')->with('msgstatus', 'success');
         } else {
-            return response()->json(array(
-                'status' => 'error',
-                'message' => \Lang::get('core.note_error')
-            ));
+            return Redirect::to('order')->with('messagetext', 'This order has already been restored!')->with('msgstatus', 'error');
+        }
+    }
+
+    public function postRemoveorderexplaination(Request $request)
+    {
+        $this->data['ids'] = implode(",", $request->input('ids'));
+        $totalIdsCount = count($request->input('ids'));
+        $ids = implode("','", $request->input('ids'));
+
+        $sql = " select po_number from orders where po_number in ('$ids') and is_api_visible=0 and status_id<>10 and status_id<>2";
+
+        $result = \DB::select($sql);
+        $ids = [];
+        foreach($result as $idsObject){
+            $ids[]= $idsObject->po_number;
+        }
+        $remainIdsCount = count($ids);
+        $excludedIdsCount = count($request->input('ids'))-$remainIdsCount;
+        $postedtonetsuitePOIds =[];
+        if(is_array($request->input('ids'))){
+            foreach($request->input('ids') as $requestedIds){
+                if(!in_array($requestedIds,$ids)){
+                    $postedtonetsuitePOIds[] = $requestedIds;
+                }
+            }
+        }
+
+        if($remainIdsCount>0){
+            $this->data['ids'] =implode(",",$ids);
+            if($excludedIdsCount>0){
+                $this->data['messagetext'] = "Following POs cannot be removed: <br>".implode("<br>",$postedtonetsuitePOIds);
+                $this->data['msgstatus'] = "error";
+            }
+           return view("order.removalreasonexplain", $this->data);
+
+
+        }else{
+            return Redirect::to('order')->with('messagetext', "Closed/Removed orders may not be removed.")->with('msgstatus', 'error');
+        }
+
+
+    }
+
+    public function postDelete(Request $request)
+    {
+        // set order status as deleted for multipe rows
+        $ids = $request->input('po_number');
+        $explaination = $request->input('explaination');
+        $uid = \Session::get('uid');
+        $query = "";
+        $result = false;
+        for ($i = 0; $i < count($ids); $i++) {
+         // echo  \DB::connection()->getPdo()->quote($explaination[$i]);
+            $query = "update orders set notes = concat(notes,'<br>'," . \DB::connection()->getPdo()->quote($explaination[$i]) . "), deleted_at=NOW(), status_id=10, deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
+           $result = \DB::update($query);
+
+            self::resetOrderedProductsReservedQty($ids[$i]);
 
         }
+
+        if ($result) {
+            return Redirect::to('order')->with('messagetext', 'Order(s) has/have been removed successfully.')->with('msgstatus', 'success');
+        } else {
+            return Redirect::to('order')->with('messagetext', 'This order status has already been removed!')->with('msgstatus', 'error');
+        }
+
 
     }
 
@@ -1116,12 +1191,12 @@ class OrderController extends Controller
         $user = \Session::get('uid');
         $userName = \FEGFormat::userToName($user);
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
-        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName,null,$isTest);
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName, null, $isTest);
 
         $messageData = [
             'userName' => $userName,
             'poNumber' => $po_number,
-            'url' => url().'/order/removeorder/'.$po_number,
+            'url' => url() . '/order/removeorder/' . $po_number,
             'reason' => $explanation,
         ];
         $message = view('order.email.removal-request', $messageData)->render();
@@ -1148,16 +1223,52 @@ class OrderController extends Controller
 
     function getRemoveorder($poNumber = "")
     {
-        $result=\DB::table('orders')->where('po_number', $poNumber)->delete();
-        if($result){
-            return Redirect::to('order')->with('messagetext', 'Po  removed successfully!')->with('msgstatus', 'success');
-        }else{
-            return Redirect::to('order')->with('messagetext', 'This PO has already been removed!')->with('msgstatus', 'error');
+        $this->data['ids'] = $poNumber;
+        $totalIdsCount = 1;
+        $ids = $poNumber;
+
+        $sql = " select po_number from orders where po_number in ('$ids') and is_api_visible=0 and status_id<>10 and status_id<>2";
+
+        $result = \DB::select($sql);
+        $ids = [];
+        foreach($result as $idsObject){
+            $ids[]= $idsObject->po_number;
         }
+        $remainIdsCount = count($ids);
+        $excludedIdsCount = count(array($poNumber))-$remainIdsCount;
+        $postedtonetsuitePOIds =[];
+        if(is_array(array($poNumber))){
+            foreach(array($poNumber) as $requestedIds){
+                if(!in_array($requestedIds,$ids)){
+                    $postedtonetsuitePOIds[] = $requestedIds;
+                }
+            }
+        }
+
+        if($remainIdsCount>0){
+            $this->data['ids'] =implode(",",$ids);
+            if($excludedIdsCount>0){
+                $this->data['messagetext'] = "Following POs cannot be removed: <br>".implode("<br>",$postedtonetsuitePOIds);
+                $this->data['msgstatus'] = "error";
+            }
+
+            return view("order.removalreasonexplain", $this->data);
+
+
+        }else{
+            return Redirect::to('order')->with('messagetext', "Closed/Removed orders may not be removed.")->with('msgstatus', 'error');
+        }
+//        $result = \DB::table('orders')->where('po_number', $poNumber)->delete();
+//        if ($result) {
+//            return Redirect::to('order')->with('messagetext', 'Po  removed successfully!')->with('msgstatus', 'success');
+//        } else {
+//            return Redirect::to('order')->with('messagetext', 'This PO has already been removed!')->with('msgstatus', 'error');
+//        }
         //\Session::flash('success', 'Po  deleted successfully!');
     }
 
-    public function getSearchFilterQuery($customQueryString = null) {
+    public function getSearchFilterQuery($customQueryString = null)
+    {
         // Filter Search for query
         // build sql query based on search filters
 
@@ -2062,5 +2173,18 @@ public static function array_move($which, $where, $array)
         self::array_splice_assoc($array, $where, 0, $tmp);
         return $array;
     }
+public static function resetOrderedProductsReservedQty($po_number){
+    $result = \DB::select("select id from orders where po_number='".$po_number."'");
+    $order_id=$result[0]->id;
+
+    if($order_id>0) {
+    $sql = "SELECT DISTINCT product_id,sum(adjestment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
+    $result = \DB::select($sql);
+        echo "<pre>";
+        print_r($result);
+        echo "</pre>";
+    }
+
+}
 
 }
