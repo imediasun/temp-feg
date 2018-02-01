@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 use App\Events\ordersEvent;
+use App\Events\PostEditOrderEvent;
 use App\Events\PostOrdersEvent;
 use App\Events\Event;
 use App\Http\Controllers\controller;
@@ -14,6 +15,7 @@ use App\Library\SximoDB;
 use Validator, Input, Redirect, Cache ;
 use PHPMailer;
 use PHPMailerOAuth;
+use App\Models\ReservedQtyLog;
 
 class OrderController extends Controller
 {
@@ -700,6 +702,10 @@ class OrderController extends Controller
                 );
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
+
+
+                $eventResponse= event(new PostEditOrderEvent($productInformation,$order_id));
+
                 $force_remove_items = explode(',',$force_remove_items);
                 \DB::table('order_contents')->where('order_id', $last_insert_id)->where('item_received', '0')->delete();
                 \DB::table('order_contents')->whereIn('id', $force_remove_items)->delete();
