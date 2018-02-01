@@ -6,6 +6,7 @@ use App\Events\Event;
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
+use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
@@ -572,6 +573,7 @@ class OrderController extends Controller
 
 
 
+
         $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
 
         /*$productIdArray = $request->get('product_id');
@@ -689,6 +691,7 @@ class OrderController extends Controller
 
 
             if ($editmode == "edit") {
+
                 $orderData = array(
                     'company_id' => $company_id,
                     'order_type_id' => $order_type,
@@ -715,7 +718,6 @@ class OrderController extends Controller
 
 
                 $eventResponse = event(new ordersEvent($productInformation))[0];
-
 
 
                 if(!empty($eventResponse) && $eventResponse['error']==true){
@@ -750,6 +752,9 @@ class OrderController extends Controller
                 }
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
+
+
+
                 $eventResponse = event(new PostOrdersEvent($productInformation,$order_id));
 
             }
@@ -876,7 +881,7 @@ class OrderController extends Controller
                     //// SUBTRACT QTY OF RESERVED AMT ITEMS
                     $item_count = substr_count($SID_string, '-') - 1;
                     $SID_new = $SID_string;
-                    $this->updateRequestAndProducts($item_count, $SID_new);
+                   // $this->updateRequestAndProducts($item_count, $SID_new);
                 } else {
                     $redirect_link = "order";
                 }
@@ -2216,5 +2221,6 @@ public static function changeProductReservedQtyOnRestoreOrder($order_id){
         }
     }
 }
+
 
 }
