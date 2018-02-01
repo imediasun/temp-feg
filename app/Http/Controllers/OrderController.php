@@ -7,6 +7,7 @@ use App\Http\Controllers\controller;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
+use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
@@ -898,7 +899,7 @@ class OrderController extends Controller
                     //// SUBTRACT QTY OF RESERVED AMT ITEMS
                     $item_count = substr_count($SID_string, '-') - 1;
                     $SID_new = $SID_string;
-                    $this->updateRequestAndProducts($item_count, $SID_new);
+                   // $this->updateRequestAndProducts($item_count, $SID_new);
                 } else {
                     $redirect_link = "order";
                 }
