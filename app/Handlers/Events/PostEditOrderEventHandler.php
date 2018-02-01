@@ -39,18 +39,41 @@ class PostEditOrderEventHandler
                     ->where('order_id',$event->order_id)
                     ->where('product_id',$products->id)
                     ->get();
+
+                if(empty($ReservedProductQtyLogObj[0])) {
+
+
+                    $user= \AUTH::user();
+                    $user_id=$user->id;
+                    $order_id=$event->order_id;
+                    $product_id=$products->id;
+                    $ReservedLogData = [
+                        "product_id"=>$product_id,
+                        "order_id"=>$order_id,
+                        "adjustment_amount"=>($products->reserved_qty-$products->qty),
+                        "adjusted_by"=>$user_id,
+                    ];
+                    $ProductReservedQtyObject= new ReservedQtyLog();
+
+                    $ProductReservedQtyObject->insert($ReservedLogData);
+                }
+                $ReservedProductQtyLogObj = ReservedQtyLog::selectRaw('id,adjustment_amount as total_adjustment_amount')
+                    ->where('order_id',$event->order_id)
+                    ->where('product_id',$products->id)
+                    ->get();
                 $ProductObj = product::find($products->id);
 
-                $ProductObj->reserved_qty = $products->reserved_qty+$ReservedProductQtyLogObj[0]->total_adjustment_amount;
+                $ProductObj->reserved_qty = $products->reserved_qty + $ReservedProductQtyLogObj[0]->total_adjustment_amount;
 
 
                 $ProductObj->save();
+
 
                 $ProductObj = product::find($products->id);
                 $ProductObj->reserved_qty = ( $ProductObj->reserved_qty-$products->qty);
                 if($ProductObj->reserved_qty==0 && $ProductObj->allow_negative_reserve_qty==0){
                     $ProductObj->inactive=1;
-                }else{
+                }elseif($ProductObj->reserved_qty > 0){
                     $ProductObj->inactive=0;
                 }
                 $ProductObj->save();
