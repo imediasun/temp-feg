@@ -48,7 +48,7 @@ class PostEditOrderEventHandler
 
                 $ProductObj = product::find($products->id);
                 $ProductObj->reserved_qty = ( $ProductObj->reserved_qty-$products->qty);
-                if(( $ProductObj->reserved_qty-$products->qty)==0 && $ProductObj->allow_negative_reserve_qty==0){
+                if($ProductObj->reserved_qty==0 && $ProductObj->allow_negative_reserve_qty==0){
                     $ProductObj->inactive=1;
                 }else{
                     $ProductObj->inactive=0;
