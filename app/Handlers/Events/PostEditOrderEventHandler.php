@@ -34,11 +34,13 @@ class PostEditOrderEventHandler
         foreach($event->products as $products) {
 
             if ($products->is_reserved == 1) {
+                $Reserved_qty_id=0;
 
                 $ReservedProductQtyLogObj = ReservedQtyLog::selectRaw('id,adjustment_amount as total_adjustment_amount')
                     ->where('order_id',$event->order_id)
                     ->where('product_id',$products->id)
                     ->get();
+                $Reserved_qty_id =$ReservedProductQtyLogObj[0]->id;
 
                 if(empty($ReservedProductQtyLogObj[0])) {
 
@@ -56,6 +58,12 @@ class PostEditOrderEventHandler
                     $ProductReservedQtyObject= new ReservedQtyLog();
 
                     $ProductReservedQtyObject->insert($ReservedLogData);
+
+                    $ReservedProductQtyLogObj = ReservedQtyLog::selectRaw('id,adjustment_amount as total_adjustment_amount')
+                        ->where('order_id', $event->order_id)
+                        ->where('product_id', $products->id)
+                        ->get();
+                    $Reserved_qty_id =$ReservedProductQtyLogObj[0]->id;
                 }else {
                     $ReservedProductQtyLogObj = ReservedQtyLog::selectRaw('id,adjustment_amount as total_adjustment_amount')
                         ->where('order_id', $event->order_id)
@@ -67,6 +75,7 @@ class PostEditOrderEventHandler
 
 
                     $ProductObj->save();
+                    $Reserved_qty_id =$ReservedProductQtyLogObj[0]->id;
                 }
 
 
@@ -78,7 +87,7 @@ class PostEditOrderEventHandler
                     $ProductObj->inactive=0;
                 }
                 $ProductObj->save();
-                $ReservedQtyLog = ReservedQtyLog::find($ReservedProductQtyLogObj[0]->id);
+                $ReservedQtyLog = ReservedQtyLog::find($Reserved_qty_id);
                 $ReservedQtyLog->adjustment_amount=$products->qty;
                 $ReservedQtyLog->save();
 
