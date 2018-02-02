@@ -36,7 +36,6 @@ class PostEditOrderEventHandler
             if ($products->is_reserved == 1) {
                 $Reserved_qty_id='';
 
-
                 $ReservedProductQtyLogObj = ReservedQtyLog::selectRaw('id,adjustment_amount as total_adjustment_amount')
                     ->where('order_id',$event->order_id)
                     ->where('product_id',$products->id)
@@ -53,8 +52,6 @@ class PostEditOrderEventHandler
 
                     $adjustmentAmount = $ProductObj->reserved_qty + $ReservedProductQtyLogObj[0]->total_adjustment_amount;
                     $ProductObj->updateProduct(['reserved_qty' => $adjustmentAmount]);
-                   // $ProductObj->reserved_qty = $products->reserved_qty + $ReservedProductQtyLogObj[0]->total_adjustment_amount;
-                    //$ProductObj->save();
                     $Reserved_qty_id =$ReservedProductQtyLogObj[0]->id;
                 }
 
@@ -69,15 +66,6 @@ class PostEditOrderEventHandler
                 }
                 $ProductObj->save();
 
-                /*$ProductObj = product::find($products->id);
-                $ProductObj->reserved_qty = ( $ProductObj->reserved_qty-$products->qty);
-                if($ProductObj->reserved_qty==0 && $ProductObj->allow_negative_reserve_qty==0){
-                    $ProductObj->inactive=1;
-                }elseif($ProductObj->reserved_qty > 0){
-                    $ProductObj->inactive=0;
-                }
-                $ProductObj->save();*/
-
                 $user= \AUTH::user();
                 $user_id=$user->id;
                 $order_id=$event->order_id;
@@ -87,12 +75,10 @@ class PostEditOrderEventHandler
                         "product_id" => $product_id,
                         "order_id" => $order_id,
                         "adjustment_amount" => $products->qty,
-                        "adjustment_type" => "negative",
                         "adjusted_by" => $user_id,
                     ];
                     $ProductReservedQtyObject = new ReservedQtyLog();
-
-                    $ProductReservedQtyObject->insertRow($ReservedLogData, $Reserved_qty_id);
+                    $ProductReservedQtyObject->setNegativeAdjustment($ReservedLogData, $Reserved_qty_id);
                     $orderdProductIds[]=$products->order_product_id;
                 }
 

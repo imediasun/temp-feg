@@ -37,7 +37,7 @@ class PostOrdersEventHandler
             if($product->is_reserved==1) {
 
                 $productObj = product::find($product->id);
-                $adjustmentAmount = $product->reserved_qty-$product->qty;
+                $adjustmentAmount = $productObj->reserved_qty-$product->qty;
                 $productObj->updateProduct(['reserved_qty' => $adjustmentAmount]);
                 if($product->allow_negative_reserve_qty != 1 && $adjustmentAmount==0) {
                     $productObj->inactive=1;
@@ -52,16 +52,15 @@ class PostOrdersEventHandler
                     "product_id"=>$product_id,
                     "order_id"=>$order_id,
                     "adjustment_amount"=>$product->qty,
-                    "adjustment_type"=>"negative",
                     "adjusted_by"=>$user_id,
                 ];
                 $reservedQtyLog = new ReservedQtyLog();
-                $reservedQtyLog->insert($reservedLogData);
+                $reservedQtyLog->setNegativeAdjustment($reservedQtyLog);
                 if($product->reserved_qty_limit>=($product->reserved_qty-$product->qty)){
                     $message = "<span style='color:red;'> Product reserved quantity limit is ".$product->reserved_qty_limit." and quantity ".($product->reserved_qty-$product->qty)." is available for product <strong>(".$product->item_name.")</strong></span>";
                     self::sendProductReservedQtyEmail($message);
 
-                    /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
+                    /* An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
                 }
 
                 //save log and quantity adjustment
