@@ -50,7 +50,7 @@ class PostEditOrderEventHandler
                     $ReservedLogData = [
                         "product_id"=>$product_id,
                         "order_id"=>$order_id,
-                        "adjustment_amount"=>($products->reserved_qty-$products->qty),
+                        "adjustment_amount"=>$products->qty,
                         "adjusted_by"=>$user_id,
                     ];
                     $ProductReservedQtyObject= new ReservedQtyLog();
