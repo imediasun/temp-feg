@@ -77,6 +77,7 @@ class PostEditOrderEventHandler
                     "product_id"=>$product_id,
                     "order_id"=>$order_id,
                     "adjustment_amount"=>$products->qty,
+                    "adjustment_type"=>"negative",
                     "adjusted_by"=>$user_id,
                 ];
                 $ProductReservedQtyObject= new ReservedQtyLog();

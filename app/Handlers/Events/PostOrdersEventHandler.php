@@ -49,6 +49,7 @@ class PostOrdersEventHandler
                         "product_id"=>$product_id,
                         "order_id"=>$order_id,
                         "adjustment_amount"=>$reserve_qty_log_amount,
+                        "adjustment_type"=>"negative",
                         "adjusted_by"=>$user_id,
                     ];
                     if($product->order_product_id>0) {
@@ -75,6 +76,7 @@ class PostOrdersEventHandler
                         "product_id"=>$product_id,
                         "order_id"=>$order_id,
                         "adjustment_amount"=>$reserve_qty_log_amount,
+                        "adjustment_type"=>"negative",
                         "adjusted_by"=>$user_id,
                     ];
                     if($product->order_product_id>0) {
