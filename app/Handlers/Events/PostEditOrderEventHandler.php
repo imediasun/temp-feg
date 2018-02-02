@@ -56,17 +56,18 @@ class PostEditOrderEventHandler
                     $ProductReservedQtyObject= new ReservedQtyLog();
 
                     $ProductReservedQtyObject->insert($ReservedLogData);
+                }else {
+                    $ReservedProductQtyLogObj = ReservedQtyLog::selectRaw('id,adjustment_amount as total_adjustment_amount')
+                        ->where('order_id', $event->order_id)
+                        ->where('product_id', $products->id)
+                        ->get();
+                    $ProductObj = product::find($products->id);
+
+                    $ProductObj->reserved_qty = $products->reserved_qty + $ReservedProductQtyLogObj[0]->total_adjustment_amount;
+
+
+                    $ProductObj->save();
                 }
-                $ReservedProductQtyLogObj = ReservedQtyLog::selectRaw('id,adjustment_amount as total_adjustment_amount')
-                    ->where('order_id',$event->order_id)
-                    ->where('product_id',$products->id)
-                    ->get();
-                $ProductObj = product::find($products->id);
-
-                $ProductObj->reserved_qty = $products->reserved_qty + $ReservedProductQtyLogObj[0]->total_adjustment_amount;
-
-
-                $ProductObj->save();
 
 
                 $ProductObj = product::find($products->id);
