@@ -58,7 +58,6 @@ class PostOrdersEventHandler
                 ];
                 $reservedQtyLog = new ReservedQtyLog();
                 $reservedQtyLog->insert($reservedLogData);
-                $reservedQtyLog->save();
                 if($productObj->reserved_qty <= $productObj->reserved_qty_limit){
                     $message = "<span style='color:red;'> Product reserved quantity limit is ".$product->reserved_qty_limit." and quantity ".($product->reserved_qty-$product->qty)." is available for product <strong>(".$product->item_name.")</strong></span>";
                     self::sendProductReservedQtyEmail($message);
