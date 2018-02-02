@@ -2177,7 +2177,7 @@ public static function resetOrderedProductsReservedQty($po_number){
         if(!empty($product)) {
             $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
             foreach($items as $itms){
-                $res = \DB::update("update products set reserved_qty=(reserved_qty+".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
+                $res = \DB::update("update products set inactive=0, reserved_qty=(reserved_qty+".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
             }
         }
 
@@ -2194,7 +2194,7 @@ public static function changeProductReservedQtyOnRestoreOrder($order_id){
             if(!empty($product)) {
                 $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
                 foreach($items as $itms){
-                    $res = \DB::update("update products set reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
+                    $res = \DB::update("update products set  reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
                 }
             }
            // $res = \DB::update("update products set reserved_qty=(reserved_qty-" . $result[0]->reducedreservedqty . ") where id='" . $result[0]->product_id . "'");
