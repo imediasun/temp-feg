@@ -79,7 +79,6 @@ class PostEditOrderEventHandler
                     ];
                     $ProductReservedQtyObject = new ReservedQtyLog();
                     $ProductReservedQtyObject->setNegativeAdjustment($ReservedLogData, $Reserved_qty_id);
-                    $ProductReservedQtyObject->save();
                     $orderdProductIds[]=$products->order_product_id;
                 }
 
