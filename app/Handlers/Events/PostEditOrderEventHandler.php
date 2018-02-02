@@ -30,11 +30,12 @@ class PostEditOrderEventHandler
      */
     public function handle(PostEditOrderEvent $event)
     {
-
+        $orderdProductIds=[];
         foreach($event->products as $products) {
 
             if ($products->is_reserved == 1) {
                 $Reserved_qty_id='';
+
 
                 $ReservedProductQtyLogObj = ReservedQtyLog::selectRaw('id,adjustment_amount as total_adjustment_amount')
                     ->where('order_id',$event->order_id)
@@ -73,16 +74,19 @@ class PostEditOrderEventHandler
                 $user_id=$user->id;
                 $order_id=$event->order_id;
                 $product_id=$products->id;
-                $ReservedLogData = [
-                    "product_id"=>$product_id,
-                    "order_id"=>$order_id,
-                    "adjustment_amount"=>$products->qty,
-                    "adjustment_type"=>"negative",
-                    "adjusted_by"=>$user_id,
-                ];
-                $ProductReservedQtyObject= new ReservedQtyLog();
+                if($products->order_product_id>0) {
+                    $ReservedLogData = [
+                        "product_id" => $product_id,
+                        "order_id" => $order_id,
+                        "adjustment_amount" => $products->qty,
+                        "adjustment_type" => "negative",
+                        "adjusted_by" => $user_id,
+                    ];
+                    $ProductReservedQtyObject = new ReservedQtyLog();
 
-                $ProductReservedQtyObject->insertRow($ReservedLogData,$Reserved_qty_id);
+                    $ProductReservedQtyObject->insertRow($ReservedLogData, $Reserved_qty_id);
+                    $orderdProductIds[]=$products->order_product_id;
+                }
 
             }
             $ProductObj = product::find($products->id);
@@ -92,6 +96,9 @@ class PostEditOrderEventHandler
                 /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
             }
 
+        }
+        if(count($orderdProductIds)>0){
+            self::setMultiProductQty($event->products,$orderdProductIds);
         }
 
 
@@ -104,5 +111,15 @@ class PostEditOrderEventHandler
             'message' => $message,
             'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
         )));
+    }
+    public static function setMultiProductQty($products,$product_ids=array()){
+        foreach($product_ids as $product_id) {
+            $ProductObj = product::find($product_id);
+            foreach ($products as $product) {
+                $Multiproducts = product::find($product->id);
+                $Multiproducts->reserved_qty = $ProductObj->reserved_qty;
+                $Multiproducts->save();
+            }
+        }
     }
 }
