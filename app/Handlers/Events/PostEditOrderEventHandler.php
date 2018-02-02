@@ -51,15 +51,15 @@ class PostEditOrderEventHandler
                         ->get();
                     $ProductObj = product::find($products->id);
 
-                    $ProductObj->reserved_qty = $products->reserved_qty + $ReservedProductQtyLogObj[0]->total_adjustment_amount;
-
-
-                    $ProductObj->save();
+                    $adjustmentAmount = $ProductObj->reserved_qty + $ReservedProductQtyLogObj[0]->total_adjustment_amount;
+                    $ProductObj->updateProduct(['reserved_qty' => $adjustmentAmount]);
+                   // $ProductObj->reserved_qty = $products->reserved_qty + $ReservedProductQtyLogObj[0]->total_adjustment_amount;
+                    //$ProductObj->save();
                     $Reserved_qty_id =$ReservedProductQtyLogObj[0]->id;
                 }
 
                 $ProductObj = product::find($products->id);
-                $adjustmentAmount = $products->reserved_qty-$products->qty;
+                $adjustmentAmount = $ProductObj->reserved_qty-$products->qty;
                 $ProductObj->updateProduct(['reserved_qty' => $adjustmentAmount]);
 
                 if($products->allow_negative_reserve_qty != 1 && $adjustmentAmount==0) {
@@ -106,7 +106,7 @@ class PostEditOrderEventHandler
 
         }
         if(count($orderdProductIds)>0){
-            self::setMultiProductQty($event->products,$orderdProductIds);
+         //   self::setMultiProductQty($event->products,$orderdProductIds);
         }
 
 
