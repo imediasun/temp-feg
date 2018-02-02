@@ -22,4 +22,11 @@ class ReservedQtyLog extends Sximo
         parent::__construct();
 
     }
+    public function setNegativeAdjustment($attributes=array(),$id=null){
+        if(empty($attributes)){
+            return false;
+        }
+        $attributes['adjustment_type']="negative";
+        $this->insertRow($attributes,$id);
+    }
 }
