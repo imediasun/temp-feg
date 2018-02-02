@@ -561,6 +561,7 @@ class OrderController extends Controller
                 foreach($items as $itms){
                     $itms->item_name=$item_names[$i];
                     $itms->qty=$request->input('qty')[$i];
+                    $itms->order_product_id = ($request->input('product_id')[$i]==$itms->id) ? $request->input('product_id')[$i] : 0;
                     $productInformation[]=$itms;
                 }
             }
