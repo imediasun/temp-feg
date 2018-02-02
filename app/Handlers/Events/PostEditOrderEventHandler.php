@@ -84,7 +84,7 @@ class PostEditOrderEventHandler
 
             }
             $ProductObj = product::find($products->id);
-            if($products->reserved_qty_limit>=$ProductObj->reserved_qty){
+            if($products->reserved_qty_limit>=$adjustmentAmount){
                 $message = "<span style='color:red;'> Product reserved quantity limit is ".$products->reserved_qty_limit." and quantity ".$ProductObj->reserved_qty." is available for product <strong>(".$products->item_name.")</strong></span>";
                 self::sendProductReservedQtyEmail($message);
                 /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
