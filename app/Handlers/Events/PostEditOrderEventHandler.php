@@ -59,7 +59,7 @@ class PostEditOrderEventHandler
                 $adjustmentAmount = $ProductObj->reserved_qty-$products->qty;
                 $ProductObj->updateProduct(['reserved_qty' => $adjustmentAmount]);
 
-                if($products->allow_negative_reserve_qty != 1 && $adjustmentAmount==0) {
+                if($ProductObj->allow_negative_reserve_qty != 1 && $adjustmentAmount==0) {
                     $ProductObj->inactive=1;
                 }else{
                     $ProductObj->inactive=0;
@@ -89,12 +89,7 @@ class PostEditOrderEventHandler
                 self::sendProductReservedQtyEmail($message);
                 /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
             }
-
         }
-        if(count($orderdProductIds)>0){
-         //   self::setMultiProductQty($event->products,$orderdProductIds);
-        }
-
 
     }
     public static function sendProductReservedQtyEmail($message){
@@ -106,14 +101,5 @@ class PostEditOrderEventHandler
             'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
         )));
     }
-    public static function setMultiProductQty($products,$product_ids=array()){
-        foreach($product_ids as $product_id) {
-            $ProductObj = product::find($product_id);
-            foreach ($products as $product) {
-                $Multiproducts = product::find($product->id);
-                $Multiproducts->reserved_qty = $ProductObj->reserved_qty;
-                $Multiproducts->save();
-            }
-        }
-    }
+
 }
