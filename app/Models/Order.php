@@ -27,6 +27,10 @@ class order extends Sximo
 
     }
 
+    public function contents(){
+        return $this->hasMany('App\Models\OrderContents');
+    }
+
     public static function querySelect()
     {
 
