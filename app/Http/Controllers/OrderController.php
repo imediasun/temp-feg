@@ -550,20 +550,15 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
-
         $item_names = $request->input('item_name');
         $productInformation = [];
         for($i=0; $i<count($item_names); $i++){
             $product = \DB::table('products')->where(['id' => $request->input('product_id')[$i],'is_reserved'=>1])->first();
             if(!empty($product)) {
-                $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
-                foreach($items as $itms){
-                    $itms->item_name=$item_names[$i];
-                    $itms->qty=$request->input('qty')[$i];
-                    $itms->order_product_id = ($request->input('product_id')[$i]==$itms->id) ? $request->input('product_id')[$i] : 0;
-                    $productInformation[]=$itms;
-                }
+                $product->item_name=$item_names[$i];
+                $product->qty=$request->input('qty')[$i];
+                $product->order_product_id = ($request->input('product_id')[$i]==$product->id) ? $request->input('product_id')[$i] : 0;
+                $productInformation[]=$product;
             }
 
 
@@ -592,7 +587,6 @@ class OrderController extends Controller
             return response()->json(array(
                 'message' => 'Someone has already ordered these products',
                 'status' => 'error',
-
             ));
         }
 

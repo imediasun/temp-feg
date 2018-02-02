@@ -6,17 +6,18 @@ use Illuminate\Support\Facades\DB;
 use Log;
 
 class product extends Sximo  {
-	
+
 	protected $table = 'products';
 	protected $primaryKey = 'id';
+	protected $guarded = [];
 
 	public function __construct() {
 		parent::__construct();
-		
+
 	}
 
 	public static function querySelect(  ){
-		
+
 		return "SELECT products.*, O.order_type AS `prod_type`,vendor.vendor_name AS `vendor`,
  IF(products.hot_item = 1,CONCAT('',products.vendor_description,' **HOT ITEM**'),
  products.vendor_description) AS `prod_description`,TRUNCATE(products.case_price/num_items,5) AS
@@ -148,7 +149,7 @@ class product extends Sximo  {
         }
         return $return;
 	}
-	
+
 	public static function queryGroup(){
 		return "  ";
 	}
@@ -257,6 +258,18 @@ class product extends Sximo  {
         $products = DB::table('products')->where(['vendor_description'=>$product->vendor_description,'sku'=>$product->sku])->get();
 
         return $products;
+    }
+
+    public  function updateProduct($attributes=array()){
+
+        if(empty($attributes)){
+            return false;
+        }
+        $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price'=>$this->case_price])->get();
+        foreach($items as $item){
+            $item->update($attributes);
+        }
+        return true;
     }
 
 
