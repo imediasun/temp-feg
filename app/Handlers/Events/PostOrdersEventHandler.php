@@ -51,9 +51,11 @@ class PostOrdersEventHandler
                         "adjustment_amount"=>$reserve_qty_log_amount,
                         "adjusted_by"=>$user_id,
                     ];
-                    $ProductReservedQtyObject= new ReservedQtyLog();
+                    if($product->order_product_id>0) {
+                        $ProductReservedQtyObject = new ReservedQtyLog();
 
-                    $ProductReservedQtyObject->insert($ReservedLogData);
+                        $ProductReservedQtyObject->insert($ReservedLogData);
+                    }
 
                 }else{
                     $adjustmentAmount = $product->reserved_qty-$product->qty;
@@ -75,9 +77,11 @@ class PostOrdersEventHandler
                         "adjustment_amount"=>$reserve_qty_log_amount,
                         "adjusted_by"=>$user_id,
                     ];
-                    $ProductReservedQtyObject = new ReservedQtyLog();
+                    if($product->order_product_id>0) {
+                        $ProductReservedQtyObject = new ReservedQtyLog();
 
-                    $ProductReservedQtyObject->insert($ReservedLogData);
+                        $ProductReservedQtyObject->insert($ReservedLogData);
+                    }
 
                 }
                 if($product->reserved_qty_limit>=($product->reserved_qty-$product->qty)){

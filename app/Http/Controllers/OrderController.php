@@ -552,26 +552,12 @@ class OrderController extends Controller
                 foreach($items as $itms){
                     $itms->item_name=$item_names[$i];
                     $itms->qty=$request->input('qty')[$i];
+                    $itms->order_product_id = ($request->input('product_id')[$i]==$itms->id) ? $request->input('product_id')[$i] : 0;
                     $productInformation[]=$itms;
                 }
             }
 
-
-
-         /*   $productInformation[]=array(
-                "product_id"=>$request->input('product_id')[$i],
-                "item_name"=>$request->input('item_name')[$i],
-                "sku"=>$request->input('sku')[$i],
-                "item"=>$request->input('item')[$i],
-                "price"=>$request->input('price')[$i],
-                "case_price"=>$request->input('case_price')[$i],
-                "qty"=>$request->input('qty')[$i],
-
-            );*/
-
         }
-
-
 
 
         $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
