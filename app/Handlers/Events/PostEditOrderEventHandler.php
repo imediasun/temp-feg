@@ -58,18 +58,26 @@ class PostEditOrderEventHandler
                     $Reserved_qty_id =$ReservedProductQtyLogObj[0]->id;
                 }
 
-
                 $ProductObj = product::find($products->id);
+                $adjustmentAmount = $products->reserved_qty-$products->qty;
+                $ProductObj->updateProduct(['reserved_qty' => $adjustmentAmount]);
+
+                if($products->allow_negative_reserve_qty != 1 && $adjustmentAmount==0) {
+                    $ProductObj->inactive=1;
+                }else{
+                    $ProductObj->inactive=0;
+                }
+                $ProductObj->save();
+
+                /*$ProductObj = product::find($products->id);
                 $ProductObj->reserved_qty = ( $ProductObj->reserved_qty-$products->qty);
                 if($ProductObj->reserved_qty==0 && $ProductObj->allow_negative_reserve_qty==0){
                     $ProductObj->inactive=1;
                 }elseif($ProductObj->reserved_qty > 0){
                     $ProductObj->inactive=0;
                 }
-                $ProductObj->save();
-               /* $ReservedQtyLog = ReservedQtyLog::find($Reserved_qty_id);
-                $ReservedQtyLog->adjustment_amount=$products->qty;
-                $ReservedQtyLog->save();*/
+                $ProductObj->save();*/
+
                 $user= \AUTH::user();
                 $user_id=$user->id;
                 $order_id=$event->order_id;
