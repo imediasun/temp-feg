@@ -29,4 +29,11 @@ class ReservedQtyLog extends Sximo
         $attributes['adjustment_type']="negative";
         $this->insertRow($attributes,$id);
     }
+    public function setPositiveAdjustment($attributes=array(),$id=null){
+        if(empty($attributes)){
+            return false;
+        }
+        $attributes['adjustment_type']="Positive";
+        $this->insertRow($attributes,$id);
+    }
 }
