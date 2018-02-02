@@ -11,4 +11,8 @@ class OrderContents extends Sximo  {
 
     }
 
+    public function product(){
+        $this->belongsTo("App/Model/Product");
+    }
+
 }
