@@ -21,6 +21,7 @@ class order extends Sximo
     const ORDER_VOID_STATUS = 9;
     const ORDER_CLOSED_STATUS = [2,6];
     const ORDER_DELETED_STATUS = 10;
+    const ORDER_ACTIVE_STATUS = 1;
 
     public function __construct()
     {
@@ -32,10 +33,18 @@ class order extends Sximo
 
     public static function boot(){
         parent::boot();
+
         static::deleted(function(Order $model){
             $model->status_id = self::ORDER_DELETED_STATUS;
             $model->deleted_by =  \Session::get('uid');
-            $model->adjustReservedProductQuantities();
+            $model->restoreReservedProductQuantities();
+        });
+
+        //@todo add statis::restore
+        static::restoring(function(Order $model){
+           $model->status_id = self::ORDER_ACTIVE_STATUS;
+           $model->deleted_by = null;
+           $model->deleteReservedProductQuantities();
         });
     }
 
@@ -43,21 +52,53 @@ class order extends Sximo
         return $this->hasMany('App\Models\OrderContent');
     }
 
-    public function adjustReservedProductQuantities(){
-        Log::debug("Adjust reserved products");
+    public function restoreReservedProductQuantities(){
+        $this->adjustReservedProductQuantities();
+    }
 
+    public function deleteReservedProductQuantities(){
+        $this->adjustReservedProductQuantities(true);
+    }
+
+    private function adjustReservedProductQuantities($reduceQuantity = false){
         $orderContents = $this->contents;
         foreach ($orderContents as $orderContent){
 
             $orderedProduct = $orderContent->product;
 
             if($orderedProduct->is_reserved == 1){
-                Log::debug("Restore Product ID : {$orderedProduct->id} ");
-                $orderedProduct->updateProduct([
-                    'reserved_qty' => $orderedProduct->reserved_qty + $orderContent->qty
-                ]);
+
+                if($reduceQuantity){
+                    if($orderedProduct->allow_negative_reserve_qty == 0 && $orderedProduct->reserved_qty < $orderContent->qty){
+                        throw new Exception("Product does not have sufficient reserved quantities");
+                    }
+                    $orderedProduct->updateProduct([
+                        'reserved_qty' => $orderedProduct->reserved_qty - $orderContent->qty
+                    ]);
+                }
+                else
+                {
+                    $orderedProduct->updateProduct([
+                        'reserved_qty' => $orderedProduct->reserved_qty + $orderContent->qty
+                    ]);
+                }
             }
         }
+    }
+
+    public function canRestoreAllReservedProducts(){
+        if(empty($this->contents)){
+            return true;
+        }
+        foreach ($this->contents as $orderContent){
+            $orderedProduct = $orderContent->product;
+            if($orderedProduct->is_reserved == 1 && $orderedProduct->allow_negative_reserve_qty == 0 &&
+                $orderedProduct->reserved_qty < $orderContent->qty){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static function querySelect()

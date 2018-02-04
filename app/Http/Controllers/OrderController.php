@@ -1112,19 +1112,36 @@ class OrderController extends Controller
 
     public function postRestoreorder(Request $request)
     {
-
-        $id = $request->input('ids');
-        $explaination = $request->input('explaination');
-
-        $result = \DB::update("update orders set notes = concat(notes,'<br>',".\DB::connection()->getPdo()->quote($explaination)."), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
-        self::changeProductReservedQtyOnRestoreOrder($id);
-        if ($result) {
-            return Redirect::to('order')->with('messagetext', 'Order has been restored successfully!')->with('msgstatus', 'success');
-        } else {
-            return Redirect::to('order')->with('messagetext', 'This order has already been restored!')->with('msgstatus', 'error');
+        // set order status as deleted for multipe rows
+        $orderId = $request->input('ids');
+        $explanations = $request->input('explaination');
+        $order = Order::withTrashed()->where('id', $orderId)->first();
+        if(empty($order)){
+            return Redirect::to('order')->with('messagetext', "Invalid Order")->with('msgstatus', 'error');
         }
-    }
 
+        if($order->canRestoreAllReservedProducts() === false){
+            return Redirect::to('order')->with('messagetext', "Order has not been restored, Reason: Insufficient reserved quantity")->with('msgstatus', 'error');
+        }
+
+        $order->notes = $order->notes . '<br>' . $explanations;
+
+        try {
+            $result = $order->restore();
+            $message = "Order ID : {$order->id} has been restored successfully!";
+        } catch (\Exception $e) {
+            $result = false;
+            $message = "Order ID : {$order->id} has not been restored. Reason: " . $e->getMessage();
+        }
+        if($result){
+            return Redirect::to('order')->with('messagetext', $message)->with('msgstatus', 'success');
+        }
+        else{
+            return Redirect::to('order')->with('messagetext', $message)->with('msgstatus', 'error');
+        }
+
+
+    }
     public function postRemoveorderexplaination(Request $request)
     {
         $this->data['ids'] = implode(",", $request->input('ids'));
