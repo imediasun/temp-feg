@@ -1168,18 +1168,18 @@ class OrderController extends Controller
     public function postDelete(Request $request)
     {
         // set order status as deleted for multipe rows
-        $ids = $request->input('po_number');
+        $poNumbers = $request->input('po_number');
         $explaination = $request->input('explaination');
         $uid = \Session::get('uid');
         $query = "";
         $result = false;
-        for ($i = 0; $i < count($ids); $i++) {
-         // echo  \DB::connection()->getPdo()->quote($explaination[$i]);
-            $query = "update orders set notes = concat(notes,'<br>'," . \DB::connection()->getPdo()->quote($explaination[$i]) . "), deleted_at=NOW(), status_id=10, deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
-           $result = \DB::update($query);
+        $orders = Order::whereIn('po_number',$poNumbers)->get();
 
-            self::resetOrderedProductsReservedQty($ids[$i]);
-
+        $index = 0;
+        foreach($orders as $order){
+            $order->notes = $order->notes.'<br>'.\DB::connection()->getPdo()->quote($explaination[$index]);
+            $result = $order->delete();
+            $index++;
         }
 
         if ($result) {
@@ -2201,7 +2201,8 @@ class OrderController extends Controller
             + $replacement
             + array_slice($input, $offset + $length, NULL, TRUE);
     }
-public static function array_move($which, $where, $array)
+
+    public static function array_move($which, $where, $array)
     {
 
         $tmpWhich = $which;
@@ -2219,157 +2220,21 @@ public static function array_move($which, $where, $array)
         self::array_splice_assoc($array, $where, 0, $tmp);
         return $array;
     }
-public static function resetOrderedProductsReservedQty($po_number){
 
-    $result = \DB::select("select id from orders where po_number='".$po_number."'");
-    $order_id=$result[0]->id;
-
-
-    if($order_id>0) {
-    $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
-    $result = \DB::select($sql);
-        $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
-        if(!empty($product)) {
-            $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
-            foreach($items as $itms){
-                $res = \DB::update("update products set inactive=0, reserved_qty=(reserved_qty+".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
-            }
-        }
-
-
-    }
-
-}
-public static function changeProductReservedQtyOnRestoreOrder($order_id){
-    if($order_id>0) {
-        $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
-        $result = \DB::select($sql);
-        if(count($result)>0) {
-            $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
-            if(!empty($product)) {
-                $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
-                foreach($items as $itms){
-                    $res = \DB::update("update products set  reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
-                }
-            }
-           // $res = \DB::update("update products set reserved_qty=(reserved_qty-" . $result[0]->reducedreservedqty . ") where id='" . $result[0]->product_id . "'");
-        }
-    }
-}
-
-    public function getCorrectOrdersBug242($step = '1'){
-        die("Script blocked. To run this script please contact your development team. Thanks!");
-
-        $records = \DB::select("SELECT
-              orders.id AS aa_id,
-              orders.po_number,
-              orders.date_ordered,
-              IF(orders.is_partial = 0,'No','Yes') AS is_partial,
-              IF(orders.is_freehand = 0,'No','Yes') AS is_freehand,
-              order_type.order_type,
-              IF(orders.invoice_verified = 0,'No','Yes') AS `invoice verified`,
-              
-            (SELECT SUM(order_contents.qty)
-            FROM orders
-            LEFT JOIN order_contents ON orders.id = order_contents.order_id
-            WHERE orders.id = aa_id
-            GROUP BY order_contents.order_id) AS items_ordered,
-            
-            (SELECT SUM(order_received.quantity)
-            FROM orders
-            LEFT JOIN order_received ON orders.id = order_received.order_id
-            WHERE orders.id = aa_id
-            GROUP BY order_received.order_id) AS items_received
-            
-            FROM orders
-            JOIN order_type ON order_type.id = orders.order_type_id
-            WHERE     status_id = 2
-                AND is_partial = 0    
-                AND is_api_visible = 0
-                AND is_freehand = 0
-                AND order_type_id IN (8,17,4,6,7)
-                
-                AND YEAR(date_ordered) = 2017
-                AND date_ordered < '2017-06-06'
-            HAVING items_ordered < items_received
-            ORDER BY aa_id");
-
-        if($step == '1'){
-            $ids = array_map(function($row){
-                return $row->aa_id;
-            }, $records);
-            \DB::table('order_received')->whereIn('order_id', $ids)->update(['deleted_at' => Carbon::now()]);
-            die("Step 1 completed!");
-        }
-
-        foreach ($records as $record){
-            $order = Order::find($record->aa_id);
-
-            $order_contents = \DB::table('order_contents')->where('order_id', $order->id)->get();
-
-            $notes = '';
-
-            foreach ($order_contents as $order_content){
-                $order_received = \DB::table('order_received')
-                    ->where('order_id', $order->id)
-                    ->where('order_line_item_id', $order_content->id)
-                    ->whereNull('deleted_at')
-                    ->get();
-
-
-                if(empty($order_received)){
-                    \DB::table('order_received')->insert([
-                        'order_id' => $order->id,
-                        'order_line_item_id' => $order_content->id,
-                        'quantity' => $order_content->qty,
-                        'received_by' => '238',
-                        'date_received' => Carbon::now(),
-                        'api_created_at' => Carbon::now(),
-                        'notes' => '(System generated) All Items Received',
-                        'status' => 1
-                    ]);
-
-                    $notes .= '(System generated) All Items Received <br>----------------------<br>';
-
-                }else{
-
-                    $qty_received = collect($order_received)->sum('quantity');
-
-                    if($qty_received < $order_content->qty){
-                        $qty_left = $order_content->qty - $qty_received;
-                    }else{
-                        $qty_left = $order_content->qty;
+    public static function changeProductReservedQtyOnRestoreOrder($order_id){
+        if($order_id>0) {
+            $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
+            $result = \DB::select($sql);
+            if(count($result)>0) {
+                $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
+                if(!empty($product)) {
+                    $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
+                    foreach($items as $itms){
+                        $res = \DB::update("update products set  reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
                     }
-
-                    \DB::table('order_received')->insert([
-                        'order_id' => $order->id,
-                        'order_line_item_id' => $order_content->id,
-                        'quantity' => $qty_left,
-                        'received_by' => '238',
-                        'date_received' => Carbon::now(),
-                        'api_created_at' => Carbon::now(),
-                        'notes' => '(System generated) Some Items Received',
-                        'status' => 1
-                    ]);
-
-                    $notes .= '(System generated) Some Items Received <br>----------------------<br>';
                 }
-
-                \DB::table('order_contents')->where('id', $order_content->id)->update(['item_received' => $order_content->qty]);
+               // $res = \DB::update("update products set reserved_qty=(reserved_qty-" . $result[0]->reducedreservedqty . ") where id='" . $result[0]->product_id . "'");
             }
-
-            $order->status_id = 2;
-            $order->invoice_verified = 1;
-            $order->invoice_verified_date = Carbon::now();
-            $order->is_api_visible = 1;
-            $order->api_created_at = Carbon::now();
-            $order->date_received = Carbon::now();
-            $order->updated_at = Carbon::now();
-            $order->received_by = '238';
-            $order->notes = $notes;
-            $order->save();
         }
-
-        die("Script Completed!");
     }
 }
