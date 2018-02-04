@@ -70,7 +70,7 @@ class order extends Sximo
 
                 if($reduceQuantity){
                     if($orderedProduct->allow_negative_reserve_qty == 0 && $orderedProduct->reserved_qty < $orderContent->qty){
-                        throw new Exception("Product does not have sufficient reserved quantities");
+                        throw new \Exception("Product does not have sufficient reserved quantities");
                     }
                     $orderedProduct->updateProduct([
                         'reserved_qty' => $orderedProduct->reserved_qty - $orderContent->qty
