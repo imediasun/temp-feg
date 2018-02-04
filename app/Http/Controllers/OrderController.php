@@ -1145,18 +1145,18 @@ class OrderController extends Controller
     public function postDelete(Request $request)
     {
         // set order status as deleted for multipe rows
-        $ids = $request->input('po_number');
+        $poNumbers = $request->input('po_number');
         $explaination = $request->input('explaination');
         $uid = \Session::get('uid');
         $query = "";
         $result = false;
-        for ($i = 0; $i < count($ids); $i++) {
-         // echo  \DB::connection()->getPdo()->quote($explaination[$i]);
-            $query = "update orders set notes = concat(notes,'<br>'," . \DB::connection()->getPdo()->quote($explaination[$i]) . "), deleted_at=NOW(), status_id=10, deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
-           $result = \DB::update($query);
+        $orders = Order::whereIn('po_number',$poNumbers)->get();
 
-            self::resetOrderedProductsReservedQty($ids[$i]);
-
+        $index = 0;
+        foreach($orders as $order){
+            $order->notes = $order->notes.'<br>'.\DB::connection()->getPdo()->quote($explaination[$index]);
+            $result = $order->delete();
+            $index++;
         }
 
         if ($result) {
@@ -2146,7 +2146,8 @@ class OrderController extends Controller
             + $replacement
             + array_slice($input, $offset + $length, NULL, TRUE);
     }
-public static function array_move($which, $where, $array)
+
+    public static function array_move($which, $where, $array)
     {
 
         $tmpWhich = $which;
@@ -2164,43 +2165,21 @@ public static function array_move($which, $where, $array)
         self::array_splice_assoc($array, $where, 0, $tmp);
         return $array;
     }
-public static function resetOrderedProductsReservedQty($po_number){
 
-    $result = \DB::select("select id from orders where po_number='".$po_number."'");
-    $order_id=$result[0]->id;
-
-
-    if($order_id>0) {
-    $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
-    $result = \DB::select($sql);
-        $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
-        if(!empty($product)) {
-            $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
-            foreach($items as $itms){
-                $res = \DB::update("update products set inactive=0, reserved_qty=(reserved_qty+".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
-            }
-        }
-
-
-    }
-
-}
-public static function changeProductReservedQtyOnRestoreOrder($order_id){
-    if($order_id>0) {
-        $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
-        $result = \DB::select($sql);
-        if(count($result)>0) {
-            $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
-            if(!empty($product)) {
-                $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
-                foreach($items as $itms){
-                    $res = \DB::update("update products set  reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
+    public static function changeProductReservedQtyOnRestoreOrder($order_id){
+        if($order_id>0) {
+            $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
+            $result = \DB::select($sql);
+            if(count($result)>0) {
+                $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
+                if(!empty($product)) {
+                    $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
+                    foreach($items as $itms){
+                        $res = \DB::update("update products set  reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
+                    }
                 }
+               // $res = \DB::update("update products set reserved_qty=(reserved_qty-" . $result[0]->reducedreservedqty . ") where id='" . $result[0]->product_id . "'");
             }
-           // $res = \DB::update("update products set reserved_qty=(reserved_qty-" . $result[0]->reducedreservedqty . ") where id='" . $result[0]->product_id . "'");
         }
     }
-}
-
-
 }

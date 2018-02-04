@@ -1,7 +1,7 @@
 <?php namespace App\Models;
 
 
-class OrderContents extends Sximo  {
+class OrderContent extends Sximo  {
 
     protected $table = 'order_contents';
     protected $primaryKey = 'id';
@@ -12,7 +12,7 @@ class OrderContents extends Sximo  {
     }
 
     public function product(){
-        $this->belongsTo("App/Model/Product");
+        return $this->belongsTo("App\Models\product");
     }
 
 }

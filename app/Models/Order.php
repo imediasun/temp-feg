@@ -5,11 +5,13 @@ use App\Models\Sximo\Module;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Log;
 
 class order extends Sximo
 {
+    use SoftDeletes;
 
     protected $table = 'orders';
     protected $primaryKey = 'id';
@@ -18,6 +20,7 @@ class order extends Sximo
     const ORDER_TYPE_PART_GAMES = 1;
     const ORDER_VOID_STATUS = 9;
     const ORDER_CLOSED_STATUS = [2,6];
+    const ORDER_DELETED_STATUS = 10;
 
     public function __construct()
     {
@@ -27,8 +30,34 @@ class order extends Sximo
 
     }
 
+    public static function boot(){
+        parent::boot();
+        static::deleted(function(Order $model){
+            $model->status_id = self::ORDER_DELETED_STATUS;
+            $model->deleted_by =  \Session::get('uid');
+            $model->adjustReservedProductQuantities();
+        });
+    }
+
     public function contents(){
-        return $this->hasMany('App\Models\OrderContents');
+        return $this->hasMany('App\Models\OrderContent');
+    }
+
+    public function adjustReservedProductQuantities(){
+        Log::debug("Adjust reserved products");
+
+        $orderContents = $this->contents;
+        foreach ($orderContents as $orderContent){
+
+            $orderedProduct = $orderContent->product;
+
+            if($orderedProduct->is_reserved == 1){
+                Log::debug("Restore Product ID : {$orderedProduct->id} ");
+                $orderedProduct->updateProduct([
+                    'reserved_qty' => $orderedProduct->reserved_qty + $orderContent->qty
+                ]);
+            }
+        }
     }
 
     public static function querySelect()
