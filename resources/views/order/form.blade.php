@@ -342,7 +342,9 @@
                         <td><br/> <input type='number' name='qty[]' placeholder='0' autocomplete="off"
 
                                          class='calculate form-control qty' receive="0" min="1" step="1" id="qty" orderqty="0" placeholder="00"
-                                         required></td>
+                                         required>
+                            <input type="hidden" name="prev_qty[]" value="0"/>
+                        </td>
                         <td class="game" style="display:none">
                             <br/> <input type='hidden' name='game[]' id='game_0'>
                         </td>
@@ -820,6 +822,7 @@
                     //$('input[name^=qty]').eq(i).val(order_qty_array[i]-order_qty_received_array[i]);
                     //while editing order show original quantities as per gabe on 8/01/2017
                     $('input[name^=qty]').eq(i).val(order_qty_array[i]);
+                    $('input[name^=prev_qty]').eq(i).val(order_qty_array[i]);
                     $('input[name^=qty]').eq(i).attr('orderqty', order_qty_array[i]);
                     if(mode=='edit'){ ///Don't set item received when making clone/create order.
                         $('input[name^=qty]').eq(i).attr('receive', order_qty_received_array[i]);

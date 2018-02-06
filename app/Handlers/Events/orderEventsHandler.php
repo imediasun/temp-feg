@@ -32,7 +32,7 @@ class orderEventsHandler
         $message='You have attempted to request more product than there is Reserved Quantity available. Your request has been modified to reflect this amount.';
         foreach($event->products as $product){
 
-            if($product->allow_negative_reserve_qty==0 && $product->reserved_qty<$product->qty){
+            if($product->allow_negative_reserve_qty == 0 && $product->reserved_qty < $product->changed_qty){
                     $error=true;
                     $message .="<br>* Item Name: ".$product->item_name.", SKU: ".$product->sku.", Quantity: ".$product->reserved_qty."";
                   // $message .= "Total quantity ".$product->reserved_qty." is available for ".$product->item_name."<br />";
