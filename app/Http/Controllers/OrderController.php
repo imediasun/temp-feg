@@ -707,6 +707,17 @@ class OrderController extends Controller
             }
 
 
+            $eventResponse = event(new ordersEvent($productInformation))[0];
+
+
+            if(!empty($eventResponse) && $eventResponse['error']==true){
+                return response()->json(array(
+                    'message' => $eventResponse['message'],
+                    'status' => 'error',
+
+                ));
+            }
+
 
             if ($editmode == "edit") {
                 $orderData = array(
@@ -732,20 +743,6 @@ class OrderController extends Controller
                 \DB::table('order_contents')->whereIn('id', $force_remove_items)->delete();
                 \DB::table('order_received')->whereIn('order_line_item_id', $force_remove_items)->delete();
             } else {
-
-
-
-                $eventResponse = event(new ordersEvent($productInformation))[0];
-
-
-
-                if(!empty($eventResponse) && $eventResponse['error']==true){
-                    return response()->json(array(
-                        'message' => $eventResponse['message'],
-                        'status' => 'error',
-
-                    ));
-                }
 
                 $orderData = array(
                     'user_id' => \Session::get('uid'),
