@@ -39,31 +39,33 @@ class PostEditOrderEventHandler
                 $ReservedProductQtyLogObj = ReservedQtyLog::selectRaw('id,adjustment_amount as total_adjustment_amount')
                     ->where('order_id',$event->order_id)
                     ->where('product_id',$products->id)
-                    ->get();
-                $Reserved_qty_id =!empty($ReservedProductQtyLogObj[0]) ? $ReservedProductQtyLogObj[0]->id : null;
+                    ->orderBy('id', 'DESC')
+                    ->first();
+                $Reserved_qty_id =!empty($ReservedProductQtyLogObj) ? $ReservedProductQtyLogObj->id : null;
 
-                if(!empty($ReservedProductQtyLogObj[0])) {
+                if(!empty($ReservedProductQtyLogObj)) {
 
                     $ReservedProductQtyLogObj = ReservedQtyLog::selectRaw('id,adjustment_amount as total_adjustment_amount')
                         ->where('order_id', $event->order_id)
                         ->where('product_id', $products->id)
-                        ->get();
+                        ->orderBy('id', 'DESC')
+                        ->first();
                     $ProductObj = product::find($products->id);
 
-                    $adjustmentAmount = $ProductObj->reserved_qty + $ReservedProductQtyLogObj[0]->total_adjustment_amount;
+                    $adjustmentAmount = $ProductObj->reserved_qty + $ReservedProductQtyLogObj->total_adjustment_amount;
                     $ProductObj->updateProduct(['reserved_qty' => $adjustmentAmount]);
-                    $Reserved_qty_id =$ReservedProductQtyLogObj[0]->id;
+                    $Reserved_qty_id =$ReservedProductQtyLogObj->id;
                 }
 
                 $ProductObj = product::find($products->id);
-                $adjustmentAmount = $ProductObj->reserved_qty-$products->qty;
-                $ProductObj->updateProduct(['reserved_qty' => $adjustmentAmount]);
-
-                if($ProductObj->allow_negative_reserve_qty != 1 && $adjustmentAmount==0) {
-                    $ProductObj->inactive=1;
+                $adjustmentAmount = $ProductObj->reserved_qty - $products->qty;
+                if($ProductObj->allow_negative_reserve_qty != 1 && $adjustmentAmount == 0) {
+                    $inactive = 1;
                 }else{
-                    $ProductObj->inactive=0;
+                    $inactive = 0;
                 }
+
+                $ProductObj->updateProduct(['reserved_qty' => $adjustmentAmount, 'inactive' => $inactive]);
                 $ProductObj->save();
 
                 $user= \AUTH::user();

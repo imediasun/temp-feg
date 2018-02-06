@@ -38,11 +38,13 @@ class PostOrdersEventHandler
 
 
                 $productObj = product::find($product->id);
-                $adjustmentAmount = $productObj->reserved_qty-$product->qty;
-                $productObj->updateProduct(['reserved_qty' => $adjustmentAmount]);
-                if($productObj->allow_negative_reserve_qty != 1 && $adjustmentAmount==0) {
-                    $productObj->inactive=1;
+                $adjustmentAmount = $productObj->reserved_qty - $product->qty;
+                if($productObj->allow_negative_reserve_qty != 1 && $adjustmentAmount == 0) {
+                    $inactive = 1;
+                }else{
+                    $inactive = 0;
                 }
+                $productObj->updateProduct(['reserved_qty' => $adjustmentAmount, 'inactive' => $inactive]);
                 $productObj->save();
 
                 $user = \AUTH::user();

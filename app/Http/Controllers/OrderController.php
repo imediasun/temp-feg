@@ -557,6 +557,7 @@ class OrderController extends Controller
             if(!empty($product)) {
                 $product->item_name=$item_names[$i];
                 $product->qty=$request->input('qty')[$i];
+                $product->changed_qty = $request->input('qty')[$i] - $request->input('prev_qty')[$i];
                 $product->order_product_id = ($request->input('product_id')[$i]==$product->id) ? $request->input('product_id')[$i] : 0;
                 $productInformation[]=$product;
             }
@@ -575,8 +576,6 @@ class OrderController extends Controller
             );*/
 
         }
-
-
 
         $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
 
