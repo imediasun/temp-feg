@@ -6,7 +6,7 @@ use App\Events\Event;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class ordersEvent extends Event
+class SomeEvent extends Event
 {
     use SerializesModels;
 
@@ -15,15 +15,9 @@ class ordersEvent extends Event
      *
      * @return void
      */
-    public $products;
-
-    public $order_id;
-
-    public function __construct($products=array(), $order_id)
+    public function __construct()
     {
-        $this->products = $products;
-
-        $this->order_id = $order_id;
+        //
     }
 
     /**

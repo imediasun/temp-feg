@@ -3,6 +3,7 @@ use App\Events\ordersEvent;
 use App\Events\PostEditOrderEvent;
 use App\Events\PostOrdersEvent;
 use App\Events\Event;
+use App\Events\PostSaveOrderEvent;
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
@@ -668,9 +669,7 @@ class OrderController extends Controller
                         $itemsPriceArray[$i] . ' ea.';
             }
 
-
-            $eventResponse = event(new ordersEvent($productInformation))[0];
-
+            $eventResponse = event(new ordersEvent($productInformation, $order_id))[0];
 
             if(!empty($eventResponse) && $eventResponse['error']==true){
                 return response()->json(array(
@@ -679,7 +678,6 @@ class OrderController extends Controller
 
                 ));
             }
-
 
             if ($editmode == "edit") {
 
@@ -697,8 +695,7 @@ class OrderController extends Controller
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
 
-
-                $eventResponse= event(new PostEditOrderEvent($productInformation,$order_id));
+                //event(new PostEditOrderEvent($productInformation,$order_id));
 
                 $force_remove_items = explode(',',$force_remove_items);
                 \DB::table('order_contents')->where('order_id', $last_insert_id)->where('item_received', '0')->delete();
@@ -731,9 +728,7 @@ class OrderController extends Controller
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
 
-
-
-                $eventResponse = event(new PostOrdersEvent($productInformation,$order_id));
+                //event(new PostOrdersEvent($productInformation,$order_id));
 
             }
             //// UPDATE STATUS TO APPROVED AND PROCESSED
@@ -815,14 +810,18 @@ class OrderController extends Controller
                     'vendor_id' => $prodVendorId,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
+
                 if ($editmode == "clone") {
                     $items_received_qty = 0;
                 }
+
                 if($items_received_qty == '0'){
                     \DB::table('order_contents')->insert($contentsData);
                 }else{
                     \DB::table('order_contents')->where('id', $order_content_id[$i])->update($contentsData);
                 }
+
+                event(new PostSaveOrderEvent($contentsData));
 
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
                 {
@@ -864,23 +863,7 @@ class OrderController extends Controller
                     $redirect_link = "order";
                 }
             }
-            // $mailto = $vendor_email;
-            $from = \Session::get('eid');
-            //send product order as email to vendor only if sendor and reciever email is available
-            // if(!empty($mailto) && !empty($from))
-            // {
-            // $this->getPo($order_id, true,$mailto,$from);
-            //}
-            //$result = Mail::send('submitservicerequest.test', $message, function ($message) use ($to, $from, $full_upload_path, $subject) {
-//
-//        if (isset($full_upload_path) && !empty($full_upload_path)) {
-//            $message->attach($full_upload_path);
-//        }
-//        $message->subject($subject);
-//        $message->to($to);
-//        $message->from($from);
-//
-//    });
+
 
             //Deny Denied SID's
             if($editmode == 'SID' && !empty($denied_SIDs)){
