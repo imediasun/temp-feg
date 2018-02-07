@@ -25,6 +25,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\PostEditOrderEvent' => [
             'App\Handlers\Events\PostEditOrderEventHandler',
         ],
+        'App\Events\PostSaveOrderEvent' => [
+            'App\Handlers\Events\PostSaveOrderEventHandler',
+        ],
     ];
 
     /**
