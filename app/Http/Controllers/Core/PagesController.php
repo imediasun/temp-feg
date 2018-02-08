@@ -5,7 +5,8 @@ use App\Models\Core\Pages;
 use App\Models\Core\Groups;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect, Session, Auth, DB, Log;
+use Validator, Input, Redirect, Session, Auth, DB;
+use Illuminate\Support\Facades\Response;
 
 
 class PagesController extends Controller
@@ -361,4 +362,15 @@ class PagesController extends Controller
         }
         return $content;        
     }
+
+    public function downloadExpanseReports($fileName)
+    {
+        $file= public_path(). "/upload/expenseReport/".$fileName;
+        $headers = array(
+            'Content-type: application/octet-stream',
+        );
+        return Response::download($file, $fileName, $headers);
+
+    }
+
 }
