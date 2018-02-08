@@ -178,7 +178,6 @@ class OrderController extends Controller
         }
     }
 
-
     public function getIndex()
     {
         /*
@@ -361,7 +360,6 @@ class OrderController extends Controller
         return view('order.table', $this->data);
 
     }
-
 
     function getUpdate(Request $request, $id = 0, $mode = '')
     {
@@ -1100,6 +1098,7 @@ class OrderController extends Controller
 
 
     }
+
     public function postRemoveorderexplaination(Request $request)
     {
         $this->data['ids'] = implode(",", $request->input('ids'));
@@ -1531,6 +1530,7 @@ class OrderController extends Controller
         $this->data['data'] = $this->model->getOrderQuery($id,null,$this->data['pass']);
         return view('order.clonenew', $this->data);
     }
+
     function getInstaClone(Request $request, $eId, $voidify = null)
     {
         $now = date("Y-m-d");
@@ -1582,6 +1582,7 @@ class OrderController extends Controller
         return $this->validatePO($po,$po_full,$location_id);
 
     }
+
     function validatePO($po,$po_full,$location_id)
     {
         if($po !=0)
@@ -2046,6 +2047,7 @@ class OrderController extends Controller
         }
         return response()->json($response);
     }
+
     function getCheckReceivable(Request $request, $eId) {
         $id = \SiteHelpers::encryptID($eId, true);
         $response = ['status' => 'error', 'message' => \Lang::get('core.order_missing_id')];
@@ -2087,6 +2089,7 @@ class OrderController extends Controller
         return response()->json($response);
 
     }
+
     function getCheckClonable(Request $request, $eId) {
 
     }
@@ -2130,7 +2133,7 @@ class OrderController extends Controller
         return $notes;
     }
 
-   public static function array_splice_assoc(&$input, $offset, $length, $replacement) {
+    public static function array_splice_assoc(&$input, $offset, $length, $replacement) {
         $replacement = (array) $replacement;
         $key_indices = array_flip(array_keys($input));
         if (isset($input[$offset]) && is_string($offset)) {

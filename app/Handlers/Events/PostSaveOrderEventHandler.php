@@ -45,7 +45,7 @@ class PostSaveOrderEventHandler
                 $adjustmentAmount = $product->reserved_qty - $item->qty;
             }
 
-            if($product->allow_negative_reserve_qty != 1 && $adjustmentAmount == 0) {
+            if($product->allow_negative_reserve_qty != 1 and $adjustmentAmount == 0) {
                 $inactive = 1;
             }else{
                 $inactive = 0;
@@ -66,7 +66,7 @@ class PostSaveOrderEventHandler
             $reservedQtyLog->insert($reservedLogData);
 
             if($adjustmentAmount <= $product->reserved_qty_limit){
-                $message = "<span style='color:red;'> Product reserved quantity limit is ".$product->reserved_qty_limit." and quantity ".($product->reserved_qty-$product->qty)." is available for product <strong>(".$product->item_name.")</strong></span>";
+                $message = "<span style='color:red;'> Product Name : $product->item_description <br> Reserved Qty Limit: $product->reserved_qty_limit <br> Reserved Qty Available: $adjustmentAmount</span>";
                 self::sendProductReservedQtyEmail($message);
                 /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
             }
