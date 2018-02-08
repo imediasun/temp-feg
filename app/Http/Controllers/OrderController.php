@@ -547,7 +547,7 @@ class OrderController extends Controller
             if(!empty($product)) {
                 $product->item_name=$item_names[$i];
                 $product->qty=$request->input('qty')[$i];
-                $product->changed_qty = $request->input('qty')[$i] - $request->input('prev_qty')[$i];
+                $product->prev_qty = $request->input('prev_qty')[$i];
                 $product->order_product_id = ($request->input('product_id')[$i]==$product->id) ? $request->input('product_id')[$i] : 0;
                 $productInformation[]=$product;
             }
@@ -819,6 +819,7 @@ class OrderController extends Controller
                     \DB::table('order_contents')->where('id', $order_content_id[$i])->update($contentsData);
                 }
 
+                $contentsData['prev_qty'] = $request->input('prev_qty')[$i];
                 event(new PostSaveOrderEvent($contentsData));
 
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
