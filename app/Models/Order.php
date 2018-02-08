@@ -72,15 +72,21 @@ class order extends Sximo
                     if($orderedProduct->allow_negative_reserve_qty == 0 && $orderedProduct->reserved_qty < $orderContent->qty){
                         throw new \Exception("Product does not have sufficient reserved quantities");
                     }
-                    $orderedProduct->updateProduct([
-                        'reserved_qty' => $orderedProduct->reserved_qty - $orderContent->qty
-                    ]);
+                    $reserved_qty = $orderedProduct->reserved_qty - $orderContent->qty;
+                    $updates = ['reserved_qty' => $reserved_qty];
+                    if(!$orderedProduct->allow_negative_reserve_qty and $reserved_qty == 0) {
+                        $updates['inactive'] = 1;
+                    }
+                    $orderedProduct->updateProduct($updates, true);
                 }
                 else
                 {
-                    $orderedProduct->updateProduct([
-                        'reserved_qty' => $orderedProduct->reserved_qty + $orderContent->qty
-                    ]);
+                    $reserved_qty = $orderedProduct->reserved_qty + $orderContent->qty;
+                    $updates = ['reserved_qty' => $reserved_qty];
+                    if($reserved_qty > 0) {
+                        $updates['inactive'] = 0;
+                    }
+                    $orderedProduct->updateProduct($updates, true);
                 }
             }
         }

@@ -4,7 +4,9 @@ use App\Http\Controllers\controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\Types\Null_;
 use Validator, Input, Redirect,Image;
 
 class ProductController extends Controller
@@ -391,6 +393,12 @@ class ProductController extends Controller
 
             }
 
+            if($data['inactive']){
+                $data['inactive_by'] = Auth::user()->id;
+            }else{
+                $data['inactive_by'] = NULL;
+            }
+
             if(is_array($product_categories) && $id > 0){
 
                 $products_combined = $this->model->checkProducts($id);
@@ -412,6 +420,7 @@ class ProductController extends Controller
                         unset($data_attached_products['retail_price']);
                         unset($data_attached_products['ticket_value']);
                         unset($data_attached_products['inactive']);
+                        unset($data_attached_products['inactive_by']);
                         unset($data_attached_products['in_development']);
 
                         $this->model->insertRow($data_attached_products,$pc->id);
@@ -607,15 +616,10 @@ class ProductController extends Controller
         $isActive = $request->get('isActive');
         $productId = $request->get('productId');
         if ($isActive == "true") {
-            $update = \DB::update('update products set inactive = 1 where id=' . $productId);
+            $update = \DB::update('update products set inactive = 1, inactive_by = '.Auth::user()->id.' where id=' . $productId);
         }
-        else
-         {
-            $update = \DB::update('update products set inactive = 0,in_development = 0 where id=' . $productId);
-             /*if($update &&  \Session::get('product_type') == "productsindevelopment")
-             {
-                 \DB::update('update products set in_development = 0 where id=' . $productId);
-             }*/
+        else {
+            $update = \DB::update('update products set inactive = 0, in_development = 0, inactive_by = NULL where id=' . $productId);
         }
         if ($update) {
             return response()->json(array(
