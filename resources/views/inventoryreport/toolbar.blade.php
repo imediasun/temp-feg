@@ -58,6 +58,23 @@
 </div>
 <script>
     $(document).ready(function(){
+        $(document).on("keyup change keydown",".date",function(){
+            var selectedDate = $(this).val();
+            //console.log(selectedDate);
+            if(selectedDate !==''){
+                selectedDate = selectedDate.split('/');
+                if(selectedDate.length==3){
+                    if(Number(selectedDate[2]) < 2017 || (Number(selectedDate[2]) < 2017 &&  Number(selectedDate[0]) < 6)){
+                            $(this).val('');
+                    }else if(Number(selectedDate[2]) <= 2017 &&  Number(selectedDate[0]) < 6) {
+                            $(this).val('');
+                    }else if(Number(selectedDate[2]) <= 2017 &&  Number(selectedDate[0]) <= 6 && Number(selectedDate[1]) <= 5) {
+                            $(this).val('');
+                        //06/06/2017
+                    }
+                }
+            }
+        });
         $('.date').datepicker({
             startDate:"06/06/2017",
             format:'mm/dd/yyyy',
