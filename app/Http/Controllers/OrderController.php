@@ -2179,7 +2179,6 @@ class OrderController extends Controller
                         $res = \DB::update("update products set  reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
                     }
                 }
-               // $res = \DB::update("update products set reserved_qty=(reserved_qty-" . $result[0]->reducedreservedqty . ") where id='" . $result[0]->product_id . "'");
             }
         }
     }
