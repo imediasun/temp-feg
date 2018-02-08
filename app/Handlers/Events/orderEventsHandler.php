@@ -32,13 +32,8 @@ class orderEventsHandler
         $message='You have attempted to request more product than there is Reserved Quantity available. Your request has been modified to reflect this amount.';
         foreach($event->products as $product){
 
-            $ReservedProductQtyLogObj = ReservedQtyLog::where('order_id', $event->order_id)
-                ->where('product_id', $product->id)
-                ->orderBy('id', 'DESC')
-                ->first();
-
-            if($ReservedProductQtyLogObj){
-                $adjustmentAmount = $product->qty - $ReservedProductQtyLogObj->adjustment_amount;
+            if($product->prev_qty){
+                $adjustmentAmount = $product->qty - $product->prev_qty;
             }else{
                 $adjustmentAmount = $product->qty;
             }

@@ -393,10 +393,12 @@ class ProductController extends Controller
 
             }
 
-            if($data['inactive']){
-                $data['inactive_by'] = Auth::user()->id;
-            }else{
-                $data['inactive_by'] = NULL;
+            if(isset($data['inactive'])){
+                if($data['inactive']){
+                    $data['inactive_by'] = Auth::user()->id;
+                }else{
+                    $data['inactive_by'] = NULL;
+                }
             }
 
             if(is_array($product_categories) && $id > 0){

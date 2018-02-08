@@ -551,15 +551,16 @@ class OrderController extends Controller
     {
         $item_names = $request->input('item_name');
         $productInformation = [];
-        for($i=0; $i<count($item_names); $i++) {
-            $product = \DB::table('products')->where(['id' => $request->input('product_id')[$i], 'is_reserved' => 1])->first();
-            if (!empty($product)) {
-                $product->item_name = $item_names[$i];
-                $product->qty = $request->input('qty')[$i];
-                $product->changed_qty = $request->input('qty')[$i] - $request->input('prev_qty')[$i];
-                $product->order_product_id = ($request->input('product_id')[$i] == $product->id) ? $request->input('product_id')[$i] : 0;
-                $productInformation[] = $product;
+        for($i=0; $i<count($item_names); $i++){
+            $product = \DB::table('products')->where(['id' => $request->input('product_id')[$i],'is_reserved'=>1])->first();
+            if(!empty($product)) {
+                $product->item_name=$item_names[$i];
+                $product->qty=$request->input('qty')[$i];
+                $product->prev_qty = $request->input('prev_qty')[$i];
+                $product->order_product_id = ($request->input('product_id')[$i]==$product->id) ? $request->input('product_id')[$i] : 0;
+                $productInformation[]=$product;
             }
+
         }
 
         $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
@@ -840,6 +841,7 @@ class OrderController extends Controller
                     \DB::table('order_contents')->where('id', $order_content_id[$i])->update($contentsData);
                 }
 
+                $contentsData['prev_qty'] = $request->input('prev_qty')[$i];
                 event(new PostSaveOrderEvent($contentsData));
 
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
