@@ -119,7 +119,7 @@ $selected_loc=\Session::get('selected_location');?>
                 $class = Request::url() == $mUrl ? "active" : "";
                 ?>
                 <li class="{{$class}}" >
-                    <a  href="{{ $mUrl }}"
+                    <a  href="{{ $mUrl }}" id="{{$moduleId}}"
                     @if(true || count($menu['childs']) > 0 ) class="expand level-closed" @endif>
                         <i class="{{$menu['menu_icons']}}"></i> <span class="nav-label">
 					
