@@ -1268,7 +1268,9 @@ class OrderController extends Controller
                 } elseif ($statusIdFilter == 10) {
                     $orderStatusCondition = " AND orders.deleted_at is not null  ";
                 } else {
-                    $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter' AND  orders.tracking_number!='') AND orders.deleted_at is null ";
+                   // $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter' AND  orders.tracking_number!='') AND orders.deleted_at is null ";
+                    $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter') AND orders.deleted_at is null ";
+
                 }
 
             }
