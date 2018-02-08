@@ -180,7 +180,6 @@ class OrderController extends Controller
         }
     }
 
-
     public function getIndex()
     {
 
@@ -370,7 +369,6 @@ class OrderController extends Controller
         return view('order.table', $this->data);
 
     }
-
 
     function getUpdate(Request $request, $id = 0, $mode = '')
     {
@@ -1111,6 +1109,7 @@ class OrderController extends Controller
 
 
     }
+
     public function postRemoveorderexplaination(Request $request)
     {
         $this->data['ids'] = implode(",", $request->input('ids'));
@@ -1607,7 +1606,7 @@ class OrderController extends Controller
 
     }
 
-    function validatePO($po, $po_full, $location_id)
+    function validatePO($po,$po_full,$location_id)
     {
         if ($po != 0) {
 
@@ -2069,8 +2068,7 @@ class OrderController extends Controller
         return response()->json($response);
     }
 
-    function getCheckReceivable(Request $request, $eId)
-    {
+    function getCheckReceivable(Request $request, $eId) {
         $id = \SiteHelpers::encryptID($eId, true);
         $response = ['status' => 'error', 'message' => \Lang::get('core.order_missing_id')];
         if (!empty($id)) {
@@ -2112,8 +2110,7 @@ class OrderController extends Controller
 
     }
 
-    function getCheckClonable(Request $request, $eId)
-    {
+    function getCheckClonable(Request $request, $eId) {
 
     }
 
@@ -2221,7 +2218,6 @@ class OrderController extends Controller
                         $res = \DB::update("update products set  reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
                     }
                 }
-               // $res = \DB::update("update products set reserved_qty=(reserved_qty-" . $result[0]->reducedreservedqty . ") where id='" . $result[0]->product_id . "'");
             }
         }
     }
