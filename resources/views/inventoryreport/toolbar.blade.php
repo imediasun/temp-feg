@@ -58,6 +58,13 @@
 </div>
 <script>
     $(document).ready(function(){
+
+        $('.date').datepicker({
+            startDate:"06/05/2017",
+            format:'mm/dd/yyyy',
+            autoclose:true
+        });
+
         var config_id=$("#col-config").val();
         if(config_id ==0 )
         {
