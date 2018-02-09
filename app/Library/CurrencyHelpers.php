@@ -43,8 +43,8 @@ class CurrencyHelpers
          $decimalSection = '';
          if(isset($split[1])){
              $decimalSection = $split[1].'00000';
-             $fixed = substr($decimalSection, 0,2);
-             $decimalSection = $dec_point.$fixed.rtrim(substr($decimalSection, $decimalPlaces), '0');
+             $fixed = substr($decimalSection, 0, 2);
+             $decimalSection = $dec_point.$fixed.rtrim(substr($decimalSection,2, ($decimalPlaces-2)), '0');
          }
          $decimalPlaces = 0;
          $formattedValue .= number_format((double)$split[0],$decimalPlaces,$dec_point , $thousands_sep);
