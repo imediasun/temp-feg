@@ -901,12 +901,7 @@ class OrderController extends Controller
                 \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
             }
 
-            /**
-             * Updating order status to open partial if received Items qty is less than ordered items qty
-             */
-            $order = Order::find($order_id);
-            $order->setOrderStatus();
-            $order->save();
+
 
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
@@ -943,12 +938,6 @@ class OrderController extends Controller
             }
             $this->model->insertRow($data, $id);
             \Session::put('order_id', $id);
-            /**
-             * Updating order status to open partial if received Items qty is less than ordered items qty
-             */
-            $order = Order::find($id);
-            $order->setOrderStatus();
-            $order->save();
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
 
             return response()->json(array(
@@ -1699,6 +1688,13 @@ class OrderController extends Controller
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
         }
+        /**
+         * Updating order status to open partial if received Items qty is less than ordered items qty
+         */
+        $order = Order::find($order_id);
+        $order->setOrderStatus();
+        $order->save();
+
         $rules = array();
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";
