@@ -28,5 +28,4 @@ class OrderContent extends Sximo
         return $this->belongsTo("App\Models\Order");
     }
 
-
 }
