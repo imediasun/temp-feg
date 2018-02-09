@@ -1620,12 +1620,7 @@ class OrderController extends Controller
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
         }
-        /**
-         * Updating order status to open partial if received Items qty is less than ordered items qty
-         */
-        $order = Order::find($order_id);
-        $order->setOrderStatus();
-        $order->save();
+
 
         $rules = array();
         if (empty($notes)) {
@@ -1698,7 +1693,12 @@ class OrderController extends Controller
             if ($request->get('mode') == 'update') {
                 $this->updateOrderReceipt($request);
             }
-
+            /**
+             * Updating order status to open partial if received Items qty is less than ordered items qty
+             */
+            $order = Order::find($order_id);
+            $order->setOrderStatus();
+            $order->save();
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
