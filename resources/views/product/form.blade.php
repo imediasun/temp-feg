@@ -35,11 +35,6 @@
             width: 100%;
             margin-bottom: 14px;
         }
-        .product-reserved-qty-box{
-            float: left;
-            width: 100%;
-            margin-bottom: 14px;
-        }
     </style>
     <div class="sbox">
         <div class="sbox-title">
@@ -277,8 +272,20 @@
 
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="Reserved Qty" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Reserved Qty', (isset($fields['reserved_qty']['language'])?
+                            $fields['reserved_qty']['language'] : array())) !!}
+                        </label>
 
-                    <span class="product-reserved-qty-box" style=" {{ in_array('1',$is_reserved) ? '':'display: none;' }}">
+                        <div class="col-md-6">
+                            {!! Form::text('reserved_qty', $row['reserved_qty'],array('class'=>'form-control',
+                            'placeholder'=>'', )) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="allow_negative_reserve_qty" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Allow Negative Reserved Qty', (isset($fields['allow_negative_reserve_qty']['language'])?
@@ -311,21 +318,6 @@
 
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="Reserved Qty" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Reserved Qty', (isset($fields['reserved_qty']['language'])?
-                            $fields['reserved_qty']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            {!! Form::text('reserved_qty', $row['reserved_qty'],array('class'=>'form-control',
-                            'placeholder'=>'', )) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-                    </span>
 
                     <div class="form-group  ">
                         <label for="Img" class=" control-label col-md-4 text-left">
@@ -457,13 +449,6 @@
         $('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue'
-        });
-
-        $('[name="is_reserved"]').on("ifChecked", function () {
-            $(".product-reserved-qty-box").show();
-        })
-        .on("ifUnchecked", function () {
-            $(".product-reserved-qty-box").hide();
         });
 
             $("#prod_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
