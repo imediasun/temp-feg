@@ -13,7 +13,7 @@ use Log;
  * Class Ordercontent
  * @package App\Models
  */
-class OrderContent extends Sximo
+class OrderedContent extends Sximo
 {
     /**
      * @var string
@@ -27,5 +27,6 @@ class OrderContent extends Sximo
     {
         return $this->belongsTo("App\Models\Order");
     }
+
 
 }

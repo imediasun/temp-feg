@@ -31,20 +31,29 @@ class order extends Sximo
 
     }
 
-    public static function boot(){
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orderedContent()
+    {
+        return $this->hasMany("App\Models\OrderedContent");
+    }
+
+    public static function boot()
+    {
         parent::boot();
 
-        static::deleted(function(Order $model){
+        static::deleted(function (Order $model) {
             $model->status_id = self::ORDER_DELETED_STATUS;
-            $model->deleted_by =  \Session::get('uid');
+            $model->deleted_by = \Session::get('uid');
             $model->restoreReservedProductQuantities();
         });
 
         //@todo add statis::restore
-        static::restoring(function(Order $model){
-           $model->status_id = self::ORDER_ACTIVE_STATUS;
-           $model->deleted_by = null;
-           $model->deleteReservedProductQuantities();
+        static::restoring(function (Order $model) {
+            $model->status_id = self::ORDER_ACTIVE_STATUS;
+            $model->deleted_by = null;
+            $model->deleteReservedProductQuantities();
         });
     }
 
@@ -1147,5 +1156,13 @@ class order extends Sximo
             }
         }
         return $notes;
+    }
+    public function setOrderStatus(){
+        $OrderedQty = $this->orderedContent->sum('qty');
+        $ItemReceived = $this->orderedContent->sum('item_received');
+        if($ItemReceived>0 && $ItemReceived<$OrderedQty){
+            $this->status_id=1;
+            $this->is_partial=1;
+        }
     }
 }
