@@ -136,7 +136,7 @@
 										 if($row->size !='')
 										 {
 											 echo $value;
-											 echo " Size:".$row->size;
+											 echo " <br> Size:" . $row->size;
 										 }else{
 											 echo $value;
 										 }
