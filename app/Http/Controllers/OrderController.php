@@ -182,7 +182,6 @@ class OrderController extends Controller
 
     public function getIndex()
     {
-
         /*
         \App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
@@ -902,6 +901,13 @@ class OrderController extends Controller
                 \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
             }
 
+            /**
+             * Updating order status to open partial if received Items qty is less than ordered items qty
+             */
+            $order = Order::find($order_id);
+            $order->setOrderStatus();
+            $order->save();
+
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
             \Session::put('redirect', $redirect_link);
@@ -937,7 +943,14 @@ class OrderController extends Controller
             }
             $this->model->insertRow($data, $id);
             \Session::put('order_id', $id);
+            /**
+             * Updating order status to open partial if received Items qty is less than ordered items qty
+             */
+            $order = Order::find($id);
+            $order->setOrderStatus();
+            $order->save();
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
+
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
