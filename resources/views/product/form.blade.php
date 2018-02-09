@@ -86,19 +86,6 @@
                         </div>
                     </div>
                     <div class="form-group  ">
-                        <label for="Size" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Size', (isset($fields['size']['language'])?
-                            $fields['size']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            {!! Form::text('size', $row['size'],array('class'=>'form-control', 'placeholder'=>'', )) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-                    <div class="form-group  ">
                         <label for="Addl Details" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Add\'l Details', (isset($fields['details']['language'])?
                             $fields['details']['language'] : array())) !!}
