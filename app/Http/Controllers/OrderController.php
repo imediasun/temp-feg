@@ -548,6 +548,20 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        $item_names = $request->input('item_name');
+        $productInformation = [];
+        for($i=0; $i<count($item_names); $i++){
+            $product = \DB::table('products')->where(['id' => $request->input('product_id')[$i],'is_reserved'=>1])->first();
+            if(!empty($product)) {
+                $product->item_name=$item_names[$i];
+                $product->qty=$request->input('qty')[$i];
+                $product->prev_qty = $request->input('prev_qty')[$i];
+                $product->order_product_id = ($request->input('product_id')[$i]==$product->id) ? $request->input('product_id')[$i] : 0;
+                $productInformation[]=$product;
+            }
+
+        }
+
         $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
 
         /*$productIdArray = $request->get('product_id');
@@ -676,12 +690,13 @@ class OrderController extends Controller
                     $itemsPriceArray[$i] . ' ea.';
             }
 
-            $validationResponse = $this->validateProductForReserveQty($request);
+            $eventResponse = event(new ordersEvent($productInformation, $order_id))[0];
 
-            if(!empty($validationResponse) && $validationResponse['error']==true){
+            if(!empty($eventResponse) && $eventResponse['error']==true){
                 return response()->json(array(
-                    'message' => $validationResponse['message'],
+                    'message' => $eventResponse['message'],
                     'status' => 'error',
+
                 ));
             }
 
@@ -700,6 +715,9 @@ class OrderController extends Controller
                 );
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
+
+                //event(new PostEditOrderEvent($productInformation,$order_id));
+
 
                 $force_remove_items = explode(',', $force_remove_items);
                 \DB::table('order_contents')->where('order_id', $last_insert_id)->where('item_received', '0')->delete();
@@ -732,6 +750,9 @@ class OrderController extends Controller
                 }
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
+
+                //event(new PostOrdersEvent($productInformation,$order_id));
+
             }
             //// UPDATE STATUS TO APPROVED AND PROCESSED
             //don't put this code in loop below
@@ -936,33 +957,6 @@ class OrderController extends Controller
             ));
         }
 
-    }
-
-    public function validateProductForReserveQty($request){
-        $item_names = $request->input('item_name');
-        $productInformation = [];
-        for($i=0; $i<count($item_names); $i++){
-            $product = \DB::table('products')->where(['id' => $request->input('product_id')[$i],'is_reserved'=>1])->first();
-            if(!empty($product)) {
-                $product->item_name=$item_names[$i];
-                $product->qty=$request->input('qty')[$i];
-                $product->prev_qty = $request->input('prev_qty')[$i];
-                $product->order_product_id = ($request->input('product_id')[$i]==$product->id) ? $request->input('product_id')[$i] : 0;
-                $productInformation[]=$product;
-            }
-        }
-
-        $collect = collect($productInformation);
-        $groups = $collect->groupBy('id');
-
-        $productInformationCombined = [];
-        foreach ($groups as $key => $group){ //This loop will combine duplicate products
-            $group[0]->qty = $group->sum('qty');
-            $group[0]->prev_qty = $group->sum('prev_qty');
-            $productInformationCombined[] = $group[0];
-        }
-
-        return event(new ordersEvent($productInformationCombined, $request->order_id))[0];
     }
 
     public function getSaveOrSendEmail($isPop = null)
