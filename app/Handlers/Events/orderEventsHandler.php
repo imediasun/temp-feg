@@ -45,9 +45,11 @@ class orderEventsHandler
 
             if($product->allow_negative_reserve_qty == 0 && $adjustmentAmount > $product->reserved_qty){
                     $error=true;
-                    $message .="<br>* Item Name: ".$product->item_name.", SKU: ".$product->sku.", Quantity: ".$product->reserved_qty."";
+                    $message .= "<br>* Item Name: $product->item_name, SKU: $product->sku, Quantity: $product->reserved_qty";
             }
+
         }
+
        return array_merge($ProductResponse,['error'=>$error,"message"=>$message]);
     }
 }
