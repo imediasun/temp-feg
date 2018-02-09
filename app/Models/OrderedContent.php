@@ -13,7 +13,7 @@ use Log;
  * Class Ordercontent
  * @package App\Models
  */
-class Ordercontent extends Sximo
+class OrderedContent extends Sximo
 {
     /**
      * @var string
@@ -23,7 +23,8 @@ class Ordercontent extends Sximo
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function order(){
+    public function order()
+    {
         return $this->belongsTo("App\Models\Order");
     }
 
