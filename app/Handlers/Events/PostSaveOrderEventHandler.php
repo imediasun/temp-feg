@@ -34,7 +34,12 @@ class PostSaveOrderEventHandler
 
         if($product->is_reserved==1) {
 
-            if($item->prev_qty){
+            $ReservedProductQtyLogObj = ReservedQtyLog::where('order_id', $event->order_id)
+                ->where('product_id', $product->id)
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            if($ReservedProductQtyLogObj and $item->prev_qty){
                 $adjustmentAmount = ($product->reserved_qty + $item->prev_qty) - $item->qty;
             }else{
                 $adjustmentAmount = $product->reserved_qty - $item->qty;
