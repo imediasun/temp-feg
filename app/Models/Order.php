@@ -34,9 +34,7 @@ class order extends Sximo
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function contents(){
-        return $this->hasMany("App\Models\Ordercontent");
-    }
+
 
     public static function boot(){
         parent::boot();
