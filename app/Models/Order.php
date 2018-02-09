@@ -27,6 +27,13 @@ class order extends Sximo
 
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function contents(){
+        return $this->hasMany("App\Models\Ordercontent");
+    }
+
     public static function querySelect()
     {
 
@@ -1066,5 +1073,13 @@ class order extends Sximo
             }
         }
         return $notes;
+    }
+    public function setOrderStatus(){
+        $OrderedQty = $this->contents->sum('qty');
+        $ItemReceived = $this->contents->sum('item_received');
+        if($ItemReceived>0 && $ItemReceived<$OrderedQty){
+            $this->status_id=1;
+            $this->is_partial=1;
+        }
     }
 }
