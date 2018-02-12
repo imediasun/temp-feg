@@ -156,6 +156,7 @@ class UserController extends Controller
     }
     public function getGoogle()
     {
+
         $user = Socialite::driver('google')->stateless()->user();
         $email = $user->email;
         $userCheck = User::where('email', '=', $user->email)->first();
@@ -779,7 +780,7 @@ class UserController extends Controller
 
     function getSocialize($social)
     {
-        return Socialize::with($social)->scopes(['openid', 'profile', 'email','https://mail.google.com'])->with(['access_type' => 'offline'])->redirect();
+        return Socialize::with($social)->scopes(['openid', 'profile', 'email', 'https://mail.google.com'])->with(['access_type' => 'offline', 'prompt' => 'consent'])->redirect();
     }
 
     function getAutosocial($social)
