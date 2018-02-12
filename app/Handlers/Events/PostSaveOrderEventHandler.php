@@ -66,7 +66,7 @@ class PostSaveOrderEventHandler
             $reservedQtyLog->insert($reservedLogData);
 
             if($adjustmentAmount <= $product->reserved_qty_limit){
-                $message = "<span style='color:red;'> Product Name : $product->vendor_description <br> Reserved Qty Limit: $product->reserved_qty_limit <br> Reserved Qty Available: $adjustmentAmount</span>";
+                $message = "<span style='color:red;'> Product Name : $product->vendor_description <br> Reserved Qty Par Amount: $product->reserved_qty_limit <br> Reserved Qty Available: $adjustmentAmount</span>";
                 self::sendProductReservedQtyEmail($message);
                 /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
             }

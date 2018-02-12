@@ -1667,7 +1667,7 @@
 
     </style>
 
-<script>
+    <script>
     $(document).ready(function () {
         
         $(".exposeAPI").on('click', function() {
@@ -1815,3 +1815,31 @@
     });
 
 </script>
+
+    <script>
+        $(document).ready(function () {
+            $(document).ajaxComplete(function(event, xhr, settings){
+                if(xhr.status == 200 && settings.url == "{{ action('OrderController@postSave') }}"){
+                    var response = JSON.parse(xhr.responseText);
+                    if('reserve_quantities' in response){
+                        var reserve_quantities = response.reserve_quantities;
+                        console.log("reserve_quantities found "+ reserve_quantities);
+
+                        var reserveQuantitiesAssoc = [];
+                        $.each(reserve_quantities, function(k, v) {
+                            reserveQuantitiesAssoc[k] = v;
+                        });
+
+                        $('.clonedInput').each(function(i, ele){
+                            var product_id = $(ele).find("[name='product_id[]']").first().val();
+                            var prev_qty = $(ele).find("[name='prev_qty[]']").first().val();
+                            if(reserveQuantitiesAssoc[product_id] !== undefined){
+                                var qty = reserveQuantitiesAssoc[product_id] + parseInt(prev_qty || 0);
+                                $(ele).find("[name='qty[]']").first().val(qty);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>
