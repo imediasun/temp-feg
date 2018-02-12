@@ -1821,27 +1821,17 @@
             $(document).ajaxComplete(function(event, xhr, settings){
                 if(xhr.status == 200 && settings.url == "{{ action('OrderController@postSave') }}"){
                     var response = JSON.parse(xhr.responseText);
-                    if('reserve_quantities' in response){
-                        var reserve_quantities = response.reserve_quantities;
-                        console.log("reserve_quantities found "+ reserve_quantities);
-
-                        var reserveQuantitiesAssoc = [];
-                        $.each(reserve_quantities, function(k, v) {
-                            reserveQuantitiesAssoc[k] = v;
+                    if('adjustQty' in response){
+                        var adjustQty = response.adjustQty;
+                        var adjustQtyAssoc = [];
+                        $.each(adjustQty, function(k, v) {
+                            adjustQtyAssoc[k] = v;
                         });
 
                         $('.clonedInput').each(function(i, ele){
                             var product_id = $(ele).find("[name='product_id[]']").first().val();
-                            var prev_qty = parseInt($(ele).find("[name='prev_qty[]']").first().val() || 0);
-                            if(reserveQuantitiesAssoc[product_id] !== undefined){
-                                var reserve_qty = reserveQuantitiesAssoc[product_id], qty =0;
-                                if(prev_qty > reserve_qty){
-                                    qty = reserve_qty;
-                                }else{
-                                    qty = reserve_qty + prev_qty;
-                                }
-
-                                $(ele).find("[name='qty[]']").first().val(qty).change();
+                            if(adjustQtyAssoc[product_id] !== undefined){
+                                $(ele).find("[name='qty[]']").first().val(adjustQtyAssoc[product_id]).change();
                             }
                         });
                     }

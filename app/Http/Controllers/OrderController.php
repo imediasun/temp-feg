@@ -682,7 +682,7 @@ class OrderController extends Controller
                 return response()->json(array(
                     'message' => $validationResponse['message'],
                     'status' => 'error',
-                    'reserve_quantities' => $validationResponse['reserve_quantities']
+                    'adjustQty' => $validationResponse['adjustQty']
                 ));
             }
 
