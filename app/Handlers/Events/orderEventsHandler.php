@@ -30,7 +30,7 @@ class orderEventsHandler
         $error = false;
         $ProductResponse=['error' => $error, "message" => ''];
         $message='You have attempted to request more product than there is Reserved Quantity available. Your request has been modified to reflect this amount.';
-        $responseReservesQty = [];
+        $adjustQty = [];
         foreach($event->products as $product){
 
             $ReservedProductQtyLogObj = ReservedQtyLog::where('order_id', $event->order_id)
@@ -47,10 +47,10 @@ class orderEventsHandler
             if($product->allow_negative_reserve_qty == 0 && $adjustmentAmount > $product->reserved_qty){
                 $error=true;
                 $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $product->reserved_qty";
-                $responseReservesQty[$product->id] = $product->reserved_qty;
+                $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $product->reserved_qty + $product->prev_qty : $product->reserved_qty;
             }
         }
 
-       return array_merge($ProductResponse,['error' => $error, "message" => $message, "reserve_quantities" => $responseReservesQty]);
+       return array_merge($ProductResponse,['error' => $error, "message" => $message, "adjustQty" => $adjustQty]);
     }
 }
