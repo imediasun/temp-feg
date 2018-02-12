@@ -678,10 +678,11 @@ class OrderController extends Controller
 
             $validationResponse = $this->validateProductForReserveQty($request);
 
-            if(!empty($validationResponse) && $validationResponse['error']==true){
+            if(!empty($validationResponse) && $validationResponse['error'] == true){
                 return response()->json(array(
                     'message' => $validationResponse['message'],
                     'status' => 'error',
+                    'reserve_quantities' => $validationResponse['reserve_quantities']
                 ));
             }
 
