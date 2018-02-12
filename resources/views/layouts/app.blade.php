@@ -90,6 +90,7 @@
     <script type="text/javascript" src="{{ asset('sximo/js/search.js') }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js') }}"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+	<meta name="google-site-verification" content="Fykw9_aQCQ8gaf5Ei_mtcIQrtNDyyZIcTP4zkGR2PNw"/>
     <!-- End Search and storage  -->
     @yield('beforeheadend', '')	
   	</head>
