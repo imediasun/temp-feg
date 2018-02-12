@@ -154,8 +154,8 @@ class ProductController extends Controller
             $this->data['active_prod'] = 0;
         }
         $this->data['sub_type']=$sub_type;
-        $results = $this->model->getRows($params, $prod_list_type, $active,$sub_type);
-
+        echo $results = $this->model->getRows($params, $prod_list_type, $active, $sub_type);
+        die;
         $rows = $results['rows'];
 
         foreach ($rows as $index => $data) {

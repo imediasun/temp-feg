@@ -238,7 +238,7 @@ class product extends Sximo  {
 
 
         Log::info("Query : ".$select . " {$params}  {$groupConditions} {$orderConditional}  {$limitConditional} ");
-
+        return $select . " {$params} {$groupConditions} {$orderConditional}  {$limitConditional} ";
         $result=\DB::select($select." {$params} {$groupConditions} {$orderConditional}  {$limitConditional} ");
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
         $counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
