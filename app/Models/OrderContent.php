@@ -27,5 +27,12 @@ class OrderContent extends Sximo
     {
         return $this->belongsTo("App\Models\Order");
     }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function product(){
+        return $this->belongsTo("App\Models\product");
+    }
 
 }
