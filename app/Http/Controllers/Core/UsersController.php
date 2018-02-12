@@ -345,17 +345,11 @@ class UsersController extends Controller
             {
                 $user->refresh_token = $array['refresh_token'];
             }
-
-            print_r($array);
-            print_r($array2);
-            exit;
-
             $user->save();
             return redirect(url('core/users/update/'.$request->get('state')));
         }
         else
         {
-            dd("no code found");
             if ($id == '') {
 
                 if ($this->access['is_add'] == 0)
