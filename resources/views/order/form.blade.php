@@ -1835,7 +1835,7 @@
                             var prev_qty = $(ele).find("[name='prev_qty[]']").first().val();
                             if(reserveQuantitiesAssoc[product_id] !== undefined){
                                 var qty = reserveQuantitiesAssoc[product_id] + parseInt(prev_qty || 0);
-                                $(ele).find("[name='qty[]']").first().val(qty);
+                                $(ele).find("[name='qty[]']").first().val(qty).change();
                             }
                         });
                     }
