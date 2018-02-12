@@ -273,6 +273,20 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label for="Reserved Qty" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Reserved Qty', (isset($fields['reserved_qty']['language'])?
+                            $fields['reserved_qty']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            {!! Form::text('reserved_qty', $row['reserved_qty'],array('class'=>'form-control',
+                            'placeholder'=>'', )) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="allow_negative_reserve_qty" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Allow Negative Reserved Qty', (isset($fields['allow_negative_reserve_qty']['language'])?
                             $fields['is_reserved']['language'] : array())) !!}
@@ -292,7 +306,7 @@
                     </div>
                     <div class="form-group">
                         <label for="Reserved Qty Limit" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Reserved Qty Limit', (isset($fields['reserved_qty_limit']['language'])?
+                            {!! SiteHelpers::activeLang('Reserved Qty Par Amount', (isset($fields['reserved_qty_limit']['language'])?
                             $fields['reserved_qty_limit']['language'] : array())) !!}
                         </label>
 
@@ -304,20 +318,7 @@
 
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="Reserved Qty" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Reserved Qty', (isset($fields['reserved_qty']['language'])?
-                            $fields['reserved_qty']['language'] : array())) !!}
-                        </label>
 
-                        <div class="col-md-6">
-                            {!! Form::text('reserved_qty', $row['reserved_qty'],array('class'=>'form-control',
-                            'placeholder'=>'', )) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
                     <div class="form-group  ">
                         <label for="Img" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Img', (isset($fields['img']['language'])?
