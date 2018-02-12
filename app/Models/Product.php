@@ -173,9 +173,13 @@ class product extends Sximo  {
             'global'	=> 1
         ), $args ));
 
+
+        if ($sort == 'prod_type_id' || $sort == 'prod_sub_type_id') {
+            $sort = "products." . $sort;
+        }
         $offset = ($page-1) * $limit ;
         $limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';
-        $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : '';
+        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY $sort {$order} " : '';
 
         // Update permission global / own access new ver 1.1
         $table = with(new static)->table;
@@ -223,6 +227,7 @@ class product extends Sximo  {
         if(!empty($vendor_id)){
             $select .= " AND vendor_id='$vendor_id'";
         }
+
         //$limitConditional = 'LIMIT 0 , 1';
 
         if($is_api){
@@ -233,6 +238,7 @@ class product extends Sximo  {
 
 
         Log::info("Query : ".$select . " {$params}  {$groupConditions} {$orderConditional}  {$limitConditional} ");
+
         $result=\DB::select($select." {$params} {$groupConditions} {$orderConditional}  {$limitConditional} ");
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
         $counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
