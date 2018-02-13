@@ -944,7 +944,9 @@ class OrderController extends Controller
         $groups = $collect->groupBy('id');
 
         $productInformationCombined = [];
-        foreach ($groups as $key => $group){ //This loop will combine duplicate products
+        //TODO: This functionality don't needed when double product restriction will be applied.
+        //This loop will combine duplicate products
+        foreach ($groups as $key => $group){
             $group[0]->qty = $group->sum('qty');
             $group[0]->prev_qty = $group->sum('prev_qty');
             $productInformationCombined[] = $group[0];
