@@ -1879,7 +1879,15 @@ class OrderController extends Controller
         }
 
         if($excludeProducts){
-            $whereWithExcludeProductCondition = " AND products.id NOT IN ($excludeProducts) ";
+            $excludeProductsArray = explode(',', $excludeProducts);
+            $excludeProductsIds = [];
+            foreach ($excludeProductsArray as $item){
+                $product = product::find($item);
+                $variations = $product->getProductVariations();
+                array_map(function($row) use (&$excludeProductsIds) { $excludeProductsIds[] = $row->id; }, $variations->all());
+            }
+            $excludeProductsIds = implode(',', $excludeProductsIds);
+            $whereWithExcludeProductCondition = " AND products.id NOT IN ($excludeProductsIds) ";
         }
 
         $results = array();
