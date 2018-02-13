@@ -265,5 +265,68 @@ class product extends Sximo  {
         return $products;
     }
 
+    public function checkIsDefaultExpenseCategory($id)
+    {
+        $product = DB::table('products')->where(['id' => $id])->first();
+        if ($product->is_default_expense_category == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function hasDefaultExpenseCategory($id)
+    {
+
+        $searchProduct = $this->checkIsDefaultExpenseCategory($id);
+
+        $products = $this->checkProducts($id);
+        if (count($products) == 1) {
+            return false;
+        } elseif ($searchProduct == true) {
+            return true;
+        } elseif ($searchProduct == false) {
+            return false;
+        } elseif (count($products) > 1) {
+            foreach ($products as $product) {
+                if ($product->is_default_expense_category == 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public function setFirstDefaultExpenseCategory($id)
+    {
+        $products = $this->checkProducts($id);
+        $first = 1;
+        foreach ($products as $product) {
+            $item = self::find($product->id);
+            if ($first == 1) {
+                $item->is_default_expense_category = 1;
+                $first = 2;
+            } else {
+                $item->is_default_expense_category = 0;
+            }
+            $item->save();
+        }
+    }
+
+    public function setDefaultExpenseCategory($id)
+    {
+        $products = $this->checkProducts($id);
+
+        foreach ($products as $product) {
+            $item = self::find($product->id);
+            if ($id == $item->id) {
+                $item->is_default_expense_category = 1;
+            } else {
+                $item->is_default_expense_category = 0;
+            }
+            $item->save();
+        }
+    }
+
 
 }
