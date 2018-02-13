@@ -1397,6 +1397,23 @@
                         if (vendorId != "") {
                             request.vendor_id = $("#vendor_id").val();
                         }
+
+                        var already_added_products = [], exclude_products = '';
+                        $('.clonedInput').each(function(i, ele){
+                            var product_id = $(ele).find("[name='product_id[]']").first().val();
+                            if(product_id){
+                                already_added_products.push(product_id);
+                            }
+                        });
+
+                        if(already_added_products.length){
+                            exclude_products = already_added_products.join();
+                        }
+
+                        if(exclude_products){
+                            request.exclude_products = exclude_products;
+                        }
+
                         lastXhr = $.getJSON("{{url()}}/order/autocomplete", request, function (data, status, xhr) {
                             cache[term] = data;
                             if (data.value == "No Match") {
