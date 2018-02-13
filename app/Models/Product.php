@@ -278,4 +278,10 @@ class product extends Sximo  {
     }
 
 
+    public  function getProductVariations(){
+        $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price'=>$this->case_price])->get();
+        return $items;
+    }
+
+
 }
