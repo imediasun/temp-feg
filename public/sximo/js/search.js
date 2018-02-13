@@ -40,8 +40,8 @@ function performAdvancedSearch(params) {
                 value2 = '';
             }
             if (typeof value == 'string') {
-                value  = $.trim(value);
-                value2 = $.trim(value2);
+                value  = $.trim(value).replace(/[^\x00-\x7F]/g, "");
+                value2 = $.trim(value2).replace(/[^\x00-\x7F]/g, "");
             }
             // cache original value
             cache[field] = {value:value, value2: value2, operator: operate};           
