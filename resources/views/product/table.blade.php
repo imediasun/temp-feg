@@ -8,7 +8,7 @@
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','product/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
-			@endif 
+			@endif
 		</div>
 	</div>
 	<div class="sbox-content">
@@ -31,7 +31,7 @@
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'prod_list_type'=>$product_list_type,'active'=>$active_prod])
 
 	 <?php echo Form::open(array('url'=>'product/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
-<div class="table-responsive">	
+<div class="table-responsive">
 	@if(count($rowData)>=1)
     <table class="table table-striped datagrid " id="{{ $pageModule }}Table">
         <thead>
@@ -98,10 +98,10 @@
 				<td >
 					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
 				</td>
-			  </tr>	 
-			  @endif        
-			
-           		<?php foreach ($rowData as $row) : 
+			  </tr>
+			  @endif
+
+           		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
 				{{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
@@ -116,16 +116,16 @@
 						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 					@endif
 					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('product/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
-					@endif			
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('product/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
+					@endif
 					 <?php foreach ($tableGrid as $field) :
-					 	if($field['view'] =='1') : 
+					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
-								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
+								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                      @if($field['field']=='img')
 										<?php
@@ -170,9 +170,9 @@
 									@endif
 
 								 </td>
-							@endif	
-						 <?php endif;					 
-						endforeach; 
+							@endif
+						 <?php endif;
+						endforeach;
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
                      {!! AjaxHelpers::GamestitleButtonAction('product',$access,$id ,$setting) !!}
@@ -193,11 +193,11 @@
                 	<td colspan="{{ $colspan}}" class="data"></td>
                 	<td></td>
                 </tr>
-                @endif				
+                @endif
             <?php endforeach;?>
-              
+
         </tbody>
-      
+
     </table>
         @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
             @foreach ($rowData as $row)
@@ -207,16 +207,16 @@
 	@else
 
 	<div style="margin:100px 0; text-align:center;">
-	
+
 		<p> No Record Found </p>
 	</div>
-	
-	@endif		
-	
+
+	@endif
+
 	</div>
 	<?php echo Form::close() ;?>
 	@include('ajaxfooter',array('product_list_type'=>$product_list_type,'sub_type'=>$sub_type,'active'=>$active_prod))
-	
+
 	</div>
 </div>
 
@@ -235,7 +235,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
-       
+
       </div>
     </div>
   </div>
@@ -300,24 +300,24 @@ $(document).ready(function() {
 	$('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue'
-	});	
+	});
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
 	});
 	$('#{{ $pageModule }}Table .checkall').on('ifUnchecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('uncheck');
-	});	
-	
+	});
+
 	$('#{{ $pageModule }}Paginate .pagination li a').click(function() {
 		var url = $(this).attr('href');
-		reloadData('#{{ $pageModule }}',url);		
+		reloadData('#{{ $pageModule }}',url);
 		return false ;
 	});
 
 	<?php if($setting['view-method'] =='expand') :
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
-	 ?>	
+	 ?>
 
 var simpleSearch = $('.simpleSearchContainer');
 if (simpleSearch.length) {
