@@ -85,10 +85,6 @@ class AjaxHelpers
                         } else {
                             if (isset($row->$fieldName)) {
                                 $params[$index] = $row->$fieldName;
-                                //$fieldName=="Unit_Price" || $fieldName="Case_Price" ||
-                                if (strtolower($fieldName) == 'order_total' || strtolower($fieldName) == 'unit_price' || strtolower($fieldName) == 'retail_price' || strtolower($fieldName) == 'case_price') {
-                                    $params[$index + 1] = 5;
-                                }
                             }
                         }
                     }

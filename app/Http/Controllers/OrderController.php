@@ -280,8 +280,8 @@ class OrderController extends Controller
                 } else {
                     $sku = " (SKU: " . $r->sku . ")";
                 }
-
-                $info = $info . '(' . $r->qty . ') ' . $r->item_name . ' ' . \CurrencyHelpers::formatPrice($r->total, 5, true, ',', '.', true) . $sku . '; ';
+                // As per bug-194 2 decimals will be showing in info total price
+                $info = $info . '(' . $r->qty . ') ' . $r->item_name . ' ' . \CurrencyHelpers::formatPrice($r->total, 2, true, ',', '.', true) . $sku . '; ';
             }
             $rs->productInfo = rtrim($info, '; ');
         }
