@@ -85,6 +85,9 @@ class AjaxHelpers
                         } else {
                             if (isset($row->$fieldName)) {
                                 $params[$index] = $row->$fieldName;
+                                if ($fieldName == 'order_total') {
+                                    $params[$index + 1] = 5;
+                                }
                             }
                         }
                     }

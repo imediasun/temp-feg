@@ -181,7 +181,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ CurrencyHelpers::formatPrice($row->order_total, \App\Models\Order::ORDER_PERCISION) }}
+                            {{ CurrencyHelpers::formatPrice($row->order_total,5) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -377,11 +377,11 @@ if(!empty($order_data['orderQtyArray'])){
                         <td>{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
                         <td>{{  \DateHelpers::formatStringValue($order_data['orderDescriptionArray'][$i]) }}</td>
                         <td>
-                                {{CurrencyHelpers::formatCurrency(number_format($order_data['itemCasePrice'][$i],\App\Models\Order::ORDER_PERCISION)) }}
+                            {{CurrencyHelpers::formatPrice($order_data['itemCasePrice'][$i],5) }}
 
                         </td>
                         <td>
-                                {{CurrencyHelpers::formatCurrency(number_format($order_data['orderPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}
+                            {{CurrencyHelpers::formatPrice($order_data['orderPriceArray'][$i],5) }}
 
                         </td>
                         <td>{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
@@ -389,7 +389,7 @@ if(!empty($order_data['orderQtyArray'])){
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
                             <td>{{  \DateHelpers::formatStringValue($order_data['gamenameArray'][$i]) }}</td>
                         @endif
-                        <td>{{ CurrencyHelpers::formatPrice($order_data['orderItemsPriceArray'][$i]* $order_data['orderQtyArray'][$i], \App\Models\Order::ORDER_PERCISION)}}</td>
+                        <td>{{ CurrencyHelpers::formatPrice($order_data['orderItemsPriceArray'][$i]* $order_data['orderQtyArray'][$i],5)}}</td>
                           </tr>
                     @endfor
                 <tr>
@@ -399,7 +399,7 @@ if(!empty($order_data['orderQtyArray'])){
                         <td colspan="6">&nbsp;</td>
                     @endif
                     <td  colspan="2"><b>Sub Total ($)</b></td>
-                    <td colspan="1"><b>{{CurrencyHelpers::formatPrice($order_data['order_total'], \App\Models\Order::ORDER_PERCISION) }}</b></td>
+                    <td colspan="1"><b>{{CurrencyHelpers::formatPrice($order_data['order_total'],5) }}</b></td>
 
                 </tr>
                     @else
