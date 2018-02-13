@@ -538,7 +538,7 @@
         }
     });
     $(document).on("blur", "input[name='case_price']", function () {
-        $(this).val($(this).fixDecimal());
+        $(this).val($(this).fixDecimal(5));
     });
 
     $(document).on("keyup change", "input[name='case_price']", function () {
@@ -546,11 +546,11 @@
     });
 
     $(document).on("blur", "input[name='unit_price']", function () {
-        $(this).val($(this).fixDecimal());
+        $(this).val($(this).fixDecimal(5));
     });
 
     $(document).on("blur", "input[name='retail_price']", function () {
-        $(this).val($(this).fixDecimal());
+        $(this).val($(this).fixDecimal(5));
     });
 
     $(function(){
@@ -571,7 +571,7 @@
         });
     });
     function fixdeci(value) {
-        places = 2;
+        places = 5;
         var val = getFlooredFixed($.trim(value),5);
 
         if(val.indexOf('.') == -1){
