@@ -345,7 +345,6 @@ class UsersController extends Controller
             {
                 $user->refresh_token = $array['refresh_token'];
             }
-
             $user->save();
             return redirect(url('core/users/update/'.$request->get('state')));
         }
