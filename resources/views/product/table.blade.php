@@ -408,19 +408,19 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 	}
 });
 $(document).on("blur", "input[name='case_price']", function () {
-	$(this).val($(this).fixDecimal());
+	$(this).val($(this).fixDecimal('<?php echo \App\Models\Order::ORDER_PERCISION; ?>'));
 });
 
 $(document).on("keyup change", "input[name='case_price']", function () {
 	calculateUnitPrice($(this).parents('tr').data('id'));
 });
 
-$(document).on("blur", "input[name='unit_price']", function () {
-	$(this).val($(this).fixDecimal());
-});
+    $(document).on("blur", "input[name='unit_price']", function () {
+        $(this).val($(this).fixDecimal('<?php echo \App\Models\Order::ORDER_PERCISION; ?>'));
+    });
 
 $(document).on("blur", "input[name='retail_price']", function () {
-	$(this).val($(this).fixDecimal());
+	$(this).val($(this).fixDecimal('<?php echo \App\Models\Order::ORDER_PERCISION; ?>'));
 });
 </script>
 
