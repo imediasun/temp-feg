@@ -99,7 +99,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Unit Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) }}
                     </td>
-                    <td>{{CurrencyHelpers::formatPrice($row->unit_price,5) }} </td>
+                    <td>{{CurrencyHelpers::formatPrice($row->unit_price, \App\Models\Order::ORDER_PERCISION) }} </td>
 
                 </tr>
                 @if($row->prod_type_id == 8)
@@ -107,7 +107,7 @@
                         <td width='30%' class='label-view text-right'>
                             {{ SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])? $fields['retail_price']['language'] : array())) }}
                         </td>
-                        <td>{{ CurrencyHelpers::formatPrice($row->retail_price,5) }} </td>
+                        <td>{{ CurrencyHelpers::formatPrice($row->retail_price,\App\Models\Order::ORDER_PERCISION) }} </td>
 
                     </tr>
                 @endif
@@ -115,7 +115,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Case  Per Price', (isset($fields['case_price']['language'])? $fields['case_price']['language'] : array())) }}
                     </td>
-                    <td>{{ CurrencyHelpers::formatPrice($row->case_price,5) }} </td>
+                    <td>{{ CurrencyHelpers::formatPrice($row->case_price,\App\Models\Order::ORDER_PERCISION) }} </td>
 
                 </tr>
 
