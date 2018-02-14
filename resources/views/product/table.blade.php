@@ -275,58 +275,67 @@
 
     }
 
-    $(document).ready(function () {
-        //$(".sel-search").select2({ width:"100%"});
-        $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function (event, state) {
-            productId = $(this).data('id');
-            $.ajax(
+$(document).ready(function() {
+	//$(".sel-search").select2({ width:"100%"});
+    $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
+        productId=$(this).data('id');
+        $.ajax(
+            {
+                type:'POST',
+                url:'product/trigger',
+                data:{isActive:state,productId:productId},
+                success:function(data){
+                    if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
                     {
-                        type: 'POST',
-                        url: 'product/trigger',
-                        data: {isActive: state, productId: productId},
-                        success: function (data) {
-                            if ($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false) {
-                                //window.location.reload();
-                                $('#form-' + productId).hide(800);
-                            }
-                            if (data.status == "error") {
-                                //notyMessageError(data.message);
-                            }
-                        }
+                        //window.location.reload();
+                        $('#form-'+productId).hide(800);
                     }
-            );
-        });
-
-        $("[id^='exclude_export_']").on('switchChange.bootstrapSwitch', function (event, state) {
-            productId = $(this).data('id');
-             var product_id = $("tr[data-id='"+productId+"']").attr("product-id");
-        /*    if(state==false) {
-                $("tr[product-id='" + product_id + "'] td[data-field='exclude_export'] .toggle").bootstrapSwitch("state", false);
-            }else{
-                $("tr[product-id='" + product_id + "'] td[data-field='exclude_export'] .toggle").bootstrapSwitch("state", true);
-            }*/
-            $.ajax(
-                    {
-                        type: 'POST',
-                        url: 'product/exclude',
-                        data: {excludeExport: state, productId: productId},
-                        success: function (data) {
-
-                            $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
-
-                           // $('.doSimpleSearch').click();
-                            /*if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
-                             {
-                             //window.location.reload();
-                             $('#form-'+productId).hide(800);
-                             }
-                             if(data.status == "error"){
-                             //notyMessageError(data.message);
-                             }*/
-                        }
+                    if(data.status == "error"){
+                        //notyMessageError(data.message);
                     }
-            );
-        });
+                }
+            }
+        );
+    });
+	$("[id^='exclude_export_']").on('switchChange.bootstrapSwitch', function(event, state) {
+		productId=$(this).data('id');
+		$.ajax(
+				{
+					type:'POST',
+					url:'product/exclude',
+					data:{excludeExport:state,productId:productId},
+					success:function(data){
+						$('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+						/*if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
+						{
+							//window.location.reload();
+							$('#form-'+productId).hide(800);
+						}
+						if(data.status == "error"){
+							//notyMessageError(data.message);
+						}*/
+					}
+				}
+		);
+	});
+	$("[id^='is_default_expense_']").on('switchChange.bootstrapSwitch', function (event, state) {
+		productId = $(this).data('id');
+		console.log(state);
+
+		$.ajax(
+				{
+					type: 'POST',
+					url: 'product/setdefaultcategory',
+					data: {isdefault: state, productId: productId},
+					success: function (data) {
+						if (data.status == "error") {
+							notyMessageError(data.message);
+						}
+						$('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+					}
+				}
+		);
+	});
 
     $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
     $("[id^='exclude_export_']").bootstrapSwitch();
