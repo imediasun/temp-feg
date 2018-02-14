@@ -370,6 +370,10 @@
 
     <script>
 		superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
+		//fix height while moving from code view to text.
+		$( ".note-editable" ).focus(function() {
+			$(this).animate({height:"1146px"});
+		});
         $(document).ready(function(){
             $("#iGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: "{{ is_object($row)?$row->direct_edit_groups:'' }}"});
