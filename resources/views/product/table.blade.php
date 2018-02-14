@@ -305,7 +305,11 @@ $(document).ready(function() {
 	$("[id^='is_default_expense_']").on('switchChange.bootstrapSwitch', function (event, state) {
 		productId = $(this).data('id');
 		console.log(state);
-
+		if (state === true) {
+			state = 1;
+		} else {
+			state = 0;
+		}
 		$.ajax(
 				{
 					type: 'POST',
