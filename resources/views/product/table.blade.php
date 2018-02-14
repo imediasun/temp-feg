@@ -157,11 +157,19 @@
 
 										 	echo $value;
 										 }
-?>
+										 ?>
+									 @elseif($field['field']=='is_default_expense_category')
+
+										 <input type='checkbox' name="mycheckbox" @if($value == 1) checked
+												@endif data-field="is_default_expense_category" data-size="mini"
+												data-animate="true" data-on-text="Yes" data-off-text="No"
+												data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+												id="is_default_expense_{{$row->id}}" onSwitchChange="trigger()"/>
                                      @elseif($field['field']=='inactive')
-                                         <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif data-field="inactive" data-size="mini" data-animate="true"
-                                                data-on-text="Inactive" data-name="{{$row->vendor_description}}" data-off-text="Active" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
-                                                id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+                                         <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked @endif data-field="inactive" data-size="mini" data-animate="true"
+												data-on-text="Inactive" data-name="{{ $value }}" data-off-text="Active"
+												data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+												id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 									 @elseif($field['field']=='exclude_export')
 										 <input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif data-field="exclude_export"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}" id="exclude_export_{{$row->id}}" onSwitchChange="trigger()" />
 
@@ -281,6 +289,7 @@ $(document).ready(function() {
 					url:'product/exclude',
 					data:{excludeExport:state,productId:productId},
 					success:function(data){
+						$('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
 						/*if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
 						{
 							//window.location.reload();
@@ -293,9 +302,28 @@ $(document).ready(function() {
 				}
 		);
 	});
+	$("[id^='is_default_expense_']").on('switchChange.bootstrapSwitch', function (event, state) {
+		productId = $(this).data('id');
+		console.log(state);
+
+		$.ajax(
+				{
+					type: 'POST',
+					url: 'product/setdefaultcategory',
+					data: {isdefault: state, productId: productId},
+					success: function (data) {
+						if (data.status == "error") {
+							notyMessageError(data.message);
+						}
+						$('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+					}
+				}
+		);
+	});
 
     $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
     $("[id^='exclude_export_']").bootstrapSwitch();
+	$("[id^='is_default_expense_']").bootstrapSwitch();
 	$('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
 		checkboxClass: 'icheckbox_square-blue',

@@ -296,6 +296,7 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
         //to remove the extra spaces im between the string
         $request->vendor_description = trim(preg_replace('/\s+/',' ', $request->vendor_description));
 
@@ -338,6 +339,7 @@ class ProductController extends Controller
             }
         ;
         }
+
         if ($request->hasFile('img'))
         {
             $file = $request->file('img');
@@ -369,6 +371,7 @@ class ProductController extends Controller
             if ($id == 0) {
                 $data = $this->validatePost('products');
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
+
             }
             else {
                 //for inline editing all fields do not get saved
@@ -428,8 +431,14 @@ class ProductController extends Controller
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
                 }
+                $isDefaultExpenseCategory = $request->input("is_default_expense_category");
+                if ($id > 0 && $isDefaultExpenseCategory > 0) {
+                    $this->model->setDefaultExpenseCategory($id);
+                }
+
             }elseif(is_array($product_categories))
             {
+
                 $ids = [];
                 $count = 1;
                 $prodData = $data;
@@ -448,6 +457,7 @@ class ProductController extends Controller
                     }*/
                     $ids[] = $this->model->insertRow($prodData, $id);
                 }
+
                 foreach ($ids as $id)
                 {
                     $updates = array();
@@ -461,6 +471,7 @@ class ProductController extends Controller
 
                     }
                     $this->model->insertRow($updates, $id);
+                    $this->model->setFirstDefaultExpenseCategory($id);
                 }
 
             }
@@ -484,8 +495,6 @@ class ProductController extends Controller
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
                 }
-
-
             }
 
             return response()->json(array(
@@ -512,11 +521,20 @@ class ProductController extends Controller
                 'status' => 'error',
                 'message' => \Lang::get('core.note_restric')
             ));
-            die;
-
         }
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
+
+            foreach ($request->input('ids') as $id) {
+                $hasDefaultExpenseCategory = $this->model->hasDefaultExpenseCategory($id);
+                if ($hasDefaultExpenseCategory == true) {
+                    return response()->json(array(
+                        'status' => 'error',
+                        'message' => "Selected product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category before removing this variant."
+                    ));
+                }
+            }
+
             $this->model->destroy($request->input('ids'));
 
             return response()->json(array(
@@ -717,5 +735,27 @@ GROUP BY mapped_expense_category");
         }
         $options = implode("",$items);
         echo $options;
+    }
+
+    public function postSetdefaultcategory(Request $request)
+    {
+        $id = $request->input('productId');
+        $isdefaultexp = (bool)$request->input('isdefault');
+        $searchProduct = Product::find($id);
+        $products = $this->model->checkProducts($id);
+
+        if ($isdefaultexp == 1 && count($products) > 1 && $searchProduct->is_default_expense_category == 1) {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => "This product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category."
+            ));
+        } elseif (count($products) == 1) {
+            $searchProduct->is_default_expense_category = $isdefaultexp;
+            $searchProduct->save();
+
+            //  $this->model->toggleDefaultExpenseCategory($isdefaultexp,$id);
+        } else {
+            $this->model->setDefaultExpenseCategory($id);
+        }
     }
 }
