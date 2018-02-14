@@ -285,5 +285,15 @@ class product extends Sximo  {
         }
     }
 
+    public function toggleDefaultExpenseCategory($state, $id)
+    {
+        $item = self::find($id);
+        if ($state) {
+            $item->is_default_expense_category = 1;
+        } else {
+            $item->is_default_expense_category = 0;
+        }
+        $item->save();
+    }
 
 }
