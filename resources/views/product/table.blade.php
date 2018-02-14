@@ -398,6 +398,20 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 	console.log(settings);
 	var $urlArray = settings.url.split('/');
 	console.log($urlArray);
+	$('tr td[data-field="expense_category"]').each(function () {
+		var ids = $.trim($(this).text());
+		ids = ids.trim();
+		if (ids == "No Data" || ids == '') {
+
+			$(this).text('No Data');
+
+		} else {
+
+			ids = ids.split(" ");
+			$(this).text(Number(ids[0]));
+		}
+
+	});
 	if(typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null)
 	{
 		if ( settings.url === "product/save/"+$urlArray[2] ) {
@@ -451,6 +465,23 @@ $(document).on("keyup change", "input[name='case_price']", function () {
 
 $(document).on("blur", "input[name='retail_price']", function () {
     $(this).val($(this).fixDecimal('<?php echo \App\Models\Order::ORDER_PERCISION; ?>'));
+});
+$(function () {
+
+	$.ajax({
+		type: "GET",
+		data: {DATATEST: 1},
+		dataType: "HTML",
+		url: 'product/expense-category-ajax',
+		success: function (response) {
+			console.log(response);
+			$(".expense_category").html(response);
+			$(".expense_category").change();
+		},
+		error: function (res) {
+			console.log(res);
+		}
+	});
 });
 </script>
 
