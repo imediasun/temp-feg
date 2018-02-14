@@ -520,25 +520,64 @@ class ProductController extends Controller
                 'message' => \Lang::get('core.note_restric')
             ));
         }
+        $errorMessages = [];
+        $ids = $request->input('ids');
         // delete multipe rows
-        if (count($request->input('ids')) >= 1) {
-
-            foreach ($request->input('ids') as $id) {
-                $hasDefaultExpenseCategory = $this->model->hasDefaultExpenseCategory($id);
-                if ($hasDefaultExpenseCategory == true) {
-                    return response()->json(array(
-                        'status' => 'error',
-                        'message' => "Selected product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category before removing this variant."
-                    ));
+        if (count($ids) >= 1) {
+            $deleteids = [];
+            $deletedIds = [];
+            $errorId = [];
+            foreach ($ids as $id) {
+                if (!in_array($id, $deletedIds)) {
+                    $products = $this->model->checkProducts($id);
+                    $variations = [];
+                    foreach ($products as $product) {
+                        if (in_array($product->id, $ids)) {
+                            $variations[] = $product->id;
+                        }
+                    }
+                    if (count($products) == count($variations)) {
+                        $this->model->destroy($variations);
+                        foreach ($variations as $variation) {
+                            $deletedIds[] = $variation;
+                        }
+                    } else if (count($products) > count($variations)) {
+                        foreach ($variations as $productid) {
+                            $product = Product::find($productid);
+                            if ($product->is_default_expense_category == 1) {
+                                foreach ($variations as $variation) {
+                                    $errorId[] = $variation;
+                                }
+                                $errorMessages[] = [
+                                    'status' => 'error',
+                                    'message' => "Selected product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category before removing this variant."
+                                ];
+                            }
+                        }
+                    }
+                    if (!in_array($id, $errorId)) {
+                        $this->model->destroy([$id]);
+                    }
                 }
             }
 
-            $this->model->destroy($request->input('ids'));
+            if (count($errorMessages) > 0) {
+                return response()->json($errorMessages);
+            }
 
-            return response()->json(array(
+            /* $hasDefaultExpenseCategory = $this->model->hasDefaultExpenseCategory($id);
+             if ($hasDefaultExpenseCategory == true) {
+                 return response()->json(array(
+                     'status' => 'error',
+                     'message' => "Selected product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category before removing this variant."
+                 ));
+             }*/
+            //$this->model->destroy($request->input('ids'));
+
+            return response()->json([array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success_delete')
-            ));
+            )]);
         } else {
             return response()->json(array(
                 'status' => 'error',

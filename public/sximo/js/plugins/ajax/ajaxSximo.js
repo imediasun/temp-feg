@@ -303,6 +303,33 @@ function ajaxRemove( id, url )
         notyMessageError("Please select one or more rows.");
     }
 }
+function ajaxRemoveProduct(id, url) {
+    var datas = $(id + 'Table :input').serialize();
+    if ($(".ids:checked").length > 0) {
+        if (confirm('Are you sure you want to delete the selected row(s)?')) {
+
+            $.post(url + '/delete', datas, function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var dataMessage = data[i];
+                    if (dataMessage.status == 'success') {
+                        //console.log("called succes");
+                        notyMessage(dataMessage.message);
+                        ajaxFilter(id, url + '/data');
+                    } else {
+                        //console.log("called error");
+                        notyMessageError(dataMessage.message);
+                    }
+                    $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+                }
+
+            });
+
+        }
+    }
+    else {
+        notyMessageError("Please select one or more rows.");
+    }
+}
 function ajaxGameDispose( id, url )
 {
     var datas = $( id +'Table :input').serialize();
