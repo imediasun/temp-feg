@@ -263,6 +263,7 @@
 	.note-editable > *:not(.page-content-wrapper),.page-content-wrapper.m-t > *:not(.sbox),.sbox.animated.fadeInRight > *:not(.sbox-content) {
 		display: none;
 	}
+	.note-editor { height: 1146px !important;  }
 </style>
   <script>
 	  var file_upload_request;
