@@ -165,11 +165,20 @@
                         </div>
                         <div class="col-md-2">
                             @if(!empty($id))
-
+                                <?php
+                                $product = new \App\Models\product();
+                                $products = $product->checkProducts($id);
+                                $disabledcheckbox = '';
+                                if (count($products) > 1 && $row['is_default_expense_category']) {
+                                    $disabledcheckbox = 'disabled="disabled"';
+                                }
+                                ?>
                                 <label class='checked checkbox-inline'>
-                              <input type="hidden" name="is_default_expense_category" value="0"/>
-                                <input type='checkbox' name='is_default_expense_category' value='1' class=''
-                                       @if($row['is_default_expense_category']==1) checked @endif /> Is Default</label>
+                              <input type="hidden" {{ $disabledcheckbox }}   name="is_default_expense_category"
+                                     value="0"/>
+                                <input type='checkbox' {{ $disabledcheckbox }} name='is_default_expense_category'
+                                       value='1' class=''
+                                       @if($row['is_default_expense_category']==1) checked @endif /> Make Default</label>
                             @endif
                         </div>
                     </div>
