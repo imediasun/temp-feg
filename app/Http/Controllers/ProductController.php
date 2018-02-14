@@ -720,7 +720,7 @@ class ProductController extends Controller
         $searchProduct = Product::find($id);
         $products = $this->model->checkProducts($id);
 
-        if ($isdefaultexp == 1 && count($products) > 1 && $searchProduct->is_default_expense_category == 1) {
+        if ($isdefaultexp == 0 && count($products) > 1 && $searchProduct->is_default_expense_category == 1) {
             return response()->json(array(
                 'status' => 'error',
                 'message' => "This product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category."
