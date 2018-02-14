@@ -266,6 +266,7 @@
 		display: none;
 	}
 	.note-editor { height: 1146px !important;  }
+	.note-editor.codeview .note-codable{height: 1146px !important;}
 </style>
   <script>
 	  var file_upload_request;
