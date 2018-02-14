@@ -712,7 +712,6 @@ class ProductController extends Controller
         }
         return $items;
     }
-
     public function postSetdefaultcategory(Request $request)
     {
         $id = $request->input('productId');
