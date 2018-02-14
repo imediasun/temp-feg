@@ -172,10 +172,9 @@
 												id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 									 @elseif($field['field']=='exclude_export')
 										 <input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif data-field="exclude_export"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}" id="exclude_export_{{$row->id}}" onSwitchChange="trigger()" />
-
-                                     @else
-									 {!! $value !!}
-									@endif
+                                @else
+                                    {!! $value !!}
+                                @endif
 
 								 </td>
 							@endif
@@ -189,8 +188,8 @@
 
 
 
-				 </td>
-				</tr>
+                        </td>
+                    </tr>
 
 
                 @if($setting['view-method']=='expand')
@@ -228,6 +227,12 @@
 	</div>
 </div>
 
+        </div>
+        <?php echo Form::close();?>
+        @include('ajaxfooter',array('product_list_type'=>$product_list_type,'sub_type'=>$sub_type,'active'=>$active_prod))
+
+    </div>
+</div>
 
 
 <!-- Modal -->
@@ -451,9 +456,108 @@ $(document).on("keyup change", "input[name='case_price']", function () {
         $(this).val($(this).fixDecimal('<?php echo \App\Models\Order::ORDER_PERCISION; ?>'));
     });
 
-$(document).on("blur", "input[name='retail_price']", function () {
-	$(this).val($(this).fixDecimal('<?php echo \App\Models\Order::ORDER_PERCISION; ?>'));
-});
+    $(document).on("blur", "input[name='retail_price']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+
+    $(function(){
+
+        $.ajax({
+            type:"GET",
+            data:{DATATEST:1},
+            dataType:"HTML",
+            url:'product/expense-category-ajax',
+            success:function(response){
+                // console.log(response);
+                $(".expense_category").html(response);
+                $(".expense_category").change();
+            },
+            error:function(res){
+                console.log(res);
+            }
+        });
+
+    $("[id^='is_default_expense_']").on('switchChange.bootstrapSwitch', function (event, state) {
+        productId = $(this).data('id');
+        console.log(state);
+        if (state === true) {
+            state = 1;
+        } else {
+            state = 0;
+        }
+        $.ajax(
+                {
+                    type: 'POST',
+                    url: 'product/setdefaultcategory',
+                    data: {isdefault: state, productId: productId},
+                    success: function (data) {
+                        if (data.status == "error") {
+                            notyMessageError(data.message);
+                        }
+                        $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+                    }
+                }
+        );
+    });
+
+    $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
+    $("[id^='exclude_export_']").bootstrapSwitch();
+    $("[id^='is_default_expense_']").bootstrapSwitch();
+    $('.tips').tooltip();
+    $('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
+        checkboxClass: 'icheckbox_square-blue',
+        radioClass: 'iradio_square-blue'
+    });
+    $('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
+        $('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
+    });
+    $('#{{ $pageModule }}Table .checkall').on('ifUnchecked',function(){
+        $('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('uncheck');
+    });
+
+    $('#{{ $pageModule }}Paginate .pagination li a').click(function() {
+        var url = $(this).attr('href');
+        reloadData('#{{ $pageModule }}',url);
+        return false ;
+    });
+
+            <?php if($setting['view-method'] =='expand') :
+                echo AjaxHelpers::htmlExpandGrid();
+            endif;
+            ?>
+
+    var simpleSearch = $('.simpleSearchContainer');
+    if (simpleSearch.length) {
+        initiateSearchFormFields(simpleSearch);
+        simpleSearch.find('.doSimpleSearch').click(function(event){
+            performSimpleSearch.call($(this), {
+                moduleID: '#{{ $pageModule }}',
+                url: "{{ $pageUrl }}",
+                event: event,
+                container: simpleSearch
+                >>>>>>> Temporary merge branch 2
+            });
+        });
+        function fixdeci(value) {
+            places = 2;
+            var val = getFlooredFixed($.trim(value),5);
+
+            if(val.indexOf('.') == -1){
+                val = val+'.00000';
+            }
+            val = val+'00';
+            val = val.slice(0, (val.indexOf("."))+6);
+            val = val.split('.');
+            var number = 0;
+            if(val[1]){
+                var fixed = val[1].substring(0, places);
+                var decimalSection = (val[1].substring(places)).rtrim();
+                number = val[0]+'.'+fixed+''+decimalSection;
+            }else{
+                number = val[0];
+            }
+            return number;
+        }
 </script>
 
 <style>

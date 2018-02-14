@@ -377,7 +377,11 @@ class ProductController extends Controller
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
+            }
+            $postedtoNetSuite = $data['vendor_description'];
 
+            if(strlen( $data['vendor_description'])>53){
+                $postedtoNetSuite = substr($data['vendor_description'],0.53);
             }
 
 
@@ -410,6 +414,7 @@ class ProductController extends Controller
                 $data_attached_products= $data;
 
                 foreach($products_combined as $pc){
+                    $data['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     if($pc->id == $id){
                         $data['prod_type_id'] = $data['prod_type_id'][0];
                         $data['prod_sub_type_id'] = $data['prod_sub_type_id'][1];
@@ -430,6 +435,8 @@ class ProductController extends Controller
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
+                    $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
+                    $this->model->insertRow($netsuite_description, $pc->id);
                 }
                 $isDefaultExpenseCategory = $request->input("is_default_expense_category");
                 if ($id > 0 && $isDefaultExpenseCategory > 0) {
@@ -460,8 +467,14 @@ class ProductController extends Controller
 
                 foreach ($ids as $id)
                 {
+                    $postedtoNetSuite = $data['vendor_description'];
+
+                    if(strlen( $data['vendor_description'])>53){
+                        $postedtoNetSuite = substr($data['vendor_description'],0.53);
+                    }
+
                     $updates = array();
-                    $updates['netsuite_description'] = "$id...".$data['vendor_description'];
+                    $updates['netsuite_description'] = "$id...".$postedtoNetSuite;
                     if (isset($img)) {
 
                         $newfilename = $id . '' . $extension;
@@ -494,6 +507,13 @@ class ProductController extends Controller
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
+                    $postedtoNetSuite = $data['vendor_description'];
+
+                    if(strlen( $data['vendor_description'])>53){
+                        $postedtoNetSuite = substr($data['vendor_description'],0.53);
+                    }
+                    $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
+                    $this->model->insertRow($netsuite_description, $pc->id);
                 }
             }
 
