@@ -390,6 +390,10 @@
 				}
 		})
         $(document).ready(function(){
+			//fix height while moving from code view to text.
+			$( ".note-editable" ).focus(function() {
+				$(this).animate({height:"1146px"});
+			});
 
         	//$('button.btn[data-event="codeview"]').remove();
 			var html = '<div class="page-content-wrapper m-t">';
