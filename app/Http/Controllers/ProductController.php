@@ -527,6 +527,7 @@ class ProductController extends Controller
             $deleteids = [];
             $deletedIds = [];
             $errorId = [];
+            $variationsErrorId = [];
             foreach ($ids as $id) {
                 if (!in_array($id, $deletedIds)) {
                     $products = $this->model->checkProducts($id);
@@ -548,10 +549,14 @@ class ProductController extends Controller
                                 foreach ($variations as $variation) {
                                     $errorId[] = $variation;
                                 }
-                                $errorMessages[] = [
-                                    'status' => 'error',
-                                    'message' => "Selected product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category before removing this variant."
-                                ];
+                                if (!in_array($product->id, $variationsErrorId)) {
+                                    $variationsErrorId[] = $product->id;
+                                    $errorMessages[] = [
+                                        'status' => 'error',
+                                        'message' => "Selected product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category before removing this variant."
+                                    ];
+                                }
+
                             }
                         }
                     }
