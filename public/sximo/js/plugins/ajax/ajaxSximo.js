@@ -309,6 +309,7 @@ function ajaxRemoveProduct(id, url) {
         if (confirm('Are you sure you want to delete the selected row(s)?')) {
 
             $.post(url + '/delete', datas, function (data) {
+
                 for (var i = 0; i < data.length; i++) {
                     var dataMessage = data[i];
                     if (dataMessage.status == 'success') {

@@ -26,42 +26,42 @@ class PostOrdersEventHandler
     /**
      * Handle the event.
      *
-     * @param  PostOrdersEvent  $event
+     * @param  PostOrdersEvent $event
      * @return void
      */
     public function handle(PostOrdersEvent $event)
     {
 
-        foreach($event->products as $product){
+        foreach ($event->products as $product) {
 
-            if($product->is_reserved==1) {
+            if ($product->is_reserved == 1) {
 
 
                 $productObj = product::find($product->id);
                 $adjustmentAmount = $productObj->reserved_qty - $product->qty;
-                if($productObj->allow_negative_reserve_qty != 1 && $adjustmentAmount == 0) {
+                if ($productObj->allow_negative_reserve_qty != 1 && $adjustmentAmount == 0) {
                     $inactive = 1;
-                }else{
+                } else {
                     $inactive = 0;
                 }
                 $productObj->updateProduct(['reserved_qty' => $adjustmentAmount, 'inactive' => $inactive]);
                 $productObj->save();
 
                 $user = \AUTH::user();
-                $user_id=$user->id;
-                $order_id=$event->order_id;
-                $product_id=$product->id;
+                $user_id = $user->id;
+                $order_id = $event->order_id;
+                $product_id = $product->id;
                 $reservedLogData = [
-                    "product_id"=>$product_id,
-                    "order_id"=>$order_id,
-                    "adjustment_amount"=>$product->qty,
-                    "adjustment_type"=>"negative",
-                    "adjusted_by"=>$user_id,
+                    "product_id" => $product_id,
+                    "order_id" => $order_id,
+                    "adjustment_amount" => $product->qty,
+                    "adjustment_type" => "negative",
+                    "adjusted_by" => $user_id,
                 ];
                 $reservedQtyLog = new ReservedQtyLog();
                 $reservedQtyLog->insert($reservedLogData);
-                if($adjustmentAmount <= $productObj->reserved_qty_limit){
-                    $message = "<span style='color:red;'> Product reserved quantity limit is ".$product->reserved_qty_limit." and quantity ".($product->reserved_qty-$product->qty)." is available for product <strong>(".$product->item_name.")</strong></span>";
+                if ($adjustmentAmount <= $productObj->reserved_qty_limit) {
+                    $message = "<span style='color:red;'> Product reserved quantity limit is " . $product->reserved_qty_limit . " and quantity " . ($product->reserved_qty - $product->qty) . " is available for product <strong>(" . $product->item_name . ")</strong></span>";
                     self::sendProductReservedQtyEmail($message);
                     /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
                 }
@@ -70,7 +70,9 @@ class PostOrdersEventHandler
             }
         }
     }
-    public static function sendProductReservedQtyEmail($message){
+
+    public static function sendProductReservedQtyEmail($message)
+    {
         /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
         $receipts = FEGSystemHelper::getSystemEmailRecipients("Product Reserved Quantity Email");
         FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(

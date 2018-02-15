@@ -1399,18 +1399,18 @@
                         }
 
                         var already_added_products = [], exclude_products = '';
-                        $('.clonedInput').each(function(i, ele){
+                        $('.clonedInput').each(function (i, ele) {
                             var product_id = $(ele).find("[name='product_id[]']").first().val();
-                            if(product_id){
+                            if (product_id) {
                                 already_added_products.push(product_id);
                             }
                         });
 
-                        if(already_added_products.length){
+                        if (already_added_products.length) {
                             exclude_products = already_added_products.join();
                         }
 
-                        if(exclude_products){
+                        if (exclude_products) {
                             request.exclude_products = exclude_products;
                         }
 
@@ -1835,19 +1835,19 @@
 
     <script>
         $(document).ready(function () {
-            $(document).ajaxComplete(function(event, xhr, settings){
-                if(xhr.status == 200 && settings.url == "{{ action('OrderController@postSave') }}"){
+            $(document).ajaxComplete(function (event, xhr, settings) {
+                if (xhr.status == 200 && settings.url == "{{ action('OrderController@postSave') }}") {
                     var response = JSON.parse(xhr.responseText);
-                    if('adjustQty' in response){
+                    if ('adjustQty' in response) {
                         var adjustQty = response.adjustQty;
                         var adjustQtyAssoc = [];
-                        $.each(adjustQty, function(k, v) {
+                        $.each(adjustQty, function (k, v) {
                             adjustQtyAssoc[k] = v;
                         });
 
-                        $('.clonedInput').each(function(i, ele){
+                        $('.clonedInput').each(function (i, ele) {
                             var product_id = $(ele).find("[name='product_id[]']").first().val();
-                            if(adjustQtyAssoc[product_id] !== undefined){
+                            if (adjustQtyAssoc[product_id] !== undefined) {
                                 $(ele).find("[name='qty[]']").first().val(adjustQtyAssoc[product_id]).change();
                             }
                         });

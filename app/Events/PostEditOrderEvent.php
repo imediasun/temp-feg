@@ -17,10 +17,11 @@ class PostEditOrderEvent extends Event
      */
     public $products;
     public $order_id;
-    public function __construct($products=array(),$order_id)
+
+    public function __construct($products = array(), $order_id)
     {
-        $this->products=$products;
-        $this->order_id=$order_id;
+        $this->products = $products;
+        $this->order_id = $order_id;
     }
 
     /**

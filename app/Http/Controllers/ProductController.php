@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -363,6 +364,8 @@ class ProductController extends Controller
         {
             $rules['expense_category'] = 'required|numeric|min:0';
         }*/
+        $_POST['allow_negative_reserve_qty'] = 0;
+        unset($_POST['inactive_by']);
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
@@ -400,10 +403,10 @@ class ProductController extends Controller
 
             }
 
-            if(isset($data['inactive'])){
-                if($data['inactive']){
+            if (isset($data['inactive'])) {
+                if ($data['inactive']) {
                     $data['inactive_by'] = Auth::user()->id;
-                }else{
+                } else {
                     $data['inactive_by'] = NULL;
                 }
             }
@@ -546,33 +549,53 @@ class ProductController extends Controller
         $ids = $request->input('ids');
         // delete multipe rows
         if (count($ids) >= 1) {
-            $deleteids = [];
             $deletedIds = [];
             $errorId = [];
             $variationsErrorId = [];
             foreach ($ids as $id) {
                 if (!in_array($id, $deletedIds)) {
-                    $products = $this->model->checkProducts($id);
-                    $variations = [];
-                    foreach ($products as $product) {
-                        if (in_array($product->id, $ids)) {
-                            $variations[] = $product->id;
+                    $productVariation = Product::find($id);
+                    $productVariations = $productVariation->getProductVariations();
+                    $variations = new Collection();
+                    foreach ($productVariations as $productVariation) {
+                        if (in_array($productVariation->id, $ids)) {
+                            //$variations[] = $productVariation;
+                            $variations->add($productVariation);
                         }
                     }
-                    if (count($products) == count($variations)) {
-                        $this->model->destroy($variations);
+                    //case when user has selected all variations of a product then delete all variations
+                    if ($productVariations->count() == $variations->count()) {
+
+                        $variations->each(function ($product) {
+                            $product->delete();
+                        });
                         foreach ($variations as $variation) {
-                            $deletedIds[] = $variation;
+                            $deletedIds[] = $variation->id;
                         }
-                    } else if (count($products) > count($variations)) {
-                        foreach ($variations as $productid) {
-                            $product = Product::find($productid);
-                            if ($product->is_default_expense_category == 1) {
+                    } else if ($productVariations->count() - 1 == $variations->count()) {
+
+                        //delete all variation including default varation
+                        $variations->each(function ($product) {
+                            $product->delete();
+                        });
+                        $remainingItem = $productVariations->diff($variations);
+                        $remainingItem->each(function ($product) {
+                            $product->is_default_expense_category = 1;
+                            $product->save();
+                        });
+                        foreach ($variations as $variation) {
+                            $deletedIds[] = $variation->id;
+                        }
+                    } else if ($productVariations->count() > $variations->count()) {
+
+                        foreach ($variations as $productVariation) {
+                            if ($productVariation->is_default_expense_category == 1) {
+                                //Need to test that
                                 foreach ($variations as $variation) {
-                                    $errorId[] = $variation;
+                                    $errorId[] = $variation->id;
                                 }
-                                if (!in_array($product->id, $variationsErrorId)) {
-                                    $variationsErrorId[] = $product->id;
+                                if (!in_array($productVariation->id, $variationsErrorId)) {
+                                    $variationsErrorId[] = $productVariation->id;
                                     $errorMessages[] = [
                                         'status' => 'error',
                                         'message' => "Selected product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category before removing this variant."
@@ -700,9 +723,8 @@ class ProductController extends Controller
         $isActive = $request->get('isActive');
         $productId = $request->get('productId');
         if ($isActive == "true") {
-            $update = \DB::update('update products set inactive = 1, inactive_by = '.Auth::user()->id.' where id=' . $productId);
-        }
-        else {
+            $update = \DB::update('update products set inactive = 1, inactive_by = ' . Auth::user()->id . ' where id=' . $productId);
+        } else {
             $update = \DB::update('update products set inactive = 0, in_development = 0, inactive_by = NULL where id=' . $productId);
         }
         if ($update) {

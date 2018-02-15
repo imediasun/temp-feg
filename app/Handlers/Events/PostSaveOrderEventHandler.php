@@ -24,7 +24,7 @@ class PostSaveOrderEventHandler
     /**
      * Handle the event.
      *
-     * @param  PostSaveOrderEvent  $event
+     * @param  PostSaveOrderEvent $event
      * @return void
      */
     public function handle(PostSaveOrderEvent $event)
@@ -32,22 +32,22 @@ class PostSaveOrderEventHandler
         $item = (object)$event->order_item;
         $product = product::find($item->product_id);
 
-        if($product->is_reserved==1) {
+        if ($product->is_reserved == 1) {
 
             $ReservedProductQtyLogObj = ReservedQtyLog::where('order_id', $item->order_id)
                 ->where('product_id', $product->id)
                 ->orderBy('id', 'DESC')
                 ->first();
 
-            if($ReservedProductQtyLogObj and $item->prev_qty){
+            if ($ReservedProductQtyLogObj and $item->prev_qty) {
                 $adjustmentAmount = ($product->reserved_qty + $item->prev_qty) - $item->qty;
-            }else{
+            } else {
                 $adjustmentAmount = $product->reserved_qty - $item->qty;
             }
 
-            if($product->allow_negative_reserve_qty != 1 and $adjustmentAmount == 0) {
+            if ($product->allow_negative_reserve_qty != 1 and $adjustmentAmount == 0) {
                 $inactive = 1;
-            }else{
+            } else {
                 $inactive = 0;
             }
 
@@ -65,7 +65,7 @@ class PostSaveOrderEventHandler
             $reservedQtyLog = new ReservedQtyLog();
             $reservedQtyLog->insert($reservedLogData);
 
-            if($adjustmentAmount <= $product->reserved_qty_limit){
+            if ($adjustmentAmount <= $product->reserved_qty_limit) {
                 $message = "<span style='color:red;'> Product Name : $product->vendor_description <br> Reserved Qty Par Amount: $product->reserved_qty_limit <br> Reserved Qty Available: $adjustmentAmount</span>";
                 self::sendProductReservedQtyEmail($message);
                 /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
@@ -74,7 +74,8 @@ class PostSaveOrderEventHandler
 
     }
 
-    public static function sendProductReservedQtyEmail($message){
+    public static function sendProductReservedQtyEmail($message)
+    {
         /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
         $receipts = FEGSystemHelper::getSystemEmailRecipients("Product Reserved Quantity Email");
         FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
