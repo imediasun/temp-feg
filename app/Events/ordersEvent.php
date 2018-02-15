@@ -19,7 +19,7 @@ class ordersEvent extends Event
 
     public $order_id;
 
-    public function __construct($products=array(), $order_id)
+    public function __construct($products = array(), $order_id)
     {
         $this->products = $products;
 

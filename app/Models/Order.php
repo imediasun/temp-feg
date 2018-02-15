@@ -31,59 +31,62 @@ class order extends Sximo
 
     }
 
-    public static function boot(){
+    public static function boot()
+    {
         parent::boot();
 
-        static::deleted(function(Order $model){
+        static::deleted(function (Order $model) {
             $model->status_id = self::ORDER_DELETED_STATUS;
-            $model->deleted_by =  \Session::get('uid');
+            $model->deleted_by = \Session::get('uid');
             $model->restoreReservedProductQuantities();
         });
 
         //@todo add statis::restore
-        static::restoring(function(Order $model){
-           $model->status_id = self::ORDER_ACTIVE_STATUS;
-           $model->deleted_by = null;
-           $model->deleteReservedProductQuantities();
+        static::restoring(function (Order $model) {
+            $model->status_id = self::ORDER_ACTIVE_STATUS;
+            $model->deleted_by = null;
+            $model->deleteReservedProductQuantities();
         });
     }
 
-    public function contents(){
+    public function contents()
+    {
         return $this->hasMany('App\Models\OrderContent');
     }
 
-    public function restoreReservedProductQuantities(){
+    public function restoreReservedProductQuantities()
+    {
         $this->adjustReservedProductQuantities();
     }
 
-    public function deleteReservedProductQuantities(){
+    public function deleteReservedProductQuantities()
+    {
         $this->adjustReservedProductQuantities(true);
     }
 
-    private function adjustReservedProductQuantities($reduceQuantity = false){
+    private function adjustReservedProductQuantities($reduceQuantity = false)
+    {
         $orderContents = $this->contents;
-        foreach ($orderContents as $orderContent){
+        foreach ($orderContents as $orderContent) {
 
             $orderedProduct = $orderContent->product;
 
-            if($orderedProduct->is_reserved == 1){
+            if ($orderedProduct->is_reserved == 1) {
 
-                if($reduceQuantity){
-                    if($orderedProduct->allow_negative_reserve_qty == 0 && $orderedProduct->reserved_qty < $orderContent->qty){
+                if ($reduceQuantity) {
+                    if ($orderedProduct->allow_negative_reserve_qty == 0 && $orderedProduct->reserved_qty < $orderContent->qty) {
                         throw new \Exception("Product does not have sufficient reserved quantities");
                     }
                     $reserved_qty = $orderedProduct->reserved_qty - $orderContent->qty;
                     $updates = ['reserved_qty' => $reserved_qty];
-                    if(!$orderedProduct->allow_negative_reserve_qty and $reserved_qty == 0) {
+                    if (!$orderedProduct->allow_negative_reserve_qty and $reserved_qty == 0) {
                         $updates['inactive'] = 1;
                     }
                     $orderedProduct->updateProduct($updates, true);
-                }
-                else
-                {
+                } else {
                     $reserved_qty = $orderedProduct->reserved_qty + $orderContent->qty;
                     $updates = ['reserved_qty' => $reserved_qty];
-                    if($reserved_qty > 0) {
+                    if ($reserved_qty > 0) {
                         $updates['inactive'] = 0;
                     }
                     $orderedProduct->updateProduct($updates, true);
@@ -92,14 +95,16 @@ class order extends Sximo
         }
     }
 
-    public function canRestoreAllReservedProducts(){
-        if(empty($this->contents)){
+    public function canRestoreAllReservedProducts()
+    {
+        if (empty($this->contents)) {
             return true;
         }
-        foreach ($this->contents as $orderContent){
+        foreach ($this->contents as $orderContent) {
             $orderedProduct = $orderContent->product;
-            if($orderedProduct->is_reserved == 1 && $orderedProduct->allow_negative_reserve_qty == 0 &&
-                $orderedProduct->reserved_qty < $orderContent->qty){
+            if ($orderedProduct->is_reserved == 1 && $orderedProduct->allow_negative_reserve_qty == 0 &&
+                $orderedProduct->reserved_qty < $orderContent->qty
+            ) {
                 return false;
             }
         }

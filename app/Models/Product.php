@@ -9,7 +9,7 @@ class product extends Sximo  {
 	
 	protected $table = 'products';
 	protected $primaryKey = 'id';
-	protected $guarded = [];
+    protected $guarded = [];
 
 	public function __construct() {
 		parent::__construct();
@@ -337,15 +337,17 @@ class product extends Sximo  {
         }
         $item->save();
     }
-    public  function updateProduct($attributes=array(), $override_inactive = false){
 
-        if(empty($attributes)){
+    public function updateProduct($attributes = array(), $override_inactive = false)
+    {
+
+        if (empty($attributes)) {
             return false;
         }
-        $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price'=>$this->case_price])->get();
-        foreach($items as $item){
+        $items = $this->getProductVariations();
+        foreach ($items as $item) {
             $updates = $attributes;
-            if($override_inactive and isset($updates['inactive']) and $updates['inactive'] == 0){
+            if ($override_inactive and isset($updates['inactive']) and $updates['inactive'] == 0) {
                 $updates['inactive'] = ($item->inactive_by) ? 1 : 0;
             }
             $item->update($updates);
@@ -355,8 +357,9 @@ class product extends Sximo  {
     }
 
 
-    public  function getProductVariations(){
-        $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price'=>$this->case_price])->get();
+    public function getProductVariations()
+    {
+        $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price' => $this->case_price])->get();
         return $items;
     }
 
