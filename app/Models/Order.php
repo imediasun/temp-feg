@@ -224,11 +224,11 @@ class order extends Sximo
             $orderId = $item->order_id;
 
             if(in_array($item->order_type_id,$order_types) && (!empty($item->qty_per_case) && $item->qty_per_case>0)){
-                $item->price = \CurrencyHelpers::formatPrice(($item->case_price/$item->qty_per_case), 5, false);
-                $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 5, false);
+                $item->price = \CurrencyHelpers::formatPriceAPI(($item->case_price / $item->qty_per_case), 5, false);
+                $item->case_price = \CurrencyHelpers::formatPriceAPI($item->case_price, 5, false);
             }else{
-                $item->price = \CurrencyHelpers::formatPrice($item->price, 5, false);
-                $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 5, false);
+                $item->price = \CurrencyHelpers::formatPriceAPI($item->price, 5, false);
+                $item->case_price = \CurrencyHelpers::formatPriceAPI($item->case_price, 5, false);
             }
 
           /*  $orderId = $item->order_id;
