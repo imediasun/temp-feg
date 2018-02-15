@@ -2250,7 +2250,8 @@ class OrderController extends Controller
                 }
             }
         }
-=======
+    }
+
     public function getCorrectOrdersBug242($step = '1'){
         die("Script blocked. To run this script please contact your development team. Thanks!");
 
@@ -2365,6 +2366,5 @@ class OrderController extends Controller
         }
 
         die("Script Completed!");
->>>>>>> Temporary merge branch 2
     }
 }
