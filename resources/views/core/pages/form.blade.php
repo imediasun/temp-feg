@@ -395,6 +395,19 @@
 			//fix height while moving from code view to text.
 			$( ".note-editable" ).focus(function() {
 				$(this).animate({height:"1146px"});
+				var text = $(".note-editable .page-content-wrapper .sbox-content .col-md-12").text();
+				if($.trim(text)=="" || text.length==1) {
+					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").text('');
+					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").empty();
+					var html = '<div class="page-content-wrapper m-t">';
+					html += '<div class="sbox animated fadeInRight">';
+					html += '<div class="sbox-content">';
+					html += '<div class="col-md-12" style="height: auto; min-height:50px; margin-top: -15px; line-height: normal; background-color: #ffffff;">';
+					html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
+					$(".note-editable").html("<p><br><p>"+html);
+					return false;
+				}
+
 			});
 
         	//$('button.btn[data-event="codeview"]').remove();
