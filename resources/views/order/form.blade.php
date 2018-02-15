@@ -342,7 +342,9 @@
                         <td><br/> <input type='number' name='qty[]' placeholder='0' autocomplete="off"
 
                                          class='calculate form-control qty' receive="0" min="1" step="1" id="qty" orderqty="0" placeholder="00"
-                                         required></td>
+                                         required>
+                            <input type="hidden" name="prev_qty[]" value="0"/>
+                        </td>
                         <td class="game" style="display:none">
                             <br/> <input type='hidden' name='game[]' id='game_0'>
                         </td>
@@ -824,6 +826,7 @@
                     if(mode=='edit'){ ///Don't set item received when making clone/create order.
                         $('input[name^=qty]').eq(i).attr('receive', order_qty_received_array[i]);
                         $('input[name^=item_received]').eq(i).val(order_qty_received_array[i]);
+                        $('input[name^=prev_qty]').eq(i).val(order_qty_array[i]);
                     }
                     $('input[name^=order_content_id]').eq(i).val(order_content_id_array[i]);
                 }
@@ -1382,6 +1385,23 @@
                         if (vendorId != "") {
                             request.vendor_id = $("#vendor_id").val();
                         }
+
+                        var already_added_products = [], exclude_products = '';
+                        $('.clonedInput').each(function(i, ele){
+                            var product_id = $(ele).find("[name='product_id[]']").first().val();
+                            if(product_id){
+                                already_added_products.push(product_id);
+                            }
+                        });
+
+                        if(already_added_products.length){
+                            exclude_products = already_added_products.join();
+                        }
+
+                        if(exclude_products){
+                            request.exclude_products = exclude_products;
+                        }
+
                         lastXhr = $.getJSON("{{url()}}/order/autocomplete", request, function (data, status, xhr) {
                             cache[term] = data;
                             if (data.value == "No Match") {
@@ -1652,7 +1672,7 @@
 
     </style>
 
-<script>
+    <script>
     $(document).ready(function () {
         
         $(".exposeAPI").on('click', function() {
@@ -1800,3 +1820,27 @@
     });
 
 </script>
+
+    <script>
+        $(document).ready(function () {
+            $(document).ajaxComplete(function(event, xhr, settings){
+                if(xhr.status == 200 && settings.url == "{{ action('OrderController@postSave') }}"){
+                    var response = JSON.parse(xhr.responseText);
+                    if('adjustQty' in response){
+                        var adjustQty = response.adjustQty;
+                        var adjustQtyAssoc = [];
+                        $.each(adjustQty, function(k, v) {
+                            adjustQtyAssoc[k] = v;
+                        });
+
+                        $('.clonedInput').each(function(i, ele){
+                            var product_id = $(ele).find("[name='product_id[]']").first().val();
+                            if(adjustQtyAssoc[product_id] !== undefined){
+                                $(ele).find("[name='qty[]']").first().val(adjustQtyAssoc[product_id]).change();
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>
