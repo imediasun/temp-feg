@@ -264,28 +264,6 @@ class product extends Sximo  {
         return $products;
     }
 
-    public  function updateProduct($attributes=array(), $override_inactive = false){
-
-        if(empty($attributes)){
-            return false;
-        }
-        $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price'=>$this->case_price])->get();
-        foreach($items as $item){
-            $updates = $attributes;
-            if($override_inactive and isset($updates['inactive']) and $updates['inactive'] == 0){
-                $updates['inactive'] = ($item->inactive_by) ? 1 : 0;
-            }
-            $item->update($updates);
-        }
-        return true;
-
-    }
-
-
-    public  function getProductVariations(){
-        $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price'=>$this->case_price])->get();
-        return $items;
-    }
 
     public function checkIsDefaultExpenseCategory($id)
     {
