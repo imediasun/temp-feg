@@ -372,11 +372,57 @@
 
     <script>
 		superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
+		$(document).on("keyup",".note-editable",function(e){
+			var key = e.keyCode || e.charCode;
+			if (key == 8 || key == 46) {
+				var text = $(".note-editable .page-content-wrapper .sbox-content .col-md-12").text();
+				if($.trim(text)=="" || text.length==1) {
+					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").text('');
+					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").empty();
+					var html = '<div class="page-content-wrapper m-t">';
+					html += '<div class="sbox animated fadeInRight">';
+					html += '<div class="sbox-content">';
+					html += '<div class="col-md-12" style="height: auto; min-height:50px; margin-top: -15px; line-height: normal; background-color: #ffffff;">';
+					html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
+							$(".note-editable").html("<p><br><p>"+html);
+						return false;
+					}
+				}
+		})
         $(document).ready(function(){
 			//fix height while moving from code view to text.
 			$( ".note-editable" ).focus(function() {
 				$(this).animate({height:"1146px"});
+				var text = $(".note-editable .page-content-wrapper .sbox-content .col-md-12").text();
+				if($.trim(text)=="" || text.length==1) {
+					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").text('');
+					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").empty();
+					var html = '<div class="page-content-wrapper m-t">';
+					html += '<div class="sbox animated fadeInRight">';
+					html += '<div class="sbox-content">';
+					html += '<div class="col-md-12" style="height: auto; min-height:50px; margin-top: -15px; line-height: normal; background-color: #ffffff;">';
+					html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
+					$(".note-editable").html("<p><br><p>"+html);
+					return false;
+				}
+
 			});
+
+        	//$('button.btn[data-event="codeview"]').remove();
+			var html = '<div class="page-content-wrapper m-t">';
+			html += '<div class="sbox animated fadeInRight">';
+			html += '<div class="sbox-content">';
+			html += '<div class="col-md-12" style="height: auto; min-height:50px; margin-top: -15px; line-height: normal; background-color: #ffffff;">';
+			html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
+			setTimeout(function(){
+				console.log("Length "+$(".note-editable .page-content-wrapper").length);
+				if($(".note-editable .page-content-wrapper").length==0){
+						$(".note-editable").html("<p><br><p>"+html);
+					console.log("Length "+$(".note-editable .page-content-wrapper").length);
+				}
+			},700);
+
+
             $("#iGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: "{{ is_object($row)?$row->direct_edit_groups:'' }}"});
             $("#iUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
