@@ -101,7 +101,7 @@
                                 <thead>
                                 <tr>
                                     <th>No#</th>
-                                    <th>Name </th>
+                                    <th>Item Name</th>
                                     <th>Item Description</th>
                                     @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)<th>Game</th>@endif
                                     <th>Unit Price</th>

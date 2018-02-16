@@ -97,7 +97,7 @@
 
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('PO Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) }}
 						</td>
 						<td>{{ \DateHelpers::formatStringValue($row->notes,$nodata['notes']) }} </td>
 

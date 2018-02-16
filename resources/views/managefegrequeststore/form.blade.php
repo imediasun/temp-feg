@@ -41,8 +41,8 @@
 				  </div> 					
 
 				  <div class="form-group  " > 
-					<label for="Notes" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) !!}	
+					<label for="Notes" class=" control-label col-md-4 text-left">
+						{!! SiteHelpers::activeLang('PO Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
                         <textarea rows="8" cols="45" name="notes" class="form-control">{{ $row['notes'] }}</textarea>
