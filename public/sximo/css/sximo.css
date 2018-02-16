@@ -3273,7 +3273,7 @@ position: relative;
 
 .input-group.input-group-sm input.form-control,.input-group.m-b input.form-control {
   float: left;
-  width: 150px;
+  width: 100%;
 }
 .input-group.m-b input.form-control {
   height: 36px;
