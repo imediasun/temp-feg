@@ -32,7 +32,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Item Name', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}
 						</td>
 						<td>{{ $row->description }} </td>
 						
