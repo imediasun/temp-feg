@@ -443,7 +443,7 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 							itemSize = "Size: " + $.trim(row.find('td[data-field="item_description"]').attr('item-size'));
 						}
 						var item_description = $.trim(mainRow.children('td[data-field="item_description"]').text());
-
+						item_description = item_description.split(itemSize).join('');
 						if (item_description.search(itemSize) > -1) {
 
 							item_description = item_description.substring(0, item_description.length - itemSize.length);
