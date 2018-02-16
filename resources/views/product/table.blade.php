@@ -125,7 +125,10 @@
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
-								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
+						<td align="<?php echo $field['align'];?>"
+							@if($field['field']=='item_description') item-size="{{ $row->size }}"
+							@endif data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}"
+							data-format="{{ htmlentities($value) }}">
 
                                      @if($field['field']=='img')
 										<?php
@@ -391,7 +394,20 @@ $( document ).ajaxComplete(function( event, xhr, settings ) {
 						row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
 						row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
 						row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').text()));
-						row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
+						var itemSize = '';
+						if ($.trim(row.find('td[data-field="item_description"]').attr('item-size')) != '') {
+							itemSize = "Size: " + $.trim(row.find('td[data-field="item_description"]').attr('item-size'));
+						}
+						var item_description = $.trim(mainRow.children('td[data-field="item_description"]').text());
+
+						if (item_description.search(itemSize) > -1) {
+
+							item_description = item_description.substring(0, item_description.length - itemSize.length);
+							item_description += "<br>" + itemSize;
+						} else {
+							item_description += "<br>" + itemSize;
+						}
+						row.find('td[data-field="item_description"]').html(item_description);
 						row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
 						row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
 						row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
