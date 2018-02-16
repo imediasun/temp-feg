@@ -51,10 +51,10 @@ class productsindevelopmentreport extends Sximo  {
         if (!empty($description)) {
             $where .= " AND products.vendor_description LIKE '%$description%' ";
         }
-		
+
         $sql .= $where;
-        
-		return $sql;
+
+        return $sql;
         
 	}	
 
@@ -97,7 +97,7 @@ class productsindevelopmentreport extends Sximo  {
         $searchQueries = [
             'date_start' => $date_start,
             'date_end' => $date_end,
-            'description' => $description,
+            'description' => urldecode($description),
         ];
 
         $total = 0;
