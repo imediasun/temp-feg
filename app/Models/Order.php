@@ -322,7 +322,7 @@ class order extends Sximo
                     $sku = " (SKU: ".$r->sku.")";
                 }
 
-                $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).$sku. ';';
+                $info = $info . '(' . $r->qty . ') ' . $r->item_name . ' ' . \CurrencyHelpers::formatPrice($r->total, 2) . $sku . ';';
             }
             $rs->productInfo = $info;
         }
