@@ -125,7 +125,7 @@ class OrderController extends Controller
                     $sku = " (SKU: ".$r->sku.")";
                 }
 
-                $infoString = $infoString .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total,3,true,',','.' , true ).$sku. '; ';
+                $infoString = $infoString . '(' . $r->qty . ') ' . $r->item_name . ' ' . \CurrencyHelpers::formatPrice($r->total, 2, true, ',', '.', true) . $sku . '; ';
             }
             $rs->productInfo = rtrim($infoString,'; ');
         }
