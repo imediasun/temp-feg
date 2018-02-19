@@ -14,7 +14,7 @@ class order extends Sximo
     protected $table = 'orders';
     protected $primaryKey = 'id';
     const OPENID1 = 1, OPENID2 = 3, OPENID3 = 4, FIXED_ASSET_ID = 9, CLOSEID1 = 2, CLOSEID2 = 5;
-    const ORDER_PERCISION = 2;
+    const ORDER_PERCISION = 5;
     const ORDER_TYPE_PART_GAMES = 1;
     const ORDER_VOID_STATUS = 9;
     const ORDER_CLOSED_STATUS = [2,6];
@@ -131,11 +131,11 @@ class order extends Sximo
             $orderId = $item->order_id;
 
             if(in_array($item->order_type_id,$order_types) && (!empty($item->qty_per_case) && $item->qty_per_case>0)){
-                $item->price = \CurrencyHelpers::formatPrice(($item->case_price/$item->qty_per_case), 5, false);
-                $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 5, false);
+                $item->price = \CurrencyHelpers::formatPrice(($item->case_price / $item->qty_per_case), self::ORDER_PERCISION, false);
+                $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, self::ORDER_PERCISION, false);
             }else{
-                $item->price = \CurrencyHelpers::formatPrice($item->price, 5, false);
-                $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 5, false);
+                $item->price = \CurrencyHelpers::formatPrice($item->price, self::ORDER_PERCISION, false);
+                $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, self::ORDER_PERCISION, false);
             }
           /*  $orderId = $item->order_id;
             $item->price = \CurrencyHelpers::formatPrice($item->price, 3, false);
