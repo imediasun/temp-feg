@@ -329,25 +329,25 @@ class order extends Sximo
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
                     $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
-                    $orderPriceArray[] = \CurrencyHelpers::formatPrice($row->price, Order::ORDER_PERCISION, false);
+                    $orderPriceArray[] = \CurrencyHelpers::formatPrice($row->price, self::ORDER_PERCISION, false);
                     if(in_array($data['order_type'],$case_price_categories))
                     {
-                        $orderItemsPriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, Order::ORDER_PERCISION, false);
+                        $orderItemsPriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, self::ORDER_PERCISION, false);
                     }
                     elseif(in_array($data['order_type'],$case_price_if_no_unit_categories))
                     {
-                        $orderItemsPriceArray[] = ($row->price == 0.00)? \CurrencyHelpers::formatPrice($row->case_price, Order::ORDER_PERCISION, false) : \CurrencyHelpers::formatPrice($row->price, Order::ORDER_PERCISION, false);
+                        $orderItemsPriceArray[] = ($row->price == 0.00) ? \CurrencyHelpers::formatPrice($row->case_price, self::ORDER_PERCISION, false) : \CurrencyHelpers::formatPrice($row->price, Order::ORDER_PERCISION, false);
                     }
                     else
                     {
-                        $orderItemsPriceArray[] = \CurrencyHelpers::formatPrice($row->price, Order::ORDER_PERCISION, false);
+                        $orderItemsPriceArray[] = \CurrencyHelpers::formatPrice($row->price, self::ORDER_PERCISION, false);
                     }
                     $orderQtyArray[] = $row->qty;
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
                     $skuNumArray[] = $row->sku;
-                    $orderitemcasepriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, Order::ORDER_PERCISION, false);
-                    $orderretailpriceArray[]= \CurrencyHelpers::formatPrice($row->retail_price, Order::ORDER_PERCISION, false);
+                    $orderitemcasepriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, self::ORDER_PERCISION, false);
+                    $orderretailpriceArray[] = \CurrencyHelpers::formatPrice($row->retail_price, self::ORDER_PERCISION, false);
                     $ordergameidsArray[] = $row->game_id;
                     $ordergamenameArray[] = $row->game_name;
 
