@@ -27,7 +27,7 @@ class CurrencyHelpers
          return '$ '.$value;
      }
 
-    public static function formatPrice($value, $decimalPlaces = \App\Models\Order::ORDER_PERCISION, $isDollarSign = true, $thousands_sep = ',', $dec_point = '.', $dolar_space = false)
+    public static function formatPrice($value, $decimalPlaces = 5, $isDollarSign = true, $thousands_sep = ',', $dec_point = '.', $dolar_space = false)
     {
          if($dolar_space === false){
              $formattedValue= ($isDollarSign === true)?'$ ':"";

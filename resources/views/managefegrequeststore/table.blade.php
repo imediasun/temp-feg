@@ -157,7 +157,7 @@
                                     @if(SiteHelpers::filterColumn($limited ))
                                     <td align="<?php echo $field['align']; ?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                        @if($field['field'] == 'price')
-                                            {!!number_format((float)2, '.','',$value) !!}
+                                            {!! CurrencyHelpers::formatPrice($value, App\Models\Order::ORDER_PERCISION ) !!}
                                         @else
                                             {!! $value !!}
 
