@@ -1,7 +1,7 @@
 @if (isset($pageModule) && !empty($access) && $access['is_add'] == "1" && \SiteHelpers::getModuleSetting($pageModule, 'inline') == 'true')
 
 @section ('inlinedit')
-    @if($access['is_add'] =='1')
+    @if($access['is_edit'] =='1')
         <script type="text/javascript" src="{{ asset('sximo/js/modules/utilities/inline-edit.js') }}"></script>
     @endif
     <script type="text/javascript">
