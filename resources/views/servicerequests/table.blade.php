@@ -111,9 +111,10 @@
 
                     $id = $row->TicketID;
                     ?>
-                    <tr @if($access['is_edit']=='1') class="editable" @endif id="form-{{ $row->TicketID }}"
+                    <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
+                        @endif id="form-{{ $row->TicketID }}"
                         @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->TicketID }}"
-                        @if($access['is_edit']=='1') ondblclick="showFloatingCancelSave(this)" @endif @endif>
+                        @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this)" @endif @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif

@@ -58,9 +58,10 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->ProductID;
            		?>
-			<tr @if($access['is_edit']=='1') class="editable" @endif id="form-{{ $row->ProductID }}"
-				@if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}"
-				@if($access['is_edit']=='1') ondblclick="showFloatingCancelSave(this)" @endif @endif>
+            <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
+                @endif id="form-{{ $row->ProductID }}"
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}"
+                @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this)" @endif @endif>
 					<td class="number"> <?php echo ++$i;?>  </td>
 					@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 					<td ><input type="checkbox" class="ids" name="id[]" value="<?php echo $row->ProductID ;?>" />  </td>
