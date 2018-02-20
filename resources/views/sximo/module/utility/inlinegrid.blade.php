@@ -1,7 +1,9 @@
-@if (isset($pageModule) && !empty($access) && $access['is_add'] == "1" && \SiteHelpers::getModuleSetting($pageModule, 'inline') == 'true')
+@if (isset($pageModule) && !empty($access) && ($access['is_add'] == "1" || $access['is_edit']=='1') && \SiteHelpers::getModuleSetting($pageModule, 'inline') == 'true')
 
 @section ('inlinedit')
-<script type="text/javascript" src="{{ asset('sximo/js/modules/utilities/inline-edit.js') }}"></script>          
+    @if($access['is_edit'] =='1')
+        <script type="text/javascript" src="{{ asset('sximo/js/modules/utilities/inline-edit.js') }}"></script>
+    @endif
     <script type="text/javascript">
         (function (){
             "use strict";
