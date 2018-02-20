@@ -138,7 +138,9 @@ usort($tableGrid, "SiteHelpers::_sort");
            		?>
 
 
-                <tr  @if(empty($row->deleted_at)) class="editable" @endif data-id="{{ $row->id }}" id="form-{{ $row->id }}" @if(($setting['inline']!='false' && $setting['disablerowactions']=='false') || empty($row->deleted_at))  ondblclick="showFloatingCancelSave(this)" @endif>
+            <tr @if(empty($row->deleted_at)) @if($access['is_edit']=='1') class="editable"
+                @endif @endif data-id="{{ $row->id }}" id="form-{{ $row->id }}"
+                @if(($setting['inline']!='false' && $setting['disablerowactions']=='false') || empty($row->deleted_at)) @if($access['is_edit']=='1') ondblclick="showFloatingCancelSave(this)" @endif @endif>
 
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>

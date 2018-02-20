@@ -105,7 +105,9 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
+			<tr @if($access['is_edit']=='1') class="editable" @endif id="form-{{ $row->id }}" id="form-{{ $row->id }}"
+				@if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}"
+				@if($access['is_edit']=='1') ondblclick="showFloatingCancelSave(this)" @endif @endif>
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
