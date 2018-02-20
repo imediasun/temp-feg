@@ -101,34 +101,43 @@
 			  </tr>
 			  @endif
 
-           		<?php foreach ($rowData as $row) :
-           			  $id = $row->id;
-           		?>
-				{{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
-                <tr class="editable" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}" data-id="{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
-					<input type="hidden" name="numberOfItems" value="{{$row->num_items}}" />
-					<input id = "sku-{{ $row->id }}" type="hidden" name="old-sku" value="{{$row->sku}}" />
-					<input id = "vd-{{ $row->id }}"type="hidden" name="old-vd" value="{{$row->vendor_description}}" />
-					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
-						<td class="number"> <?php echo ++$i;?>  </td>
-					@endif
-						@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
-						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
-					@endif
-					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('product/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
-					@endif
-					 <?php foreach ($tableGrid as $field) :
-					 	if($field['view'] =='1') :
-							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
-						 	?>
-						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
-						 	@if(SiteHelpers::filterColumn($limited ))
-						<td align="<?php echo $field['align'];?>"
-							@if($field['field']=='item_description') item-size="{{ $row->size }}"
-							@endif data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}"
-							data-format="{{ htmlentities($value) }}">
+                    <?php
+                    $vendor_description= "";
+                    $product_id = "";
+                    foreach ($rowData as $row) :
+                    $id = $row->id;
+                    if($vendor_description !=$row->vendor_description){
+                        $product_id="product-".$id;
+                        $vendor_description =$row->vendor_description;
+                    }
+                    ?>
+                    {{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
+                    <tr @if($access['is_edit']=='1') class="editable" @endif product-id="{!! $product_id !!}"
+                        onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
+                        data-id="{{ $row->id }}"
+                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') @if($access['is_edit']=='1') ondblclick="showFloatingCancelSave(this); editedProduct('{!! $product_id !!}',this);" @endif @endif>
+                        <input type="hidden" name="numberOfItems" value="{{$row->num_items}}"/>
+                        <input id="sku-{{ $row->id }}" type="hidden" name="old-sku" value="{{$row->sku}}"/>
+                        <input id="vd-{{ $row->id }}" type="hidden" name="old-vd" value="{{$row->vendor_description}}"/>
+                        @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                            <td class="number"> <?php echo ++$i;?>  </td>
+                        @endif
+                        @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
+                            <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>"/></td>
+                        @endif
+                        @if($setting['view-method']=='expand')
+                            <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}"
+                                   data-url="{{ url('product/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
+                        @endif
+                        <?php foreach ($tableGrid as $field) :
+                        if($field['view'] == '1') :
+                        $conn = (isset($field['conn']) ? $field['conn'] : array());
+                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn, isset($field['nodata']) ? $field['nodata'] : 0);
+                        ?>
+                        <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
+                        @if(SiteHelpers::filterColumn($limited ))
+                            <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
+                                data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                      @if($field['field']=='img')
 										<?php
