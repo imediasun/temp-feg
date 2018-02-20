@@ -77,29 +77,32 @@
         </thead>
 
 
-        <tbody>
-        	@if($access['is_add'] =='1' && $setting['inline']=='true')
-			<tr id="form-0" style="display: none">
-				<td> # </td>
-				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
-					<td> </td>
-				@endif
-				@if($setting['view-method']=='expand') <td> </td> @endif
-				@foreach ($tableGrid as $t)
-					@if(isset($t['inline']) && $t['inline'] =='1')
-					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
-						@if(SiteHelpers::filterColumn($limited ))
-						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
-						</td>
-						@endif
-					@endif
-				@endforeach
-				<td >
-					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
-				</td>
-			  </tr>
-			  @endif
+                    <tbody>
+                    @if(($access['is_add'] =='1' || $access['is_edit']=='1' ) && $setting['inline']=='true' )
+                        <tr id="form-0" style="display: none">
+                            <td> #</td>
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
+                                <td></td>
+                            @endif
+                            @if($setting['view-method']=='expand')
+                                <td></td> @endif
+                            @foreach ($tableGrid as $t)
+                                @if(isset($t['inline']) && $t['inline'] =='1')
+                                    <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
+                                    @if(SiteHelpers::filterColumn($limited ))
+                                        <td data-form="{{ $t['field'] }}"
+                                            data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+                                            {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
+                                        </td>
+                                    @endif
+                                @endif
+                            @endforeach
+                            <td>
+                                <button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i
+                                            class="fa  fa-save"></i></button>
+                            </td>
+                        </tr>
+                    @endif
 
                     <?php
                     $vendor_description= "";
