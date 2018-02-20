@@ -1,4 +1,4 @@
-@if (isset($pageModule) && !empty($access) && $access['is_add'] == "1" && \SiteHelpers::getModuleSetting($pageModule, 'inline') == 'true')
+@if (isset($pageModule) && !empty($access) && ($access['is_add'] == "1" || $access['is_edit']=='1') && \SiteHelpers::getModuleSetting($pageModule, 'inline') == 'true')
 
 @section ('inlinedit')
     @if($access['is_edit'] =='1')
