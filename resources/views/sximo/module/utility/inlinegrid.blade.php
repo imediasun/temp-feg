@@ -3,7 +3,7 @@
 @section ('inlinedit')
     @if($access['is_edit'] =='1')
         <script type="text/javascript" src="{{ asset('sximo/js/modules/utilities/inline-edit.js') }}"></script>
-    @endif
+
     <script type="text/javascript">
         (function (){
             "use strict";
@@ -28,7 +28,7 @@
 
         }());
     </script>
-       
+    @endif
 @endsection
 
 @endif
