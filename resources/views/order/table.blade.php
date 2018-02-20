@@ -109,7 +109,7 @@ usort($tableGrid, "SiteHelpers::_sort");
         </tr>
         </thead>
         <tbody>
-        	@if($access['is_add'] =='1' && $setting['inline']=='true')
+        @if(($access['is_add'] =='1' || $access['is_edit']=='1' ) && $setting['inline']=='true' )
 			<tr id="form-0">
 				<td class="cell"> # </td>
 				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1' || !empty($pass['Can remove order'])))

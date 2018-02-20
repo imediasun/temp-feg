@@ -94,7 +94,7 @@ width: 75%">
             ?>
             @if($isExport)
                 <div class="pull-right">
-                    @if($access['is_add'] =='1' && $setting['inline']=='true')
+                    @if(($access['is_add'] =='1' || $access['is_edit']=='1' ) && $setting['inline']=='true' )
 
                     @endif
                     @if($isExcel)
