@@ -12,6 +12,8 @@ class ProductController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'product';
     static $per_page = '10';
 
@@ -30,6 +32,8 @@ class ProductController extends Controller
             'pageUrl' => url('product'),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['vendor_id' => 'vendor.vendor_name', 'prod_type_id' => 'O.order_type', 'prod_sub_type_id' => 'T.type_description'];
+        $this->sortUnMapping = ['vendor.vendor_name' => 'vendor_id', 'O.order_type' => 'prod_type_id', 'T.type_description' => 'prod_sub_type_id'];
 
 
     }
@@ -131,7 +135,7 @@ class ProductController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         $filter = $this->getSearchFilterQuery();//(!is_null($request->input('search')) ? $this->buildSearch() : '');
-
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -153,6 +157,7 @@ class ProductController extends Controller
         }
         $this->data['sub_type']=$sub_type;
         $results = $this->model->getRows($params, $prod_list_type, $active,$sub_type);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         $rows = $results['rows'];
 
