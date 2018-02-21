@@ -14,8 +14,12 @@ class gamesdisposed extends Sximo  {
 	}
 
 	public static function querySelect(  ){
-		
-		return "  SELECT game.* FROM game  ";
+
+        return "  SELECT
+  game.*
+FROM game
+  LEFT JOIN game_title
+    ON game_title.id = game.game_title_id  ";
 	}	
 
 	public static function queryWhere(  ){
