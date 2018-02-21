@@ -32,8 +32,8 @@ class PendingrequestController extends Controller
             'pageUrl' => url('pendingrequest'),
             'return' => self::returnUrl()
         );
-        $this->sortMapping = ['process_user_id' => 'PU.first_name', 'product_id' => 'products.vendor_description', 'request_user_id' => 'RU.username', 'status_id' => 'merch_request_status.status', 'vendor_id' => 'V.vendor_name', 'location_id' => 'location.location_name'];
-        $this->sortUnMapping = ['PU.first_name' => 'process_user_id', 'products.vendor_description' => 'product_id', 'RU.username' => 'request_user_id', 'merch_request_status.status' => 'status_id', 'V.vendor_name' => 'vendor_id', 'location.location_name' => 'location_id'];
+        $this->sortMapping = ['process_user_id' => 'PU.first_name', 'product_id' => 'products.vendor_description', 'request_user_id' => 'RU.username', 'status_id' => 'merch_request_status.status', 'vendor_id' => 'vendor.vendor_name', 'location_id' => 'location.location_name'];
+        $this->sortUnMapping = ['PU.first_name' => 'process_user_id', 'products.vendor_description' => 'product_id', 'RU.username' => 'request_user_id', 'merch_request_status.status' => 'status_id', 'vendor.vendor_name' => 'vendor_id', 'location.location_name' => 'location_id'];
 
 
     }
