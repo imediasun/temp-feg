@@ -39,8 +39,8 @@ class SparepartsController extends Controller
             'pageUrl' => url('spareparts'),
             'return' => self::returnUrl()
         );
-        $this->sortMapping = ['claimed_by' => 'users.username', 'status_id' => 'spare_status.status', 'game_title_id' => 'game_title.game_title', 'claimed_location_id' => 'CL.location_name', 'loc_id' => 'PL.location_name'];
-        $this->sortUnMapping = ['users.username' => 'claimed_by', 'spare_status.status' => 'status_id', 'game_title.game_title' => 'game_title_id', 'CL.location_name' => 'claimed_location_id', 'PL.location_name' => 'loc_id'];
+        $this->sortMapping = ['claimed_by' => 'users.username', 'status_id' => 'spare_status.status', 'game_title_id' => 'game_title.game_title', 'claimed_location_id' => 'CL.location_name', 'loc_id' => 'L.location_name'];
+        $this->sortUnMapping = ['users.username' => 'claimed_by', 'spare_status.status' => 'status_id', 'game_title.game_title' => 'game_title_id', 'CL.location_name' => 'claimed_location_id', 'L.location_name' => 'loc_id'];
 
     }
 

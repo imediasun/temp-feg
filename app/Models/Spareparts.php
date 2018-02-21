@@ -16,11 +16,11 @@ class spareparts extends Sximo  {
 
 	public static function querySelect(  ){
 
-        return "  SELECT
+        return " SELECT
   spare_parts.*
 FROM spare_parts
   LEFT JOIN location L
-    ON l.id = spare_parts.loc_id
+    ON L.id = spare_parts.loc_id
   LEFT JOIN location CL
     ON CL.id = spare_parts.claimed_location_id
   LEFT JOIN game_title
@@ -28,8 +28,7 @@ FROM spare_parts
   LEFT JOIN spare_status
     ON spare_status.id = spare_parts.status_id
   LEFT JOIN users
-    ON users.id = spare_parts.claimed_by
-  ";
+    ON users.id = spare_parts.claimed_by ";
 	}	
 
 	public static function queryWhere(  ){
