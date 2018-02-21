@@ -20,6 +20,7 @@ class OrderController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
     public $module = 'order';
     static $per_page = '10';
 
@@ -47,7 +48,7 @@ class OrderController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
-
+        $this->sortMapping = ['order_type_id' => 'OT.order_type', 'location_id' => 'location_name'];
 
     }
 
@@ -219,9 +220,7 @@ class OrderController extends Controller
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-        if ($sort == 'order_type_id') {
-            $sort = 'OT.order_type';
-        }
+
         // End Filter sort and order for query
 
         // Get order_type search filter value and location_id saerch filter values
@@ -250,6 +249,9 @@ class OrderController extends Controller
 
 
         $page = $request->input('page', 1);
+
+        $sort = !empty($this->model->sortMapping) && isset($this->model->sortMapping[$sort]) ? $this->model->sortMapping[$sort] : $sort;
+
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
@@ -264,6 +266,7 @@ class OrderController extends Controller
 
         // \Session::put('filter_before_redirect',false);
         //\Session::put('params',$params);
+        $this->model->sortMapping = 'abc';
         $results = $this->model->getRows($params, $order_selected);
 
 
