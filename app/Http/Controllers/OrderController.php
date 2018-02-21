@@ -21,6 +21,7 @@ class OrderController extends Controller
     protected $layout = "layouts.main";
     protected $data = array();
     protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'order';
     static $per_page = '10';
 
@@ -49,6 +50,7 @@ class OrderController extends Controller
             'return' => self::returnUrl()
         );
         $this->sortMapping = ['order_type_id' => 'OT.order_type', 'location_id' => 'location_name'];
+        $this->sortUnMapping = ['OT.order_type' => 'order_type_id', 'location_name' => 'location_id'];
 
     }
 
@@ -266,7 +268,6 @@ class OrderController extends Controller
 
         // \Session::put('filter_before_redirect',false);
         //\Session::put('params',$params);
-        $this->model->sortMapping = 'abc';
         $results = $this->model->getRows($params, $order_selected);
 
 
@@ -330,9 +331,8 @@ class OrderController extends Controller
 
         }
 
-        if ($sort == 'OT.order_type') {
-            $params['sort'] = 'order_type_id';
-        }
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
