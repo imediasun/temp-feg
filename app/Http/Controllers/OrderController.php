@@ -49,8 +49,8 @@ class OrderController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
-        $this->sortMapping = ['order_type_id' => 'OT.order_type', 'location_id' => 'location_name'];
-        $this->sortUnMapping = ['OT.order_type' => 'order_type_id', 'location_name' => 'location_id'];
+        $this->sortMapping = ['status_id' => 'OS.status', 'vendor_id' => 'V.vendor_name', 'user_id' => 'U.id', 'order_type_id' => 'OT.order_type', 'location_id' => 'L.location_name'];
+        $this->sortUnMapping = ['OS.status' => 'status_id', 'V.vendor_name' => 'vendor_id', 'U.id' => 'user_id', 'OT.order_type' => 'order_type_id', 'L.location_name' => 'location_id'];
 
     }
 
