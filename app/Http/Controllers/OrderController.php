@@ -250,7 +250,7 @@ class OrderController extends Controller
 
         $page = $request->input('page', 1);
 
-        $sort = !empty($this->model->sortMapping) && isset($this->model->sortMapping[$sort]) ? $this->model->sortMapping[$sort] : $sort;
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $params = array(
             'page' => $page,
