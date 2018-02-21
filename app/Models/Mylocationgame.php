@@ -15,8 +15,37 @@ class mylocationgame extends Sximo  {
 	}
 
 	public static function querySelect(  ){
-		
-		return "SELECT game.*,game_title.img,game.location_id as location_num FROM game LEFT OUTER JOIN game_title ON game.game_title_id=game_title.id  ";
+
+        return " SELECT
+  game.*,
+  game_title.img,
+  game.location_id      AS location_num,
+  game_title.game_title,
+  game_type.game_type,
+  game_version.version,
+  location.location_name,
+  vendor.vendor_name,
+  game_status.game_status,
+  freight_orders.from_add_name,
+  users.username
+FROM game
+  LEFT OUTER JOIN game_title
+    ON game.game_title_id = game_title.id
+  LEFT JOIN  game_type
+    ON game_type.id = game.game_type_id
+  LEFT JOIN game_version
+    ON game_version.id = game.version_id
+  LEFT JOIN location
+    ON location.id = game.location_id 
+   LEFT JOIN location pl
+    ON pl.id =  game.prev_location_id
+  LEFT JOIN vendor
+    ON vendor.id = game.mfg_id
+  LEFT JOIN game_status
+  ON game_status.id = game.status_id
+  LEFT JOIN freight_orders
+  ON freight_orders.id = game.freight_order_id
+  LEFT JOIN users ON users.id = game.last_edited_by ";
 	}	
 
 	public static function queryWhere(  ){
