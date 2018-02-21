@@ -13,6 +13,9 @@ class SparepartsController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'spareparts';
     static $per_page = '10';
 
@@ -36,7 +39,8 @@ class SparepartsController extends Controller
             'pageUrl' => url('spareparts'),
             'return' => self::returnUrl()
         );
-
+        $this->sortMapping = ['claimed_by' => 'users.username', 'status_id' => 'spare_status.status', 'game_title_id' => 'game_title.game_title', 'claimed_location_id' => 'CL.location_name', 'loc_id' => 'PL.location_name'];
+        $this->sortUnMapping = ['users.username' => 'claimed_by', 'spare_status.status' => 'status_id', 'game_title.game_title' => 'game_title_id', 'CL.location_name' => 'claimed_location_id', 'PL.location_name' => 'loc_id'];
 
     }
 
@@ -76,6 +80,7 @@ class SparepartsController extends Controller
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -89,6 +94,8 @@ class SparepartsController extends Controller
         // Get Query
         $results = $this->model->getRows($params);
         // Build pagination setting
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 
