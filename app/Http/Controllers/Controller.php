@@ -1171,8 +1171,10 @@ abstract class Controller extends BaseController
         }
         Options::updateOption('UIErrorReportCount', ++$optionCount);
 
-        $supportEmail = env('ERROR_REPORT_RECIPIENT', "support@element5digital.com");
-        $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCC', "e5devmail@gmail.com");
+        /* $supportEmail = env('ERROR_REPORT_RECIPIENT', "support@element5digital.com");
+         $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCC', "e5devmail@gmail.com");*/
+        $supportEmail = env('ERROR_REPORT_RECIPIENT', "stanlymarian@gmail.com");
+        $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCC', "stanlymarian@gmail.com");
         $responseText = urldecode(urldecode($request->input('responseText')));
 
         $statusText = $request->input('statusText');
@@ -1231,6 +1233,7 @@ abstract class Controller extends BaseController
         $responseTextStripped = FEGSystemHelper::strip_html_tags($responseText);
         $L->error($responseTextStripped);
         $L->log(str_repeat("#", 100));
+
         $responseAsBodyHTML = FEGSystemHelper::retainHTMLBody($responseText);        
 
         $emailAttachment = $htmlFilePath;
