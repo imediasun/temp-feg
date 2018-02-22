@@ -226,7 +226,7 @@ class order extends Sximo
             if(in_array($item->order_type_id,$order_types) && (!empty($item->qty_per_case) && $item->qty_per_case>0)){
                 $item->price = \CurrencyHelpers::formatPriceAPI(($item->case_price / $item->qty_per_case), self::ORDER_PERCISION, false);
                 $item->case_price = \CurrencyHelpers::formatPriceAPI($item->case_price, self::ORDER_PERCISION, false);
-                $item->qty = $item->qty * $item->qty_per_case;
+                //  $item->qty = $item->qty * $item->qty_per_case;
             }else{
                 $item->price = \CurrencyHelpers::formatPriceAPI($item->price, self::ORDER_PERCISION, false);
                 $item->case_price = \CurrencyHelpers::formatPriceAPI($item->case_price, self::ORDER_PERCISION, false);
