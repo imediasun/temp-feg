@@ -20,6 +20,8 @@ class UsersController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'users';
     static $per_page = '10';
 
@@ -41,6 +43,8 @@ class UsersController extends Controller
             'return' => self::returnUrl()
 
         );
+        $this->sortMapping = ['company_id' => 'company.company_name_short', 'group_id' => 'tb_groups.name'];
+        $this->sortUnMapping = ['company.company_name_short' => 'company_id', 'tb_groups.name' => 'group_id'];
     }
 
     public function getCheckAccess()
@@ -140,6 +144,7 @@ class UsersController extends Controller
         //$filter .= " AND tb_users.group_id >= '".\Session::get('gid')."'" ;
 
 
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
 
@@ -153,6 +158,7 @@ class UsersController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params, $id);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
