@@ -38,6 +38,13 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+
+        //empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+            return response()->view('errors.404', [], 404);
+        }
+
         return parent::render($request, $e);
     }
 }
