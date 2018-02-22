@@ -11,6 +11,8 @@ class ManageservicerequestsController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'manageservicerequests';
     static $per_page = '10';
 
@@ -29,6 +31,8 @@ class ManageservicerequestsController extends Controller
             'pageUrl' => url('manageservicerequests'),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['requestor_id' => 'u1.username', "location_id" => "location.location_name"];
+        $this->sortUnMapping = ['u1.username' => 'requestor_id', "location.location_name" => "location_id"];
 
 
     }
@@ -70,6 +74,7 @@ class ManageservicerequestsController extends Controller
             $filter = $this->buildSearch();
         }
 
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -83,6 +88,7 @@ class ManageservicerequestsController extends Controller
 
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
 
         // Build pagination setting
