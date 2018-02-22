@@ -129,10 +129,11 @@ class order extends Sximo
         $order_types = explode(",",$order_types);
         foreach($result as $item){
             $orderId = $item->order_id;
-            $item->qty = $item->qty * $item->qty_per_case;
+
             if(in_array($item->order_type_id,$order_types) && (!empty($item->qty_per_case) && $item->qty_per_case>0)){
                 $item->price = \CurrencyHelpers::formatPriceAPI(($item->case_price / $item->qty_per_case), self::ORDER_PERCISION, false);
                 $item->case_price = \CurrencyHelpers::formatPriceAPI($item->case_price, self::ORDER_PERCISION, false);
+                $item->qty = $item->qty * $item->qty_per_case;
             }else{
                 $item->price = \CurrencyHelpers::formatPriceAPI($item->price, self::ORDER_PERCISION, false);
                 $item->case_price = \CurrencyHelpers::formatPriceAPI($item->case_price, self::ORDER_PERCISION, false);
