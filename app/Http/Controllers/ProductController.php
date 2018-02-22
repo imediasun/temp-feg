@@ -369,8 +369,6 @@ class ProductController extends Controller
         {
             $rules['expense_category'] = 'required|numeric|min:0';
         }*/
-        $_POST['allow_negative_reserve_qty'] = 0;
-        unset($_POST['inactive_by']);
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
