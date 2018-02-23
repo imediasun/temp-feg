@@ -135,6 +135,7 @@ class ManagefegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
+
         $this->getSearchParamsForRedirect('manageFegStore');
         $user_level = \Session::get('gid');
         if ($user_level == Groups::PARTNER) {
@@ -179,8 +180,13 @@ class ManagefegrequeststoreController extends Controller
                 $searchInput = ['query' => $globalSearchFilter['search_all_fields'],'fields' => $searchFields];
                 $filter = $this->buildSearch($searchInput);
             }*/
+
+
             $filter = $this->getSearchFilterQuery();
+
+
             $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3, $filter);
+
             $this->data['manageRequestInfo'] = $manageRequestInfo;
             $this->data['TID'] = $manageRequestInfo['TID'];
             $this->data['LID'] = $manageRequestInfo['LID'];
@@ -197,6 +203,13 @@ class ManagefegrequeststoreController extends Controller
             } if (!empty($manageRequestInfo['vendor_options']) && !array_key_exists(!empty($this->data['VID'])?$this->data['VID']:0,$manageRequestInfo['vendor_options'])) {
                 $this->data['VID'] = "";
             }
+            $searchQuery = $request->input('search');
+            if (!empty($searchQuery)) {
+                $searchQuery = explode(":", $searchQuery);
+                $searchQuery = !empty($searchQuery[2]) ? rtrim($searchQuery[2], "|") : '';
+                $filter = $this->getSearchFilterQuery(['query' => $searchQuery, 'fields' => ['products.vendor_description', 'V1.vendor_name', 'u1.username']]);
+            }
+
             $page = $request->input('page', 1);
             $params = array(
                 'page' => $page,
@@ -255,6 +268,7 @@ class ManagefegrequeststoreController extends Controller
         // Get assigned locations list as sql query (part)
         //$locationFilter = \SiteHelpers::getQueryStringForLocation('new_graphics_request', 'location_id', [], ' OR new_graphics_request.location_id=0 ');
         $locationFilter = \SiteHelpers::getQueryStringForLocation('requests');
+
         // if search filter does not have location_id filter
         // add default location filter
         $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));
