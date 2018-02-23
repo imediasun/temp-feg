@@ -186,7 +186,6 @@ class OrderController extends Controller
 
     public function getIndex()
     {
-        echo $err;
         /*
         \App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
