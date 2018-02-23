@@ -224,5 +224,6 @@ return [
     ],
 
     'NETSUITE_PRODUCT_MAX_LENGTH'=>env('NETSUITE_PRODUCT_MAX_LENGTH',10),
+    'SHOW_EXCEPTION' => env('SHOW_EXCEPTION', false),
 
 ];

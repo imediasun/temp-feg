@@ -1175,10 +1175,10 @@ abstract class Controller extends BaseController
         $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCC', "e5devmail@gmail.com");
 
         $responseText = urldecode(urldecode($request->input('responseText')));
-
-        $errorText = str_replace("id='tempError'", "id='tempError' style='display:none !important;'", $responseText);
-        $responseText = str_replace("id='ActualError' style='display: none;'", "id='ActualError' style='display: block !important; font-size:14px; color:black !important;'", $errorText);
-
+        if (config("app.SHOW_EXCEPTION") == true) {
+            $errorText = str_replace("id='tempError'", "id='tempError' style='display:none !important;'", $responseText);
+            $responseText = str_replace("id='ActualError' style='display: none;'", "id='ActualError' style='display: block !important; font-size:14px; color:black !important;'", $errorText);
+        }
 
         $statusText = $request->input('statusText');
         $status = $request->input('status');
