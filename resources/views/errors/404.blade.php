@@ -36,7 +36,7 @@
 <body>
 <div class="container">
     <div class="content">
-        <div class="title" id='tempError'>404 Page not found.</div>
+        <div class="title" id='tempError'>500 Internal Server Error.</div>
     </div>
 
 </div>
