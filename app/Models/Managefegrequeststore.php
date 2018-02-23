@@ -427,4 +427,18 @@ class managefegrequeststore extends Sximo
         }
     }
 
+    function getSearchQueryStringToArray($queryString = '')
+    {
+
+        $QueryArray = [];
+        $queryArray = explode("|", $queryString);
+        foreach ($queryArray as $itemKey) {
+            $SearchKey = explode(":", $itemKey);
+            if (!empty($SearchKey[2])) {
+                $QueryArray[$SearchKey[0]] = $SearchKey[2];
+            }
+        }
+        return $QueryArray;
+    }
+
 }

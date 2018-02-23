@@ -203,6 +203,21 @@ class ManagefegrequeststoreController extends Controller
             }
             $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
+            $searchQuery = $request->input('search');
+            if (!empty($searchQuery)) {
+                $searchQuery = explode(":", $searchQuery);
+                if ($searchQuery[0] == 'description') {
+                    $searchQuery = !empty($searchQuery[2]) ? explode("|", $searchQuery[2])[0] : '';
+                    $filter = $this->getSearchFilterQuery(['query' => $searchQuery, 'fields' => ['products.vendor_description', 'V1.vendor_name', 'u1.username']]);
+                }
+
+                $searchQueryArray = $this->model->getSearchQueryStringToArray($request->input('search'));
+
+                if (array_key_exists("vendor_id", $searchQueryArray)) {
+                    $filter = "  AND products.vendor_id IN(" . $searchQueryArray['vendor_id'] . ")   " . $filter;
+                }
+            }
+
             $page = $request->input('page', 1);
             $params = array(
                 'page' => $page,
