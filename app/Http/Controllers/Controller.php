@@ -1171,10 +1171,9 @@ abstract class Controller extends BaseController
         }
         Options::updateOption('UIErrorReportCount', ++$optionCount);
 
-        /* $supportEmail = env('ERROR_REPORT_RECIPIENT', "support@element5digital.com");
-         $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCC', "e5devmail@gmail.com");*/
-        $supportEmail = env('ERROR_REPORT_RECIPIENT', "stanlymarian@gmail.com");
-        $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCC', "stanlymarian@gmail.com");
+        $supportEmail = env('ERROR_REPORT_RECIPIENT', "support@element5digital.com");
+        $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCC', "e5devmail@gmail.com");
+
         $responseText = urldecode(urldecode($request->input('responseText')));
 
         $errorText = str_replace("id='tempError'", "id='tempError' style='display:none !important;'", $responseText);
