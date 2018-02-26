@@ -37,8 +37,8 @@ class ManagefreightquotersController extends Controller
             'pageUrl' => url('managefreightquoters'),
             'return' => self::returnUrl()
         );
-        $this->sortMapping = ['vend_to' => 'V2.vendor_name', 'vend_from' => 'V.vendor_name', 'loc_to_1' => 'L.location_name'];
-        $this->sortUnMapping = ['V2.vendor_name' => 'vend_to', 'V.vendor_name' => 'vend_from', 'location_name' => 'L.loc_to_1'];
+        $this->sortMapping = ['vend_to1' => 'V2.vendor_name', 'vend_from1' => 'V.vendor_name', 'loc_to_1' => 'L1.id'];
+        $this->sortUnMapping = ['V2.vendor_name' => 'vend_to1', 'V.vendor_name' => 'vend_from1', 'L1.id' => 'loc_to_1'];
     }
 
     public function getIndex()

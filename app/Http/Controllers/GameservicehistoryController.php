@@ -40,8 +40,8 @@ class GameservicehistoryController extends Controller
         );
         $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'][0] : array());
 
-        $this->sortMapping = ['down_user_id' => 'username', 'up_user_id' => 'username'];
-        $this->sortUnMapping = ['username' => 'down_user_id', 'username' => 'up_user_id'];
+        $this->sortMapping = ['down_user_id' => 'username', 'up_user_id' => 'username1'];
+        $this->sortUnMapping = ['username' => 'down_user_id', 'username1' => 'up_user_id'];
 
     }
 
