@@ -47,8 +47,8 @@ class servicerequestsController extends Controller
             'issueTypeOptions' => $this->model->getIssueTypes(),
             'canChangeStatus' => ticketsetting::canUserChangeStatus(),
         );
-        $this->sortMapping = ['location_id' => 'L.location_name', 'last_user' => 'U.first_name'];
-        $this->sortUnMapping = ['L.location_name' => 'location_id', 'U.first_name' => 'last_user'];
+        $this->sortMapping = ['location_id11' => 'L.location_name', 'last_user' => 'U.first_name'];
+        $this->sortUnMapping = ['L.location_name11' => 'location_id', 'U.first_name' => 'last_user'];
 
     }
 
