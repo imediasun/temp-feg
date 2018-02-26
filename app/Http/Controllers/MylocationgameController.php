@@ -37,8 +37,8 @@ class MylocationgameController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
-        $this->sortMapping = ['prev_location_id' => 'pl.location_name', 'users.username' => 'last_edited_by', 'freight_order_id' => 'freight_orders.from_add_name', 'game_status_id' => 'game_status.game_status', 'version_id' => 'game_version.version', 'game_type_id' => 'game_type.game_type', 'game_title_id' => 'game_title.game_title', 'location_id' => 'location.location_name', 'mfg_id' => 'vendor.vendor_name'];
-        $this->sortUnMapping = ['pl.location_name' => 'prev_location_id', 'users.username' => 'last_edited_by', 'freight_orders.from_add_name' => 'freight_order_id', 'game_status.game_status' => 'game_status_id', 'game_version.version' => 'version_id', 'game_type.game_type' => 'game_type_id', 'game_title.game_title' => 'game_title_id', 'location.location_name' => 'location_id', 'vendor.vendor_name' => 'mfg_id'];
+        $this->sortMapping = ['prev_location_id' => 'pl.location_name', 'last_edited_by' => 'users.username', 'freight_order_id' => 'freight_orders.from_add_name', 'status_id' => 'game_status.game_status', 'version' => 'game_version.version', 'game_type_id' => 'game_type.game_type', 'game_title_id' => 'game_title.game_title', 'location_id' => 'location.location_name', 'mfg_id' => 'vendor.vendor_name'];
+        $this->sortUnMapping = ['pl.location_name' => 'prev_location_id', 'users.username' => 'last_edited_by', 'freight_orders.from_add_name' => 'freight_order_id', 'game_status.game_status' => 'status_id', 'game_version.version' => 'version', 'game_type.game_type' => 'game_type_id', 'game_title.game_title' => 'game_title_id', 'location.location_name' => 'location_id', 'vendor.vendor_name' => 'mfg_id'];
     }
 
     private function  updatePermissions($module){

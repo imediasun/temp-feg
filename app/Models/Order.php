@@ -130,7 +130,7 @@ class order extends Sximo
                 LEFT OUTER JOIN order_type OT ON orders.order_type_id=OT.id
                 LEFT OUTER JOIN order_contents OC ON orders.id=OC.order_id
                 LEFT OUTER JOIN order_status OS ON orders.status_id=OS.id
-                LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id";
+                LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id ";
     }
     public static function getProductInfo($id){
 

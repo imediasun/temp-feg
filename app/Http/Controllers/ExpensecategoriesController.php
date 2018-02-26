@@ -30,8 +30,8 @@ class ExpensecategoriesController extends Controller {
 			'pageUrl'			=>  url('expensecategories'),
 			'return' 			=> 	self::returnUrl()
 		);
-        $this->sortMapping = ['order_type' => 'order_type.order_type'];
-        $this->sortUnMapping = ['order_type.order_type' => 'order_type'];
+        $this->sortMapping = ['order_type' => 'order_type.order_type', 'product_type' => 'product_type.type_description'];
+        $this->sortUnMapping = ['order_type.order_type' => 'order_type', 'product_type.type_description' => 'product_type'];
 
 
     }
