@@ -30,8 +30,8 @@ class ExcludedreadersController extends Controller {
 			'pageUrl'			=>  url('excludedreaders'),
 			'return' 			=> 	self::returnUrl()
 		);
-        $this->sortMapping = ['loc_id' => 'location.location_name', 'debit_type_id' => 'debit_type.company'];
-        $this->sortUnMapping = ['location.location_name' => 'loc_id', 'debit_type.company' => 'debit_type_id'];
+        $this->sortMapping = ['loc_id1' => 'location.location_name', 'debit_type_id' => 'debit_type.company'];
+        $this->sortUnMapping = ['location.location_name' => 'loc_id1', 'debit_type.company' => 'debit_type_id'];
 
 
 	}
