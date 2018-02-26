@@ -31,8 +31,8 @@ class ManageservicerequestsController extends Controller
             'pageUrl' => url('manageservicerequests'),
             'return' => self::returnUrl()
         );
-        $this->sortMapping = ['requestor_id' => 'u1.username', "location_id111" => "location.location_name"];
-        $this->sortUnMapping = ['u1.username' => 'requestor_id', "location.location_name111" => "location_id"];
+        $this->sortMapping = ['requestor_id' => 'u1.username', "location_id111" => "location.location_name", 'status_id' => 'service_status.status'];
+        $this->sortUnMapping = ['u1.username' => 'requestor_id', "location.location_name111" => "location_id", 'service_status.status' => 'status_id'];
 
 
     }
