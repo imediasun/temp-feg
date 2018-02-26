@@ -45,7 +45,7 @@ FROM (SELECT
         LEFT JOIN users downuser
           ON downuser.id = gsh.down_user_id
 	LEFT JOIN users upuser
-          ON upuser.id = gsh.down_user_id
+          ON upuser.id = gsh.up_user_id
           ) AS game_service_history ";
     }
 
