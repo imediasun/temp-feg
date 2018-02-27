@@ -26,7 +26,7 @@
         <div class="sbox ">
             <div class="sbox-content">
                 <div class="alert alert-warning  fade in block-inner" id='tempError'>
-                    <button class="close" onclick="window.location='/order'; " type="button">&times;</button>
+                    <button class="close" onclick="window.location='/order';" type="button">&times;</button>
                     <i class="icon-warning" style="vertical-align: text-bottom;"></i> &nbsp;Something went wrong. We are
                     trying to get back.
                 </div>
