@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>404 Page not found.</title>
+    <title>500 Internal Server Error.</title>
 
     <link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
 
