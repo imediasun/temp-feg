@@ -204,6 +204,8 @@ class OrderController extends Controller
 
     public function postData(Request $request)
     {
+        $testCase1 = 2 / 0;
+        echo $testCase1;
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'order')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         $this->getSearchParamsForRedirect();
