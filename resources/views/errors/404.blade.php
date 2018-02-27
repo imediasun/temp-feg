@@ -1,7 +1,7 @@
 <html>
 <head>
     <title>{{ CNF_APPNAME }}</title>
-
+    <link rel="shortcut icon" href="{{ asset('fegpo.png')}}" type="image/x-icon">
     <link href="{{ asset('sximo/js/plugins/bootstrap/css/bootstrap.css')}}" rel="stylesheet">
     <link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet">
     <link href="{{ asset('sximo/css/animate.css')}}" rel="stylesheet">
