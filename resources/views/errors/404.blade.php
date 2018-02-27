@@ -17,7 +17,7 @@
 </head>
 <body id="login-bg"
       style="background:url('{{asset("sximo/images/feg-login-bg.jpg") }}');background-size: 100% auto;background-attachment: fixed;background-position: center top;background-size: cover; background-color:#003673">
-<div class="middle-box  " style="width: 550px; margin-left:-275px; font-size: 16px;">
+<div class="middle-box  " style="font-size: 16px;">
     <div>
         <div class="text-center">
             <img src="{{ asset('sximo/images/feg_new_logo.png') }}"/>
@@ -26,9 +26,15 @@
         <div class="sbox ">
             <div class="sbox-content">
                 <div class="alert alert-warning  fade in block-inner" id='tempError'>
-                    <button class="close" onclick="window.location='/order';  " type="button">&times;</button>
-                    <i class="icon-warning" style="vertical-align: text-bottom;"></i> &nbsp;Something went wrong. We are
-                    trying to get back.
+                    <div class="row">
+                        <div class="col-md-2">
+                            <i class="icon-warning"
+                               style="vertical-align: middle;  font-size: 33px; line-height: 40px; left: 2px; position: relative;"></i>
+                        </div>
+                        <div class="col-md-9">Something went wrong.<br/> We are
+                            trying to get back.
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
