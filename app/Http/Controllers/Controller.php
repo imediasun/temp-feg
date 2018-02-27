@@ -1173,7 +1173,6 @@ abstract class Controller extends BaseController
 
         $supportEmail = env('ERROR_REPORT_RECIPIENT', "support@element5digital.com");
         $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCC', "e5devmail@gmail.com");
-
         $responseText = urldecode(urldecode($request->input('responseText')));
         if (config("app.SHOW_EXCEPTION") == true) {
             $errorText = str_replace("id='tempError'", "id='tempError' style='display:none !important;'", $responseText);
@@ -1237,7 +1236,13 @@ abstract class Controller extends BaseController
         $L->error($responseTextStripped);
         $L->log(str_repeat("#", 100));
         $responseAsBodyHTML = FEGSystemHelper::retainHTMLBody($responseText);
-
+        if (config("app.SHOW_EXCEPTION") == true) {
+            $htmlContent = file_get_contents($htmlFilePath);
+            $htmlElement = FEGSystemHelper::getDOMElementById($htmlContent, "ActualError");
+            $responseAsBodyHTML = FEGSystemHelper::DOMinnerHTML($htmlElement);
+            $responseAsBodyHTML = nl2br($responseAsBodyHTML);
+            file_put_contents($htmlFilePath, $responseAsBodyHTML);
+        }
         $emailAttachment = $htmlFilePath;
         $subject = "An error has been reported by user from FEG Admin";
         $emailMessage = "<p>".$errorMessageHTML . "</p><hr/>"

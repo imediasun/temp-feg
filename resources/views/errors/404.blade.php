@@ -1,43 +1,39 @@
 <html>
 <head>
-    <title>500 Internal Server Error.</title>
+    <title>{{ CNF_APPNAME }}</title>
 
-    <link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
+    <link href="{{ asset('sximo/js/plugins/bootstrap/css/bootstrap.css')}}" rel="stylesheet">
+    <link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet">
+    <link href="{{ asset('sximo/css/animate.css')}}" rel="stylesheet">
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            color: #B0BEC5;
-            display: table;
-            font-weight: 100;
-            font-family: 'Lato';
-        }
+    <link href="sximo/css/icons.min.css" rel="stylesheet">
+    <link href="sximo/fonts/awesome/css/font-awesome.min.css" rel="stylesheet">
+    <script src="//use.edgefonts.net/source-sans-pro.js"></script>
 
-        .container {
-            text-align: center;
-            display: table-cell;
-            vertical-align: middle;
-        }
-
-        .content {
-            text-align: center;
-            display: inline-block;
-        }
-
-        .title {
-            font-size: 72px;
-            margin-bottom: 40px;
-        }
-    </style>
+    <script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('sximo/js/plugins/parsley.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('sximo/js/plugins/bootstrap/js/bootstrap.js') }}"></script>
+    <link href="{{ asset('sximo/css/feg_new_styles.css')}}" rel="stylesheet">
 </head>
-<body>
-<div class="container">
-    <div class="content">
-        <div class="title" id='tempError'>500 Internal Server Error.</div>
+<body id="login-bg"
+      style="background:url('{{asset("sximo/images/feg-login-bg.jpg") }}');background-size: 100% auto;background-attachment: fixed;background-position: center top;background-size: cover; background-color:#003673">
+<div class="middle-box  " style="width: 550px; margin-left:-275px; font-size: 16px;">
+    <div>
+        <div class="text-center">
+            <img src="{{ asset('sximo/images/feg_new_logo.png') }}"/>
+            <img id="logo-bar" src="{{ asset('sximo/images/logo_bar.png') }}" class="full-width"/>
+        </div>
+        <div class="sbox ">
+            <div class="sbox-content">
+                <div class="alert alert-warning  fade in block-inner" id='tempError'>
+                    <button class="close" type="button"> x</button>
+                    <i class="icon-warning" style="vertical-align: text-bottom;"></i> &nbsp;Something went wrong. We are
+                    trying to get back.
+                </div>
+            </div>
+        </div>
     </div>
+
 
 </div>
 </body>
