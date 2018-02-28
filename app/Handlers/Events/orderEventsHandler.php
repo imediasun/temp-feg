@@ -47,7 +47,7 @@ class orderEventsHandler
             if($product->allow_negative_reserve_qty == 0 && $adjustmentAmount > $product->reserved_qty){
                 $error=true;
                 $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $product->reserved_qty";
-                $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $product->reserved_qty + $product->prev_qty : $product->reserved_qty;
+                $adjustQty[$product->id] = $product->reserved_qty < 1 ? $product->reserved_qty : $ReservedProductQtyLogObj ? $product->reserved_qty + $product->prev_qty : $product->reserved_qty;
             }
         }
 
