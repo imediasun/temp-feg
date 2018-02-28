@@ -49,7 +49,7 @@ class MylocationgameController extends Controller
     public function getSearch($mode = 'ajax')
     {
 
-        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableForm'] = \SiteHelpers::configureSimpleSearchForm($this->info['config']['forms']);
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['searchMode'] = $mode;
 
