@@ -208,7 +208,7 @@ class ManagefegrequeststoreController extends Controller
                 $searchQuery = explode(":", $searchQuery);
                 if ($searchQuery[0] == 'description') {
                     $searchQuery = !empty($searchQuery[2]) ? explode("|", $searchQuery[2])[0] : '';
-                    $filter = $this->getSearchFilterQuery(['query' => $searchQuery, 'fields' => ['products.vendor_description', 'V1.vendor_name', 'u1.username']]);
+                    $filter = $this->getSearchFilterQuery(['query' => $searchQuery, 'fields' => ['products.vendor_description', 'u1.username']]);
                 }
 
                 $searchQueryArray = $this->model->getSearchQueryStringToArray($request->input('search'));
@@ -263,6 +263,7 @@ class ManagefegrequeststoreController extends Controller
             if ($this->data['config_id'] != 0 && !empty($config)) {
                 $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
             }
+
 // Render into template
             return view('managefegrequeststore.table', $this->data);
         }
