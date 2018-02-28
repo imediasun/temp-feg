@@ -46,6 +46,20 @@ class MylocationgameController extends Controller
         $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Dispose']) ? 1 : 0;
     }
 
+    public function getSearch($mode = 'ajax')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = $mode;
+
+        if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            return view('feg_common.search', $this->data);
+        } else {
+            return view('sximo.module.utility.search', $this->data);
+        }
+
+    }
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
