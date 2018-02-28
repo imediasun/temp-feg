@@ -37,8 +37,7 @@ function performSimpleSearch(params) {
         }
         if (typeof value == 'string') {
             //Trim and remove any character other than ASCII
-            value = $.trim(value);
-            //value = $.trim(value).replace(/[^\x00-\x7F]/g, "");
+            value = $.trim(value).replace(/[^\x00-\x7F]/g, "");
         }
         // not required to be included
         if (!fieldName || fieldName === '_token' || value === '') {
@@ -66,7 +65,7 @@ function performSimpleSearch(params) {
         
         // encode URI if needed
         if(App.needsURIEncoding(value, valueField)){
-            // value = encodeURIComponent(value);
+            value = encodeURIComponent(value);
         }
         
         // store querystring specific values
