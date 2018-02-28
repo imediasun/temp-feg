@@ -369,8 +369,8 @@ var simpleSearch = $('.simpleSearchContainer');
 if (simpleSearch.length) {
     initiateSearchFormFields(simpleSearch);
     simpleSearch.find('.doSimpleSearch').click(function(event){
-		console.log("Here B");
-        performSimpleSearch.call($(this), {
+
+		performSimpleSearch.call($(this), {
             moduleID: '#{{ $pageModule }}',
             url: "{{ $pageUrl }}",
             event: event,
