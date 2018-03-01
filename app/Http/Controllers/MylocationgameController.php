@@ -56,8 +56,15 @@ class MylocationgameController extends Controller
         if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
             return view('feg_common.search', $this->data);
         } else {
-
-            $this->data = \SiteHelpers::configureSimpleSearchForm($this->data);
+            print_r($this->data);
+            uasort($this->data, function ($a, $b) {
+                return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1);
+            });
+            echo "<br>==============<br>";
+            print_r($this->data);
+            echo "<br>==============<br>";
+            die;
+            // $this->data = \SiteHelpers::configureSimpleSearchForm($this->data);
 
             return view('sximo.module.utility.search', $this->data);
         }
