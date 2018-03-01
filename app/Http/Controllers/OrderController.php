@@ -2112,17 +2112,18 @@ public static function array_move($which, $where, $array)
     public function getCloseOrdersWithNoContent()
     {
         $records = \DB::select("SELECT
-                              orders.id,
-                              orders.po_number,
-                              orders.date_ordered,
-                              orders.status_id,
-                              order_contents.id
-                            FROM orders
-                              LEFT JOIN order_contents
-                                ON order_contents.order_id = orders.id
-                            WHERE  YEAR(date_ordered) <=2016
-                                AND order_contents.id IS NULL
-                                AND orders.status_id <> 2");
+                                  orders.id,
+                                  orders.po_number,
+                                  orders.date_ordered,
+                                  orders.status_id,
+                                  order_contents.id
+                                FROM orders
+                                  LEFT JOIN order_contents
+                                    ON order_contents.order_id = orders.id
+                                WHERE YEAR(date_ordered) <= 2016
+                                    AND order_contents.id IS NULL
+                                    AND orders.status_id <> 2
+                                    AND orders.order_type_id IN(8,17,4,6,7)");
 
         if (!empty($records)) {
             foreach ($records as $order) {
@@ -2137,36 +2138,37 @@ public static function array_move($which, $where, $array)
         // die("Script blocked. To run this script please contact your development team. Thanks!");
 
         $records = \DB::select("SELECT
-              orders.id AS aa_id,
-              orders.po_number,
-              orders.date_ordered,
-              IF(orders.is_partial = 0,'No','Yes') AS is_partial,
-              IF(orders.is_freehand = 0,'No','Yes') AS is_freehand,
-              order_type.order_type,
-              IF(orders.invoice_verified = 0,'No','Yes') AS `invoice verified`,
-              
-            (SELECT SUM(order_contents.qty)
-            FROM orders
-            LEFT JOIN order_contents ON orders.id = order_contents.order_id
-            WHERE orders.id = aa_id
-            GROUP BY order_contents.order_id) AS items_ordered,
-            
-            (SELECT SUM(order_received.quantity)
-            FROM orders
-            LEFT JOIN order_received ON orders.id = order_received.order_id
-            WHERE orders.id = aa_id
-            GROUP BY order_received.order_id) AS items_received
-            
-            FROM orders
-            JOIN order_type ON order_type.id = orders.order_type_id
-            WHERE 
-                AND is_partial = 0    
-                AND is_api_visible = 0
-                AND is_freehand = 0
-                AND order_type_id IN (8,17,4,6,7)
-                AND YEAR(date_ordered) <= 2016
-            HAVING items_ordered < items_received
-            ORDER BY aa_id");
+                              orders.id             AS aa_id,
+                              orders.po_number,
+                              orders.date_ordered,
+                              IF(orders.is_partial = 0,'No','Yes') AS is_partial,
+                              IF(orders.is_freehand = 0,'No','Yes') AS is_freehand,
+                              order_type.order_type,
+                              IF(orders.invoice_verified = 0,'No','Yes') AS `invoice verified`,
+                              (SELECT
+                                 SUM(order_contents.qty)
+                               FROM orders
+                                 LEFT JOIN order_contents
+                                   ON orders.id = order_contents.order_id
+                               WHERE orders.id = aa_id
+                               GROUP BY order_contents.order_id) AS items_ordered,
+                              (SELECT
+                                 SUM(order_received.quantity)
+                               FROM orders
+                                 LEFT JOIN order_received
+                                   ON orders.id = order_received.order_id
+                               WHERE orders.id = aa_id
+                                   AND order_received.deleted_at IS NULL
+                               GROUP BY order_received.order_id) AS items_received
+                            FROM orders
+                              JOIN order_type
+                                ON order_type.id = orders.order_type_id
+                            WHERE is_api_visible = 0
+                                AND is_freehand = 0
+                                AND order_type_id IN(8,17,4,6,7)
+                                AND YEAR(date_ordered) <= 2016
+                            HAVING items_ordered < items_received
+                            ORDER BY aa_id");
 
         if ($step == '1') {
             $ids = array_map(function ($row) {
