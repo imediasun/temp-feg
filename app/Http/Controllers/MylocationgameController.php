@@ -57,9 +57,11 @@ class MylocationgameController extends Controller
             return view('feg_common.search', $this->data);
         } else {
 
-            uasort($this->data['tableForm'], function ($a, $b) {
-                return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1);
-            });
+            /*  uasort($this->data['tableForm'], function ($a, $b) {
+                  return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1);
+              });*/
+            $out = array_splice($this->data['tableForm'], 36, 2);
+            array_splice($this->data['tableForm'], 2, 0, $out);
 
             // $this->data = \SiteHelpers::configureSimpleSearchForm($this->data);
 
