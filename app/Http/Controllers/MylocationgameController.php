@@ -49,13 +49,18 @@ class MylocationgameController extends Controller
     public function getSearch($mode = 'ajax')
     {
 
-        $this->data['tableForm'] = \SiteHelpers::configureSimpleSearchForm($this->info['config']['forms']);
+        $this->data['tableForm'] = $this->info['config']['forms'];
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['searchMode'] = $mode;
 
         if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            echo 'A';
+            die;
             return view('feg_common.search', $this->data);
         } else {
+
+            $this->data = \SiteHelpers::configureSimpleSearchForm($this->data);
+
             return view('sximo.module.utility.search', $this->data);
         }
 
