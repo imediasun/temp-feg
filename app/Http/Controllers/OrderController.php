@@ -2112,17 +2112,17 @@ public static function array_move($which, $where, $array)
     public function getCloseOrdersWithNoContent()
     {
         $records = \DB::select("SELECT
-                          orders.id,
-                          orders.po_number,
-                          orders.date_ordered,
-                          orders.status_id,
-                          order_contents.id
-                        FROM orders
-                          LEFT JOIN order_contents
-                            ON order_contents.order_id = orders.id
-                        WHERE date_ordered < '2017-06-06'
-                            AND order_contents.id IS NULL
-                            AND orders.status_id <> 2");
+                              orders.id,
+                              orders.po_number,
+                              orders.date_ordered,
+                              orders.status_id,
+                              order_contents.id
+                            FROM orders
+                              LEFT JOIN order_contents
+                                ON order_contents.order_id = orders.id
+                            WHERE  YEAR(date_ordered) <=2016
+                                AND order_contents.id IS NULL
+                                AND orders.status_id <> 2");
 
         if (!empty($records)) {
             foreach ($records as $order) {
@@ -2159,14 +2159,12 @@ public static function array_move($which, $where, $array)
             
             FROM orders
             JOIN order_type ON order_type.id = orders.order_type_id
-            WHERE     status_id = 2
+            WHERE 
                 AND is_partial = 0    
                 AND is_api_visible = 0
                 AND is_freehand = 0
                 AND order_type_id IN (8,17,4,6,7)
-                
                 AND YEAR(date_ordered) <= 2016
-                AND date_ordered < '2017-06-06'
             HAVING items_ordered < items_received
             ORDER BY aa_id");
 
