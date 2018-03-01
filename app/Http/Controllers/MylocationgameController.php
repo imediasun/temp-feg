@@ -54,8 +54,6 @@ class MylocationgameController extends Controller
         $this->data['searchMode'] = $mode;
 
         if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
-            echo 'A';
-            die;
             return view('feg_common.search', $this->data);
         } else {
 
