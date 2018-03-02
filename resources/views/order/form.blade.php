@@ -198,7 +198,7 @@
                     <div class="form-group">
                         <br/><br/>
                         <label for="bil_ac_num" class=" control-label col-md-4 text-left" style="margin-top: 7px;">
-                            Billing Accoung Number</label>
+                            Billing Account Number</label>
 
                         <div class="col-md-8" style="padding-left: 15px;">
                             <input  type="text" class="form-control " id="bil_ac_num" readonly/>
