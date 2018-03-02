@@ -57,10 +57,12 @@ class order extends Sximo
         });
 
         //@todo add statis::restore
-        static::restoring(function (Order $model) {
-            $model->status_id = self::ORDER_ACTIVE_STATUS;
-            $model->deleted_by = null;
-            $model->deleteReservedProductQuantities();
+        static::restoring(function(Order $model){
+           $model->status_id = self::ORDER_ACTIVE_STATUS;
+           $model->deleted_by = null;
+            if ($model->is_freehand == 0) {
+                $model->deleteReservedProductQuantities();
+            }
         });
     }
 
