@@ -679,17 +679,17 @@ class OrderController extends Controller
                     . ') ' . $itemsArray[$i] . ' @ $' .
                     $itemsPriceArray[$i] . ' ea.';
             }
+            if ($is_freehand == 0) {
+                $validationResponse = $this->validateProductForReserveQty($request);
 
-            $validationResponse = $this->validateProductForReserveQty($request);
-
-            if (!empty($validationResponse) && $validationResponse['error'] == true) {
-                return response()->json(array(
-                    'message' => $validationResponse['message'],
-                    'status' => 'error',
-                    'adjustQty' => $validationResponse['adjustQty']
-                ));
+                if (!empty($validationResponse) && $validationResponse['error'] == true) {
+                    return response()->json(array(
+                        'message' => $validationResponse['message'],
+                        'status' => 'error',
+                        'adjustQty' => $validationResponse['adjustQty']
+                    ));
+                }
             }
-
             if ($editmode == "edit") {
                 $orderData = array(
                     'company_id' => $company_id,
@@ -798,7 +798,6 @@ class OrderController extends Controller
                     'order_id' => $order_id,
                     'request_id' => $request_id,
                     'product_id' => $product_id,
-                    'product_description' => $itemsArray[$i],
                     'price' => $priceArray[$i],
                     'qty' => $qtyArray[$i],
                     'game_id' => $game_id,
@@ -813,6 +812,9 @@ class OrderController extends Controller
                     'vendor_id' => $prodVendorId,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
+                if (!empty($itemsArray[$i])) {
+                    $contentsData['product_description'] = $itemsArray[$i];
+                }
 
                 if ($editmode == "clone") {
                     $items_received_qty = 0;
@@ -825,7 +827,9 @@ class OrderController extends Controller
                 }
 
                 $contentsData['prev_qty'] = $request->input('prev_qty')[$i];
-                event(new PostSaveOrderEvent($contentsData));
+                if ($is_freehand == 0) {
+                    event(new PostSaveOrderEvent($contentsData));
+                }
 
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
                 {
