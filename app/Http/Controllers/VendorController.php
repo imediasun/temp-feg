@@ -285,8 +285,8 @@ class VendorController extends Controller
     private function getVendor($id) {
 
         $result = \DB::select('
-        SELECT vendor.* FROM vendor 
-        WHERE id IS NOT NULL
+        SELECT vendor.*,countries.country_name FROM vendor left join countries on countries.id = vendor.country_id
+        WHERE vendor.id IS NOT NULL
         AND vendor.id = '.$id.' 
         ');
         if (count($result) <= 0) {
