@@ -33,10 +33,17 @@ class order extends Sximo
 
     public static function boot(){
         parent::boot();
-
-        static::deleted(function(Order $model){
+        //Commented by Arslan
+        // bug identified that deleting event has to call save to reflect column changes
+        // strangley restore does not have to call save
+        static::deleting(function(Order $model){
             $model->status_id = self::ORDER_DELETED_STATUS;
             $model->deleted_by =  \Session::get('uid');
+            $model->save();
+        });
+
+        //separating pre delete and post delete functions
+        static::deleted(function(Order $model){
             $model->restoreReservedProductQuantities();
         });
 
