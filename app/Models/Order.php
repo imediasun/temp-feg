@@ -51,9 +51,7 @@ class order extends Sximo
         static::restoring(function(Order $model){
            $model->status_id = self::ORDER_ACTIVE_STATUS;
            $model->deleted_by = null;
-            if ($model->is_freehand == 0) {
-                $model->deleteReservedProductQuantities();
-            }
+           $model->deleteReservedProductQuantities();
         });
     }
 
@@ -62,10 +60,16 @@ class order extends Sximo
     }
 
     public function restoreReservedProductQuantities(){
+        if($this->is_freehand === 1){
+            return ;
+        }
         $this->adjustReservedProductQuantities();
     }
 
     public function deleteReservedProductQuantities(){
+        if($this->is_freehand === 1){
+            return ;
+        }
         $this->adjustReservedProductQuantities(true);
     }
 
@@ -102,12 +106,12 @@ class order extends Sximo
     }
 
     public function canRestoreAllReservedProducts(){
-        if(empty($this->contents)){
+        if(empty($this->contents) || $this->is_freehand === 1){
             return true;
         }
         foreach ($this->contents as $orderContent){
             $orderedProduct = $orderContent->product;
-            if($orderedProduct->is_reserved == 1 && $orderedProduct->allow_negative_reserve_qty == 0 &&
+            if(!empty($orderedProduct) && $orderedProduct->is_reserved == 1 && $orderedProduct->allow_negative_reserve_qty == 0 &&
                 $orderedProduct->reserved_qty < $orderContent->qty){
                 return false;
             }
