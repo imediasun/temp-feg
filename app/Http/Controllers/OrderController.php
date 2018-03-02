@@ -1103,7 +1103,7 @@ class OrderController extends Controller
     {
         // set order status as deleted for multipe rows
         $orderId = $request->input('ids');
-        $explanations = $request->input('explaination');
+        $explanations = trim(strip_tags($request->input('explaination')));
         $order = Order::withTrashed()->where('id', $orderId)->first();
         if (empty($order)) {
             return Redirect::to('order')->with('messagetext', "Invalid Order")->with('msgstatus', 'error');
@@ -1182,8 +1182,8 @@ class OrderController extends Controller
         $orders = Order::whereIn('po_number', $poNumbers)->get();
 
         $index = 0;
-        foreach ($orders as $order) {
-            $order->notes = $order->notes . '<br>' . \DB::connection()->getPdo()->quote($explaination[$index]);
+        foreach($orders as $order){
+            $order->notes = $order->notes.'<br>'.trim(strip_tags($explaination[$index]));
             $result = $order->delete();
             $index++;
         }
