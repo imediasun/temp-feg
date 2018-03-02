@@ -2378,6 +2378,7 @@ class OrderController extends Controller
 
     public function getCloseOrdersWithNoContent()
     {
+        die("Script blocked. To run this script please contact your development team. Thanks!");
         $records = \DB::select("SELECT
                                   orders.id,
                                   orders.po_number,
@@ -2402,7 +2403,7 @@ class OrderController extends Controller
 
     public function getCorrectOrdersBug2016($step = '1')
     {
-        // die("Script blocked. To run this script please contact your development team. Thanks!");
+        die("Script blocked. To run this script please contact your development team. Thanks!");
 
         $records = \DB::select("SELECT
                               orders.id             AS aa_id,

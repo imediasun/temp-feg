@@ -377,12 +377,10 @@ if(!empty($order_data['orderQtyArray'])){
                         <td>{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
                         <td>{{  \DateHelpers::formatStringValue($order_data['orderDescriptionArray'][$i]) }}</td>
                         <td>
-                            {{CurrencyHelpers::formatPrice($order_data['itemCasePrice'][$i],\App\Models\Order::ORDER_PERCISION) }}
-
+                            {{CurrencyHelpers::formatPrice($order_data['itemCasePrice'][$i]) }}
                         </td>
                         <td>
-                            {{CurrencyHelpers::formatPrice($order_data['orderPriceArray'][$i],\App\Models\Order::ORDER_PERCISION) }}
-
+                            {{CurrencyHelpers::formatPrice($order_data['orderPriceArray'][$i]) }}
                         </td>
                         <td>{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
                         <td>{{ $order_data['receivedItemsArray'][$i] }}</td>
