@@ -52,6 +52,13 @@
 						<td>{{ \DateHelpers::formatStringValue($row->zip) }} </td>
 						
 					</tr>
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Country', (isset($fields['Country']['language'])? $fields['Country']['language'] : array())) }}
+						</td>
+						<td>{{ \DateHelpers::formatStringValue($row->country_name) }} </td>
+
+					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
