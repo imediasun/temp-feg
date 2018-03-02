@@ -110,6 +110,7 @@ class VendorController extends Controller
         return view('vendor.index', $this->data);
     }
 
+
     public function postData(Request $request)
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'vendor')->pluck('module_id');
@@ -231,6 +232,8 @@ class VendorController extends Controller
         }
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+
+        $this->data['countries'] = \DB::select('select * from countries where active=1 order by id asc ');
 
         $this->data['id'] = $id;
 
