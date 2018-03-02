@@ -83,7 +83,23 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
+				  </div>
+							<div class="form-group  ">
+								<label for="Country" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Country', (isset($fields['country_id']['language'])? $fields['country_id']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									<select name="country_id" class="select2" required>
+										<option value="">--Select--</option>
+										@foreach($countries as $country)
+											<option {!! ( $row['country_id']== $country->id ? 'selected':'')  !!} value="{!! $country->id !!}">{!! $country->country_name !!}</option>
+										@endforeach
+									</select>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
 				  <div class="form-group  " > 
 					<label for="Phone" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Phone', (isset($fields['phone']['language'])? $fields['phone']['language'] : array())) !!}	
