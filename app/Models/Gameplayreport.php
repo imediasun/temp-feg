@@ -47,6 +47,7 @@ class gameplayreport extends Sximo  {
             'game_title_id' => ''
         ));        
         extract($filters);
+        $game_id = urldecode($game_id);
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
         }     
@@ -57,7 +58,8 @@ class gameplayreport extends Sximo  {
         $defaultEndDate = DBHelpers::getHighestRecorded('report_game_plays', 'date_played', 'report_status=1 AND record_status=1');
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         //ReportHelpers::dateRangeFix($date_start, $date_end);
-        
+
+
         $total = ReportHelpers::getGamePlayCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);       
 		$offset = ($page-1) * $limit ;
         if ($offset >= $total && $limit != 0) {
@@ -65,6 +67,7 @@ class gameplayreport extends Sximo  {
             $offset = ($page-1) * $limit ;
         }   
 		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
+
 
         $mainQuery = ReportHelpers::getGamePlayQuery($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id, $sort, $order);
         $mainQuery .= $limitConditional;
