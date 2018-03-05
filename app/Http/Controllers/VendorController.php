@@ -12,6 +12,8 @@ class VendorController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'vendor';
     static $per_page = '10';
 
@@ -30,6 +32,8 @@ class VendorController extends Controller
             'pageUrl' => url('vendor'),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['country_id' => 'countries.country_name'];
+        $this->sortUnMapping = ['countries.country_name' => 'country_id'];
 
 
     }
@@ -137,6 +141,8 @@ class VendorController extends Controller
         //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
         $page = $request->input('page', 1);
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
+
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
@@ -147,6 +153,8 @@ class VendorController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         foreach ($results['rows'] as $result) {
 
             if ($result->partner_hide == 1) {
@@ -354,7 +362,9 @@ class VendorController extends Controller
             }
             $data['updated_by'] = \Session::get('uid');
             $data['hide'] = $request->get('hide') == "1" ?1:0;
-            $data['status'] = $request->get('status') == "1" ?1:0;
+            if (!empty($request->get('status'))) {
+                $data['status'] = $request->get('status') == "1" ? 1 : 0;
+            }
             if (!empty($data['website'])) {
                 if (preg_match('/^https?\:\/\//', trim($data['website'])) !== 1) {
                     $data['website'] = 'http://' . trim($data['website']);
