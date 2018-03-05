@@ -334,7 +334,8 @@
                                     /></td>
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
-                                         class='form-control item_name mysearch' onfocus="init(this.id,this)"
+                                         class='form-control item_name mysearch'
+                                         {!!   (is_object($row) && $row->is_freehand != 1) ?'readonly freehand="0"' : ' freehand="1" onfocus="init(this.id,this);" '  !!}
                                          maxlength="225" required>
                         </td>
                         <td>
@@ -475,6 +476,7 @@
         console.log(type_permissions);
         console.log('Createing order '+show_freehand);
         $(document).ready(function () {
+
             if(mode == 'SID'){
                 $("#wrapper").css("pointer-events","all");
             }
@@ -1224,6 +1226,13 @@
             // $('input[name^=price],input[name^=case_price],input[name^=qty]').parsley().reset();
 
             handleItemCount('add');
+            setTimeout(function () {
+                var item = $(".item_name").last();
+                if (Number(item.attr("freehand")) == 0) {
+                    $(".item_name").last().attr("onfocus", "init(this.id,this);");
+                    $('.item_name').last().removeAttr('readonly');
+                }
+            }, 500);
             $(".calculate").keyup(function () {
                 calculateSum();
             }).blur(function () {
