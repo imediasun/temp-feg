@@ -43,6 +43,7 @@ class potentialoverreportingerrors extends Sximo  {
             'debit_type_id' => '', 'game_on_test' => '', 'location_id' => '', 'game_id' => ''
         ));        
         extract($filters);
+        $game_id = urldecode($game_id);
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
         }        
