@@ -3,40 +3,45 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class VendorAPI extends Sximo  {
-	
-	protected $table = 'vendor';
-	protected $primaryKey = 'id';
+class VendorAPI extends Sximo
+{
 
-	public function __construct() {
-		parent::__construct();
-		
-	}
+    protected $table = 'vendor';
+    protected $primaryKey = 'id';
 
-	public static function querySelect(  ){
+    public function __construct()
+    {
+        parent::__construct();
 
-		
-		return "SELECT vendor.* FROM vendor ";
-	}	
+    }
 
-	public static function queryWhere( ){
-		//
-		return "  WHERE vendor.status = 1 AND vendor.hide = 0 AND id IS NOT NULL";
-	}
-	
-	public static function queryGroup(){
-		return "  ";
-	}
+    public static function querySelect()
+    {
 
-	public static function processApiData($json,$param=null)
+
+        return "SELECT vendor.* FROM vendor ";
+    }
+
+    public static function queryWhere()
+    {
+        //
+        return "  WHERE vendor.status = 1 AND vendor.hide = 0 AND id IS NOT NULL";
+    }
+
+    public static function queryGroup()
+    {
+        return "  ";
+    }
+
+    public static function processApiData($json, $param = null)
     {
 
         //loop over all records and check if website is not empty then add http:// prefix for it
         $data = array();
-        foreach($json as $record){
-            if(!empty($record['website'])){
-                if(strpos($record['website'],'http') === false){
-                    $record['website'] = 'http://'.$record['website'];
+        foreach ($json as $record) {
+            if (!empty($record['website'])) {
+                if (strpos($record['website'], 'http') === false) {
+                    $record['website'] = 'http://' . $record['website'];
                 }
             }
 
