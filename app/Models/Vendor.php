@@ -14,8 +14,16 @@ class vendor extends Sximo  {
 	}
 
 	public static function querySelect(  ){
-		
-		return "SELECT vendor.* ,CONCAT(users.first_name, ' ', users.last_name) as updated_by_user FROM vendor LEFT JOIN users ON vendor.updated_by=users.id ";
+
+        return "SELECT
+  vendor.*,
+  CONCAT(users.first_name, ' ', users.last_name) AS updated_by_user,
+  countries.country_name
+FROM vendor
+  LEFT JOIN users
+    ON vendor.updated_by = users.id
+  LEFT JOIN countries
+    ON countries.id = vendor.country_id ";
 	}	
 
 	public static function queryWhere(  ){
