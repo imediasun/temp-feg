@@ -214,7 +214,10 @@ class ManagefegrequeststoreController extends Controller
                 $searchQueryArray = $this->model->getSearchQueryStringToArray($request->input('search'));
 
                 if (array_key_exists("vendor_id", $searchQueryArray)) {
-                    $filter = "  AND products.vendor_id IN(" . $searchQueryArray['vendor_id'] . ")   " . $filter;
+                    $filter .= "  AND products.vendor_id IN(" . $searchQueryArray['vendor_id'] . ")   " . $filter;
+                }
+                if (array_key_exists("location_id", $searchQueryArray)) {
+                    $filter .= "  AND requests.location_id IN(" . $searchQueryArray['location_id'] . ")   " . $filter;
                 }
             }
 
