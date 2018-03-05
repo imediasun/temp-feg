@@ -323,7 +323,7 @@
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
                                          class='form-control item_name mysearch'
-                                         {!!   (is_object($row) && $row->is_freehand != 1) ?'readonly': ' onfocus="init(this.id,this);" '  !!}
+                                         {!!   (is_object($row) && $row->is_freehand != 1) ?'readonly freehand="0"' : ' freehand="1" onfocus="init(this.id,this);" '  !!}
                                          maxlength="225" required>
                         </td>
                         <td>
@@ -368,9 +368,7 @@
                     </tbody>
                 </table>
                 <div style="padding-left:60px !important;">
-                    <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone"
-                       onclick="$('.item_name').prop('readonly',true); setTimeout(function(){  $('.item_name').last().removeAttr('readonly'); },500) "
-                       id="add_new_item"><i
+                    <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
                                 class="fa fa-plus"></i>
                         New Item</a>
                 @if($show_freehand == 1)
@@ -1211,6 +1209,13 @@
             // $('input[name^=price],input[name^=case_price],input[name^=qty]').parsley().reset();
 
             handleItemCount('add');
+            setTimeout(function () {
+                var item = $(".item_name").last();
+                if (Number(item.attr("freehand")) == 0) {
+                    $(".item_name").last().attr("onfocus", "init(this.id,this);");
+                    $('.item_name').last().removeAttr('readonly');
+                }
+            }, 500);
             $(".calculate").keyup(function () {
                 calculateSum();
             }).blur(function () {
