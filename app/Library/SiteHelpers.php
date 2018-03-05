@@ -746,6 +746,7 @@ class SiteHelpers
 
     public static function transForm($field, $forms = array(), $bulk = false, $value = '')
     {
+        $value = !empty($value) ? urldecode($value) : "";
         $type = '';
         $bulk = ($bulk == true ? '[]' : '');
         $mandatory = '';
