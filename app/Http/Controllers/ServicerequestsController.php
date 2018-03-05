@@ -107,6 +107,7 @@ class servicerequestsController extends Controller
         {
             \Session::put('showAllChecked',true);
         }
+        $filter = str_replace("AND last_updated_elapsed_days =", "HAVING last_updated_elapsed_days =", $filter);
         
         return $filter;
     }
