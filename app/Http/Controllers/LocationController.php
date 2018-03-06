@@ -303,7 +303,7 @@ class LocationController extends Controller
                         $value = null;
                     }
                     $locationAssignments[$groupID] = $value;
-                    unset($data[$fieldName]);
+                    // unset($data[$fieldName]);
                 }                
             }
 
