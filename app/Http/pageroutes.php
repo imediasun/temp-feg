@@ -15,5 +15,14 @@ Route::get('trainingmatrials', 'HomeController@index');
 Route::get('popupblocker', 'HomeController@index');
 Route::get('testpagecms', 'HomeController@index');
 Route::get('expanse-report', 'HomeController@index');
+Route::get('test-page', 'HomeController@index');
+Route::get('test-page', 'HomeController@index');
+Route::get('test-page', 'HomeController@index');
+Route::get('test-two-page', 'HomeController@index');
+Route::get('hamid-test', 'HomeController@index');
+Route::get('javed-test', 'HomeController@index');
+Route::get('coming-soon', 'HomeController@index');
+Route::get('test', 'HomeController@index');
+Route::get('nowtest', 'HomeController@index');
 Route::get('coming-soon', 'HomeController@index');
 ?>
