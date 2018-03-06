@@ -295,6 +295,9 @@ class LocationController extends Controller
             }
             
             $locationAssignments = [];
+            echo "<pre>";
+            print_r($locationAssignmentFields);
+            echo "</pre>";
             foreach($data as $fieldName => $value) {
                 if (isset($locationAssignmentFields[$fieldName])) {
                     $groupID = $locationAssignmentFields[$fieldName];
