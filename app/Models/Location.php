@@ -94,10 +94,7 @@ FROM location
   LEFT JOIN users u5
     ON u5.id = location.regional_manager_id
   LEFT JOIN users u6
-    ON u6.id = merch_contact_id
-WHERE location.id IS NOT NULL
-    AND location.active = '1'
-ORDER BY id ASC ";
+    ON u6.id = merch_contact_id ";
         return $sql;
     }
 
