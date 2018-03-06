@@ -390,8 +390,7 @@
 				}
 		})
         $(document).ready(function(){
-
-        	$('button.btn[data-event="codeview"]').remove();
+        	//$('button.btn[data-event="codeview"]').remove();
 			var html = '<div class="page-content-wrapper m-t">';
 			html += '<div class="sbox animated fadeInRight">';
 			html += '<div class="sbox-content">';
