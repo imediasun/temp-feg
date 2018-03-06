@@ -180,7 +180,6 @@ class OrderController extends Controller
 
     public function getIndex()
     {
-
         /*
         \App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
@@ -867,6 +866,8 @@ class OrderController extends Controller
                 \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
             }
 
+
+
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
             \Session::put('redirect', $redirect_link);
@@ -903,6 +904,7 @@ class OrderController extends Controller
             $this->model->insertRow($data, $id);
             \Session::put('order_id', $id);
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
+
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
@@ -1621,6 +1623,8 @@ class OrderController extends Controller
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
         }
+
+
         $rules = array();
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";
@@ -1692,7 +1696,12 @@ class OrderController extends Controller
             if ($request->get('mode') == 'update') {
                 $this->updateOrderReceipt($request);
             }
-
+            /**
+             * Updating order status to open partial if received Items qty is less than ordered items qty
+             */
+            $order = Order::find($order_id);
+            $order->setOrderStatus();
+            $order->save();
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
