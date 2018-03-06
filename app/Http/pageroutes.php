@@ -14,4 +14,5 @@ Route::get('generaltips', 'HomeController@index');
 Route::get('trainingmatrials', 'HomeController@index');
 Route::get('popupblocker', 'HomeController@index');
 Route::get('expanse-report', 'HomeController@index');
+Route::get('coming-soon', 'HomeController@index');
 ?>
