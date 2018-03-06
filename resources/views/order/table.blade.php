@@ -109,7 +109,7 @@ usort($tableGrid, "SiteHelpers::_sort");
         </tr>
         </thead>
         <tbody>
-        	@if($access['is_add'] =='1' && $setting['inline']=='true')
+        @if(($access['is_add'] =='1' || $access['is_edit']=='1' ) && $setting['inline']=='true' )
 			<tr id="form-0">
 				<td class="cell"> # </td>
 				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1' || !empty($pass['Can remove order'])))
@@ -138,7 +138,9 @@ usort($tableGrid, "SiteHelpers::_sort");
            		?>
 
 
-                <tr  @if(empty($row->deleted_at)) class="editable" @endif data-id="{{ $row->id }}" id="form-{{ $row->id }}" @if(($setting['inline']!='false' && $setting['disablerowactions']=='false') || empty($row->deleted_at))  ondblclick="showFloatingCancelSave(this)" @endif>
+            <tr @if(empty($row->deleted_at)) @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
+                @endif @endif data-id="{{ $row->id }}" id="form-{{ $row->id }}"
+                @if(($setting['inline']!='false' && $setting['disablerowactions']=='false') || empty($row->deleted_at)) @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this)" @endif @endif>
 
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>

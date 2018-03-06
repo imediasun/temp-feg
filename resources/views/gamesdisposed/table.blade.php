@@ -77,7 +77,7 @@
 
 
         <tbody>
-        	@if($access['is_add'] =='1' && $setting['inline']=='true')
+		@if(($access['is_add'] =='1' || $access['is_edit']=='1' ) && $setting['inline']=='true' )
 			<tr id="form-0" >
 				<td> # </td>
 				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
@@ -105,7 +105,10 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
+			<tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
+				@endif id="form-{{ $row->id }}" id="form-{{ $row->id }}"
+				@if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}"
+				@if($access['is_edit']=='1' && $setting['inline']=='true' ) ondblclick="showFloatingCancelSave(this)" @endif @endif>
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
