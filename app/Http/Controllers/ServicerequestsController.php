@@ -21,6 +21,8 @@ class servicerequestsController extends Controller
     public $module = 'Servicerequests';
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
 
     public function __construct()
     {
@@ -45,7 +47,8 @@ class servicerequestsController extends Controller
             'issueTypeOptions' => $this->model->getIssueTypes(),
             'canChangeStatus' => ticketsetting::canUserChangeStatus(),
         );
-
+        $this->sortMapping = ['location_id11' => 'L.location_name', 'last_user' => 'U.first_name'];
+        $this->sortUnMapping = ['L.location_name11' => 'location_id', 'U.first_name' => 'last_user'];
 
     }
 
@@ -134,6 +137,7 @@ class servicerequestsController extends Controller
         // Filter Search for query
         //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : "AND sb_tickets.Status != 'closed'");
         $filter = $this->getSearchFilterQuery();
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -149,6 +153,8 @@ class servicerequestsController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         // Build pagination setting
         if (count($results['rows']) == 0 and $page != 1) {
             $params['limit'] = $this->info['setting']['perpage'];

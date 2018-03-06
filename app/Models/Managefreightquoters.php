@@ -39,7 +39,8 @@ class managefreightquoters extends Sximo
                 LEFT JOIN vendor V ON V.id=freight_orders.vend_from
                 LEFT JOIN vendor V2 ON V2.id=freight_orders.vend_to
                 LEFT JOIN location L ON L.id=freight_orders.loc_from
-                LEFT JOIN location L2 ON L2.id=FLT.location_id';
+                LEFT JOIN location L1 ON L1.id=freight_orders.loc_to_1
+                LEFT JOIN location L2 ON L2.id=FLT.location_id ';
     }
 
     public static function queryWhere()

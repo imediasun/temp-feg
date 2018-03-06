@@ -12,6 +12,8 @@ class GamesintransitController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'gamesintransit';
     static $per_page = '10';
 
@@ -37,7 +39,8 @@ class GamesintransitController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
-
+        $this->sortMapping = ['verison_id' => 'game_version.version', 'status_id' => 'game_status.game_status', 'game_title_id' => 'game_title.game_title', 'game_type_id' => 'Y.game_type'];
+        $this->sortUnMapping = ['game_version.version' => 'version_id', 'game_status.game_status' => 'status_id', 'game_title.game_title' => 'game_title_id', 'Y.game_type' => 'game_type_id'];
 
     }
 
@@ -89,12 +92,11 @@ class GamesintransitController extends Controller
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-        if($request->input('sort')=='game_type_id'){
-            $sort = 'game.game_type_id';
-        }
+
         // End Filter sort and order for query
         // Filter Search for query
         $filter = $this->getSearchFilterQuery();
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -108,6 +110,8 @@ class GamesintransitController extends Controller
         // Get Query
         $results = $this->model->getRows($params);
         // Build pagination setting
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 

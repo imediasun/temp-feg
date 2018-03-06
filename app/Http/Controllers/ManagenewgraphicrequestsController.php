@@ -12,6 +12,8 @@ class ManagenewgraphicrequestsController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'managenewgraphicrequests';
     static $per_page = '10';
 
@@ -30,6 +32,9 @@ class ManagenewgraphicrequestsController extends Controller
             'pageUrl' => url('managenewgraphicrequests'),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['request_user_id' => 'u1.username', 'aprrove_user_id' => 'u2.username', 'location_id' => 'location.location_name', 'status_id' => 'new_graphics_request_status.status'];
+        $this->sortUnMapping = ['u1.username' => 'request_user_id', 'u2.username' => 'aprrove_user_id', 'location.location_name' => 'location_id', 'new_graphics_request_status.status' => 'status_id'];
+
     }
 
     public function getApprove($id)
@@ -150,6 +155,7 @@ class ManagenewgraphicrequestsController extends Controller
         $filter = $this->getSearchFilterQuery();
         //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -166,6 +172,7 @@ class ManagenewgraphicrequestsController extends Controller
         $this->data['manageNewGraphicsInfo'] = $this->model->getManageGraphicsRequestsInfo();
         // Get Query
         $results = $this->model->getRows($params, $cond);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
