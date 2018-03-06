@@ -5,11 +5,13 @@ use App\Models\Sximo\Module;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Log;
 
 class order extends Sximo
 {
+    use SoftDeletes;
 
     protected $table = 'orders';
     protected $primaryKey = 'id';
@@ -18,6 +20,8 @@ class order extends Sximo
     const ORDER_TYPE_PART_GAMES = 1;
     const ORDER_VOID_STATUS = 9;
     const ORDER_CLOSED_STATUS = [2,6];
+    const ORDER_DELETED_STATUS = 10;
+    const ORDER_ACTIVE_STATUS = 1;
 
     public function __construct()
     {
