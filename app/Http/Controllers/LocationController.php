@@ -316,7 +316,7 @@ class LocationController extends Controller
             // Assing the newly created or updated/id changed location to 
             // users having has_all_locations=1 (all Locations = true)
             // additionally clean orphan user location assignmens
-            \SiteHelpers::addLocationToAllLocationUsers($newId, $oldId);
+            // \SiteHelpers::addLocationToAllLocationUsers($newId, $oldId);
             \SiteHelpers::refreshUserLocations(\Session::get('uid'));
             return response()->json(array(
                 'status' => 'success',
