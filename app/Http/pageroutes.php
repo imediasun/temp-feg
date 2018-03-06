@@ -13,9 +13,5 @@ Route::get('inventor', 'HomeController@index');
 Route::get('generaltips', 'HomeController@index');
 Route::get('trainingmatrials', 'HomeController@index');
 Route::get('popupblocker', 'HomeController@index');
-Route::get('testpagecms', 'HomeController@index');
 Route::get('expanse-report', 'HomeController@index');
-Route::get('test-page', 'HomeController@index');
-Route::get('test-page', 'HomeController@index');
-Route::get('test-page', 'HomeController@index');
 ?>
