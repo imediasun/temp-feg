@@ -192,12 +192,11 @@ class LocationController extends Controller
                 
         $rows = $this->model->getRow($id);
         $row = json_decode(json_encode($rows), true);
+
         if ($row) {
             $row = $row[0];
         } else {
             $row = $this->model->getColumnTable('location');
-            $assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-');
-            $row = array_merge($row, $assignmentFields);
         }
         $this->data['row'] = $row;
         
