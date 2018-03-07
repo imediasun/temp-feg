@@ -720,45 +720,8 @@ class Sximo extends Model {
             $case_price_if_no_unit_categories = explode(',',$pass['use case price if unit price is 0.00']->data_options);
         }
         \DB::setFetchMode(\PDO::FETCH_ASSOC);
-        $row = \DB::select('SELECT U1.first_name, 
-                                    U1.last_name,
-                                    U1.email,
-                                    C.company_name_short,
-                                    C.company_name_long,
-                                    O.date_ordered,
-										  O.order_type_id,
-                                          L.location_name_short AS loc_name_short,
-                                          L.id AS loc_id,
-                                          L.loading_info,
-										  L.loc_ship_to AS loc_ship_to,
-                                          U2.email AS loc_contact_email, 
-                                          U3.email AS loc_merch_contact_email,
-										  V.vendor_name,
-                                          V.street1 AS vend_street1,
-                                          V.city AS vend_city,
-                                          V.state AS vend_state,
-                                          V.zip AS vend_zip,
-										  V.contact AS vend_contact,
-                                          V.email AS vend_email,
-                                          V.bill_account_num as billing_account,
-                                          O.order_description,
-                                          O.order_total,
-                                          O.po_number,
-										  O.alt_address,
-                                          F.freight_type, 
-                                          O.new_format,
-                                          O.po_notes
-								     FROM orders O
-								LEFT JOIN company C ON C.id = O.company_id
-								LEFT JOIN location L ON L.id = O.location_id
-								LEFT JOIN users U1 ON U1.id = O.user_id
-								LEFT JOIN user_locations UL2 ON UL2.location_id = L.id AND UL2.group_id=101
-								LEFT JOIN users U2 ON U2.id = UL2.user_id
-								LEFT JOIN user_locations UL3 ON UL3.location_id = L.id AND UL3.group_id=102
-								LEFT JOIN users U3 ON U3.id = UL3.user_id
-								LEFT JOIN vendor V ON V.id = O.vendor_id
-								LEFT JOIN freight F ON F.id = O.freight_id
-								    WHERE O.id=' . $order_id);
+        $getOrderDataQuery = $this->getOrderDataQuery($order_id);
+        $row = \DB::select($getOrderDataQuery);
         $alt_address = $row[0]['alt_address'];
         if (empty($row[0]['loc_ship_to'])) {
             $location_id = $row[0]['loc_id'];
@@ -1441,5 +1404,55 @@ class Sximo extends Model {
         }
         $array = $gamesArray;
         return $array;
+    }
+
+    public function getOrderDataQuery($order_id = 0)
+    {
+        $sqlColumns = ' U1.first_name,
+                      U1.last_name,
+                      U1.email,
+                      C.company_name_short,
+                      C.company_name_long,
+                      O.date_ordered,
+                      O.order_type_id,
+                      L.location_name_short AS loc_name_short,
+                      L.id                  AS loc_id,
+                      L.loading_info,
+                      L.loc_ship_to         AS loc_ship_to,
+                      U2.email              AS loc_contact_email,
+                      U3.email              AS loc_merch_contact_email,
+                      V.vendor_name,
+                      V.street1             AS vend_street1,
+                      V.city                AS vend_city,
+                      V.state               AS vend_state,
+                      V.zip                 AS vend_zip,
+                      V.contact             AS vend_contact,
+                      V.email               AS vend_email,
+                      V.bill_account_num    AS billing_account,
+                      O.order_description,
+                      O.order_total,
+                      O.po_number,
+                      O.alt_address,
+                      F.freight_type,
+                      O.new_format,
+                      O.po_notes ';
+        $sqlJoins = " LEFT JOIN company C
+                        ON C.id = O.company_id
+                      LEFT JOIN location L
+                        ON L.id = O.location_id
+                      LEFT JOIN users U1
+                        ON U1.id = O.user_id
+                      LEFT JOIN users U2
+                        ON U2.id = L.general_manager_id
+                      LEFT JOIN users U3
+                        ON U3.id = L.regional_manager_id
+                      LEFT JOIN vendor V
+                        ON V.id = O.vendor_id
+                      LEFT JOIN freight F
+                        ON F.id = O.freight_id ";
+
+        $query = "SELECT " . $sqlColumns . " FROM orders O " . $sqlJoins . " WHERE O.id=" . $order_id;
+
+        return $query;
     }
 }
