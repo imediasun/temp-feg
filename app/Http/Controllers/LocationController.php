@@ -71,11 +71,11 @@ class LocationController extends Controller
         if (stripos($filter, "AND location.active = '-1'") >= 0 ) {
             $filter = str_replace("AND location.active = '-1'", "", $filter);
         }
-        
-        $assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('-field');
+
+        /*$assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('-field');
         foreach($assignmentFields as $field) {
             $filter = str_replace("location.$field", "$field.user_id", $filter);
-        }  
+        } */
         
         return $filter;
     }
