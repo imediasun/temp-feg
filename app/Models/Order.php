@@ -17,10 +17,16 @@ class order extends Sximo
     const ORDER_PERCISION = 5;
     const ORDER_TYPE_PART_GAMES = 1;
     const ORDER_VOID_STATUS = 9;
+    const ORDER_INSTALLED_AND_RETURNED_STATUS = 6;
     const ORDER_CLOSED_STATUS = [2,6];
-    const ORDER_TYPE_TICKET_TOKEN_UNIFORM = [4,22,23,24];
+    const ORDER_TYPE_TICKET_TOKEN_UNIFORM = [4,22,23,24,25,26];
     const ORDER_TYPE_REDEMPTION = 7;
     const ORDER_TYPE_INSTANT_WIN_PRIZE = 8;
+    const ORDER_TYPE_OFFICE_SUPPLIES = 6;
+    const ORDER_TYPE_REPAIR_LABOUR = 3;
+    const ORDER_TYPE_ADVANCED_REPLACEMENT = 2;
+    const ORDER_TYPE_PRODUCT_IN_DEVELOPMENT = 18;
+
 
 
     public function __construct()
@@ -592,7 +598,7 @@ class order extends Sximo
                 $data['tracking_number']=$query[0]->tracking_number;
                 $data['status_id']=$query[0]->status_id;
             }
-            if (!empty($data['requestIds']) && ($data['order_type'] == 7 || $data['order_type'] == 8)) //INSTANT WIN AND REDEMPTION PRIZES
+            if (!empty($data['requestIds']) && ($data['order_type'] == Order::ORDER_TYPE_REDEMPTION || $data['order_type'] == Order::ORDER_TYPE_INSTANT_WIN_PRIZE)) //INSTANT WIN AND REDEMPTION PRIZES
             {
                 $item_count = substr_count($data['requestIds'], ',') + 1;
                 $data['item_count'] = $item_count;

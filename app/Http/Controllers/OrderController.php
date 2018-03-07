@@ -315,7 +315,7 @@ class OrderController extends Controller
             $order_status = \DB::select("Select status FROM order_status WHERE id = '" . $data->status_id . "'");
             //  $partial = $data->status_id == 10 ? ' ' : ' (Partial)';
             $partial =  '';
-            if ($data->is_partial == 1 && $data->status_id == 1)
+            if ($data->is_partial == 1 && $data->status_id == Order::OPENID1)
             {
                 $partial = ' (Partial)';
             }else{
@@ -790,7 +790,7 @@ class OrderController extends Controller
                     \DB::table('order_contents')->where('id', $order_content_id[$i])->update($contentsData);
                 }
 
-                if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
+                if ($order_type == Order::ORDER_TYPE_PRODUCT_IN_DEVELOPMENT) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
                 {
                     $productData = array(
                         'vendor_id' => $vendor_id,
@@ -934,7 +934,7 @@ class OrderController extends Controller
         $cc1 = "";
         // for Instant Win, Redemption Prize, Tickets, Uniforms and Office Supply categories send a copy of PO to
         // marissa sexton,mandee cook,lisa price
-        if (($order_type_id == 7 || $order_type_id == 8 || $order_type_id == 4 || $order_type_id == 6))// && CNF_MODE != "development" )
+        if (($order_type_id == Order::ORDER_TYPE_REDEMPTION || in_array($order_type_id, Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM) || $order_type_id == Order::ORDER_TYPE_OFFICE_SUPPLIES))// && CNF_MODE != "development" )
         {
             $cc1 = $cc;
 
@@ -1250,7 +1250,7 @@ class OrderController extends Controller
                 'fields' => $searchFields, 'dateFields' => $dateSearchFields];
 
             if (!empty($statusIdFilter)) {
-                if ($statusIdFilter == 6) {
+                if ($statusIdFilter == Order::ORDER_INSTALLED_AND_RETURNED_STATUS) {
                     $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "' OR (orders.status_id = '2' AND orders.tracking_number!='') ";
                 } else {
                     /* if($statusIdFilter=="removed") {
@@ -1263,9 +1263,10 @@ class OrderController extends Controller
 
         } else {
             if (!empty($statusIdFilter)) {
-                if ($statusIdFilter == 6) {
+                if ($statusIdFilter == Order::ORDER_INSTALLED_AND_RETURNED_STATUS) {
                     $orderStatusCondition = " OR (orders.status_id = '2' AND orders.tracking_number!='') AND orders.deleted_at is null ";
                 } elseif ($statusIdFilter == 10) {
+                    //@todo update order status after code merge
                     $orderStatusCondition = " AND orders.deleted_at is not null  ";
                 } else {
                    // $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter' AND  orders.tracking_number!='') AND orders.deleted_at is null ";
@@ -1323,7 +1324,7 @@ class OrderController extends Controller
             } else {
                 $data[0]['loc_contact_email'] = '';
             }
-            if ($data[0]['order_type_id'] == 3 || $data[0]['order_type_id'] == 4) {
+            if ($data[0]['order_type_id'] == Order::ORDER_TYPE_REPAIR_LABOUR || in_array($data[0]['order_type_id'],Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM)) {
                 $data[0]['cc_email'] = ', lisa.price@fegllc.com';
             } else {
                 $data[0]['cc_email'] = '';
@@ -1587,7 +1588,7 @@ class OrderController extends Controller
         $order_type_id = $request->get('order_type_id');
         $added = 0;
 
-        if (!empty($request->get('receivedInParts')) && $order_status == '2') {
+        if (!empty($request->get('receivedInParts')) && in_array($order_status,Order::ORDER_CLOSED_STATUS)) {
             return response()->json(array(
                 'status' => 'error',
                 'message' => \Lang::get('core.partial_close_restrict')
@@ -1622,7 +1623,7 @@ class OrderController extends Controller
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";
         }
-        if ($order_status == 2 && $order_type_id == 2) // Advanced Replacement Returned.. require tracking number
+        if ($order_status == Order::CLOSEID1 && $order_type_id == Order::ORDER_TYPE_ADVANCED_REPLACEMENT) // Advanced Replacement Returned.. require tracking number
         {
             $rules['tracking_number'] = "required|min:3";
             $tracking_number = trim($request->get('tracking_number'));
