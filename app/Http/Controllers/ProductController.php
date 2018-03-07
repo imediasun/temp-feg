@@ -699,4 +699,50 @@ class ProductController extends Controller
         }
         return $items;
     }
+
+    function getExpenseCategoryAjax(Request $request)
+    {
+
+        $expense_category = \DB::select("SELECT expense_category_mapping.id,expense_category_mapping.mapped_expense_category,order_type.`order_type`,CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | ')) as order_type
+FROM expense_category_mapping
+JOIN order_type ON order_type.id = expense_category_mapping.order_type
+WHERE product_type IS NULL
+GROUP BY mapped_expense_category");
+
+        $items = ['<option value=""> -- Select  -- </option>'];
+        foreach ($expense_category as $category) {
+            $orderType = $category->order_type;
+            $categoryId = $category->mapped_expense_category;
+            if ($categoryId == 0) {
+                $orderType = "N/A";
+                $categoryId = "";
+            }
+            $items[] = '<option value="' . $categoryId . '"> ' . $orderType . ' </option>';
+
+        }
+        $options = implode("", $items);
+        echo $options;
+    }
+
+    public function postSetdefaultcategory(Request $request)
+    {
+        $id = $request->input('productId');
+        $isdefaultexp = (bool)$request->input('isdefault');
+        $searchProduct = Product::find($id);
+        $products = $this->model->checkProducts($id);
+
+        if ($isdefaultexp == 0 && count($products) > 1 && $searchProduct->is_default_expense_category == 1) {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => "This product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category."
+            ));
+        } elseif (count($products) == 1) {
+            $searchProduct->is_default_expense_category = $isdefaultexp;
+            $searchProduct->save();
+
+            //  $this->model->toggleDefaultExpenseCategory($isdefaultexp,$id);
+        } else {
+            $this->model->setDefaultExpenseCategory($id);
+        }
+    }
 }

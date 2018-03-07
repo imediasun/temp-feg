@@ -24,7 +24,13 @@ class product extends Sximo  {
   AS `add`,CONCAT('Details') AS `addldetails`,products.id AS `product_id`,
   IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price) AS `retail_price`,
   O.order_type AS prod_type_id,
-  T.type_description AS prod_sub_type_id
+  T.type_description AS prod_sub_type_id,
+  (SELECT
+  CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | ')) AS expense_category
+FROM expense_category_mapping
+  JOIN order_type
+    ON order_type.id = expense_category_mapping.order_type
+WHERE product_type IS NULL AND mapped_expense_category=products.expense_category) AS expense_category_field
   FROM `products` LEFT JOIN vendor ON (products.vendor_id = vendor.id)
   LEFT JOIN order_type O ON (O.id = products.prod_type_id)
   LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id)";
@@ -264,6 +270,5 @@ class product extends Sximo  {
 
         return $products;
     }
-
 
 }
