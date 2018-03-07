@@ -23,6 +23,8 @@ class order extends Sximo
     const ORDER_TYPE_TICKET_TOKEN_UNIFORM = [4,22,23,24];
     const ORDER_TYPE_REDEMPTION = 7;
     const ORDER_TYPE_INSTANT_WIN_PRIZE = 8;
+    const ORDER_DELETED_STATUS = 10;
+    const ORDER_ACTIVE_STATUS = 1;
 
 
     public function __construct()
