@@ -317,7 +317,7 @@
                     <tbody>
                     <?php
                     // Disable order items for Non-Freehand orders and Orders from Store
-                    $readOnlyItem = 'freehand="1" onfocus="init(this.id,this);';
+                    $readOnlyItem = 'freehand="1" onfocus="init(this.id,this);"';
                     if ((is_object($row) && $row->is_freehand != 1) || $fromStore == 1) {
                         $readOnlyItem = 'readonly freehand="0"';
                     }
