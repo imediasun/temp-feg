@@ -20,6 +20,8 @@ class OrderController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'order';
     static $per_page = '10';
 
@@ -47,7 +49,8 @@ class OrderController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
-
+        $this->sortMapping = ['status_id' => 'OS.status', 'vendor_id' => 'V.vendor_name', 'user_id' => 'U.username', 'order_type_id' => 'OT.order_type', 'location_id' => 'L.location_name'];
+        $this->sortUnMapping = ['OS.status' => 'status_id', 'V.vendor_name' => 'vendor_id', 'U.username' => 'user_id', 'OT.order_type' => 'order_type_id', 'L.location_name' => 'location_id'];
 
     }
 
@@ -177,7 +180,6 @@ class OrderController extends Controller
 
     public function getIndex()
     {
-
         /*
         \App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
@@ -219,9 +221,7 @@ class OrderController extends Controller
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-        if ($sort == 'order_type_id') {
-            $sort = 'OT.order_type';
-        }
+
         // End Filter sort and order for query
 
         // Get order_type search filter value and location_id saerch filter values
@@ -250,6 +250,9 @@ class OrderController extends Controller
 
 
         $page = $request->input('page', 1);
+
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
+
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
@@ -327,9 +330,8 @@ class OrderController extends Controller
 
         }
 
-        if ($sort == 'OT.order_type') {
-            $params['sort'] = 'order_type_id';
-        }
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
@@ -864,6 +866,8 @@ class OrderController extends Controller
                 \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
             }
 
+
+
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
             \Session::put('redirect', $redirect_link);
@@ -900,6 +904,7 @@ class OrderController extends Controller
             $this->model->insertRow($data, $id);
             \Session::put('order_id', $id);
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
+
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
@@ -1618,6 +1623,8 @@ class OrderController extends Controller
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
         }
+
+
         $rules = array();
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";
@@ -1689,7 +1696,12 @@ class OrderController extends Controller
             if ($request->get('mode') == 'update') {
                 $this->updateOrderReceipt($request);
             }
-
+            /**
+             * Updating order status to open partial if received Items qty is less than ordered items qty
+             */
+            $order = Order::find($order_id);
+            $order->setOrderStatus();
+            $order->save();
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')

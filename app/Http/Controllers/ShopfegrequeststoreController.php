@@ -13,6 +13,8 @@ class ShopfegrequeststoreController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'shopfegrequeststore';
     static $per_page = '10';
 
@@ -34,6 +36,8 @@ class ShopfegrequeststoreController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['vendor_id' => 'vendor.vendor_name', 'prod_type_id' => 'O.order_type', 'prod_sub_type_id' => 'T.product_type'];
+        $this->sortUnMapping = ['vendor.vendor_name' => 'vendor_id', 'O.order_type' => 'prod_type_id', 'T.product_type' => 'prod_sub_type_id'];
 
 
     }
@@ -158,6 +162,8 @@ class ShopfegrequeststoreController extends Controller
 
 
         $page = $request->input('page', 1);
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
+
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
@@ -178,6 +184,7 @@ class ShopfegrequeststoreController extends Controller
         $this->data['product_type'] = $product_type;
         $cond = array('type' => $type, 'active_inactive' => $active_inactive, 'order_type' => $order_type, 'product_type' => $product_type,);
         $results = $this->model->getRows($params, $cond);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;

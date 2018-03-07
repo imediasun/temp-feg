@@ -9,7 +9,9 @@ use Validator, Input, Redirect ;
 class ExpensecategoriesController extends Controller {
 
 	protected $layout = "layouts.main";
-	protected $data = array();	
+    protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
 	public $module = 'expensecategories';
 	static $per_page	= '10';
 	
@@ -28,10 +30,11 @@ class ExpensecategoriesController extends Controller {
 			'pageUrl'			=>  url('expensecategories'),
 			'return' 			=> 	self::returnUrl()
 		);
-		
+        $this->sortMapping = ['order_type' => 'order_type.order_type', 'product_type' => 'product_type.type_description'];
+        $this->sortUnMapping = ['order_type.order_type' => 'order_type', 'product_type.type_description' => 'product_type'];
 
 
-	}
+    }
 
 	public function getIndex()
 	{
@@ -77,6 +80,7 @@ class ExpensecategoriesController extends Controller {
 		if(\Session::get('filter_toggle')){
 			$filter = $filter." AND expense_category_mapping.order_type IS NOT NULL AND expense_category_mapping.product_type IS NULL ";
 		}
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
 		$page = $request->input('page', 1);
 		$params = array(
@@ -89,6 +93,7 @@ class ExpensecategoriesController extends Controller {
 		);
 		// Get Query
 		$results = $this->model->getRows( $params );
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
 		//Filter results
 		if(\Session::get('filter_toggle') == 'true'){

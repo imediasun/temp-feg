@@ -18,25 +18,35 @@ class gameservicehistory extends Sximo
     public static function querySelect()
     {
         //CONCAT(IF(date_down IS NULL,'',date_down),'<br/>',IF(date_up IS NULL,'',date_up)) AS
-        return " SELECT * FROM 
-            (SELECT 
-                gsh.id,
-                gsh.game_id,
-                g.game_title_id,
-                gt.game_title,
-                gsh.location_id,                    
-                l.location_name,
-                gsh.problem,
-                gsh.down_user_id,
-                gsh.date_down,
-                gsh.solution,
-                gsh.up_user_id,
-                gsh.date_up,
-                DATEDIFF(IF(gsh.date_up IS NULL, CURRENT_DATE(), gsh.date_up),gsh.date_down) AS days_down
-            FROM game_service_history gsh
-            LEFT JOIN location l ON l.id = gsh.location_id
-            LEFT JOIN game g ON gsh.game_id=g.id
-            LEFT JOIN game_title gt ON gt.id = g.game_title_id) AS game_service_history ";
+        return " SELECT *
+FROM (SELECT
+        gsh.id,
+        gsh.game_id,
+        g.game_title_id,
+        gt.game_title,
+        gsh.location_id,
+        l.location_name,
+        gsh.problem,
+        gsh.down_user_id,
+        gsh.date_down,
+        gsh.solution,
+        gsh.up_user_id,
+        gsh.date_up,
+        DATEDIFF(IF(gsh.date_up IS NULL, CURRENT_DATE(), gsh.date_up),gsh.date_down) AS days_down,
+        downuser.username,
+        upuser.username  AS username1
+      FROM game_service_history gsh
+        LEFT JOIN location l
+          ON l.id = gsh.location_id
+        LEFT JOIN game g
+          ON gsh.game_id = g.id
+        LEFT JOIN game_title gt
+          ON gt.id = g.game_title_id
+        LEFT JOIN users downuser
+          ON downuser.id = gsh.down_user_id
+	LEFT JOIN users upuser
+          ON upuser.id = gsh.up_user_id
+          ) AS game_service_history ";
     }
 
     public static function queryWhere()

@@ -12,6 +12,8 @@ class ManagefegrequeststoreController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'managefegrequeststore';
     static $per_page = '10';
     protected $_request;
@@ -33,6 +35,8 @@ class ManagefegrequeststoreController extends Controller
         );
 
         $this->_request = $request;
+        $this->sortMapping = ['vendor_id' => 'V1.vendor_name', 'request_user_id' => 'u1.username', 'prod_type_id' => 'order_type.order_type', 'prod_sub_type_id' => 'product_type.type_description', 'location_id' => 'location.location_name'];
+        $this->sortUnMapping = ['V1.vendor_name' => 'vendor_id', 'u1.username' => 'request_user_id', 'order_type.order_type' => 'prod_type_id', 'product_type.type_description' => 'prod_sub_type_id', 'location.location_name' => 'location_id'];
 
 
     }
@@ -187,6 +191,8 @@ class ManagefegrequeststoreController extends Controller
             } if (!empty($manageRequestInfo['vendor_options']) && !array_key_exists(!empty($this->data['VID'])?$this->data['VID']:0,$manageRequestInfo['vendor_options'])) {
                 $this->data['VID'] = "";
             }
+            $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
+
             $page = $request->input('page', 1);
             $params = array(
                 'page' => $page,
@@ -203,6 +209,8 @@ class ManagefegrequeststoreController extends Controller
             $cond = array('view' => $view, 'order_type_id' => $this->data['TID'], 'location_id' => $this->data['LID'], 'vendor_id' => $this->data['VID']);
             $this->data['view'] = $view;
             $results = $this->model->getRows($params, $cond);
+            $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
             // Build pagination setting
             $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
             $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :

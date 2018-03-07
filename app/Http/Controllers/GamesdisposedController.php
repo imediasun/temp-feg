@@ -12,6 +12,8 @@ class GamesdisposedController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'gamesdisposed';
     static $per_page = '10';
 
@@ -38,7 +40,8 @@ class GamesdisposedController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
-
+        $this->sortMapping = ['game_title_id' => 'game_title.game_title'];
+        $this->sortUnMapping = ['game_title.game_title' => 'game_title_id'];
 
     }
 
@@ -92,7 +95,7 @@ class GamesdisposedController extends Controller
         // Filter Search for query
         $filter = $this->getSearchFilterQuery();
 
-
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -104,6 +107,8 @@ class GamesdisposedController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 

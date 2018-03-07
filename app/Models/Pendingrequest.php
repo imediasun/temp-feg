@@ -14,13 +14,26 @@ class pendingrequest extends Sximo  {
 	}
 
 	public static function querySelect(  ){
-		
-		return "SELECT  requests.*,products.unit_price,products.case_price,merch_request_status.status ,vendor.id AS vendor_id  FROM requests
-                LEFT JOIN merch_request_status ON (requests.status_id = merch_request_status.id)
-                LEFT OUTER JOIN products
-                ON requests.product_id=products.id
-                LEFT OUTER JOIN vendor
-                ON products.vendor_id=vendor.id";
+
+        return " SELECT
+  requests.*,
+  products.unit_price,
+  products.case_price,
+  merch_request_status.status,
+  vendor.id                   AS vendor_id
+FROM requests
+  LEFT JOIN merch_request_status
+    ON (requests.status_id = merch_request_status.id)
+  LEFT OUTER JOIN products
+    ON requests.product_id = products.id
+  LEFT OUTER JOIN vendor
+    ON products.vendor_id = vendor.id
+  LEFT JOIN location
+    ON location.id = requests.location_id
+  LEFT JOIN users RU
+    ON RU.id = requests.request_user_id
+  LEFT JOIN users PU
+    ON PU.id = requests.process_user_id ";
 	}	
 
 	public static function queryWhere(  )

@@ -71,7 +71,17 @@ class location extends Sximo  {
             location.reporting,
             location.active";
         $sql = "SELECT ".$roleSQL['select'] . ", $locationFields 
-            FROM location " .$roleSQL['join'];
+            FROM location " . $roleSQL['join'] . " 
+             lEFT JOIN debit_type debittype_c  on debittype_c.id=location.debit_type_id
+             LEFT JOIN company cmp on cmp.id = location.company_id 
+             LEFT JOIN loc_group on loc_group.id = location.loc_group_id
+             LEFT JOIN users u1 ON u1.id = general_manager_id.user_id
+             LEFT JOIN users u2 ON u2.id = technical_user_id.user_id
+             LEFT JOIN users u3 ON u3.id = vp_id.user_id
+             LEFT JOIN users u4 ON u4.id = contact_id.user_id
+             LEFT JOIN users u5 ON u5.id = regional_manager_id.user_id
+             LEFT JOIN users u6 ON u6.id = merch_contact_id.user_id
+             ";
         return $sql;
     }
 	public static function querySelect(  ){        

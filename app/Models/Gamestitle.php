@@ -14,8 +14,14 @@ class gamestitle extends Sximo  {
 	}
 
 	public static function querySelect(  ){
-		
-		return "  SELECT game_title.* FROM game_title  ";
+
+        return "  SELECT
+  game_title.*,
+  vendor.vendor_name,
+  game_type.game_type_short
+FROM game_title
+LEFT JOIN vendor ON vendor.id = game_title.mfg_id
+LEFT JOIN game_type ON game_type.id = game_title.game_type_id ";
 	}	
 
 	public static function queryWhere(  ){

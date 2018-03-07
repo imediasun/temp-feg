@@ -11,6 +11,8 @@ class PendingrequestController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'pendingrequest';
     static $per_page = '10';
 
@@ -30,6 +32,8 @@ class PendingrequestController extends Controller
             'pageUrl' => url('pendingrequest'),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['process_user_id' => 'PU.first_name', 'product_id' => 'products.vendor_description', 'request_user_id' => 'RU.username', 'status_id' => 'merch_request_status.status', 'vendor_id' => 'vendor.vendor_name', 'location_id' => 'location.location_name'];
+        $this->sortUnMapping = ['PU.first_name' => 'process_user_id', 'products.vendor_description' => 'product_id', 'RU.username' => 'request_user_id', 'merch_request_status.status' => 'status_id', 'vendor.vendor_name' => 'vendor_id', 'location.location_name' => 'location_id'];
 
 
     }
@@ -70,6 +74,7 @@ class PendingrequestController extends Controller
         //following script is used to avoid conflict of vendor_id in search
         $filter = str_replace('vendor.vendor_id','vendor.id',$filter);
 
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -82,6 +87,8 @@ class PendingrequestController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 

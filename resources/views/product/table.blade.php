@@ -84,7 +84,7 @@
 
 
                     <tbody>
-                    @if($access['is_add'] =='1' && $setting['inline']=='true')
+                    @if(($access['is_add'] =='1' || $access['is_edit']=='1' ) && $setting['inline']=='true' )
                         <tr id="form-0" style="display: none">
                             <td> #</td>
                             @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
@@ -121,9 +121,11 @@
                     }
                     ?>
                     {{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
-                    <tr class="editable" product-id="{!! $product_id !!}" onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
+                    <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
+                        @endif product-id="{!! $product_id !!}"
+                        onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
                         data-id="{{ $row->id }}"
-                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this); editedProduct('{!! $product_id !!}',this);" @endif>
+                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this); editedProduct('{!! $product_id !!}',this);" @endif @endif>
                         <input type="hidden" name="numberOfItems" value="{{$row->num_items}}"/>
                         <input id="sku-{{ $row->id }}" type="hidden" name="old-sku" value="{{$row->sku}}"/>
                         <input id="vd-{{ $row->id }}" type="hidden" name="old-vd" value="{{$row->vendor_description}}"/>
