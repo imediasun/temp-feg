@@ -352,8 +352,14 @@ class VendorController extends Controller
         $rules["vendor_name"] = "required|unique:vendor,vendor_name," . $id;
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            //No one tested for 1 year that edit was not saving missing data
-            $data = $this->validatePost('vendor');
+            if(empty($id))
+            {
+                $data = $this->validatePost('vendor');
+            }
+            else
+            {
+                $data = $this->validatePost('vendor', true);
+            }
             $data['updated_by'] = \Session::get('uid');
             $data['hide'] = $request->get('hide') == "1" ?1:0;
             if (!empty($request->get('status'))) {
