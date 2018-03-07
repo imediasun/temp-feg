@@ -18,6 +18,10 @@ class order extends Sximo
     const ORDER_TYPE_PART_GAMES = 1;
     const ORDER_VOID_STATUS = 9;
     const ORDER_CLOSED_STATUS = [2,6];
+    const ORDER_TYPE_TICKET_TOKEN_UNIFORM = [4,22,23,24];
+    const ORDER_TYPE_REDEMPTION = 7;
+    const ORDER_TYPE_INSTANT_WIN_PRIZE = 8;
+
 
     public function __construct()
     {
