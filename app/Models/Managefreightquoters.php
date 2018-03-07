@@ -670,4 +670,24 @@ class managefreightquoters extends Sximo
             return parent::getComboselect($params, $limit, $parent);
         }
     }
+
+    public function getSelectUserFormTypeQuery($location)
+    {
+        $sqlQuery = "SELECT
+                      L.location_name,
+                      L.street1,
+                      L.city          AS loc_city,
+                      L.state         AS loc_state,
+                      L.zip           AS loc_zip,
+                      L.loading_info,
+                      U.first_name    AS user_first_name,
+                      U.last_name     AS user_last_name,
+                      U.email         AS user_email,
+                      U.primary_phone AS user_phone
+                    FROM location L
+                      LEFT JOIN users U
+                        ON U.id = L.general_manager_id 
+                    WHERE L.id = " . $location;
+        return $sqlQuery;
+    }
 }

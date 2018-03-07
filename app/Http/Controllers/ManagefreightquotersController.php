@@ -323,12 +323,8 @@ class ManagefreightquotersController extends Controller
                 \DB::table('vendor')->insert($data);
             }
             if ($from_form_type == 'location') {
-                $query = \DB::select('SELECT L.location_name,L.street1,L.city AS loc_city,L.state AS loc_state,L.zip AS loc_zip,L.loading_info,
-                 U.first_name AS user_first_name,U.last_name AS user_last_name,U.email AS user_email,U.primary_phone AS user_phone
-										 FROM location L
-                                         LEFT JOIN user_locations UL ON UL.location_id = L.id AND UL.group_id=101
-                                         LEFT JOIN users U ON U.id = UL.user_id
-										WHERE L.id = ' . $form_data['loc_from'] . '');
+                $UserFromFormTypeQuery = $this->model->getSelectUserFormTypeQuery($form_data['loc_from']);
+                $query = \DB::select($UserFromFormTypeQuery);
                 if (count($query)) {
                     $from_name = $query[0]->location_name;
                     $from_street = $query[0]->street1;
@@ -369,12 +365,8 @@ class ManagefreightquotersController extends Controller
             }
             if ($to_form_type == 'location') {
                 foreach ($location_to as $location) {
-                    $query = \DB::select('SELECT L.location_name, L.street1,  L.city AS loc_city, L.state AS loc_state, L.zip AS loc_zip, L.loading_info,
-											  U.first_name AS user_first_name, U.last_name AS user_last_name, U.email AS user_email,  U.primary_phone AS user_phone
-										 FROM location L
-                                         LEFT JOIN user_locations UL ON UL.location_id = L.id AND UL.group_id=101
-                                         LEFT JOIN users U ON U.id = UL.user_id
-                                         WHERE L.id = ' . $location . '');
+                    $UserToFormTypeQuery = $this->model->getSelectUserFormTypeQuery($location);
+                    $query = \DB::select($UserToFormTypeQuery);
                     if (count($query) == 1) {
                         $to_name[] = $query[0]->location_name;
                         $to_street[] = $query[0]->street1;
