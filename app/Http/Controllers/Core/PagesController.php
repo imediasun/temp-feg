@@ -93,7 +93,6 @@ class PagesController extends Controller
     function getUpdate(Request $request, $id = null)
     {
 
-
         if ($id == '') {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -164,7 +163,6 @@ class PagesController extends Controller
         $patternStop = '/@stop/im';
 
         $this->data['content'] = preg_replace(array($patternExtend, $patternSection, $patternTitle, $patternStop), '', $this->data['content']);
-
 
         return view('core.pages.form', $this->data);
     }

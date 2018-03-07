@@ -15,7 +15,6 @@ class location extends Sximo  {
 	}
 
     public static function getQuery( ) {
-        // $roleSQL = \SiteHelpers::getUniqueLocationUserAssignmentMeta('sql');
         $sql = "SELECT
   location.general_manager_id,
   location.technical_user_id,

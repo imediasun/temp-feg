@@ -6,6 +6,7 @@ use App\Events\PostOrdersEvent;
 use App\Events\Event;
 use App\Events\PostSaveOrderEvent;
 use App\Http\Controllers\controller;
+use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
