@@ -276,13 +276,19 @@ $ExpenseCaegory = array_map(function ($rowData) {
             if (ExpenseCategory > 0 && ExpenseCategory != '') {
                 if (ID !== "" && Number(ID) != 0 && ID !== "0") {
                     if (ID == ExpenseCategory) {
-                        return ExpenseCategoryField;
+                        if (ExpenseCategoryField != '' && ExpenseCategoryField != '0') {
+                            return ExpenseCategoryField;
+                        } else {
+                            return ExpenseCategory;
+                        }
                         var ECat = $("tr td[data-field='expense_category'][data-values='" + ExpenseCategory + "'");
                         ECat.text($.trim(ExpenseCategoryField));
                     }
                 } else if (ID == 0) {
                     var ECat = $("tr td[data-field='expense_category'][data-values='" + ExpenseCategory + "'");
-                    ECat.text($.trim(ExpenseCategoryField));
+                    if (ExpenseCategoryField != '' && Number(ExpenseCategoryField) != '0') {
+                        ECat.text($.trim(ExpenseCategoryField));
+                    }
                 }
             }
         }
