@@ -1423,7 +1423,7 @@ class OrderController extends Controller
                         'filename' => $filename,
                         'encoding' => 'base64',
                         'type' => 'application/pdf',
-                        'preferGoogleOAuthMail' => true
+                        'preferGoogleOAuthMail' => false
                     ];
                     if (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) {
 
