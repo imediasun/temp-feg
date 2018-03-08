@@ -71,11 +71,11 @@ class LocationController extends Controller
         if (stripos($filter, "AND location.active = '-1'") >= 0 ) {
             $filter = str_replace("AND location.active = '-1'", "", $filter);
         }
-        
-        $assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('-field');
+
+        /*$assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('-field');
         foreach($assignmentFields as $field) {
             $filter = str_replace("location.$field", "$field.user_id", $filter);
-        }  
+        } */
         
         return $filter;
     }
@@ -192,12 +192,11 @@ class LocationController extends Controller
                 
         $rows = $this->model->getRow($id);
         $row = json_decode(json_encode($rows), true);
+
         if ($row) {
             $row = $row[0];
         } else {
             $row = $this->model->getColumnTable('location');
-            $assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-');
-            $row = array_merge($row, $assignmentFields);
         }
         $this->data['row'] = $row;
         
@@ -271,7 +270,7 @@ class LocationController extends Controller
     {
         $rules = $this->validateForm();
         $input_id=$request->get('id');
-        $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
+        //  $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
         
         if(\Session::get('location_updated') != $input_id) {
             if (!empty($input_id)) {
@@ -285,38 +284,17 @@ class LocationController extends Controller
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('location', !empty($id));
-
+            $data = $this->validatePost('location');
             // old id in case the existing location's id has been modified
             $oldId = $id;
             $newId = isset($data['id']) ? $data['id'] : $id;
             if (empty($newId) || empty($oldId) || $oldId == $newId) {
                 $oldId = null;
             }
-            
-            $locationAssignments = [];
-            foreach($data as $fieldName => $value) {
-                if (isset($locationAssignmentFields[$fieldName])) {
-                    $groupID = $locationAssignmentFields[$fieldName];
-                    if (empty($value)) {
-                        $value = null;
-                    }
-                    $locationAssignments[$groupID] = $value;
-                    unset($data[$fieldName]);
-                }                
-            }
 
             $id = $this->model->insertRow($data, $id);
-            
-            foreach($locationAssignments as $groupId => $userId) {
-                \App\Models\UserLocations::updateRoleAssignment($newId, $userId, $groupId);
-            }
-            
-            // Assing the newly created or updated/id changed location to 
-            // users having has_all_locations=1 (all Locations = true)
-            // additionally clean orphan user location assignmens
-            \SiteHelpers::addLocationToAllLocationUsers($newId, $oldId);
-            \SiteHelpers::refreshUserLocations(\Session::get('uid'));
+
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')

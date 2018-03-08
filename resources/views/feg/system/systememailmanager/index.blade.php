@@ -43,8 +43,7 @@
     var UNDEFINED,         
         users = <?php echo json_encode($users); ?>,
         userGroups = <?php echo json_encode($userGroups); ?>,
-        usersPerGroup = <?php echo json_encode($usersPerGroup); ?>,
-        locationContactNames = <?php echo json_encode($locationContactNames); ?>;
+            usersPerGroup = <?php echo json_encode($usersPerGroup); ?>;
     
 $(document).ready(function(){
 	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
