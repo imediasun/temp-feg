@@ -770,7 +770,6 @@ class OrderController extends Controller
                     'product_id' => $product_id,
                     'price' => $priceArray[$i],
                     'qty' => $qtyArray[$i],
-                    'product_description' => $itemsArray[$i],
                     'game_id' => $game_id,
                     'item_name' => $itemNamesArray[$i],
                     'case_price' => $casePriceArray[$i],
@@ -783,10 +782,9 @@ class OrderController extends Controller
                     'vendor_id' => $prodVendorId,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
-                /*
                 if (!empty($itemsArray[$i])) {
                     $contentsData['product_description'] = $itemsArray[$i];
-                }*/
+                }
 
                 if ($editmode == "clone") {
                     $items_received_qty = 0;
