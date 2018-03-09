@@ -895,14 +895,20 @@ jQuery(document).ready(function ($) {
 
 });
 
-/* Ajax Error Handling */
+/* Ajax Error Handling *///
 App.functions.reportIssue = function (params, options) {
     var reportUrl = siteUrl + '/core/users/report-issue';
     notyMessage("Wait, Reporting error!");
+    var RequestData = {};
+    for (var entrie of params.xhr.data.entries()) {
+        var obj = entrie[0];
+        RequestData[obj] = entrie[1];
+    }
+
     $.ajax({
         url: reportUrl,
         type:'POST',
-        method:'POST',
+        // method:'POST',
         data: {
             responseText: encodeURIComponent(encodeURIComponent(params.jQXhr.responseText)),
             readyState: params.jQXhr.readyState,
@@ -912,7 +918,7 @@ App.functions.reportIssue = function (params, options) {
             url: params.xhr.url,
             pageUrl: location.href,
             userAgent: navigator.userAgent,
-            data: params.xhr.data || {}
+            data: RequestData || {}
         }
     })
     .done(function (data) {
@@ -964,6 +970,7 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
                     onClick: function ($noty) {
                         blockUI();
                         App.functions.reportIssue.call(obj, params, {'done': function (response) {
+                            //response
                             unblockUI();
                             $noty.close();
                             notyMessage("Error reported!");
