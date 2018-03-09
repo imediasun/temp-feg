@@ -783,6 +783,10 @@ class OrderController extends Controller
                     'vendor_id' => $prodVendorId,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
+                if (!empty($itemsArray[$i])) {
+                    $contentsData['product_description'] = $itemsArray[$i];
+                }
+
                 if ($editmode == "clone") {
                     $items_received_qty = 0;
                 }
