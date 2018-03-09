@@ -768,7 +768,6 @@ class OrderController extends Controller
                     'order_id' => $order_id,
                     'request_id' => $request_id,
                     'product_id' => $product_id,
-                    'product_description' => $itemsArray[$i],
                     'price' => $priceArray[$i],
                     'qty' => $qtyArray[$i],
                     'game_id' => $game_id,
