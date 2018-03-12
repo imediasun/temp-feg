@@ -643,21 +643,23 @@ $(document).on("blur", "input[name='retail_price']", function () {
 });
 $(function () {
 
-	$.ajax({
-		type: "GET",
-		data: {DATATEST: 1},
-		dataType: "HTML",
-		url: 'product/expense-category-ajax',
-		success: function (response) {
-			console.log(response);
-			$(".expense_category").html(response);
-			$(".expense_category").change();
-		},
-		error: function (res) {
-			console.log(res);
-		}
-	});
-});
+        $.ajax({
+            type:"GET",
+            data:{DATATEST:1},
+            dataType:"HTML",
+            url:'product/expense-category-ajax',
+            success:function(response){
+                // console.log(response);
+                $(".expense_category").attr('required', 'required');
+                $(".expense_category").html(response);
+                $(".expense_category").change();
+            },
+            error:function(res){
+                console.log(res);
+            }
+        });
+    });
+
 </script>
 
 <style>

@@ -365,10 +365,9 @@ class ProductController extends Controller
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
-        /*if($id != 0)
-        {
-            $rules['expense_category'] = 'required|numeric|min:0';
-        }*/
+
+            $rules['expense_category'] = 'required';
+
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
@@ -377,7 +376,6 @@ class ProductController extends Controller
             if ($id == 0) {
                 $data = $this->validatePost('products');
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
-
             }
             else {
                 //for inline editing all fields do not get saved
@@ -792,15 +790,17 @@ JOIN order_type ON order_type.id = expense_category_mapping.order_type
 WHERE product_type IS NULL
 GROUP BY mapped_expense_category");
         $items = [];
-        foreach ($expense_category as  $category){
+        foreach ($expense_category as $category) {
             $orderType = $category->order_type;
             $categoryId = $category->mapped_expense_category;
-    if( $categoryId==0){
-        $orderType = "N/A";
-        $categoryId = "";
-    }
+            if ($categoryId == 0) {
+                /* $orderType = "N/A";
+                 $categoryId = "";
+                */
+            } else {
 
-            $items[] = [$categoryId, $orderType];
+                $items[] = [$categoryId, $orderType];
+            }
         }
         return $items;
     }
@@ -816,11 +816,12 @@ GROUP BY mapped_expense_category");
         foreach ($expense_category as $category){
             $orderType = $category->order_type;
             $categoryId = $category->mapped_expense_category;
-    if( $categoryId==0){
-        $orderType = "N/A";
-        $categoryId = "";
-    }
-            $items[] = '<option value="'.$categoryId.'"> '.$orderType.' </option>';
+            if ($categoryId == 0) {
+                /* $orderType = "N/A";
+                 $categoryId = "";*/
+            } else {
+                $items[] = '<option value="' . $categoryId . '"> ' . $orderType . ' </option>';
+            }
 
         }
         $options = implode("",$items);

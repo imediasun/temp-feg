@@ -47,6 +47,14 @@ class addtocart extends Sximo
         return $where ;
     }
 
+    public function getCartData($productId)
+    {
+        return self::where('product_id', $productId)->where('request_user_id', \Session::get('uid'))
+            ->where('location_id', \Session::get('selected_location'))
+            ->where('status_id', 4)
+            ->first();
+    }
+
     public static function queryGroup()
     {
         return "  ";
