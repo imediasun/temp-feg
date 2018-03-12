@@ -271,6 +271,26 @@ $ExpenseCaegory = array_map(function ($rowData) {
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
     var jsonExpenseCategory = [];
+    function fixdeci(value) {
+        places = 2;
+        var val = getFlooredFixed($.trim(value), 5);
+
+        if (val.indexOf('.') == -1) {
+            val = val + '.00000';
+        }
+        val = val + '00';
+        val = val.slice(0, (val.indexOf(".")) + 6);
+        val = val.split('.');
+        var number = 0;
+        if (val[1]) {
+            var fixed = val[1].substring(0, places);
+            var decimalSection = (val[1].substring(places)).rtrim();
+            number = val[0] + '.' + fixed + '' + decimalSection;
+        } else {
+            number = val[0];
+        }
+        return number;
+    }
     <?php if(!empty($jsonRowData)){ ?>
             jsonExpenseCategory = JSON.parse('<?php echo $jsonRowData ?>');
     <?php } ?>
