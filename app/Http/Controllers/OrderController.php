@@ -618,7 +618,7 @@ class OrderController extends Controller
 
             $received_quantity = \DB::select("SELECT SUM(quantity) as total_received_qty FROM order_received WHERE  order_id=$order_id")[0]->total_received_qty;
 
-            if ($totalQuanity > 0 && $received_quantity < $totalQuanity) {
+            if ($orderQuantity > 0 && $received_quantity < $totalQuanity) {
                 \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
             } elseif ($received_quantity == $totalQuanity) {
                 \DB::update('update orders set status_id=1, is_partial=0 where id="' . $order_id . '"');
@@ -897,15 +897,7 @@ class OrderController extends Controller
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
             \Session::put('redirect', $redirect_link);
-            $totalQuanity = \DB::select("SELECT SUM(qty) AS total_quantity FROM order_contents WHERE order_id=$order_id")[0]->total_quantity;
 
-            $received_quantity = \DB::select("SELECT SUM(quantity) as total_received_qty FROM order_received WHERE  order_id=$order_id")[0]->total_received_qty;
-
-            if ($totalQuanity > 0 && $received_quantity < $totalQuanity) {
-                \DB::update('update orders set status_id=1, is_partial=1 where id="' . $order_id . '"');
-            } elseif ($received_quantity == $totalQuanity) {
-                \DB::update('update orders set status_id=1, is_partial=0 where id="' . $order_id . '"');
-            }
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
@@ -938,15 +930,7 @@ class OrderController extends Controller
             }
 
             $this->model->insertRow($data, $id);
-            $totalQuanity = \DB::select("SELECT SUM(qty) AS total_quantity FROM order_contents WHERE order_id=$order_id")[0]->total_quantity;
 
-            $received_quantity = \DB::select("SELECT SUM(quantity) as total_received_qty FROM order_received WHERE  order_id=$order_id")[0]->total_received_qty;
-
-            if ($totalQuanity > 0 && $received_quantity < $totalQuanity) {
-                \DB::update('update orders set status_id=1, is_partial=1 where id="' . $order_id . '"');
-            } elseif ($received_quantity == $totalQuanity) {
-                \DB::update('update orders set status_id=1, is_partial=0 where id="' . $order_id . '"');
-            }
             \Session::put('order_id', $id);
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
 
