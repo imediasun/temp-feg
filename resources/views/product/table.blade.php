@@ -1,4 +1,10 @@
-<?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<?php usort($tableGrid, "SiteHelpers::_sort");
+$ExpenseCaegory = array_map(function ($rowData) {
+    $dataArray['expense_category'] = $rowData->expense_category;
+    $dataArray['expense_category_field'] = $rowData->expense_category_field;
+    return $dataArray;
+}, $rowData);  $jsonRowData = json_encode($ExpenseCaegory);
+?>
 <div class="sbox">
     <div class="sbox-title">
 
@@ -259,7 +265,58 @@
 </div>
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
+    var jsonExpenseCategory = [];
+    function fixdeci(value) {
+        places = 2;
+        var val = getFlooredFixed($.trim(value), 5);
 
+        if (val.indexOf('.') == -1) {
+            val = val + '.00000';
+        }
+        val = val + '00';
+        val = val.slice(0, (val.indexOf(".")) + 6);
+        val = val.split('.');
+        var number = 0;
+        if (val[1]) {
+            var fixed = val[1].substring(0, places);
+            var decimalSection = (val[1].substring(places)).rtrim();
+            number = val[0] + '.' + fixed + '' + decimalSection;
+        } else {
+            number = val[0];
+        }
+        return number;
+    }
+    <?php if(!empty($jsonRowData)){ ?>
+            jsonExpenseCategory = JSON.parse('<?php echo $jsonRowData ?>');
+    <?php } ?>
+    function setExpenseCategoryName(ID) {
+        for (var i = 0; i < jsonExpenseCategory.length; i++) {
+            var ExpenseCategory = jsonExpenseCategory[i].expense_category;
+            var ExpenseCategoryField = jsonExpenseCategory[i].expense_category_field;
+            if (ExpenseCategory > 0 && ExpenseCategory != '') {
+                if (ID !== "" && Number(ID) != 0 && ID !== "0") {
+                    if (ID == ExpenseCategory) {
+                        if (ExpenseCategoryField != '' && ExpenseCategoryField != '0') {
+                            return ExpenseCategoryField;
+                        } else {
+                            return ExpenseCategory;
+                        }
+                        var ECat = $("tr td[data-field='expense_category'][data-values='" + ExpenseCategory + "'");
+                        ECat.text($.trim(ExpenseCategoryField));
+                    }
+                } else if (ID == 0) {
+                    var ECat = $("tr td[data-field='expense_category'][data-values='" + ExpenseCategory + "'");
+                    if (ExpenseCategoryField != '' && Number(ExpenseCategoryField) != '0') {
+                        ECat.text($.trim(ExpenseCategoryField));
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+    $(function () {
+        setExpenseCategoryName(0);
+    });
     var EditedProductId=0;
     var singleRowObjectId=0;
     function editedProduct(id,singleobject){
@@ -401,6 +458,10 @@
     $(document).ajaxComplete(function (event, xhr, settings) {
 
         var $urlArray = settings.url.split('/');
+//console.log("index Of:"+(settings.url).indexOf('product/data'));
+        if ((settings.url).indexOf('product/data')) {
+
+        }
 
         if (typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null) {
             if (settings.url === "product/save/" + $urlArray[2]) {
@@ -440,6 +501,9 @@
                                     var idSplited = (row.attr('id')).split("-");
                                     if(key=="expense_category") {
                                        // console.log(row.attr("data-id") === singleRowObjectId);
+                                    }
+                                    if (key == "expense_category") {
+                                        value = setExpenseCategoryName($.trim(value));
                                     }
 
                                 //    if(idSplited[1]$urlArray[2]) {
@@ -487,7 +551,7 @@
                                         value = "No Data";
                                     }
 
-                                    //if ($(this).children('td[data-field="vendor_description"]').length == 0) {
+
 
                                         if (key !== "mycheckbox") {
 
@@ -496,7 +560,7 @@
                                                     row.find('td[data-field="' + key + '"]').text($.trim(value));
                                                 }
                                             } else {
-                                                if ((key === "expense_category" || key === "ticket_value" || key === "retail_price")) {
+                                                if ((key === "ticket_value" || key === "retail_price")) {
 
                                                     if (row.attr("data-id") === singleRowObjectId) {
 
@@ -512,9 +576,11 @@
                                                     }
                                                 }
                                             }
-                                       // }
-                                    }
+
+
+                                        }
                                 }
+
                                 //console.log($("select[name='vendor_id'] option:selected").text());
                                 //	row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
                                 //	row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
@@ -573,26 +639,7 @@
             }
         });
     });
-    function fixdeci(value) {
-        places = 2;
-        var val = getFlooredFixed($.trim(value),5);
 
-        if(val.indexOf('.') == -1){
-            val = val+'.00000';
-        }
-        val = val+'00';
-        val = val.slice(0, (val.indexOf("."))+6);
-        val = val.split('.');
-        var number = 0;
-        if(val[1]){
-            var fixed = val[1].substring(0, places);
-            var decimalSection = (val[1].substring(places)).rtrim();
-            number = val[0]+'.'+fixed+''+decimalSection;
-        }else{
-            number = val[0];
-        }
-        return number;
-    }
 </script>
 
 <style>
