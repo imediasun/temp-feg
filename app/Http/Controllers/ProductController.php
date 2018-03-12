@@ -351,10 +351,9 @@ class ProductController extends Controller
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
-        /*if($id != 0)
-        {
+
             $rules['expense_category'] = 'required';
-        }*/
+
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
@@ -691,12 +690,36 @@ class ProductController extends Controller
             ->groupBy('mapped_expense_category')->get();
         $items = [];
         foreach ($expense_category as $key => $category){
-            if($category->mapped_expense_category == 0)
+            if ($category->mapped_expense_category == 0 || empty($category->mapped_expense_category))
             {
-                $category->mapped_expense_category = "N/A";
+                // $category->mapped_expense_category = "N/A";
+            } else {
+                $items[] = [$category->id, $category->mapped_expense_category];
             }
-            $items[] = [$category->id, $category->mapped_expense_category];
         }
         return $items;
+    }
+
+    function getExpenseCategoryAjax(Request $request)
+    {
+
+        $expense_category = \DB::select("SELECT expense_category_mapping.id,expense_category_mapping.mapped_expense_category,order_type.`order_type`,CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | ')) as order_type
+FROM expense_category_mapping
+JOIN order_type ON order_type.id = expense_category_mapping.order_type
+WHERE product_type IS NULL
+GROUP BY mapped_expense_category");
+
+        $items = ['<option value=""> -- Select  -- </option>'];
+        foreach ($expense_category as $category) {
+            $orderType = $category->order_type;
+            $categoryId = $category->mapped_expense_category;
+            if ($categoryId > 0 && !empty($categoryId)) {
+                $items[] = '<option value="' . $categoryId . '"> ' . $orderType . ' </option>';
+            }
+
+
+        }
+        $options = implode("", $items);
+        echo $options;
     }
 }

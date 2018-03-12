@@ -160,7 +160,8 @@
                             {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <select name='expense_category[1]' rows='5' id='expense_category_1' class='select2'></select>
+                            <select name='expense_category[1]' rows='5' id='expense_category_1' class='select2'
+                                    required></select>
                             {{--<input class="form-control" placeholder="" parsley-type="number" required="required" id="expense_category_1" name="expense_category[1]" type="text" value="{{$row['expense_category']}}">--}}
                         </div>
                         <div class="col-md-2">
@@ -672,7 +673,7 @@
                 ' <div class="col-md-6"> <select name="prod_sub_type_id['+types_counter+']" rows="5" data-counter="'+types_counter+'" id="prod_sub_type_id_'+types_counter+'" class="prod_sub_type select2 "></select>' +
                 ' </div> <div class="col-md-2"> </div> </div> ' +
                 '<div class="form-group"> <label for="Expense Category" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Expense Category", (isset($fields["expense_category"]["language"])? $fields["expense_category"]["language"] : array())) !!}</label> ' +
-                '<div class="col-md-6"><select name="expense_category['+types_counter+']" rows="5" id="expense_category_'+types_counter+'" class="select2"></select> ' +
+                '<div class="col-md-6"><select name="expense_category[' + types_counter + ']" rows="5" id="expense_category_' + types_counter + '" class="select2" required></select> ' +
                 '</div> <div class="col-md-2"></div> </div>' +
                 '<div class="form-group" id="retail_price_'+types_counter+'"> <label for="Retail Price" class="control-label col-md-4 text-left addcolon">Retail Price </label> ' +
                 '<div class="col-md-6"> ' +

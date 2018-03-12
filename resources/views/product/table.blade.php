@@ -564,6 +564,7 @@
             url:'product/expense-category-ajax',
             success:function(response){
                 // console.log(response);
+                $(".expense_category").attr('required', 'required');
                 $(".expense_category").html(response);
                 $(".expense_category").change();
             },
