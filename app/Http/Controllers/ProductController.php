@@ -986,7 +986,7 @@ GROUP BY mapped_expense_category");
         $sql .= " FROM expense_category_mapping 
                   JOIN order_type
                     ON order_type.id = expense_category_mapping.order_type
-                WHERE product_type IS NULL AND mapped_expense_category !=0 AND mapped_expense_category = 61701 
+                WHERE product_type IS NULL AND mapped_expense_category !=0 AND mapped_expense_category = $expense_category 
                 GROUP BY mapped_expense_category";
         $result = \DB::select($sql);
         return $result;
