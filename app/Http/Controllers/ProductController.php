@@ -129,8 +129,10 @@ class ProductController extends Controller
 
         $rows = $this->updateDateInAllRows($rows);
         $rows = array_map(function ($element) {
-            $result = $this->getExpenseCategoryById($element->expense_category);
-            $element->expense_category = count($result) > 0 ? $result[0]->expense_category : 0;
+            if (!empty($element->expense_category) && $element->expense_category > 0) {
+                $result = $this->getExpenseCategoryById($element->expense_category);
+                $element->expense_category = count($result) > 0 ? $result[0]->expense_category : 0;
+            }
             return $element;
         }, $rows);
 
