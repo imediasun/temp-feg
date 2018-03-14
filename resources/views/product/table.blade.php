@@ -1,9 +1,9 @@
 <?php usort($tableGrid, "SiteHelpers::_sort");
-$ExpenseCaegory = array_map(function ($rowData) {
-    $dataArray['expense_category'] = $rowData->expense_category;
-    $dataArray['expense_category_field'] = $rowData->expense_category_field;
+$ExpenseCategories = array_map(function ($ExpenseCategories) {
+    $dataArray['expense_category'] = $ExpenseCategories->mapped_expense_category;
+    $dataArray['expense_category_field'] = $ExpenseCategories->expense_category_field;
     return $dataArray;
-}, $rowData);  $jsonRowData = json_encode($ExpenseCaegory);
+}, $ExpenseCategories);  $jsonRowData = json_encode($ExpenseCategories);
 ?>
 <div class="sbox">
 	<div class="sbox-title">
