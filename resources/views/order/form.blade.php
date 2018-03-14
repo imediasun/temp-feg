@@ -1641,6 +1641,23 @@
                     $('.itemstable .clonedInput:first-child textarea').val('');
                 }
             }
+            if (currentElm.data('status') == 'enabled') {
+                setTimeout(function () {
+                    var item = $(".item_name").last();
+
+                    $(".item_name").last().removeAttr("onfocus", "init(this.id,this);");
+                    $('.item_name').last().removeAttr('readonly');
+
+                }, 500);
+            } else {
+                setTimeout(function () {
+                    var item = $(".item_name").last();
+
+                    $(".item_name").last().attr("onfocus", "init(this.id,this);");
+                    $('.item_name').last().removeAttr('readonly');
+
+                }, 500);
+            }
         });
     </script>
     <style>
