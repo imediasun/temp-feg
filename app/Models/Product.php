@@ -29,14 +29,7 @@ class product extends Sximo  {
   products.id        AS `product_id`,
   IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price) AS `retail_price`,
   O.order_type       AS prod_type_id,
-  T.type_description AS prod_sub_type_id,
-  (SELECT
-     IF(mapped_expense_category=0,0,CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | '))) AS expense_category
-   FROM expense_category_mapping
-     JOIN order_type
-       ON order_type.id = expense_category_mapping.order_type
-   WHERE product_type IS NULL
-       AND mapped_expense_category = products.expense_category) AS expense_category_field
+  T.type_description AS prod_sub_type_id
 FROM `products`
   LEFT JOIN vendor
     ON (products.vendor_id = vendor.id)
@@ -271,6 +264,19 @@ FROM `products`
         //$total = 1000;
         return $results = array('rows'=> $result , 'total' => $total);
 
+    }
+
+    public function allExpenseCategories()
+    {
+        $sql = "SELECT
+  expense_category_mapping.mapped_expense_category,
+     IF(mapped_expense_category=0,0,CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | '))) AS expense_category_field
+   FROM expense_category_mapping
+     JOIN order_type
+       ON order_type.id = expense_category_mapping.order_type 
+   WHERE product_type IS NULL AND expense_category_mapping.mapped_expense_category > 0 GROUP BY expense_category_mapping.mapped_expense_category ";
+        $result = DB::select($sql);
+        return $result;
     }
 
     public function checkProducts($id){

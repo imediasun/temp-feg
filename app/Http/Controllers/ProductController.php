@@ -290,6 +290,8 @@ class ProductController extends Controller
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         $rows = $results['rows'];
+        $ExpenseCategories = $this->model->allExpenseCategories();
+        $this->data['ExpenseCategories'] = $ExpenseCategories;
 
         foreach ($rows as $index => $data) {
             if ($data->is_reserved == 1) {
