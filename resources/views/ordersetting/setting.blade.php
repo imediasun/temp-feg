@@ -20,7 +20,7 @@
                 {{ Session::get('message') }}
             @endif
 
-            {!! Form::open(array('url'=>'ordersetting/save', 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ', 'id'=> 'sbticketSetting')) !!}
+            {!! Form::open(array('url'=>'ordersetting/save', 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ', 'id'=> 'orderSetting')) !!}
 
             <div class="sbox">
                 <div class="sbox-title"><h5> Setting </h5></div>
@@ -43,7 +43,8 @@
                                 <td>Merchandise Orders PO PDF Notes</td>
                                 <td>This PO PDF note is a default PO not for Merchandise Orders</td>
                                 <td>
-                                    <textarea name="merchandisePONote" class="form-control" rows="7"></textarea>
+                                    <textarea name="merchandisePONote" class="form-control"
+                                              rows="7">{{ $MerchandisePO }}</textarea>
                                 </td>
                                 <td>
                                     <select name='merchandiseordertypes[]' multiple rows='5' id="merchandiseordertype"
@@ -53,32 +54,18 @@
                             </tr>
                             <tr>
                                 <!--<td>1</td>-->
-                                <td>None Merchandise Orders PO PDF Notes</td>
-                                <td>This PO PDF note is a default PO not for None Merchandise Orders</td>
+                                <td>Non Merchandise Orders PO PDF Notes</td>
+                                <td>This PO PDF note is a default PO not for Non Merchandise Orders</td>
                                 <td>
-                                    <textarea name="nonemerchandisePONote" class="form-control" rows="7"></textarea>
+                                    <textarea name="NonmerchandisePONote" class="form-control"
+                                              rows="7">{{ $NonMerchandisePO }}</textarea>
                                 </td>
                                 <td>
-                                    <select name='nonemerchandiseordertypes[]' multiple rows='5'
-                                            id="nonemerchandiseordertype" class='select2 '>
+                                    <select name='Nonmerchandiseordertypes[]' multiple rows='5'
+                                            id="Nonmerchandiseordertype" class='select2 '>
                                     </select>
                                 </td>
                             </tr>
-
-                            {{--<tr>--}}
-                            {{--<td>5</td>--}}
-                            {{--<td>Able to subscribe to email alerts by ticket</td>--}}
-                            {{--<td>--}}
-                            {{--<select name='role5[]' multiple id="role5" rows='5' class='select2 '>--}}
-
-                            {{--</select>--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                            {{--<select name='individual5[]' multiple rows='5' id="individual5" class='select2 '>--}}
-
-                            {{--</select>--}}
-                            {{--</td>--}}
-                            {{--</tr>--}}
                             </tbody>
                         </table>
                     </div>
@@ -94,26 +81,20 @@
 
     <script>
         $(document).ready(function () {
-            superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
-
-
-            $("#individual5").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting->individual5 }}'});
+            $("#merchandiseordertype").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
+                    {selected_value: '{{ $MerchandiseOrder }}', initial_text: '-------- Select Order Type --------'});
+            $("#Nonmerchandiseordertype").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
+                    {
+                        selected_value: '{{ $NonMerchandiseOrder }}',
+                        initial_text: '-------- Select Order Type --------'
+                    });
         });
-        @if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN)
-                    $(document).ajaxStop(function () {
-            console.log("Triggered ajaxStop handler.");
-            $('#role1 option[value="' + superAdmin + '"],#role2 option[value="' + superAdmin + '"],#role3 option[value="' + superAdmin + '"],#role4 option[value="' + superAdmin + '"],#role5 option[value="' + superAdmin + '"]').remove();
-            /*$('#role1 option[value="'+superAdmin+'"],#role2 option[value="'+superAdmin+'"],#role3 option[value="'+superAdmin+'"],#role4 option[value="'+superAdmin+'"],#role5 option[value="'+superAdmin+'"]').attr('disabled','disabled');*/
-            $('#role1,#role2,#role3,#role4,#role5').trigger('change');
-        });
-                @endif
-        var form = $('#sbticketSetting');
+
+        var form = $('#orderSetting');
         form.parsley();
         form.submit(function () {
             if (form.parsley('isValid') == true) {
-                /*$('#role1 option[value="'+superAdmin+'"],#role2 option[value="'+superAdmin+'"],#role3 option[value="'+superAdmin+'"],#role4 option[value="'+superAdmin+'"],#role5 option[value="'+superAdmin+'"]').removeAttr('disabled');
-                 $('#role1,#role2,#role3,#role4,#role5').trigger('change');*/
+
                 var options = {
                     dataType: 'json',
                     beforeSubmit: showRequest,

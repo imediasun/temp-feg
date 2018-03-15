@@ -5,6 +5,7 @@ use App\Models\Ordersetting;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
+use App\Models\OrdersettingContent;
 
 class OrdersettingController extends Controller
 {
@@ -35,17 +36,86 @@ class OrdersettingController extends Controller
 
     public function getSetting()
     {
-        $ordersetting = new $this->model();
-        $orderSettingData = $ordersetting->where("id", 1)->get();
-        echo "<pre>";
-        dd($orderSettingData);
-        die;
+        $MerchandiseOrderSetting = $this->model->where("is_merchandiseorder", 1)->first();
+        $MerchandiseSetting = $MerchandiseOrderSetting->po_note;
+        $MerchandiseOrderTypes = [];
+        foreach ($MerchandiseOrderSetting->ordersettingcontent as $SettingContent) {
+            $MerchandiseOrderTypes[] = $SettingContent->ordertype_id;
+        }
+        $NonMerchandiseOrderSetting = $this->model->where("is_merchandiseorder", 0)->first();
+        $NonMerchandiseSetting = $NonMerchandiseOrderSetting->po_note;
+        $NonMerchandiseOrderTypes = [];
+        foreach ($NonMerchandiseOrderSetting->ordersettingcontent as $SettingContent) {
+            $NonMerchandiseOrderTypes[] = $SettingContent->ordertype_id;
+        }
+        $this->data['MerchandisePO'] = $MerchandiseSetting;
+        $this->data['NonMerchandisePO'] = $NonMerchandiseSetting;
+        $this->data['MerchandiseOrder'] = implode(",", $MerchandiseOrderTypes);
+        $this->data['NonMerchandiseOrder'] = implode(",", $NonMerchandiseOrderTypes);
+
         $this->data['access'] = $this->access;
         return view('ordersetting.setting', $this->data);
     }
 
     public function postSave(Request $request)
     {
+
+        $merchandisePONote = $request->input('merchandisePONote');
+        $NonmerchandisePONote = $request->input('NonmerchandisePONote');
+        $merchandiseOrderTypes = $request->input('merchandiseordertypes');
+        $NonMerchandiseOrderTypes = $request->input('Nonmerchandiseordertypes');
+
+        if (count(array_intersect($merchandiseOrderTypes, $NonMerchandiseOrderTypes)) > 0) {
+            return response()->json(array(
+                'message' => 'You can not select the same order type for both Merchandise and Non Merchandise.',
+                'status' => 'error',
+
+            ));
+        }
+
+        $merchandiseOrderSetting = $this->model->firstOrNew(["is_merchandiseorder" => 1]);
+        $merchandiseOrderSetting->po_note = $merchandisePONote;
+        $merchandiseOrderSetting->is_merchandiseorder = 1;
+        $merchandiseOrderSetting->save();
+        $settingContent = $merchandiseOrderSetting->ordersettingcontent();
+
+        if ($settingContent->getResults()->count() > 0) {
+            foreach ($settingContent->getResults() as $orderType) {
+                $orderType->delete();
+            }
+        }
+        foreach ($merchandiseOrderTypes as $MerchandiseOrderType) {
+            $Ordersettingcontent = new OrdersettingContent();
+            $Ordersettingcontent->ordersetting_id = $merchandiseOrderSetting->id;
+            $Ordersettingcontent->ordertype_id = $MerchandiseOrderType;
+            $Ordersettingcontent->save();
+        }
+
+        $NonMerchandiseOrderSetting = $this->model->firstOrNew(["is_merchandiseorder" => 0]);
+        $NonMerchandiseOrderSetting->po_note = $NonmerchandisePONote;
+        $NonMerchandiseOrderSetting->is_merchandiseorder = 0;
+        $NonMerchandiseOrderSetting->save();
+        $settingContent = $NonMerchandiseOrderSetting->ordersettingcontent();
+
+        if ($settingContent->getResults()->count() > 0) {
+            foreach ($settingContent->getResults() as $orderType) {
+                $orderType->delete();
+            }
+        }
+        foreach ($NonMerchandiseOrderTypes as $NonMerchandiseOrderType) {
+            $Ordersettingcontent = new OrdersettingContent();
+            $Ordersettingcontent->ordersetting_id = $NonMerchandiseOrderSetting->id;
+            $Ordersettingcontent->ordertype_id = $NonMerchandiseOrderType;
+            $Ordersettingcontent->save();
+        }
+
+
+        return response()->json(array(
+            'message' => 'Order Setting has been saved successfully.',
+            'status' => 'success',
+
+        ));
+
 
     }
 
