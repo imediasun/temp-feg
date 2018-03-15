@@ -9,7 +9,9 @@ use Validator, Input, Redirect ;
 class ExcludedreadersController extends Controller {
 
 	protected $layout = "layouts.main";
-	protected $data = array();	
+    protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
 	public $module = 'excludedreaders';
 	static $per_page	= '10';
 	
@@ -28,7 +30,8 @@ class ExcludedreadersController extends Controller {
 			'pageUrl'			=>  url('excludedreaders'),
 			'return' 			=> 	self::returnUrl()
 		);
-		
+        $this->sortMapping = ['loc_id1' => 'location.location_name', 'debit_type_id' => 'debit_type.company'];
+        $this->sortUnMapping = ['location.location_name' => 'loc_id1', 'debit_type.company' => 'debit_type_id'];
 
 
 	}
@@ -84,7 +87,7 @@ class ExcludedreadersController extends Controller {
         // End Filter sort and order for query
         // Filter Search for query        
         $filter = $this->getSearchFilterQuery();
-
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 		$page = $request->input('page', 1);
 		$params = array(
 			'page'		=> $page ,
@@ -96,7 +99,9 @@ class ExcludedreadersController extends Controller {
 		);
 		// Get Query
 		$results = $this->model->getRows( $params );
-		// Build pagination setting
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
+        // Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
         $pagination = new Paginator($results['rows'], $results['total'],
             (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 

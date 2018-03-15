@@ -1647,25 +1647,47 @@ class SiteHelpers
 
     public static function gridDisplay($val, $field, $arr)
     {
-        if (isset($arr['valid']) && $arr['valid'] == 1) {
-            $fields = str_replace("|", ",", $arr['display']);
-            $Q = DB::select(" SELECT " . $fields . " FROM " . $arr['db'] . " WHERE " . $arr['key'] . " = '" . $val . "' ");
-            if (count($Q) >= 1) {
-                $row = $Q[0];
-                $fields = explode("|", $arr['display']);
-                $v = '';
-                $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
-                $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
-                $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');
 
 
-                return $v;
+            if (isset($arr['valid']) && $arr['valid'] == 1) {
+                $fields = str_replace("|", ",", $arr['display']);
+                $Q = DB::select(" SELECT " . $fields . " FROM " . $arr['db'] . " WHERE " . $arr['key'] . " = '" . $val . "' ");
+                if (count($Q) >= 1) {
+                    $row = $Q[0];
+                    $fields = explode("|", $arr['display']);
+                    $v = '';
+                    if (isset($fields[0]) && (empty($row->$fields[0]) || $row->$fields[0] == 0)) {
+                        $v = "No Data";
+                    } else {
+                        $v .= (isset($fields[0]) && $fields[0] !== '' ? $row->$fields[0] . ' ' : '');
+                    }
+
+                    if (isset($fields[1]) && (empty($row->$fields[1]) || $row->$fields[1] == 0)) {
+                        $v = "No Data";
+                    } else {
+                        $v .= (isset($fields[1]) && $fields[1] !== '' ? $row->$fields[1] . ' ' : '');
+                    }
+                    if (isset($fields[2]) && (empty($row->$fields[2]) || $row->$fields[2] == 0)) {
+                        $v = "No Data";
+                    } else {
+                        $v .= (isset($fields[2]) && $fields[2] !== '' ? $row->$fields[2] . ' ' : '');
+                    }
+                    /*    $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
+                        $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
+                        $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');*/
+
+
+                    return $v;
+                } else {
+                    return '';
+                }
             } else {
-                return '';
+                if (empty($val) || $val===0) {
+                    $val = "No Data";
+                }
+                return $val;
             }
-        } else {
-            return $val;
-        }
+
     }
 
     public static function gridDisplayView($val, $field, $arr,$nodata=0)
@@ -2537,9 +2559,17 @@ class SiteHelpers
     static function configureSimpleSearchForm($data)
     {
         $newArray = array();
+        $flag=true;
         foreach ($data as $item) {
             if (isset($item['simplesearch']) && $item['simplesearch'] == '1') {
                 $item['generatingSimpleSearch'] = true;
+                if($flag==true){
+                    $item['simplesearchfieldwidth']="col-xs-12 col-sm-12 col-md-3 col-lg-2";
+                    $flag=false;
+                }else{
+                    $item['simplesearchfieldwidth']="col-xs-12 col-sm-12 col-md-3 col-lg-3";
+                }
+              //
                 $newArray[] = $item;
             }
         }
@@ -2661,9 +2691,10 @@ class SiteHelpers
             $widthStyle = 'width:' . $width . ';';
         }
         if (!empty($width)) {
-            $buttonStyle = "width: 100%;";
+           // $buttonStyle = "width: 100%;";
+            $buttonStyle = "";
         }
-        $button = '<div class="sscol-submit col-md-1 col-sm-2 ' . $widthClass . '"
+        $button = '<div class="sscol-submit col-sm-12 col-md-2  col-lg-1 ' . $widthClass . '"
             style="' . $widthStyle . '"><br/>
             <button type="button" name="search" style="' . $buttonStyle . '"
                     class="doSimpleSearch btn btn-sm btn-primary"> Search </button>

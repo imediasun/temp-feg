@@ -14,7 +14,7 @@ class order extends Sximo
     protected $table = 'orders';
     protected $primaryKey = 'id';
     const OPENID1 = 1, OPENID2 = 3, OPENID3 = 4, FIXED_ASSET_ID = 9, CLOSEID1 = 2, CLOSEID2 = 5;
-    const ORDER_PERCISION = 2;
+    const ORDER_PERCISION = 5;
     const ORDER_TYPE_PART_GAMES = 1;
     const ORDER_VOID_STATUS = 9;
     const ORDER_CLOSED_STATUS = [2,6];
@@ -27,6 +27,94 @@ class order extends Sximo
 
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orderedContent()
+    {
+        return $this->hasMany("App\Models\OrderedContent");
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function (Order $model) {
+            $model->status_id = self::ORDER_DELETED_STATUS;
+            $model->deleted_by = \Session::get('uid');
+            $model->restoreReservedProductQuantities();
+        });
+
+        //@todo add statis::restore
+        static::restoring(function (Order $model) {
+            $model->status_id = self::ORDER_ACTIVE_STATUS;
+            $model->deleted_by = null;
+            $model->deleteReservedProductQuantities();
+        });
+    }
+
+    public function contents(){
+        return $this->hasMany('App\Models\OrderContent');
+    }
+
+    public function restoreReservedProductQuantities()
+    {
+        $this->adjustReservedProductQuantities();
+    }
+
+    public function deleteReservedProductQuantities()
+    {
+        $this->adjustReservedProductQuantities(true);
+    }
+
+    private function adjustReservedProductQuantities($reduceQuantity = false)
+    {
+        $orderContents = $this->contents;
+        foreach ($orderContents as $orderContent) {
+
+            $orderedProduct = $orderContent->product;
+
+            if ($orderedProduct->is_reserved == 1) {
+
+                if ($reduceQuantity) {
+                    if ($orderedProduct->allow_negative_reserve_qty == 0 && $orderedProduct->reserved_qty < $orderContent->qty) {
+                        throw new \Exception("Product does not have sufficient reserved quantities");
+                    }
+                    $reserved_qty = $orderedProduct->reserved_qty - $orderContent->qty;
+                    $updates = ['reserved_qty' => $reserved_qty];
+                    if (!$orderedProduct->allow_negative_reserve_qty and $reserved_qty == 0) {
+                        $updates['inactive'] = 1;
+                    }
+                    $orderedProduct->updateProduct($updates, true);
+                } else {
+                    $reserved_qty = $orderedProduct->reserved_qty + $orderContent->qty;
+                    $updates = ['reserved_qty' => $reserved_qty];
+                    if ($reserved_qty > 0) {
+                        $updates['inactive'] = 0;
+                    }
+                    $orderedProduct->updateProduct($updates, true);
+                }
+            }
+        }
+    }
+
+    public function canRestoreAllReservedProducts()
+    {
+        if (empty($this->contents)) {
+            return true;
+        }
+        foreach ($this->contents as $orderContent) {
+            $orderedProduct = $orderContent->product;
+            if ($orderedProduct->is_reserved == 1 && $orderedProduct->allow_negative_reserve_qty == 0 &&
+                $orderedProduct->reserved_qty < $orderContent->qty
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static function querySelect()
     {
 
@@ -37,10 +125,13 @@ class order extends Sximo
                 LEFT OUTER JOIN order_type OT ON orders.order_type_id=OT.id
                 LEFT OUTER JOIN order_contents OC ON orders.id=OC.order_id
                 LEFT OUTER JOIN order_status OS ON orders.status_id=OS.id
-                LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id";
+                LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id ";
     }
     public static function getProductInfo($id){
-        $select ="SELECT order_contents.qty,order_contents.item_name,order_contents.total FROM order_contents WHERE order_id = ".$id;
+
+        $select ="SELECT IF(order_contents.sku IS null OR order_contents.sku = '', products.sku,order_contents.sku) as sku, order_contents.qty,order_contents.item_name,order_contents.total FROM order_contents
+        LEFT OUTER JOIN products ON products.id=order_contents.product_id
+        WHERE order_id = ".$id;
         $result = \DB::select($select );
         return $result;
     }
@@ -72,6 +163,12 @@ class order extends Sximo
             default:
                 $return .= " orders.id IS NOT NULL";
         }
+        $module_id = Module::name2id('order');
+        $pass = \FEGSPass::getMyPass($module_id);
+        if(empty($pass['Can remove order']))
+        {
+            $return .= " AND orders.deleted_at is null ";
+        }
         if($cond == 'only_api_visible')
         {
             $return .= " AND is_api_visible = 1 And api_created_at IS NOT NULL";
@@ -80,23 +177,58 @@ class order extends Sximo
         return $return;
     }
 
+    public static function truncatePoNotes($poNotes,$length=300)
+    {
+        //$poNotes = preg_replace("/[\r\n]+/", " ", $poNotes);
+        $poNotes = str_replace(["\r\n"]," ",$poNotes);
+        $poNotes = preg_replace('/\t+/', '', $poNotes);
+        $poNotes = preg_replace('/\n+/', '', $poNotes);
+        if(empty($poNotes) || strlen($poNotes) < $length){
+            return $poNotes;
+        }
+        return \CurrencyHelpers::truncateLongText($poNotes, $length);
+    }
+
     public static function addOrderItems($data){
         $orders = [];
         //extract order id for query to order_contents order_id in (1,2,3)
         foreach($data as &$record){
             $orders[] = $record['id'];
+            $record['po_notes'] = self::truncatePoNotes($record['po_notes']);
             $record['items'] = [];
         }
         if(empty($orders)){
             return $data;
         }
-        $query = "SELECT O.*,IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id WHERE O.order_id IN (".implode(',',$orders).")";
+
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $order_types = $pass['calculate price according to case price']->data_options;
+        $condition = '';
+      /*  if($order_types != ''){
+            $condition = "IF(ORD.order_type_id IN($order_types), O.case_price/O.qty, O.price/O.qty) AS price,";
+        }*/
+
+        $query = "SELECT O.*,ORD.order_type_id,$condition IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id INNER JOIN orders ORD ON ORD.id = O.order_id WHERE O.order_id IN (".implode(',',$orders).")";
+
+        // $query = "SELECT O.*,IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id WHERE O.order_id IN (".implode(',',$orders).")";
         $result = \DB::select($query);
         //all order contents place them in relevent order
+        $order_types = explode(",",$order_types);
         foreach($result as $item){
             $orderId = $item->order_id;
+
+            if(in_array($item->order_type_id,$order_types) && (!empty($item->qty_per_case) && $item->qty_per_case>0)){
+                $item->price = \CurrencyHelpers::formatPriceAPI(($item->case_price / $item->qty_per_case), self::ORDER_PERCISION, false);
+                $item->case_price = \CurrencyHelpers::formatPriceAPI($item->case_price, self::ORDER_PERCISION, false);
+                $item->qty = $item->qty * $item->qty_per_case;
+            }else{
+                $item->price = \CurrencyHelpers::formatPriceAPI($item->price, self::ORDER_PERCISION, false);
+                $item->case_price = \CurrencyHelpers::formatPriceAPI($item->case_price, self::ORDER_PERCISION, false);
+            }
+          /*  $orderId = $item->order_id;
             $item->price = \CurrencyHelpers::formatPrice($item->price, 3, false);
-            $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);
+            $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);*/
             if(!empty($item->po_notes)) {
                 if (strlen($item->po_notes) > 300) {
                     $item->po_notes = \CurrencyHelpers::truncateLongText($item->po_notes, 300);
@@ -235,7 +367,7 @@ class order extends Sximo
         $data['order_location_id'] = '';
         $data['received_date']="";
         $data['received_by']="";
-       // $data['order_location_name'] = '';
+        // $data['order_location_name'] = '';
         $data['orderItemsPriceArray']="";
         $data['order_freight_id'] = '';
         $data['orderDescriptionArray'] = '';
@@ -266,7 +398,7 @@ class order extends Sximo
                 $data['order_vendor_id'] = $order_query[0]->vendor_id;
                 $data['order_location_id'] = $order_query[0]->location_id;
 
-             //   $data['order_location_name'] = $order_query[0]->location_name;
+                //   $data['order_location_name'] = $order_query[0]->location_name;
                 $data['order_type'] = $order_query[0]->order_type_id;
                 $data['order_company_id'] = $order_query[0]->company_id;
                 $data['order_freight_id'] = $order_query[0]->freight_id;
@@ -280,31 +412,31 @@ class order extends Sximo
 												,O.item_received as item_received,O.game_id FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
 												  LEFT JOIN game g ON g.id = O.game_id
 												  WHERE O.order_id = ' . $order_id);
-            
+
             if ($content_query) {
                 foreach ($content_query as $row) {
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
                     $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
-                    $orderPriceArray[] = \CurrencyHelpers::formatPrice($row->price, Order::ORDER_PERCISION, false);
+                    $orderPriceArray[] = \CurrencyHelpers::formatPrice($row->price, self::ORDER_PERCISION, false);
                     if(in_array($data['order_type'],$case_price_categories))
                     {
-                        $orderItemsPriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, Order::ORDER_PERCISION, false);
+                        $orderItemsPriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, self::ORDER_PERCISION, false);
                     }
                     elseif(in_array($data['order_type'],$case_price_if_no_unit_categories))
                     {
-                        $orderItemsPriceArray[] = ($row->price == 0.00)? \CurrencyHelpers::formatPrice($row->case_price, Order::ORDER_PERCISION, false) : \CurrencyHelpers::formatPrice($row->price, Order::ORDER_PERCISION, false);
+                        $orderItemsPriceArray[] = ($row->price == 0.00) ? \CurrencyHelpers::formatPrice($row->case_price, self::ORDER_PERCISION, false) : \CurrencyHelpers::formatPrice($row->price, Order::ORDER_PERCISION, false);
                     }
                     else
                     {
-                        $orderItemsPriceArray[] = \CurrencyHelpers::formatPrice($row->price, Order::ORDER_PERCISION, false);
+                        $orderItemsPriceArray[] = \CurrencyHelpers::formatPrice($row->price, self::ORDER_PERCISION, false);
                     }
                     $orderQtyArray[] = $row->qty;
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
                     $skuNumArray[] = $row->sku;
-                    $orderitemcasepriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, Order::ORDER_PERCISION, false);
-                    $orderretailpriceArray[]= \CurrencyHelpers::formatPrice($row->retail_price, Order::ORDER_PERCISION, false);
+                    $orderitemcasepriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, self::ORDER_PERCISION, false);
+                    $orderretailpriceArray[] = \CurrencyHelpers::formatPrice($row->retail_price, self::ORDER_PERCISION, false);
                     $ordergameidsArray[] = $row->game_id;
                     $ordergamenameArray[] = $row->game_name;
 
@@ -312,13 +444,13 @@ class order extends Sximo
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
                 }
                 $order_received_query=\DB::select('select date_received,received_by from order_received where order_id='.$order_id);
-               if($order_received_query)
-               {
-                   foreach($order_received_query as $r) {
-                       $data['received_date'] =$r->date_received;
-                       $data['received_by'] = $r->received_by;
-                   }
-               }
+                if($order_received_query)
+                {
+                    foreach($order_received_query as $r) {
+                        $data['received_date'] =$r->date_received;
+                        $data['received_by'] = $r->received_by;
+                    }
+                }
                 $data['orderDescriptionArray'] = $orderDescriptionArray;
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
@@ -371,7 +503,7 @@ class order extends Sximo
                 $data['prefill_type'] = 'edit';
             }
             $data['today'] = ($mode) && $mode != 'clone' ? $order_query[0]->date_ordered : $this->get_local_time('date');
-            } elseif (substr($mode, 0, 3) == 'SID') {
+        } elseif (substr($mode, 0, 3) == 'SID') {
             $item_count = substr_count($mode, '-');
             $SID_string = $mode;
             $data['SID_string'] = $SID_string;
@@ -410,7 +542,7 @@ class order extends Sximo
                     $data['order_company_id'] = $query[0]->company_id;
                     $data['order_vendor_id'] = $query[0]->vendor_id;
                     $data['order_location_id'] = $query[0]->location_id;
-                   // $data['order_location_name'] = $query[0]->location_name;
+                    // $data['order_location_name'] = $query[0]->location_name;
                     $data['order_type'] = $query[0]->prod_type_id;
                     $data['order_total'] = $query[0]->total;
                     $data['po_2'] = date('mdy');
@@ -426,7 +558,7 @@ class order extends Sximo
 
                     $skuNumArray[] = $query[0]->sku;
                     $orderProductIdArray[] = $query[0]->product_id;
-                 //   $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
+                    //   $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
                     $item_name_array[] = $query[0]->vendor_description;
                     $item_case_price[] = \CurrencyHelpers::formatPrice($query[0]->case_price, Order::ORDER_PERCISION, false);
                     $item_retail_price[]= \CurrencyHelpers::formatPrice($query[0]->retail_price, Order::ORDER_PERCISION, false);
@@ -448,7 +580,7 @@ class order extends Sximo
             $data['prefill_type'] = 'SID';
         }
         $data['where_in_expression'] = substr($where_in_expression, 0, -1);
-          
+
         return $data;
     }
 
@@ -671,7 +803,7 @@ class order extends Sximo
             } /*else {
                 $count = $this->increamentPO($location);
             }*/
-            
+
         }else{
             $count=1;
         }
@@ -718,7 +850,7 @@ class order extends Sximo
     }
 
     public static function isClonable($id, $data = null) {
-        
+
     }
     public static function isEditable($id, $data = null) {
 
@@ -737,12 +869,12 @@ class order extends Sximo
             FROM order_contents
             WHERE order_id ='.$id.
             " GROUP BY order_id");
-        $partial = !empty($record) && 
-                $record[0]->remaining_items > 0 && 
-                $record[0]->remaining_items < $record[0]->total_items;        
+        $partial = !empty($record) &&
+            $record[0]->remaining_items > 0 &&
+            $record[0]->remaining_items < $record[0]->total_items;
         return $partial;
     }
-    
+
     public static function isClosed($id, $data = null) {
         if (!empty($data)) {
             $statusId = is_object($data) ? $data->status_id : $data['status_id'];
@@ -787,7 +919,7 @@ class order extends Sximo
     }
     public static function isApiable($id, $data = null, $ignoreVoid = false) {
         return !self::isFreehand($id, $data) && self::isApiableFromType($id, $data) &&
-                ($ignoreVoid || !self::isVoided($id, $data));
+            ($ignoreVoid || !self::isVoided($id, $data));
     }
     public static function isApified($id, $data = null) {
         if (!empty($data)) {
@@ -827,9 +959,9 @@ class order extends Sximo
 
     /**
      * Conditions for Post to NetSuite Button being visible:
-        1) order fully received;
-        2) order status = Closed;
-        3) Invoice Verified = Yes
+    1) order fully received;
+    2) order status = Closed;
+    3) Invoice Verified = Yes
      * Post to Netsuite button will NOT be visible for freehand orders, ever.
      * After an order has been posted to netsuite, it cannot be edited nor received against.
      * @param $id
@@ -838,7 +970,7 @@ class order extends Sximo
      */
     public static function canPostToNetSuit($id, $data = null){
         $order_qty = \DB::select("SELECT SUM(qty) as qty FROM order_contents WHERE order_id=$id");
-        $received_qty = \DB::select("SELECT SUM(quantity) as qty FROM order_received WHERE order_id=$id");
+        $received_qty = \DB::select("SELECT SUM(quantity) as qty FROM order_received WHERE order_id=$id AND deleted_at IS NULL");
         if(empty($data)){
             $data = self::find($id)->toArray();
         }
@@ -864,6 +996,7 @@ class order extends Sximo
         }
     }
 
+
     public static function cloneOrder($id, $data = null, $options = array()) {
 
         $options = array_merge([
@@ -872,11 +1005,11 @@ class order extends Sximo
             'resetDate' => null,
             'resetApiable' => true
         ], $options);
-        
+
         $nowTimestamp = strtotime("now");
         $now = date("Y-m-d", $nowTimestamp);
         $nowStamp = date("Y-m-d H:i:s", $nowTimestamp);
-        
+
         if (empty($data)) {
             $data = self::find($id)->toArray();
         }
@@ -942,7 +1075,7 @@ class order extends Sximo
             \Log::info("skipping items");
         }
         if (empty($options['skipReceipts'])) {
-             \Log::info("NOT skipping receipts");
+            \Log::info("NOT skipping receipts");
             $sql = "INSERT INTO order_received
                         (order_id,
                         order_line_item_id,
@@ -986,7 +1119,7 @@ class order extends Sximo
         return $poNumber;
     }
     public static function relateOrder($rType, $originalOrderID, $targetOrderID) {
-        
+
         $typeIDs = \FEGHelp::getEnumTable('orders_relation_types', 'relation_name', 'id');
         $oOrderData = self::find($originalOrderID);
         $tOrderData = self::find($targetOrderID);
@@ -1010,7 +1143,7 @@ class order extends Sximo
                 'relation_note' => \FEGHelp::stringBuilder(\Lang::get('core.templates.order_replaced_by'), [$oPO, $now]),
             ]];
             \DB::table('orders_relations')->insert($data);
-        }        
+        }
     }
 
     public static function getOrderRelationships($id) {
@@ -1023,7 +1156,12 @@ class order extends Sximo
         }
         return $notes;
     }
+    public function setOrderStatus(){
+        $OrderedQty = $this->orderedContent->sum('qty');
+        $ItemReceived = $this->orderedContent->sum('item_received');
+        if($ItemReceived>0 && $ItemReceived<$OrderedQty){
+            $this->status_id=1;
+            $this->is_partial=1;
+        }
+    }
 }
-
-
-

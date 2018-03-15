@@ -12,6 +12,8 @@ class GamestitleController extends Controller
 {
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'gamestitle';
     static $per_page = '10';
 
@@ -36,6 +38,8 @@ class GamestitleController extends Controller
             'pageUrl' => url('gamestitle'),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['game_type_id' => 'game_type.game_type_short', 'mfg_id' => 'vendor.vendor_name'];
+        $this->sortUnMapping = ['game_type.game_type_short' => 'game_type_id', 'vendor.vendor_name' => 'mfg_id'];
     }
 
     public function getIndex()
@@ -72,7 +76,7 @@ class GamestitleController extends Controller
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
-
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -84,6 +88,8 @@ class GamestitleController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 

@@ -20,6 +20,8 @@ class UsersController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'users';
     static $per_page = '10';
 
@@ -41,6 +43,8 @@ class UsersController extends Controller
             'return' => self::returnUrl()
 
         );
+        $this->sortMapping = ['company_id' => 'company.company_name_short', 'group_id' => 'tb_groups.name'];
+        $this->sortUnMapping = ['company.company_name_short' => 'company_id', 'tb_groups.name' => 'group_id'];
     }
 
     public function getCheckAccess()
@@ -140,6 +144,7 @@ class UsersController extends Controller
         //$filter .= " AND tb_users.group_id >= '".\Session::get('gid')."'" ;
 
 
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
 
@@ -153,6 +158,7 @@ class UsersController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params, $id);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
@@ -345,7 +351,6 @@ class UsersController extends Controller
             {
                 $user->refresh_token = $array['refresh_token'];
             }
-
             $user->save();
             return redirect(url('core/users/update/'.$request->get('state')));
         }
@@ -376,7 +381,8 @@ class UsersController extends Controller
             $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
             $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
             //$this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com/&approval_prompt=force&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri='.url('/').env('G_REDIRECT').'&response_type=code&client_id='.env('G_ID');
-            $this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com+profile+email&access_type=offline&include_granted_scopes=true&state='.$id.'&redirect_uri='.url('/').env('G_REDIRECT_2').'&response_type=code&client_id='.env('G_ID');
+            $this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com+profile+email&access_type=offline&include_granted_scopes=true&state=' . $id . '&redirect_uri=' . url('/') . env('G_REDIRECT_2') . '&response_type=code&client_id=' . env('G_ID');
+            //prompt=consent&
             return view('core.users.form', $this->data);
         }
 

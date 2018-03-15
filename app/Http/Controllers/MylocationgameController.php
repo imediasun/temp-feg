@@ -12,6 +12,8 @@ class MylocationgameController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'mylocationgame';
     static $per_page = '10';
 
@@ -35,6 +37,8 @@ class MylocationgameController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['prev_location_id' => 'pl.location_name', 'last_edited_by' => 'users.username', 'freight_order_id' => 'freight_orders.from_add_name', 'status_id' => 'game_status.game_status', 'version' => 'game_version.version', 'game_type_id' => 'game_type.game_type', 'game_title_id' => 'game_title.game_title', 'location_id' => 'location.location_name', 'mfg_id' => 'vendor.vendor_name'];
+        $this->sortUnMapping = ['pl.location_name' => 'prev_location_id', 'users.username' => 'last_edited_by', 'freight_orders.from_add_name' => 'freight_order_id', 'game_status.game_status' => 'status_id', 'game_version.version' => 'version', 'game_type.game_type' => 'game_type_id', 'game_title.game_title' => 'game_title_id', 'location.location_name' => 'location_id', 'vendor.vendor_name' => 'mfg_id'];
     }
 
     private function  updatePermissions($module){
@@ -46,6 +50,24 @@ class MylocationgameController extends Controller
         $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Dispose']) ? 1 : 0;
     }
 
+    public function getSearch($mode = 'ajax')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = $mode;
+
+        if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            return view('feg_common.search', $this->data);
+        } else {
+
+            $out = array_splice($this->data['tableForm'], 36, 1);
+            array_splice($this->data['tableForm'], 1, 0, $out);
+
+            return view('sximo.module.utility.search', $this->data);
+        }
+
+    }
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
@@ -103,7 +125,7 @@ class MylocationgameController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         $filter = $this->getSearchFilterQuery(null,$canSeeAllLocations);
-
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -116,6 +138,8 @@ class MylocationgameController extends Controller
 
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         // foreach ($results['rows'] as $result) {
 
 //            if ($result->dba == 1) {

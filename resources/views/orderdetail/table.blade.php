@@ -39,7 +39,7 @@
         </thead>
 
         <tbody>
-        	@if($access['is_add'] =='1' && $setting['inline']=='true')
+		@if(($access['is_add'] =='1' || $access['is_edit']=='1' ) && $setting['inline']=='true' )
 			<tr id="form-0" >
 				<td> # </td>
 				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
@@ -65,7 +65,8 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->productCode;
            		?>
-                <tr class="editable" id="form-{{ $row->productCode }}">
+            <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
+                @endif id="form-{{ $row->productCode }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
 					@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->productCode ;?>" />  </td>

@@ -14,13 +14,18 @@ class excludedreaders extends Sximo  {
 	}
 
 	public static function querySelect(  ){
-		
-		return " SELECT * from reader_exclude ";
+
+        return " SELECT reader_exclude.*
+FROM reader_exclude
+  LEFT JOIN location
+    ON location.id = reader_exclude.loc_id
+  LEFT JOIN debit_type
+    ON debit_type.id = reader_exclude.debit_type_id ";
 	}	
 
 	public static function queryWhere(  ){
-		
-		return " WHERE id IS NOT NULL ";
+
+        return " WHERE reader_exclude.id IS NOT NULL ";
 	}
 	
 	public static function queryGroup(){

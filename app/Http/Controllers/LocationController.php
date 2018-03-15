@@ -13,6 +13,8 @@ class LocationController extends Controller
     protected $layout = "layouts.main";
     protected $data = array();
     public $module = 'location';
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     static $per_page = '10';
 
     public function __construct()
@@ -30,6 +32,26 @@ class LocationController extends Controller
             'pageUrl' => url('location'),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = [
+            'debit_type_id' => 'debittype_c.company',
+            'general_manager_id' => 'u1.first_name',
+            'merch_contact_id' => 'u6.first_name',
+            'regional_manager_id' => 'u5.first_name',
+            'technical_user_id' => 'u2.first_name',
+            'loc_group_id' => 'loc_group.loc_group_name',
+            'company_id' => 'cmp.company_name_long',
+            'vp_id' => 'u3.first_name'
+        ];
+        $this->sortUnMapping = [
+            'debittype_c.company' => 'debit_type_id',
+            'u1.first_name' => 'general_manager_id',
+            'u6.first_name' => 'merch_contact_id',
+            'u5.first_name' => 'regional_manager_id',
+            'u2.first_name' => 'technical_user_id',
+            'loc_group.loc_group_name' => 'loc_group_id',
+            'cmp.company_name_long' => 'company_id',
+            'u3.first_name' => 'vp_id'
+        ];;
 
 
     }
@@ -96,7 +118,8 @@ class LocationController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         $filter = $this->getSearchFilterQuery();
-        
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
+
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -114,6 +137,7 @@ class LocationController extends Controller
             $results['rows'] = $this->model->getRow($id);
             $results['total'] = 1;
         }
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
@@ -247,7 +271,7 @@ class LocationController extends Controller
     {
         $rules = $this->validateForm();
         $input_id=$request->get('id');
-        $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
+        //  $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
         
         if(\Session::get('location_updated') != $input_id) {
             if (!empty($input_id)) {
@@ -261,38 +285,17 @@ class LocationController extends Controller
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('location', !empty($id));
-
+            $data = $this->validatePost('location');
             // old id in case the existing location's id has been modified
             $oldId = $id;
             $newId = isset($data['id']) ? $data['id'] : $id;
             if (empty($newId) || empty($oldId) || $oldId == $newId) {
                 $oldId = null;
             }
-            
-            $locationAssignments = [];
-            foreach($data as $fieldName => $value) {
-                if (isset($locationAssignmentFields[$fieldName])) {
-                    $groupID = $locationAssignmentFields[$fieldName];
-                    if (empty($value)) {
-                        $value = null;
-                    }
-                    $locationAssignments[$groupID] = $value;
-                    unset($data[$fieldName]);
-                }                
-            }
 
             $id = $this->model->insertRow($data, $id);
-            
-            foreach($locationAssignments as $groupId => $userId) {
-                \App\Models\UserLocations::updateRoleAssignment($newId, $userId, $groupId);
-            }
-            
-            // Assing the newly created or updated/id changed location to 
-            // users having has_all_locations=1 (all Locations = true)
-            // additionally clean orphan user location assignmens
-            \SiteHelpers::addLocationToAllLocationUsers($newId, $oldId);
-            \SiteHelpers::refreshUserLocations(\Session::get('uid'));
+
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')

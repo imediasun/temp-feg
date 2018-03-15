@@ -16,7 +16,7 @@
 				<label> Priority</label>
 				<select class="form-control" name="Priority">
 					<option value="normal"> Normal </option>
-					<option value="urgent"> Urgent </option>
+					<option value="urgent"> URGENT </option>
 				</select> 
 			</div>
 

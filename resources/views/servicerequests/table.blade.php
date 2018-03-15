@@ -83,7 +83,7 @@
                     </thead>
                     <tbody>
 
-                    @if($access['is_add'] =='1' && $setting['inline']=='true')
+                    @if(($access['is_add'] || $access['is_edit'] =='1') =='1' && $setting['inline']=='true')
                         <tr id="form-0" >
                             <td> # </td>
                             @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
@@ -111,7 +111,10 @@
 
                     $id = $row->TicketID;
                     ?>
-                    <tr class="editable" id="form-{{ $row->TicketID }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->TicketID }}" ondblclick="showFloatingCancelSave(this)" @endif>
+                    <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
+                        @endif id="form-{{ $row->TicketID }}"
+                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->TicketID }}"
+                        @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this)" @endif @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
@@ -127,13 +130,23 @@
                         if($field['view'] == '1') :
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
                         $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
+                            if(strtolower($value)=='urgent'){
+                                $value = strtoupper($value);
+                            }
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                            <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
-                                data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                {!! $value !!}
-                            </td>
+                                <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
+                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                    @if($field['field']=='urgent')
+                                        <?php
+                                        $value = strtoupper($field['field']);
+                                        ?>
+                                        {!! $value !!}
+                                    @else
+                                        {!! $value !!}
+                                    @endif
+                                </td>
                         @endif
                         <?php endif;
                         endforeach;

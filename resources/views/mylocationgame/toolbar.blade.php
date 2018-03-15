@@ -4,9 +4,9 @@
         'class'=>'form-horizontal',
         'target'=>'_self',
         'id'=> 'mylocationgameExportFormAjax')) !!}
-        
+
     <div class="clearfix">
-        
+
         <div class="col-md-4 col-sm-6 m-b-xs m-t-xs clearfix">
             <div class="col-sm-3" style="padding: 0px;">
                 <h4>Export</h4>
@@ -18,7 +18,7 @@
                 <select name='game_title_id' id='game_name' class='select4'></select>
             </div>
         </div>
-        
+
          <div class="col-md-4 col-sm-6 m-b-xs m-t-xs clearfix">
             <div class="col-sm-3" style="padding: 0px;">
                 <h4>From</h4>
@@ -27,15 +27,15 @@
                 <select name='location_id' id='location_id' class='select4'></select>
             </div>
         </div>
-        
+
         <dov class="col-md-2 col-sm-12 m-b-xs m-t-xs clearfix">
-            <div class="col-xs-12 clearfix" >
+            <div class=" clearfix" >
                 <button type="submit" class="btn btn-primary submitButton" id="submit" name="submit">Export to Excel</button>
             </div>
         </dov>
-        
+
     </div>
-    
+
     {!! Form::close() !!}
 </div>
 <div class="simpleBoxContainer assetTagExportContainer clearfix">
@@ -55,6 +55,7 @@
 
     <div class="col-md-7 form-inline">
         @if($access['is_add'] ==1)
+            <div class="float-margin">
             {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
         @endif
         @if($setting['disableactioncheckbox']=='false')
@@ -68,19 +69,21 @@
                    onclick="ajaxGameDispose('#{{ $pageModule }}','{{ $pageUrl }}');"><i
                 class="fa fa-trash-o "></i> Dispose </a>
             @endif
+            </div>
             @endif
-            <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
+            <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white float-margin"
                onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced
                 Search</a>
-       
-        
+
+
         @if(SiteHelpers::isModuleEnabled($pageModule))
-            
-                <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white"
+
+                <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin"
                    onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Arrange
                     Columns</a>
                 @if(!empty($colconfigs))
-                    <select class="form-control" name="col-config"
+
+                    <select style="margin-top: 0px;" class="form-control float-margin" name="col-config"
                             id="col-config">
                         <option value="0">Select Column Arrangement</option>
                         @foreach($colconfigs as $configs )
@@ -98,7 +101,7 @@
                         </button>
                     @endif
                 @endif
-            
+
         @endif
     </div>
     <div class="col-md-5">
@@ -131,7 +134,7 @@
             {!! Form::close() !!}
     </div>
     </div>
-    
+
 </div>
 </div>
 

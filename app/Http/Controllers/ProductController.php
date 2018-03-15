@@ -12,6 +12,8 @@ class ProductController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'product';
     static $per_page = '10';
 
@@ -30,6 +32,8 @@ class ProductController extends Controller
             'pageUrl' => url('product'),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['vendor_id' => 'vendor.vendor_name', 'prod_type_id' => 'O.order_type', 'prod_sub_type_id' => 'T.type_description'];
+        $this->sortUnMapping = ['vendor.vendor_name' => 'vendor_id', 'O.order_type' => 'prod_type_id', 'T.type_description' => 'prod_sub_type_id'];
 
 
     }
@@ -131,7 +135,7 @@ class ProductController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         $filter = $this->getSearchFilterQuery();//(!is_null($request->input('search')) ? $this->buildSearch() : '');
-
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -153,6 +157,7 @@ class ProductController extends Controller
         }
         $this->data['sub_type']=$sub_type;
         $results = $this->model->getRows($params, $prod_list_type, $active,$sub_type);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         $rows = $results['rows'];
 
@@ -364,14 +369,32 @@ class ProductController extends Controller
                 $data = $this->validatePost('products',true);
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
             }
+            $postedtoNetSuite = $data['vendor_description'];
 
-            $data['netsuite_description'] = "$id...".$data['vendor_description'];
+            if(strlen( $data['vendor_description'])>53){
+                $postedtoNetSuite = substr($data['vendor_description'],0.53);
+            }
+            if($id>0) {
+                $products_combined = $this->model->checkProducts($id);
+                $hot_items=0;
+                if(!empty($request->input('hot_item')) && $request->input('hot_item')>0){
+                    $hot_items = "'1'";
+                }else if(!empty($request->input('hot_item')) && $request->input('hot_item')==0){
+                    $hot_items = "'0'";
+                }else{
+                    $hot_items = "null";
+                }
+                \DB::update("update products set hot_item=$hot_items where id='$id'");
+
+            }
+
             if(is_array($product_categories) && $id > 0){
 
                 $products_combined = $this->model->checkProducts($id);
                 $data_attached_products= $data;
 
                 foreach($products_combined as $pc){
+                    $data['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     if($pc->id == $id){
                         $data['prod_type_id'] = $data['prod_type_id'][0];
                         $data['prod_sub_type_id'] = $data['prod_sub_type_id'][1];
@@ -388,13 +411,15 @@ class ProductController extends Controller
                         unset($data_attached_products['ticket_value']);
                         unset($data_attached_products['inactive']);
                         unset($data_attached_products['in_development']);
-                        unset($data_attached_products['hot_item']);
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
+                    $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
+                    $this->model->insertRow($netsuite_description, $pc->id);
                 }
             }elseif(is_array($product_categories))
             {
+
                 $ids = [];
                 $count = 1;
                 $prodData = $data;
@@ -415,8 +440,14 @@ class ProductController extends Controller
                 }
                 foreach ($ids as $id)
                 {
+                    $postedtoNetSuite = $data['vendor_description'];
+
+                    if(strlen( $data['vendor_description'])>53){
+                        $postedtoNetSuite = substr($data['vendor_description'],0.53);
+                    }
+
                     $updates = array();
-                    $updates['netsuite_description'] = "$id...".$data['vendor_description'];
+                    $updates['netsuite_description'] = "$id...".$postedtoNetSuite;
                     if (isset($img)) {
 
                         $newfilename = $id . '' . $extension;
@@ -431,11 +462,13 @@ class ProductController extends Controller
             else
             {
 
+
                 $products_combined = $this->model->checkProducts($id);
                 $data_attached_products= $data;
                 foreach($products_combined as $pc){
                     if($pc->id == $id){
                         $this->model->insertRow($data, $id);
+
                     }else{
 
                         unset($data_attached_products['prod_type_id']);
@@ -446,6 +479,13 @@ class ProductController extends Controller
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
+                    $postedtoNetSuite = $data['vendor_description'];
+
+                    if(strlen( $data['vendor_description'])>53){
+                        $postedtoNetSuite = substr($data['vendor_description'],0.53);
+                    }
+                    $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
+                    $this->model->insertRow($netsuite_description, $pc->id);
                 }
 
 
@@ -550,12 +590,13 @@ class ProductController extends Controller
             $destinationPath = './uploads/products/';
             $filename = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-            $newfilename = $id . '.' . $extension;
+            $newfilename = $id . mt_rand() . '.' . $extension;
             $uploadSuccess = $request->file('img')->move($destinationPath, $newfilename);
             if ($uploadSuccess) {
-                $updates['img'] = $newfilename;
+                $relatedProducts = $this->model->checkProducts($id);
+                $ids = array_map(function($row){return $row->id;}, $relatedProducts);
+                \DB::update('update products set img = "' . $newfilename . '" where id IN(' . implode(",", $ids) .')');
             }
-            $this->model->insertRow($updates, $id);
             return Redirect::to('product/upload/' . $id)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
 
         }
@@ -606,12 +647,15 @@ class ProductController extends Controller
     {
         $excludeExport = $request->get('excludeExport');
         $productId = $request->get('productId');
+        $relatedProducts = $this->model->checkProducts($productId);
+        $ids = array_map(function($row){return $row->id;}, $relatedProducts);
+
         if ($excludeExport == "true") {
-            $update = \DB::update('update products set exclude_export = 1 where id=' . $productId);
+            $update = \DB::update('update products set exclude_export = 1 where id IN(' . implode(',', $ids) . ')');
         }
         else
         {
-            $update = \DB::update('update products set exclude_export = 0 where id=' . $productId);
+            $update = \DB::update('update products set exclude_export = 0 where id IN(' . implode(',', $ids) . ')');
         }
         if ($update) {
             return response()->json(array(

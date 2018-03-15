@@ -16,6 +16,8 @@ class ManagefreightquotersController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'managefreightquoters';
     static $per_page = '10';
 
@@ -35,6 +37,8 @@ class ManagefreightquotersController extends Controller
             'pageUrl' => url('managefreightquoters'),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['vend_to1' => 'V2.vendor_name', 'vend_from1' => 'V.vendor_name', 'loc_to_1' => 'L1.id'];
+        $this->sortUnMapping = ['V2.vendor_name' => 'vend_to1', 'V.vendor_name' => 'vend_from1', 'L1.id' => 'loc_to_1'];
     }
 
     public function getIndex()
@@ -72,6 +76,7 @@ class ManagefreightquotersController extends Controller
 // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -91,6 +96,8 @@ class ManagefreightquotersController extends Controller
         $this->data['freight_status'] = \Session::get('freight_status');
 // Get Query
         $results = $this->model->getRows($params, $freight_status);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         $description = array();
         foreach ($results['rows'] as $row) {
             $description[$row->id] = $this->model->getDescription($row->id);

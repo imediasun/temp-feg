@@ -217,6 +217,17 @@ class UserController extends Controller
                 \Session::put('total_cart', $total_cart[0]->total);
                 \Session::put('lang', 'en');
 
+                if(strpos(session('url.intended'),'servicerequests') )
+                {
+                    return Redirect::to(session('url.intended'));
+                }
+                if(strpos(session('url.intended'),'removeorder') )
+                {
+
+                    return Redirect::to(session('url.intended'));
+
+                }
+
                 if (!empty($row->redirect_link)) {
                     return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
                 } elseif (!empty($group->redirect_link)) {
@@ -448,6 +459,17 @@ class UserController extends Controller
                             \Session::put('lang', $request->input('language'));
                         } else {
                             \Session::put('lang', 'en');
+                        }
+
+                        if(strpos(session('url.intended'),'servicerequests') )
+                        {
+                            return Redirect::to(session('url.intended'));
+                        }
+                        if(strpos(session('url.intended'),'removeorder') )
+                        {
+
+                            return Redirect::to(session('url.intended'));
+
                         }
                         if (!empty($row->redirect_link)) {
                             return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
@@ -757,7 +779,7 @@ class UserController extends Controller
 
     function getSocialize($social)
     {
-        return Socialize::with($social)->scopes(['openid', 'profile', 'email','https://mail.google.com'])->with(['access_type' => 'offline'])->redirect();
+        return Socialize::with($social)->scopes(['openid', 'profile', 'email', 'https://mail.google.com'])->with(['access_type' => 'offline'])->redirect();
     }
 
     function getAutosocial($social)

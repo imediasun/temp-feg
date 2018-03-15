@@ -3264,10 +3264,6 @@ position: relative;
 {
   width: 100%;
 }
-.page-content-wrapper
-{
-  padding-bottom: 15px;
-}
 .merch-gallery{
   /*float:left;*/
 }
@@ -3507,3 +3503,115 @@ li.multiselect-item.multiselect-group + li a label {
 {
   color:black;
 }
+.sbox-tools>a.btn-white{
+  margin-left: 7px !important;
+}
+.btn-white{
+  margin-left: 2px !important;
+  float: left;
+}
+/* .height-set{
+  margin-left: 2px !important;
+  left:2px;
+}
+*/
+select#col-config{
+  /*left: 2px !important;  */
+    /*top: 0px !important;*/
+  /*margin-right:2px;*/
+
+}
+/* for FireFox*/
+@-moz-document url-prefix() {
+  /* .height-set{ margin-top: -1px !important; } */
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  /* Safari and Chrome
+  .height-set {
+    margin-top: -1px !important;
+  } */
+  select {
+
+    -webkit-border-radius: 0px;
+  }
+}
+
+.sbox-content .pull-right .btn{
+    margin:0px !important;
+    left: 0px !important;
+    top: 0px !important;
+    margin-right:3px !important;
+    margin-left:0px !important;
+    margin-bottom: 3px !important;
+}
+.sbox-content .c-margin select{
+    position:initial !important;
+    float: left ;
+}
+.sbox-content .c-margin .btn,
+.sbox-content .c-margin select{
+    margin:0px !important;
+    left: 0px !important;
+    top: 0px !important;
+    margin-right:3px !important;
+    margin-left:0px !important;
+    margin-bottom: 3px !important;
+}
+.floatnone{
+    float:none !important;
+}
+.btn.btn-sm .fa {
+  margin-right: initial !important;
+  position: relative !important;
+  display:inline-block !important;
+  left: -3px !important;
+}
+.sbox-content .c-margin .btn:nth-last-child(-n+3) .fa-pencil-square-o,
+.sbox-content .c-margin .btn:nth-last-child(-n+3) .fa-trash-o{
+    margin-right: initial !important;
+    position: relative !important;
+    display:inline-block !important;
+    left: 0px !important;
+}
+#user_form .form-group, #pageCMS .form-group{
+    position: relative;
+}
+label.radio.radio-inline ul.parsley-error-list {
+    position: absolute;
+    width: 130px;
+    display: block;
+
+}
+.form-group .radio #parsley-status,.form-group .radio #parsley-template{
+    position: absolute;
+    bottom: -28px;
+}
+@media only screen and (max-width: 360px) {
+    .radio-inline, .checkbox-inline {
+        display: inline-block;
+        padding-left: 0;
+        margin-left: 0 !important;
+    }
+}
+
+/*
+.alignment-left-fixed{
+
+    margin:0px !important;
+    left: 0px !important;
+    top: 0px !important;
+    margin-right:3px !important;
+    margin-left:0px !important;
+    margin-bottom: 3px !important;
+}
+.alignment-right-fixed{
+
+    margin:0px !important;
+    left: 0px !important;
+    top: 0px !important;
+    margin-right:0px !important;
+    margin-left:3px !important;
+    margin-bottom: 3px !important;
+}*/
+/*
+Testing No */

@@ -48,7 +48,7 @@ class TicketMailer
         $to         = implode(',', $users['to']);
         $bcc         = implode(',', $users['bcc']);
         $reply_to   ='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
-        $subject    = "$locationName, $title, [Service Request #{$ticketId}][$priority] $createdOn" ;
+        $subject    = "$locationName, $title, [".(strtolower($priority)=="urgent" ? strtoupper($priority):$priority)."][Service Request #{$ticketId}] $createdOn" ;
 //        $headers    = 'MIME-Version: 1.0' . "\r\n";
 //        $headers   .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 //        $headers   .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";

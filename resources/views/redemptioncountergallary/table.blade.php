@@ -1,4 +1,8 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<style>
+    .fancybox-nav{
+        display: none !important;}
+</style>
 <div class="sbox">
     <div class="sbox-title">
         <h5> <i class="fa fa-table"></i> </h5>
@@ -50,7 +54,7 @@
                         $originalThumbFile="./uploads/gallary/". $row->id."_thumb.".$row->extension;
                         $rotatedThumbFile="./uploads/gallary/".$row->id."_thumb_rotated.".$row->extension;
                         ?>
-                        <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title=" {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}" id="gallery_img_{{ $row->id }}"  rel="{{$rel}}" data-rotation="{{ $row->img_rotation }}" data-id="{{ $row->id }}" data-extension="{{ $row->extension }}"
+                        <a @if(!$show)) style="display:inline" @else style="display:inline" @endif  title=" {{ $row->Location }} " class="previewImage fancybox image-{{ $row->id }}" data-fancybox-group="{{$rel}}" id="gallery_img_{{ $row->id }}"  rel="{{$rel}}" data-rotation="{{ $row->img_rotation }}" data-id="{{ $row->id }}" data-extension="{{ $row->extension }}"
                         @if(file_exists($rotatedFile))
                            href="{{ $rotatedFile }}?time={{ time() }}"
                            @else
@@ -116,7 +120,17 @@
         var extension = $("#gallery_img_"+id).data('extension');
         if(confirm('Are you sure you want to delete this image from gallery?'))
        {
-         location.href="{{ url() }}/redemptioncountergallary/delete/"+id+"/"+extension;
+           $.ajax({
+               type:"GET",
+               url:"{{ url() }}/merchindisetheminggallary/delete/"+id+"/"+extension,
+               success:function(res){
+                   $(".fancybox-close").trigger('click');
+                   $(".image-"+id).hide('slow');
+                   //alert();
+                   // console.log(res);
+               }
+           });
+        // location.href="{{ url() }}/redemptioncountergallary/delete/"+id+"/"+extension;
        }
     }
     var angle=0;

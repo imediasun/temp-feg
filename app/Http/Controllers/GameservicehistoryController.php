@@ -12,6 +12,8 @@ class GameservicehistoryController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'gameservicehistory';
     static $per_page = '10';
 
@@ -38,6 +40,8 @@ class GameservicehistoryController extends Controller
         );
         $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'][0] : array());
 
+        $this->sortMapping = ['down_user_id' => 'username', 'up_user_id' => 'username1'];
+        $this->sortUnMapping = ['username' => 'down_user_id', 'username1' => 'up_user_id'];
 
     }
 
@@ -77,6 +81,9 @@ class GameservicehistoryController extends Controller
 
 
         $page = $request->input('page', 1);
+
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
+
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
@@ -88,6 +95,7 @@ class GameservicehistoryController extends Controller
 
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;
 
 
         // Build pagination setting
@@ -100,6 +108,8 @@ class GameservicehistoryController extends Controller
             (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('gameservicehistory/data');
+
+
         $this->data['param'] = $params;
         $this->data['topMessage'] = @$results['topMessage'];
         $this->data['message'] = @$results['message'];

@@ -21,6 +21,8 @@ class servicerequestsController extends Controller
     public $module = 'Servicerequests';
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
 
     public function __construct()
     {
@@ -45,7 +47,8 @@ class servicerequestsController extends Controller
             'issueTypeOptions' => $this->model->getIssueTypes(),
             'canChangeStatus' => ticketsetting::canUserChangeStatus(),
         );
-
+        $this->sortMapping = ['location_id11' => 'L.location_name', 'last_user' => 'U.first_name'];
+        $this->sortUnMapping = ['L.location_name11' => 'location_id', 'U.first_name' => 'last_user'];
 
     }
 
@@ -134,6 +137,7 @@ class servicerequestsController extends Controller
         // Filter Search for query
         //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : "AND sb_tickets.Status != 'closed'");
         $filter = $this->getSearchFilterQuery();
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -149,6 +153,8 @@ class servicerequestsController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         // Build pagination setting
         if (count($results['rows']) == 0 and $page != 1) {
             $params['limit'] = $this->info['setting']['perpage'];
@@ -232,6 +238,7 @@ class servicerequestsController extends Controller
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
+
         // Build Pagination
         $this->data['pagination'] = $pagination;
         // Build pager number and append current param GET
@@ -294,6 +301,19 @@ class servicerequestsController extends Controller
         $this->data['filePaths'] = explode(",", $row['file_path']);        
         $this->data['entryBy'] = $isAdd ? $userId : $row['entry_by'];
         $this->data['locationId'] = $isAdd ? \Session::get('selected_location') : $row['location_id'];
+
+        /*$this->data['priorityOptions'] = array(
+                                                'normal' => 'Normal',
+                                                'urgent' => 'Urgent'
+                                                );*/
+        foreach( $this->data['priorityOptions'] as $p_keys =>$p_values){
+            if($p_keys=="sameday" || strtolower($p_keys)=="urgent"){
+                unset($this->data['priorityOptions'][$p_keys]);
+                $this->data['priorityOptions']['urgent']="URGENT";
+
+            }
+
+        }
 
         return view('servicerequests.form', $this->data);
     }
@@ -412,6 +432,7 @@ class servicerequestsController extends Controller
     {
         $data = $this->validatePost('sb_tickets', true);
         $data = $this->validateDates($data, $request);
+
         unset($data['file_path']);
         if (!ticketsetting::canUserChangeStatus()) {
             unset($data['Status']);
@@ -438,6 +459,7 @@ class servicerequestsController extends Controller
         
  
         $validator = Validator::make($data, $rules);
+
         if ($validator->passes()) {
             $data['updated'] = date("Y-m-d H:i:s");
             $this->model->insertRow($data, $id);
