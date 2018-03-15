@@ -21,6 +21,7 @@ use App\Library\SximoDB;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
 use PHPMailerOAuth;
+use App\Models\OrdersettingContent;
 use App\Models\ReservedQtyLog;
 
 class OrderController extends Controller
@@ -1404,12 +1405,22 @@ class OrderController extends Controller
             if (!empty($data[0]['po_attn'])) {
                 $data[0]['po_location'] = $data[0]['po_location'] . "\n" . $data[0]['po_attn'];
             }
-            $addonPONote = "\r\n Ship Palletized Whenever Possible. ";
-            if (empty($data[0]['po_notes'])) {
-                $data[0]['po_notes'] = " NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . "**" . $addonPONote;
-            } else {
-                $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " (Email Questions to " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . ")" . $addonPONote;
-            }
+
+            $OrderSetting = OrdersettingContent::where(["ordertype_id" => 9])->get();
+            $PONoteSettings = $OrderSetting[0]->ordersetting()->get();
+            $PONote = $PONoteSettings[0]->po_note;
+            $is_merchandiseorder = $PONoteSettings[0]->is_merchandiseorder;
+
+
+
+          //  $addonPONote = "\r\n Ship Palletized Whenever Possible. ";
+            $addonPONote = !empty($data[0]['po_notes_additionaltext']) ? $data[0]['po_notes_additionaltext'] : $PONote;
+            $addonPONote = str_replace("EMAIL_ADDRESS", $data[0]['email'] . (!empty($data[0]['cc_email']) ? $data[0]['cc_email']:"")  . (!empty($data[0]['loc_contact_email'])? $data[0]['loc_contact_email']:""),$addonPONote);
+            /*if (empty($data[0]['po_notes'])) {
+                $data[0]['po_notes'] = " NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . "** \r\n Ship Palletized Whenever Possible. ";
+            } else {*/
+                $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " ".$addonPONote;
+           // }
             $order_description = $data[0]['order_description'];
             if (substr($order_description, 0, 3) === ' | ') {
                 $order_description = substr($order_description, 3);
