@@ -15,9 +15,12 @@ class ordersetting extends Sximo
 
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function ordersettingcontent()
     {
-        return $this->hasMany('App\Models\ordersettingcontent', "ordersetting_id");
+        return $this->hasMany('App\Models\OrdersettingContent');
     }
 
     public static function querySelect()

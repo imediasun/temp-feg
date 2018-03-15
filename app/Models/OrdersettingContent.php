@@ -3,7 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class ordersettingcontent extends Sximo
+class OrdersettingContent extends Sximo
 {
 
     protected $table = 'ordersettings_contents';
@@ -15,12 +15,12 @@ class ordersettingcontent extends Sximo
 
     }
 
-    /*
-     *
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function ordersetting()
     {
-        return $this->belongsTo("App\Models\ordersetting", "ordersetting_id");
+        return $this->belongsTo("App\Models\Ordersetting");
     }
 
     public static function querySelect()
