@@ -17,7 +17,7 @@ class ordersetting extends Sximo
 
     public function orderSettingContent()
     {
-
+        return $this->hasMany('App/Models/ordersettingcontent');
     }
 
     public static function querySelect()
