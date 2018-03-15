@@ -15,16 +15,24 @@ class ordersettingcontent extends Sximo
 
     }
 
+    /*
+     *
+     */
+    public function orderSetting()
+    {
+        return $this->belongsTo("App/Models/ordersetting");
+    }
+
     public static function querySelect()
     {
 
-        return "  SELECT ordersettings.* FROM ordersettings  ";
+        return "  SELECT ordersettings_contents.* FROM ordersettings_contents  ";
     }
 
     public static function queryWhere()
     {
 
-        return "  WHERE ordersettings.id IS NOT NULL ";
+        return "  WHERE ordersettings_contents.id IS NOT NULL ";
     }
 
     public static function queryGroup()
