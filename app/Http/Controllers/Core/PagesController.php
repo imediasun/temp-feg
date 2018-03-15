@@ -6,6 +6,7 @@ use App\Models\Core\Groups;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Session, Auth, DB;
+use Illuminate\Support\Facades\Response;
 
 
 class PagesController extends Controller
@@ -118,12 +119,13 @@ class PagesController extends Controller
         if ($id == '') {
             $this->data['content'] = '';
         } else {
-
-            if ($row->pageID == 1) {
+            if (!is_null($row) && $row->pageID == 1) {
                 $filename = base_path() . "/resources/views/pages/home.blade.php";
                 $this->data['content'] = file_get_contents($filename);
 
-            } else {
+            }
+            else if(!is_null($row))
+            {
 
                 $filename = base_path() . "/resources/views/pages/" . $row->filename . ".blade.php";
                 if (file_exists($filename)) {
@@ -131,6 +133,10 @@ class PagesController extends Controller
                 } else {
                     $this->data['content'] = '';
                 }
+            }
+            else
+            {
+                $this->data['content'] = '';
             }
         }
 
@@ -195,9 +201,21 @@ class PagesController extends Controller
 
             $patternAddTitleSection = '/<div.*?class=["\']sbox.*?animated.*?["\']>/im';
 
-            $content = "@extends ('layouts.app') @section('content')".$content;
-            $content = preg_replace($patternAddTitleSection, '<div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
-            $content = $content."@stop";
+            $content = "@extends ('layouts.app') @section('content')" . $content;
+            $content = preg_replace($patternAddTitleSection, '<div class="page-content-wrapper m-t"><div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
+            $content = $content . "@stop";
+            $pattern = '~<div class="embed-responsive embed-responsive-16by9 video-container">|<div class="embed-responsive embed-responsive-16by9 video-container ">~';
+            $content = preg_replace($pattern, "<div>", $content);
+
+            $pattern = '~<iframe.*</iframe>|<embed.*</embed>~';
+            preg_match_all($pattern, $content, $matches);
+            foreach ($matches[0] as $match) {
+                // wrap matched iframe with div
+                $wrappedframe = '<div class="embed-responsive embed-responsive-16by9 video-container">' . $match . '</div>';
+                //replace original iframe with new in content
+                    $content = str_replace($match, $wrappedframe, $content);
+            }
+            $content = str_replace(array("http://www.","https://www.","http://","https://"),"//",$content);
 
             $content = $this->addEditLinkTemplate($content);
             
@@ -261,6 +279,16 @@ class PagesController extends Controller
 
     }
 
+    public function removePageFile(Pages $page){
+        $filePath = base_path() . "/resources/views/pages/{$page->filename}.blade.php";
+        if(file_exists($filePath)){
+            unlink($filePath);
+        }
+        else{
+            throw new \Exception("File does not exists");
+        }
+    }
+
     public function postDelete(Request $request)
     {
 
@@ -269,6 +297,16 @@ class PagesController extends Controller
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
+
+            foreach ($request->input('ids') as $id){
+                try{
+                    $this->removePageFile($this->model->find($id));
+                }
+                catch (Exception $e){
+                    Log::error("Page CMS file not deleted ".$e->getMessage());
+                }
+
+            }
             $this->model->destroy($request->input('ids'));
 
             self::createRouters();
@@ -321,4 +359,15 @@ class PagesController extends Controller
         }
         return $content;        
     }
+
+    public function downloadExpanseReports($fileName)
+    {
+        $file= public_path(). "/upload/expenseReport/".$fileName;
+        $headers = array(
+            'Content-type: application/octet-stream',
+        );
+        return Response::download($file, $fileName, $headers);
+
+    }
+
 }

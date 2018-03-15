@@ -417,18 +417,19 @@ class ShopfegrequeststoreController extends Controller
 
         $current_total_cart = \Session::get('total_cart');
         \Session::put('productId', $productId);
-        $cartData = $this->addToCartModel->popupCartData($productId, null, $qty);
-        $total_cart = $this->addToCartModel->totallyRecordInCart();
-        if ($current_total_cart == $total_cart[0]->total) {
 
+        $productExistsInCart = $this->addToCartModel->getCartData($productId);
+        if (!empty($productExistsInCart)) {
+            //if ($current_total_cart == $total_cart[0]->total) {
             $existingQty = \DB::select("SELECT qty FROM requests WHERE product_id = $productId AND request_user_id = ".\Session::get('uid')." AND status_id = 4 AND location_id = ".\Session::get('selected_location'));
             $newQty = $existingQty[0]->qty + $qty;
             \DB::update("UPDATE requests SET qty = $newQty WHERE product_id = $productId AND request_user_id = ".\Session::get('uid')." AND status_id = 4 AND location_id = ".\Session::get('selected_location'));
             $message = \Lang::get('core.add_qty_to_cart');
-
         } else {
+            $cartData = $this->addToCartModel->popupCartData($productId, null, $qty);
             $message = \Lang::get('core.add_to_cart');
         }
+        $total_cart = $this->addToCartModel->totallyRecordInCart();
         \Session::put('total_cart', $total_cart[0]->total);
         return response()->json(array(
             'status' => 'success',

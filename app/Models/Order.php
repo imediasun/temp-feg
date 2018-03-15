@@ -5,11 +5,13 @@ use App\Models\Sximo\Module;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Log;
 
 class order extends Sximo
 {
+    use SoftDeletes;
 
     protected $table = 'orders';
     protected $primaryKey = 'id';
@@ -17,7 +19,19 @@ class order extends Sximo
     const ORDER_PERCISION = 5;
     const ORDER_TYPE_PART_GAMES = 1;
     const ORDER_VOID_STATUS = 9;
+    const ORDER_INSTALLED_AND_RETURNED_STATUS = 6;
     const ORDER_CLOSED_STATUS = [2,6];
+    const ORDER_TYPE_TICKET_TOKEN_UNIFORM = [4,22,23,24,25,26];
+    const ORDER_TYPE_REDEMPTION = 7;
+    const ORDER_TYPE_INSTANT_WIN_PRIZE = 8;
+    const ORDER_TYPE_OFFICE_SUPPLIES = 6;
+    const ORDER_TYPE_REPAIR_LABOUR = 3;
+    const ORDER_TYPE_ADVANCED_REPLACEMENT = 2;
+    const ORDER_TYPE_PRODUCT_IN_DEVELOPMENT = 18;
+
+
+    const ORDER_DELETED_STATUS = 10;
+    const ORDER_ACTIVE_STATUS = 1;
 
     public function __construct()
     {
@@ -38,10 +52,17 @@ class order extends Sximo
     public static function boot()
     {
         parent::boot();
-
-        static::deleted(function (Order $model) {
+        //Commented by Arslan
+        // bug identified that deleting event has to call save to reflect column changes
+        // strangley restore does not have to call save
+        static::deleting(function (Order $model) {
             $model->status_id = self::ORDER_DELETED_STATUS;
             $model->deleted_by = \Session::get('uid');
+            $model->save();
+        });
+
+        //separating pre delete and post delete functions
+        static::deleted(function (Order $model) {
             $model->restoreReservedProductQuantities();
         });
 
@@ -53,17 +74,24 @@ class order extends Sximo
         });
     }
 
-    public function contents(){
+    public function contents()
+    {
         return $this->hasMany('App\Models\OrderContent');
     }
 
     public function restoreReservedProductQuantities()
     {
+        if ($this->is_freehand === 1) {
+            return;
+        }
         $this->adjustReservedProductQuantities();
     }
 
     public function deleteReservedProductQuantities()
     {
+        if ($this->is_freehand === 1) {
+            return;
+        }
         $this->adjustReservedProductQuantities(true);
     }
 
@@ -100,12 +128,12 @@ class order extends Sximo
 
     public function canRestoreAllReservedProducts()
     {
-        if (empty($this->contents)) {
+        if (empty($this->contents) || $this->is_freehand === 1) {
             return true;
         }
         foreach ($this->contents as $orderContent) {
             $orderedProduct = $orderContent->product;
-            if ($orderedProduct->is_reserved == 1 && $orderedProduct->allow_negative_reserve_qty == 0 &&
+            if (!empty($orderedProduct) && $orderedProduct->is_reserved == 1 && $orderedProduct->allow_negative_reserve_qty == 0 &&
                 $orderedProduct->reserved_qty < $orderContent->qty
             ) {
                 return false;
@@ -125,7 +153,7 @@ class order extends Sximo
                 LEFT OUTER JOIN order_type OT ON orders.order_type_id=OT.id
                 LEFT OUTER JOIN order_contents OC ON orders.id=OC.order_id
                 LEFT OUTER JOIN order_status OS ON orders.status_id=OS.id
-                LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id ";
+                LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id";
     }
     public static function getProductInfo($id){
 
@@ -676,7 +704,7 @@ class order extends Sximo
                 $data['tracking_number']=$query[0]->tracking_number;
                 $data['status_id']=$query[0]->status_id;
             }
-            if (!empty($data['requestIds']) && ($data['order_type'] == 7 || $data['order_type'] == 8)) //INSTANT WIN AND REDEMPTION PRIZES
+            if (!empty($data['requestIds']) && ($data['order_type'] == Order::ORDER_TYPE_REDEMPTION || $data['order_type'] == Order::ORDER_TYPE_INSTANT_WIN_PRIZE)) //INSTANT WIN AND REDEMPTION PRIZES
             {
                 $item_count = substr_count($data['requestIds'], ',') + 1;
                 $data['item_count'] = $item_count;
@@ -1156,12 +1184,14 @@ class order extends Sximo
         }
         return $notes;
     }
-    public function setOrderStatus(){
+
+    public function setOrderStatus()
+    {
         $OrderedQty = $this->orderedContent->sum('qty');
         $ItemReceived = $this->orderedContent->sum('item_received');
-        if($ItemReceived>0 && $ItemReceived<$OrderedQty){
-            $this->status_id=1;
-            $this->is_partial=1;
+        if ($ItemReceived > 0 && $ItemReceived < $OrderedQty) {
+            $this->status_id = 1;
+            $this->is_partial = 1;
         }
     }
 }

@@ -18,7 +18,10 @@ class InputTrim
         if ($input) {
             array_walk_recursive($input, function (&$item) {
                 $item = trim($item);
-                $item = ($item == "") ? null : $item;
+                //Discovered buggy code in library. It converts all empty strings to null which caused mysql error of column cannot be null
+                //freight quote empty shipping notes
+                //freehand empty order description
+                //$item = ($item == "") ? null : $item;
             });
             $request->merge($input);
         }

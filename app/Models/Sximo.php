@@ -261,7 +261,7 @@ class Sximo extends Model {
                 $data['createdOn'] = date("Y-m-d H:i:s");
             if (isset($data['updatedOn']))
                 $data['updatedOn'] = date("Y-m-d H:i:s");
-            $id = \DB::table($table)->insertGetId($data);
+            $id = @\DB::table($table)->insertGetId($data);
         } else {
             // Update here
             // update created field if any
@@ -274,7 +274,7 @@ class Sximo extends Model {
                 unset($data['createdOn']);
             if (isset($data['updatedOn']))
                 $data['updatedOn'] = date("Y-m-d H:i:s");
-            \DB::table($table)->where($key, $id)->update($data);
+            @\DB::table($table)->where($key, $id)->update($data);
         }
         return $id;
     }
