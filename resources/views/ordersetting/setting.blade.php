@@ -90,9 +90,9 @@
 
     <script>
         $(document).ready(function () {
-            $("#merchandiseordertype").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
+            $("#merchandiseordertype").jCombo("{{ URL::to('ordersetting/comboselect?filter=order_type:id:order_type') }}",
                     {selected_value: '{{ $MerchandiseOrder }}', initial_text: '-------- Select Order Type --------'});
-            $("#Nonmerchandiseordertype").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
+            $("#Nonmerchandiseordertype").jCombo("{{ URL::to('ordersetting/comboselect?filter=order_type:id:order_type') }}",
                     {
                         selected_value: '{{ $NonMerchandiseOrder }}',
                         initial_text: '-------- Select Order Type --------'
