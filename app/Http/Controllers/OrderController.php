@@ -14,6 +14,7 @@ use App\Library\SximoDB;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
 use PHPMailerOAuth;
+use App\Models\OrdersettingContent;
 
 class OrderController extends Controller
 {
@@ -180,6 +181,7 @@ class OrderController extends Controller
 
     public function getIndex()
     {
+
         /*
         \App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
@@ -1347,8 +1349,16 @@ class OrderController extends Controller
             if (!empty($data[0]['po_attn'])) {
                 $data[0]['po_location'] = $data[0]['po_location'] . "\n" . $data[0]['po_attn'];
             }
+
+            $OrderSetting = OrdersettingContent::where(["ordertype_id" => 9])->get();
+            $PONoteSettings = $OrderSetting[0]->ordersetting()->get();
+            $PONote = $PONoteSettings[0]->po_note;
+            $is_merchandiseorder = $PONoteSettings[0]->is_merchandiseorder;
+
+
+
           //  $addonPONote = "\r\n Ship Palletized Whenever Possible. ";
-            $addonPONote = !empty($data[0]['po_notes_additionaltext']) ? $data[0]['po_notes_additionaltext']:FEGSystemHelper::getOption('PO_NOTE_DEFAULT_TEXT');
+            $addonPONote = !empty($data[0]['po_notes_additionaltext']) ? $data[0]['po_notes_additionaltext'] : $PONote;
             $addonPONote = str_replace("EMAIL_ADDRESS", $data[0]['email'] . (!empty($data[0]['cc_email']) ? $data[0]['cc_email']:"")  . (!empty($data[0]['loc_contact_email'])? $data[0]['loc_contact_email']:""),$addonPONote);
             /*if (empty($data[0]['po_notes'])) {
                 $data[0]['po_notes'] = " NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . "** \r\n Ship Palletized Whenever Possible. ";
