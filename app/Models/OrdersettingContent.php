@@ -18,9 +18,9 @@ class ordersettingcontent extends Sximo
     /*
      *
      */
-    public function orderSetting()
+    public function ordersetting()
     {
-        return $this->belongsTo("App/Models/ordersetting");
+        return $this->belongsTo("App\Models\ordersetting", "ordersetting_id");
     }
 
     public static function querySelect()

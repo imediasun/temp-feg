@@ -36,8 +36,9 @@ class OrdersettingController extends Controller
     public function getSetting()
     {
         $ordersetting = new $this->model();
+        $orderSettingData = $ordersetting->where("id", 1)->get();
         echo "<pre>";
-        dd($ordersetting->where("id", 1));
+        dd($orderSettingData);
         die;
         $this->data['access'] = $this->access;
         return view('ordersetting.setting', $this->data);
