@@ -41,7 +41,7 @@
                             <tr>
                                 <!--<td>1</td>-->
                                 <td>Merchandise Orders PO PDF Notes</td>
-                                <td>This PO PDF note is a default PO not for Merchandise Orders.
+                                <td>This PO PDF note is a default PO note for Merchandise Orders.
                                     Place <code>MERCHANDISE_CONTACT</code>, <code>GENERAL_MANAGER</code>, <code>REGIONL_DIRECTOR</code>,
                                     <code>SVP_CONTACT</code>, <code>TECHNICAL_CONTACT</code>, these keywords where you
                                     want to show the email addresses.
@@ -60,7 +60,7 @@
                             <tr>
                                 <!--<td>1</td>-->
                                 <td>Non Merchandise Orders PO PDF Notes</td>
-                                <td>This PO PDF note is a default PO not for Non Merchandise Orders.
+                                <td>This PO PDF note is a default PO note for Non Merchandise Orders.
                                     Place <code>MERCHANDISE_CONTACT</code>, <code>GENERAL_MANAGER</code>, <code>REGIONL_DIRECTOR</code>,
                                     <code>SVP_CONTACT</code>, <code>TECHNICAL_CONTACT</code>, these keywords where you
                                     want to show the email addresses.
