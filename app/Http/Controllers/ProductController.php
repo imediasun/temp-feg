@@ -355,6 +355,9 @@ class ProductController extends Controller
         {
             $rules['expense_category'] = 'required';
         }*/
+        $rules['vendor_description'] = 'required';
+        $request->Product_Type = $request->prod_type_id;
+        $rules['Product_Type'] = 'required';
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
