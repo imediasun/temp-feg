@@ -404,9 +404,7 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
-        if(empty($this->data['row']['po_notes_additionaltext'])){
-            $this->data['row']['po_notes_additionaltext'] = FEGSystemHelper::getOption('PO_NOTE_DEFAULT_TEXT');
-        }
+
 
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -1332,15 +1330,15 @@ class OrderController extends Controller
                 $data[0]['freight_type'] = $data[0]['freight_type'] . "\n" . 'DELIVERY NOTES: **' . $data[0]['loading_info'] . '**';
             }
 
-            if (!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == Order::ORDER_TYPE_REDEMPTION || $data[0]['order_type_id'] == Order::ORDER_TYPE_INSTANT_WIN_PRIZE)) {
-                $data[0]['loc_contact_email'] = $data[0]['loc_merch_contact_email'];
-            }
+            /*  if (!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == Order::ORDER_TYPE_REDEMPTION || $data[0]['order_type_id'] == Order::ORDER_TYPE_INSTANT_WIN_PRIZE)) {
+                  $data[0]['loc_contact_email'] = $data[0]['loc_merch_contact_email'];
+              }
 
-            if ($data[0]['email'] != $data[0]['loc_contact_email'] && !empty($data[0]['loc_contact_email'])) {
-                $data[0]['loc_contact_email'] = ' AND ' . $data[0]['loc_contact_email'];
-            } else {
-                $data[0]['loc_contact_email'] = '';
-            }
+              if ($data[0]['email'] != $data[0]['loc_contact_email'] && !empty($data[0]['loc_contact_email'])) {
+                  $data[0]['loc_contact_email'] = ' AND ' . $data[0]['loc_contact_email'];
+              } else {
+                  $data[0]['loc_contact_email'] = '';
+              }*/
             if ($data[0]['order_type_id'] == Order::ORDER_TYPE_REPAIR_LABOUR || in_array($data[0]['order_type_id'],Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM)) {
                 $data[0]['cc_email'] = ', lisa.price@fegllc.com';
             } else {
@@ -1349,22 +1347,28 @@ class OrderController extends Controller
             if (!empty($data[0]['po_attn'])) {
                 $data[0]['po_location'] = $data[0]['po_location'] . "\n" . $data[0]['po_attn'];
             }
+            $PONote = "";
 
-            $OrderSetting = OrdersettingContent::where(["ordertype_id" => 9])->get();
-            $PONoteSettings = $OrderSetting[0]->ordersetting()->get();
-            $PONote = $PONoteSettings[0]->po_note;
-            $is_merchandiseorder = $PONoteSettings[0]->is_merchandiseorder;
+            $OrderSetting = OrdersettingContent::where(["ordertype_id" => $data[0]['order_type_id']])->get();
+            $is_merchandiseorder = 0;
+            if ($OrderSetting->count() > 0) {
+                $PONoteSettings = $OrderSetting[0]->ordersetting()->get();
+                $PONote = $PONoteSettings[0]->po_note;
+                $is_merchandiseorder = $PONoteSettings[0]->is_merchandiseorder;
+            }
 
 
-
-          //  $addonPONote = "\r\n Ship Palletized Whenever Possible. ";
             $addonPONote = !empty($data[0]['po_notes_additionaltext']) ? $data[0]['po_notes_additionaltext'] : $PONote;
-            $addonPONote = str_replace("EMAIL_ADDRESS", $data[0]['email'] . (!empty($data[0]['cc_email']) ? $data[0]['cc_email']:"")  . (!empty($data[0]['loc_contact_email'])? $data[0]['loc_contact_email']:""),$addonPONote);
-            /*if (empty($data[0]['po_notes'])) {
-                $data[0]['po_notes'] = " NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . "** \r\n Ship Palletized Whenever Possible. ";
-            } else {*/
-                $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " ".$addonPONote;
-           // }
+            $addonPONote .= $data[0]['email'] . (!empty($data[0]['cc_email']) ? $data[0]['cc_email'] : "");
+            if (!empty($addonPONote)) {
+                $addonPONote = str_replace("MERCHANDISE_CONTACT", (!empty($data[0]['loc_merch_contact_email']) ? $data[0]['loc_merch_contact_email'] : ""), $addonPONote);
+                $addonPONote = str_replace("GENERAL_MANAGER", (!empty($data[0]['loc_general_manager_email']) ? $data[0]['loc_general_manager_email'] : ""), $addonPONote);
+                $addonPONote = str_replace("REGIONL_DIRECTOR", (!empty($data[0]['loc_regional_contact_email']) ? $data[0]['loc_regional_contact_email'] : ""), $addonPONote);
+                $addonPONote = str_replace("SVP_CONTACT", (!empty($data[0]['loc_svp_contact_email']) ? $data[0]['loc_svp_contact_email'] : ""), $addonPONote);
+                $addonPONote = str_replace("TECHNICAL_CONTACT", (!empty($data[0]['loc_technical_user_email']) ? $data[0]['loc_technical_user_email'] : ""), $addonPONote);
+            }
+            $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " " . $addonPONote;
+
             $order_description = $data[0]['order_description'];
             if (substr($order_description, 0, 3) === ' | ') {
                 $order_description = substr($order_description, 3);
@@ -2298,6 +2302,32 @@ public static function array_move($which, $where, $array)
             }
         }
         die("Script Completed!");
+    }
+
+    function postAdditionalponote(Request $request)
+    {
+
+        $orderId = $request->input('order_id');
+        $orderTypeId = !empty($request->input('ordertype_id')) ? $request->input('ordertype_id') : 0;
+        $PONote = "";
+        $is_merchandiseorder = 0;
+        if ($orderId > 0) {
+            $order = Order::find($orderId);
+            $PONote = $order->po_notes_additionaltext;
+        }
+
+        $OrderSetting = OrdersettingContent::where(["ordertype_id" => $orderTypeId])->get();
+
+        if ($OrderSetting->count() > 0) {
+            $PONoteSettings = $OrderSetting[0]->ordersetting()->get();
+            $PONote = !empty($PONote) ? $PONote : $PONoteSettings[0]->po_note;
+            $is_merchandiseorder = $PONoteSettings[0]->is_merchandiseorder;
+        }
+
+        return response()->json([
+            "PoNoteText" => $PONote,
+            "is_merchandiseorder" => $is_merchandiseorder,
+        ]);
     }
 
     public function getCorrectOrdersBug2016($step = '1')
