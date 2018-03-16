@@ -1408,48 +1408,58 @@ class Sximo extends Model {
 
     public function getOrderDataQuery($order_id = 0)
     {
-        $sqlColumns = ' U1.first_name,
-                      U1.last_name,
-                      U1.email,
-                      C.company_name_short,
-                      C.company_name_long,
-                      O.date_ordered,
-                      O.order_type_id,
-                      L.location_name_short AS loc_name_short,
-                      L.id                  AS loc_id,
-                      L.loading_info,
-                      L.loc_ship_to         AS loc_ship_to,
-                      U2.email              AS loc_contact_email,
-                      U3.email              AS loc_merch_contact_email,
-                      V.vendor_name,
-                      V.street1             AS vend_street1,
-                      V.city                AS vend_city,
-                      V.state               AS vend_state,
-                      V.zip                 AS vend_zip,
-                      V.contact             AS vend_contact,
-                      V.email               AS vend_email,
-                      V.bill_account_num    AS billing_account,
-                      O.order_description,
-                      O.order_total,
-                      O.po_number,
-                      O.alt_address,
-                      F.freight_type,
-                      O.new_format,
-                      O.po_notes ';
-        $sqlJoins = " LEFT JOIN company C
-                        ON C.id = O.company_id
-                      LEFT JOIN location L
-                        ON L.id = O.location_id
-                      LEFT JOIN users U1
-                        ON U1.id = O.user_id
-                      LEFT JOIN users U2
-                        ON U2.id = L.general_manager_id
-                      LEFT JOIN users U3
-                        ON U3.id = L.regional_manager_id
-                      LEFT JOIN vendor V
-                        ON V.id = O.vendor_id
-                      LEFT JOIN freight F
-                        ON F.id = O.freight_id ";
+        $sqlColumns = '  U1.first_name,
+                          U1.last_name,
+                          U1.email,
+                          C.company_name_short,
+                          C.company_name_long,
+                          O.date_ordered,
+                          O.order_type_id,
+                          L.location_name_short AS loc_name_short,
+                          L.id                  AS loc_id,
+                          L.loading_info,
+                          L.loc_ship_to         AS loc_ship_to,
+                          U2.email              AS loc_general_manager_email,
+                          U3.email              AS loc_regional_contact_email,
+                          U4.email              AS loc_merch_contact_email,
+                          U5.email              AS loc_svp_contact_email,
+                          U6.email              AS loc_technical_user_email,
+                          V.vendor_name,
+                          V.street1             AS vend_street1,
+                          V.city                AS vend_city,
+                          V.state               AS vend_state,
+                          V.zip                 AS vend_zip,
+                          V.contact             AS vend_contact,
+                          V.email               AS vend_email,
+                          V.bill_account_num    AS billing_account,
+                          O.order_description,
+                          O.order_total,
+                          O.po_number,
+                          O.alt_address,
+                          F.freight_type,
+                          O.new_format,
+                          O.po_notes';
+
+        $sqlJoins = "  LEFT JOIN company C
+                            ON C.id = O.company_id
+                          LEFT JOIN location L
+                            ON L.id = O.location_id
+                          LEFT JOIN users U1
+                            ON U1.id = O.user_id
+                          LEFT JOIN users U2
+                            ON U2.id = L.general_manager_id
+                          LEFT JOIN users U3
+                            ON U3.id = L.regional_manager_id
+                          LEFT JOIN users U4
+                            ON U4.id = L.merch_contact_id
+                          LEFT JOIN users U5
+                            ON U5.id = L.vp_id
+                          LEFT JOIN users U6
+                            ON U6.id = L.technical_user_id
+                          LEFT JOIN vendor V
+                            ON V.id = O.vendor_id
+                          LEFT JOIN freight F
+                            ON F.id = O.freight_id ";
 
         $query = "SELECT " . $sqlColumns . " FROM orders O " . $sqlJoins . " WHERE O.id=" . $order_id;
 

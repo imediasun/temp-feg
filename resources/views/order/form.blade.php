@@ -468,6 +468,20 @@
     <script type="text/javascript">
         var type_permissions = "<?php echo $type_permissions ?>";
         type_permissions = type_permissions.split(",").map(Number);
+        $("#order_type_id").change(function (e) {
+
+            $.ajax({
+                type: "POST",
+                url: 'order/additionalponote',
+                data: {
+                    ordertype_id: $(this).val(),
+                    order_id: '<?php echo is_object($row) && $row->id ? $row->id : 0 ?>'
+                },
+                success: function (response) {
+                    $("textarea[name='po_notes_additionaltext']").text(response.PoNoteText);
+                }
+            });
+        });
 
         var case_price_if_no_unit_categories = "<?php echo $case_price_if_no_unit_categories; ?>";
         case_price_if_no_unit_categories = case_price_if_no_unit_categories.split(",").map(Number);

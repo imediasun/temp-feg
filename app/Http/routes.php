@@ -105,6 +105,7 @@ Route::group(['middleware' => 'auth'], function()
 
     Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
     Route::get('ticketsetting','TicketsettingController@getSetting');
+    Route::get('ordersetting', 'OrdersettingController@getSetting');
     Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
     Route::get('removeblocked', 'ManagefegrequeststoreController@removeBlockedCheck')->name('remove_blocked_check');
     Route::get('addmoreblockedtime', 'ManagefegrequeststoreController@AddBlockedCheck')->name('add_more_blocked_time');
