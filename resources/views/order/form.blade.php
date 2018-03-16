@@ -278,7 +278,9 @@
                         <label class="label-control col-md-4"> PO Note Additional Text</label>
                         <div class="col-md-8">
                             <textarea name="po_notes_additionaltext" class="form-control" rows="5" placeholder="PO Note Additional Text">{!! $row['po_notes_additionaltext'] !!}</textarea>
-                            <b>Place <code>EMAIL_ADDRESS</code> this keyword where you want to show your email address.</b>
+                            <b>Place <code>MERCHANDISE_CONTACT</code>, <code>GENERAL_MANAGER</code>, <code>REGIONL_DIRECTOR</code>,
+                                <code>SVP_CONTACT</code>, <code>TECHNICAL_CONTACT</code>, these keywords where you want
+                                to show the email addresses.</b>
                         </div>
                         <div style="clear:both"></div>
                     </div>
@@ -457,11 +459,12 @@
     <script type="text/javascript">
         var type_permissions = "<?php echo $type_permissions ?>";
         type_permissions = type_permissions.split(",").map(Number);
-        $("#order_type_id").change(function (e) {
 
+        $(function () {
+        $("#order_type_id").change(function (e) {
             $.ajax({
                 type: "POST",
-                url: 'order/additionalponote',
+                url: '{{ Url('order/additionalponote') }}',
                 data: {
                     ordertype_id: $(this).val(),
                     order_id: '<?php echo is_object($row) && $row->id ? $row->id : 0 ?>'
@@ -471,7 +474,7 @@
                 }
             });
         });
-
+        });
         var case_price_if_no_unit_categories = "<?php echo $case_price_if_no_unit_categories; ?>";
         case_price_if_no_unit_categories = case_price_if_no_unit_categories.split(",").map(Number);
 
