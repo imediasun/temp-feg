@@ -581,7 +581,7 @@ $('a[data-original-title="Upload Image"]').click(function () {
                                                     row.find('td[data-field="' + key + '"]').text($.trim(value));
                                                 }
                                             } else {
-                                                if ((key === "ticket_value" || key === "retail_price")) {
+                                                if (( key === "expense_category" || key === "ticket_value" || key === "retail_price")) {
 
                                                     if (row.attr("data-id") === singleRowObjectId) {
 
