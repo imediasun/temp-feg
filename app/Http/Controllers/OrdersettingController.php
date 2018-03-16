@@ -36,17 +36,24 @@ class OrdersettingController extends Controller
 
     public function getSetting()
     {
-        $MerchandiseOrderSetting = $this->model->where("is_merchandiseorder", 1)->first();
-        $MerchandiseSetting = $MerchandiseOrderSetting->po_note;
+        $MerchandiseSetting = "";
+        $NonMerchandiseSetting = "";
         $MerchandiseOrderTypes = [];
-        foreach ($MerchandiseOrderSetting->ordersettingcontent as $SettingContent) {
-            $MerchandiseOrderTypes[] = $SettingContent->ordertype_id;
+        $NonMerchandiseOrderTypes = [];
+
+        $MerchandiseOrderSetting = $this->model->where("is_merchandiseorder", 1)->first();
+        if ($MerchandiseOrderSetting) {
+            $MerchandiseSetting = $MerchandiseOrderSetting->po_note;
+            foreach ($MerchandiseOrderSetting->ordersettingcontent as $SettingContent) {
+                $MerchandiseOrderTypes[] = $SettingContent->ordertype_id;
+            }
         }
         $NonMerchandiseOrderSetting = $this->model->where("is_merchandiseorder", 0)->first();
-        $NonMerchandiseSetting = $NonMerchandiseOrderSetting->po_note;
-        $NonMerchandiseOrderTypes = [];
-        foreach ($NonMerchandiseOrderSetting->ordersettingcontent as $SettingContent) {
-            $NonMerchandiseOrderTypes[] = $SettingContent->ordertype_id;
+        if ($NonMerchandiseOrderSetting) {
+            $NonMerchandiseSetting = $NonMerchandiseOrderSetting->po_note;
+            foreach ($NonMerchandiseOrderSetting->ordersettingcontent as $SettingContent) {
+                $NonMerchandiseOrderTypes[] = $SettingContent->ordertype_id;
+            }
         }
         $this->data['MerchandisePO'] = $MerchandiseSetting;
         $this->data['NonMerchandisePO'] = $NonMerchandiseSetting;
