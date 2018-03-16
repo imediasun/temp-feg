@@ -71,13 +71,14 @@ class OrdersettingController extends Controller
         $NonmerchandisePONote = $request->input('NonmerchandisePONote');
         $merchandiseOrderTypes = $request->input('merchandiseordertypes');
         $NonMerchandiseOrderTypes = $request->input('Nonmerchandiseordertypes');
+        if (is_array($merchandiseOrderTypes) && is_array($NonMerchandiseOrderTypes)) {
+            if (count(array_intersect($merchandiseOrderTypes, $NonMerchandiseOrderTypes)) > 0) {
+                return response()->json(array(
+                    'message' => 'You can not select the same order type for both Merchandise and Non Merchandise.',
+                    'status' => 'error',
 
-        if (count(array_intersect($merchandiseOrderTypes, $NonMerchandiseOrderTypes)) > 0) {
-            return response()->json(array(
-                'message' => 'You can not select the same order type for both Merchandise and Non Merchandise.',
-                'status' => 'error',
-
-            ));
+                ));
+            }
         }
 
         $merchandiseOrderSetting = $this->model->firstOrNew(["is_merchandiseorder" => 1]);
@@ -91,11 +92,13 @@ class OrdersettingController extends Controller
                 $orderType->delete();
             }
         }
-        foreach ($merchandiseOrderTypes as $MerchandiseOrderType) {
-            $Ordersettingcontent = new OrdersettingContent();
-            $Ordersettingcontent->ordersetting_id = $merchandiseOrderSetting->id;
-            $Ordersettingcontent->ordertype_id = $MerchandiseOrderType;
-            $Ordersettingcontent->save();
+        if (!empty($merchandiseOrderTypes)) {
+            foreach ($merchandiseOrderTypes as $MerchandiseOrderType) {
+                $Ordersettingcontent = new OrdersettingContent();
+                $Ordersettingcontent->ordersetting_id = $merchandiseOrderSetting->id;
+                $Ordersettingcontent->ordertype_id = $MerchandiseOrderType;
+                $Ordersettingcontent->save();
+            }
         }
 
         $NonMerchandiseOrderSetting = $this->model->firstOrNew(["is_merchandiseorder" => 0]);
@@ -109,11 +112,13 @@ class OrdersettingController extends Controller
                 $orderType->delete();
             }
         }
-        foreach ($NonMerchandiseOrderTypes as $NonMerchandiseOrderType) {
-            $Ordersettingcontent = new OrdersettingContent();
-            $Ordersettingcontent->ordersetting_id = $NonMerchandiseOrderSetting->id;
-            $Ordersettingcontent->ordertype_id = $NonMerchandiseOrderType;
-            $Ordersettingcontent->save();
+        if (!empty($NonMerchandiseOrderTypes)) {
+            foreach ($NonMerchandiseOrderTypes as $NonMerchandiseOrderType) {
+                $Ordersettingcontent = new OrdersettingContent();
+                $Ordersettingcontent->ordersetting_id = $NonMerchandiseOrderSetting->id;
+                $Ordersettingcontent->ordertype_id = $NonMerchandiseOrderType;
+                $Ordersettingcontent->save();
+            }
         }
 
 

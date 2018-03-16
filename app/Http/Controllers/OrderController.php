@@ -1420,9 +1420,8 @@ class OrderController extends Controller
                 $is_merchandiseorder = $PONoteSettings[0]->is_merchandiseorder;
             }
 
-
             $addonPONote = !empty($data[0]['po_notes_additionaltext']) ? $data[0]['po_notes_additionaltext'] : $PONote;
-            $addonPONote .= $data[0]['email'] . (!empty($data[0]['cc_email']) ? $data[0]['cc_email'] : "");
+            $addonPONote .= " " . $data[0]['email'] . (!empty($data[0]['cc_email']) ? $data[0]['cc_email'] : "");
             if (!empty($addonPONote)) {
                 $addonPONote = str_replace("MERCHANDISE_CONTACT", (!empty($data[0]['loc_merch_contact_email']) ? $data[0]['loc_merch_contact_email'] : ""), $addonPONote);
                 $addonPONote = str_replace("GENERAL_MANAGER", (!empty($data[0]['loc_general_manager_email']) ? $data[0]['loc_general_manager_email'] : ""), $addonPONote);
@@ -2425,26 +2424,28 @@ class OrderController extends Controller
         $orderId = $request->input('order_id');
         $orderTypeId = !empty($request->input('ordertype_id')) ? $request->input('ordertype_id') : 0;
         $PONote = "";
+        $producttypeid = 0;
         $is_merchandiseorder = 0;
         if ($orderId > 0) {
-            $order = Order::find($orderId);
-            if ($order->prod_type_id == $orderTypeId) {
+            $order = $this->model->find($orderId);
+            if ($order->order_type_id == $orderTypeId) {
                 $PONote = $order->po_notes_additionaltext;
             }
         }
+        if (empty($PONote)) {
+            $OrderSetting = OrdersettingContent::where(["ordertype_id" => $orderTypeId])->get();
 
-        $OrderSetting = OrdersettingContent::where(["ordertype_id" => $orderTypeId])->get();
-
-        if ($OrderSetting->count() > 0) {
-            $PONoteSettings = $OrderSetting[0]->ordersetting()->get();
-            $PONote = !empty($PONote) ? $PONote : $PONoteSettings[0]->po_note;
-            $is_merchandiseorder = $PONoteSettings[0]->is_merchandiseorder;
+            if ($OrderSetting->count() > 0) {
+                $PONoteSettings = $OrderSetting[0]->ordersetting()->get();
+                $PONote = !empty($PONote) ? $PONote : $PONoteSettings[0]->po_note;
+                $is_merchandiseorder = $PONoteSettings[0]->is_merchandiseorder;
+            }
         }
-
         return response()->json([
             "PoNoteText" => $PONote,
             "is_merchandiseorder" => $is_merchandiseorder,
         ]);
+
     }
 
     public function getCorrectOrdersBug2016($step = '1')
