@@ -2480,7 +2480,9 @@ public static function array_move($which, $where, $array)
         $is_merchandiseorder = 0;
         if ($orderId > 0) {
             $order = Order::find($orderId);
-            $PONote = $order->po_notes_additionaltext;
+            if ($order->prod_type_id == $orderTypeId) {
+                $PONote = $order->po_notes_additionaltext;
+            }
         }
 
         $OrderSetting = OrdersettingContent::where(["ordertype_id" => $orderTypeId])->get();
