@@ -71,13 +71,14 @@ class OrdersettingController extends Controller
         $NonmerchandisePONote = $request->input('NonmerchandisePONote');
         $merchandiseOrderTypes = $request->input('merchandiseordertypes');
         $NonMerchandiseOrderTypes = $request->input('Nonmerchandiseordertypes');
+        if (is_array($merchandiseOrderTypes) && is_array($NonMerchandiseOrderTypes)) {
+            if (count(array_intersect($merchandiseOrderTypes, $NonMerchandiseOrderTypes)) > 0) {
+                return response()->json(array(
+                    'message' => 'You can not select the same order type for both Merchandise and Non Merchandise.',
+                    'status' => 'error',
 
-        if (count(array_intersect($merchandiseOrderTypes, $NonMerchandiseOrderTypes)) > 0) {
-            return response()->json(array(
-                'message' => 'You can not select the same order type for both Merchandise and Non Merchandise.',
-                'status' => 'error',
-
-            ));
+                ));
+            }
         }
 
         $merchandiseOrderSetting = $this->model->firstOrNew(["is_merchandiseorder" => 1]);
