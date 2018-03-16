@@ -496,6 +496,17 @@ class ProductController extends Controller
 
             $rules['expense_category'] = 'required';
 
+
+        $request->Product_Type = $request->prod_type_id;
+        $request->Vendor = $request->vendor_id;
+
+        $rules['vendor_description'] = 'required';
+        $rules['Product_Type'] = 'required';
+        $rules['sku'] = "required";
+        $rules['case_price'] = 'required';
+        $rules['unit_price'] = 'required';
+        $rules['Vendor'] = 'required';
+
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
