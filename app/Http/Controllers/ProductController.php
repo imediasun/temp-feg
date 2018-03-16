@@ -501,11 +501,11 @@ class ProductController extends Controller
         $request->Vendor = $request->vendor_id;
 
         $rules['vendor_description'] = 'required';
-        $rules['Product_Type'] = 'required';
+        $rules['prod_type_id'] = 'required';
         $rules['sku'] = "required";
         $rules['case_price'] = 'required';
         $rules['unit_price'] = 'required';
-        $rules['Vendor'] = 'required';
+        $rules['vendor_id'] = 'required';
 
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
