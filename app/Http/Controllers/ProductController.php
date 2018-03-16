@@ -313,8 +313,8 @@ class ProductController extends Controller
             $type = is_array($request->prod_type_id)?$request->prod_type_id[0]:$request->prod_type_id;
             $subtype = is_array($request->prod_sub_type_id)?$request->prod_sub_type_id[1]:$request->prod_sub_type_id;
 
-            $productName = Product::find($id)->vendor_description;
-
+            // $productName = Product::find($id)->vendor_description;
+            $productName = $request->vendor_description;
 
             $duplicate = Product::
             where('prod_type_id',$type)
