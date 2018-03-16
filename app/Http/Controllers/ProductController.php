@@ -313,7 +313,7 @@ class ProductController extends Controller
             $type = is_array($request->prod_type_id)?$request->prod_type_id[0]:$request->prod_type_id;
             $subtype = is_array($request->prod_sub_type_id)?$request->prod_sub_type_id[1]:$request->prod_sub_type_id;
 
-            // $productName = Product::find($id)->vendor_description;
+
             $productName = $request->vendor_description;
 
             $duplicate = Product::
@@ -330,7 +330,23 @@ class ProductController extends Controller
                     'status' => 'error'
                 ));
             }
-        ;
+
+            $productName = Product::find($id)->vendor_description;
+
+            $duplicate = Product::
+            where('prod_type_id', $type)
+                ->where('prod_sub_type_id', $subtype)
+                ->where('sku', $request->sku)
+                ->where('id', '!=', $id)
+                ->where('vendor_description', $productName)
+                ->first();
+            if (!empty($duplicate)) {
+                return response()->json(array(
+                    'message' => "A product with same Product Type & Sub Type already exist",
+                    'status' => 'error'
+                ));
+            }
+
         }
         if ($request->hasFile('img'))
         {
