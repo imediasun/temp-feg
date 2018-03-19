@@ -4,7 +4,7 @@ use App\Library\FEG\System\FEGSystemHelper;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Log, View, Auth;
-use App\Models\ordersetting;
+use App\Models\Ordersetting;
 
 class shopfegrequeststore extends Sximo  {
 	
@@ -256,7 +256,7 @@ class shopfegrequeststore extends Sximo  {
             $description=$data['description'];
         }
 
-        $OrderSetting = new ordersetting();
+        $OrderSetting = new Ordersetting();
         $GraphicsSender = "";
         $GraphicsReceiver = "";
 
