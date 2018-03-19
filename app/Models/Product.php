@@ -17,18 +17,27 @@ class product extends Sximo  {
 	}
 
 	public static function querySelect(  ){
-		
-		return "SELECT products.*, O.order_type AS `prod_type`,vendor.vendor_name AS `vendor`,
- IF(products.hot_item = 1,CONCAT('',products.vendor_description,' **HOT ITEM**'),
- products.vendor_description) AS `prod_description`,TRUNCATE(products.case_price/num_items,5) AS
-  `unit_pricing`,T.type_description AS `product_type`,IF(products.inactive = 1,'NOT AVAIL.',CONCAT('Add to Cart'))
-  AS `add`,CONCAT('Details') AS `addldetails`,products.id AS `product_id`,
+
+        return " SELECT
+  products.*,
+  O.order_type       AS `prod_type`,
+  vendor.vendor_name AS `vendor`,
+  IF(products.hot_item = 1,CONCAT('',products.vendor_description,' **HOT ITEM**'), products.vendor_description) AS `prod_description`,
+  TRUNCATE(products.case_price/num_items,5) AS `unit_pricing`,
+  T.type_description AS `product_type`,
+  IF(products.inactive = 1,'NOT AVAIL.',CONCAT('Add to Cart')) AS `add`,
+  CONCAT('Details')  AS `addldetails`,
+  products.id        AS `product_id`,
   IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price) AS `retail_price`,
-  O.order_type AS prod_type_id,
+  O.order_type       AS prod_type_id,
   T.type_description AS prod_sub_type_id
-  FROM `products` LEFT JOIN vendor ON (products.vendor_id = vendor.id)
-  LEFT JOIN order_type O ON (O.id = products.prod_type_id)
-  LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id)";
+FROM `products`
+  LEFT JOIN vendor
+    ON (products.vendor_id = vendor.id)
+  LEFT JOIN order_type O
+    ON (O.id = products.prod_type_id)
+  LEFT JOIN product_type T
+    ON (T.id = products.prod_sub_type_id) ";
 	}
 
     public static function querySelectAPI(){
@@ -258,6 +267,19 @@ class product extends Sximo  {
 
     }
 
+    public function allExpenseCategories()
+    {
+        $sql = "SELECT
+  expense_category_mapping.mapped_expense_category,
+     IF(mapped_expense_category=0,0,CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | '))) AS expense_category_field
+   FROM expense_category_mapping
+     JOIN order_type
+       ON order_type.id = expense_category_mapping.order_type 
+   WHERE product_type IS NULL AND expense_category_mapping.mapped_expense_category > 0 GROUP BY expense_category_mapping.mapped_expense_category ";
+        $result = DB::select($sql);
+        return $result;
+    }
+
     public function checkProducts($id){
         $product = DB::table('products')->where(['id'=>$id])->first();
         $products = DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
@@ -362,6 +384,5 @@ class product extends Sximo  {
         $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price' => $this->case_price])->get();
         return $items;
     }
-
 
 }

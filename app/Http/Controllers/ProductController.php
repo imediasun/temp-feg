@@ -41,6 +41,136 @@ class ProductController extends Controller
 
     }
 
+    public
+    function getExport($t = 'excel')
+    {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-' . $exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+
+        $info = $this->model->makeInfo($this->module);
+        //$master  	= $this->buildMasterDetail();
+        if (method_exists($this, 'getSearchFilterQuery')) {
+            $filter = $this->getSearchFilterQuery();
+        } else {
+            $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+        }
+
+        //$filter 	.=  $master['masterFilter'];
+//    $params = array(
+//        'params' => ''
+//    );
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby'];
+        $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];
+        $params = array(
+            'params' => '',
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0),
+            'forExcel' => 1
+        );
+
+
+        $results = $this->model->getRows($params);
+
+        $fields = $info['config']['grid'];
+        $rows = $results['rows'];
+
+        $extra = array(
+            'field' => '',
+            'alias' => 'departments',
+            'language' =>
+                array('id' => ''),
+            'label' => '',
+            'view' => '1',
+            'detail' => '1',
+            'sortable' => '1',
+            'search' => '1',
+
+            'download' => '1',
+            'frozen' => '1',
+            'limited' => '',
+            'width' => '100',
+            'align' => 'left',
+            'sortlist' => '0',
+            'conn' =>
+                array(
+                    'valid' => '0',
+                    'db' => '',
+                    'key' => '',
+                    'display' => ''),
+            'attribute' =>
+                array(
+                    'hyperlink' => '',
+                    array(
+                        'active' => '0',
+                        'link' => '',
+                        'target' => 'modal',
+                        'html' => ''),
+                    'image' =>
+                        array(
+
+                            'active' => '0',
+                            'path' => '',
+                            'size_x' => '',
+                            'size_y' => '',
+                            'html' => ''),
+                    'formater' =>
+                        array(
+                            'active' => '0',
+                            'value' => '',
+
+
+                        )));
+
+        $rows = $this->updateDateInAllRows($rows);
+        $rows = array_map(function ($element) {
+            if (!empty($element->expense_category) && $element->expense_category > 0) {
+                $result = $this->getExpenseCategoryById($element->expense_category);
+                $element->expense_category = count($result) > 0 ? $result[0]->expense_category : 0;
+            }
+            return $element;
+        }, $rows);
+
+
+        $content = array(
+            'exportID' => $exportSessionID,
+            'fields' => $fields,
+            'rows' => $rows,
+            'title' => $this->data['pageTitle'],
+            'excelExcludeFormatting' => isset($results['excelExcludeFormatting']) ? $results['excelExcludeFormatting'] : []
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('sximo.module.utility.excel', $content);
+        }
+    }
+
     public function getModify(){
         $query ="SELECT products.*  FROM `products` WHERE vendor_description REGEXP '[ ]{2,}'";
         $products = DB::select($query);
@@ -163,6 +293,8 @@ class ProductController extends Controller
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         $rows = $results['rows'];
+        $ExpenseCategories = $this->model->allExpenseCategories();
+        $this->data['ExpenseCategories'] = $ExpenseCategories;
 
         foreach ($rows as $index => $data) {
             if ($data->is_reserved == 1) {
@@ -790,6 +922,31 @@ class ProductController extends Controller
         }
         return $items;
     }
+
+    function getExpenseCategoryAjax(Request $request)
+    {
+
+        $expense_category = \DB::select("SELECT expense_category_mapping.id,expense_category_mapping.mapped_expense_category,order_type.`order_type`,CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | ')) as order_type
+FROM expense_category_mapping
+JOIN order_type ON order_type.id = expense_category_mapping.order_type
+WHERE product_type IS NULL
+GROUP BY mapped_expense_category");
+
+        $items = ['<option value=""> -- Select  -- </option>'];
+        foreach ($expense_category as $category) {
+            $orderType = $category->order_type;
+            $categoryId = $category->mapped_expense_category;
+            if ($categoryId == 0) {
+                $orderType = "N/A";
+                $categoryId = "";
+            }
+            $items[] = '<option value="' . $categoryId . '"> ' . $orderType . ' </option>';
+
+        }
+        $options = implode("", $items);
+        echo $options;
+    }
+
     public function postSetdefaultcategory(Request $request)
     {
         $id = $request->input('productId');
@@ -810,5 +967,17 @@ class ProductController extends Controller
         } else {
             $this->model->setDefaultExpenseCategory($id);
         }
+    }
+
+    public function getExpenseCategoryById($expense_category)
+    {
+        $sql = "SELECT CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | ')) AS expense_category";
+        $sql .= " FROM expense_category_mapping 
+                  JOIN order_type
+                    ON order_type.id = expense_category_mapping.order_type
+                WHERE product_type IS NULL AND mapped_expense_category !=0 AND mapped_expense_category = $expense_category 
+                GROUP BY mapped_expense_category";
+        $result = \DB::select($sql);
+        return $result;
     }
 }
