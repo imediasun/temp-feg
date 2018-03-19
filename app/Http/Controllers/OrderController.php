@@ -426,7 +426,7 @@ class OrderController extends Controller
     public function getShow($id = null)
     {
 
-        
+
         $this->data['case_price_permission'] = $this->pass['calculate price according to case price'];
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
@@ -671,6 +671,17 @@ class OrderController extends Controller
                     . ') ' . $itemsArray[$i] . ' @ $' .
                     $itemsPriceArray[$i] . ' ea.';
             }
+            if ($is_freehand == 0) {
+                $validationResponse = $this->validateProductForReserveQty($request);
+
+                if (!empty($validationResponse) && $validationResponse['error'] == true) {
+                    return response()->json(array(
+                        'message' => $validationResponse['message'],
+                        'status' => 'error',
+                        'adjustQty' => $validationResponse['adjustQty']
+                    ));
+                }
+            }
             if ($editmode == "edit") {
                 $orderData = array(
                     'company_id' => $company_id,
@@ -803,7 +814,12 @@ class OrderController extends Controller
                     \DB::table('order_contents')->where('id', $order_content_id[$i])->update($contentsData);
                 }
 
-                if ($order_type == Order::ORDER_TYPE_PRODUCT_IN_DEVELOPMENT) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
+                $contentsData['prev_qty'] = $request->input('prev_qty')[$i];
+                if ($is_freehand == 0) {
+                    event(new PostSaveOrderEvent($contentsData));
+                }
+
+                if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
                 {
                     $productData = array(
                         'vendor_id' => $vendor_id,
@@ -1053,6 +1069,13 @@ class OrderController extends Controller
 
     public function postRestoreorder(Request $request)
     {
+        // set order status as deleted for multipe rows
+        $orderId = $request->input('ids');
+        $explanations = trim(strip_tags($request->input('explaination')));
+        $order = Order::withTrashed()->where('id', $orderId)->first();
+        if(empty($order)){
+            return Redirect::to('order')->with('messagetext', "Invalid Order")->with('msgstatus', 'error');
+        }
 
         $id = $request->input('ids');
         $explaination = $request->input('explaination');
@@ -1108,14 +1131,18 @@ class OrderController extends Controller
     public function postDelete(Request $request)
     {
         // set order status as deleted for multipe rows
-        $ids = $request->input('po_number');
+        $poNumbers = $request->input('po_number');
         $explaination = $request->input('explaination');
         $uid = \Session::get('uid');
         $query = "";
         $result = false;
-        for ($i = 0; $i < count($ids); $i++) {
-            $query = "update orders set notes = concat(notes,'<br>','" . $explaination[$i] . "'), deleted_at=NOW(), status_id=10, deleted_by=$uid where po_number='" . $ids[$i] . "'; ";
-            $result = \DB::update($query);
+        $orders = Order::whereIn('po_number',$poNumbers)->get();
+
+        $index = 0;
+        foreach($orders as $order){
+            $order->notes = $order->notes.'<br>'.trim(strip_tags($explaination[$index]));
+            $result = $order->delete();
+            $index++;
         }
 
         if ($result) {
@@ -2136,7 +2163,21 @@ public static function array_move($which, $where, $array)
         self::array_splice_assoc($array, $where, 0, $tmp);
         return $array;
     }
-
+    public static function changeProductReservedQtyOnRestoreOrder($order_id){
+        if($order_id>0) {
+            $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
+            $result = \DB::select($sql);
+            if(count($result)>0) {
+                $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
+                if(!empty($product)) {
+                    $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
+                    foreach($items as $itms){
+                        $res = \DB::update("update products set  reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
+                    }
+                }
+            }
+        }
+    }
     public function getCorrectOrdersBug242($step = '1'){
         die("Script blocked. To run this script please contact your development team. Thanks!");
 

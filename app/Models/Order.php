@@ -55,14 +55,14 @@ class order extends Sximo
         //Commented by Arslan
         // bug identified that deleting event has to call save to reflect column changes
         // strangley restore does not have to call save
-        static::deleting(function (Order $model) {
+        static::deleting(function(Order $model){
             $model->status_id = self::ORDER_DELETED_STATUS;
-            $model->deleted_by = \Session::get('uid');
+            $model->deleted_by =  \Session::get('uid');
             $model->save();
         });
 
         //separating pre delete and post delete functions
-        static::deleted(function (Order $model) {
+        static::deleted(function(Order $model){
             $model->restoreReservedProductQuantities();
         });
 
@@ -79,18 +79,16 @@ class order extends Sximo
         return $this->hasMany('App\Models\OrderContent');
     }
 
-    public function restoreReservedProductQuantities()
-    {
-        if ($this->is_freehand === 1) {
-            return;
+    public function restoreReservedProductQuantities(){
+        if($this->is_freehand === 1){
+            return ;
         }
         $this->adjustReservedProductQuantities();
     }
 
-    public function deleteReservedProductQuantities()
-    {
-        if ($this->is_freehand === 1) {
-            return;
+    public function deleteReservedProductQuantities(){
+        if($this->is_freehand === 1){
+            return ;
         }
         $this->adjustReservedProductQuantities(true);
     }
@@ -126,16 +124,14 @@ class order extends Sximo
         }
     }
 
-    public function canRestoreAllReservedProducts()
-    {
-        if (empty($this->contents) || $this->is_freehand === 1) {
+    public function canRestoreAllReservedProducts(){
+        if(empty($this->contents) || $this->is_freehand === 1){
             return true;
         }
         foreach ($this->contents as $orderContent) {
             $orderedProduct = $orderContent->product;
-            if (!empty($orderedProduct) && $orderedProduct->is_reserved == 1 && $orderedProduct->allow_negative_reserve_qty == 0 &&
-                $orderedProduct->reserved_qty < $orderContent->qty
-            ) {
+            if(!empty($orderedProduct) && $orderedProduct->is_reserved == 1 && $orderedProduct->allow_negative_reserve_qty == 0 &&
+                $orderedProduct->reserved_qty < $orderContent->qty){
                 return false;
             }
         }

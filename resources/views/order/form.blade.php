@@ -341,7 +341,9 @@
                                          required></td>
                         <td><br/> <input type='number' name='qty[]' placeholder='0' autocomplete="off"
 
-                                         class='calculate form-control qty' receive="0" min="1" step="1" id="qty" orderqty="0" placeholder="00"
+                                         class='calculate form-control qty' receive="0" min="1" step="1" id="qty"
+                                         orderqty="0"
+                                         placeholder="00"
                                          required>
                             <input type="hidden" name="prev_qty[]" value="0"/>
                         </td>
