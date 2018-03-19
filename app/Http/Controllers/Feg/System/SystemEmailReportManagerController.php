@@ -30,9 +30,7 @@ class SystemEmailReportManagerController extends Controller
             'pageDetails'       => array('url' => 'feg/system/systememailreportmanager', 'module' => 'systememailreportmanager'),
 			'return' 			=> 	self::returnUrl()
 		);
-        
-        $this->data['locationContactNames'] = \SiteHelpers::getUniqueLocationUserAssignmentMeta('id-label');
-        
+
         $this->data['users'] = $this->model->getUserEmailsIDAssociated();
         $this->data['userGroups'] = $this->model->getGroupNamesIDAssociated();
         $this->data['usersPerGroup'] = $this->model->getUsersOnGroupNamesIDAssociated();		

@@ -6,6 +6,7 @@ use App\Events\PostOrdersEvent;
 use App\Events\Event;
 use App\Events\PostSaveOrderEvent;
 use App\Http\Controllers\controller;
+use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
@@ -187,6 +188,7 @@ class OrderController extends Controller
 
     public function getIndex()
     {
+
         /*
         \App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
@@ -1423,7 +1425,7 @@ class OrderController extends Controller
                         'filename' => $filename,
                         'encoding' => 'base64',
                         'type' => 'application/pdf',
-                        'preferGoogleOAuthMail' => true
+                        'preferGoogleOAuthMail' => false
                     ];
                     if (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) {
 
