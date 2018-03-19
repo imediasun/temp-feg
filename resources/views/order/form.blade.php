@@ -1607,7 +1607,9 @@
                             $('#can_select_product_list').val(1);
                             $('.itemstable .clonedInput:not(:first-child)').remove();
                             $('.itemstable .clonedInput input.sku').attr('readonly','readonly');
-                            $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
+                            setTimeout(function () {
+                                $('.itemstable .clonedInput textarea.item').attr('readonly', 'readonly');
+                            }, 500);
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
                             $('#total_cost').val(0.00);
@@ -1623,7 +1625,9 @@
                             $('.clonedInput .item_name').attr('placeholder','Item Name');
                             $('.itemstable .clonedInput:not(:first-child)').remove();
                             $('.itemstable .clonedInput input.sku').removeAttr('readonly');
+                            setTimeout(function () {
                             $('.itemstable .clonedInput textarea.item').removeAttr('readonly');
+                            }, 500);
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
                             $('#total_cost').val(0.00);
