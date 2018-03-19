@@ -1749,4 +1749,27 @@ $message" .
         $html = preg_replace('/\<\/body[\s\S]*\/html\>/is', '', $html);
         return $html;
     }
+
+    public static function getDOMElementById($content, $ElementId)
+    {
+        $doc = new \DOMDocument();
+        $doc->loadHTML($content);
+        $Element = $doc->getElementById($ElementId);
+        return $Element;
+    }
+
+    public static function DOMinnerHTML(\DOMElement $element)
+    {
+        return $element->nodeValue;
+        /*$innerHTML = "";
+        $children  = $element->childNodes;
+
+        foreach ($children as $child)
+        {
+            $innerHTML .= $element->ownerDocument->saveHTML($child);
+        }
+
+        return $innerHTML;*/
+    }
+
 }
