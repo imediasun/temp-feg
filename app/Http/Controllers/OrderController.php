@@ -955,6 +955,36 @@ class OrderController extends Controller
 
     }
 
+    public function validateProductForReserveQty($request)
+    {
+        $item_names = $request->input('item_name');
+        $productInformation = [];
+        for ($i = 0; $i < count($item_names); $i++) {
+            $product = \DB::table('products')->where(['id' => $request->input('product_id')[$i], 'is_reserved' => 1])->first();
+            if (!empty($product)) {
+                $product->item_name = $item_names[$i];
+                $product->qty = $request->input('qty')[$i];
+                $product->prev_qty = $request->input('prev_qty')[$i];
+                $product->order_product_id = ($request->input('product_id')[$i] == $product->id) ? $request->input('product_id')[$i] : 0;
+                $productInformation[] = $product;
+            }
+        }
+
+        $collect = collect($productInformation);
+        $groups = $collect->groupBy('id');
+
+        $productInformationCombined = [];
+        //TODO: This functionality don't needed when double product restriction will be applied.
+        //This loop will combine duplicate products
+        foreach ($groups as $key => $group) {
+            $group[0]->qty = $group->sum('qty');
+            $group[0]->prev_qty = $group->sum('prev_qty');
+            $productInformationCombined[] = $group[0];
+        }
+
+        return event(new ordersEvent($productInformationCombined, $request->order_id))[0];
+    }
+
     public function getSaveOrSendEmail($isPop = null)
     {
         $order_id = \Session::get('order_id');
