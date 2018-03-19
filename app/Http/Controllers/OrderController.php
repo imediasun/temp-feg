@@ -1,9 +1,15 @@
 <?php namespace App\Http\Controllers;
 
+use App\Events\ordersEvent;
+use App\Events\PostEditOrderEvent;
+use App\Events\PostOrdersEvent;
+use App\Events\Event;
+use App\Events\PostSaveOrderEvent;
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
+use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
@@ -14,6 +20,7 @@ use App\Library\SximoDB;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
 use PHPMailerOAuth;
+use App\Models\ReservedQtyLog;
 
 class OrderController extends Controller
 {
@@ -366,7 +373,6 @@ class OrderController extends Controller
         return view('order.table', $this->data);
 
     }
-
 
     function getUpdate(Request $request, $id = 0, $mode = '')
     {
@@ -1261,11 +1267,7 @@ class OrderController extends Controller
                 if ($statusIdFilter == Order::ORDER_INSTALLED_AND_RETURNED_STATUS) {
                     $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "' OR (orders.status_id = '2' AND orders.tracking_number!='') ";
                 } else {
-                    /* if($statusIdFilter=="removed") {
-                         $orderStatusCondition = "AND orders.deleted_at is not null ";
-                     }else{*/
-                    $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "' ";
-                    /* }*/
+                    $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "'";
                 }
             }
 
@@ -1290,11 +1292,6 @@ class OrderController extends Controller
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
-   // dd($filter);
-        /*if ($statusIdFilter == "removed") {
-            $filter = str_replace("orders.status_id = 'removed'", " orders.deleted_at is not null ", $filter);
-        }*/
-        // dd( $filter);
         return $filter;
     }
 
@@ -1627,8 +1624,6 @@ class OrderController extends Controller
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
         }
-
-
         $rules = array();
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";

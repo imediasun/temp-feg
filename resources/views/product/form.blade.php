@@ -164,6 +164,22 @@
                             {{--<input class="form-control" placeholder="" parsley-type="number" required="required" id="expense_category_1" name="expense_category[1]" type="text" value="{{$row['expense_category']}}">--}}
                         </div>
                         <div class="col-md-2">
+                            @if(!empty($id))
+                                <?php
+                                $product = new \App\Models\product();
+                                $products = $product->checkProducts($id);
+                                $disabledcheckbox = '';
+                                if (count($products) > 1 && $row['is_default_expense_category']) {
+                                    $disabledcheckbox = 'disabled="disabled"';
+                                }
+                                ?>
+                                <label class='checked checkbox-inline'>
+                              <input type="hidden" {{ $disabledcheckbox }}   name="is_default_expense_category"
+                                     value="0"/>
+                                <input type='checkbox' {{ $disabledcheckbox }} name='is_default_expense_category'
+                                       value='1' class=''
+                                       @if($row['is_default_expense_category']==1) checked @endif /> Make Default</label>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group" id="retail_price_1">
@@ -299,6 +315,39 @@
 
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="allow_negative_reserve_qty" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Allow Negative Reserved Qty', (isset($fields['allow_negative_reserve_qty']['language'])?
+                            $fields['is_reserved']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6 check-no">
+                            <?php $allow_negative_reserve_qty = explode(",", $row['allow_negative_reserve_qty']); ?>
+                            <label class='checked checkbox-inline'>
+                                <input type="hidden" name="allow_negative_reserve_qty" value="0"/>
+                                <input type='checkbox' name='allow_negative_reserve_qty' value='1' class=''
+                                       @if(in_array('1',$allow_negative_reserve_qty))checked @endif
+                                /> </label>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Reserved Qty Limit" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Reserved Qty Par Amount', (isset($fields['reserved_qty_limit']['language'])?
+                            $fields['reserved_qty_limit']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            {!! Form::text('reserved_qty_limit', $row['reserved_qty_limit'],array('class'=>'form-control',
+                            'placeholder'=>'', )) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+
                     <div class="form-group  ">
                         <label for="Img" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Img', (isset($fields['img']['language'])?
@@ -673,7 +722,7 @@
                 ' </div> <div class="col-md-2"> </div> </div> ' +
                 '<div class="form-group"> <label for="Expense Category" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Expense Category", (isset($fields["expense_category"]["language"])? $fields["expense_category"]["language"] : array())) !!}</label> ' +
                 '<div class="col-md-6"><select name="expense_category['+types_counter+']" rows="5" id="expense_category_'+types_counter+'" class="select2"></select> ' +
-                '</div> <div class="col-md-2"></div> </div>' +
+                '</div> <div class="col-md-2"></div></div> </div>' +
                 '<div class="form-group" id="retail_price_'+types_counter+'"> <label for="Retail Price" class="control-label col-md-4 text-left addcolon">Retail Price </label> ' +
                 '<div class="col-md-6"> ' +
                 '<div class="input-group ig-full"> <span class="input-group-addon">$</span> <input class="form-control parsley-validated retail_prices" placeholder="0.00" type="text" parsley-min="0" step="1" id="retail_input_'+types_counter+'" name="retail_price['+types_counter+']" value=""> </div> </div>' +
@@ -699,6 +748,12 @@
     });
     $(".fixDecimal").blur(function () {
         $(this).val($(this).fixDecimal());
+    });
+    $("checkbox[name='is_default_expense_category[]']").change(function () {
+        // if($(this).is(":checked")){
+        $("checkbox[name='is_default_expense_category[]']").prop("checked", false);
+        $(this).prop("checked", true);
+        //}
     });
 
 </script>

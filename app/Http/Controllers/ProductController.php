@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\Types\Null_;
 use Validator, Input, Redirect,Image;
 
 class ProductController extends Controller
@@ -299,6 +302,7 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
         //to remove the extra spaces im between the string
         $request->vendor_description = trim(preg_replace('/\s+/',' ', $request->vendor_description));
 
@@ -332,6 +336,7 @@ class ProductController extends Controller
             }
         ;
         }
+
         if ($request->hasFile('img'))
         {
             $file = $request->file('img');
@@ -355,6 +360,8 @@ class ProductController extends Controller
         {
             $rules['expense_category'] = 'required';
         }*/
+        $_POST['allow_negative_reserve_qty'] = 0;
+        unset($_POST['inactive_by']);
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
@@ -363,6 +370,7 @@ class ProductController extends Controller
             if ($id == 0) {
                 $data = $this->validatePost('products');
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
+
             }
             else {
                 //for inline editing all fields do not get saved
@@ -388,9 +396,18 @@ class ProductController extends Controller
 
             }
 
+            if (isset($data['inactive'])) {
+                if ($data['inactive']) {
+                    $data['inactive_by'] = Auth::user()->id;
+                } else {
+                    $data['inactive_by'] = NULL;
+                }
+            }
+
             if(is_array($product_categories) && $id > 0){
 
                 $products_combined = $this->model->checkProducts($id);
+                unset($data['is_default_expense_category']);
                 $data_attached_products= $data;
 
                 foreach($products_combined as $pc){
@@ -410,6 +427,7 @@ class ProductController extends Controller
                         unset($data_attached_products['retail_price']);
                         unset($data_attached_products['ticket_value']);
                         unset($data_attached_products['inactive']);
+                        unset($data_attached_products['inactive_by']);
                         unset($data_attached_products['in_development']);
 
                         $this->model->insertRow($data_attached_products,$pc->id);
@@ -417,6 +435,11 @@ class ProductController extends Controller
                     $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     $this->model->insertRow($netsuite_description, $pc->id);
                 }
+                $isDefaultExpenseCategory = $request->input("is_default_expense_category");
+                if ($id > 0 && $isDefaultExpenseCategory > 0) {
+                    $this->model->setDefaultExpenseCategory($id);
+                }
+
             }elseif(is_array($product_categories))
             {
 
@@ -438,6 +461,7 @@ class ProductController extends Controller
                     }*/
                     $ids[] = $this->model->insertRow($prodData, $id);
                 }
+
                 foreach ($ids as $id)
                 {
                     $postedtoNetSuite = $data['vendor_description'];
@@ -457,7 +481,9 @@ class ProductController extends Controller
 
                     }
                     $this->model->insertRow($updates, $id);
+                    $this->model->setFirstDefaultExpenseCategory($id);
                 }
+
             }
             else
             {
@@ -487,8 +513,6 @@ class ProductController extends Controller
                     $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     $this->model->insertRow($netsuite_description, $pc->id);
                 }
-
-
             }
 
             return response()->json(array(
@@ -515,17 +539,90 @@ class ProductController extends Controller
                 'status' => 'error',
                 'message' => \Lang::get('core.note_restric')
             ));
-            die;
-
         }
+        $errorMessages = [];
+        $ids = $request->input('ids');
         // delete multipe rows
-        if (count($request->input('ids')) >= 1) {
-            $this->model->destroy($request->input('ids'));
+        if (count($ids) >= 1) {
+            $deletedIds = [];
+            $errorId = [];
+            $variationsErrorId = [];
+            foreach ($ids as $id) {
+                if (!in_array($id, $deletedIds)) {
+                    $productVariation = Product::find($id);
+                    $productVariations = $productVariation->getProductVariations();
+                    $variations = new Collection();
+                    foreach ($productVariations as $productVariation) {
+                        if (in_array($productVariation->id, $ids)) {
+                            //$variations[] = $productVariation;
+                            $variations->add($productVariation);
+                        }
+                    }
+                    //case when user has selected all variations of a product then delete all variations
+                    if ($productVariations->count() == $variations->count()) {
 
-            return response()->json(array(
+                        $variations->each(function ($product) {
+                            $product->delete();
+                        });
+                        foreach ($variations as $variation) {
+                            $deletedIds[] = $variation->id;
+                        }
+                    } else if ($productVariations->count() - 1 == $variations->count()) {
+
+                        //delete all variation including default varation
+                        $variations->each(function ($product) {
+                            $product->delete();
+                        });
+                        $remainingItem = $productVariations->diff($variations);
+                        $remainingItem->each(function ($product) {
+                            $product->is_default_expense_category = 1;
+                            $product->save();
+                        });
+                        foreach ($variations as $variation) {
+                            $deletedIds[] = $variation->id;
+                        }
+                    } else if ($productVariations->count() > $variations->count()) {
+
+                        foreach ($variations as $productVariation) {
+                            if ($productVariation->is_default_expense_category == 1) {
+                                //Need to test that
+                                foreach ($variations as $variation) {
+                                    $errorId[] = $variation->id;
+                                }
+                                if (!in_array($productVariation->id, $variationsErrorId)) {
+                                    $variationsErrorId[] = $productVariation->id;
+                                    $errorMessages[] = [
+                                        'status' => 'error',
+                                        'message' => "Selected product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category before removing this variant."
+                                    ];
+                                }
+
+                            }
+                        }
+                    }
+                    if (!in_array($id, $errorId)) {
+                        $this->model->destroy([$id]);
+                    }
+                }
+            }
+
+            if (count($errorMessages) > 0) {
+                return response()->json($errorMessages);
+            }
+
+            /* $hasDefaultExpenseCategory = $this->model->hasDefaultExpenseCategory($id);
+             if ($hasDefaultExpenseCategory == true) {
+                 return response()->json(array(
+                     'status' => 'error',
+                     'message' => "Selected product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category before removing this variant."
+                 ));
+             }*/
+            //$this->model->destroy($request->input('ids'));
+
+            return response()->json([array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success_delete')
-            ));
+            )]);
         } else {
             return response()->json(array(
                 'status' => 'error',
@@ -621,15 +718,9 @@ class ProductController extends Controller
         $isActive = $request->get('isActive');
         $productId = $request->get('productId');
         if ($isActive == "true") {
-            $update = \DB::update('update products set inactive = 1 where id=' . $productId);
-        }
-        else
-         {
-            $update = \DB::update('update products set inactive = 0,in_development = 0 where id=' . $productId);
-             /*if($update &&  \Session::get('product_type') == "productsindevelopment")
-             {
-                 \DB::update('update products set in_development = 0 where id=' . $productId);
-             }*/
+            $update = \DB::update('update products set inactive = 1, inactive_by = ' . Auth::user()->id . ' where id=' . $productId);
+        } else {
+            $update = \DB::update('update products set inactive = 0, in_development = 0, inactive_by = NULL where id=' . $productId);
         }
         if ($update) {
             return response()->json(array(
@@ -698,5 +789,26 @@ class ProductController extends Controller
             $items[] = [$category->id, $category->mapped_expense_category];
         }
         return $items;
+    }
+    public function postSetdefaultcategory(Request $request)
+    {
+        $id = $request->input('productId');
+        $isdefaultexp = (bool)$request->input('isdefault');
+        $searchProduct = Product::find($id);
+        $products = $this->model->checkProducts($id);
+
+        if ($isdefaultexp == 0 && count($products) > 1 && $searchProduct->is_default_expense_category == 1) {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => "This product variant currently defines the default expense category for this product in the Products API. Please mark a different variant of this product as the default expense category."
+            ));
+        } elseif (count($products) == 1) {
+            $searchProduct->is_default_expense_category = $isdefaultexp;
+            $searchProduct->save();
+
+            //  $this->model->toggleDefaultExpenseCategory($isdefaultexp,$id);
+        } else {
+            $this->model->setDefaultExpenseCategory($id);
+        }
     }
 }

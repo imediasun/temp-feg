@@ -53,7 +53,7 @@ width: 75%">
             @endif
             @if($access['is_remove'] ==1)
                 <a href="javascript://ajax" class="btn btn-sm btn-white float-margin"
-                   onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i
+                   onclick="ajaxRemoveProduct('#{{ $pageModule }}','{{ $pageUrl }}');// ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i
                             class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
             @endif
             @endif

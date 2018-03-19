@@ -9,6 +9,7 @@ class product extends Sximo  {
 	
 	protected $table = 'products';
 	protected $primaryKey = 'id';
+    protected $guarded = [];
 
 	public function __construct() {
 		parent::__construct();
@@ -31,23 +32,23 @@ class product extends Sximo  {
 	}
 
     public static function querySelectAPI(){
-        return "SELECT products.*, 
-                GROUP_CONCAT(O.order_type) AS `prod_type`,
-                GROUP_CONCAT(vendor.vendor_name) AS `vendor`,
-                GROUP_CONCAT(IF(products.hot_item = 1,CONCAT('',products.vendor_description,' **HOT ITEM**'), products.vendor_description)) AS `prod_description`,
-                GROUP_CONCAT(TRUNCATE(products.case_price/num_items,5)) AS `unit_pricing`,
-                GROUP_CONCAT(T.type_description) AS `product_type`,
-                GROUP_CONCAT(products.id) AS `product_id`,
-                GROUP_CONCAT(IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price)) AS `retail_price`,
-                GROUP_CONCAT(O.order_type) AS prod_type_id,
-                GROUP_CONCAT(T.type_description) AS prod_sub_type_id,
-                GROUP_CONCAT(expense_category) AS expense_category,
-                GROUP_CONCAT(ticket_value) AS ticket_value,
-                GROUP_CONCAT(inactive) AS inactive
-                
-                FROM `products` LEFT JOIN vendor ON (products.vendor_id = vendor.id)
-                LEFT JOIN order_type O ON (O.id = products.prod_type_id)
-                LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id)";
+        $sql = ' SELECT products.*, ';
+        $sql .= ' GROUP_CONCAT(O.order_type) AS `prod_type`, ';
+        $sql .= ' GROUP_CONCAT(vendor.vendor_name) AS `vendor`, ';
+        $sql .= " GROUP_CONCAT(IF(products.hot_item = 1,CONCAT('',products.vendor_description,' **HOT ITEM**'), products.vendor_description)) AS `prod_description`,";
+        $sql .= " GROUP_CONCAT(TRUNCATE(products.case_price/num_items,5)) AS `unit_pricing`,";
+        $sql .= " GROUP_CONCAT(T.type_description) AS `product_type`,";
+        $sql .= " GROUP_CONCAT(products.id) AS `product_id`,";
+        $sql .= " GROUP_CONCAT(IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price)) AS `retail_price`,";
+        $sql .= " GROUP_CONCAT(O.order_type) AS prod_type_id,";
+        $sql .= " GROUP_CONCAT(T.type_description) AS prod_sub_type_id,";
+        $sql .= " (SELECT expense_category FROM products expns_p WHERE expns_p.sku=products.sku AND expns_p.vendor_description=products.vendor_description AND expns_p.is_default_expense_category=1) AS expense_category, ";
+        $sql .= "  GROUP_CONCAT(ticket_value) AS ticket_value,";
+        $sql .= "  GROUP_CONCAT(inactive) AS inactive";
+        $sql .= "  FROM `products` LEFT JOIN vendor ON (products.vendor_id = vendor.id)";
+        $sql .= "  LEFT JOIN order_type O ON (O.id = products.prod_type_id)";
+        $sql .= "  LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id) ";
+        return $sql;
     }
 
 	public static function queryWhere($product_list_type=null,$active=0,$sub_type=null){
@@ -259,10 +260,107 @@ class product extends Sximo  {
 
     public function checkProducts($id){
         $product = DB::table('products')->where(['id'=>$id])->first();
-
-        $products = DB::table('products')->where(['vendor_description'=>$product->vendor_description,'sku'=>$product->sku])->get();
-
+        $products = DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
         return $products;
+    }
+
+    public function checkIsDefaultExpenseCategory($id)
+    {
+        $product = DB::table('products')->where(['id' => $id])->first();
+        if ($product->is_default_expense_category == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function hasDefaultExpenseCategory($id)
+    {
+
+        $searchProduct = $this->checkIsDefaultExpenseCategory($id);
+
+        $products = $this->checkProducts($id);
+        if (count($products) == 1) {
+            return false;
+        } elseif ($searchProduct == true) {
+            return true;
+        } elseif ($searchProduct == false) {
+            return false;
+        } elseif (count($products) > 1) {
+            foreach ($products as $product) {
+                if ($product->is_default_expense_category == 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public function setFirstDefaultExpenseCategory($id)
+    {
+        $products = $this->checkProducts($id);
+        $first = 1;
+        foreach ($products as $product) {
+            $item = self::find($product->id);
+            if ($first == 1) {
+                $item->is_default_expense_category = 1;
+                $first = 2;
+            } else {
+                $item->is_default_expense_category = 0;
+            }
+            $item->save();
+        }
+    }
+
+    public function setDefaultExpenseCategory($id)
+    {
+        $products = $this->checkProducts($id);
+
+        foreach ($products as $product) {
+            $item = self::find($product->id);
+            if ($id == $item->id) {
+                $item->is_default_expense_category = 1;
+            } else {
+                $item->is_default_expense_category = 0;
+            }
+            $item->save();
+        }
+    }
+
+    public function toggleDefaultExpenseCategory($state, $id)
+    {
+        $item = self::find($id);
+        if ($state) {
+            $item->is_default_expense_category = 1;
+        } else {
+            $item->is_default_expense_category = 0;
+        }
+        $item->save();
+    }
+
+    public function updateProduct($attributes = array(), $override_inactive = false)
+    {
+
+        if (empty($attributes)) {
+            return false;
+        }
+        $items = $this->getProductVariations();
+        foreach ($items as $item) {
+            $updates = $attributes;
+            if ($override_inactive and isset($updates['inactive']) and $updates['inactive'] == 0) {
+                $updates['inactive'] = ($item->inactive_by) ? 1 : 0;
+            }
+            $item->update($updates);
+        }
+        return true;
+
+    }
+
+
+    public function getProductVariations()
+    {
+        $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price' => $this->case_price])->get();
+        return $items;
     }
 
 
