@@ -75,6 +75,32 @@
                                     </select>
                                 </td>
                             </tr>
+                            <tr>
+                                <!--<td>1</td>-->
+                                <td>New Graphics Request Content For Sender</td>
+
+                                <td>New graphics request conent for sender</td>
+                                <td>
+                                    <textarea name="newgraphicsrequestsendercontent" class="form-control"
+                                              rows="7"></textarea>
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <!--<td>1</td>-->
+                                <td>New Graphics Request Content For Receiver</td>
+
+                                <td>New graphics request conent for receiver</td>
+                                <td>
+                                    <textarea name="newgraphicsrequestreceivercontent" class="form-control"
+                                              rows="7"></textarea>
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
