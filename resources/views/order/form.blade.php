@@ -315,6 +315,13 @@
                     </thead>
 
                     <tbody>
+                    <?php
+                    // Disable order items for Non-Freehand orders and Orders from Store
+                    $readOnlyItem = 'freehand="1" onfocus="init(this.id,this);"';
+                    if ((is_object($row) && $row->is_freehand != 1) || $fromStore == 1) {
+                        $readOnlyItem = 'readonly freehand="0"';
+                    }
+                    ?>
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
                                         style="width:30px;border:none;background:none"/></td>
@@ -322,8 +329,8 @@
                                     /></td>
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
-                                         class='form-control item_name mysearch' onfocus="init(this.id,this)"
-                                         maxlength="225" required>
+                                         class='form-control item_name mysearch' {!! $readOnlyItem !!}  maxlength="225"
+                                         required>
                         </td>
                         <td>
                             <textarea name='item[]' {{  is_object($row) ? $fromStore == 1?'readonly':$row->is_freehand != 1 ?'readonly': '':'readonly' }} placeholder='Item  Description' id="item"
@@ -463,6 +470,7 @@
         console.log(type_permissions);
         console.log('Createing order '+show_freehand);
         $(document).ready(function () {
+
             if(mode == 'SID'){
                 $("#wrapper").css("pointer-events","all");
             }
@@ -981,6 +989,13 @@
                                     }
                                 }
                             });
+                            setTimeout(function () {
+                                var item = $(".item_name").last();
+                                if (Number(item.attr("freehand")) == 0) {
+                                    $(".item_name").last().attr("onfocus", "init(this.id,this);");
+                                    $('.item_name').last().removeAttr('readonly');
+                                }
+                            }, 500);
                         },
                         cancel:function(){
 
@@ -1212,6 +1227,13 @@
             // $('input[name^=price],input[name^=case_price],input[name^=qty]').parsley().reset();
 
             handleItemCount('add');
+            setTimeout(function () {
+                var item = $(".item_name").last();
+                if (Number(item.attr("freehand")) == 0) {
+                    $(".item_name").last().attr("onfocus", "init(this.id,this);");
+                    $('.item_name').last().removeAttr('readonly');
+                }
+            }, 500);
             $(".calculate").keyup(function () {
                 calculateSum();
             }).blur(function () {
@@ -1640,6 +1662,23 @@
                     $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                     $('.itemstable .clonedInput:first-child textarea').val('');
                 }
+            }
+            if (currentElm.data('status') == 'enabled') {
+                setTimeout(function () {
+                    var item = $(".item_name").last();
+
+                    $(".item_name").last().removeAttr("onfocus", "init(this.id,this);");
+                    $('.item_name').last().removeAttr('readonly');
+
+                }, 500);
+            } else {
+                setTimeout(function () {
+                    var item = $(".item_name").last();
+
+                    $(".item_name").last().attr("onfocus", "init(this.id,this);");
+                    $('.item_name').last().removeAttr('readonly');
+
+                }, 500);
             }
         });
     </script>
