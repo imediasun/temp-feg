@@ -488,12 +488,9 @@ class ProductController extends Controller
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
-        /*if($id != 0)
-        {
+
             $rules['expense_category'] = 'required';
-        }*/
-        $_POST['allow_negative_reserve_qty'] = 0;
-        unset($_POST['inactive_by']);
+
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
@@ -909,16 +906,23 @@ class ProductController extends Controller
 }
 
     function getExpenseCategoryGroups(){
-        $expense_category=\DB::table('expense_category_mapping')
-            ->select('mapped_expense_category as id', 'mapped_expense_category')
-            ->groupBy('mapped_expense_category')->get();
+        $expense_category = \DB::select("SELECT expense_category_mapping.id,expense_category_mapping.mapped_expense_category,order_type.`order_type`,CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | ')) as order_type
+FROM expense_category_mapping
+JOIN order_type ON order_type.id = expense_category_mapping.order_type
+WHERE product_type IS NULL
+GROUP BY mapped_expense_category");
         $items = [];
-        foreach ($expense_category as $key => $category){
-            if($category->mapped_expense_category == 0)
-            {
-                $category->mapped_expense_category = "N/A";
+        foreach ($expense_category as $category) {
+            $orderType = $category->order_type;
+            $categoryId = $category->mapped_expense_category;
+            if ($categoryId == 0) {
+                /* $orderType = "N/A";
+                 $categoryId = "";
+                */
+            } else {
+
+                $items[] = [$categoryId, $orderType];
             }
-            $items[] = [$category->id, $category->mapped_expense_category];
         }
         return $items;
     }
@@ -937,10 +941,11 @@ GROUP BY mapped_expense_category");
             $orderType = $category->order_type;
             $categoryId = $category->mapped_expense_category;
             if ($categoryId == 0) {
-                $orderType = "N/A";
-                $categoryId = "";
+                /* $orderType = "N/A";
+                 $categoryId = "";*/
+            } else {
+                $items[] = '<option value="' . $categoryId . '"> ' . $orderType . ' </option>';
             }
-            $items[] = '<option value="' . $categoryId . '"> ' . $orderType . ' </option>';
 
         }
         $options = implode("", $items);

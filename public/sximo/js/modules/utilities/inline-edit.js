@@ -342,9 +342,8 @@
         if ($(el).length > 0) {
             $(el + " option:contains('N/A')").remove();
             $(el).find('option').get(0).remove();
-
-            $(el).prepend('<option value="">N/A</option>');
-            $(el).prepend('<option value=""> -- Select  -- </option>');
+            $(el).prop("required", true);
+            $(el).prepend('<option value=""> -- Please Select  -- </option>');
         }
 
     };
