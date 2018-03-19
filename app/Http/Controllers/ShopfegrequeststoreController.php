@@ -7,7 +7,7 @@ use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, URL;
-use App\Models\ordersetting;
+use App\Models\Ordersetting;
 
 class ShopfegrequeststoreController extends Controller
 {
