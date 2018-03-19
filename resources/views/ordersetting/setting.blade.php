@@ -82,7 +82,7 @@
                                 <td>New graphics request conent for sender</td>
                                 <td>
                                     <textarea name="newgraphicsrequestsendercontent" class="form-control"
-                                              rows="7"></textarea>
+                                              rows="7">{{ $GraphicsSender }}</textarea>
                                 </td>
                                 <td>
 
@@ -95,7 +95,7 @@
                                 <td>New graphics request conent for receiver</td>
                                 <td>
                                     <textarea name="newgraphicsrequestreceivercontent" class="form-control"
-                                              rows="7"></textarea>
+                                              rows="7">{{ $GraphicsReceiver }}</textarea>
                                 </td>
                                 <td>
 

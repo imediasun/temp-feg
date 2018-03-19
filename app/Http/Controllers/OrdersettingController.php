@@ -55,10 +55,21 @@ class OrdersettingController extends Controller
                 $NonMerchandiseOrderTypes[] = $SettingContent->ordertype_id;
             }
         }
+        $GraphicsSender = "";
+        $GraphicsReceiver = "";
+
+        $GraphicsRequestSetting = $this->model->where("is_graphics_setting", 1)->first();
+        if ($GraphicsRequestSetting) {
+            $GraphicsSender = $GraphicsRequestSetting->graphics_sender_content;
+            $GraphicsReceiver = $GraphicsRequestSetting->graphics_recever_content;
+        }
+
         $this->data['MerchandisePO'] = $MerchandiseSetting;
         $this->data['NonMerchandisePO'] = $NonMerchandiseSetting;
         $this->data['MerchandiseOrder'] = implode(",", $MerchandiseOrderTypes);
         $this->data['NonMerchandiseOrder'] = implode(",", $NonMerchandiseOrderTypes);
+        $this->data['GraphicsSender'] = $GraphicsSender;
+        $this->data['GraphicsReceiver'] = $GraphicsReceiver;
 
         $this->data['access'] = $this->access;
         return view('ordersetting.setting', $this->data);
@@ -71,6 +82,8 @@ class OrdersettingController extends Controller
         $NonmerchandisePONote = $request->input('NonmerchandisePONote');
         $merchandiseOrderTypes = $request->input('merchandiseordertypes');
         $NonMerchandiseOrderTypes = $request->input('Nonmerchandiseordertypes');
+        $GraphicsRequestSenderContent = $request->input('newgraphicsrequestsendercontent');
+        $GraphicsRequestReceiverContent = $request->input('newgraphicsrequestreceivercontent');
         if (is_array($merchandiseOrderTypes) && is_array($NonMerchandiseOrderTypes)) {
             if (count(array_intersect($merchandiseOrderTypes, $NonMerchandiseOrderTypes)) > 0) {
                 return response()->json(array(
@@ -120,6 +133,12 @@ class OrdersettingController extends Controller
                 $Ordersettingcontent->save();
             }
         }
+
+        $GraphicsRequestSetting = $this->model->firstOrNew(["is_graphics_setting" => 1]);
+        $GraphicsRequestSetting->graphics_sender_content = $GraphicsRequestSenderContent;
+        $GraphicsRequestSetting->graphics_recever_content = $GraphicsRequestReceiverContent;
+        $GraphicsRequestSetting->is_graphics_setting = 1;
+        $GraphicsRequestSetting->save();
 
 
         return response()->json(array(
