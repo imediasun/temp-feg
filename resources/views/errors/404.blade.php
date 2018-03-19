@@ -32,9 +32,8 @@
                                style="vertical-align: middle;  font-size: 33px; line-height: 40px; left: 2px; position: relative;"></i>
                         </div>
                         <div class="col-md-9">
-                            <p>Oops! Something zigged when it should have zagged and you ended up here. Probably, you
-                                didn't want to end up here. Please click your browser's BACK button and reload the
-                                page.</p>
+                            <p>Oops! Something zigged when it should have zagged. Probably, you did not want to end up
+                                here. Please click your browser's BACK button and reload the page.</p>
 
                             <p>If you continue to arrive here, please contact the department head managing the module
                                 you were using.</p>
