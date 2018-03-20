@@ -5,6 +5,7 @@ use App\Http\Controllers\controller;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect;
 use App\Models\Core\Groups;
+use App\Models\Sximo;
 
 
 class MenuController extends Controller
@@ -56,6 +57,13 @@ class MenuController extends Controller
         $this->data['groups'] = \DB::select(" SELECT * FROM tb_groups ");
         $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
         $this->data['active'] = $pos;
+        echo "<pre>";
+        $sximo = new Sximo();
+        $info = Sximo::makeInfo($this->data['row']['module']);
+        //print_r($info);die;
+        $accessing['access'] = $sximo->validAccess($info['id']);
+        print_r($accessing);
+        die;
         return view('sximo.menu.index', $this->data);
     }
 
