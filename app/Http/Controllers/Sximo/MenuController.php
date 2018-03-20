@@ -18,6 +18,7 @@ class MenuController extends Controller
         $this->info = $this->model->makeInfo('menu');
         $this->access = $this->model->validAccess($this->info['id']);
         $this->data['pageTitle'] = "Menu Management";
+        $this->data['groups'] = \DB::select(" SELECT * FROM tb_groups ");
     }
 
 
@@ -57,13 +58,14 @@ class MenuController extends Controller
         $this->data['groups'] = \DB::select(" SELECT * FROM tb_groups ");
         $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
         $this->data['active'] = $pos;
-        echo "<pre>";
+        $this->data['usergroupAccess'] = [];
         $sximo = new Sximo();
         $info = Sximo::makeInfo($this->data['row']['module']);
-        //print_r($info);die;
-        $accessing['access'] = $sximo->validAccess($info['id']);
-        print_r($accessing);
-        die;
+        if (isset($info['id'])) {
+
+            $this->data['usergroupAccess'] = $sximo->moduleViewAccess($info['id']);
+        }
+
         return view('sximo.menu.index', $this->data);
     }
 
@@ -172,6 +174,69 @@ class MenuController extends Controller
         return Redirect::to('feg/menu')
             ->with('messagetext', 'Successfully deleted row!')->with('msgstatus', 'success');
 
+    }
+
+    public function postViewPermission(Request $request)
+    {
+
+        $module_name = $request->input('module_name');
+        $sximo = new Sximo();
+        $info = Sximo::makeInfo($module_name);
+        $html = '';
+        if (isset($info['id'])) {
+
+            $usergroupAccess = $sximo->moduleViewAccess($info['id']);
+
+            foreach ($this->data['groups'] as $group) {
+                $checked = '';
+
+                if (in_array($group->group_id, $usergroupAccess)) {
+                    $checked = ' checked="checked"';
+                    $html .= '<label class="checkbox">
+                           <div class="icheckbox_square-blue checked disabled" style="position: relative;"> <input disabled type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                            ' . $group->name . '
+                        </label>';
+                } else {
+                    $html .= '<label class="checkbox disabled">
+                           <div class="icheckbox_square-blue " style="position: relative;"> <input disabled type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                            ' . $group->name . '
+                        </label>';
+                }
+
+            }
+        } else {
+
+            $PagePermision = \DB::table("tb_pages")->where("alias", '=', $module_name)->first();
+
+            $PagePermision = (array)json_decode($PagePermision->access);
+            $keys = array_keys($PagePermision);
+            $permission = [];
+            foreach ($PagePermision as $key => $value) {
+                if ($value == 1) {
+                    $permission[] = $key;
+                }
+            }
+
+            foreach ($this->data['groups'] as $group) {
+                $checked = '';
+
+                if (in_array($group->group_id, $permission)) {
+                    $checked = ' checked="checked"';
+                    $html .= '<label class="checkbox">
+                           <div class="icheckbox_square-blue checked disabled" style="position: relative;"> <input disabled type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                            ' . $group->name . '
+                        </label>';
+                } else {
+                    $html .= '<label class="checkbox disabled">
+                           <div class="icheckbox_square-blue " style="position: relative;"> <input disabled type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                            ' . $group->name . '
+                        </label>';
+                }
+
+            }
+
+        }
+        return $html;
     }
 
 

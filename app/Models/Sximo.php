@@ -405,6 +405,26 @@ class Sximo extends Model {
         }
     }
 
+    function moduleViewAccess($id)
+    {
+        $row = \DB::table('tb_groups_access')->where('module_id', '=', $id)->get();
+        $Permissions = array_map(function ($row) {
+            $AccessData = (array)\GuzzleHttp\json_decode($row->access_data);
+            if ($AccessData['is_view'] == 1) {
+                return $row->group_id;
+            }
+        }, $row);
+        $Permissions = array_filter($Permissions, function ($var) {
+            return !is_null($var);
+        });
+        if (is_array($Permissions)) {
+            return $Permissions;
+        } else {
+            return [$Permissions];
+        }
+
+    }
+
     function validPageAccess($page, $groupId = null) {
         if (empty($groupId)) {
             $groupId = \Session::get('gid');

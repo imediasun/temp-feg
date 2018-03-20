@@ -177,8 +177,8 @@
 				  <div class="form-group  int-link" >
 					<label for="ipt" class=" control-label col-md-4 text-right"> Module </label>
 					<div class="col-md-8">
-					  <select name='module' rows='5' id='module'  style="width:100%"
-							class='select-liquid '    >
+                        <select name='module' rows='5' id='module' style="width:100%"
+                                class='select-liquid '    >
 							<option value=""> -- Select Module or Page -- </option>
 							<optgroup label="Module ">
 							@foreach($modules as $mod)
@@ -245,18 +245,20 @@
 
 			  <div class="form-group">
 				<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_maccess') }}  <code>*</code></label>
-				<div class="col-md-8">
-						<?php 
-					$pers = json_decode($row['access_data'],true);
+                  <div class="col-md-8 menupermissions">
+                      <?php
+
 					foreach($groups as $group) {
 						$checked = '';
-						if(isset($pers[$group->group_id]) && $pers[$group->group_id]=='1')
-						{
-							$checked= ' checked="checked"';
-						}						
+
+                      if (in_array($group->group_id, $usergroupAccess)) {
+                          $checked = ' checked="checked"';
+                      }
 							?>		
 				  <label class="checkbox">
-				  <input type="checkbox" name="groups[<?php echo $group->group_id;?>]" value="<?php echo $group->group_id;?>" <?php echo $checked;?>  />   
+                      <input type="checkbox" disabled onclick="return false;"
+                             name="groups[<?php echo $group->group_id;?>]"
+                             value="<?php echo $group->group_id;?>" <?php echo $checked;?> />
 				  <?php echo $group->name;?>  
 				  </label>
 			
@@ -341,6 +343,19 @@ function mType( val )
 		}	
 }
 
+$("select[name='module']").change(function () {
+    var module_name = $(this).val();
+
+    $.ajax({
+        type: "POST",
+        url: '{{ url('feg/menu/') }}/view-permission',
+        data: {module_name: module_name},
+        success: function (response) {
+            $(".menupermissions").html(response);
+        }
+    })
+
+});
 	
 function update_out(selector, sel2){
 	
