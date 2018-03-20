@@ -223,12 +223,12 @@ class MenuController extends Controller
                 if (in_array($group->group_id, $permission)) {
                     $checked = ' checked="checked"';
                     $html .= '<label class="checkbox">
-                           <div class="icheckbox_square-blue checked disabled" style="position: relative;"> <input disabled type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                           <div class="icheckbox_square-blue checked disabled" style="position: relative;"> <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
                             ' . $group->name . '
                         </label>';
                 } else {
                     $html .= '<label class="checkbox disabled">
-                           <div class="icheckbox_square-blue " style="position: relative;"> <input disabled type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                           <div class="icheckbox_square-blue " style="position: relative;"> <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
                             ' . $group->name . '
                         </label>';
                 }
