@@ -256,7 +256,7 @@
                       }
 							?>		
 				  <label class="checkbox">
-                      <input type="checkbox" onclick="return false;"
+                      <input type="checkbox"
                              name="groups[<?php echo $group->group_id;?>]"
                              value="<?php echo $group->group_id;?>" <?php echo $checked;?> />
 				  <?php echo $group->name;?>  

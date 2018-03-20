@@ -219,16 +219,17 @@ class MenuController extends Controller
 
             foreach ($this->data['groups'] as $group) {
                 $checked = '';
-
+                $onclick = "onclick='$(this).children(\":first\").toggleClass(";;
+                $onclick .= "\"checked\");'";
                 if (in_array($group->group_id, $permission)) {
                     $checked = ' checked="checked"';
-                    $html .= '<label class="checkbox">
-                           <div class="icheckbox_square-blue checked disabled" style="position: relative;"> <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                    $html .= '<label class="checkbox" ' . $onclick . '>
+                           <div class="icheckbox_square-blue checked "   style="position: relative;"> <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
                             ' . $group->name . '
                         </label>';
                 } else {
-                    $html .= '<label class="checkbox disabled">
-                           <div class="icheckbox_square-blue " style="position: relative;"> <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                    $html .= '<label class="checkbox " ' . $onclick . '>
+                           <div class="icheckbox_square-blue "   style="position: relative;"> <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
                             ' . $group->name . '
                         </label>';
                 }
