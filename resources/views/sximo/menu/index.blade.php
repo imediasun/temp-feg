@@ -360,6 +360,7 @@ function mType( val )
         else {
 			$('.ext-link').hide(); 
 			$('.int-link').show();
+			$("select[name='module']").change();
 			permisionoverlay.style.display = 'block';
 		}
 
