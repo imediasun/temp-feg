@@ -247,18 +247,26 @@
 				<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_maccess') }}  <code>*</code></label>
 				  <div class="col-md-8 menupermissions" style="position: relative;">
 					  <div id="permission-overlay"
-						   style=" z-index:1000; cursor:not-allowed; background:rgba(128, 128, 128, 0);; width: 100%; height: 100%; position: absolute;"></div>
+						   style=" <?php if ($row['menu_type'] == "external") {
+							   echo "display:none;";
+						   } ?> z-index:1000; cursor:not-allowed; background:rgba(128, 128, 128, 0);; width: 100%; height: 100%; position: absolute;"></div>
                       <?php
-					  if ($row['menu_type'] == "external") {
-
-					  }
 
 					foreach($groups as $group) {
 						$checked = '';
 
-                      if (in_array($group->group_id, $usergroupAccess)) {
-                          $checked = ' checked="checked"';
-                      }
+
+					  if ($row['menu_type'] == "external") {
+						  $pers = json_decode($row['access_data'], true);
+						  if (isset($pers[$group->group_id]) && $pers[$group->group_id] == '1') {
+							  $checked = ' checked="checked"';
+						  }
+					  } else {
+						  if (in_array($group->group_id, $usergroupAccess)) {
+							  $checked = ' checked="checked"';
+						  }
+					  }
+
 							?>		
 				  <label class="checkbox">
                       <input type="checkbox"
