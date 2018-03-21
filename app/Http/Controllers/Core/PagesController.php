@@ -130,8 +130,13 @@ class PagesController extends Controller
                 $filename = base_path() . "/resources/views/pages/" . $row->filename . ".blade.php";
                 if (file_exists($filename)) {
                     $this->data['content'] = file_get_contents($filename);
+                    if (strpos($this->data['content'], 'page-content-wrapper') !== false) {
+
+                    } else {
+                        $this->data['content'] = '';
+                    }
                 } else {
-                    $this->data['content'] = '';
+                    $this->data['content'] = '<div class="page-content-wrapper m-t">' . $this->data['content'] . '</div>';
                 }
             }
             else
