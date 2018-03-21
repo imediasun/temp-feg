@@ -163,7 +163,7 @@ class PagesController extends Controller
         $patternStop = '/@stop/im';
 
         $this->data['content'] = preg_replace(array($patternExtend, $patternSection, $patternTitle, $patternStop), '', $this->data['content']);
-        
+
         return view('core.pages.form', $this->data);
     }
 
@@ -202,12 +202,7 @@ class PagesController extends Controller
             $patternAddTitleSection = '/<div.*?class=["\']sbox.*?animated.*?["\']>/im';
 
             $content = "@extends ('layouts.app') @section('content')" . $content;
-            if (strpos($content, 'page-content-wrapper') !== false) {
-                $content = preg_replace($patternAddTitleSection, '<div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
-
-            } else {
-                $content = preg_replace($patternAddTitleSection, '<div class="page-content-wrapper m-t"><div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
-            }
+            $content = preg_replace($patternAddTitleSection, '<div class="page-content-wrapper m-t"><div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
             $content = $content . "@stop";
             $pattern = '~<div class="embed-responsive embed-responsive-16by9 video-container">|<div class="embed-responsive embed-responsive-16by9 video-container ">~';
             $content = preg_replace($pattern, "<div>", $content);
