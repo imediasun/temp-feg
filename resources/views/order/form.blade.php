@@ -1629,7 +1629,6 @@
                     confirm: function (){
                         var status=currentElm.data('status');
                         if(status == "enabled") {
-
                             currentElm.data('status','disabled');
                             $("#can-freehand i").toggleClass("fa-check-circle-o");
                             $("#can-freehand span").text('Enable Freehand');
@@ -1642,13 +1641,6 @@
                             $('.itemstable .clonedInput:first-child textarea').val('');
                             $('#total_cost').val(0.00);
                             $('input[name="Subtotal"]').val(0.00);
-                            setTimeout(function () {
-                                var item = $(".item_name").last();
-
-                                $(".item_name").last().removeAttr("onfocus", "init(this.id,this);");
-                                $('.item_name').last().removeAttr('readonly');
-
-                            }, 500);
                         }
                         else{
                             currentElm.data('status','enabled');
@@ -1667,13 +1659,6 @@
                             $('#total_cost').val(0.00);
                             $('input[name="Subtotal"]').val(0.00);
                             reInitParcley();
-                            setTimeout(function () {
-                                var item = $(".item_name").last();
-
-                                $(".item_name").last().attr("onfocus", "init(this.id,this);");
-                                $('.item_name').last().removeAttr('readonly');
-
-                            }, 500);
                         }
                     }
                 });
@@ -1692,13 +1677,6 @@
                     $('.itemstable .clonedInput:first-child textarea').val('');
                     $('.itemstable .clonedInput input.sku').attr('readonly','readonly');
                     $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
-                    setTimeout(function () {
-                        var item = $(".item_name").last();
-
-                        $(".item_name").last().removeAttr("onfocus", "init(this.id,this);");
-                        $('.item_name').last().removeAttr('readonly');
-
-                    }, 500);
                 }
                 else{
                     currentElm.data('status','enabled');
@@ -1713,19 +1691,25 @@
                     $('.itemstable .clonedInput textarea.item').removeAttr('readonly');
                     $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                     $('.itemstable .clonedInput:first-child textarea').val('');
-                    setTimeout(function () {
-                        var item = $(".item_name").last();
-
-                        $(".item_name").last().attr("onfocus", "init(this.id,this);");
-                        $('.item_name').last().removeAttr('readonly');
-
-                    }, 500);
                 }
             }
             if (currentElm.data('status') == 'enabled') {
+                setTimeout(function () {
+                    var item = $(".item_name").last();
 
+                    $(".item_name").last().attr("onfocus", "init(this.id,this);");
+                    $('.item_name').last().removeAttr('readonly');
+
+
+                }, 500);
             } else {
+                setTimeout(function () {
+                    var item = $(".item_name").last();
 
+                    $(".item_name").last().removeAttr("onfocus", "init(this.id,this);");
+                    $('.item_name').last().removeAttr('readonly');
+
+                }, 500);
             }
         });
     </script>
