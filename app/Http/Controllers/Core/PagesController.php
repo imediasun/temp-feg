@@ -203,7 +203,7 @@ class PagesController extends Controller
 
             $content = "@extends ('layouts.app') @section('content')" . $content;
             if (strpos($content, 'page-content-wrapper') !== false) {
-                $content = preg_replace($patternAddTitleSection, '<div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}', $content);
+                $content = preg_replace($patternAddTitleSection, '<div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
 
             } else {
                 $content = preg_replace($patternAddTitleSection, '<div class="page-content-wrapper m-t"><div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
