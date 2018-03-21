@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
   <div class="page-content row">
     <!-- Page header -->
     <div class="page-header">
