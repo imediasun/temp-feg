@@ -5,6 +5,7 @@ use App\Http\Controllers\controller;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect;
 use App\Models\Core\Groups;
+use App\Models\Sximo;
 
 
 class MenuController extends Controller
@@ -17,6 +18,7 @@ class MenuController extends Controller
         $this->info = $this->model->makeInfo('menu');
         $this->access = $this->model->validAccess($this->info['id']);
         $this->data['pageTitle'] = "Menu Management";
+        $this->data['groups'] = \DB::select(" SELECT * FROM tb_groups ");
     }
 
 
@@ -56,6 +58,14 @@ class MenuController extends Controller
         $this->data['groups'] = \DB::select(" SELECT * FROM tb_groups ");
         $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
         $this->data['active'] = $pos;
+        $this->data['usergroupAccess'] = [];
+        $sximo = new Sximo();
+        $info = Sximo::makeInfo($this->data['row']['module']);
+        if (isset($info['id'])) {
+
+            $this->data['usergroupAccess'] = $sximo->moduleViewAccess($info['id']);
+        }
+
         return view('sximo.menu.index', $this->data);
     }
 
@@ -164,6 +174,75 @@ class MenuController extends Controller
         return Redirect::to('feg/menu')
             ->with('messagetext', 'Successfully deleted row!')->with('msgstatus', 'success');
 
+    }
+
+    public function postViewPermission(Request $request)
+    {
+
+        $module_name = $request->input('module_name');
+        $sximo = new Sximo();
+        $info = Sximo::makeInfo($module_name);
+        $html = '';
+        if (isset($info['id'])) {
+            $html = '<div id="permission-overlay" style=" z-index:1000; cursor:not-allowed; background:rgba(128, 128, 128, 0);; width: 100%; height: 100%; position: absolute;"></div>';
+
+            $usergroupAccess = $sximo->moduleViewAccess($info['id']);
+
+            foreach ($this->data['groups'] as $group) {
+                $checked = '';
+
+                if (in_array($group->group_id, $usergroupAccess)) {
+                    $checked = ' checked="checked"';
+                    $html .= '<label class="checkbox">
+                           <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' >
+                            ' . $group->name . '
+                        </label>';
+
+                } else {
+                    $html .= '<label class="checkbox">
+                           <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' >
+                            ' . $group->name . '
+                        </label>';
+
+                }
+
+            }
+        } else {
+            $html = '<div id="permission-overlay" style=" z-index:1000; cursor:not-allowed; background:rgba(128, 128, 128, 0);; width: 100%; height: 100%; position: absolute;"></div>';
+
+            $PagePermision = \DB::table("tb_pages")->where("alias", '=', $module_name)->first();
+            $permission = [];
+            if ($PagePermision) {
+                $PagePermision = (array)json_decode($PagePermision->access);
+                $keys = array_keys($PagePermision);
+
+                foreach ($PagePermision as $key => $value) {
+                    if ($value == 1) {
+                        $permission[] = $key;
+                    }
+                }
+                }
+
+            foreach ($this->data['groups'] as $group) {
+                $checked = '';
+                $onclick = "onclick='$(this).children(\":first\").toggleClass(";;
+                $onclick .= "\"checked\");'";
+                if (in_array($group->group_id, $permission)) {
+                    $checked = ' checked="checked"';
+                    $html .= '<label class="checkbox">
+                           <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' >
+                            ' . $group->name . '
+                        </label>';
+                } else {
+                    $html .= '<label class="checkbox">
+                           <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' >
+                            ' . $group->name . '
+                        </label>';
+                }
+            }
+
+        }
+        return $html;
     }
 
 
