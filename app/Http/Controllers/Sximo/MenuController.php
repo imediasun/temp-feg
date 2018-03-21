@@ -184,6 +184,7 @@ class MenuController extends Controller
         $info = Sximo::makeInfo($module_name);
         $html = '';
         if (isset($info['id'])) {
+            $html = '<div id="permission-overlay" style=" z-index:1000; cursor:not-allowed; background:rgba(128, 128, 128, 0);; width: 100%; height: 100%; position: absolute;"></div>';
 
             $usergroupAccess = $sximo->moduleViewAccess($info['id']);
 
@@ -193,29 +194,34 @@ class MenuController extends Controller
                 if (in_array($group->group_id, $usergroupAccess)) {
                     $checked = ' checked="checked"';
                     $html .= '<label class="checkbox">
-                           <div class="icheckbox_square-blue checked disabled" style="position: relative;"> <input disabled type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                           <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' >
                             ' . $group->name . '
                         </label>';
+
                 } else {
-                    $html .= '<label class="checkbox disabled">
-                           <div class="icheckbox_square-blue " style="position: relative;"> <input disabled type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                    $html .= '<label class="checkbox">
+                           <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' >
                             ' . $group->name . '
                         </label>';
+
                 }
 
             }
         } else {
+            $html = '<div id="permission-overlay" style=" z-index:1000; cursor:not-allowed; background:rgba(128, 128, 128, 0);; width: 100%; height: 100%; position: absolute;"></div>';
 
             $PagePermision = \DB::table("tb_pages")->where("alias", '=', $module_name)->first();
-
-            $PagePermision = (array)json_decode($PagePermision->access);
-            $keys = array_keys($PagePermision);
             $permission = [];
-            foreach ($PagePermision as $key => $value) {
-                if ($value == 1) {
-                    $permission[] = $key;
+            if ($PagePermision) {
+                $PagePermision = (array)json_decode($PagePermision->access);
+                $keys = array_keys($PagePermision);
+
+                foreach ($PagePermision as $key => $value) {
+                    if ($value == 1) {
+                        $permission[] = $key;
+                    }
                 }
-            }
+                }
 
             foreach ($this->data['groups'] as $group) {
                 $checked = '';
@@ -223,17 +229,16 @@ class MenuController extends Controller
                 $onclick .= "\"checked\");'";
                 if (in_array($group->group_id, $permission)) {
                     $checked = ' checked="checked"';
-                    $html .= '<label class="checkbox" ' . $onclick . '>
-                           <div class="icheckbox_square-blue checked "   style="position: relative;"> <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                    $html .= '<label class="checkbox">
+                           <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' >
                             ' . $group->name . '
                         </label>';
                 } else {
-                    $html .= '<label class="checkbox " ' . $onclick . '>
-                           <div class="icheckbox_square-blue "   style="position: relative;"> <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                    $html .= '<label class="checkbox">
+                           <input  type="checkbox"  name="groups[' . $group->group_id . ']" value="' . $group->group_id . '" ' . $checked . ' >
                             ' . $group->name . '
                         </label>';
                 }
-
             }
 
         }
