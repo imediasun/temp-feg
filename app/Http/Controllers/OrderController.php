@@ -678,7 +678,7 @@ class OrderController extends Controller
                 }
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i]
                     . ') ' . $itemsArray[$i] . ' @ $' .
-                    $itemsPriceArray[$i] . ' ea.';
+                    $itemsPriceArray[$i] . ' ea. (SKU: ' . $skuNumArray[$i] . ')';
             }
             if ($is_freehand == 0) {
                 $validationResponse = $this->validateProductForReserveQty($request);
