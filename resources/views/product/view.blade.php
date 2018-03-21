@@ -74,7 +74,7 @@
 
                 <tr>
                     <td width='30%' class='label-view text-right'>
-                        {{ SiteHelpers::activeLang('Product Sub Type', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) }}
+                        {{ SiteHelpers::activeLang('Product Subtype', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) }}
                     </td>
                     <td>{!!
                         SiteHelpers::gridDisplayView($row->prod_sub_type_id,'prod_sub_type_id','1:product_type:id:type_description',$nodata['prod_sub_type_id'])
