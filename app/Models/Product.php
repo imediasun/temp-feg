@@ -51,7 +51,7 @@ FROM `products`
         $sql .= " GROUP_CONCAT(IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price)) AS `retail_price`,";
         $sql .= " GROUP_CONCAT(O.order_type) AS prod_type_id,";
         $sql .= " GROUP_CONCAT(T.type_description) AS prod_sub_type_id,";
-        $sql .= " (SELECT expense_category FROM products expns_p WHERE expns_p.sku=products.sku AND expns_p.vendor_description=products.vendor_description AND expns_p.is_default_expense_category=1) AS expense_category, ";
+        $sql .= " (SELECT expense_category FROM products expns_p WHERE expns_p.id=products.id AND expns_p.sku=products.sku AND expns_p.vendor_description=products.vendor_description AND expns_p.is_default_expense_category=1) AS expense_category, ";
         $sql .= "  GROUP_CONCAT(ticket_value) AS ticket_value,";
         $sql .= "  GROUP_CONCAT(inactive) AS inactive";
         $sql .= "  FROM `products` LEFT JOIN vendor ON (products.vendor_id = vendor.id)";
