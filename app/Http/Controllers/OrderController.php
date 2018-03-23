@@ -2212,6 +2212,48 @@ public static function array_move($which, $where, $array)
             }
         }
     }
+
+    public function getUpdateProductVariantsWithDefaultExpenseCategory(){
+
+        $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category')
+            ->groupBy('vendor_description','vendor_id','sku','case_price')
+            ->havingRaw('COUNT(vendor_description) > 1')
+            ->get();
+
+        $products = Product::hydrate($products);
+
+        foreach($products as $product){
+
+            if($product->hasDefaultExpenseCategory($product->id)){
+                echo "Skipping For (ID: {$product->id} Item Name:{$product->vendor_description} SKU:{$product->sku} Case Price: {$product->case_price} ) <br>";
+                continue;
+            }
+            $variants = $product->getProductVariations();
+            $sorted = $variants->sortBy('inactive');
+
+            $activeItemFound = false;
+            foreach ($sorted as $item){
+                if($item->inactive == 0){
+                    $activeItemFound = true;
+                    $item->is_default_expense_category = 1;
+                    $item->save();
+                }
+            }
+
+            if(!$activeItemFound){
+                $item = $variants->sortBy('id')->first();
+                $item->is_default_expense_category = 1;
+                $item->save();
+            }
+            echo "Update default Expense Category For (ID: {$product->id} Item Name:{$product->vendor_description} SKU:{$product->sku} Case Price: {$product->case_price} ) <br>";
+        }
+
+
+    }
+
+
+
+
     public function getCorrectOrdersBug242($step = '1'){
         die("Script blocked. To run this script please contact your development team. Thanks!");
 
