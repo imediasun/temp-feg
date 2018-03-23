@@ -2237,6 +2237,7 @@ public static function array_move($which, $where, $array)
                     $activeItemFound = true;
                     $item->is_default_expense_category = 1;
                     $item->save();
+                    break;
                 }
             }
 
