@@ -282,7 +282,7 @@ FROM `products`
 
     public function checkProducts($id){
         $product = DB::table('products')->where(['id'=>$id])->first();
-        $products = DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
+        $products = DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku, 'case_price' => $product->case_price])->get();
         return $products;
     }
 
