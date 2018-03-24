@@ -2213,6 +2213,60 @@ public static function array_move($which, $where, $array)
         }
     }
 
+
+    public function getUpdateProductVariantsWithDefaultExpenseCategoryHavingDifferentPrice(){
+
+        $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category','vendor_id')
+            ->groupBy('vendor_description','vendor_id','sku')
+            ->havingRaw('COUNT(vendor_description) > 1 AND GROUP_CONCAT(is_default_expense_category) = "0,0"')
+            ->get();
+
+        $products = Product::hydrate($products);
+
+
+        foreach($products as $product){
+
+            if($product->hasDefaultExpenseCategory($product->id)){
+                echo "Skipping For (ID: {$product->id} === Item Name:{$product->vendor_description} === SKU:{$product->sku} === Case Price: {$product->case_price} ) <br>";
+                continue;
+            }
+            $variants = Product::where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku, 'vendor_id' => $product->vendor_id])->get();
+            foreach ($variants as $item){
+                $item->is_default_expense_category = 1;
+                $item->save();
+                echo "Update default Expense Category For (ID: {$item->id} === Item Name:{$item->vendor_description} === SKU:{$item->sku} === Case Price: {$item->case_price} ) <br>";
+            }
+
+        }
+    }
+
+    public function getUpdateProductVariantsWithDefaultExpenseCategoryHavingDifferentSku(){
+
+        $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category','vendor_id')
+            ->groupBy('vendor_description','vendor_id','case_price')
+            ->havingRaw('COUNT(vendor_description) > 1 AND GROUP_CONCAT(is_default_expense_category) = "0,0"')
+            ->get();
+
+        $products = Product::hydrate($products);
+
+
+        foreach($products as $product){
+
+            if($product->hasDefaultExpenseCategory($product->id)){
+                echo "Skipping For (ID: {$product->id} === Item Name:{$product->vendor_description} === SKU:{$product->sku} === Case Price: {$product->case_price} ) <br>";
+                continue;
+            }
+            $variants = Product::where(['vendor_description' => $product->vendor_description, 'case_price' => $product->case_price, 'vendor_id' => $product->vendor_id])->get();
+            foreach ($variants as $item){
+                $item->is_default_expense_category = 1;
+                $item->save();
+                echo "Update default Expense Category For (ID: {$item->id} === Item Name:{$item->vendor_description} === SKU:{$item->sku} === Case Price: {$item->case_price} ) <br>";
+            }
+
+        }
+    }
+
+
     public function getUpdateProductVariantsWithDefaultExpenseCategory(){
 
         $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category')
