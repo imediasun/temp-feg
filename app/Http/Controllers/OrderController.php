@@ -939,7 +939,7 @@ class OrderController extends Controller
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
-                'total' => $orderTotal,
+                /*'total' => $orderTotal,*/
                 'message' => \Lang::get('core.note_success'),
 
             ));
