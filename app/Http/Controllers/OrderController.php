@@ -911,8 +911,7 @@ class OrderController extends Controller
 
         } elseif ($id != 0) {
             $data = $this->validatePost('orders', true);
-
-            $orderTotal = Order::find($id)->order_total;
+            $orderTotal = \CurrencyHelpers::formatPrice(Order::find($id)->order_total,2);
             if (isset($data['order_type_id'])) {
                 $order_contents = \DB::table('order_contents')->where('order_id', $id)->get();
                 $orderTotal = 0;
