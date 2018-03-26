@@ -911,6 +911,7 @@ class OrderController extends Controller
 
         } elseif ($id != 0) {
             $data = $this->validatePost('orders', true);
+            print_r($data);exit;
             $orderTotal = 0;
             if (isset($data['order_type_id'])) {
                 $order_contents = \DB::table('order_contents')->where('order_id', $id)->get();
