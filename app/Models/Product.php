@@ -32,23 +32,78 @@ class product extends Sximo  {
 	}
 
     public static function querySelectAPI(){
-        $sql = ' SELECT products.*, ';
-        $sql .= ' GROUP_CONCAT(O.order_type) AS `prod_type`, ';
-        $sql .= ' GROUP_CONCAT(vendor.vendor_name) AS `vendor`, ';
-        $sql .= " GROUP_CONCAT(IF(products.hot_item = 1,CONCAT('',products.vendor_description,' **HOT ITEM**'), products.vendor_description)) AS `prod_description`,";
-        $sql .= " GROUP_CONCAT(TRUNCATE(products.case_price/num_items,5)) AS `unit_pricing`,";
-        $sql .= " GROUP_CONCAT(T.type_description) AS `product_type`,";
-        $sql .= " GROUP_CONCAT(products.id) AS `product_id`,";
-        $sql .= " GROUP_CONCAT(IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price)) AS `retail_price`,";
-        $sql .= " GROUP_CONCAT(O.order_type) AS prod_type_id,";
-        $sql .= " GROUP_CONCAT(T.type_description) AS prod_sub_type_id,";
-        $sql .= " (SELECT expense_category FROM products expns_p WHERE expns_p.sku=products.sku AND expns_p.vendor_description=products.vendor_description AND expns_p.is_default_expense_category=1) AS expense_category, ";
-        $sql .= "  GROUP_CONCAT(ticket_value) AS ticket_value,";
-        $sql .= "  GROUP_CONCAT(inactive) AS inactive";
-        $sql .= "  FROM `products` LEFT JOIN vendor ON (products.vendor_id = vendor.id)";
-        $sql .= "  LEFT JOIN order_type O ON (O.id = products.prod_type_id)";
-        $sql .= "  LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id) ";
+
+        $id = self::getDefaultExpenseCategoryQuery("expns_p.id", "id");
+        $item_description = self::getDefaultExpenseCategoryQuery("expns_p.item_description", "item_description");
+        $netsuite_description = self::getDefaultExpenseCategoryQuery("expns_p.netsuite_description", "netsuite_description");
+        $expense_category = self::getDefaultExpenseCategoryQuery("expns_p.expense_category", "expense_category");
+        $is_default_expense_category = self::getDefaultExpenseCategoryQuery("expns_p.is_default_expense_category", "is_default_expense_category");
+
+        $sql = " SELECT
+                " . $id . ",
+                  products.sku,
+                  products.vendor_description,
+                  " . $item_description . ",
+                  " . $netsuite_description . ",
+                  products.size,
+                  products.details,
+                  products.num_items,
+                  products.vendor_id,
+                  products.unit_price,
+                  products.case_price,
+                  products.retail_price,
+                  products.ticket_value,
+                  products.prod_type_id,
+                  products.prod_sub_type_id,
+                  products.is_reserved,
+                  products.reserved_qty,
+                  products.min_order_amt,
+                  products.img,
+                  products.inactive,
+                  products.inactive_by,
+                  products.eta,
+                  products.in_development,
+                  products.limit_to_loc_group_id,
+                  products.date_added,
+                  products.hot_item,
+                  products.created_at,
+                  products.updated_at,
+                  " . $expense_category . ",
+                  products.exclude_export,
+                  products.allow_negative_reserve_qty,
+                  products.reserved_qty_limit,
+                  " . $is_default_expense_category . ",
+                  GROUP_CONCAT(O.order_type)          AS `prod_type`,
+                  GROUP_CONCAT(vendor.vendor_name)    AS `vendor`,
+                  GROUP_CONCAT(IF(products.hot_item = 1,CONCAT('',products.vendor_description,' **HOT ITEM**'), products.vendor_description)) AS `prod_description`,
+                  GROUP_CONCAT(TRUNCATE(products.case_price/num_items,5)) AS `unit_pricing`,
+                  GROUP_CONCAT(T.type_description)    AS `product_type`,
+                  GROUP_CONCAT(products.id)           AS `product_id`,
+                  GROUP_CONCAT(IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price)) AS `retail_price`,
+                  GROUP_CONCAT(O.order_type)          AS prod_type_id,
+                  GROUP_CONCAT(T.type_description)    AS prod_sub_type_id,
+                  GROUP_CONCAT(ticket_value)          AS ticket_value,
+                  GROUP_CONCAT(inactive)              AS inactive
+                FROM `products`
+                  LEFT JOIN vendor
+                    ON (products.vendor_id = vendor.id)
+                  LEFT JOIN order_type O
+                    ON (O.id = products.prod_type_id)
+                  LEFT JOIN product_type T
+                    ON (T.id = products.prod_sub_type_id)  ";
         return $sql;
+    }
+
+    public static function getDefaultExpenseCategoryQuery($column, $alt_name)
+    {
+        return $sql = "(SELECT
+      " . $column . " 
+      FROM products expns_p
+       WHERE expns_p.sku = products.sku
+       AND expns_p.vendor_id = products.vendor_id
+       AND expns_p.case_price = products.case_price
+       AND expns_p.vendor_description = products.vendor_description
+       AND expns_p.is_default_expense_category = 1 LIMIT 1) AS " . $alt_name;
     }
 
 	public static function queryWhere($product_list_type=null,$active=0,$sub_type=null){
@@ -155,7 +210,7 @@ class product extends Sximo  {
 	}
 
     public static function queryGroupAPI(){
-        return " GROUP BY vendor_description, sku ";
+        return " GROUP BY products.vendor_description, products.sku, products.vendor_id, products.case_price ";
     }
 
     public static function getRows( $args,$cond=null,$active=null,$sub_type=null, $is_api=false)
