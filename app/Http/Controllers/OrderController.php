@@ -911,7 +911,7 @@ class OrderController extends Controller
 
         } elseif ($id != 0) {
             $data = $this->validatePost('orders', true);
-            $orderTotal = \CurrencyHelpers::formatPrice(Order::find($id)->order_total,2);
+            $orderTotal = \CurrencyHelpers::formatPrice(Order::find($id)->order_total,2, false);
             if (isset($data['order_type_id'])) {
                 $order_contents = \DB::table('order_contents')->where('order_id', $id)->get();
                 $orderTotal = 0;
@@ -939,7 +939,7 @@ class OrderController extends Controller
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
-                /*'total' => $orderTotal,*/
+                'total' => $orderTotal,
                 'message' => \Lang::get('core.note_success'),
 
             ));
