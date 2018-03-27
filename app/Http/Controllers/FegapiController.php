@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\product;
 use App\Models\Restapi;
 use App\Models\Sximo;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -87,6 +88,38 @@ class FegapiController extends Controller
 
             if($class == 'Product'){
                 $results = $class1::getRows($param, null, null, null, true);
+
+                $results['rows'] = array_map(function ($rows) {
+                    $resh = product::find($rows->id);
+                    if ($resh) {
+                        if ($resh->inactive == 1) {
+                            $totalVariations = $resh->getProductVariations()->count();
+                            $orderedContent = $resh->orderedProduct->toArray();
+                            $ordersIds = array_map(function ($orders) {
+                                return $orders['order_id'];
+                            }, $orderedContent);
+                            $past24hours = date("Y-m-d H:i:s", strtotime("-24 hours"));
+                            $CheckOrders = Order::whereIn("id", $ordersIds)->where("api_created_at", ">", $past24hours)->orderBy("api_created_at", "DESC")->first();
+                            if ($CheckOrders) {
+                                if ($CheckOrders->is_api_visible == 1) {
+                                    $status = 0;
+                                    for ($i = 0; $i < $totalVariations; $i++) {
+                                        if ($i == 0) {
+                                            $status = '0';
+                                        } else {
+                                            $status .= ",0";
+                                        }
+                                    }
+                                    $rows->inactive = $status;
+                                    return $rows;
+                                }
+                            }
+
+                        }
+                    }
+                    return $rows;
+                }, $results['rows']);
+
                 $qry = $class1::$getRowsQuery;
             }
             elseif($class != 'Order' && $class != "Itemreceipt")
