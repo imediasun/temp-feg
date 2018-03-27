@@ -139,6 +139,7 @@ class ManagefegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
+
         $this->getSearchParamsForRedirect('manageFegStore');
         $user_level = \Session::get('gid');
         if ($user_level == Groups::PARTNER) {
@@ -173,8 +174,23 @@ class ManagefegrequeststoreController extends Controller
             //   } else {
             //        $filter = $this->buildSearch();
             //    }
+            //Updated Code Here 08-01-2018
+           /* $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+            if(!empty($globalSearchFilter['search_all_fields'])){
+                $searchFields = [
+                    'requests.description',
+                    'users.username',
+                ];
+                $searchInput = ['query' => $globalSearchFilter['search_all_fields'],'fields' => $searchFields];
+                $filter = $this->buildSearch($searchInput);
+            }*/
+
+
             $filter = $this->getSearchFilterQuery();
+
+
             $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3, $filter);
+
             $this->data['manageRequestInfo'] = $manageRequestInfo;
             $this->data['TID'] = $manageRequestInfo['TID'];
             $this->data['LID'] = $manageRequestInfo['LID'];
@@ -191,6 +207,24 @@ class ManagefegrequeststoreController extends Controller
             } if (!empty($manageRequestInfo['vendor_options']) && !array_key_exists(!empty($this->data['VID'])?$this->data['VID']:0,$manageRequestInfo['vendor_options'])) {
                 $this->data['VID'] = "";
             }
+            $searchQuery = $request->input('search');
+            if (!empty($searchQuery)) {
+                $searchQuery = explode(":", $searchQuery);
+                if ($searchQuery[0] == 'description') {
+                    $searchQuery = !empty($searchQuery[2]) ? explode("|", $searchQuery[2])[0] : '';
+                    $filter = $this->getSearchFilterQuery(['query' => $searchQuery, 'fields' => ['products.vendor_description', 'u1.username']]);
+                }
+
+                $searchQueryArray = $this->model->getSearchQueryStringToArray($request->input('search'));
+
+                if (array_key_exists("vendor_id", $searchQueryArray)) {
+                    $filter .= "  AND products.vendor_id IN(" . $searchQueryArray['vendor_id'] . ")   " . $filter;
+                }
+                if (array_key_exists("location_id", $searchQueryArray)) {
+                    $filter .= "  AND requests.location_id IN(" . $searchQueryArray['location_id'] . ")   " . $filter;
+                }
+            }
+
             $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
             $page = $request->input('page', 1);
@@ -238,6 +272,7 @@ class ManagefegrequeststoreController extends Controller
             if ($this->data['config_id'] != 0 && !empty($config)) {
                 $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
             }
+
 // Render into template
             return view('managefegrequeststore.table', $this->data);
         }
@@ -253,6 +288,7 @@ class ManagefegrequeststoreController extends Controller
         // Get assigned locations list as sql query (part)
         //$locationFilter = \SiteHelpers::getQueryStringForLocation('new_graphics_request', 'location_id', [], ' OR new_graphics_request.location_id=0 ');
         $locationFilter = \SiteHelpers::getQueryStringForLocation('requests');
+
         // if search filter does not have location_id filter
         // add default location filter
         $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));

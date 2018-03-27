@@ -183,7 +183,7 @@ class ProductController extends Controller
         }
 
     }
-    
+
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
@@ -453,6 +453,14 @@ class ProductController extends Controller
         {
             $type = is_array($request->prod_type_id)?$request->prod_type_id[0]:$request->prod_type_id;
             $subtype = is_array($request->prod_sub_type_id)?$request->prod_sub_type_id[1]:$request->prod_sub_type_id;
+
+            $productName = Product::find($id)->vendor_description;
+
+            /*return response()->json(array(
+                'message' => $productName,
+                'status' => 'error'
+            ));*/
+
             $duplicate = Product::
             where('prod_type_id',$type)
             ->where('prod_sub_type_id',$subtype)

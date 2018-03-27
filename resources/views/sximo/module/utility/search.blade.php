@@ -22,8 +22,10 @@
                 (strpos($t['type'], "date") !== false ? 'between' : 'equal');
         ?>
 		<tr id="{{ $t['field'] }}" class="fieldsearch">
-			<td>{!! SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) !!} </td>
-			<td width="120">
+			<td width="80">{!! SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) !!} </td>
+			
+			<td width="100">
+			    
 			<select id="{{ $t['field']}}_operate" @if($t['type'] == 'select') disabled @endif class="form-control oper" name="operate" onchange="changeSearchOperator(this.value , '{{ $t['field']}}', this,'{{ $t['type'] }}')">
 				<option value="equal"> = </option>
                 @if($pageModule != "merchandisebudget" )
@@ -38,8 +40,10 @@
                     @endif
                 @endif
 			</select>
+			
 			</td>
-			<td id="field_{{ $t['field']}}" width="50%">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
+			
+			<td style="position: relative;" id="field_{{ $t['field']}}" width="60%">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
 
 		</tr>
 

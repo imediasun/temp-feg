@@ -9,8 +9,9 @@
 
 	<div class="sbox-content"> 
 @endif	
-
+	<div class="table-responsive">
 		<table class="table table-striped table-bordered" >
+			
 			<tbody>	
 				
 					<tr>
@@ -31,7 +32,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Item Name', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}
 						</td>
 						<td>{{ $row->description }} </td>
 						
@@ -111,7 +112,7 @@
 				
 			</tbody>	
 		</table>  
-			
+	</div>
 		 	
 
 @if($setting['form-method'] =='native')

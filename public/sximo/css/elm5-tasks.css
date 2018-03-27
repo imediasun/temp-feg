@@ -65,10 +65,15 @@
 .tasksContainer #tasksGrid .panel-heading .taskNameText {
     margin: 4px 0;
 }
+
 .tasksContainer #tasksGrid .panel-heading .label {
-    font-size: 13px;
-    opacity: .6;
+	font-size: 13px;
+	opacity: .6;
+	white-space: normal;
+	text-align: left;
+	line-height: 18px;
 }
+
 .tasksContainer #tasksGrid .panel-body {
     padding: 0;
 }

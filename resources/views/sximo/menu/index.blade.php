@@ -91,6 +91,7 @@
 		 {!! Form::close() !!}	
 		 </div>
 		</div>
+		
 		<div class="col-sm-7">
 		<h5>
 				@if($row['menu_id'] =='')
@@ -220,11 +221,11 @@
                         @endforeach
 					 &nbsp;</div>
 				  </div> 	 				
-				  <div class="form-group  " >
+				  <div class="form-group" >
 					<label for="ipt" class=" control-label col-md-4 text-right">{{ Lang::get('core.fr_miconclass') }}  </label>
 					<div class="col-md-8">
 					  {!! Form::text('menu_icons', $row['menu_icons'],array('class'=>'form-control', 'placeholder'=>'')) !!}
-					  <p> {{ Lang::get('core.fr_mexample') }} : <span class="label label-info"> icon-windows8 </span>  , <span class="label label-info"> fa fa-cloud-upload </span> </p>
+					  <p> <span class="label-title"> {{ Lang::get('core.fr_mexample') }} :</span> <span class="label label-info"> icon-windows8 </span>  , <span class="label label-info"> fa fa-cloud-upload </span> </p>
 					  <p> {{ Lang::get('core.fr_musage') }} 
 					  <a href="{{ url('core/template?show=icons')}}" target="_blank"> Font Awesome </a>  and <a href="{{ url('core/template?show=icon-moon')}}" target="_blank"> Icomoon </a> class name</p>
 					 </div> 

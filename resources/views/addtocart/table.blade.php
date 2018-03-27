@@ -2,9 +2,8 @@
 @if(isset($cartData['subtotals']) && !empty($cartData['subtotals']))
 <div class="sbox">
     <div class="sbox-title">
-        <h5><i class="fa fa-table"></i>
-            <a href="{{ url('shopfegrequeststore') }}" class="btn btn-xs btn-white tips" title="Shop FEG Request Store"><i class="fa fa-arrow-left"></i>
-                 Back to Shop Page</a></h5>
+        <h5><a style="margin-left: 0 !important;" href="{{ url('shopfegrequeststore') }}" class="btn btn-xs btn-white tips" title="Shop FEG Request Store"><i class="fa fa-arrow-left"></i> Back to Shop Page</a>
+        </h5>
 
         <div class="sbox-tools">
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search"
@@ -18,7 +17,9 @@
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
         </div>
+        
     </div>
+    
     <div class="sbox-content">
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
@@ -199,16 +200,20 @@
         -->
             <div class="row" id="cart-footer-btns">
 
-                <div class=" col-md-offset-4 col-sm-offset-2 col-xs-offset-1 col-md-8">
-               <div class="col-md-2 col-sm-3 col-xs-12">
-                   <button  class="btn btn-sm btn-primary" id="update-cart-values" onclick="updateCart();">Update Cart</button>
-               </div>
-                   <div class="col-md-10 col-sm-9 col-xs-12">
+                <div class="col-md-offset-4 col-sm-offset-2 col-md-8 col-sm-10">
+                    <div class="row">
+                    
+                   <div class="col-md-2 col-sm-3 col-xs-12">
+                       <button  class="btn btn-sm btn-primary" id="update-cart-values" onclick="updateCart();">Update Cart</button>
+                   </div>
+               
+                    <div class="col-md-10 col-sm-9 col-xs-12">
                     <input type="button" style="font-weight: bold;" class="btn btn-sm btn-success"
                            value="Submit Weekly Requests totalling {{\CurrencyHelpers::formatCurrency($cartData['shopping_cart_total'])}}"
                            onClick="confirmSubmit({{ json_encode($cartData['amt_short_message']) }});" id = "cartbtn"></button>
+                    </div>
                 </div>
-            </div>
+                </div>
             </div>
         @include('ajaxfooter')
 

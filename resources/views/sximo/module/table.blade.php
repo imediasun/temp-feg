@@ -51,8 +51,8 @@
 			  	<th scope="col" data-hide="phone">API</th>
 			  	<th scope="col" data-hide="phone">Inline Editing</th>
                 <th scope="col" data-hide="phone">Exclude No Data</th>
-				<th scope="col" data-hide="phone" style="width:70px;">Width</th>
-				<th scope="col" data-hide="phone" style="width:100px;">Align</th>
+				<th scope="col" data-hide="phone" style="width:90px;">Width</th>
+				<th scope="col" data-hide="phone" style="width:140px;">Align</th>
 				<th scope="col" data-hide="phone">Format Column </th>
 			  </tr>
 			 </thead> 

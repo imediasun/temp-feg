@@ -45,7 +45,8 @@
 		
 		<a href="{{ URL::to('feg/config/addtranslation')}} " onclick="SximoModal(this.href,'Add New Language');return false;" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Add New Translation </a>
 		<hr />
-		<table class="table table-striped">
+	<div class="table-responsive">
+		<table class="table table-striped table-border">
 			<thead>
 				<tr>
 					<th> Name </th>
@@ -74,6 +75,7 @@
 			
 			</tbody>
 		</table>
+	</div>
 	</div> 
 	</div>
 	</div>

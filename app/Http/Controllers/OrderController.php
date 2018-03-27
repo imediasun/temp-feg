@@ -420,7 +420,8 @@ class OrderController extends Controller
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
-        return view('order.form', $this->data)->with('fromStore', $fromStore);
+
+        return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
     public function getShow($id = null)
@@ -658,6 +659,7 @@ class OrderController extends Controller
             $item_received = $request->get('item_received');
             $item_received = $request->get('item_received');
             $denied_SIDs = $request->get('denied_SIDs');
+            $po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
@@ -694,7 +696,8 @@ class OrderController extends Controller
                     'freight_id' => $freight_type_id,
                     'alt_address' => $alt_address,
                     'request_ids' => $where_in,
-                    'po_notes' => $notes
+                    'po_notes' => $notes,
+                    'po_notes_additionaltext'=>$po_notes_additionaltext,
                 );
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
@@ -719,7 +722,8 @@ class OrderController extends Controller
                     'request_ids' => $where_in,
                     'new_format' => 1,
                     'is_freehand' => $is_freehand,
-                    'po_notes' => $notes
+                    'po_notes' => $notes,
+                    'po_notes_additionaltext'=>$po_notes_additionaltext,
                 );
                 if ($editmode == "clone") {
                     $id = 0;
@@ -772,7 +776,6 @@ class OrderController extends Controller
                 if ($product_id != 0) {
                     $prodData = \DB::select("SELECT * from products where id =$product_id");
                     $prodType = $prodData[0]->prod_type_id;
-
                     $prodSubtype = $prodData[0]->prod_sub_type_id;
                     $qty_per_case = $prodData[0]->num_items;
                     $prodTicketValue = $prodData[0]->ticket_value;
@@ -1113,7 +1116,8 @@ class OrderController extends Controller
 
         $id = $request->input('ids');
         $explaination = $request->input('explaination');
-        $result = \DB::update("update orders set notes = concat(notes,'<br>','$explaination'), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
+
+        $result = \DB::update("update orders set notes = concat(notes,'<br>',".\DB::connection()->getPdo()->quote($explaination)."), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
 
         if ($result) {
             return Redirect::to('order')->with('messagetext', 'Order has been restored successfully!')->with('msgstatus', 'success');
@@ -1387,7 +1391,7 @@ class OrderController extends Controller
                 $data[0]['loc_contact_email'] = $data[0]['loc_merch_contact_email'];
             }
 
-            if ($data[0]['email'] != $data[0]['loc_contact_email']) {
+            if ($data[0]['email'] != $data[0]['loc_contact_email'] && !empty($data[0]['loc_contact_email'])) {
                 $data[0]['loc_contact_email'] = ' AND ' . $data[0]['loc_contact_email'];
             } else {
                 $data[0]['loc_contact_email'] = '';

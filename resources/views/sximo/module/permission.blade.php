@@ -27,7 +27,9 @@
 <div class="sbox">
 	<div class="sbox-title"><h5> Module Permission </h5></div>
 	<div class="sbox-content">	
+	<div class="table-responsive">
 		<table class="table table-striped table-bordered" id="table">
+			
 		<thead class="no-border">
   <tr>
 	<th field="name1" width="30">No</th>
@@ -58,7 +60,8 @@
 	<?php }?>
   </tbody>
 </table>	
-
+	</div>
+	
 <div class="infobox infobox-danger fade in">
   <button type="button" class="close" data-dismiss="alert"> x </button>
   <h5>Please Note:</h5>
