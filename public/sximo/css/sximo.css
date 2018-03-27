@@ -3233,7 +3233,7 @@ position: relative;
 
 .input-group.input-group-sm input.form-control,.input-group.m-b input.form-control {
   float: left;
-  width: 100%;
+  width: 200px;
 }
 .input-group.m-b input.form-control {
   height: 36px;
