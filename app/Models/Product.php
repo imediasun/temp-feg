@@ -16,6 +16,11 @@ class product extends Sximo  {
 		
 	}
 
+    function orderedProduct()
+    {
+        return $this->hasMany("App\Models\OrderedContent");
+    }
+
 	public static function querySelect(  ){
 
         return " SELECT
