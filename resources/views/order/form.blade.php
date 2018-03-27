@@ -273,15 +273,15 @@
                         </div>
                     </div>
                     <div style="clear:both"></div>
-                    <div class="form-group">
-                        <br/>
-                        <label class="label-control col-md-4"> PO Note Additional Text</label>
-                        <div class="col-md-8">
-                            <textarea name="po_notes_additionaltext" class="form-control" rows="5" placeholder="PO Note Additional Text">{!! $row['po_notes_additionaltext'] !!}</textarea>
-                            <b>Place <code>EMAIL_ADDRESS</code> this keyword where you want to show your email address.</b>
-                        </div>
-                        <div style="clear:both"></div>
-                    </div>
+                    {{--   <div class="form-group">
+                           <br/>
+                           <label class="label-control col-md-4"> PO Note Additional Text</label>
+                           <div class="col-md-8">
+                               <textarea name="po_notes_additionaltext" class="form-control" rows="5" placeholder="PO Note Additional Text">{!! $row['po_notes_additionaltext'] !!}</textarea>
+                               <b>Place <code>EMAIL_ADDRESS</code> this keyword where you want to show your email address.</b>
+                           </div>
+                           <div style="clear:both"></div>
+                       </div>--}}
 
                     <div style="clear:both"></div>
                     <input type="hidden" id="hidden_num_items" name="hidden_num_items">
