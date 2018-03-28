@@ -94,12 +94,16 @@ class FegapiController extends Controller
                     if ($resh) {
                         if ($resh->inactive == 1) {
                             $totalVariations = $resh->getProductVariations()->count();
+
                             $orderedContent = $resh->orderedProduct->toArray();
                             $ordersIds = array_map(function ($orders) {
                                 return $orders['order_id'];
                             }, $orderedContent);
                             $past24hours = date("Y-m-d H:i:s", strtotime("-24 hours"));
-                            $CheckOrders = Order::whereIn("id", $ordersIds)->where("api_created_at", ">", $past24hours)->orderBy("api_created_at", "DESC")->first();
+                            // $past24hours = date("Y-m-d H:i:s",strtotime("2018-03-27 09:44:15"));
+
+                            $CheckOrders = Order::whereIn("id", $ordersIds)->where("is_api_visible", "=", 1)->where("api_created_at", ">", $past24hours)->orderBy("api_created_at", "DESC")->first();
+
                             if ($CheckOrders) {
                                 if ($CheckOrders->is_api_visible == 1) {
                                     $status = 0;
@@ -111,7 +115,7 @@ class FegapiController extends Controller
                                         }
                                     }
                                     $rows->inactive = $status;
-                                    return $rows;
+                                    //return $rows;
                                 }
                             }
 
@@ -119,7 +123,9 @@ class FegapiController extends Controller
                     }
                     return $rows;
                 }, $results['rows']);
-
+                /* echo "<pre>";
+                 print_r($results);
+                 die;*/
                 $qry = $class1::$getRowsQuery;
             }
             elseif($class != 'Order' && $class != "Itemreceipt")
