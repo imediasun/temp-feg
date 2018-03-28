@@ -43,8 +43,9 @@
                                 <td>Merchandise Orders PO PDF Notes</td>
                                 <td>This PO PDF note is a default PO note for Merchandise Orders.
                                     Place <code>MERCHANDISE_CONTACT</code>, <code>GENERAL_MANAGER</code>, <code>REGIONL_DIRECTOR</code>,
-                                    <code>SVP_CONTACT</code>, <code>TECHNICAL_CONTACT</code>, these keywords where you
-                                    want to show the email addresses.
+                                    <code>SVP_CONTACT</code>, <code>TECHNICAL_CONTACT</code>, these tags in content.
+                                    System will replace these tags with actual email address assigned to roles in
+                                    system.
 
                                 </td>
                                 <td>
@@ -62,8 +63,9 @@
                                 <td>Non Merchandise Orders PO PDF Notes</td>
                                 <td>This PO PDF note is a default PO note for Non Merchandise Orders.
                                     Place <code>MERCHANDISE_CONTACT</code>, <code>GENERAL_MANAGER</code>, <code>REGIONL_DIRECTOR</code>,
-                                    <code>SVP_CONTACT</code>, <code>TECHNICAL_CONTACT</code>, these keywords where you
-                                    want to show the email addresses.
+                                    <code>SVP_CONTACT</code>, <code>TECHNICAL_CONTACT</code>, these tags in content.
+                                    System will replace these tags with actual email address assigned to roles in
+                                    system.
                                 </td>
                                 <td>
                                     <textarea name="NonmerchandisePONote" class="form-control"
@@ -79,7 +81,7 @@
                                 <!--<td>1</td>-->
                                 <td>New Graphics Request Content For Sender</td>
 
-                                <td>New graphics request conent for sender</td>
+                                <td>Graphic request email content for person who initiated graphic request.</td>
                                 <td>
                                     <textarea name="newgraphicsrequestsendercontent" class="form-control"
                                               rows="7">{{ $GraphicsSender }}</textarea>
@@ -92,7 +94,7 @@
                                 <!--<td>1</td>-->
                                 <td>New Graphics Request Content For Receiver</td>
 
-                                <td>New graphics request conent for receiver</td>
+                                <td>Graphic request email content for graphic managers to approve/deny request.</td>
                                 <td>
                                     <textarea name="newgraphicsrequestreceivercontent" class="form-control"
                                               rows="7">{{ $GraphicsReceiver }}</textarea>
