@@ -90,21 +90,28 @@ class FegapiController extends Controller
                 $results = $class1::getRows($param, null, null, null, true);
 
                 $results['rows'] = array_map(function ($rows) {
-                    $resh = product::find($rows->id);
-                    if ($resh) {
-                        //  if ($resh->inactive == 1) {
-                            $totalVariations = $resh->getProductVariations()->count();
-                            $orderedContent = $resh->orderedProduct->toArray();
-                            $ordersIds = array_map(function ($orders) {
-                                return $orders['order_id'];
-                            }, $orderedContent);
+                    $SingleProduct = product::find($rows->id);
+                    if ($SingleProduct) {
+
+                        $totalVariations = $SingleProduct->getProductVariations()->count();
+                        $ProductVariations = $SingleProduct->getProductVariations();
+
+                        $ordersIds = [];
+                        foreach($ProductVariations as $Item){
+                         $orderedContent = $Item->orderedProduct->toArray();
+                            if($orderedContent){
+                               foreach($orderedContent as $orders){
+                                   $ordersIds[] = $orders['order_id'];
+                               }
+                            }
+                           }
+
                             $past24hours = date("Y-m-d H:i:s", strtotime("-24 hours"));
                             // $past24hours = date("Y-m-d H:i:s",strtotime("2018-03-27 09:44:15"));
 
                             $CheckOrders = Order::whereIn("id", $ordersIds)->where("is_api_visible", "=", 1)->where("api_created_at", ">", $past24hours)->orderBy("api_created_at", "DESC")->first();
 
                             if ($CheckOrders) {
-                                if ($CheckOrders->is_api_visible == 1) {
                                     $status = 0;
                                     for ($i = 0; $i < $totalVariations; $i++) {
                                         if ($i == 0) {
@@ -114,17 +121,11 @@ class FegapiController extends Controller
                                         }
                                     }
                                     $rows->inactive = $status;
-                                    //return $rows;
-                                }
                             }
-
-                        // }
                     }
                     return $rows;
                 }, $results['rows']);
-                /* echo "<pre>";
-                 print_r($results);
-                 die;*/
+
                 $qry = $class1::$getRowsQuery;
             }
             elseif($class != 'Order' && $class != "Itemreceipt")
