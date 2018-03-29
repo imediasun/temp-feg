@@ -90,15 +90,15 @@ class FegapiController extends Controller
                 $results = $class1::getRows($param, null, null, null, true);
 
                 $results['rows'] = array_map(function ($rows) {
-                    $SingleProduct = product::find($rows->id);
-                    if ($SingleProduct) {
+                    $singleProduct = product::find($rows->id);
+                    if ($singleProduct) {
 
-                        $totalVariations = $SingleProduct->getProductVariations()->count();
-                        $ProductVariations = $SingleProduct->getProductVariations();
+                        $totalVariations = $singleProduct->getProductVariations()->count();
+                        $productVariations = $singleProduct->getProductVariations();
 
                         $ordersIds = [];
-                        foreach($ProductVariations as $Item){
-                         $orderedContent = $Item->orderedProduct->toArray();
+                        foreach($productVariations as $item){
+                         $orderedContent = $item->orderedProduct->toArray();
                             if($orderedContent){
                                foreach($orderedContent as $orders){
                                    $ordersIds[] = $orders['order_id'];
