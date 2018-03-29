@@ -94,16 +94,24 @@ class FegapiController extends Controller
                     if ($singleProduct) {
                         $productVariations = $singleProduct->getProductVariations();
                         $totalVariations = $productVariations->count();
-                        $ordersIds = $productVariations->pluck('order_id');
-
-                            $past24hours = date("Y-m-d H:i:s", strtotime("-24 hours"));
-                            // $past24hours = date("Y-m-d H:i:s",strtotime("2018-03-27 09:44:15"));
-
-                            $CheckOrders = Order::whereIn("id", $ordersIds)->where("is_api_visible", "=", 1)->where("api_created_at", ">", $past24hours)->orderBy("api_created_at", "DESC")->first();
-
-                            if ($CheckOrders) {
-                                $rows->inactive = implode(",",array_fill(0,$totalVariations,'0'));
+                        $ordersIds = [];
+                        foreach($productVariations as $Item){
+                            $orderedContent = $Item->orderedProduct->toArray();
+                            if($orderedContent){
+                                foreach($orderedContent as $orders){
+                                    $ordersIds[] = $orders['order_id'];
+                                }
                             }
+                        }
+
+                        $past24hours = date("Y-m-d H:i:s", strtotime("-24 hours"));
+                        // $past24hours = date("Y-m-d H:i:s",strtotime("2018-03-27 09:44:15"));
+
+                        $CheckOrders = Order::whereIn("id", $ordersIds)->where("is_api_visible", "=", 1)->where("api_created_at", ">", $past24hours)->orderBy("api_created_at", "DESC")->first();
+
+                        if ($CheckOrders) {
+                            $rows->inactive = implode(",",array_fill(0,$totalVariations,'0'));
+                        }
                     }
                     return $rows;
                 }, $results['rows']);
