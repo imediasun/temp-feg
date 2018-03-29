@@ -434,13 +434,8 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        //if($id == 0){
-       echo     $UniqueID = substr(md5(md5(time()+time())."-".md5(time())),0,8);
-      //  }
-        echo "   <br>";
-        echo "<pre>";
-        print_r($_REQUEST);
-        die;
+
+
 
         //to remove the extra spaces im between the string
         $request->vendor_description = trim(preg_replace('/\s+/',' ', $request->vendor_description));
@@ -511,6 +506,7 @@ class ProductController extends Controller
 
         $product_categories = $request->get('prod_type_id');
         if ($validator->passes()) {
+
             if ($id == 0) {
                 $data = $this->validatePost('products');
 
@@ -521,6 +517,10 @@ class ProductController extends Controller
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
+            }
+            if($id == 0 || empty($id)){
+                $UniqueID = substr(md5(md5(time()+time())."-".md5(time())),0,10);
+                $data['veriation_id'] = $UniqueID;
             }
             $postedtoNetSuite = $data['vendor_description'];
 
