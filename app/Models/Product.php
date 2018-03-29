@@ -113,6 +113,12 @@ FROM `products`
         if($column == 'expns_p.id'){
             $column = 'IF('.$column.'=0,products.id,'.$column.') as pid';
         }
+        if($column == 'expns_p.netsuite_description'){
+            $column = 'IF(isnull('.$column.'),products.netsuite_description,'.$column.') as netsuitedescription';
+        }
+        if($column == 'expns_p.item_description'){
+            $column = 'IF(isnull('.$column.'),products.item_description,'.$column.') as itemdescription';
+        }
         return $sql = "(SELECT
       " . $column . " 
       FROM products expns_p
