@@ -1880,9 +1880,9 @@ class OrderController extends Controller
             foreach ($queries as $query) {
                 $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
             }
-            echo json_encode($results);
+            return $results;
         } else {
-            echo json_encode(array('id' => 0, 'value' => "No Match"));
+            return array('id' => 0, 'value' => "No Match");
         }
     }
 
