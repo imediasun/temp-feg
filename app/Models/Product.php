@@ -110,6 +110,9 @@ FROM `products`
 
     public static function getDefaultExpenseCategoryQuery($column, $alt_name)
     {
+        if($column == 'expns_p.id'){
+            $column = 'IF('.$column.'=0,products.id,'.$column.') as pid';
+        }
         return $sql = "(SELECT
       " . $column . " 
       FROM products expns_p
