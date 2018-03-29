@@ -47,7 +47,7 @@ class PostSaveOrderEventHandler
             } else {
                 $adjustmentAmount = $product->reserved_qty - $item->qty;
             }
-
+            $inactive = 0;
             if ($product->allow_negative_reserve_qty != 1 and $adjustmentAmount == 0) {
                 $inactive = 1;
             } else {
@@ -68,10 +68,49 @@ class PostSaveOrderEventHandler
             $reservedQtyLog = new ReservedQtyLog();
             $reservedQtyLog->insert($reservedLogData);
 
-            if ($adjustmentAmount <= $product->reserved_qty_limit) {
-                $message = "<span style='color:red;'> Product Name : $product->vendor_description <br> Reserved Qty Par Amount: $product->reserved_qty_limit <br> Reserved Qty Available: $adjustmentAmount</span>";
+            if($inactive == 1){
+                // When product with reserved quantity becomes inactive due to not allowing negative quantities:
+               /* > Hello FEG Team,
+                > <br>
+                > The following product has become inactive due to a lack of remaining reserve quantity.
+                >
+                > Product Name:
+                > Product SKU:
+                > Reserved Qty Par Amount:
+                > Remaining Reserved Quantity:
+                >*/
+                $message = 'Hello FEG Team,';
+                $message .='<br><br>';
+                $message .='The following product has become inactive due to a lack of remaining reserve quantity.<br>';
+                $message .='<br><br>';
+                $message .='Product Name: '.$product->vendor_description.'<br>';
+                $message .='Product SKU: '.$product->sku.'<br>';
+                $message .='Reserved Qty Par Amount: '.$product->reserved_qty_limit.'<br>';
+                $message .='Remaining Reserved Quantity: '.$adjustmentAmount.'<br>';
                 self::sendProductReservedQtyEmail($message);
-                /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
+            }
+            if ($adjustmentAmount < $product->reserved_qty_limit && $inactive == 0) {
+               /* When reserved quantity par amount is met or exceeded (reserve quantity reduced to par amount or less):
+
+                > Hello FEG Team,
+                >
+                > The following product has met or exceeded it's par amount.
+                >
+                > Product Name:
+                > Product SKU:
+                > Reserved Qty Par Amount:
+                > Remaining Reserved Quantity:  */
+
+                $message = 'Hello FEG Team,';
+                $message .='<br><br>';
+                $message .='The following product has met or exceeded it\'s par amount.<br>';
+                $message .='<br><br>';
+                $message .='Product Name: '.$product->vendor_description.'<br>';
+                $message .='Product SKU: '.$product->sku.'<br>';
+                $message .='Reserved Qty Par Amount: '.$product->reserved_qty_limit.'<br>';
+                $message .='Remaining Reserved Quantity: '.$adjustmentAmount.'<br>';
+                self::sendProductReservedQtyEmail($message);
+
             }
         }
 

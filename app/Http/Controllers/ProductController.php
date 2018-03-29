@@ -444,6 +444,9 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        if($id == 0){
+            $UniqueID = substr(md5(md5(time()+time())."-".md5(time())),0,8);
+        }
 
         //to remove the extra spaces im between the string
         $request->vendor_description = trim(preg_replace('/\s+/',' ', $request->vendor_description));
@@ -516,6 +519,7 @@ class ProductController extends Controller
         if ($validator->passes()) {
             if ($id == 0) {
                 $data = $this->validatePost('products');
+
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
 
             }
