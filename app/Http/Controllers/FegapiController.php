@@ -92,7 +92,6 @@ class FegapiController extends Controller
                 $results['rows'] = array_map(function ($rows) {
                     $singleProduct = product::find($rows->id);
                     if ($singleProduct) {
-
                         $productVariations = $singleProduct->getProductVariations();
                         $totalVariations = $productVariations->count();
                         $ordersIds = $productVariations->pluck('order_id');
