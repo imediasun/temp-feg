@@ -4,9 +4,8 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class OrderModuleTests extends TestCase
+class OrderModuleTest extends TestCase
 {
-    const TEST_VENDOR = '114'; //OFFICE DEPOT
 
     public function testOrderGridPage(){
         $this->visit('/order')
