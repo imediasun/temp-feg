@@ -92,7 +92,7 @@ class FegapiController extends Controller
                 $results['rows'] = array_map(function ($rows) {
                     $resh = product::find($rows->id);
                     if ($resh) {
-                        if ($resh->inactive == 1) {
+                      //  if ($resh->inactive == 1) {
                             $totalVariations = $resh->getProductVariations()->count();
 
                             $orderedContent = $resh->orderedProduct->toArray();
@@ -119,7 +119,7 @@ class FegapiController extends Controller
                                 }
                             }
 
-                        }
+                        //}
                     }
                     return $rows;
                 }, $results['rows']);
