@@ -90,38 +90,28 @@ class FegapiController extends Controller
                 $results = $class1::getRows($param, null, null, null, true);
 
                 $results['rows'] = array_map(function ($rows) {
-                    $SingleProduct = product::find($rows->id);
-                    if ($SingleProduct) {
-
-                        $totalVariations = $SingleProduct->getProductVariations()->count();
-                        $ProductVariations = $SingleProduct->getProductVariations();
-
+                    $singleProduct = product::find($rows->id);
+                    if ($singleProduct) {
+                        $productVariations = $singleProduct->getProductVariations();
+                        $totalVariations = $productVariations->count();
                         $ordersIds = [];
-                        foreach($ProductVariations as $Item){
-                         $orderedContent = $Item->orderedProduct->toArray();
+                        foreach($productVariations as $Item){
+                            $orderedContent = $Item->orderedProduct->toArray();
                             if($orderedContent){
-                               foreach($orderedContent as $orders){
-                                   $ordersIds[] = $orders['order_id'];
-                               }
+                                foreach($orderedContent as $orders){
+                                    $ordersIds[] = $orders['order_id'];
+                                }
                             }
-                           }
+                        }
 
-                            $past24hours = date("Y-m-d H:i:s", strtotime("-24 hours"));
-                            // $past24hours = date("Y-m-d H:i:s",strtotime("2018-03-27 09:44:15"));
+                        $past24hours = date("Y-m-d H:i:s", strtotime("-24 hours"));
+                        // $past24hours = date("Y-m-d H:i:s",strtotime("2018-03-27 09:44:15"));
 
-                            $CheckOrders = Order::whereIn("id", $ordersIds)->where("is_api_visible", "=", 1)->where("api_created_at", ">", $past24hours)->orderBy("api_created_at", "DESC")->first();
+                        $CheckOrders = Order::whereIn("id", $ordersIds)->where("is_api_visible", "=", 1)->where("api_created_at", ">", $past24hours)->orderBy("api_created_at", "DESC")->first();
 
-                            if ($CheckOrders) {
-                                    $status = 0;
-                                    for ($i = 0; $i < $totalVariations; $i++) {
-                                        if ($i == 0) {
-                                            $status = '0';
-                                        } else {
-                                            $status .= ",0";
-                                        }
-                                    }
-                                    $rows->inactive = $status;
-                            }
+                        if ($CheckOrders) {
+                            $rows->inactive = implode(",",array_fill(0,$totalVariations,'0'));
+                        }
                     }
                     return $rows;
                 }, $results['rows']);
