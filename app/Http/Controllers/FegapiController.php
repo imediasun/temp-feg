@@ -112,7 +112,6 @@ class FegapiController extends Controller
                             $CheckOrders = Order::whereIn("id", $ordersIds)->where("is_api_visible", "=", 1)->where("api_created_at", ">", $past24hours)->orderBy("api_created_at", "DESC")->first();
 
                             if ($CheckOrders) {
-                                if ($CheckOrders->is_api_visible == 1) {
                                     $status = 0;
                                     for ($i = 0; $i < $totalVariations; $i++) {
                                         if ($i == 0) {
@@ -122,7 +121,6 @@ class FegapiController extends Controller
                                         }
                                     }
                                     $rows->inactive = $status;
-                                }
                             }
                     }
                     return $rows;
