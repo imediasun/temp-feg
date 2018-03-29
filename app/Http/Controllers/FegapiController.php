@@ -93,18 +93,19 @@ class FegapiController extends Controller
                     $singleProduct = product::find($rows->id);
                     if ($singleProduct) {
 
-                        $totalVariations = $singleProduct->getProductVariations()->count();
                         $productVariations = $singleProduct->getProductVariations();
+                        $totalVariations = $productVariations->count();
+                        $ordersIds = $productVariations->pluck('order_id');
 
-                        $ordersIds = [];
-                        foreach($productVariations as $item){
-                         $orderedContent = $item->orderedProduct->toArray();
+                       /* $ordersIds = [];
+                        foreach($ProductVariations as $Item){
+                         $orderedContent = $Item->orderedProduct->toArray();
                             if($orderedContent){
                                foreach($orderedContent as $orders){
                                    $ordersIds[] = $orders['order_id'];
                                }
                             }
-                           }
+                           }*/
 
                             $past24hours = date("Y-m-d H:i:s", strtotime("-24 hours"));
                             // $past24hours = date("Y-m-d H:i:s",strtotime("2018-03-27 09:44:15"));
@@ -112,15 +113,16 @@ class FegapiController extends Controller
                             $CheckOrders = Order::whereIn("id", $ordersIds)->where("is_api_visible", "=", 1)->where("api_created_at", ">", $past24hours)->orderBy("api_created_at", "DESC")->first();
 
                             if ($CheckOrders) {
-                                    $status = 0;
-                                    for ($i = 0; $i < $totalVariations; $i++) {
+                                  //  $status = 0;
+                                $rows->inactive = implode(",",array_fill(0,$totalVariations,'0'));
+                                   /* for ($i = 0; $i < $totalVariations; $i++) {
                                         if ($i == 0) {
                                             $status = '0';
                                         } else {
                                             $status .= ",0";
                                         }
-                                    }
-                                    $rows->inactive = $status;
+                                    }*/
+                                   // $rows->inactive = $status;
                             }
                     }
                     return $rows;
