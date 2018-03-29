@@ -4,6 +4,9 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
 {
     const TEST_SUPER_ADMIN_EMAIL = 'greg@element5digital.com';
     const FEG_TITLE = ' FEG LLC ';
+    const TEST_VENDOR = '114';
+    const TEST_PRODUCT_TYPE = 'Instant Win Prizes';
+
 
     protected $baseUrl = 'http://localhost';
     public $superAdmin = null;
