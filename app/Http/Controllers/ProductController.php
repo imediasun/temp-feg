@@ -444,6 +444,9 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        if($id == 0){
+            $UniqueID = substr(md5(md5(time()+time())."-".md5(time())),0,8);
+        }
 
         $reserved_qty_reason = $request->input('reserved_qty_reason');
         $rules = $this->validateForm();
