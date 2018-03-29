@@ -110,14 +110,17 @@ FROM `products`
 
     public static function getDefaultExpenseCategoryQuery($column, $alt_name)
     {
-        return $sql = "(SELECT
+
+          return   $sql ="IFNULL((SELECT
       " . $column . " 
       FROM products expns_p
        WHERE expns_p.sku = products.sku
        AND expns_p.vendor_id = products.vendor_id
        AND expns_p.case_price = products.case_price
        AND expns_p.vendor_description = products.vendor_description
-       AND expns_p.is_default_expense_category = 1 LIMIT 1) AS " . $alt_name;
+       AND expns_p.is_default_expense_category = 1 LIMIT 1),products.$alt_name) AS ".$alt_name;
+
+
     }
 
 	public static function queryWhere($product_list_type=null,$active=0,$sub_type=null){
