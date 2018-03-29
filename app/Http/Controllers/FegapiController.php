@@ -93,12 +93,20 @@ class FegapiController extends Controller
                     $resh = product::find($rows->id);
                     if ($resh) {
                       //  if ($resh->inactive == 1) {
-                            $totalVariations = $resh->getProductVariations()->count();
+                        $totalVariations = $resh->getProductVariations()->count();
+                        $ProductVariations = $resh->getProductVariations();
 
-                            $orderedContent = $resh->orderedProduct->toArray();
-                            $ordersIds = array_map(function ($orders) {
+                        foreach($ProductVariations as $Item){
+                         $orderedContent = $Item->orderedProduct->toArray();
+                          $ordersIds = array_map(function ($orders) {
+                             return $orders['order_id'];
+                           }, $orderedContent);
+                           }
+
+                           // $orderedContent = $resh->orderedProduct->toArray();
+                           /* $ordersIds = array_map(function ($orders) {
                                 return $orders['order_id'];
-                            }, $orderedContent);
+                            }, $orderedContent);*/
                             $past24hours = date("Y-m-d H:i:s", strtotime("-24 hours"));
                             // $past24hours = date("Y-m-d H:i:s",strtotime("2018-03-27 09:44:15"));
 
