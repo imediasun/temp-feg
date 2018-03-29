@@ -318,8 +318,8 @@
                         </label>
 
                         <div class="col-md-6">
-                            {!! Form::text('reserved_qty_reason', $row['reserved_qty_reason'],array('class'=>'form-control',
-                            'placeholder'=>'',)) !!}
+                            {!! Form::textarea('reserved_qty_reason', $row['reserved_qty_reason'],array('class'=>'form-control',
+                            'placeholder'=>'','rows'=>'10', )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -487,6 +487,21 @@
 <script type="text/javascript">
     var types_counter = 1;
     $(document).ready(function () {
+        $(document).on("change",'input[name="reserved_qty"]',function(e){
+            var recentValue = Number($(this).attr("reserved-quantity"));
+            var currentValue = Number($(this).val());
+            console.log(recentValue+"  "+currentValue);
+            var reservedQtyReason = $("#reserved_qty_reason");
+            if(currentValue < recentValue){
+                reservedQtyReason.slideDown("slow");
+                $('textarea[name="reserved_qty_reason"]').empty();
+                $('textarea[name="reserved_qty_reason"]').attr("required",'required').removeAttr("disabled");
+            }else if(currentValue > recentValue){
+                reservedQtyReason.slideUp("slow");
+                $('textarea[name="reserved_qty_reason"]').empty();
+                $('textarea[name="reserved_qty_reason"]').removeAttr("required").attr("disabled",'disabled');
+            }
+        });
 
         numberFieldValidationChecks($("#qty_input"));
         var form = $('#productFormAjax');
