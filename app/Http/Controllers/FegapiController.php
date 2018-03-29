@@ -90,23 +90,22 @@ class FegapiController extends Controller
                 $results = $class1::getRows($param, null, null, null, true);
 
                 $results['rows'] = array_map(function ($rows) {
-                    $resh = product::find($rows->id);
-                    if ($resh) {
-                      //  if ($resh->inactive == 1) {
-                        $totalVariations = $resh->getProductVariations()->count();
-                        $ProductVariations = $resh->getProductVariations();
+                    $SingleProduct = product::find($rows->id);
+                    if ($SingleProduct) {
 
+                        $totalVariations = $SingleProduct->getProductVariations()->count();
+                        $ProductVariations = $SingleProduct->getProductVariations();
+
+                        $ordersIds = [];
                         foreach($ProductVariations as $Item){
                          $orderedContent = $Item->orderedProduct->toArray();
-                          $ordersIds = array_map(function ($orders) {
-                             return $orders['order_id'];
-                           }, $orderedContent);
+                            if($orderedContent){
+                               foreach($orderedContent as $orders){
+                                   $ordersIds[] = $orders['order_id'];
+                               }
+                            }
                            }
 
-                           // $orderedContent = $resh->orderedProduct->toArray();
-                           /* $ordersIds = array_map(function ($orders) {
-                                return $orders['order_id'];
-                            }, $orderedContent);*/
                             $past24hours = date("Y-m-d H:i:s", strtotime("-24 hours"));
                             // $past24hours = date("Y-m-d H:i:s",strtotime("2018-03-27 09:44:15"));
 
@@ -123,17 +122,12 @@ class FegapiController extends Controller
                                         }
                                     }
                                     $rows->inactive = $status;
-                                    //return $rows;
                                 }
                             }
-
-                        //}
                     }
                     return $rows;
                 }, $results['rows']);
-                /* echo "<pre>";
-                 print_r($results);
-                 die;*/
+
                 $qry = $class1::$getRowsQuery;
             }
             elseif($class != 'Order' && $class != "Itemreceipt")
