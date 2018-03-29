@@ -6,6 +6,19 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class OrderModuleTest extends TestCase
 {
+    private $order = null;
+    private $orderController = null;
+    private $orderModel = null;
+
+    function setUp(){
+        parent::setUp();
+        $controller = new \App\Http\Controllers\OrderController();
+        $this->orderController = $controller;
+
+        $model = new \App\Models\Order();
+        $this->orderModel = $model;
+        $this->order = $model->orderBy('id', 'desc')->first();
+    }
 
     public function testOrderGridPage(){
         $this->actingAs($this->superAdmin)
@@ -61,6 +74,23 @@ class OrderModuleTest extends TestCase
             ->seeJson([
                 'OMG' => ' Ops .. Cant access the page !',
             ]);
+    }
+
+    public function testIsPOAvailable(){
+        $po = $this->order->po_number;
+        $this->assertFalse($this->orderModel->isPOAvailable($po));
+        $this->assertTrue($this->orderModel->isPOAvailable("2008-000000-000"));
+    }
+
+    public function testGetOrderReceipt(){
+        $order_id = $this->order->id;
+        $this->actingAs($this->superAdmin)
+            ->get('/order/orderreceipt/'.$order_id)
+            ->see('Order Receipt');
+
+        $this->actingAs($this->superAdmin)
+            ->get('/order/orderreceipt/')
+            ->see('Whoops, looks like something went wrong.');
     }
 
     public function testGetProductInOrderController()
