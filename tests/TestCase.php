@@ -9,6 +9,14 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
      */
     protected $baseUrl = 'http://localhost';
 
+    public function __construct()
+    {
+        parent::__construct();
+        if(!defined('CNF_APPNAME')){
+            require __DIR__.'/../setting.php';
+        }
+    }
+
     /**
      * Creates the application.
      *

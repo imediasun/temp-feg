@@ -13,6 +13,10 @@ class OrderTest extends TestCase
      */
     public function testGetProductInOrderController()
     {
+
+        $this->visit('/')
+            ->see('Laravel 5');
+
         $orderController = new \App\Http\Controllers\OrderController();
         $products = json_decode($orderController->getProduct());
         $this->assertFalse(empty($products));
