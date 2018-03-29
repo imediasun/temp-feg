@@ -319,8 +319,19 @@
 
                         <div class="col-md-6">
                             {!! Form::textarea('reserved_qty_reason', $row['reserved_qty_reason'],array('class'=>'form-control',
-                            'placeholder'=>'','rows'=>'10', )) !!}
+                            'placeholder'=>'','rows'=>'10','id'=>'reserved_qty_reasontxt','required'=>'required' )) !!}
                         </div>
+                        <?php
+                         if(empty($row['reserved_qty_reason'])){
+                            ?>
+                            <script>
+                                $(function(){
+                                    $("#reserved_qty_reasontxt").attr('disabled','disabled').removeAttr('required');
+                                })
+                            </script>
+                        <?php
+                        }
+                        ?>
                         <div class="col-md-2">
 
                         </div>
