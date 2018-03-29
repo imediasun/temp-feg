@@ -297,7 +297,21 @@
 
                         <div class="col-md-6">
                             {!! Form::text('reserved_qty', $row['reserved_qty'],array('class'=>'form-control',
-                            'placeholder'=>'', )) !!}
+                            'placeholder'=>'','reserved-quantity'=> !empty($row['reserved_qty']) ? $row['reserved_qty']:0)) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group" id="reserved_qty_reason" {!! !empty($row['reserved_qty_reason']) ? 'style="display:block;"':'style="display:none;"' !!}>
+                        <label for="Reserved Qty Reason" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Reserved Qty Reason', (isset($fields['reserved_qty']['language'])?
+                            $fields['reserved_qty']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            {!! Form::text('reserved_qty_reason', $row['reserved_qty_reason'],array('class'=>'form-control',
+                            'placeholder'=>'',)) !!}
                         </div>
                         <div class="col-md-2">
 
