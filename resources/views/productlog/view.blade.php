@@ -23,19 +23,121 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sku', (isset($fields['sku']['language'])? $fields['sku']['language'] : array())) }}
+						</td>
+						<td>{{ $row->sku }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Vendor Description', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) }}
 						</td>
 						<td>{{ $row->vendor_description }} </td>
 						
 					</tr>
 				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Item Description', (isset($fields['item_description']['language'])? $fields['item_description']['language'] : array())) }}
+						</td>
+						<td>{{ $row->item_description }} </td>
 
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Netsuite Description', (isset($fields['netsuite_description']['language'])? $fields['netsuite_description']['language'] : array())) }}
+						</td>
+						<td>{{ $row->netsuite_description }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Size', (isset($fields['size']['language'])? $fields['size']['language'] : array())) }}
+						</td>
+						<td>{{ $row->size }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Details', (isset($fields['details']['language'])? $fields['details']['language'] : array())) }}
+						</td>
+						<td>{{ $row->details }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Num Items', (isset($fields['num_items']['language'])? $fields['num_items']['language'] : array())) }}
+						</td>
+						<td>{{ $row->num_items }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Vendor Id', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) }}
+						</td>
+						<td>{{ $row->vendor_id }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Unit Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) }}
+						</td>
+						<td>{{ $row->unit_price }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])? $fields['case_price']['language'] : array())) }}
+						</td>
+						<td>{{ $row->case_price }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])? $fields['retail_price']['language'] : array())) }}
+						</td>
+						<td>{{ $row->retail_price }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])? $fields['ticket_value']['language'] : array())) }}
+						</td>
+						<td>{{ $row->ticket_value }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) }}
+						</td>
+						<td>{{ $row->prod_type_id }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Prod Sub Type Id', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) }}
+						</td>
+						<td>{{ $row->prod_sub_type_id }} </td>
+
+					</tr>
 
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Is Reserved', (isset($fields['is_reserved']['language'])? $fields['is_reserved']['language'] : array())) }}
 						</td>
-						<td>{!! $row->is_reserved == 0 ? 'No':'Yes' !!} </td>
+						<td>{{ $row->is_reserved }} </td>
 						
 					</tr>
 				
@@ -49,10 +151,98 @@
 
 					<tr>
 						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Veriation Id', (isset($fields['veriation_id']['language'])? $fields['veriation_id']['language'] : array())) }}
+						</td>
+						<td>{{ $row->veriation_id }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Reserved Qty Reason', (isset($fields['reserved_qty_reason']['language'])? $fields['reserved_qty_reason']['language'] : array())) }}
+						</td>
+						<td>{{ $row->reserved_qty_reason }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Min Order Amt', (isset($fields['min_order_amt']['language'])? $fields['min_order_amt']['language'] : array())) }}
+						</td>
+						<td>{{ $row->min_order_amt }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Img', (isset($fields['img']['language'])? $fields['img']['language'] : array())) }}
+						</td>
+						<td>{{ $row->img }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Inactive', (isset($fields['inactive']['language'])? $fields['inactive']['language'] : array())) }}
 						</td>
-						<td>{!! $row->inactive == 0 ? 'No':'Yes' !!} </td>
-						
+						<td>{{ $row->inactive }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Inactive By', (isset($fields['inactive_by']['language'])? $fields['inactive_by']['language'] : array())) }}
+						</td>
+						<td>{{ $row->inactive_by }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Eta', (isset($fields['eta']['language'])? $fields['eta']['language'] : array())) }}
+						</td>
+						<td>{{ $row->eta }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('In Development', (isset($fields['in_development']['language'])? $fields['in_development']['language'] : array())) }}
+						</td>
+						<td>{{ $row->in_development }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Limit To Loc Group Id', (isset($fields['limit_to_loc_group_id']['language'])? $fields['limit_to_loc_group_id']['language'] : array())) }}
+						</td>
+						<td>{{ $row->limit_to_loc_group_id }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Date Added', (isset($fields['date_added']['language'])? $fields['date_added']['language'] : array())) }}
+						</td>
+						<td>{{ $row->date_added }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Hot Item', (isset($fields['hot_item']['language'])? $fields['hot_item']['language'] : array())) }}
+						</td>
+						<td>{{ $row->hot_item }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Created At', (isset($fields['created_at']['language'])? $fields['created_at']['language'] : array())) }}
+						</td>
+						<td>{{ $row->created_at }} </td>
+
 					</tr>
 
 					<tr>
@@ -65,9 +255,25 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) }}
+						</td>
+						<td>{{ $row->expense_category }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Exclude Export', (isset($fields['exclude_export']['language'])? $fields['exclude_export']['language'] : array())) }}
+						</td>
+						<td>{{ $row->exclude_export }} </td>
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Allow Negative Reserve Qty', (isset($fields['allow_negative_reserve_qty']['language'])? $fields['allow_negative_reserve_qty']['language'] : array())) }}
 						</td>
-						<td>{!! $row->allow_negative_reserve_qty == 0 ? 'No':'Yes' !!} </td>
+						<td>{{ $row->allow_negative_reserve_qty }} </td>
 						
 					</tr>
 				
@@ -75,83 +281,23 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Reserved Qty Limit', (isset($fields['reserved_qty_limit']['language'])? $fields['reserved_qty_limit']['language'] : array())) }}
 						</td>
-						<td>{{ !empty($row->reserved_qty_limit) ? $row->reserved_qty_limit :"No Data" }} </td>
-						
+						<td>{{ $row->reserved_qty_limit }} </td>
+
 					</tr>
 
-				
-			</tbody>	
-		</table>
-@if(!empty($ProductLogContent))
-		<br /><br />
-		<?php
-			$reducedByOrder = $ProductLogContent['reducedByOrder'];
-			$addedFromProductList  = $ProductLogContent['addedFromProductList'];
-			?>
-		<table class="table table-striped table-bordered" >
-			<tbody>
-				<tr>
-					<th colspan="6"><h4>Reserved Quantity Added/Reduced from Product List</h4></th>
-				</tr>
-				<tr>
-					<th>Item ID</th>
-					<th>Added Amount</th>
-					<th>Added/Reduced</th>
-					<th>Reason</th>
-					<th>Added By</th>
-					<th>Added At</th>
-				</tr>
-				@if(count($addedFromProductList)>0)
-@foreach($addedFromProductList as $logContent)
-			<tr>
-				<td>{{ $logContent->product_id }}</td>
-				<td>{{ ($logContent->adjustment_amount > 0 ? $logContent->adjustment_amount:($logContent->adjustment_amount * -1)) }}</td>
-				<td>{{ !empty($logContent->adjustment_type=='negative') ? 'Reduced':'Added' }}</td>
-				<td>{{ !empty($logContent->reserved_qty_reason) ? $logContent->reserved_qty_reason:"No Data" }}</td>
-				<td>{{ $logContent->adjusted_by }}</td>
-				<td>{{ $logContent->created_at }}</td>
-			</tr>
-	@endforeach
-					@else
-			<tr>
-				<td colspan="6" align="center">No existing record found.</td>
-			</tr>
-			@endif
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Is Default Expense Category', (isset($fields['is_default_expense_category']['language'])? $fields['is_default_expense_category']['language'] : array())) }}
+						</td>
+						<td>{{ $row->is_default_expense_category }} </td>
+
+					</tr>
+
 			</tbody>
 		</table>
-	<br /> <br />
-			<table class="table table-striped table-bordered" >
-				<tbody>
-				<tr>
-					<th colspan="6"><h4>Reserved Quantity Added/Reduced from Orders</h4></th>
-				</tr>
-				<tr>
-					<th>Item ID</th>
-					<th>Order ID</th>
-					<th>Used Amount</th>
-					<th>Added/Reduced</th>
-					<th>Used By</th>
-					<th>Used At</th>
-				</tr>
-				@if(count($reducedByOrder) > 0)
-				@foreach($reducedByOrder as $logContent)
-					<tr>
-						<td>{{ $logContent->product_id }}</td>
-						<td>{{ $logContent->order_id }}</td>
-						<td>{{ ($logContent->adjustment_amount > 0 ? $logContent->adjustment_amount:($logContent->adjustment_amount * -1)) }}</td>
-						<td>{{ !empty($logContent->adjustment_type=='negative') ? 'Reduced':'Added' }}</td>
-						<td>{{ $logContent->adjusted_by }}</td>
-						<td>{{ $logContent->created_at }}</td>
-					</tr>
-				@endforeach
-				@else
-					<tr>
-						<td colspan="6" align="center">No existing record found.</td>
-					</tr>
-				@endif
-				</tbody>
-			</table>
-@endif
+
+
+
 @if($setting['form-method'] =='native')
 	</div>	
 </div>	
