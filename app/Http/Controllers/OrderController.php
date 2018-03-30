@@ -10,6 +10,7 @@ use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
+use App\Models\OrderStatus;
 use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
@@ -1943,14 +1944,18 @@ class OrderController extends Controller
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
             //for order type Advance Replacement
             if (isset($param[3]) && !empty($param[3]) && isset($param[4])) {
+                $orderStatus = new OrderStatus();
                 if ($param[3] == "order_type_id" && $param[4] == 0) {
-                    $rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '6')->orderBy('status', 'asc')->get();
+                    //$rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '6')->orderBy('status', 'asc')->get();
+                    $rows = $orderStatus->getOrderStatuses(['1', '6']);
                 } //for ordet type other than Advance Replacement
                 elseif ($param[3] == "order_type_id" && $param[4] == 1) {
-                    $rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '2')->orderBy('status', 'asc')->get();
+                    //$rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '2')->orderBy('status', 'asc')->get();
+                    $rows = $orderStatus->getOrderStatuses(['1', '2']);
                 }
             } else {
-                $rows = $this->model->getComboselect($param, $limit, $parent);
+                $order = new Order();
+                $rows = $order->getComboselect($param, $limit, $parent);
             }
             $items = array();
 
@@ -1962,7 +1967,6 @@ class OrderController extends Controller
                     if ($val != "") $value .= $row->$val . " ";
                 }
                 $items[] = array($row->$param['1'], $value);
-
             }
 
             return json_encode($items);
