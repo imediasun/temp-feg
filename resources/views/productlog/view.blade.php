@@ -91,11 +91,12 @@
 		<table class="table table-striped table-bordered" >
 			<tbody>
 				<tr>
-					<th colspan="5"><h4>Reserved Quantity Added/Reduced from Product List</h4></th>
+					<th colspan="6"><h4>Reserved Quantity Added/Reduced from Product List</h4></th>
 				</tr>
 				<tr>
 					<th>Item ID</th>
 					<th>Added Amount</th>
+					<th>Added/Reduced</th>
 					<th>Reason</th>
 					<th>Added By</th>
 					<th>Added At</th>
@@ -105,6 +106,7 @@
 			<tr>
 				<td>{{ $logContent->product_id }}</td>
 				<td>{{ ($logContent->adjustment_amount > 0 ? $logContent->adjustment_amount:($logContent->adjustment_amount * -1)) }}</td>
+				<td>{{ !empty($logContent->adjustment_type=='negative') ? 'Reduced':'Added' }}</td>
 				<td>{{ !empty($logContent->reserved_qty_reason) ? $logContent->reserved_qty_reason:"No Data" }}</td>
 				<td>{{ $logContent->adjusted_by }}</td>
 				<td>{{ $logContent->created_at }}</td>
@@ -112,7 +114,7 @@
 	@endforeach
 					@else
 			<tr>
-				<td colspan="5" align="center">No existing record found.</td>
+				<td colspan="6" align="center">No existing record found.</td>
 			</tr>
 			@endif
 			</tbody>
