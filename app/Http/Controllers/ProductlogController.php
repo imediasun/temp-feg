@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Productlog;
+use App\Models\ReservedQtyLog;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect ;
+use App\User;
 
 class ProductlogController extends Controller {
 
@@ -162,7 +164,30 @@ class ProductlogController extends Controller {
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('products');
 		}
-		
+
+
+        $ProductLogContent = "";
+        $productLogContentData = ['reducedByOrder'=>[],'addedFromProductList'=>[]];
+
+		if(!empty($row->variation_id)) {
+            $ProductLogContent = ReservedQtyLog::where("variation_id", "=", $row->variation_id);
+            $Contents = $ProductLogContent->get()->filter(function ($item) {
+            $userData = User::find($item->adjusted_by);
+                return $item->adjusted_by = $userData->first_name." ".$userData->last_name;
+            });
+            $productLogContentData['reducedByOrder'] = $Contents->filter(function ($item) {
+                if($item['order_id']>0){
+                    return $item;
+                }
+
+            });
+            $productLogContentData['addedFromProductList'] = $Contents->where("order_id",0);
+        }
+
+
+
+        $this->data['ProductLogContent'] = $productLogContentData;
+
         $this->data['tableGrid'] = $this->info['config']['grid'];
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;

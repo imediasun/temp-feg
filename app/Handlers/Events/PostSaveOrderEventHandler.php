@@ -62,6 +62,7 @@ class PostSaveOrderEventHandler
                 "order_id" => $item->order_id,
                 "adjustment_amount" => $item->qty,
                 "adjustment_type" => "negative",
+                "variation_id" => $product->variation_id,
                 "adjusted_by" => \AUTH::user()->id,
             ];
 
