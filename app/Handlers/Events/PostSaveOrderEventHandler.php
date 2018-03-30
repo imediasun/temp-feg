@@ -48,6 +48,10 @@ class PostSaveOrderEventHandler
                     $qty = ($item->qty - $item->prev_qty) < 0 ? ( ($item->qty - $item->prev_qty) * -1 ):($item->qty - $item->prev_qty);
 
                     self::setPositiveAdjustement($item,$product,"positive",$qty);
+                }else{
+                    $qty = ($item->qty - $item->prev_qty) < 0 ? ( ($item->qty - $item->prev_qty) * -1 ):($item->qty - $item->prev_qty);
+
+                    self::setPositiveAdjustement($item,$product,"negative",$qty);
                 }
             } else {
                 $adjustmentAmount = $product->reserved_qty - $item->qty;
