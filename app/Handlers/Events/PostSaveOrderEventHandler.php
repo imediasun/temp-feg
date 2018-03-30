@@ -44,9 +44,20 @@ class PostSaveOrderEventHandler
 
             if ($ReservedProductQtyLogObj and $item->prev_qty) {
                 $adjustmentAmount = ($product->reserved_qty + $item->prev_qty) - $item->qty;
+                if($item->prev_qty > $item->qty){
+                    $qty = ($item->qty - $item->prev_qty) < 0 ? ( ($item->qty - $item->prev_qty) * -1 ):($item->qty - $item->prev_qty);
+
+                    self::setPositiveAdjustement($item,$product,"positive",$qty);
+                }
             } else {
                 $adjustmentAmount = $product->reserved_qty - $item->qty;
+                if($item->prev_qty < $item->qty){
+                    $qty = ($item->qty - $item->prev_qty) < 0 ? ( ($item->qty - $item->prev_qty) * -1 ):($item->qty - $item->prev_qty);
+
+                    self::setPositiveAdjustement($item,$product,"negative",$qty);
+                }
             }
+
             $inactive = 0;
             if ($product->allow_negative_reserve_qty != 1 and $adjustmentAmount == 0) {
                 $inactive = 1;
@@ -57,7 +68,7 @@ class PostSaveOrderEventHandler
             $product->updateProduct(['reserved_qty' => $adjustmentAmount, 'inactive' => $inactive], true);
             $product->save();
 
-            $reservedLogData = [
+          /*  $reservedLogData = [
                 "product_id" => $item->product_id,
                 "order_id" => $item->order_id,
                 "adjustment_amount" => $item->qty,
@@ -67,7 +78,7 @@ class PostSaveOrderEventHandler
             ];
 
             $reservedQtyLog = new ReservedQtyLog();
-            $reservedQtyLog->insert($reservedLogData);
+            $reservedQtyLog->insert($reservedLogData);*/
 
             if($inactive == 1){
                 // When product with reserved quantity becomes inactive due to not allowing negative quantities:
@@ -115,6 +126,19 @@ class PostSaveOrderEventHandler
             }
         }
 
+    }
+    public static function setPositiveAdjustement($item,$product,$type,$qty){
+        $reservedLogData = [
+            "product_id" => $item->product_id,
+            "order_id" => $item->order_id,
+            "adjustment_amount" => $qty,
+            "adjustment_type" => $type,
+            "variation_id" => $product->variation_id,
+            "adjusted_by" => \AUTH::user()->id,
+        ];
+
+        $reservedQtyLog = new ReservedQtyLog();
+        $reservedQtyLog->insert($reservedLogData);
     }
 
     public static function sendProductReservedQtyEmail($message)
