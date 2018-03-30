@@ -1861,18 +1861,36 @@ class OrderController extends Controller
     public function getAutocomplete()
     {
         $term = Input::get('term');
-        $vendorId = Input::get('vendor_id', 0);
-        $whereWithVendorCondition = "";
+        $vendorId = Input::get('vendor_id',0);
+        $excludeProducts = Input::get('exclude_products', null);
+        $whereWithVendorCondition = $whereWithExcludeProductCondition = "";
+
         //get products related to selected vendor only
         if (!empty($vendorId)) {
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
         }
+
+        if ($excludeProducts) {
+            $excludeProductsArray = explode(',', $excludeProducts);
+            $excludeProductsIds = [];
+            foreach ($excludeProductsArray as $item) {
+                $product = product::find($item);
+                $variations = $product->getProductVariations();
+                array_map(function ($row) use (&$excludeProductsIds) {
+                    $excludeProductsIds[] = $row->id;
+                }, $variations->all());
+            }
+            $excludeProductsIds = implode(',', $excludeProductsIds);
+            $whereWithExcludeProductCondition = " AND products.id NOT IN ($excludeProductsIds) ";
+        }
+
         $results = array();
         $term = addslashes($term);
         //fixing for https://www.screencast.com/t/vwFYE3AlF
         $queries = \DB::select("SELECT *,LOCATE('$term',vendor_description) AS pos
                                 FROM products
-                                WHERE vendor_description LIKE '%$term%' AND products.inactive=0  $whereWithVendorCondition
+                                WHERE vendor_description LIKE '%$term%' 
+                                AND products.inactive=0  $whereWithVendorCondition  $whereWithExcludeProductCondition  
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
                                  Limit 0,10");
