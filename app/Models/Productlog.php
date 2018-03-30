@@ -20,7 +20,7 @@ class productlog extends Sximo  {
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE products.id IS NOT NULL and products.is_reserved = 1";
+		return "  WHERE products.id IS NOT NULL and products.is_reserved = 1 ";
 	}
 	
 	public static function queryGroup(){

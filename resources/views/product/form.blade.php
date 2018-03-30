@@ -303,27 +303,16 @@
 
                         </div>
                     </div>
-                    <div class="form-group" id="reserved_qty_reason" {!! !empty($row['reserved_qty_reason']) ? 'style="display:block;"':'style="display:none;"' !!}>
+                    <div class="form-group" id="reserved_qty_reason"  style="display:none;">
                         <label for="Reserved Qty Reason" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Reserved Qty Reason', (isset($fields['reserved_qty']['language'])?
                             $fields['reserved_qty']['language'] : array())) !!}
                         </label>
 
                         <div class="col-md-6">
-                            {!! Form::textarea('reserved_qty_reason', $row['reserved_qty_reason'],array('class'=>'form-control',
+                            {!! Form::textarea('reserved_qty_reason', '',array('class'=>'form-control',
                             'placeholder'=>'','rows'=>'10','id'=>'reserved_qty_reasontxt','required'=>'required' )) !!}
                         </div>
-                        <?php
-                         if(empty($row['reserved_qty_reason'])){
-                            ?>
-                            <script>
-                                $(function(){
-                                    $("#reserved_qty_reasontxt").attr('disabled','disabled').removeAttr('required');
-                                })
-                            </script>
-                        <?php
-                        }
-                        ?>
                         <div class="col-md-2">
 
                         </div>
@@ -486,7 +475,7 @@
         $(document).on("change",'input[name="reserved_qty"]',function(e){
             var recentValue = Number($(this).attr("reserved-quantity"));
             var currentValue = Number($(this).val());
-            console.log(recentValue+"  "+currentValue);
+
             var reservedQtyReason = $("#reserved_qty_reason");
             if(currentValue < recentValue){
                 reservedQtyReason.slideDown("slow");
