@@ -166,12 +166,10 @@ class ProductlogController extends Controller {
 		}
 
 
-        $ProductLogContent = "";
         $productLogContentData = ['reducedByOrder'=>[],'addedFromProductList'=>[]];
-
 		if(!empty($row->variation_id)) {
-            $ProductLogContent = ReservedQtyLog::where("variation_id", "=", $row->variation_id);
-            $Contents = $ProductLogContent->get()->filter(function ($item) {
+            $productLogContent = ReservedQtyLog::where("variation_id", "=", $row->variation_id);
+            $Contents = $productLogContent->get()->filter(function ($item) {
             $userData = User::find($item->adjusted_by);
                 return $item->adjusted_by = $userData->first_name." ".$userData->last_name;
             });
@@ -181,13 +179,15 @@ class ProductlogController extends Controller {
                 }
 
             });
-            $productLogContentData['addedFromProductList'] = $Contents->where("order_id",0);
+            $productLogContentData['addedFromProductList'] = $Contents->filter(function ($item) {
+                if($item['order_id'] == 0 || $item['order_id'] == ''){
+                    return $item;
+                }
+
+            });
         }
 
-
-
         $this->data['ProductLogContent'] = $productLogContentData;
-
         $this->data['tableGrid'] = $this->info['config']['grid'];
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
