@@ -133,8 +133,7 @@
 					  ?>
                   @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{{--{!! AjaxHelpers::buttonAction('productlog',$access,$id ,$setting) !!} --}}
-					 <div class=" action dropup"><a href="{!! Url('productlog/show/'.$row->id) !!}" onclick="SximoModal(this.href,'View Detail'); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="View"><i class="fa fa-search"></i></a></div>
+					{!! AjaxHelpers::buttonAction('productlog',$access,$id ,$setting) !!}
                  </td>
                 @endif
                 </tr>
