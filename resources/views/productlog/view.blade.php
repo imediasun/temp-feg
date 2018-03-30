@@ -46,13 +46,6 @@
 						<td>{{ $row->reserved_qty }} </td>
 						
 					</tr>
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Min Order Amt', (isset($fields['min_order_amt']['language'])? $fields['min_order_amt']['language'] : array())) }}
-						</td>
-						<td>{{ $row->min_order_amt }} </td>
-						
-					</tr>
 
 					<tr>
 						<td width='30%' class='label-view text-right'>
