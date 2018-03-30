@@ -440,4 +440,18 @@ FROM `products`
         return $items;
     }
 
+    public function getAutoComplete($term, $vendorId){
+        $products = self::select(DB::raw("*,LOCATE('$term',vendor_description) AS pos"))
+            ->where('vendor_description', 'like', "%$term%")
+            ->where('inactive', 0)
+            ->groupBy('vendor_description')
+            ->orderBy('pos')
+            ->orderBy('vendor_description');
+
+        if (!empty($vendorId)) {
+            $products = $products->where('vendor_id', $vendorId);
+        }
+
+        return $products->take(10)->get();
+    }
 }

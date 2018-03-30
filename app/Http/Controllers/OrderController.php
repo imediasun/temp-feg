@@ -1860,30 +1860,18 @@ class OrderController extends Controller
 
     public function getAutocomplete()
     {
-        $term = Input::get('term');
+        $term = addslashes(Input::get('term'));
         $vendorId = Input::get('vendor_id', 0);
-        $whereWithVendorCondition = "";
-        //get products related to selected vendor only
-        if (!empty($vendorId)) {
-            $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
-        }
-        $results = array();
-        $term = addslashes($term);
-        //fixing for https://www.screencast.com/t/vwFYE3AlF
-        $queries = \DB::select("SELECT *,LOCATE('$term',vendor_description) AS pos
-                                FROM products
-                                WHERE vendor_description LIKE '%$term%' AND products.inactive=0  $whereWithVendorCondition
-                                GROUP BY vendor_description
-                                ORDER BY pos, vendor_description
-                                 Limit 0,10");
-        if (count($queries) != 0) {
-            foreach ($queries as $query) {
-                $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
-            }
-            return $results;
-        } else {
-            return array('id' => 0, 'value' => "No Match");
-        }
+
+        $product = new Product();
+        $data = $product->getAutoComplete($term, $vendorId);
+        $data = $data->map(function ($row) {
+            return [
+                'id' => $row->id,
+                'value' => $row->vendor_description
+            ];
+        });
+        return $data->all() ?: ['id' => 0, 'value' => "No Match"] ;
     }
 
     public function getProductdata()
