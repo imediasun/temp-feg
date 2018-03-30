@@ -55,11 +55,10 @@ class PostSaveOrderEventHandler
                 }
             } else {
                 $adjustmentAmount = $product->reserved_qty - $item->qty;
-                if($item->prev_qty < $item->qty){
-                    $qty = ($item->qty - $item->prev_qty) < 0 ? ( ($item->qty - $item->prev_qty) * -1 ):($item->qty - $item->prev_qty);
+
+                    $qty = ($item->qty) < 0 ? ( ($item->qty) * -1 ):($item->qty);
 
                     self::setPositiveAdjustement($item,$product,"negative",$qty);
-                }
             }
 
             $inactive = 0;
@@ -71,18 +70,6 @@ class PostSaveOrderEventHandler
 
             $product->updateProduct(['reserved_qty' => $adjustmentAmount, 'inactive' => $inactive], true);
             $product->save();
-
-          /*  $reservedLogData = [
-                "product_id" => $item->product_id,
-                "order_id" => $item->order_id,
-                "adjustment_amount" => $item->qty,
-                "adjustment_type" => "negative",
-                "variation_id" => $product->variation_id,
-                "adjusted_by" => \AUTH::user()->id,
-            ];
-
-            $reservedQtyLog = new ReservedQtyLog();
-            $reservedQtyLog->insert($reservedLogData);*/
 
             if($inactive == 1){
                 // When product with reserved quantity becomes inactive due to not allowing negative quantities:
