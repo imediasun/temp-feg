@@ -444,8 +444,28 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        if($id != 0){
+            $Product = product::find($id);
+            $NewReservedQty = $request->input('reserved_qty');
+            if($Product->reserved_qty != $NewReservedQty && $NewReservedQty !=''){
+                $NewReservedQty = $NewReservedQty - $Product->reserved_qty;
+                $type = "negative";
+                if($NewReservedQty > $Product->reserved_qty){
+                    $type = "positive";
+                }else if($NewReservedQty < $Product->reserved_qty){
+                    $type = "negative";
+                }
+                $ReservedQtyLog = new ReservedQtyLog();
+                $reservedLogData = [
+                    "product_id" => $id,
+                    "adjustment_amount" => $NewReservedQty,
+                    "adjustment_type" => $type,
+                    "adjusted_by" => \AUTH::user()->id,
+                ];
+                $ReservedQtyLog->insertRow($reservedLogData,0);
 
-
+            }
+        }
 
         $reserved_qty_reason = $request->input('reserved_qty_reason');
         $rules = $this->validateForm();
@@ -552,7 +572,10 @@ class ProductController extends Controller
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
 
-        $rules['expense_category'] = 'required';
+            $rules['expense_category'] = 'required';
+        if(isset($_POST['reserved_qty_reason'])){
+            $rules['reserved_qty_reason'] = 'required';
+        }
 
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
