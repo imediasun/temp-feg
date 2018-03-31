@@ -133,12 +133,20 @@ class order extends Sximo
                         $updates['inactive'] = 1;
                     }
                     $orderedProduct->updateProduct($updates, true);
+                    $reservedLogData = [
+                        "product_id" => $orderedProduct->product_id,
+                        "order_id" => $orderedProduct->order_id,
+                        "adjustment_amount" => $orderContent->qty,
+                        "adjustment_type" => "positive",
+                        "variation_id" => $orderContent->variation_id,
+                        "adjusted_by" => \AUTH::user()->id,
+                    ];
 
+                    $reservedQtyLog = new ReservedQtyLog();
+                    $reservedQtyLog->insert($reservedLogData);
                 }
                 else
                 {
-                    //This part is all working
-                    Log::info("Putting back qty to product because order is deleting");
                     $reserved_qty = $orderedProduct->reserved_qty + $orderContent->qty;
                     $reservedLogData = [
                         "product_id" => $orderContent->product_id,
@@ -159,7 +167,17 @@ class order extends Sximo
                         $updates['inactive'] = 0;
                     }
                     $orderedProduct->updateProduct($updates, true);
+                    $reservedLogData = [
+                        "product_id" => $orderedProduct->product_id,
+                        "order_id" => $orderedProduct->order_id,
+                        "adjustment_amount" => $orderContent->qty,
+                        "adjustment_type" => "negative",
+                        "variation_id" => $orderContent->variation_id,
+                        "adjusted_by" => \AUTH::user()->id,
+                    ];
 
+                    $reservedQtyLog = new ReservedQtyLog();
+                    $reservedQtyLog->insert($reservedLogData);
                 }
             }
         }
