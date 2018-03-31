@@ -5,6 +5,7 @@ use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
 use App\Models\OrderSendDetails;
+use App\Models\product;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;

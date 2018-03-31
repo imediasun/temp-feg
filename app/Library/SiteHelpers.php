@@ -173,6 +173,24 @@ class SiteHelpers
         return $out;
     }
 
+    public static function randomString2(){
+        $seed = str_split('abcdefghijklmnopqrstuvwxyz'
+            .'ABCDEFGHIJKLMNOPQRSTUVWXYZ'); // and any other characters
+        shuffle($seed); // probably optional since array_is randomized; this may be redundant
+        $rand = '';
+        foreach (array_rand($seed, 5) as $k) $rand .= $seed[$k];
+        return $rand;
+    }
+   public static function randomString($length) {
+        $key = '';
+        $keys = array_merge(range(0, 9), range('a', 'z'));
+
+        for ($i = 0; $i < $length; $i++) {
+            $key .= $keys[array_rand($keys)];
+        }
+
+        return $key;
+    }
     public static function alphaID($in, $to_num = false, $pad_up = false, $passKey = null)
     {
         $index = "abcdefghijkmnpqrstuvwxyz23456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
