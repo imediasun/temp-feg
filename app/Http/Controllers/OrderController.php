@@ -2097,13 +2097,13 @@ class OrderController extends Controller
     {
 
     }
-
-    public function getEmailHistory(Request $request)
-    {
+    // This is testing comment
+    public function getEmailHistory(Request $request){
 
         $returnSelf = !empty($request->input('returnSelf'));
 
-        $searchFor = !is_null($request->input('search')) ? trim($request->input('search')) : '';
+        $searchFor = !is_null($request->input('search')) ? trim($request->input('search')) : ''; //This is third comment
+        //This is an other test comment
         $searchFor = empty($searchFor) || $searchFor == '@' ? '' : $searchFor;
 
         $startAt = !is_null($request->input('start')) ? trim($request->input('start')) : '';
