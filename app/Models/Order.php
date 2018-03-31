@@ -110,6 +110,17 @@ class order extends Sximo
                         $updates['inactive'] = 1;
                     }
                     $orderedProduct->updateProduct($updates, true);
+                    $reservedLogData = [
+                        "product_id" => $orderedProduct->product_id,
+                        "order_id" => $orderedProduct->order_id,
+                        "adjustment_amount" => $orderContent->qty,
+                        "adjustment_type" => "positive",
+                        "variation_id" => $orderContent->variation_id,
+                        "adjusted_by" => \AUTH::user()->id,
+                    ];
+
+                    $reservedQtyLog = new ReservedQtyLog();
+                    $reservedQtyLog->insert($reservedLogData);
                 }
                 else
                 {
@@ -119,6 +130,17 @@ class order extends Sximo
                         $updates['inactive'] = 0;
                     }
                     $orderedProduct->updateProduct($updates, true);
+                    $reservedLogData = [
+                        "product_id" => $orderedProduct->product_id,
+                        "order_id" => $orderedProduct->order_id,
+                        "adjustment_amount" => $orderContent->qty,
+                        "adjustment_type" => "negative",
+                        "variation_id" => $orderContent->variation_id,
+                        "adjusted_by" => \AUTH::user()->id,
+                    ];
+
+                    $reservedQtyLog = new ReservedQtyLog();
+                    $reservedQtyLog->insert($reservedLogData);
                 }
             }
         }
