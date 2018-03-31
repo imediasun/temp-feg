@@ -1213,7 +1213,7 @@ class order extends Sximo
     public function setOrderStatus()
     {
         $OrderedQty = $this->orderedContent->sum('qty');
-        $ItemReceived = $this->orderedContent->sum('item_received');
+        $ItemReceived = $this->orderedContent->sum('item_received'); // This is a test comment
         if ($ItemReceived > 0 && $ItemReceived < $OrderedQty) {
             $this->status_id = 1;
             $this->is_partial = 1;
