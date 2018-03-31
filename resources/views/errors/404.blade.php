@@ -48,4 +48,4 @@
 </div>
 </body>
 </html>
-{!! $errorMessage !!}
+{!! $errorMessage or '' !!}
