@@ -32,7 +32,6 @@ class order extends Sximo
     const ORDER_DELETED_STATUS = 10;
     const ORDER_ACTIVE_STATUS = 1;
 
-
     public function __construct()
     {
         ini_set('memory_limit','1G');
@@ -82,65 +81,80 @@ class order extends Sximo
         if($this->is_freehand === 1){
             return ;
         }
+        Log::info("Delete Event : Before calling adjustReservedProductQuantities");
         $this->adjustReservedProductQuantities();
+        Log::info("Delete Event : After calling adjustReservedProductQuantities");
     }
 
     public function deleteReservedProductQuantities(){
         if($this->is_freehand === 1){
             return ;
         }
+        Log::info("Restore Event : Before calling adjustReservedProductQuantities");
         $this->adjustReservedProductQuantities(true);
+        Log::info("Restore Event : After calling adjustReservedProductQuantities");
+
     }
 
     private function adjustReservedProductQuantities($reduceQuantity = false){
         $orderContents = $this->contents;
-        foreach ($orderContents as $orderContent){
+        Log::info("adjustReservedProductQuantities => Total Items = ".$orderContents->count());
+        foreach ($orderContents as $orderContent) {
 
             $orderedProduct = $orderContent->product;
 
             if($orderedProduct->is_reserved == 1){
 
-                if($reduceQuantity){
-                    if($orderedProduct->allow_negative_reserve_qty == 0 && $orderedProduct->reserved_qty < $orderContent->qty){
+                if ($reduceQuantity) {
+                    Log::info("claiming qty from product because order is restoring");
+                    if ($orderedProduct->allow_negative_reserve_qty == 0 && $orderedProduct->reserved_qty < $orderContent->qty) {
                         throw new \Exception("Product does not have sufficient reserved quantities");
                     }
                     $reserved_qty = $orderedProduct->reserved_qty - $orderContent->qty;
+                    $reservedLogData = [
+                        "product_id" => $orderContent->product_id,
+                        "order_id" => $orderContent->order_id,
+                        "adjustment_amount" => $orderContent->qty,
+                        "adjustment_type" => "negative",
+                        "variation_id" => $orderedProduct->variation_id,
+                        "adjusted_by" => \AUTH::user()->id,
+                    ];
+
+
+                    $reservedQtyLog = new ReservedQtyLog();
+                    $reservedQtyLog->insert($reservedLogData);
                     $updates = ['reserved_qty' => $reserved_qty];
                     if(!$orderedProduct->allow_negative_reserve_qty and $reserved_qty == 0) {
                         $updates['inactive'] = 1;
                     }
                     $orderedProduct->updateProduct($updates, true);
-                    $reservedLogData = [
-                        "product_id" => $orderedProduct->product_id,
-                        "order_id" => $orderedProduct->order_id,
-                        "adjustment_amount" => $orderContent->qty,
-                        "adjustment_type" => "positive",
-                        "variation_id" => $orderContent->variation_id,
-                        "adjusted_by" => \AUTH::user()->id,
-                    ];
 
-                    $reservedQtyLog = new ReservedQtyLog();
-                    $reservedQtyLog->insert($reservedLogData);
                 }
                 else
                 {
+                    //This part is all working
+                    Log::info("Putting back qty to product because order is deleting");
                     $reserved_qty = $orderedProduct->reserved_qty + $orderContent->qty;
-                    $updates = ['reserved_qty' => $reserved_qty];
-                    if($reserved_qty > 0) {
-                        $updates['inactive'] = 0;
-                    }
-                    $orderedProduct->updateProduct($updates, true);
                     $reservedLogData = [
-                        "product_id" => $orderedProduct->product_id,
-                        "order_id" => $orderedProduct->order_id,
+                        "product_id" => $orderContent->product_id,
+                        "order_id" => $orderContent->order_id,
                         "adjustment_amount" => $orderContent->qty,
-                        "adjustment_type" => "negative",
-                        "variation_id" => $orderContent->variation_id,
+                        "adjustment_type" => "positive",
+                        "variation_id" => $orderedProduct->variation_id,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
 
+
                     $reservedQtyLog = new ReservedQtyLog();
                     $reservedQtyLog->insert($reservedLogData);
+
+                    $updates = ['reserved_qty' => $reserved_qty];
+
+                    if ($reserved_qty > 0) {
+                        $updates['inactive'] = 0;
+                    }
+                    $orderedProduct->updateProduct($updates, true);
+
                 }
             }
         }
@@ -272,7 +286,6 @@ class order extends Sximo
                 $item->price = \CurrencyHelpers::formatPriceAPI($item->price, self::ORDER_PERCISION, false);
                 $item->case_price = \CurrencyHelpers::formatPriceAPI($item->case_price, self::ORDER_PERCISION, false);
             }
-
           /*  $orderId = $item->order_id;
             $item->price = \CurrencyHelpers::formatPrice($item->price, 3, false);
             $item->case_price = \CurrencyHelpers::formatPrice($item->case_price, 3, false);*/
