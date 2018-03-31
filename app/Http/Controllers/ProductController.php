@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use phpDocumentor\Reflection\Types\Null_;
 use Validator, Input, Redirect,Image;
-
+use App\Models\ReservedQtyLog;
 class ProductController extends Controller
 {
 
@@ -435,6 +435,49 @@ class ProductController extends Controller
     function postSave(Request $request, $id = 0)
     {
 
+        $reserved_qty_reason = $request->input('reserved_qty_reason');
+        $rules = $this->validateForm();
+
+        if(isset($_POST['reserved_qty_reason'])){
+            $rules['reserved_qty_reason'] = 'required';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+            if ($id != 0) {
+                $Product = product::find($id);
+                $NewReservedQty = $request->input('reserved_qty');
+                if ($Product->reserved_qty != $NewReservedQty && $NewReservedQty != '') {
+                    $type = "negative";
+                    if ($NewReservedQty > $Product->reserved_qty) {
+                        $type = "positive";
+                    } else if ($NewReservedQty < $Product->reserved_qty) {
+                        $type = "negative";
+                    }
+                    $NewReservedQty = $NewReservedQty - $Product->reserved_qty;
+                    if($NewReservedQty < 0 ){
+                        $NewReservedQty = $NewReservedQty * -1;
+                    }
+                    $ReservedQtyLog = new ReservedQtyLog();
+                    $reservedLogData = [
+                        "product_id" => $id,
+                        "adjustment_amount" => $NewReservedQty,
+                        "adjustment_type" => $type,
+                        "variation_id" => !empty($Product->variation_id) ? $Product->variation_id:null,
+                        "reserved_qty_reason" => $reserved_qty_reason,
+                        "adjusted_by" => \AUTH::user()->id,
+                    ];
+                    $ReservedQtyLog->insertRow($reservedLogData, 0);
+                }
+            }
+        }else{
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));
+        }
+
         //to remove the extra spaces im between the string
         $request->vendor_description = trim(preg_replace('/\s+/',' ', $request->vendor_description));
 
@@ -510,7 +553,7 @@ class ProductController extends Controller
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
 
-            $rules['expense_category'] = 'required';
+        $rules['expense_category'] = 'required';
 
 
         $request->Product_Type = $request->prod_type_id;
@@ -526,16 +569,26 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
+
         $product_categories = $request->get('prod_type_id');
         if ($validator->passes()) {
+
             if ($id == 0) {
                 $data = $this->validatePost('products');
+
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
             }
             else {
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
+            }
+            if(isset($data['reserved_qty_reason'])){
+                unset($data['reserved_qty_reason']);
+            }
+            if($id == 0 || empty($id)){
+                $UniqueID = substr(md5(md5(time()+time())."-".md5(time())),0,10);
+                $data['variation_id'] = $UniqueID;
             }
             $postedtoNetSuite = $data['vendor_description'];
 
@@ -609,22 +662,41 @@ class ProductController extends Controller
                 $ids = [];
                 $count = 1;
                 $prodData = $data;
-                foreach ($product_categories as $category)
-                {
-                    $prodData['retail_price'] = (isset($retail_price[$count]) && !empty($retail_price[$count]))?$retail_price[$count]:0;
-                    $prodData['ticket_value'] = (isset($data['ticket_value'][$count]) && !empty($data['ticket_value'][$count]))?$data['ticket_value'][$count]:0;
+                foreach ($product_categories as $category) {
+                    $prodData['retail_price'] = (isset($retail_price[$count]) && !empty($retail_price[$count])) ? $retail_price[$count] : 0;
+                    $prodData['ticket_value'] = (isset($data['ticket_value'][$count]) && !empty($data['ticket_value'][$count])) ? $data['ticket_value'][$count] : 0;
                     $prodData['prod_type_id'] = $category;
-                    $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count]))?$data['prod_sub_type_id'][$count]:0;
-                    $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count]))?$data['expense_category'][$count]:0;
+                    $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count])) ? $data['prod_sub_type_id'][$count] : 0;
+                    $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count])) ? $data['expense_category'][$count] : 0;
                     $count++;
                     /*
                      * commented as per Gabe request on 9/13/2017
                     if($data['prod_type_id'] != 8){
                         $data['retail_price'] = 0.000;
                     }*/
-                    $ids[] = $this->model->insertRow($prodData, $id);
-                }
 
+                    $ids[] = $this->model->insertRow($prodData, $id);
+
+                }
+                if (isset($ids) && count($ids) > 0) {
+                    $Product = product::find($ids[0]);
+                        $type = "negative";
+                        if ($Product->reserved_qty > 0) {
+                            $type = "positive";
+                        } else if ($Product->reserved_qty < 0) {
+                            $type = "negative";
+                        }
+                        $ReservedQtyLog = new ReservedQtyLog();
+                        $reservedLogData = [
+                            "product_id" => $Product->id,
+                            "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1):$Product->reserved_qty),
+                            "adjustment_type" => $type,
+                            "variation_id" => $Product->variation_id,
+                            "reserved_qty_reason" => $reserved_qty_reason,
+                            "adjusted_by" => \AUTH::user()->id,
+                        ];
+                        $ReservedQtyLog->insertRow($reservedLogData, 0);
+                }
                 foreach ($ids as $id)
                 {
                     $postedtoNetSuite = $data['vendor_description'];
@@ -676,6 +748,7 @@ class ProductController extends Controller
                     $this->model->insertRow($netsuite_description, $pc->id);
                 }
             }
+
 
             return response()->json(array(
                 'status' => 'success',

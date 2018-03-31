@@ -660,20 +660,16 @@ class OrderController extends Controller
             $item_received = $request->get('item_received');
             $item_received = $request->get('item_received');
             $denied_SIDs = $request->get('denied_SIDs');
-            //  $po_notes_additionaltext = $request->get('po_notes_additionaltext');
+              $po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
                 if (in_array($order_type, $case_price_categories)) {
                     $itemsPriceArray[] = $casePriceArray[$i];
-                }
-                elseif(in_array($order_type,$case_price_if_no_unit_categories))
-                {
-                    $itemsPriceArray[] = ($priceArray[$i] == 0.00)?$casePriceArray[$i]:$priceArray[$i];
-                }
-                else
-                {
+                } elseif (in_array($order_type, $case_price_if_no_unit_categories)) {
+                    $itemsPriceArray[] = ($priceArray[$i] == 0.00) ? $casePriceArray[$i] : $priceArray[$i];
+                } else {
                     $itemsPriceArray[] = $priceArray[$i];
                 }
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i]
@@ -702,7 +698,7 @@ class OrderController extends Controller
                     'alt_address' => $alt_address,
                     'request_ids' => $where_in,
                     'po_notes' => $notes,
-                    //'po_notes_additionaltext'=>$po_notes_additionaltext,
+                    'po_notes_additionaltext'=>$po_notes_additionaltext,
                 );
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
@@ -730,7 +726,7 @@ class OrderController extends Controller
                     'new_format' => 1,
                     'is_freehand' => $is_freehand,
                     'po_notes' => $notes,
-                    //'po_notes_additionaltext'=>$po_notes_additionaltext,
+                    'po_notes_additionaltext'=>$po_notes_additionaltext,
                 );
                 if ($editmode == "clone") {
                     $id = 0;
@@ -906,7 +902,7 @@ class OrderController extends Controller
 
         } elseif ($id != 0) {
             $data = $this->validatePost('orders', true);
-
+            $orderTotal = \CurrencyHelpers::formatPrice(Order::find($id)->order_total,2, false);
             if (isset($data['order_type_id'])) {
                 $order_contents = \DB::table('order_contents')->where('order_id', $id)->get();
                 $orderTotal = 0;
@@ -1712,8 +1708,6 @@ class OrderController extends Controller
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
         }
-
-
         $rules = array();
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";
@@ -2276,6 +2270,102 @@ class OrderController extends Controller
             }
         }
     }
+
+
+    public function getUpdateProductVariantsWithDefaultExpenseCategoryHavingDifferentPrice(){
+
+        $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category','vendor_id')
+            ->groupBy('vendor_description','vendor_id','sku')
+            ->havingRaw('COUNT(vendor_description) > 1 AND GROUP_CONCAT(is_default_expense_category) = "0,0"')
+            ->get();
+
+        $products = Product::hydrate($products);
+
+
+        foreach($products as $product){
+
+            if($product->hasDefaultExpenseCategory($product->id)){
+                echo "Skipping For (ID: {$product->id} === Item Name:{$product->vendor_description} === SKU:{$product->sku} === Case Price: {$product->case_price} ) <br>";
+                continue;
+            }
+            $variants = Product::where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku, 'vendor_id' => $product->vendor_id])->get();
+            foreach ($variants as $item){
+                $item->is_default_expense_category = 1;
+                $item->save();
+                echo "Update default Expense Category For (ID: {$item->id} === Item Name:{$item->vendor_description} === SKU:{$item->sku} === Case Price: {$item->case_price} ) <br>";
+            }
+
+        }
+    }
+
+    public function getUpdateProductVariantsWithDefaultExpenseCategoryHavingDifferentSku(){
+
+        $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category','vendor_id')
+            ->groupBy('vendor_description','vendor_id','case_price')
+            ->havingRaw('COUNT(vendor_description) > 1 AND GROUP_CONCAT(is_default_expense_category) = "0,0"')
+            ->get();
+
+        $products = Product::hydrate($products);
+
+
+        foreach($products as $product){
+
+            if($product->hasDefaultExpenseCategory($product->id)){
+                echo "Skipping For (ID: {$product->id} === Item Name:{$product->vendor_description} === SKU:{$product->sku} === Case Price: {$product->case_price} ) <br>";
+                continue;
+            }
+            $variants = Product::where(['vendor_description' => $product->vendor_description, 'case_price' => $product->case_price, 'vendor_id' => $product->vendor_id])->get();
+            foreach ($variants as $item){
+                $item->is_default_expense_category = 1;
+                $item->save();
+                echo "Update default Expense Category For (ID: {$item->id} === Item Name:{$item->vendor_description} === SKU:{$item->sku} === Case Price: {$item->case_price} ) <br>";
+            }
+
+        }
+    }
+
+
+    public function getUpdateProductVariantsWithDefaultExpenseCategory(){
+
+        $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category')
+            ->groupBy('vendor_description','vendor_id','sku','case_price')
+            ->havingRaw('COUNT(vendor_description) > 1')
+            ->get();
+
+        $products = Product::hydrate($products);
+
+        foreach($products as $product){
+
+            if($product->hasDefaultExpenseCategory($product->id)){
+                echo "Skipping For (ID: {$product->id} Item Name:{$product->vendor_description} SKU:{$product->sku} Case Price: {$product->case_price} ) <br>";
+                continue;
+            }
+            $variants = $product->getProductVariations();
+            $sorted = $variants->sortBy('inactive');
+
+            $activeItemFound = false;
+            foreach ($sorted as $item){
+                if($item->inactive == 0){
+                    $activeItemFound = true;
+                    $item->is_default_expense_category = 1;
+                    $item->save();
+                    break;
+                }
+            }
+
+            if(!$activeItemFound){
+                $item = $variants->sortBy('id')->first();
+                $item->is_default_expense_category = 1;
+                $item->save();
+            }
+            echo "Update default Expense Category For (ID: {$product->id} Item Name:{$product->vendor_description} SKU:{$product->sku} Case Price: {$product->case_price} ) <br>";
+        }
+
+
+    }
+
+
+
 
     public function getCorrectOrdersBug242($step = '1'){
         die("Script blocked. To run this script please contact your development team. Thanks!");

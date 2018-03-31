@@ -54,6 +54,17 @@ class PostEditOrderEventHandler
 
                     $adjustmentAmount = $ProductObj->reserved_qty + $ReservedProductQtyLogObj->total_adjustment_amount;
                     $ProductObj->updateProduct(['reserved_qty' => $adjustmentAmount]);
+                    $user = \AUTH::user();
+                    $user_id = $user->id;
+                    $ReservedLogData = [
+                        "product_id" => $products->id,
+                        "order_id" => $event->order_id,
+                        "adjustment_amount" => $adjustmentAmount,
+                        "variation_id" => $products->variation_id,
+                        "adjusted_by" => $user_id,
+                    ];
+                    $ProductReservedQtyObject = new ReservedQtyLog();
+                    $ProductReservedQtyObject->setPositiveAdjustment($ReservedLogData, $Reserved_qty_id);
                     $Reserved_qty_id = $ReservedProductQtyLogObj->id;
                 }
 
@@ -77,6 +88,7 @@ class PostEditOrderEventHandler
                         "product_id" => $product_id,
                         "order_id" => $order_id,
                         "adjustment_amount" => $products->qty,
+                        "variation_id" => $products->variation_id,
                         "adjusted_by" => $user_id,
                     ];
                     $ProductReservedQtyObject = new ReservedQtyLog();
