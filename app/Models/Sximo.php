@@ -50,8 +50,6 @@ class Sximo extends Model {
             'params' => $params,
             'conditions' => $conditions
         );
-        Log::info("Before log file creation");
-
         $l = '';
         $L =  FEGSystemHelper::setLogger($l, "user-action-logs.log", "FEGUserActions", "USER_ACTIONS");
         if(!$cronTask)
