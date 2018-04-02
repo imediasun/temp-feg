@@ -43,13 +43,17 @@ class PostSaveOrderEventHandler
                 $adjustmentAmount = ($product->reserved_qty + $item->prev_qty) - $item->qty;
                 if($item->prev_qty > $item->qty){
                     $qty = ($item->qty - $item->prev_qty) < 0 ? ( ($item->qty - $item->prev_qty) * -1 ):($item->qty - $item->prev_qty);
-
-                    self::setPositiveAdjustement($item,$product,"positive",$qty);
+                    if($item->prev_qty != $item->qty) {
+                        self::setPositiveAdjustement($item, $product, "positive", $qty);
+                    }
                 }else{
-                    $qty = ($item->qty - $item->prev_qty) < 0 ? ( ($item->qty - $item->prev_qty) * -1 ):($item->qty - $item->prev_qty);
 
-                    self::setPositiveAdjustement($item,$product,"negative",$qty);
+                    $qty = ($item->qty - $item->prev_qty) < 0 ? ( ($item->qty - $item->prev_qty) * -1 ):($item->qty - $item->prev_qty);
+                    if($item->prev_qty != $item->qty) {
+                        self::setPositiveAdjustement($item, $product, "negative", $qty);
+                    }
                 }
+
             } else {
                 $adjustmentAmount = $product->reserved_qty - $item->qty;
 
@@ -70,23 +74,22 @@ class PostSaveOrderEventHandler
 
             if($inactive == 1){
                 // When product with reserved quantity becomes inactive due to not allowing negative quantities:
-               /* > Hello FEG Team,
-                > <br>
-                > The following product has become inactive due to a lack of remaining reserve quantity.
-                >
-                > Product Name:
-                > Product SKU:
-                > Reserved Qty Par Amount:
-                > Remaining Reserved Quantity:
-                >*/
+                /* > Hello FEG Team,
+                 > <br>
+                 > The following product has become inactive due to a lack of remaining reserve quantity.
+                 >
+                 > Product Name:
+                 > Product SKU:
+                 > Reserved Quantity:
+                 >
+                 >*/
                 $message = 'Hello FEG Team,';
                 $message .='<br><br>';
                 $message .='The following product has become inactive due to a lack of remaining reserve quantity.<br>';
                 $message .='<br><br>';
                 $message .='Product Name: '.$product->vendor_description.'<br>';
                 $message .='Product SKU: '.$product->sku.'<br>';
-                $message .='Reserved Qty Par Amount: '.$product->reserved_qty_limit.'<br>';
-                $message .='Remaining Reserved Quantity: '.$adjustmentAmount.'<br>';
+                $message .='Reserved Quantity: '.$product->reserved_qty.'<br>';
                 self::sendProductReservedQtyEmail($message);
             }
             if ($adjustmentAmount < $product->reserved_qty_limit && $inactive == 0) {
@@ -99,7 +102,9 @@ class PostSaveOrderEventHandler
                 > Product Name:
                 > Product SKU:
                 > Reserved Qty Par Amount:
-                > Remaining Reserved Quantity:  */
+                > Remaining Reserved Quantity:
+                >
+                 */
 
                 $message = 'Hello FEG Team,';
                 $message .='<br><br>';
@@ -108,7 +113,6 @@ class PostSaveOrderEventHandler
                 $message .='Product Name: '.$product->vendor_description.'<br>';
                 $message .='Product SKU: '.$product->sku.'<br>';
                 $message .='Reserved Qty Par Amount: '.$product->reserved_qty_limit.'<br>';
-                $message .='Reserved Quantity: '.$adjustmentAmount.'<br>';
                 self::sendProductReservedQtyEmail($message);
 
             }

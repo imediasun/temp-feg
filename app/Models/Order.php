@@ -66,14 +66,15 @@ class order extends Sximo
         });
 
         //@todo add statis::restore
-        static::restoring(function(Order $model){
-           $model->status_id = self::ORDER_ACTIVE_STATUS;
-           $model->deleted_by = null;
-           $model->deleteReservedProductQuantities();
+        static::restoring(function (Order $model) {
+            $model->status_id = self::ORDER_ACTIVE_STATUS;
+            $model->deleted_by = null;
+            $model->deleteReservedProductQuantities();
         });
     }
 
-    public function contents(){
+    public function contents()
+    {
         return $this->hasMany('App\Models\OrderContent');
     }
 
@@ -96,14 +97,15 @@ class order extends Sximo
 
     }
 
-    private function adjustReservedProductQuantities($reduceQuantity = false){
+    private function adjustReservedProductQuantities($reduceQuantity = false)
+    {
         $orderContents = $this->contents;
         Log::info("adjustReservedProductQuantities => Total Items = ".$orderContents->count());
         foreach ($orderContents as $orderContent) {
 
             $orderedProduct = $orderContent->product;
 
-            if($orderedProduct->is_reserved == 1){
+            if ($orderedProduct->is_reserved == 1) {
 
                 if ($reduceQuantity) {
                     Log::info("claiming qty from product because order is restoring");
@@ -124,7 +126,7 @@ class order extends Sximo
                     $reservedQtyLog = new ReservedQtyLog();
                     $reservedQtyLog->insert($reservedLogData);
                     $updates = ['reserved_qty' => $reserved_qty];
-                    if(!$orderedProduct->allow_negative_reserve_qty and $reserved_qty == 0) {
+                    if (!$orderedProduct->allow_negative_reserve_qty and $reserved_qty == 0) {
                         $updates['inactive'] = 1;
                     }
                     $orderedProduct->updateProduct($updates, true);
@@ -164,7 +166,7 @@ class order extends Sximo
         if(empty($this->contents) || $this->is_freehand === 1){
             return true;
         }
-        foreach ($this->contents as $orderContent){
+        foreach ($this->contents as $orderContent) {
             $orderedProduct = $orderContent->product;
             if(!empty($orderedProduct) && $orderedProduct->is_reserved == 1 && $orderedProduct->allow_negative_reserve_qty == 0 &&
                 $orderedProduct->reserved_qty < $orderContent->qty){
@@ -1216,12 +1218,14 @@ class order extends Sximo
         }
         return $notes;
     }
-    public function setOrderStatus(){
+
+    public function setOrderStatus()
+    {
         $OrderedQty = $this->orderedContent->sum('qty');
-        $ItemReceived = $this->orderedContent->sum('item_received');
-        if($ItemReceived>0 && $ItemReceived<$OrderedQty){
-            $this->status_id=1;
-            $this->is_partial=1;
+        $ItemReceived = $this->orderedContent->sum('item_received'); // This is a test comment
+        if ($ItemReceived > 0 && $ItemReceived < $OrderedQty) {
+            $this->status_id = 1;
+            $this->is_partial = 1;
         }
     }
 }
