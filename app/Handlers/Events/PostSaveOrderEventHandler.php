@@ -113,6 +113,7 @@ class PostSaveOrderEventHandler
                 $message .='Product Name: '.$product->vendor_description.'<br>';
                 $message .='Product SKU: '.$product->sku.'<br>';
                 $message .='Reserved Qty Par Amount: '.$product->reserved_qty_limit.'<br>';
+                $message .='Remaining Reserved Quantity:'.$adjustmentAmount."<br>";
                 self::sendProductReservedQtyEmail($message);
 
             }
