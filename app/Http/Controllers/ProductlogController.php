@@ -67,7 +67,10 @@ class ProductlogController extends Controller {
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query
 		// Filter Search for query
-		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+	//	$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+
+        $searchQuery = $request->input('search');
+        $filter = $this->getSearchFilterQuery();
 
 
 		$page = $request->input('page', 1);
@@ -273,5 +276,41 @@ class ProductlogController extends Controller {
 		}
 
 	}
+
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+
+
+
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'reserved_qty' => '']);
+        $skipFilters = ['search_all_fields'];
+        $mergeFilters = [];
+        extract($globalSearchFilter); //search_all_fields
+
+        // rebuild search query
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+        $searchInput = $trimmedSearchQuery;
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                'products.vendor_description',
+                'products.sku',
+                'orders.id',
+                'orders.po_number',
+            ];
+            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+        }
+
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
+
+        $reservedQtyQuery = '';
+        if($reserved_qty != ''){
+            $reservedQtyQuery = " AND products.reserved_qty = $reserved_qty";
+        }
+
+        return $filter.$reservedQtyQuery;
+    }
 
 }

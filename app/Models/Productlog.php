@@ -15,7 +15,14 @@ class productlog extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT products.* FROM products  ";
+		return "  SELECT
+  products.*,
+  '' AS search_all_fields
+FROM products
+  INNER JOIN order_contents
+    ON products.id = order_contents.product_id
+  INNER JOIN orders
+    ON orders.id = order_contents.order_id  ";
 	}	
 
 	public static function queryWhere(  ){
