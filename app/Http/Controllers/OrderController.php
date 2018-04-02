@@ -1315,7 +1315,8 @@ class OrderController extends Controller
                 'orders.notes',
                 'orders.is_partial',
                 'orders.tracking_number',
-                'YN.yesno'
+                'YN.yesno',
+                'OC.sku'
             ];
             $dateSearchFields = [
                 'orders.date_ordered',
