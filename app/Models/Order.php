@@ -151,6 +151,7 @@ class order extends Sximo
                 LEFT OUTER JOIN order_status OS ON orders.status_id=OS.id
                 LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id";
     }
+
     public static function getProductInfo($id){
 
         $select ="SELECT IF(order_contents.sku IS null OR order_contents.sku = '', products.sku,order_contents.sku) as sku, order_contents.qty,order_contents.item_name,order_contents.total FROM order_contents
@@ -843,7 +844,6 @@ class order extends Sximo
         }
     }
 
-
     public static function getComboselect($params, $limit = null, $parent = null)
     {
         $tableName = $params[0];
@@ -858,6 +858,7 @@ class order extends Sximo
         return Sximo::parseNumber($this->attributes['unit_price']);
         //return number_format($this->attributes['unit_price'],3); //causing problem with inputs
     }
+
     public function getCasePriceAttribute(){
         return Sximo::parseNumber($this->attributes['case_price']);
         //return number_format($this->attributes['case_price'],3); //causing problem with inputs
@@ -866,12 +867,15 @@ class order extends Sximo
     public static function isClonable($id, $data = null) {
 
     }
+
     public static function isEditable($id, $data = null) {
 
     }
+
     public static function isReceivable($id, $data = null) {
 
     }
+
     public static function isPartiallyReceived($id, $data = null) {
         $partial = false;
         if (self::isVoided($id, $data)){
@@ -899,6 +903,7 @@ class order extends Sximo
         $isClosed = in_array($statusId, self::ORDER_CLOSED_STATUS);
         return $isClosed;
     }
+
     public static function isVoided($id, $data = null) {
         if (!empty($data)) {
             $statusId = is_object($data) ? $data->status_id : $data['status_id'];
@@ -909,6 +914,7 @@ class order extends Sximo
         $isVoided = $statusId == self::ORDER_VOID_STATUS;
         return $isVoided;
     }
+
     public static function isFreehand($id, $data = null) {
         if (!empty($data)) {
             $freehand = is_object($data) ? $data->is_freehand : $data['is_freehand'];
@@ -931,10 +937,12 @@ class order extends Sximo
         $isApiable = Ordertyperestrictions::isApiable($oType);
         return $isApiable;
     }
+
     public static function isApiable($id, $data = null, $ignoreVoid = false) {
         return !self::isFreehand($id, $data) && self::isApiableFromType($id, $data) &&
             ($ignoreVoid || !self::isVoided($id, $data));
     }
+
     public static function isApified($id, $data = null) {
         if (!empty($data)) {
             $api = is_object($data) ? $data->is_api_visible : $data['is_api_visible'];
@@ -945,6 +953,7 @@ class order extends Sximo
         $isApified = !empty($api);
         return $isApified;
     }
+
     public static function apified($id, $isUnset = false) {
         if (self::isApiable($id, null, true)) {
             $now = date("Y-m-d H:i:s");
@@ -961,6 +970,7 @@ class order extends Sximo
         }
         return false;
     }
+
     public static function voidify($id) {
         $now = date("Y-m-d H:i:s");
         $updateData = ['status_id' => self::ORDER_VOID_STATUS];
@@ -1009,7 +1019,6 @@ class order extends Sximo
             return false;
         }
     }
-
 
     public static function cloneOrder($id, $data = null, $options = array()) {
 
@@ -1132,6 +1141,7 @@ class order extends Sximo
 
         return $poNumber;
     }
+
     public static function relateOrder($rType, $originalOrderID, $targetOrderID) {
 
         $typeIDs = \FEGHelp::getEnumTable('orders_relation_types', 'relation_name', 'id');
