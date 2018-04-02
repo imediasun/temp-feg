@@ -10,7 +10,11 @@ use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
+use App\Models\OrderContent;
+use App\Models\OrderReceived;
 use App\Models\OrderStatus;
+use App\Models\pendingrequest;
+use App\Models\PoTrack;
 use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
@@ -19,6 +23,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\SximoDB;
+use Illuminate\Support\Facades\Auth;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
 use PHPMailerOAuth;
@@ -553,31 +558,43 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
+        \DB::beginTransaction();
 
-        /*$productIdArray = $request->get('product_id');
-        $query = \DB::select('select id from requests where location_id = "' . (int)$request->location_id . '" AND status_id = 1 AND product_id IN ('.implode(',',$productIdArray).')');
-*/
-        if (count($query) < 1 && $request->from_sid == 1) {
+        $pending_requests = new pendingrequest();
+        $pending = $pending_requests->getPendingRequests(
+            (int)$request->location_id,
+            (int)$request->vendor_id
+        )->all();
+
+        if (count($pending) < 1 && $request->from_sid == 1) {
             return response()->json(array(
                 'message' => 'Someone has already ordered these products',
                 'status' => 'error',
-
             ));
         }
+
         $rules = array(
-            //  'location_id' => "required",
             'vendor_id' => 'required',
             'order_type_id' => "required",
             'freight_type_id' => 'required',
             'date_ordered' => 'required',
-            //   'po_3' => 'required'
         );
+
+        $altShipTo = $request->get('alt_ship_to');
+        if (!empty($altShipTo)) {
+            $shipToRules = array(
+                'to_add_name' => 'required|max:60',
+                'to_add_street' => 'required|min:5',
+                'to_add_city' => 'required|min:5',
+                'to_add_state' => 'required|max:2',
+                'to_add_zip' => 'required|max:10'
+            );
+            $rules = array_merge($rules, $shipToRules);
+        }
+
         $validator = Validator::make($request->all(), $rules);
-        $order_data = array();
-        $order_contents = array();
-        $data = array_filter($request->all());
         $redirect_link = "order";
+
         $case_price_categories = [];
         if (isset($this->data['pass']['calculate price according to case price'])) {
             $case_price_categories = explode(',', $this->data['pass']['calculate price according to case price']->data_options);
@@ -586,17 +603,23 @@ class OrderController extends Controller
         if (isset($this->data['pass']['use case price if unit price is 0.00'])) {
             $case_price_if_no_unit_categories = explode(',', $this->data['pass']['use case price if unit price is 0.00']->data_options);
         }
+        
         if ($validator->passes()) {
             $order_id = $request->get('order_id');
+            if($order_id){
+                $order = order::find($order_id);
+            }else{
+                $order = new order();
+            }
+
             $editmode = $request->get('editmode');
             $where_in = $request->get('where_in_expression');
-            //$where_in = implode(',',$query);
             $SID_string = $request->get('SID_string');
             $company_id = $request->get('company_id');
             $location_id = $request->get('location_id');
             $order_type = $request->get('order_type_id');
             $vendor_id = $request->get('vendor_id');
-            $vendor_email = $this->model->getVendorEmail($vendor_id);
+            $vendor_email = $order->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
             $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
@@ -606,46 +629,20 @@ class OrderController extends Controller
             $po_2 = $request->get('po_2');
             $po_3 = $request->get('po_3');
             $po = $po_1 . '-' . $po_2 . '-' . $po_3;
-            $altShipTo = $request->get('alt_ship_to');
-            $alt_address = '';
             $order_description = '';
-            $totalQuanity = \DB::select("SELECT SUM(qty) AS total_quantity FROM order_contents WHERE order_id=$order_id")[0]->total_quantity;
-            $orderQuantity =  array_sum($request->qty);
-            $orderQuantity = $orderQuantity - $totalQuanity;
-            //When order quantity will be increase then order status will be updated to open (Partial)
 
-            $received_quantity = \DB::select("SELECT SUM(quantity) as total_received_qty FROM order_received WHERE  order_id=$order_id")[0]->total_received_qty;
+            $to_add_name = $request->get('to_add_name');
+            $to_add_street = $request->get('to_add_street');
+            $to_add_city = $request->get('to_add_city');
+            $to_add_state = $request->get('to_add_state');
+            $to_add_zip = $request->get('to_add_zip');
+            $to_add_notes = $request->get('to_add_notes');
+            $alt_address = $to_add_name . '|' . $to_add_street .
+                '|' . $to_add_city . '| ' . $to_add_state .
+                '| ' . $to_add_zip . '|' . $to_add_notes;
 
-            if ($orderQuantity > 0 && $received_quantity < $totalQuanity) {
-                \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
-            } elseif ($received_quantity == $totalQuanity) {
-                \DB::update('update orders set status_id=1, is_partial=0 where id="' . $order_id . '"');
-            }
+            $order->setOrderStatusPost(array_sum($request->qty));
 
-            $itemReceivedcount = \DB::select("SELECT COUNT(*) AS itemReceivedcount FROM order_contents WHERE order_id=$order_id AND item_received>0")[0]->itemReceivedcount;
-
-            if($itemReceivedcount==0){
-                \DB::update('update orders set status_id=1, is_partial=0 where id="'.$order_id.'"');
-            }
-            if (!empty($altShipTo)) {
-                $rules = array(
-                    'to_add_name' => 'required|max:60',
-                    'to_add_street' => 'required|min:5',
-                    'to_add_city' => 'required|min:5',
-                    'to_add_state' => 'required|max:2',
-                    'to_add_zip' => 'required|max:10'
-                );
-                $validator = Validator::make($request->all(), $rules);
-                $to_add_name = $request->get('to_add_name');
-                $to_add_street = $request->get('to_add_street');
-                $to_add_city = $request->get('to_add_city');
-                $to_add_state = $request->get('to_add_state');
-                $to_add_zip = $request->get('to_add_zip');
-                $to_add_notes = $request->get('to_add_notes');
-                $alt_address = $to_add_name . '|' . $to_add_street .
-                    '|' . $to_add_city . '| ' . $to_add_state .
-                    '| ' . $to_add_zip . '|' . $to_add_notes;
-            }
             $itemsArray = $request->get('item');
             $itemNamesArray = $request->get('item_name');
             $skuNumArray = $request->get('sku');
@@ -658,9 +655,8 @@ class OrderController extends Controller
             $force_remove_items = $request->get('force_remove_items');
             $games = $request->get('game');
             $item_received = $request->get('item_received');
-            $item_received = $request->get('item_received');
             $denied_SIDs = $request->get('denied_SIDs');
-            //  $po_notes_additionaltext = $request->get('po_notes_additionaltext');
+            //$po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
@@ -676,6 +672,19 @@ class OrderController extends Controller
                     . ') ' . $itemsArray[$i] . ' @ $' .
                     $itemsPriceArray[$i] . ' ea.';
             }
+
+            $order->company_id = $company_id;
+            $order->order_type_id = $order_type;
+            $order->vendor_id = $vendor_id;
+            $order->order_description = $order_description;
+            $order->freight_id = $freight_type_id;
+            $order->order_total = $total_cost;
+            $order->alt_address = $alt_address;
+            $order->request_ids = $where_in;
+            $order->po_notes = $notes;
+            //$order->po_notes_additionaltext = $po_notes_additionaltext;
+
+
             if ($is_freehand == 0) {
                 $validationResponse = $this->validateProductForReserveQty($request);
 
@@ -687,100 +696,49 @@ class OrderController extends Controller
                     ));
                 }
             }
+            
             if ($editmode == "edit") {
-                $orderData = array(
-                    'company_id' => $company_id,
-                    'order_type_id' => $order_type,
-                    'vendor_id' => $vendor_id,
-                    'order_description' => $order_description,
-                    'order_total' => $total_cost,
-                    'freight_id' => $freight_type_id,
-                    'alt_address' => $alt_address,
-                    'request_ids' => $where_in,
-                    'po_notes' => $notes,
-                    //'po_notes_additionaltext'=>$po_notes_additionaltext,
-                );
-                $this->model->insertRow($orderData, $order_id);
-                $last_insert_id = $order_id;
                 $force_remove_items = explode(',', $force_remove_items);
-                \DB::table('order_contents')->where('order_id', $last_insert_id)->where('item_received', '0')->delete();
-                \DB::table('order_contents')->whereIn('id', $force_remove_items)->delete();
-                \DB::table('order_received')->whereIn('order_line_item_id', $force_remove_items)->delete();
+                OrderContent::where('order_id', $order->id)->where('item_received', '0')->delete();
+                OrderContent::whereIn('id', $force_remove_items)->delete();
+                OrderReceived::whereIn('order_line_item_id', $force_remove_items)->delete();
             } else {
-                $orderData = array(
-                    'user_id' => \Session::get('uid'),
-                    'company_id' => $company_id,
-                    'location_id' => $location_id,
-                    'order_type_id' => $order_type,
-                    'date_ordered' => $date_ordered,
-                    'vendor_id' => $vendor_id,
-                    'order_description' => $order_description,
-                    'status_id' => 1,
-                    'order_total' => $total_cost,
-                    'freight_id' => $freight_type_id,
-                    'po_number' => $po,
-                    'alt_address' => $alt_address,
-                    'request_ids' => $where_in,
-                    'new_format' => 1,
-                    'is_freehand' => $is_freehand,
-                    'po_notes' => $notes,
-                    //'po_notes_additionaltext'=>$po_notes_additionaltext,
-                );
+                $order->user_id = Auth::user()->id;
+                $order->location_id = $location_id;
+                $order->date_ordered = $date_ordered;
+                $order->status_id = 1;
+                $order->po_number = $po;
+                $order->new_format = 1;
+                $order->is_freehand = $is_freehand;
+                $orderData = $order->getAttributes();
                 if ($editmode == "clone") {
-                    $id = 0;
                     Sximo::insertLog('Order', 'Clone', 'OrderController', 'An order with po : ' . $po . ' is cloned', json_encode($orderData));
                 }
-                $this->model->insertRow($orderData, $id);
-                $order_id = \DB::getPdo()->lastInsertId();
             }
+
             //// UPDATE STATUS TO APPROVED AND PROCESSED
-            //don't put this code in loop below
-            $now = $this->model->get_local_time('date');
             if (!empty($where_in)) {
-                \DB::update('UPDATE requests
-							 SET status_id = 2,
-							 	 process_user_id = ' . \Session::get('uid') . ',
-								 process_date = "' . $now . '",
-								 blocked_at = null
-						   WHERE id IN(' . $where_in . ')');
+                $order->updateRequest(explode(',', $where_in));
             }
+
+            //Save the order
+            $order->save();
+
             for ($i = 0; $i < $num_items_in_array; $i++) {
 
-                if (empty($productIdArray[$i])) {
-                    $product_id = '0';
-                } else {
-                    $product_id = $productIdArray[$i];
-                }
-                if (empty($skuNumArray[$i])) {
-                    $sku_num = '0';
-                } else {
-                    $sku_num = $skuNumArray[$i];
-                }
+                $product_id = empty($productIdArray[$i]) ? '0' : $productIdArray[$i];
+                $sku_num = empty($skuNumArray[$i]) ? '0' : $skuNumArray[$i];
+                $request_id = empty($requestIdArray[$i]) ? '0' : $requestIdArray[$i];
+                $game_id = ($order_type == 1) ? $games[$i] : '0';
+                $items_received_qty = empty($item_received[$i]) ? '0' : $item_received[$i];
 
-                if (empty($requestIdArray[$i])) {
-                    $request_id = '0';
-                } else {
-                    $request_id = $requestIdArray[$i];
-                }
-
-                if ($order_type == 1) {
-                    $game_id = $games[$i];
-                } else {
-                    $game_id = '0';
-                }
-
-                if (empty($item_received[$i])) {
-                    $items_received_qty = '0';
-                } else {
-                    $items_received_qty = $item_received[$i];
-                }
                 if ($product_id != 0) {
-                    $prodData = \DB::select("SELECT * from products where id =$product_id");
-                    $prodType = $prodData[0]->prod_type_id;
-                    $prodSubtype = $prodData[0]->prod_sub_type_id;
-                    $qty_per_case = $prodData[0]->num_items;
-                    $prodTicketValue = $prodData[0]->ticket_value;
-                    $prodVendorId = $prodData[0]->vendor_id;
+                    $product = product::find($product_id);
+                    $prodType = $product->prod_type_id;
+                    $prodSubtype = $product->prod_sub_type_id;
+                    $qty_per_case = $product->num_items;
+                    $prodTicketValue = $product->ticket_value;
+                    $prodVendorId = $product->vendor_id;
                 } else {
                     $prodType = $order_type;
                     $prodSubtype = 0;
@@ -789,36 +747,37 @@ class OrderController extends Controller
                     $prodVendorId = $vendor_id;
                 }
 
-                $contentsData = array(
-                    'order_id' => $order_id,
-                    'request_id' => $request_id,
-                    'product_id' => $product_id,
-                    'price' => $priceArray[$i],
-                    'qty' => $qtyArray[$i],
-                    'game_id' => $game_id,
-                    'item_name' => $itemNamesArray[$i],
-                    'case_price' => $casePriceArray[$i],
-                    'item_received' => $items_received_qty,
-                    'sku' => $sku_num,
-                    'prod_type_id' => $prodType,
-                    'prod_sub_type_id' => $prodSubtype,
-                    'qty_per_case' => $qty_per_case,
-                    'ticket_value' => $prodTicketValue,
-                    'vendor_id' => $prodVendorId,
-                    'total' => $itemsPriceArray[$i] * $qtyArray[$i]
-                );
-                if (!empty($itemsArray[$i])) {
-                    $contentsData['product_description'] = $itemsArray[$i];
-                }
-
                 if ($editmode == "clone") {
                     $items_received_qty = 0;
                 }
+
                 if ($items_received_qty == '0') {
-                    \DB::table('order_contents')->insert($contentsData);
+                    $orderContent = new OrderContent();
                 } else {
-                    \DB::table('order_contents')->where('id', $order_content_id[$i])->update($contentsData);
+                    $orderContent = OrderContent::find($order_content_id[$i]);
                 }
+
+                $orderContent->order()->associate($order);
+                $orderContent->product_id = $product_id;
+                $orderContent->request_id = $request_id;
+                $orderContent->price = $priceArray[$i];
+                $orderContent->qty = $qtyArray[$i];
+                $orderContent->game_id = $game_id;
+                $orderContent->item_name = $itemNamesArray[$i];
+                $orderContent->case_price = $casePriceArray[$i];
+                $orderContent->item_received = $items_received_qty;
+                $orderContent->sku = $sku_num;
+                $orderContent->prod_type_id = $prodType;
+                $orderContent->prod_sub_type_id = $prodSubtype;
+                $orderContent->qty_per_case = $qty_per_case;
+                $orderContent->ticket_value = $prodTicketValue;
+                $orderContent->vendor_id = $prodVendorId;
+                $orderContent->total = $itemsPriceArray[$i] * $qtyArray[$i];
+                if (!empty($itemsArray[$i])) {
+                    $orderContent->product_description = $itemsArray[$i];
+                }
+                $orderContent->save();
+                $contentsData = $orderContent->getAttributes();
 
                 $contentsData['prev_qty'] = $request->input('prev_qty')[$i];
                 if ($is_freehand == 0) {
@@ -827,35 +786,36 @@ class OrderController extends Controller
 
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
                 {
-                    $productData = array(
+                    $product = new product();
+                    $productData = [
                         'vendor_id' => $vendor_id,
                         'vendor_description' => $itemsArray[$i],
                         'case_price' => $priceArray[$i],
                         'num_items' => $qtyArray[$i],
                         'in_development' => 1,
-                    );
-                    \DB::table('products')->insert($productData);
+                    ];
+                    $product->setRawAttributes($productData);
+                    $product->save();
                 }
+
                 if (!empty($where_in)) {
                     $redirect_link = "managefegrequeststore";
-                    $request_qty = \DB::select('SELECT qty FROM requests WHERE id=' . $request_id);
-                    empty($request_qty) ? $request_qty = 0 : $request_qty = $request_qty[0]->qty;
+                    $shop_request = pendingrequest::find($request_id);
+                    $request_qty = empty($shop_request) ? 0 : $shop_request->qty;
                     $restore_qty = $request_qty - $qtyArray[$i];
 
+                    $shop_request->blocked_at = null;
                     if ($restore_qty > 0) {
-                        \DB::update('UPDATE requests
-                         SET status_id = 3,
-                             qty = ' . $restore_qty . ',
-                             blocked_at = null
-                       WHERE id=' . $request_id);
+                        $shop_request->status_id = 3;
+                        $shop_request->qty = $restore_qty;
                     } else {
-                        \DB::update('UPDATE requests
-                         SET status_id = 2,
-                             process_user_id = ' . \Session::get('uid') . ',
-                             process_date = "' . $now . '",
-                             blocked_at = null
-                       WHERE id=' . $request_id);
+                        $shop_request->status_id = 2;
+                        $shop_request->process_user_id = Auth::user()->id;
+                        $shop_request->process_date = $order->get_local_time('date');
+                        $shop_request->qty = $restore_qty;
                     }
+
+                    $shop_request->save();
 
                     //// SUBTRACT QTY OF RESERVED AMT ITEMS
                     $item_count = substr_count($SID_string, '-') - 1;
@@ -865,47 +825,26 @@ class OrderController extends Controller
                     $redirect_link = "order";
                 }
             }
-            // $mailto = $vendor_email;
-            $from = \Session::get('eid');
-            //send product order as email to vendor only if sendor and reciever email is available
-            // if(!empty($mailto) && !empty($from))
-            // {
-            // $this->getPo($order_id, true,$mailto,$from);
-            //}
-            //$result = Mail::send('submitservicerequest.test', $message, function ($message) use ($to, $from, $full_upload_path, $subject) {
-//
-//        if (isset($full_upload_path) && !empty($full_upload_path)) {
-//            $message->attach($full_upload_path);
-//        }
-//        $message->subject($subject);
-//        $message->to($to);
-//        $message->from($from);
-//
-//    });
 
             //Deny Denied SID's
             if ($editmode == 'SID' && !empty($denied_SIDs)) {
-                //$denied_SIDs = explode('-', $denied_SIDs);
-                //array_pop($denied_SIDs);
-                //array_shift($denied_SIDs)
                 $denied_SIDs = ltrim($denied_SIDs, ',');
-                \DB::update('UPDATE requests
-                         SET status_id = 3
-                       WHERE id IN(' . $denied_SIDs . ')');
+                pendingrequest::whereIn('id', $denied_SIDs)->update(['status_id' => 3]);
             }
 
             //Updating PO Track table
-            if (isset($orderData['po_number'])) {
-                \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
+            if (isset($order->po_number)) {
+                PoTrack::where('po_number', $order->po_number)->update(['enabled' => '1']);
             }
 
-
-
             \Session::put('send_to', $vendor_email);
-            \Session::put('order_id', $order_id);
+            \Session::put('order_id', $order->id);
             \Session::put('redirect', $redirect_link);
 
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
+
+            \DB::commit();
+
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
@@ -940,6 +879,7 @@ class OrderController extends Controller
             \Session::put('order_id', $id);
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
 
+            \DB::commit();
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
@@ -948,7 +888,6 @@ class OrderController extends Controller
 
             ));
         } else {
-
             $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
                 'message' => $message,

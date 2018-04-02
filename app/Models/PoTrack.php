@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class PoTrack extends Model
 {
     protected $table = 'po_track';
+    public $timestamps = false;
 }

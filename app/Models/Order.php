@@ -6,6 +6,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Log;
 
@@ -47,6 +48,16 @@ class order extends Sximo
     public function orderedContent()
     {
         return $this->hasMany("App\Models\OrderedContent");
+    }
+
+    public function orderContent()
+    {
+        return $this->hasMany("App\Models\OrderContent");
+    }
+
+    public function orderReceived()
+    {
+        return $this->hasMany("App\Models\OrderReceived");
     }
 
     public static function boot()
@@ -1190,4 +1201,35 @@ class order extends Sximo
             $this->is_partial = 1;
         }
     }
+
+    public function setOrderStatusPost($new_qty){
+        $total_qty = $this->orderContent->sum('qty');
+        $received_qty = $this->orderReceived->sum('quantity');
+        $new_qty = $new_qty - $total_qty;
+
+        if ($new_qty > 0 && $received_qty <= $total_qty) {
+            $this->status_id = 1;
+            $this->is_partial = 1;
+        } elseif ($received_qty <= $total_qty) {
+            $this->status_id = 1;
+            $this->is_partial = 1;
+        }
+
+        $itemReceivedcount = $this->orderContent->where('item_received', '>', 0)->count();
+
+        if($itemReceivedcount == 0){
+            $this->status_id = 1;
+            $this->is_partial = 0;
+        }
+    }
+
+    public function updateRequest(array $request_ids){
+        pendingrequest::whereIn('id', $request_ids)->update([
+            'status_id' => 2,
+            'process_user_id' => Auth::user()->id,
+            'process_date' => $this->get_local_time('date'),
+            'blocked_at' => null,
+        ]);
+    }
+
 }
