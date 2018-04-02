@@ -23,7 +23,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Vendor Description', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Item Name', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) }}
 						</td>
 						<td>{{ $row->vendor_description }} </td>
 						
@@ -65,7 +65,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Allow Negative Reserve Qty', (isset($fields['allow_negative_reserve_qty']['language'])? $fields['allow_negative_reserve_qty']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Allow Negative Reserved Qty', (isset($fields['allow_negative_reserve_qty']['language'])? $fields['allow_negative_reserve_qty']['language'] : array())) }}
 						</td>
 						<td>{!! $row->allow_negative_reserve_qty == 0 ? 'No':'Yes' !!} </td>
 						
@@ -73,7 +73,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Reserved Qty Limit', (isset($fields['reserved_qty_limit']['language'])? $fields['reserved_qty_limit']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Reserved Qty Per Amount', (isset($fields['reserved_qty_limit']['language'])? $fields['reserved_qty_limit']['language'] : array())) }}
 						</td>
 						<td>{{ !empty($row->reserved_qty_limit) ? $row->reserved_qty_limit :"No Data" }} </td>
 						
