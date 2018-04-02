@@ -282,13 +282,13 @@ class ProductlogController extends Controller {
         // build sql query based on search filters
 
 
-        // Get custom Ticket Type filter value
+
         $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'reserved_qty' => '']);
         $skipFilters = ['search_all_fields'];
         $mergeFilters = [];
         extract($globalSearchFilter); //search_all_fields
 
-        // rebuild search query skipping 'ticket_custom_type' filter
+        // rebuild search query
         $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
         $searchInput = $trimmedSearchQuery;
         if (!empty($search_all_fields)) {
