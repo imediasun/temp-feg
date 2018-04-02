@@ -16,8 +16,8 @@ class productlog extends Sximo  {
 	public static function querySelect(  ){
 		
 		return "  SELECT
+   ''                          AS search_all_fields,
   products.*,
-  ''                          AS search_all_fields,
   reserved_qty_log.created_at AS logCreatedAt
 FROM products
   INNER JOIN order_contents
