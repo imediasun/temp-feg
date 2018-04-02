@@ -305,12 +305,7 @@ class ProductlogController extends Controller {
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
-        $reservedQtyQuery = '';
-        if($reserved_qty != ''){
-            $reservedQtyQuery = " AND products.reserved_qty = $reserved_qty";
-        }
-
-        return $filter.$reservedQtyQuery;
+        return $filter;
     }
 
 }
