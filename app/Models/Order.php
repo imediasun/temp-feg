@@ -269,7 +269,6 @@ class order extends Sximo
         return $data;
     }
 
-
     public static function getExportRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
@@ -362,7 +361,6 @@ class order extends Sximo
         }
         return $results = array('rows' => $result, 'total' => $total);
     }
-
 
     public static function queryGroup()
     {
@@ -632,28 +630,20 @@ class order extends Sximo
         else{
             return 1;
         }
-
-
-
-
     }
-    function isPOAvailable($po_full)
-    {
-        $query = \DB::select("SELECT po_number FROM po_track WHERE po_number = '".$po_full."'" );
-        if(count($query) > 0 ) {
 
-            return false;
-        }
-        else{
-            return true;
-        }
+    function isPOAvailable($po_full){
+        $po = PoTrack::where('po_number', $po_full)->first();
+        return $po ? false : true;
     }
+
     function createPOTrack($po_full,$location_id)
     {
         $count = explode('-', $po_full);
         $data=array('po_number'=>$po_full,'location_id'=>$location_id, 'sort' => $count[2]);
         \DB::table('po_track')->insert($data);
     }
+
     public function get_local_time($type = null)
     {
         $year = date('Y');
@@ -731,7 +721,7 @@ class order extends Sximo
             $data['title'] = 'Order Receipt';
             return $data;
         } else {
-            Redirect::to('orders');
+            \Redirect::to('orders');
         }
     }
 
