@@ -311,7 +311,7 @@
 
                         <div class="col-md-6">
                             {!! Form::textarea('reserved_qty_reason', '',array('class'=>'form-control',
-                            'placeholder'=>'','rows'=>'10','id'=>'reserved_qty_reasontxt','required'=>'required' )) !!}
+                            'placeholder'=>'','rows'=>'10','id'=>'reserved_qty_reasontxt',"disabled"=>"disabled" )) !!}
                         </div>
                         <div class="col-md-2">
 
