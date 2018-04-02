@@ -1942,16 +1942,17 @@ class OrderController extends Controller
             $param = explode(':', $request->input('filter'));
             $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
+            $rows  = [];
             //for order type Advance Replacement
             if (isset($param[3]) && !empty($param[3]) && isset($param[4])) {
                 $orderStatus = new OrderStatus();
                 if ($param[3] == "order_type_id" && $param[4] == 0) {
                     //$rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '6')->orderBy('status', 'asc')->get();
-                    $rows = $orderStatus->getOrderStatuses(['1', '6']);
+                    $rows = $orderStatus->getOrderStatusesByIds(['1', '6']);
                 } //for ordet type other than Advance Replacement
                 elseif ($param[3] == "order_type_id" && $param[4] == 1) {
                     //$rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '2')->orderBy('status', 'asc')->get();
-                    $rows = $orderStatus->getOrderStatuses(['1', '2']);
+                    $rows = $orderStatus->getOrderStatusesByIds(['1', '2']);
                 }
             } else {
                 $order = new Order();

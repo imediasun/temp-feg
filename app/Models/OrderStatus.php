@@ -13,7 +13,7 @@ class OrderStatus extends Model
         parent::__construct();
     }
 
-    public function getOrderStatuses(array $ids){
+    public function getOrderStatusesByIds(array $ids){
         return self::whereIn('id', $ids)
             ->orderBy('status', 'asc')
             ->get();
