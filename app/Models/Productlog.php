@@ -17,12 +17,15 @@ class productlog extends Sximo  {
 		
 		return "  SELECT
   products.*,
-  '' AS search_all_fields
+  ''                          AS search_all_fields,
+  reserved_qty_log.created_at AS logCreatedAt
 FROM products
   INNER JOIN order_contents
     ON products.id = order_contents.product_id
   INNER JOIN orders
-    ON orders.id = order_contents.order_id  ";
+    ON orders.id = order_contents.order_id
+  LEFT JOIN reserved_qty_log
+    ON reserved_qty_log .variation_id = products.variation_id  ";
 	}	
 
 	public static function queryWhere(  ){
