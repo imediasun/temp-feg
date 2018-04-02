@@ -451,7 +451,7 @@ class OrderController extends Controller
         return view('order.view', $this->data);
     }
     // Uncomment if Copy functionality is needed for orders
-// it need testing afer commenting.
+    // it need testing afer commenting.
     /*
         function postCopy(Request $request)
         {
@@ -2162,7 +2162,7 @@ class OrderController extends Controller
         return $notes;
     }
 
-   public static function array_splice_assoc(&$input, $offset, $length, $replacement) {
+    public static function array_splice_assoc(&$input, $offset, $length, $replacement) {
         $replacement = (array) $replacement;
         $key_indices = array_flip(array_keys($input));
         if (isset($input[$offset]) && is_string($offset)) {
@@ -2176,7 +2176,8 @@ class OrderController extends Controller
             + $replacement
             + array_slice($input, $offset + $length, NULL, TRUE);
     }
-public static function array_move($which, $where, $array)
+
+    public static function array_move($which, $where, $array)
     {
 
         $tmpWhich = $which;
@@ -2194,6 +2195,7 @@ public static function array_move($which, $where, $array)
         self::array_splice_assoc($array, $where, 0, $tmp);
         return $array;
     }
+
     public static function changeProductReservedQtyOnRestoreOrder($order_id){
         if($order_id>0) {
             $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
@@ -2209,7 +2211,6 @@ public static function array_move($which, $where, $array)
             }
         }
     }
-
 
     public function getUpdateProductVariantsWithDefaultExpenseCategoryHavingDifferentPrice(){
 
@@ -2263,7 +2264,6 @@ public static function array_move($which, $where, $array)
         }
     }
 
-
     public function getUpdateProductVariantsWithDefaultExpenseCategory(){
 
         $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category')
@@ -2302,9 +2302,6 @@ public static function array_move($which, $where, $array)
 
 
     }
-
-
-
 
     public function getCorrectOrdersBug242($step = '1'){
         die("Script blocked. To run this script please contact your development team. Thanks!");
