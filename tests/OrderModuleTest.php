@@ -53,21 +53,25 @@ class OrderModuleTest extends TestCase
             ->get('/order/comboselect?filter=order_type:id:order_type&parent=can_request:1', ['X-Requested-With' => 'XMLHttpRequest'])
         ->response->getContent();
         $json = json_decode($json);
-        if($json){
-            $this->assertTrue(is_array($json[0]));
-        }else{
-            $this->assertFalse(true);
-        }
+        $this->assertTrue(is_array($json[0]), 'Failed to get order type combo select correctly.');
 
         $json = $this->actingAs($this->superAdmin)
             ->get('/order/comboselect?filter=order_type:id:order_type', ['X-Requested-With' => 'XMLHttpRequest'])
             ->response->getContent();
         $json = json_decode($json);
-        if($json){
-            $this->assertTrue(is_array($json[0]));
-        }else{
-            $this->assertFalse(true);
-        }
+        $this->assertTrue(is_array($json[0]), 'Failed to get order type combo select correctly.');
+
+        $json = $this->actingAs($this->superAdmin)
+            ->get('/order/comboselect?filter=location:id:id|location_name', ['X-Requested-With' => 'XMLHttpRequest'])
+            ->response->getContent();
+        $json = json_decode($json);
+        $this->assertTrue(is_array($json[0]), 'Failed to get locations combo select correctly.');
+
+        $json = $this->actingAs($this->superAdmin)
+            ->get('/order/comboselect?filter=freight:id:freight_type', ['X-Requested-With' => 'XMLHttpRequest'])
+            ->response->getContent();
+        $json = json_decode($json);
+        $this->assertTrue(is_array($json[0]), 'Failed to get freight type combo select correctly.');
 
         $this->actingAs($this->superAdmin)
             ->get('/order/comboselect?filter=order_type:id:order_type&parent=can_request:1')
