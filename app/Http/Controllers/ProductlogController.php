@@ -176,6 +176,7 @@ class ProductlogController extends Controller {
             $userData = User::find($item->adjusted_by);
                 return $item->adjusted_by = $userData->first_name." ".$userData->last_name;
             });
+            $productLogContentData['Contents'] = $Contents;
             $productLogContentData['reducedByOrder'] = $Contents->filter(function ($item) {
                 if($item['order_id']>0){
                     return $item;
@@ -190,7 +191,7 @@ class ProductlogController extends Controller {
             });
         }
 
-        $this->data['ProductLogContent'] = $productLogContentData;
+        $this->data['productLogContent'] = $productLogContentData;
         $this->data['tableGrid'] = $this->info['config']['grid'];
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
