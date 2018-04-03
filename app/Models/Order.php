@@ -1207,18 +1207,14 @@ class order extends Sximo
         $received_qty = $this->orderReceived->sum('quantity');
         $new_qty = $new_qty - $total_qty;
 
-        if ($new_qty > 0 && $received_qty <= $total_qty) {
+        if ($received_qty and ($total_qty + $new_qty) != $received_qty) {
             $this->status_id = 1;
             $this->is_partial = 1;
-        } elseif ($received_qty <= $total_qty) {
+        } elseif(!$received_qty) {
             $this->status_id = 1;
-            $this->is_partial = 1;
-        }
-
-        $itemReceivedcount = $this->orderContent->where('item_received', '>', 0)->count();
-
-        if($itemReceivedcount == 0){
-            $this->status_id = 1;
+            $this->is_partial = 0;
+        }elseif (($total_qty + $new_qty) == $received_qty){
+            $this->status_id = 2;
             $this->is_partial = 0;
         }
     }
