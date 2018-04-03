@@ -612,23 +612,19 @@ class OrderController extends Controller
             $totalQuanity = \DB::select("SELECT SUM(qty) AS total_quantity FROM order_contents WHERE order_id=$order_id")[0]->total_quantity;
             $orderQuantity =  array_sum($request->qty);
             $orderQuantity = $orderQuantity - $totalQuanity;
+            $newOrderedQty = $totalQuanity + $orderQuantity;
             //When order quantity will be increase then order status will be updated to open (Partial)
 
             $received_quantity = \DB::select("SELECT SUM(quantity) as total_received_qty FROM order_received WHERE  order_id=$order_id")[0]->total_received_qty;
-
-            if ($received_quantity and ($totalQuanity + $orderQuantity) != $received_quantity) {
+            $current_order = \DB::select("SELECT * FROM orders WHERE id=$order_id")[0];
+            if ($received_quantity and $newOrderedQty != $received_quantity) {
                 \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
             } elseif(!$received_quantity) {
                 \DB::update('update orders set status_id=1, is_partial=0 where id="' . $order_id . '"');
-            }elseif (($totalQuanity + $orderQuantity) == $received_quantity){
+            }elseif ($newOrderedQty == $received_quantity and $current_order->status_id != '1'){
                 \DB::update('update orders set status_id=2, is_partial=0 where id="' . $order_id . '"');
             }
 
-            $itemReceivedcount = \DB::select("SELECT COUNT(*) AS itemReceivedcount FROM order_contents WHERE order_id=$order_id AND item_received>0")[0]->itemReceivedcount;
-
-            if($itemReceivedcount==0){
-                \DB::update('update orders set status_id=1, is_partial=0 where id="'.$order_id.'"');
-            }
             if (!empty($altShipTo)) {
                 $rules = array(
                     'to_add_name' => 'required|max:60',
