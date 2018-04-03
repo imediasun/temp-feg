@@ -881,15 +881,19 @@ class OrderController extends Controller
     }
 
     public function getAltAddress($request){
-        $to_add_name = $request->get('to_add_name');
-        $to_add_street = $request->get('to_add_street');
-        $to_add_city = $request->get('to_add_city');
-        $to_add_state = $request->get('to_add_state');
-        $to_add_zip = $request->get('to_add_zip');
-        $to_add_notes = $request->get('to_add_notes');
-        return $to_add_name . '|' . $to_add_street .
+        if($request->alt_ship_to){
+            $to_add_name = $request->get('to_add_name');
+            $to_add_street = $request->get('to_add_street');
+            $to_add_city = $request->get('to_add_city');
+            $to_add_state = $request->get('to_add_state');
+            $to_add_zip = $request->get('to_add_zip');
+            $to_add_notes = $request->get('to_add_notes');
+            return $to_add_name . '|' . $to_add_street .
             '|' . $to_add_city . '| ' . $to_add_state .
             '| ' . $to_add_zip . '|' . $to_add_notes;
+        }else{
+            return null;
+        }
     }
 
     public function validateProductForReserveQty($request)
