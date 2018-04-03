@@ -50,11 +50,6 @@ class order extends Sximo
         return $this->hasMany("App\Models\OrderedContent");
     }
 
-    public function orderContent()
-    {
-        return $this->hasMany("App\Models\OrderContent");
-    }
-
     public function orderReceived()
     {
         return $this->hasMany("App\Models\OrderReceived");
@@ -1203,7 +1198,7 @@ class order extends Sximo
     }
 
     public function setOrderStatusPost($request_qty){
-        $total_qty = $this->orderContent->sum('qty');
+        $total_qty = $this->contents->sum('qty');
         $received_qty = $this->orderReceived->sum('quantity');
         $new_qty = $request_qty - $total_qty;
         $final_qty = $new_qty + $total_qty;

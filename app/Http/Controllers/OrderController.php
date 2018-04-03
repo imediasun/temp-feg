@@ -558,7 +558,9 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        \DB::beginTransaction();
+        if($id){
+            return $this->postSaveInlineEdit($id);
+        }
 
         /////// VALIDATION STARTS /////////
         $pending_requests = new pendingrequest();
@@ -604,6 +606,8 @@ class OrderController extends Controller
             ));
         }
         /////// VALIDATION END /////////
+
+        \DB::beginTransaction();
 
         $order_id = $request->get('order_id');
         if($order_id){
@@ -869,14 +873,17 @@ class OrderController extends Controller
         }
     }
 
-    public function postSaveInlineEditing($id){
+    public function postSaveInlineEdit($id){
         $data = $this->validatePost('orders', true);
 
         \DB::beginTransaction();
-        $orderTotal = \CurrencyHelpers::formatPrice(Order::find($id)->order_total,2, false);
-        list($case_price_categories, $case_price_if_no_unit_categories) = $this->getOrderSpecialPermissions();
-        if (isset($data['order_type_id'])) {
-            $order_contents = \DB::table('order_contents')->where('order_id', $id)->get();
+        $order = Order::find($id);
+        $orderTotal = \CurrencyHelpers::formatPrice($order->order_total, 2, false);
+
+        //TODO: Following check has been removed
+        if (false && isset($data['order_type_id'])) {
+            list($case_price_categories, $case_price_if_no_unit_categories) = $this->getOrderSpecialPermissions();
+            $order_contents = $order->contents;
             $orderTotal = 0;
             $order_type = $data['order_type_id'];
             foreach ($order_contents as $content) {
@@ -888,13 +895,16 @@ class OrderController extends Controller
                     $sum = $content->qty * $content->price;
                 }
                 if ($sum != $content->total) {
-                    \DB::table('order_contents')->where('id', $content->id)->update(['total' => $sum]);
+                    $order_contents->total = $sum;
+                    $order_contents->save();
                 }
                 $orderTotal += $sum;
             }
             $data['order_total'] = $orderTotal;
         }
-        $this->model->insertRow($data, $id);
+        
+        $order->setRawAttributes($data);
+        $order->save();
         \DB::commit();
 
         \Session::put('order_id', $id);
