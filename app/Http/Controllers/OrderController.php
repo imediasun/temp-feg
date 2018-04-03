@@ -619,7 +619,7 @@ class OrderController extends Controller
             $current_order = \DB::select("SELECT * FROM orders WHERE id=$order_id");
             if ($received_quantity and $newOrderedQty != $received_quantity) {
                 \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
-            } elseif(!$received_quantity) {
+            } elseif(!$received_quantity or ($newOrderedQty == $received_quantity and $current_order[0]->status_id != '2')) {
                 \DB::update('update orders set status_id=1, is_partial=0 where id="' . $order_id . '"');
             }elseif ($newOrderedQty == $received_quantity and $current_order and $current_order[0]->status_id != '1'){
                 \DB::update('update orders set status_id=2, is_partial=0 where id="' . $order_id . '"');
