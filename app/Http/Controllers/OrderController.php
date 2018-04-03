@@ -615,10 +615,12 @@ class OrderController extends Controller
 
             $received_quantity = \DB::select("SELECT SUM(quantity) as total_received_qty FROM order_received WHERE  order_id=$order_id")[0]->total_received_qty;
 
-            if ($orderQuantity > 0 && $received_quantity <= $totalQuanity) {
+            if ($received_quantity and ($totalQuanity + $orderQuantity) != $received_quantity) {
                 \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
-            } elseif ($received_quantity <= $totalQuanity) {
+            } elseif(!$received_quantity) {
                 \DB::update('update orders set status_id=1, is_partial=0 where id="' . $order_id . '"');
+            }elseif (($totalQuanity + $orderQuantity) == $received_quantity){
+                \DB::update('update orders set status_id=2, is_partial=0 where id="' . $order_id . '"');
             }
 
             $itemReceivedcount = \DB::select("SELECT COUNT(*) AS itemReceivedcount FROM order_contents WHERE order_id=$order_id AND item_received>0")[0]->itemReceivedcount;
