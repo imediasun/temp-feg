@@ -294,8 +294,8 @@ class ProductlogController extends Controller {
         $searchInput = $trimmedSearchQuery;
         if (!empty($search_all_fields)) {
             $searchFields = [
-                'prod.vendor_description',
-                'prod.sku',
+                'products.vendor_description',
+                'products.sku',
                 'orders.id',
                 'orders.po_number',
             ];
