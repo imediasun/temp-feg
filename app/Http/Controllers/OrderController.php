@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\SximoDB;
+use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
 use PHPMailerOAuth;
@@ -213,7 +214,10 @@ class OrderController extends Controller
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'order')->pluck('module_id');
         $this->data['module_id'] = $module_id;
-        $this->getSearchParamsForRedirect();
+        if(Session::get('redirect') != "managefegrequeststore") {
+
+            $this->getSearchParamsForRedirect();
+        }
 
         session_start();
         $_SESSION['searchParamsForOrder'] = \Session::get('searchParams');
