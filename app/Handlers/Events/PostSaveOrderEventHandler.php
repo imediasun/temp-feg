@@ -31,7 +31,10 @@ class PostSaveOrderEventHandler
     {
         $item = (object)$event->order_item;
         $product = product::find($item->product_id);
-
+        //fix added by arslan on 4/3/2018 for Error Report # 134
+        if(is_null($product)){
+            return ;
+        }
         if ($product->is_reserved == 1) {
 
             $ReservedProductQtyLogObj = ReservedQtyLog::where('order_id', $item->order_id)
