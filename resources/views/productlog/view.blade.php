@@ -73,7 +73,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Reserved Qty Per Amount', (isset($fields['reserved_qty_limit']['language'])? $fields['reserved_qty_limit']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Reserved Qty Par Amount', (isset($fields['reserved_qty_limit']['language'])? $fields['reserved_qty_limit']['language'] : array())) }}
 						</td>
 						<td>{{ !empty($row->reserved_qty_limit) ? $row->reserved_qty_limit :"No Data" }} </td>
 						
