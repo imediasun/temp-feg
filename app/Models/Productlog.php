@@ -18,10 +18,10 @@ class productlog extends Sximo  {
 		return "  SELECT
   ''               AS search_all_fields,
   prod.*,
-  log.id,
-  log.variation_id,
-  log.created_at as logCreatedAt
-FROM reserved_qty_log LOG
+  pLOG.id,
+  pLOG.variation_id,
+  pLOG.created_at
+FROM reserved_qty_log pLOG
   INNER JOIN products prod
     ON log.variation_id = prod.variation_id
   INNER JOIN order_contents
@@ -32,7 +32,7 @@ FROM reserved_qty_log LOG
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE log.id IN(SELECT
+		return "  WHERE pLOG.id IN(SELECT
                   MAX(id)
                 FROM reserved_qty_log
                 GROUP BY variation_id)
