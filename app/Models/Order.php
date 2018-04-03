@@ -1202,10 +1202,10 @@ class order extends Sximo
         }
     }
 
-    public function setOrderStatusPost($new_qty){
+    public function setOrderStatusPost($request_qty){
         $total_qty = $this->orderContent->sum('qty');
         $received_qty = $this->orderReceived->sum('quantity');
-        $new_qty = $new_qty - $total_qty;
+        $new_qty = $request_qty - $total_qty;
         $final_qty = $new_qty + $total_qty;
 
         if ($received_qty and $final_qty != $received_qty) {
