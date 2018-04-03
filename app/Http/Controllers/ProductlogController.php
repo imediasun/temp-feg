@@ -172,7 +172,7 @@ class ProductlogController extends Controller {
         $productLogContentData = ['reducedByOrder'=>[],'addedFromProductList'=>[]];
 		if(!empty($row->variation_id)) {
             $productLogContent = ReservedQtyLog::where("variation_id", "=", $row->variation_id);
-            $Contents = $productLogContent->get()->filter(function ($item) {
+            $Contents = $productLogContent->orderBy('id', 'DESC')->get()->filter(function ($item) {
             $userData = User::find($item->adjusted_by);
                 return $item->adjusted_by = $userData->first_name." ".$userData->last_name;
             });
