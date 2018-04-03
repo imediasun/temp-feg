@@ -436,12 +436,12 @@ class ManagefreightquotersController extends Controller
             }
             if(!empty($from_contact_phone))
             {
-                $from_contact_summary .= (!empty($from_contact_full_name) ? ' | ' : '') . $from_contact_phone;
+                $from_contact_summary .= (!empty($from_contact_phone) ? ' | ' : '') . $from_contact_phone;
 
             }
             if(!empty($from_contact_email))
             {
-                $from_contact_summary .= ((!empty($from_contact_full_name) && !empty($from_contact_phone)) ? ' | ' : '') . $from_contact_email;
+                $from_contact_summary .= ((!empty($from_contact_full_name) && !empty($from_contact_email)) ? ' | ' : '') . $from_contact_email;
             }
             $from_contact_summary.= '<br>';
 
@@ -472,12 +472,12 @@ class ManagefreightquotersController extends Controller
                     }
                     if(!empty($to_contact_phone[$i]))
                     {
-                        $to_contact_summary .= (!empty($to_contact_full_name[$i]) ? ' | ' : '') . $to_contact_phone[$i];
+                        $to_contact_summary .= (!empty($to_contact_phone[$i]) ? ' | ' : '') . $to_contact_phone[$i];
 
                     }
                     if(!empty($to_contact_email[$i]))
                     {
-                        $to_contact_summary .= ((!empty($to_contact_full_name[$i]) && !empty($to_contact_phone[$i])) ? ' | ' : '') . $to_contact_email[$i];
+                        $to_contact_summary .= ((!empty($to_contact_full_name[$i]) && !empty($to_contact_email[$i])) ? ' | ' : '') . $to_contact_email[$i];
                     }
                     $to_contact_summary.= '<br>';
                 }
@@ -514,12 +514,12 @@ class ManagefreightquotersController extends Controller
                     }
                     if(!empty($to_contact_phone[$i]))
                     {
-                        $toMessage .= (!empty($to_contact_full_name[$i]) ? ' | ' : '') . $to_contact_phone[$i];
+                        $toMessage .= (!empty($to_contact_phone[$i]) ? ' | ' : '') . $to_contact_phone[$i];
 
                     }
                     if(!empty($to_contact_email[$i]))
                     {
-                        $toMessage .= ((!empty($to_contact_full_name[$i]) && !empty($to_contact_phone[$i])) ? ' | ' : '') . $to_contact_email[$i];
+                        $toMessage .= ((!empty($to_contact_full_name[$i]) && !empty($to_contact_email[$i])) ? ' | ' : '') . $to_contact_email[$i];
                     }
                     $toMessage.= '<br>';
                     if(!empty($to_loading_info[$i]))
@@ -551,12 +551,12 @@ class ManagefreightquotersController extends Controller
                 }
                 if(!empty($to_contact_phone))
                 {
-                    $toMessage .= (!empty($to_contact_full_name) ? ' | ' : '') . $to_contact_phone;
+                    $toMessage .= (!empty($to_contact_phone) ? ' | ' : '') . $to_contact_phone;
 
                 }
                 if(!empty($to_contact_email))
                 {
-                    $toMessage .= ((!empty($to_contact_full_name) && !empty($to_contact_phone)) ? ' | ' : '') . $to_contact_email;
+                    $toMessage .= ((!empty($to_contact_full_name) && !empty($to_contact_email)) ? ' | ' : '') . $to_contact_email;
                 }
                 $toMessage.= '<br>';
                 if(!empty($to_loading_info))
