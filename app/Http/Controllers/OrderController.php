@@ -625,24 +625,8 @@ class OrderController extends Controller
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
             $is_freehand = $request->get('is_freehand') == "1" ? 1 : 0;
-            $po_1 = $request->get('po_1');
-            $po_2 = $request->get('po_2');
-            $po_3 = $request->get('po_3');
-            $po = $po_1 . '-' . $po_2 . '-' . $po_3;
+            $po = $request->get('po_1') . '-' . $request->get('po_2') . '-' . $request->get('po_3');
             $order_description = '';
-
-            $to_add_name = $request->get('to_add_name');
-            $to_add_street = $request->get('to_add_street');
-            $to_add_city = $request->get('to_add_city');
-            $to_add_state = $request->get('to_add_state');
-            $to_add_zip = $request->get('to_add_zip');
-            $to_add_notes = $request->get('to_add_notes');
-            $alt_address = $to_add_name . '|' . $to_add_street .
-                '|' . $to_add_city . '| ' . $to_add_state .
-                '| ' . $to_add_zip . '|' . $to_add_notes;
-
-            $order->setOrderStatusPost(array_sum($request->qty));
-
             $itemsArray = $request->get('item');
             $itemNamesArray = $request->get('item_name');
             $skuNumArray = $request->get('sku');
@@ -657,10 +641,9 @@ class OrderController extends Controller
             $item_received = $request->get('item_received');
             $denied_SIDs = $request->get('denied_SIDs');
             //$po_notes_additionaltext = $request->get('po_notes_additionaltext');
-            $num_items_in_array = count($itemsArray);
 
-            for ($i = 0; $i < $num_items_in_array; $i++) {
-                $j = $i + 1;
+            $order->setOrderStatusPost(array_sum($request->qty));
+            foreach($itemsArray as $i => $item) {
                 if (in_array($order_type, $case_price_categories)) {
                     $itemsPriceArray[] = $casePriceArray[$i];
                 } elseif (in_array($order_type, $case_price_if_no_unit_categories)) {
@@ -668,7 +651,7 @@ class OrderController extends Controller
                 } else {
                     $itemsPriceArray[] = $priceArray[$i];
                 }
-                $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i]
+                $order_description .= ' | item' . ($i+1) . ' - (' . $qtyArray[$i]
                     . ') ' . $itemsArray[$i] . ' @ $' .
                     $itemsPriceArray[$i] . ' ea.';
             }
@@ -679,7 +662,7 @@ class OrderController extends Controller
             $order->order_description = $order_description;
             $order->freight_id = $freight_type_id;
             $order->order_total = $total_cost;
-            $order->alt_address = $alt_address;
+            $order->alt_address = $this->getAltAddress($request);
             $order->request_ids = $where_in;
             $order->po_notes = $notes;
             //$order->po_notes_additionaltext = $po_notes_additionaltext;
@@ -724,8 +707,7 @@ class OrderController extends Controller
             //Save the order
             $order->save();
 
-            for ($i = 0; $i < $num_items_in_array; $i++) {
-
+            foreach($itemsArray as $i => $item) {
                 $product_id = empty($productIdArray[$i]) ? '0' : $productIdArray[$i];
                 $sku_num = empty($skuNumArray[$i]) ? '0' : $skuNumArray[$i];
                 $request_id = empty($requestIdArray[$i]) ? '0' : $requestIdArray[$i];
@@ -896,6 +878,18 @@ class OrderController extends Controller
             ));
         }
 
+    }
+
+    public function getAltAddress($request){
+        $to_add_name = $request->get('to_add_name');
+        $to_add_street = $request->get('to_add_street');
+        $to_add_city = $request->get('to_add_city');
+        $to_add_state = $request->get('to_add_state');
+        $to_add_zip = $request->get('to_add_zip');
+        $to_add_notes = $request->get('to_add_notes');
+        return $to_add_name . '|' . $to_add_street .
+            '|' . $to_add_city . '| ' . $to_add_state .
+            '| ' . $to_add_zip . '|' . $to_add_notes;
     }
 
     public function validateProductForReserveQty($request)
