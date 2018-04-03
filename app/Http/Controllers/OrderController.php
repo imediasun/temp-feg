@@ -599,7 +599,7 @@ class OrderController extends Controller
         $validator = Validator::make($request->all(), $rules);
         $redirect_link = "order";
 
-        if($validator->failes()){
+        if($validator->fails()){
             $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
                 'message' => $message,
@@ -632,15 +632,23 @@ class OrderController extends Controller
         }
 
         //GETTING DATA FROM REQUEST
-        $editmode = $request->get('editmode');
-        $where_in = $request->get('where_in_expression');
-        $SID_string = $request->get('SID_string');
-        $company_id = $request->get('company_id');
-        $location_id = $request->get('location_id');
+        /**
+         * @var $editmode
+         * @var $SID_string
+         * @var $where_in_expression
+         * @var $company_id
+         * @var $location_id
+         * @var $vendor_id
+         * @var $freight_type_id
+         * @var $order_content_id
+         * @var $force_remove_items
+         * @var $item_received
+         * @var $denied_SIDs
+         * @var $po_notes_additionaltext
+         */
+        extract($request->input());
         $order_type = $request->get('order_type_id');
-        $vendor_id = $request->get('vendor_id');
         $vendor_email = $order->getVendorEmail($vendor_id);
-        $freight_type_id = $request->get('freight_type_id');
         $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
         $total_cost = $request->get('order_total');
         $notes = $request->get('po_notes');
@@ -653,12 +661,7 @@ class OrderController extends Controller
         $qtyArray = $request->get('qty');
         $productIdArray = $request->get('product_id');
         $requestIdArray = $request->get('request_id');
-        $order_content_id = $request->get('order_content_id');
-        $force_remove_items = $request->get('force_remove_items');
         $games = $request->get('game');
-        $item_received = $request->get('item_received');
-        $denied_SIDs = $request->get('denied_SIDs');
-        //$po_notes_additionaltext = $request->get('po_notes_additionaltext');
 
         //PROCEEDING TO SAVE
         $order->setOrderStatusPost(array_sum($request->qty));
@@ -670,7 +673,7 @@ class OrderController extends Controller
         $order->freight_id = $freight_type_id;
         $order->order_total = $total_cost;
         $order->alt_address = $this->getAltAddress($request);
-        $order->request_ids = $where_in;
+        $order->request_ids = $where_in_expression;
         $order->po_notes = $notes;
         //$order->po_notes_additionaltext = $po_notes_additionaltext;
 
@@ -693,8 +696,8 @@ class OrderController extends Controller
         }
 
         //UPDATE STATUS TO APPROVED AND PROCESSED
-        if (!empty($where_in)) {
-            $order->updateRequest(explode(',', $where_in));
+        if (!empty($where_in_expression)) {
+            $order->updateRequest(explode(',', $where_in_expression));
         }
 
         //SAVE THE ORDER
@@ -774,7 +777,7 @@ class OrderController extends Controller
                 $product->save();
             }
 
-            if (!empty($where_in)) {
+            if (!empty($where_in_expression)) {
                 $redirect_link = "managefegrequeststore";
                 $shop_request = pendingrequest::find($request_id);
                 $request_qty = empty($shop_request) ? 0 : $shop_request->qty;
