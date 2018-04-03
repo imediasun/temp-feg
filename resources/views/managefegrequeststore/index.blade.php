@@ -34,7 +34,7 @@ $(document).ready(function(){
             \Session::put('filter_before_redirect','no');
         }
      ?>
-     {{ \Session::set('searchParamsForManageFEGStore','') }}
+
         reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
     }
     else {
