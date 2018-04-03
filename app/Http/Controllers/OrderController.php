@@ -558,6 +558,7 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        //IF REQUEST FROM INLINE EDITING THEN PROCESS IT THROUGH postSaveInlineEdit
         if($id){
             return $this->postSaveInlineEdit($id);
         }
@@ -576,22 +577,22 @@ class OrderController extends Controller
             ));
         }
 
-        $rules = array(
+        $rules = [
             'vendor_id' => 'required',
             'order_type_id' => "required",
             'freight_type_id' => 'required',
             'date_ordered' => 'required',
-        );
+        ];
 
         $altShipTo = $request->get('alt_ship_to');
         if (!empty($altShipTo)) {
-            $shipToRules = array(
+            $shipToRules = [
                 'to_add_name' => 'required|max:60',
                 'to_add_street' => 'required|min:5',
                 'to_add_city' => 'required|min:5',
                 'to_add_state' => 'required|max:2',
                 'to_add_zip' => 'required|max:10'
-            );
+            ];
             $rules = array_merge($rules, $shipToRules);
         }
 
@@ -605,6 +606,19 @@ class OrderController extends Controller
                 'status' => 'error',
             ));
         }
+
+        $is_freehand = $request->get('is_freehand') == "1" ? 1 : 0;
+        if ($is_freehand == 0) {
+            $validationResponse = $this->validateProductForReserveQty($request);
+
+            if (!empty($validationResponse) && $validationResponse['error'] == true) {
+                return response()->json(array(
+                    'message' => $validationResponse['message'],
+                    'status' => 'error',
+                    'adjustQty' => $validationResponse['adjustQty']
+                ));
+            }
+        }
         /////// VALIDATION END /////////
 
         \DB::beginTransaction();
@@ -617,6 +631,7 @@ class OrderController extends Controller
             $order->status_id = 1;
         }
 
+        //GETTING DATA FROM REQUEST
         $editmode = $request->get('editmode');
         $where_in = $request->get('where_in_expression');
         $SID_string = $request->get('SID_string');
@@ -629,7 +644,6 @@ class OrderController extends Controller
         $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
         $total_cost = $request->get('order_total');
         $notes = $request->get('po_notes');
-        $is_freehand = $request->get('is_freehand') == "1" ? 1 : 0;
         $po = $request->get('po_1') . '-' . $request->get('po_2') . '-' . $request->get('po_3');
         $itemsArray = $request->get('item');
         $itemNamesArray = $request->get('item_name');
@@ -646,30 +660,19 @@ class OrderController extends Controller
         $denied_SIDs = $request->get('denied_SIDs');
         //$po_notes_additionaltext = $request->get('po_notes_additionaltext');
 
+        //PROCEEDING TO SAVE
         $order->setOrderStatusPost(array_sum($request->qty));
+        list($order_description, $itemsPriceArray) = $this->generateOrderDescriptionAndPriceArray($order_type, $itemsArray, $casePriceArray, $priceArray, $qtyArray);
         $order->company_id = $company_id;
         $order->order_type_id = $order_type;
         $order->vendor_id = $vendor_id;
-        $order->order_description = $this->generateOrderDescription($order_type, $itemsArray, $casePriceArray, $priceArray, $qtyArray);
+        $order->order_description = $order_description;
         $order->freight_id = $freight_type_id;
         $order->order_total = $total_cost;
         $order->alt_address = $this->getAltAddress($request);
         $order->request_ids = $where_in;
         $order->po_notes = $notes;
         //$order->po_notes_additionaltext = $po_notes_additionaltext;
-
-
-        if ($is_freehand == 0) {
-            $validationResponse = $this->validateProductForReserveQty($request);
-
-            if (!empty($validationResponse) && $validationResponse['error'] == true) {
-                return response()->json(array(
-                    'message' => $validationResponse['message'],
-                    'status' => 'error',
-                    'adjustQty' => $validationResponse['adjustQty']
-                ));
-            }
-        }
 
         if ($editmode == "edit") {
             $force_remove_items = explode(',', $force_remove_items);
@@ -689,14 +692,15 @@ class OrderController extends Controller
             }
         }
 
-        //// UPDATE STATUS TO APPROVED AND PROCESSED
+        //UPDATE STATUS TO APPROVED AND PROCESSED
         if (!empty($where_in)) {
             $order->updateRequest(explode(',', $where_in));
         }
 
-        //Save the order
+        //SAVE THE ORDER
         $order->save();
 
+        //UPDATE ORDER CONTENTS
         foreach($itemsArray as $i => $item) {
             $product_id = empty($productIdArray[$i]) ? '0' : $productIdArray[$i];
             $sku_num = empty($skuNumArray[$i]) ? '0' : $skuNumArray[$i];
@@ -798,13 +802,13 @@ class OrderController extends Controller
             }
         }
 
-        //Deny Denied SID's
+        //DENY DENIED SID'S
         if ($editmode == 'SID' && !empty($denied_SIDs)) {
             $denied_SIDs = ltrim($denied_SIDs, ',');
             pendingrequest::whereIn('id', $denied_SIDs)->update(['status_id' => 3]);
         }
 
-        //Updating PO Track table
+        //UPDATING PO TRACK TABLE
         if (isset($order->po_number)) {
             PoTrack::where('po_number', $order->po_number)->update(['enabled' => '1']);
         }
@@ -838,7 +842,7 @@ class OrderController extends Controller
         return [$case_price_categories, $case_price_if_no_unit_categories];
     }
 
-    public function generateOrderDescription($order_type, $itemsArray, $casePriceArray, $priceArray, $qtyArray){
+    public function generateOrderDescriptionAndPriceArray($order_type, $itemsArray, $casePriceArray, $priceArray, $qtyArray){
         list($case_price_categories, $case_price_if_no_unit_categories) = $this->getOrderSpecialPermissions();
         $order_description = '';
         foreach($itemsArray as $i => $item) {
@@ -854,7 +858,7 @@ class OrderController extends Controller
                 $itemsPriceArray[$i] . ' ea.';
         }
 
-        return $order_description;
+        return [$order_description, $itemsPriceArray];
     }
 
     public function getAltAddress($request){
@@ -902,7 +906,7 @@ class OrderController extends Controller
             }
             $data['order_total'] = $orderTotal;
         }
-        
+
         $order->setRawAttributes($data);
         $order->save();
         \DB::commit();
