@@ -644,15 +644,19 @@ class OrderController extends Controller
          * @var $force_remove_items
          * @var $item_received
          * @var $denied_SIDs
+         * @var $order_type_id
+         * @var $order_total
+         * @var $po_notes
+         * @var $po_1
+         * @var $po_2
+         * @var $po_3
+         * @var $game
          * @var $po_notes_additionaltext
          */
         extract($request->input());
-        $order_type = $request->get('order_type_id');
         $vendor_email = $order->getVendorEmail($vendor_id);
         $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
-        $total_cost = $request->get('order_total');
-        $notes = $request->get('po_notes');
-        $po = $request->get('po_1') . '-' . $request->get('po_2') . '-' . $request->get('po_3');
+        $po = $po_1 . '-' . $po_2 . '-' . $po_3;
         $itemsArray = $request->get('item');
         $itemNamesArray = $request->get('item_name');
         $skuNumArray = $request->get('sku');
@@ -661,20 +665,19 @@ class OrderController extends Controller
         $qtyArray = $request->get('qty');
         $productIdArray = $request->get('product_id');
         $requestIdArray = $request->get('request_id');
-        $games = $request->get('game');
 
         //PROCEEDING TO SAVE
         $order->setOrderStatusPost(array_sum($request->qty));
-        list($order_description, $itemsPriceArray) = $this->generateOrderDescriptionAndPriceArray($order_type, $itemsArray, $casePriceArray, $priceArray, $qtyArray);
+        list($order_description, $itemsPriceArray) = $this->generateOrderDescriptionAndPriceArray($order_type_id, $itemsArray, $casePriceArray, $priceArray, $qtyArray);
         $order->company_id = $company_id;
-        $order->order_type_id = $order_type;
+        $order->order_type_id = $order_type_id;
         $order->vendor_id = $vendor_id;
         $order->order_description = $order_description;
         $order->freight_id = $freight_type_id;
-        $order->order_total = $total_cost;
+        $order->order_total = $order_total;
         $order->alt_address = $this->getAltAddress($request);
         $order->request_ids = $where_in_expression;
-        $order->po_notes = $notes;
+        $order->po_notes = $po_notes;
         //$order->po_notes_additionaltext = $po_notes_additionaltext;
 
         if ($editmode == "edit") {
@@ -708,7 +711,7 @@ class OrderController extends Controller
             $product_id = empty($productIdArray[$i]) ? '0' : $productIdArray[$i];
             $sku_num = empty($skuNumArray[$i]) ? '0' : $skuNumArray[$i];
             $request_id = empty($requestIdArray[$i]) ? '0' : $requestIdArray[$i];
-            $game_id = ($order_type == 1) ? $games[$i] : '0';
+            $game_id = ($order_type_id == 1) ? $game[$i] : '0';
             $items_received_qty = empty($item_received[$i]) ? '0' : $item_received[$i];
 
             if ($product_id != 0) {
@@ -719,7 +722,7 @@ class OrderController extends Controller
                 $prodTicketValue = $product->ticket_value;
                 $prodVendorId = $product->vendor_id;
             } else {
-                $prodType = $order_type;
+                $prodType = $order_type_id;
                 $prodSubtype = 0;
                 $qty_per_case = 1;
                 $prodTicketValue = '';
@@ -763,7 +766,7 @@ class OrderController extends Controller
                 event(new PostSaveOrderEvent($contentsData));
             }
 
-            if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
+            if ($order_type_id == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
             {
                 $product = new product();
                 $productData = [
