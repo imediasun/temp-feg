@@ -766,9 +766,9 @@ class OrderController extends Controller
                 event(new PostSaveOrderEvent($contentsData));
             }
 
-            if ($order_type_id == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
-            {
-                $product = new product();
+            //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
+            if ($order_type_id == 18) {
+                $newProduct = new product();
                 $productData = [
                     'vendor_id' => $vendor_id,
                     'vendor_description' => $itemsArray[$i],
@@ -776,8 +776,8 @@ class OrderController extends Controller
                     'num_items' => $qtyArray[$i],
                     'in_development' => 1,
                 ];
-                $product->setRawAttributes($productData);
-                $product->save();
+                $newProduct->setRawAttributes($productData);
+                $newProduct->save();
             }
 
             if (!empty($where_in_expression)) {
