@@ -1580,13 +1580,11 @@ class OrderController extends Controller
     function validatePO($po, $po_full, $location_id)
     {
         if ($po != 0) {
-
             if ($this->model->isPOAvailable($po_full)) {
                 $this->model->createPOTrack($po_full, $location_id);
                 $po_3 = explode('-', $po_full);
                 $msg = $po_3[2];
             } else {
-                //die('po not available');
                 $msg = $this->model->increamentPO($location_id);
             }
         } else {

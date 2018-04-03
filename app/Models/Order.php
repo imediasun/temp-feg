@@ -644,11 +644,14 @@ class order extends Sximo
         return $po ? false : true;
     }
 
-    function createPOTrack($po_full,$location_id)
-    {
+    function createPOTrack($po_full,$location_id) {
         $count = explode('-', $po_full);
-        $data=array('po_number'=>$po_full,'location_id'=>$location_id, 'sort' => $count[2]);
-        \DB::table('po_track')->insert($data);
+        $data = [
+            'po_number' => $po_full,
+            'location_id' => $location_id,
+            'sort' => $count[2]
+        ];
+        return PoTrack::create($data);
     }
 
     public function get_local_time($type = null)
