@@ -16,25 +16,32 @@ class productlog extends Sximo  {
 	public static function querySelect(  ){
 		
 		return "  SELECT
-   ''                          AS search_all_fields,
-  products.*,
-  reserved_qty_log.id AS logid
-FROM products
+  ''               AS search_all_fields,
+  prod.*,
+  log.id,
+  log.variation_id,
+  log.created_at as logCreatedAt
+FROM reserved_qty_log LOG
+  INNER JOIN products prod
+    ON log.variation_id = prod.variation_id
   INNER JOIN order_contents
-    ON products.id = order_contents.product_id
+    ON prod.id = order_contents.product_id
   INNER JOIN orders
-    ON orders.id = order_contents.order_id
-  INNER JOIN reserved_qty_log
-    ON reserved_qty_log .variation_id = products.variation_id  ";
+    ON orders.id = order_contents.order_id  ";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE products.id IS NOT NULL and products.is_reserved = 1 ";
+		return "  WHERE log.id IN(SELECT
+                  MAX(id)
+                FROM reserved_qty_log
+                GROUP BY variation_id)
+    AND prod.id IS NOT NULL
+    AND prod.is_reserved = 1  ";
 	}
 	
 	public static function queryGroup(){
-		return " GROUP BY products.vendor_description, products.sku, products.vendor_id, products.case_price ";
+		return " GROUP BY prod.vendor_description, prod.sku, prod.vendor_id, prod.case_price  ";
 	}
 
 }
