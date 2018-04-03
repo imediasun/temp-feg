@@ -1214,7 +1214,7 @@ class order extends Sximo
         } elseif(!$received_qty) {
             $this->status_id = 1;
             $this->is_partial = 0;
-        }elseif ($final_qty == $received_qty and $this->status_id != '1'){
+        } elseif ($final_qty == $received_qty and $this->status_id != '1'){
             $this->status_id = 2;
             $this->is_partial = 0;
         }
