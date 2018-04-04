@@ -39,6 +39,7 @@ class PostSaveOrderEventHandler
 
             $ReservedProductQtyLogObj = ReservedQtyLog::where('order_id', $item->order_id)
                 ->where('variation_id', $product->variation_id)
+                ->where('adjustment_type', 'negative')
                 ->orderBy('id', 'DESC')
                 ->first();
 
