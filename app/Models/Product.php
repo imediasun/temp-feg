@@ -487,6 +487,7 @@ WHERE orders.is_api_visible = 1
         if (empty($attributes)) {
             return false;
         }
+        $this->update(["inactive"=>$attributes['inactive']]);
         $items = $this->getProductVariations();
         foreach ($items as $item) {
             $updates = $attributes;
