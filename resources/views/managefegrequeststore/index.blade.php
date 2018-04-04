@@ -7,29 +7,37 @@
         $(document).ready(function(){
             searchParams = "{{ \Session::get('searchParamsForManageFEGStore') }}";
             searchParams = searchParams.replace(/&amp;/g, '&');
-            $('.ajaxLoading').show();
-            $.ajax({
-                type:"GET",
-                url:"{{ Url('/managefegrequeststore/searchfilterparemsresult') }}"+searchParams,
-                success:function(response){
-                    searchParams = response;
-                    if(searchParams!='') {
-                        $("#searchParamsString").val(searchParams);
-                        <?php
-                        if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
-                           {
-                               \Session::put('filter_before_redirect','no');
-                           }
-                        ?>
-                           reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
-                    }else{
-                        $("#searchParamsString").val("?view=manage'");
-                        <?php \Session::put('filter_before_redirect','no'); ?>
-                        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
-                    }
+            var v1 = searchParams.indexOf("v1");
+            var v2 = searchParams.indexOf("v2");
+            var v3 = searchParams.indexOf("v3");
+            if(v1 != -1 || v2 != -1 || v3 != -1) {
+                $('.ajaxLoading').show();
+                $.ajax({
+                    type: "GET",
+                    url: "{{ Url('/managefegrequeststore/searchfilterparemsresult') }}" + searchParams,
+                    success: function (response) {
+                        searchParams = response;
+                        if (searchParams != '') {
+                            $("#searchParamsString").val(searchParams);
+                            <?php
+                            if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
+                               {
+                                   \Session::put('filter_before_redirect','no');
+                               }
+                            ?>
+                               reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
+                        } else {
+                            $("#searchParamsString").val("?view=manage'");
+                            <?php \Session::put('filter_before_redirect','no'); ?>
+                            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+                        }
 
-                }
-            });
+                    }
+                });
+            }else{
+                <?php \Session::put('filter_before_redirect','no'); ?>
+                           reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+            }
 
             <?php
            if(isset($error)) { ?>
