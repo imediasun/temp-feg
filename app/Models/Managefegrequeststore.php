@@ -465,7 +465,7 @@ class managefegrequeststore extends Sximo
             WHERE `status_id` = 1
                 AND blocked_at IS NULL  '.$queryWhere.' 
             GROUP BY order_type,location_id,vendor_id
-            ORDER BY order_type.order_type ASC limit 1';
+            ORDER BY order_type.order_type,requests.location_id,vendor.vendor_name ASC limit 1';
 
         $result = \DB::select($sql);
         if($result){
