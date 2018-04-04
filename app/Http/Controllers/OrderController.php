@@ -786,18 +786,19 @@ class OrderController extends Controller
                 $request_qty = empty($shop_request) ? 0 : $shop_request->qty;
                 $restore_qty = $request_qty - $qtyArray[$i];
 
-                $shop_request->blocked_at = null;
-                if ($restore_qty > 0) {
-                    $shop_request->status_id = 3;
-                    $shop_request->qty = $restore_qty;
-                } else {
-                    $shop_request->status_id = 2;
-                    $shop_request->process_user_id = Auth::user()->id;
-                    $shop_request->process_date = $order->get_local_time('date');
-                    $shop_request->qty = $restore_qty;
+                if($shop_request){
+                    $shop_request->blocked_at = null;
+                    if ($restore_qty > 0) {
+                        $shop_request->status_id = 3;
+                        $shop_request->qty = $restore_qty;
+                    } else {
+                        $shop_request->status_id = 2;
+                        $shop_request->process_user_id = Auth::user()->id;
+                        $shop_request->process_date = $order->get_local_time('date');
+                        $shop_request->qty = $restore_qty;
+                    }
+                    $shop_request->save();
                 }
-
-                $shop_request->save();
 
                 //// SUBTRACT QTY OF RESERVED AMT ITEMS
                 $item_count = substr_count($SID_string, '-') - 1;
