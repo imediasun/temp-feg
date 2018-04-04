@@ -19,6 +19,7 @@ use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
+use App\Models\vendor;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -1914,7 +1915,8 @@ class OrderController extends Controller
         if (empty($vendor_id)) {
             $vendor_id = 0;
         }
-        return \DB::table('vendor')->select('bill_account_num')->where('id', $vendor_id)->get();
+        return vendor::select('bill_account_num')->where('id', $vendor_id)->get();
+        //return \DB::table('vendor')->select('bill_account_num')->where('id', $vendor_id)->get();
     }
 
     function getComboselect(Request $request)
