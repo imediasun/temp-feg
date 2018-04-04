@@ -1,7 +1,44 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="page-content row">
+    <input type="hidden" id="searchParamsString" value="">
+    <script>
+        var searchParams;
+        $(document).ready(function(){
+            searchParams = "{{ \Session::get('searchParamsForManageFEGStore') }}";
+            searchParams = searchParams.replace(/&amp;/g, '&');
+            $('.ajaxLoading').show();
+            $.ajax({
+                type:"GET",
+                url:"{{ Url('/managefegrequeststore/searchfilterparemsresult') }}"+searchParams,
+                success:function(response){
+                    searchParams = response;
+                    if(searchParams!='') {
+                        $("#searchParamsString").val(searchParams);
+                        <?php
+                        if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
+                           {
+                               \Session::put('filter_before_redirect','no');
+                           }
+                        ?>
+                           reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
+                    }else{
+                        $("#searchParamsString").val("?view=manage'");
+                        <?php \Session::put('filter_before_redirect','no'); ?>
+                        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+                    }
+
+                }
+            });
+
+            <?php
+           if(isset($error)) { ?>
+                   notyMessageError("{{$error}}");
+            <?php } ?>
+
+        });
+    </script>
+    <div class="page-content row">
   <!-- Begin Header & Breadcrumb -->
     <div class="page-header">
       <div class="page-title">
@@ -21,38 +58,7 @@
 		<div id="{{ $pageModule }}Grid"></div>
 	</div>	
 	<!-- End Content -->  
-</div>	
-<script>
-$(document).ready(function(){
-    var searchParams = "{{ \Session::get('searchParamsForManageFEGStore') }}";
-     searchParams = searchParams.replace(/&amp;/g, '&');
-    $('.ajaxLoading').show();
-        $.ajax({
-            type:"GET",
-            url:"{{ Url('/managefegrequeststore/searchfilterparemsresult') }}"+searchParams,
-            success:function(response){
-                searchParams = response;
-                if(searchParams!='') {
-                    <?php
-                    if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
-                       {
-                           \Session::put('filter_before_redirect','no');
-                       }
-                    ?>
-                       reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
-                }else{
-                    <?php \Session::put('filter_before_redirect','no'); ?>
-                    reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
-                }
+</div>
 
-            }
-        });
 
-    <?php
-   if(isset($error)) { ?>
-           notyMessageError("{{$error}}");
-    <?php } ?>
-
-});	
-</script>	
 @endsection
