@@ -41,12 +41,14 @@
                             <tr>
                                 <!--<td>1</td>-->
                                 <td>Merchandise Orders PO PDF Notes</td>
-                                <td>This PO PDF note is a default PO note for Merchandise Orders.
-                                    Place <code>MERCHANDISE_CONTACT</code>, <code>GENERAL_MANAGER</code>, <code>REGIONL_DIRECTOR</code>,
-                                    <code>SVP_CONTACT</code>, <code>TECHNICAL_CONTACT</code>, these tags in content.
-                                    System will replace these tags with actual email address assigned to roles in
-                                    system.
-
+                                <td>
+                                    This is the default PO Note which appears on the PO PDF. To include the location's listing for a specific job position, please use one of the following tags in your note text:
+                                    <br> <code>MERCHANDISE_CONTACT</code><br>
+                                    <code>GENERAL_MANAGER</code><br>
+                                    <code>REGIONAL_DIRECTOR</code><br>
+                                    <code>SVP_CONTACT</code><br>
+                                    <code>TECHNICAL_CONTACT</code><br>
+                                    The tag above will be swapped out for whichever Employee is listed in that position in the Locations module. If no employee is listed in a position and that position's tag is used, then no name will appear in the PDF Note.
                                 </td>
                                 <td>
                                     <textarea name="merchandisePONote" class="form-control"
@@ -61,12 +63,13 @@
                             <tr>
                                 <!--<td>1</td>-->
                                 <td>Non Merchandise Orders PO PDF Notes</td>
-                                <td>This PO PDF note is a default PO note for Non Merchandise Orders.
-                                    Place <code>MERCHANDISE_CONTACT</code>, <code>GENERAL_MANAGER</code>, <code>REGIONL_DIRECTOR</code>,
-                                    <code>SVP_CONTACT</code>, <code>TECHNICAL_CONTACT</code>, these tags in content.
-                                    System will replace these tags with actual email address assigned to roles in
-                                    system.
-                                    want to show the email addresses.
+                                <td>This is the default PO Note which appears on the PO PDF. To include the location's listing for a specific job position, please use one of the following tags in your note text:
+                                    <br> <code>MERCHANDISE_CONTACT</code><br>
+                                    <code>GENERAL_MANAGER</code><br>
+                                    <code>REGIONAL_DIRECTOR</code><br>
+                                    <code>SVP_CONTACT</code><br>
+                                    <code>TECHNICAL_CONTACT</code><br>
+                                    The tag above will be swapped out for whichever Employee is listed in that position in the Locations module. If no employee is listed in a position and that position's tag is used, then no name will appear in the PDF Note.
                                 </td>
                                 <td>
                                     <textarea name="NonmerchandisePONote" class="form-control"

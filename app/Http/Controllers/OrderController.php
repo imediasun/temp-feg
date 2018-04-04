@@ -1420,7 +1420,7 @@ class OrderController extends Controller
             if (!empty($addonPONote)) {
                 $addonPONote = str_replace("MERCHANDISE_CONTACT", (!empty($data[0]['loc_merch_contact_email']) ? $data[0]['loc_merch_contact_email'] : ""), $addonPONote);
                 $addonPONote = str_replace("GENERAL_MANAGER", (!empty($data[0]['loc_general_manager_email']) ? $data[0]['loc_general_manager_email'] : ""), $addonPONote);
-                $addonPONote = str_replace("REGIONL_DIRECTOR", (!empty($data[0]['loc_regional_contact_email']) ? $data[0]['loc_regional_contact_email'] : ""), $addonPONote);
+                $addonPONote = str_replace("REGIONAL_DIRECTOR", (!empty($data[0]['loc_regional_contact_email']) ? $data[0]['loc_regional_contact_email'] : ""), $addonPONote);
                 $addonPONote = str_replace("SVP_CONTACT", (!empty($data[0]['loc_svp_contact_email']) ? $data[0]['loc_svp_contact_email'] : ""), $addonPONote);
                 $addonPONote = str_replace("TECHNICAL_CONTACT", (!empty($data[0]['loc_technical_user_email']) ? $data[0]['loc_technical_user_email'] : ""), $addonPONote);
             }

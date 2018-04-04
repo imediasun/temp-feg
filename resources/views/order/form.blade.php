@@ -278,9 +278,14 @@
                         <label class="label-control col-md-4"> PO Note Additional Text</label>
                         <div class="col-md-8">
                             <textarea name="po_notes_additionaltext" class="form-control" rows="5" placeholder="PO Note Additional Text">{!! $row['po_notes_additionaltext'] !!}</textarea>
-                            <b>Place <code>MERCHANDISE_CONTACT</code>, <code>GENERAL_MANAGER</code>, <code>REGIONL_DIRECTOR</code>,
-                                <code>SVP_CONTACT</code>, <code>TECHNICAL_CONTACT</code>, these tags in content. System
-                                will replace these tags with actual email address assigned to roles in system.</b>
+                            <b>This is the default PO Note which appears on the PO PDF. To include the location's listing for a specific job position, please use one of the following tags in your note text:
+                                <br> <code>MERCHANDISE_CONTACT</code><br>
+                                <code>GENERAL_MANAGER</code><br>
+                                <code>REGIONAL_DIRECTOR</code><br>
+                                <code>SVP_CONTACT</code><br>
+                                <code>TECHNICAL_CONTACT</code><br>
+                                The tag above will be swapped out for whichever Employee is listed in that position in the Locations module. If no employee is listed in a position and that position's tag is used, then no name will appear in the PDF Note.
+                            </b>
                         </div>
                         <div style="clear:both"></div>
                     </div>
