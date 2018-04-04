@@ -853,6 +853,7 @@ class OrderController extends Controller
     public function generateOrderDescriptionAndPriceArray($order_type, $itemsArray, $casePriceArray, $priceArray, $qtyArray){
         list($case_price_categories, $case_price_if_no_unit_categories) = $this->getOrderSpecialPermissions();
         $order_description = '';
+        $itemsPriceArray = [];
         foreach($itemsArray as $i => $item) {
             if (in_array($order_type, $case_price_categories)) {
                 $itemsPriceArray[] = $casePriceArray[$i];
