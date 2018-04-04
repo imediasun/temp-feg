@@ -40,6 +40,34 @@ class ManagefegrequeststoreController extends Controller
 
 
     }
+    function returnUrl()
+    {
+        $pages = (isset($_GET['page']) ? $_GET['page'] : '');
+        $sort = (isset($_GET['sort']) ? $_GET['sort'] : '');
+        $order = (isset($_GET['order']) ? $_GET['order'] : '');
+        $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
+        $search = (isset($_GET['search']) ? $_GET['search'] : '');
+        $v1 = (isset($_GET['v1']) ? $_GET['v1'] : '');
+        $v2 = (isset($_GET['v2']) ? $_GET['v2'] : '');
+        $v3 = (isset($_GET['v3']) ? $_GET['v3'] : '');
+
+        $appends = array();
+        if ($pages != '') $appends['page'] = $pages;
+        if ($sort != '') $appends['sort'] = $sort;
+        if ($order != '') $appends['order'] = $order;
+        if ($rows != '') $appends['rows'] = $rows;
+        if ($search != '') $appends['search'] = $search;
+        if ($v1 != '') $appends['v1'] = $v1;
+        if ($v2 != '') $appends['v2'] = $v2;
+        if ($v2 != '') $appends['v3'] = $v3;
+
+        $url = "";
+        foreach ($appends as $key => $val) {
+            $url .= "&$key=$val";
+        }
+        return $url;
+
+    }
 
     public function getIndex()
     {
@@ -139,6 +167,9 @@ class ManagefegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
+        if($request->input('search') == ''){
+            \Session::put('searchParamsForManageFEGStore','');
+        }
 
         $searchUrl = $this->getSearchParamsForRedirect('manageFegStore');
         $user_level = \Session::get('gid');
