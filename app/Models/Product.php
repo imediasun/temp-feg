@@ -429,7 +429,6 @@ FROM `products`
         if (empty($attributes)) {
             return false;
         }
-        $this->update(["inactive"=>$attributes['inactive']]);
         $items = $this->getProductVariations();
         foreach ($items as $item) {
             $updates = $attributes;

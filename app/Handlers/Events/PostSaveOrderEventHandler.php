@@ -35,7 +35,7 @@ class PostSaveOrderEventHandler
         if ($product->is_reserved == 1) {
 
             $ReservedProductQtyLogObj = ReservedQtyLog::where('order_id', $item->order_id)
-                ->where('product_id', $product->id)
+                ->where('variation_id', $product->variation_id)
                 ->orderBy('id', 'DESC')
                 ->first();
 
@@ -69,7 +69,6 @@ class PostSaveOrderEventHandler
                 $inactive = 0;
             }
             $product->updateProduct(['reserved_qty' => $adjustmentAmount, 'inactive' => $inactive], true);
-            $product->inactive = $inactive;
             $product->save();
 
             if($inactive == 1){
