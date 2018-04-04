@@ -623,16 +623,9 @@ class OrderController extends Controller
 
         \DB::beginTransaction();
 
-        $order_id = $request->get('order_id');
-        if($order_id){
-            $order = order::find($order_id);
-        }else{
-            $order = new order();
-            $order->status_id = 1;
-        }
-
         //GETTING DATA FROM REQUEST
         /**
+         * @var $order_id
          * @var $editmode
          * @var $SID_string
          * @var $where_in_expression
@@ -654,6 +647,13 @@ class OrderController extends Controller
          * @var $po_notes_additionaltext
          */
         extract($request->input());
+        if($editmode == "edit"){
+            $order = order::find($order_id);
+        }else{
+            $order = new order();
+            $order->status_id = 1;
+        }
+
         $vendor_email = $order->getVendorEmail($vendor_id);
         $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
         $po = $po_1 . '-' . $po_2 . '-' . $po_3;
@@ -879,7 +879,7 @@ class OrderController extends Controller
             '|' . $to_add_city . '| ' . $to_add_state .
             '| ' . $to_add_zip . '|' . $to_add_notes;
         }else{
-            return null;
+            return '';
         }
     }
 
