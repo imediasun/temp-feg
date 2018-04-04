@@ -440,7 +440,7 @@ FROM `products`
         return $items;
     }
 
-    public function getAutoComplete($term, $vendorId){
+    public function getAutoComplete($term, $vendorId, $excludeProductsIds){
         $products = self::select(DB::raw("*,LOCATE('$term',vendor_description) AS pos"))
             ->where('vendor_description', 'like', "%$term%")
             ->where('inactive', 0)
@@ -450,6 +450,10 @@ FROM `products`
 
         if (!empty($vendorId)) {
             $products = $products->where('vendor_id', $vendorId);
+        }
+
+        if (!empty($excludeProductsIds)) {
+            $products = $products->whereNotIn('id', $excludeProductsIds);
         }
 
         return $products->take(10)->get();

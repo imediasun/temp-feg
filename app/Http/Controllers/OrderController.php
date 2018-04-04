@@ -1831,9 +1831,22 @@ class OrderController extends Controller
     {
         $term = addslashes(Input::get('term'));
         $vendorId = Input::get('vendor_id', 0);
+        $excludeProducts = Input::get('exclude_products', null);
+        $excludeProductsIds = [];
+
+        if ($excludeProducts) {
+            $excludeProductsArray = explode(',', $excludeProducts);
+            foreach ($excludeProductsArray as $item) {
+                $product = product::find($item);
+                $variations = $product->getProductVariations();
+                array_map(function ($row) use (&$excludeProductsIds) {
+                    $excludeProductsIds[] = $row->id;
+                }, $variations->all());
+            }
+        }
 
         $product = new Product();
-        $data = $product->getAutoComplete($term, $vendorId);
+        $data = $product->getAutoComplete($term, $vendorId, $excludeProductsIds);
         $data = $data->map(function ($row) {
             return [
                 'id' => $row->id,
