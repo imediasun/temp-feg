@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
 use PHPMailerOAuth;
-use App\Models\ReservedQtyLog;
 use App\Models\OrdersettingContent;
+use App\Models\ReservedQtyLog;
 
 class OrderController extends Controller
 {
@@ -414,7 +414,6 @@ class OrderController extends Controller
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
 
-
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         $this->data['mode'] = $mode;
@@ -424,7 +423,8 @@ class OrderController extends Controller
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
-        return view('order.form', $this->data)->with('fromStore', $fromStore);
+
+        return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
     public function getShow($id = null)
@@ -662,7 +662,7 @@ class OrderController extends Controller
             $item_received = $request->get('item_received');
             $item_received = $request->get('item_received');
             $denied_SIDs = $request->get('denied_SIDs');
-              $po_notes_additionaltext = $request->get('po_notes_additionaltext');
+            $po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
@@ -700,7 +700,7 @@ class OrderController extends Controller
                     'alt_address' => $alt_address,
                     'request_ids' => $where_in,
                     'po_notes' => $notes,
-                    'po_notes_additionaltext'=>$po_notes_additionaltext,
+                    'po_notes_additionaltext' => $po_notes_additionaltext,
                 );
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
@@ -728,7 +728,7 @@ class OrderController extends Controller
                     'new_format' => 1,
                     'is_freehand' => $is_freehand,
                     'po_notes' => $notes,
-                    'po_notes_additionaltext'=>$po_notes_additionaltext,
+                    'po_notes_additionaltext' => $po_notes_additionaltext,
                 );
                 if ($editmode == "clone") {
                     $id = 0;
