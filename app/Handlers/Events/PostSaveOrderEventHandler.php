@@ -71,8 +71,9 @@ class PostSaveOrderEventHandler
             } else {
                 $inactive = 0;
             }
-
+            $this->inactive = $inactive;
             $product->updateProduct(['reserved_qty' => $adjustmentAmount, 'inactive' => $inactive], true);
+            $product->inactive = $inactive;
             $product->save();
 
             if($inactive == 1){
