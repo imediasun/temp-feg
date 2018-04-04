@@ -434,7 +434,7 @@ FROM `products`
         foreach ($items as $item) {
             $updates = $attributes;
             if ($override_inactive and isset($updates['inactive']) and $updates['inactive'] == 0) {
-                $updates['inactive'] = ($item->inactive_by) ? 1 : 0;
+              //  $updates['inactive'] = ($item->inactive_by) ? 1 : 0;
             }
             $item->update($updates);
         }
