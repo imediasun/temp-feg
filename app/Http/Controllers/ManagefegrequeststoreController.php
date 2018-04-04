@@ -140,11 +140,12 @@ class ManagefegrequeststoreController extends Controller
     public function postData(Request $request)
     {
 
-        $this->getSearchParamsForRedirect('manageFegStore');
+        $searchUrl = $this->getSearchParamsForRedirect('manageFegStore');
         $user_level = \Session::get('gid');
         if ($user_level == Groups::PARTNER) {
             return redirect('dashboard');
         } else {
+
             $v1 = $request->get('v1');
             $v2 = $request->get('v2');
             $v3 = $request->get('v3');
@@ -274,6 +275,10 @@ class ManagefegrequeststoreController extends Controller
             }
 
 // Render into template
+            $this->data['searchUrl']="";
+            if(!empty($searchUrl)){
+                $this->data['searchUrl'] = $searchUrl;
+            }
             return view('managefegrequeststore.table', $this->data);
         }
     }
@@ -516,5 +521,77 @@ class ManagefegrequeststoreController extends Controller
             }
         }
         return 'requestIds are empty!';
+    }
+    function getSearchfilterparemsresult(Request $request){
+
+        $productTypeId = $request->get('v1');
+        $locationId = $request->get('v2');
+        $vendorId = $request->get('v3');
+        if(!empty($productTypeId)){
+            $productTypeId = str_replace("T","",$productTypeId);
+        }
+        if(!empty($locationId)){
+            $locationId = str_replace("L","",$locationId);
+        }
+        if(!empty($vendorId)){
+            $vendorId = str_replace("V","",$vendorId);
+        }
+        $response = ['product_type_id'=>'','location_id'=>'','vendor_id'=>''];
+        $responseSet = true;
+
+        $whereQuery = " products.prod_type_id = '".$productTypeId."' ";
+        $whereQuery .= " AND requests.location_id = '".$locationId."' ";
+        $whereQuery .= " AND products.vendor_id = '".$vendorId."' ";
+        $result  = $this->model->getSearchFilterResult($whereQuery); // Select from Search Parems
+
+        if(empty($result)) {
+            $whereQuery = " products.prod_type_id = '" . $productTypeId . "' ";
+            $whereQuery .= " AND requests.location_id = '" . $locationId . "' ";
+            $result = $this->model->getSearchFilterResult($whereQuery); // selecting first vendor from searched product type and location
+        }
+        if(empty($result)){
+            $whereQuery = " products.prod_type_id = '" . $productTypeId . "' ";
+            $result = $this->model->getSearchFilterResult($whereQuery); // selecting first location and vendor from search product type
+        }
+        if(empty($result)){
+            $result = $this->model->getSearchFilterResult(); // selecting first product type, location and vendor
+        }
+
+        if(!empty($result)){
+            $response = [
+                'product_type_id'=>$result->product_type_id,
+                'location_id'=>$result->location_id,
+                'vendor_id'=>$result->vendor_id,
+                    ];
+
+        }
+        $url="?";
+        if(!isset($_GET['v1'])){
+            $_GET['v1'] ='';
+        }
+        if(!isset($_GET['v2'])){
+            $_GET['v2'] ='';
+        }
+        if(!isset($_GET['v3'])){
+            $_GET['v3'] ='';
+        }
+        foreach($_GET as $paramName=>$paramValue)
+        {
+            $value = $paramValue;
+            if($paramName=='v1'){
+                $value = 'T'.$response['product_type_id'];
+            }
+            if($paramName=='v2'){
+                $value = 'L'.$response['location_id'];
+            }
+            if($paramName=='v3'){
+                $value = 'V'.$response['vendor_id'];
+            }
+            $url .= $paramName."=".$value."&";
+        }
+        $url=substr($url,0,strlen($url)-1);
+
+        return $url;
+
     }
 }

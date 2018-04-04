@@ -1155,6 +1155,8 @@ abstract class Controller extends BaseController
             \Session::put('searchParams',$url);
         }else{
             \Session::put('searchParamsForManageFEGStore',$url);
+            return $url;
+
         }
     }
     function destroyRedirectFilters()
