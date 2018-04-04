@@ -440,5 +440,36 @@ class managefegrequeststore extends Sximo
         }
         return $QueryArray;
     }
+    function getSearchFilterResult($queryWhere = ''){
+        if(!empty($queryWhere)){
+            $queryWhere = " AND ".$queryWhere;
+        }
+        $sql = 'SELECT
+              order_type.order_type,
+              order_type.id AS product_type_id,
+              location_id,
+              vendor_id
+            FROM requests  JOIN products
+            ON requests.product_id = products.id
+          JOIN order_type
+            ON products.prod_type_id = order_type.id
+          JOIN product_type
+            ON products.prod_type_id = product_type.id
+          LEFT JOIN vendor
+            ON vendor.id = products.vendor_id
+          LEFT JOIN location
+            ON location.id = requests.location_id
+            WHERE `status_id` = 1
+                AND blocked_at IS NULL  '.$queryWhere.' 
+            GROUP BY order_type,location_id,vendor_id
+            ORDER BY order_type.order_type ASC limit 1';
+
+        $result = \DB::select($sql);
+        if($result){
+            return $result[0];
+        }else{
+            return false;
+        }
+    }
 
 }

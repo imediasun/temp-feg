@@ -25,33 +25,33 @@
 <script>
 $(document).ready(function(){
     var searchParams = "{{ \Session::get('searchParamsForManageFEGStore') }}";
-    var searchParams = searchParams.replace(/&amp;/g, '&');
-    console.log('searchParams: '+searchParams);
-    if(searchParams!='') {
-     <?php
-     if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
-        {
-            \Session::put('filter_before_redirect','no');
-        }
-     ?>
+     searchParams = searchParams.replace(/&amp;/g, '&');
+    $('.ajaxLoading').show();
+        $.ajax({
+            type:"GET",
+            url:"{{ Url('/managefegrequeststore/searchfilterparemsresult') }}"+searchParams,
+            success:function(response){
+                searchParams = response;
+                if(searchParams!='') {
+                    <?php
+                    if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
+                       {
+                           \Session::put('filter_before_redirect','no');
+                       }
+                    ?>
+                       reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
+                }else{
+                    <?php \Session::put('filter_before_redirect','no'); ?>
+                    reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+                }
 
-        reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
-    }
-    else {
-        <?php
+            }
+        });
 
-        \Session::put('filter_before_redirect','no');
-         ?>
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
-    }
     <?php
-   if(isset($error))
-       {
-           ?>
+   if(isset($error)) { ?>
            notyMessageError("{{$error}}");
-    <?php
-    }
-    ?>
+    <?php } ?>
 
 });	
 </script>	
