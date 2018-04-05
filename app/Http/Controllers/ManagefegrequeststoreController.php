@@ -570,6 +570,9 @@ class ManagefegrequeststoreController extends Controller
         }
         $response = ['product_type_id'=>'','location_id'=>'','vendor_id'=>''];
         $responseSet = true;
+        if(empty($productTypeId)){
+            $productTypeId = 0 ;
+        }
 
         $whereQuery = " products.prod_type_id in(" . $productTypeId . ") ";
         $whereQuery .= " AND requests.location_id = '".$locationId."' ";
