@@ -415,22 +415,54 @@ class ProductController extends Controller
 
         foreach (\DB::select("SHOW COLUMNS FROM products ") as $column) {
 
-            if ($column->Field != 'id')
+            if ($column->Field != 'id' && $column!='variation_id')
                 $columns[] = $column->Field;
 
         }
+
         $toCopy = implode(",", $request->input('ids'));
+
 
         $sql = "INSERT INTO products (" . implode(",", $columns) . ") ";
         $columns[1] = "CONCAT('copy ".mt_rand()." ',vendor_description)";
-        $sql .= " SELECT " . implode(",", $columns) . " FROM products WHERE id IN (" . $toCopy . ")";
-        \DB::insert($sql);
+        $column = str_replace("variation_id"," SUBSTRING(UUID(),1,10) as variation_id ",implode(",", $columns));
+
+        $sql .= " SELECT " .$column. " FROM products WHERE id IN (" . $toCopy . ")";
+
+         \DB::insert($sql);
+        $lastInsertId = \DB::getPdo()->lastInsertId();
+
+        for($i=0; $i<count($request->input('id')); $i++) {
+            $lastInsertId = $lastInsertId + $i;
+
+            $Product = product::find($lastInsertId);
+            $type = "negative";
+
+                if ($Product->reserved_qty > 0) {
+                    $type = "positive";
+                } else if ($Product->reserved_qty < 0) {
+                    $type = "negative";
+                }
+                $ReservedQtyLog = new ReservedQtyLog();
+                $reservedLogData = [
+                    "product_id" => $Product->id,
+                    "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1) : $Product->reserved_qty),
+                    "adjustment_type" => $type,
+                    "variation_id" => $Product->variation_id,
+                    "adjusted_by" => \AUTH::user()->id,
+                ];
+                $ReservedQtyLog->insertRow($reservedLogData, 0);
+
+
+        }
+
 
         return response()->json(array(
             'status' => 'success',
             'message' => \Lang::get('core.note_success')
         ));
     }
+
 
     function postSave(Request $request, $id = 0)
     {
