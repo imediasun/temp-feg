@@ -141,6 +141,7 @@ class FegapiController extends Controller
                                         ];
                                         $result = product::getRows($where, null, null, null, true); // preparing product record for api
                                         $result['rows'][0]->inactive = implode(",", array_fill(0, $totalVariations, '0'));
+                                        $result['rows'][0]->updated_at = $row->api_created_at;
                                         $mergeValues[] =  $result['rows'][0];
                                         $results['rows']=product::array_remove_object($results['rows'],$variation->id,'id');
 
