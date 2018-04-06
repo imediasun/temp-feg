@@ -242,7 +242,11 @@ FROM `products`
             'sort' 		=> '' ,
             'order' 	=> '' ,
             'params' 	=> '' ,
-            'global'	=> 1
+            'global'	=> 1,
+            'vendor_id'=>'',
+            'case_price'=>'',
+            'sku'=>'',
+            'vendor_description'=>'',
         ), $args ));
 
 
@@ -299,6 +303,18 @@ FROM `products`
         if(!empty($vendor_id)){
             $select .= " AND vendor_id='$vendor_id'";
         }
+        if(!empty($vendor_id)){
+            $select .= " AND products.vendor_id='$vendor_id'";
+        }
+        if(!empty($case_price)){
+            $select .= " AND products.case_price='$case_price'";
+        }
+        if(!empty($vendor_description)){
+            $select .= " AND products.vendor_description='$vendor_description'";
+        }
+        if(!empty($sku)){
+            $select .= " AND products.sku='$sku'";
+        }
 
         //$limitConditional = 'LIMIT 0 , 1';
 
@@ -307,7 +323,6 @@ FROM `products`
         }else{
             $groupConditions = self::queryGroup();
         }
-
 
         Log::info("Query : ".$select . " {$params}  {$groupConditions} {$orderConditional}  {$limitConditional} ");
 
@@ -329,6 +344,40 @@ FROM `products`
         return $results = array('rows'=> $result , 'total' => $total);
 
     }
+    public static function getMergeRows( $args,$cond=null,$active=null,$sub_type=null, $is_api=false)
+    {
+
+        $table = with(new static)->table;
+        $key = with(new static)->primaryKey;
+
+        extract( array_merge( array(
+            'page' 		=> '0' ,
+            'limit'  	=> '0' ,
+            'sort' 		=> '' ,
+            'order' 	=> '' ,
+            'params' 	=> '' ,
+            'global'	=> 1,
+            'exculdeProducts'=>''
+
+        ), $args ));
+
+        $sql ='SELECT
+ DISTINCT order_contents.product_id
+FROM orders
+  JOIN order_contents
+    ON orders.id = order_contents.order_id
+WHERE orders.is_api_visible = 1
+    AND orders.api_created_at >= DATE_SUB(NOW(),INTERVAL 1 DAY) ';
+
+        if(!empty($exculdeProducts)){
+            $sql .= " AND order_contents.product_id NOT IN($exculdeProducts)";
+        }
+
+        $results =  \DB::select($sql);
+        return $results;
+
+    }
+
 
     public function allExpenseCategories()
     {
