@@ -137,7 +137,7 @@ class FegapiController extends Controller
                                             'vendor_id' => $variation->vendor_id,
                                             'case_price' => $variation->case_price,
                                             'sku' => $variation->sku,
-                                            'vendor_description' => addcslashes($variation->vendor_description),
+                                            'vendor_description' => addslashes($variation->vendor_description),
                                         ];
                                         $result = product::getRows($where, null, null, null, true); // preparing product record for api
                                         $result['rows'][0]->inactive = implode(",", array_fill(0, $totalVariations, '0'));
