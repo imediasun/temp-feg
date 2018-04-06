@@ -2612,13 +2612,14 @@ WHERE status_id = 2
     AND date_ordered < '2017-06-06'
 ORDER BY aa_id");
 
+        /*
         if($step == '1'){
             $ids = array_map(function($row){
                 return $row->aa_id;
             }, $records);
             \DB::table('order_received')->whereIn('order_id', $ids)->update(['deleted_at' => Carbon::now()]);
             die("Step 1 completed!");
-        }
+        }*/
 
         foreach ($records as $record){
             $order = Order::find($record->aa_id);
