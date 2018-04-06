@@ -2610,9 +2610,6 @@ WHERE status_id = 2
     AND order_type_id IN(8,17,4,6,7)
     AND YEAR(date_ordered) <= 2017
     AND date_ordered < '2017-06-06'
-HAVING items_ordered > 0
-    AND (items_ordered < items_received
-          OR items_received = 0)
 ORDER BY aa_id");
 
         if($step == '1'){
@@ -2626,6 +2623,7 @@ ORDER BY aa_id");
         foreach ($records as $record){
             $order = Order::find($record->aa_id);
 
+            /*
             $order_contents = \DB::table('order_contents')->where('order_id', $order->id)->get();
 
             $notes = '';
@@ -2677,17 +2675,17 @@ ORDER BY aa_id");
                 }
 
                 \DB::table('order_contents')->where('id', $order_content->id)->update(['item_received' => $order_content->qty]);
-            }
+            }*/
 
             $order->status_id = 2;
             $order->invoice_verified = 1;
             $order->invoice_verified_date = Carbon::now();
             $order->is_api_visible = 1;
-            $order->api_created_at = '2000-01-01 00:00:00';
+            $order->api_created_at = '2017-06-06 00:00:00';
             $order->date_received = Carbon::now();
             $order->updated_at = Carbon::now();
             $order->received_by = '238';
-            $order->notes = $notes;
+            $order->notes = '(System generated) Some Items Received <br>----------------------<br>';
             $order->save();
         }
 
