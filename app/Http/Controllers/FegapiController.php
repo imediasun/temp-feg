@@ -108,8 +108,7 @@ class FegapiController extends Controller
                             }
                         }
 
-                        $past24hours = date("Y-m-d H:i:s", strtotime("-24 hours"));
-                        // $past24hours = date("Y-m-d H:i:s",strtotime("2018-03-27 09:44:15"));
+                        $past24hours = date("Y-m-d H:i:s", strtotime("-1 days"));
 
                         $CheckOrders = Order::whereIn("id", $ordersIds)->where("is_api_visible", "=", 1)->where("api_created_at", ">", $past24hours)->orderBy("api_created_at", "DESC")->first();
 
