@@ -496,5 +496,10 @@ WHERE orders.is_api_visible = 1
         $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price' => $this->case_price])->get();
         return $items;
     }
-
+    public static function array_remove_object(&$array, $value, $prop)
+    {
+        return array_filter($array, function($a) use($value, $prop) {
+            return $a->$prop !== $value;
+        });
+    }
 }
