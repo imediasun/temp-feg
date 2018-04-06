@@ -362,7 +362,7 @@ FROM `products`
         ), $args ));
 
         $sql ='SELECT
- DISTINCT order_contents.product_id
+ DISTINCT order_contents.product_id,orders.api_created_at
 FROM orders
   JOIN order_contents
     ON orders.id = order_contents.order_id
