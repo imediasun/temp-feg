@@ -389,6 +389,7 @@ $(document).ready(function() {
 		} else {
 			state = 0;
 		}
+		console.log("State: "+state);
 		$.ajax(
 				{
 					type: 'POST',
