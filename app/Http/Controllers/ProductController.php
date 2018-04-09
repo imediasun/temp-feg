@@ -432,9 +432,11 @@ class ProductController extends Controller
          \DB::insert($sql);
         $lastInsertId = \DB::getPdo()->lastInsertId();
 
-        for($i=0; $i<count($request->input('id')); $i++) {
-            $lastInsertId = $lastInsertId + $i;
 
+        for($i=0; $i<count($request->input('ids')); $i++) {
+            if($i > 0) {
+                $lastInsertId = $lastInsertId + 1;
+            }
             $Product = product::find($lastInsertId);
             $type = "negative";
 
