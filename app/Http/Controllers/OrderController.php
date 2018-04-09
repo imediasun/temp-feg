@@ -10,15 +10,22 @@ use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
+use App\Models\OrderContent;
+use App\Models\OrderReceived;
+use App\Models\OrderStatus;
+use App\Models\pendingrequest;
+use App\Models\PoTrack;
 use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
+use App\Models\vendor;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\SximoDB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
 use PHPMailerOAuth;
@@ -453,7 +460,7 @@ class OrderController extends Controller
         return view('order.view', $this->data);
     }
     // Uncomment if Copy functionality is needed for orders
-// it need testing afer commenting.
+    // it need testing afer commenting.
     /*
         function postCopy(Request $request)
         {
@@ -555,31 +562,285 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
+        //IF REQUEST FROM INLINE EDITING THEN PROCESS IT THROUGH postSaveInlineEdit
+        if($id){
+            return $this->postSaveInlineEdit($id);
+        }
 
-        /*$productIdArray = $request->get('product_id');
-        $query = \DB::select('select id from requests where location_id = "' . (int)$request->location_id . '" AND status_id = 1 AND product_id IN ('.implode(',',$productIdArray).')');
-*/
-        if (count($query) < 1 && $request->from_sid == 1) {
+        /////// VALIDATION STARTS /////////
+        $pending_requests = new pendingrequest();
+        $pending = $pending_requests->getPendingRequests(
+            (int)$request->location_id,
+            (int)$request->vendor_id
+        )->all();
+
+        if (count($pending) < 1 && $request->from_sid == 1) {
             return response()->json(array(
                 'message' => 'Someone has already ordered these products',
                 'status' => 'error',
             ));
         }
 
-        $rules = array(
-            //  'location_id' => "required",
+        $rules = [
             'vendor_id' => 'required',
             'order_type_id' => "required",
             'freight_type_id' => 'required',
             'date_ordered' => 'required',
-            //   'po_3' => 'required'
-        );
+        ];
+
+        $altShipTo = $request->get('alt_ship_to');
+        if (!empty($altShipTo)) {
+            $shipToRules = [
+                'to_add_name' => 'required|max:60',
+                'to_add_street' => 'required|min:5',
+                'to_add_city' => 'required|min:5',
+                'to_add_state' => 'required|max:2',
+                'to_add_zip' => 'required|max:10'
+            ];
+            $rules = array_merge($rules, $shipToRules);
+        }
+
         $validator = Validator::make($request->all(), $rules);
-        $order_data = array();
-        $order_contents = array();
-        $data = array_filter($request->all());
         $redirect_link = "order";
+
+        if($validator->fails()){
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error',
+            ));
+        }
+
+        $is_freehand = $request->get('is_freehand') == "1" ? 1 : 0;
+        if ($is_freehand == 0) {
+            $validationResponse = $this->validateProductForReserveQty($request);
+
+            if (!empty($validationResponse) && $validationResponse['error'] == true) {
+                return response()->json(array(
+                    'message' => $validationResponse['message'],
+                    'status' => 'error',
+                    'adjustQty' => $validationResponse['adjustQty']
+                ));
+            }
+        }
+        /////// VALIDATION END /////////
+
+        \DB::beginTransaction();
+
+        //GETTING DATA FROM REQUEST
+        /**
+         * @var $order_id
+         * @var $editmode
+         * @var $SID_string
+         * @var $where_in_expression
+         * @var $company_id
+         * @var $location_id
+         * @var $vendor_id
+         * @var $freight_type_id
+         * @var $order_content_id
+         * @var $force_remove_items
+         * @var $item_received
+         * @var $denied_SIDs
+         * @var $order_type_id
+         * @var $order_total
+         * @var $po_notes
+         * @var $po_1
+         * @var $po_2
+         * @var $po_3
+         * @var $game
+         * @var $po_notes_additionaltext
+         */
+        extract($request->input());
+        if($editmode == "edit"){
+            $order = order::find($order_id);
+        }else{
+            $order = new order();
+            $order->status_id = 1;
+        }
+
+        $vendor_email = $order->getVendorEmail($vendor_id);
+        $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
+        $po = $po_1 . '-' . $po_2 . '-' . $po_3;
+        $itemsArray = $request->get('item');
+        $itemNamesArray = $request->get('item_name');
+        $skuNumArray = $request->get('sku');
+        $casePriceArray = $request->get('case_price');
+        $priceArray = $request->get('price');
+        $qtyArray = $request->get('qty');
+        $productIdArray = $request->get('product_id');
+        $requestIdArray = $request->get('request_id');
+
+        //PROCEEDING TO SAVE
+        $order->setOrderStatusPost(array_sum($request->qty));
+        list($order_description, $itemsPriceArray) = $this->generateOrderDescriptionAndPriceArray($order_type_id, $itemsArray, $casePriceArray, $priceArray, $qtyArray);
+        $order->company_id = $company_id;
+        $order->order_type_id = $order_type_id;
+        $order->vendor_id = $vendor_id;
+        $order->order_description = $order_description;
+        $order->freight_id = $freight_type_id;
+        $order->order_total = $order_total;
+        $order->alt_address = $this->getAltAddress($request);
+        $order->request_ids = $where_in_expression;
+        $order->po_notes = $po_notes;
+        //$order->po_notes_additionaltext = $po_notes_additionaltext;
+
+        if ($editmode == "edit") {
+            $force_remove_items = explode(',', $force_remove_items);
+            OrderContent::where('order_id', $order->id)->where('item_received', '0')->delete();
+            OrderContent::whereIn('id', $force_remove_items)->delete();
+            OrderReceived::whereIn('order_line_item_id', $force_remove_items)->delete();
+        } else {
+            $order->user_id = Auth::user()->id;
+            $order->location_id = $location_id;
+            $order->date_ordered = $date_ordered;
+            $order->po_number = $po;
+            $order->new_format = 1;
+            $order->is_freehand = $is_freehand;
+            $orderData = $order->getAttributes();
+            if ($editmode == "clone") {
+                Sximo::insertLog('Order', 'Clone', 'OrderController', 'An order with po : ' . $po . ' is cloned', json_encode($orderData));
+            }
+        }
+
+        //UPDATE STATUS TO APPROVED AND PROCESSED
+        if (!empty($where_in_expression)) {
+            $order->updateRequest(explode(',', $where_in_expression));
+        }
+
+        //SAVE THE ORDER
+        $order->save();
+
+        //UPDATE ORDER CONTENTS
+        foreach($itemsArray as $i => $item) {
+            $product_id = empty($productIdArray[$i]) ? '0' : $productIdArray[$i];
+            $sku_num = empty($skuNumArray[$i]) ? '0' : $skuNumArray[$i];
+            $request_id = empty($requestIdArray[$i]) ? '0' : $requestIdArray[$i];
+            $game_id = ($order_type_id == 1) ? $game[$i] : '0';
+            $items_received_qty = empty($item_received[$i]) ? '0' : $item_received[$i];
+
+            if ($product_id != 0) {
+                $product = product::find($product_id);
+                $prodType = $product->prod_type_id;
+                $prodSubtype = $product->prod_sub_type_id;
+                $qty_per_case = $product->num_items;
+                $prodTicketValue = $product->ticket_value;
+                $prodVendorId = $product->vendor_id;
+            } else {
+                $prodType = $order_type_id;
+                $prodSubtype = 0;
+                $qty_per_case = 1;
+                $prodTicketValue = '';
+                $prodVendorId = $vendor_id;
+            }
+
+            if ($editmode == "clone") {
+                $items_received_qty = 0;
+            }
+
+            if ($items_received_qty == '0') {
+                $orderContent = new OrderContent();
+            } else {
+                $orderContent = OrderContent::find($order_content_id[$i]);
+            }
+
+            $orderContent->order()->associate($order);
+            $orderContent->product_id = $product_id;
+            $orderContent->request_id = $request_id;
+            $orderContent->price = $priceArray[$i];
+            $orderContent->qty = $qtyArray[$i];
+            $orderContent->game_id = $game_id;
+            $orderContent->item_name = $itemNamesArray[$i];
+            $orderContent->case_price = $casePriceArray[$i];
+            $orderContent->item_received = $items_received_qty;
+            $orderContent->sku = $sku_num;
+            $orderContent->prod_type_id = $prodType;
+            $orderContent->prod_sub_type_id = $prodSubtype;
+            $orderContent->qty_per_case = $qty_per_case;
+            $orderContent->ticket_value = $prodTicketValue;
+            $orderContent->vendor_id = $prodVendorId;
+            $orderContent->total = $itemsPriceArray[$i] * $qtyArray[$i];
+            if (!empty($itemsArray[$i])) {
+                $orderContent->product_description = $itemsArray[$i];
+            }
+            $orderContent->save();
+            $contentsData = $orderContent->getAttributes();
+
+            $contentsData['prev_qty'] = $request->input('prev_qty')[$i];
+            if ($is_freehand == 0) {
+                event(new PostSaveOrderEvent($contentsData));
+            }
+
+            //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
+            if ($order_type_id == 18) {
+                $newProduct = new product();
+                $productData = [
+                    'vendor_id' => $vendor_id,
+                    'vendor_description' => $itemsArray[$i],
+                    'case_price' => $priceArray[$i],
+                    'num_items' => $qtyArray[$i],
+                    'in_development' => 1,
+                ];
+                $newProduct->setRawAttributes($productData);
+                $newProduct->save();
+            }
+
+            if (!empty($where_in_expression)) {
+                $redirect_link = "managefegrequeststore";
+                $shop_request = pendingrequest::find($request_id);
+                $request_qty = empty($shop_request) ? 0 : $shop_request->qty;
+                $restore_qty = $request_qty - $qtyArray[$i];
+
+                if($shop_request){
+                    $shop_request->blocked_at = null;
+                    if ($restore_qty > 0) {
+                        $shop_request->status_id = 3;
+                        $shop_request->qty = $restore_qty;
+                    } else {
+                        $shop_request->status_id = 2;
+                        $shop_request->process_user_id = Auth::user()->id;
+                        $shop_request->process_date = $order->get_local_time('date');
+                        $shop_request->qty = $restore_qty;
+                    }
+                    $shop_request->save();
+                }
+
+                //// SUBTRACT QTY OF RESERVED AMT ITEMS
+                $item_count = substr_count($SID_string, '-') - 1;
+                $SID_new = $SID_string;
+                $this->updateRequestAndProducts($item_count, $SID_new);
+            } else {
+                $redirect_link = "order";
+            }
+        }
+
+        //DENY DENIED SID'S
+        if ($editmode == 'SID' && !empty($denied_SIDs)) {
+            $denied_SIDs = ltrim($denied_SIDs, ',');
+            pendingrequest::whereIn('id', $denied_SIDs)->update(['status_id' => 3]);
+        }
+
+        //UPDATING PO TRACK TABLE
+        if (isset($order->po_number)) {
+            PoTrack::where('po_number', $order->po_number)->update(['enabled' => '1']);
+        }
+
+        \Session::put('send_to', $vendor_email);
+        \Session::put('order_id', $order->id);
+        \Session::put('redirect', $redirect_link);
+
+        $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
+
+        \DB::commit();
+
+        return response()->json(array(
+            'saveOrSendContent' => $saveOrSendView,
+            'status' => 'success',
+            'message' => \Lang::get('core.note_success'),
+
+        ));
+    }
+
+    public function getOrderSpecialPermissions(){
         $case_price_categories = [];
         if (isset($this->data['pass']['calculate price according to case price'])) {
             $case_price_categories = explode(',', $this->data['pass']['calculate price according to case price']->data_options);
@@ -588,365 +849,89 @@ class OrderController extends Controller
         if (isset($this->data['pass']['use case price if unit price is 0.00'])) {
             $case_price_if_no_unit_categories = explode(',', $this->data['pass']['use case price if unit price is 0.00']->data_options);
         }
-        if ($validator->passes()) {
-            $order_id = $request->get('order_id');
-            $editmode = $request->get('editmode');
-            $where_in = $request->get('where_in_expression');
-            //$where_in = implode(',',$query);
-            $SID_string = $request->get('SID_string');
-            $company_id = $request->get('company_id');
-            $location_id = $request->get('location_id');
-            $order_type = $request->get('order_type_id');
-            $vendor_id = $request->get('vendor_id');
-            $vendor_email = $this->model->getVendorEmail($vendor_id);
-            $freight_type_id = $request->get('freight_type_id');
-           /* $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));*/
-            $date_ordered = '0000-00-00';
-            $total_cost = $request->get('order_total');
-            $notes = $request->get('po_notes');
-            $is_freehand = $request->get('is_freehand') == "1" ? 1 : 0;
-            $po_1 = $request->get('po_1');
-            $po_2 = $request->get('po_2');
-            $po_3 = $request->get('po_3');
-            $po = $po_1 . '-' . $po_2 . '-' . $po_3;
-            $altShipTo = $request->get('alt_ship_to');
 
-            $alt_address = '';
-            $order_description = '';
-            $totalQuanity = \DB::select("SELECT SUM(qty) AS total_quantity FROM order_contents WHERE order_id=$order_id")[0]->total_quantity;
-            $orderQuantity =  array_sum($request->qty);
-            $orderQuantity = $orderQuantity - $totalQuanity;
-            $newOrderedQty = $totalQuanity + $orderQuantity;
-            //When order quantity will be increase then order status will be updated to open (Partial)
+        return [$case_price_categories, $case_price_if_no_unit_categories];
+    }
 
-            $received_quantity = \DB::select("SELECT SUM(quantity) as total_received_qty FROM order_received WHERE  order_id=$order_id")[0]->total_received_qty;
-            $current_order = \DB::select("SELECT * FROM orders WHERE id=$order_id");
-            if ($received_quantity and $newOrderedQty != $received_quantity) {
-                \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
-            } elseif(!$received_quantity or ($newOrderedQty == $received_quantity and $current_order[0]->status_id != '2')) {
-                \DB::update('update orders set status_id=1, is_partial=0 where id="' . $order_id . '"');
-            }elseif ($newOrderedQty == $received_quantity and $current_order and $current_order[0]->status_id != '1'){
-                \DB::update('update orders set status_id=2, is_partial=0 where id="' . $order_id . '"');
-            }
-
-            if (!empty($altShipTo)) {
-                $rules = array(
-                    'to_add_name' => 'required|max:60',
-                    'to_add_street' => 'required|min:5',
-                    'to_add_city' => 'required|min:5',
-                    'to_add_state' => 'required|max:2',
-                    'to_add_zip' => 'required|max:10'
-                );
-                $validator = Validator::make($request->all(), $rules);
-                $to_add_name = $request->get('to_add_name');
-                $to_add_street = $request->get('to_add_street');
-                $to_add_city = $request->get('to_add_city');
-                $to_add_state = $request->get('to_add_state');
-                $to_add_zip = $request->get('to_add_zip');
-                $to_add_notes = $request->get('to_add_notes');
-                $alt_address = $to_add_name . '|' . $to_add_street .
-                    '|' . $to_add_city . '| ' . $to_add_state .
-                    '| ' . $to_add_zip . '|' . $to_add_notes;
-            }
-            $itemsArray = $request->get('item');
-            $itemNamesArray = $request->get('item_name');
-            $skuNumArray = $request->get('sku');
-            $casePriceArray = $request->get('case_price');
-            $priceArray = $request->get('price');
-            $qtyArray = $request->get('qty');
-            $productIdArray = $request->get('product_id');
-            $requestIdArray = $request->get('request_id');
-            $order_content_id = $request->get('order_content_id');
-            $force_remove_items = $request->get('force_remove_items');
-            $games = $request->get('game');
-            $item_received = $request->get('item_received');
-            $item_received = $request->get('item_received');
-            $denied_SIDs = $request->get('denied_SIDs');
-            $po_notes_additionaltext = $request->get('po_notes_additionaltext');
-            $num_items_in_array = count($itemsArray);
-
-            for ($i = 0; $i < $num_items_in_array; $i++) {
-                $j = $i + 1;
-                if (in_array($order_type, $case_price_categories)) {
-                    $itemsPriceArray[] = $casePriceArray[$i];
-                } elseif (in_array($order_type, $case_price_if_no_unit_categories)) {
-                    $itemsPriceArray[] = ($priceArray[$i] == 0.00) ? $casePriceArray[$i] : $priceArray[$i];
-                } else {
-                    $itemsPriceArray[] = $priceArray[$i];
-                }
-                $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i]
-                    . ') ' . $itemsArray[$i] . ' @ $' .
-                    $itemsPriceArray[$i] . ' ea. (SKU: ' . $skuNumArray[$i] . ')';
-            }
-            if ($is_freehand == 0) {
-                $validationResponse = $this->validateProductForReserveQty($request);
-
-                if (!empty($validationResponse) && $validationResponse['error'] == true) {
-                    return response()->json(array(
-                        'message' => $validationResponse['message'],
-                        'status' => 'error',
-                        'adjustQty' => $validationResponse['adjustQty']
-                    ));
-                }
-            }
-            if ($editmode == "edit") {
-                $orderData = array(
-                    'company_id' => $company_id,
-                    'order_type_id' => $order_type,
-                    'vendor_id' => $vendor_id,
-                    'order_description' => $order_description,
-                    'order_total' => $total_cost,
-                    'freight_id' => $freight_type_id,
-                    'alt_address' => $alt_address,
-                    'request_ids' => $where_in,
-                    'po_notes' => $notes,
-                    'po_notes_additionaltext' => $po_notes_additionaltext,
-                );
-                $this->model->insertRow($orderData, $order_id);
-                $last_insert_id = $order_id;
-
-                $force_remove_items = explode(',', $force_remove_items);
-                \DB::table('order_contents')->where('order_id', $last_insert_id)->where('item_received', '0')->delete();
-                \DB::table('order_contents')->whereIn('id', $force_remove_items)->delete();
-                \DB::table('order_received')->whereIn('order_line_item_id', $force_remove_items)->delete();
+    public function generateOrderDescriptionAndPriceArray($order_type, $itemsArray, $casePriceArray, $priceArray, $qtyArray){
+        list($case_price_categories, $case_price_if_no_unit_categories) = $this->getOrderSpecialPermissions();
+        $order_description = '';
+        $itemsPriceArray = [];
+        foreach($itemsArray as $i => $item) {
+            if (in_array($order_type, $case_price_categories)) {
+                $itemsPriceArray[] = $casePriceArray[$i];
+            } elseif (in_array($order_type, $case_price_if_no_unit_categories)) {
+                $itemsPriceArray[] = ($priceArray[$i] == 0.00) ? $casePriceArray[$i] : $priceArray[$i];
             } else {
-
-                $orderData = array(
-                    'user_id' => \Session::get('uid'),
-                    'company_id' => $company_id,
-                    'location_id' => $location_id,
-                    'order_type_id' => $order_type,
-                    'date_ordered' => $date_ordered,
-                    'vendor_id' => $vendor_id,
-                    'order_description' => $order_description,
-                    'status_id' => 1,
-                    'order_total' => $total_cost,
-                    'freight_id' => $freight_type_id,
-                    'po_number' => $po,
-                    'alt_address' => $alt_address,
-                    'request_ids' => $where_in,
-                    'new_format' => 1,
-                    'is_freehand' => $is_freehand,
-                    'po_notes' => $notes,
-                    'po_notes_additionaltext' => $po_notes_additionaltext,
-                );
-                if ($editmode == "clone") {
-                    $id = 0;
-                    Sximo::insertLog('Order', 'Clone', 'OrderController', 'An order with po : ' . $po . ' is cloned', json_encode($orderData));
-                }
-                $this->model->insertRow($orderData, $id);
-                $order_id = \DB::getPdo()->lastInsertId();
+                $itemsPriceArray[] = $priceArray[$i];
             }
-            //// UPDATE STATUS TO APPROVED AND PROCESSED
-            //don't put this code in loop below
-            $now = $this->model->get_local_time('date');
-            if (!empty($where_in)) {
-                \DB::update('UPDATE requests
-							 SET status_id = 2,
-							 	 process_user_id = ' . \Session::get('uid') . ',
-								 process_date = "' . $now . '",
-								 blocked_at = null
-						   WHERE id IN(' . $where_in . ')');
-            }
-            for ($i = 0; $i < $num_items_in_array; $i++) {
-
-                if (empty($productIdArray[$i])) {
-                    $product_id = '0';
-                } else {
-                    $product_id = $productIdArray[$i];
-                }
-                if (empty($skuNumArray[$i])) {
-                    $sku_num = '0';
-                } else {
-                    $sku_num = $skuNumArray[$i];
-                }
-
-                if (empty($requestIdArray[$i])) {
-                    $request_id = '0';
-                } else {
-                    $request_id = $requestIdArray[$i];
-                }
-
-                if ($order_type == 1) {
-                    $game_id = $games[$i];
-                } else {
-                    $game_id = '0';
-                }
-
-                if (empty($item_received[$i])) {
-                    $items_received_qty = '0';
-                } else {
-                    $items_received_qty = $item_received[$i];
-                }
-                if ($product_id != 0) {
-                    $prodData = \DB::select("SELECT * from products where id =$product_id");
-                    $prodType = $prodData[0]->prod_type_id;
-                    $prodSubtype = $prodData[0]->prod_sub_type_id;
-                    $qty_per_case = $prodData[0]->num_items;
-                    $prodTicketValue = $prodData[0]->ticket_value;
-                    $prodVendorId = $prodData[0]->vendor_id;
-                } else {
-                    $prodType = $order_type;
-                    $prodSubtype = 0;
-                    $qty_per_case = 1;
-                    $prodTicketValue = '';
-                    $prodVendorId = $vendor_id;
-                }
-
-                $contentsData = array(
-                    'order_id' => $order_id,
-                    'request_id' => $request_id,
-                    'product_id' => $product_id,
-                    'price' => $priceArray[$i],
-                    'qty' => $qtyArray[$i],
-                    'game_id' => $game_id,
-                    'item_name' => $itemNamesArray[$i],
-                    'case_price' => $casePriceArray[$i],
-                    'item_received' => $items_received_qty,
-                    'sku' => $sku_num,
-                    'prod_type_id' => $prodType,
-                    'prod_sub_type_id' => $prodSubtype,
-                    'qty_per_case' => $qty_per_case,
-                    'ticket_value' => $prodTicketValue,
-                    'vendor_id' => $prodVendorId,
-                    'total' => $itemsPriceArray[$i] * $qtyArray[$i]
-                );
-                if (!empty($itemsArray[$i])) {
-                    $contentsData['product_description'] = $itemsArray[$i];
-                }
-
-                if ($editmode == "clone") {
-                    $items_received_qty = 0;
-                }
-
-                if($items_received_qty == '0'){
-                    \DB::table('order_contents')->insert($contentsData);
-                } else {
-                    \DB::table('order_contents')->where('id', $order_content_id[$i])->update($contentsData);
-                }
-
-                $contentsData['prev_qty'] = $request->input('prev_qty')[$i];
-                if ($is_freehand == 0) {
-                    event(new PostSaveOrderEvent($contentsData));
-                }
-
-                if ($order_type == Order::ORDER_TYPE_PRODUCT_IN_DEVELOPMENT) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
-                {
-                    $productData = array(
-                        'vendor_id' => $vendor_id,
-                        'vendor_description' => $itemsArray[$i],
-                        'case_price' => $priceArray[$i],
-                        'num_items' => $qtyArray[$i],
-                        'in_development' => 1,
-                    );
-                    \DB::table('products')->insert($productData);
-                }
-                if (!empty($where_in)) {
-                    $redirect_link = "managefegrequeststore";
-                    $request_qty = \DB::select('SELECT qty FROM requests WHERE id=' . $request_id);
-                    empty($request_qty) ? $request_qty = 0 : $request_qty = $request_qty[0]->qty;
-                    $restore_qty = $request_qty - $qtyArray[$i];
-
-                    if ($restore_qty > 0) {
-                        \DB::update('UPDATE requests
-                         SET status_id = 3,
-                             qty = ' . $restore_qty . ',
-                             blocked_at = null
-                       WHERE id=' . $request_id);
-                    } else {
-                        \DB::update('UPDATE requests
-                         SET status_id = 2,
-                             process_user_id = ' . \Session::get('uid') . ',
-                             process_date = "' . $now . '",
-                             blocked_at = null
-                       WHERE id=' . $request_id);
-                    }
-
-                    //// SUBTRACT QTY OF RESERVED AMT ITEMS
-                    $item_count = substr_count($SID_string, '-') - 1;
-                    $SID_new = $SID_string;
-                    // $this->updateRequestAndProducts($item_count, $SID_new);
-                } else {
-                    $redirect_link = "order";
-                }
-            }
-
-
-            //Deny Denied SID's
-            if ($editmode == 'SID' && !empty($denied_SIDs)) {
-                //$denied_SIDs = explode('-', $denied_SIDs);
-                //array_pop($denied_SIDs);
-                //array_shift($denied_SIDs)
-                $denied_SIDs = ltrim($denied_SIDs, ',');
-                \DB::update('UPDATE requests
-                         SET status_id = 3
-                       WHERE id IN(' . $denied_SIDs . ')');
-            }
-
-            //Updating PO Track table
-            if (isset($orderData['po_number'])) {
-                \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
-            }
-
-
-
-            \Session::put('send_to', $vendor_email);
-            \Session::put('order_id', $order_id);
-            \Session::put('redirect', $redirect_link);
-
-            $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
-            return response()->json(array(
-                'saveOrSendContent' => $saveOrSendView,
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success'),
-
-            ));
-
-        } elseif ($id != 0) {
-            $data = $this->validatePost('orders', true);
-            $orderTotal = \CurrencyHelpers::formatPrice(Order::find($id)->order_total,2, false);
-            if (isset($data['order_type_id'])) {
-                $order_contents = \DB::table('order_contents')->where('order_id', $id)->get();
-                $orderTotal = 0;
-                $order_type = $data['order_type_id'];
-                foreach ($order_contents as $content) {
-                    if (in_array($order_type, $case_price_categories)) {
-                        $sum = $content->qty * $content->case_price;
-                    } elseif (in_array($order_type, $case_price_if_no_unit_categories)) {
-                        $sum = $content->qty * (($content->price == 0.00) ? $content->case_price : $content->price);
-                    } else {
-                        $sum = $content->qty * $content->price;
-                    }
-                    if ($sum != $content->total) {
-                        \DB::table('order_contents')->where('id', $content->id)->update(['total' => $sum]);
-                    }
-                    $orderTotal += $sum;
-                }
-                $data['order_total'] = $orderTotal;
-            }
-
-            $this->model->insertRow($data, $id);
-
-            \Session::put('order_id', $id);
-            $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
-
-            return response()->json(array(
-                'saveOrSendContent' => $saveOrSendView,
-                'status' => 'success',
-                'total' => $orderTotal,
-                'message' => \Lang::get('core.note_success'),
-
-            ));
-        } else {
-
-            $message = $this->validateListError($validator->getMessageBag()->toArray());
-            return response()->json(array(
-                'message' => $message,
-                'status' => 'error',
-
-            ));
+            $order_description .= ' | item' . ($i+1) . ' - (' . $qtyArray[$i]
+                . ') ' . $itemsArray[$i] . ' @ $' .
+                $itemsPriceArray[$i] . ' ea.';
         }
 
+        return [$order_description, $itemsPriceArray];
+    }
+
+    public function getAltAddress($request){
+        if($request->alt_ship_to){
+            $to_add_name = $request->get('to_add_name');
+            $to_add_street = $request->get('to_add_street');
+            $to_add_city = $request->get('to_add_city');
+            $to_add_state = $request->get('to_add_state');
+            $to_add_zip = $request->get('to_add_zip');
+            $to_add_notes = $request->get('to_add_notes');
+            return $to_add_name . '|' . $to_add_street .
+            '|' . $to_add_city . '| ' . $to_add_state .
+            '| ' . $to_add_zip . '|' . $to_add_notes;
+        }else{
+            return '';
+        }
+    }
+
+    public function postSaveInlineEdit($id){
+        $data = $this->validatePost('orders', true);
+
+        \DB::beginTransaction();
+        $order = Order::find($id);
+        $orderTotal = \CurrencyHelpers::formatPrice($order->order_total, 2, false);
+
+        //TODO: Following check has been removed
+        if (false && isset($data['order_type_id'])) {
+            list($case_price_categories, $case_price_if_no_unit_categories) = $this->getOrderSpecialPermissions();
+            $order_contents = $order->contents;
+            $orderTotal = 0;
+            $order_type = $data['order_type_id'];
+            foreach ($order_contents as $content) {
+                if (in_array($order_type, $case_price_categories)) {
+                    $sum = $content->qty * $content->case_price;
+                } elseif (in_array($order_type, $case_price_if_no_unit_categories)) {
+                    $sum = $content->qty * (($content->price == 0.00) ? $content->case_price : $content->price);
+                } else {
+                    $sum = $content->qty * $content->price;
+                }
+                if ($sum != $content->total) {
+                    $order_contents->total = $sum;
+                    $order_contents->save();
+                }
+                $orderTotal += $sum;
+            }
+            $data['order_total'] = $orderTotal;
+        }
+
+        $order->setRawAttributes($data);
+        $order->save();
+        \DB::commit();
+
+        \Session::put('order_id', $id);
+        $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
+
+        return response()->json(array(
+            'saveOrSendContent' => $saveOrSendView,
+            'status' => 'success',
+            'total' => $orderTotal,
+            'message' => \Lang::get('core.note_success'),
+        ));
     }
 
     public function validateProductForReserveQty($request)
@@ -1635,18 +1620,17 @@ class OrderController extends Controller
 
     function validatePO($po, $po_full, $location_id)
     {
+        $order = new Order();
         if ($po != 0) {
-
-            if ($this->model->isPOAvailable($po_full)) {
-                $this->model->createPOTrack($po_full, $location_id);
+            if ($order->isPOAvailable($po_full)) {
+                $order->createPOTrack($po_full, $location_id);
                 $po_3 = explode('-', $po_full);
                 $msg = $po_3[2];
             } else {
-                //die('po not available');
-                $msg = $this->model->increamentPO($location_id);
+                $msg = $order->increamentPO($location_id);
             }
         } else {
-            $msg = $this->model->increamentPo($location_id);
+            $msg = $order->increamentPo($location_id);
         }
         return $msg;
     }
@@ -1880,19 +1864,13 @@ class OrderController extends Controller
 
     public function getAutocomplete()
     {
-        $term = Input::get('term');
+        $term = addslashes(Input::get('term'));
         $vendorId = Input::get('vendor_id', 0);
         $excludeProducts = Input::get('exclude_products', null);
-        $whereWithVendorCondition = $whereWithExcludeProductCondition = "";
-
-        //get products related to selected vendor only
-        if (!empty($vendorId)) {
-            $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
-        }
+        $excludeProductsIds = [];
 
         if ($excludeProducts) {
             $excludeProductsArray = explode(',', $excludeProducts);
-            $excludeProductsIds = [];
             foreach ($excludeProductsArray as $item) {
                 $product = product::find($item);
                 $variations = $product->getProductVariations();
@@ -1900,28 +1878,17 @@ class OrderController extends Controller
                     $excludeProductsIds[] = $row->id;
                 }, $variations->all());
             }
-            $excludeProductsIds = implode(',', $excludeProductsIds);
-            $whereWithExcludeProductCondition = " AND products.id NOT IN ($excludeProductsIds) ";
         }
 
-        $results = array();
-        $term = addslashes($term);
-        //fixing for https://www.screencast.com/t/vwFYE3AlF
-        $queries = \DB::select("SELECT *,LOCATE('$term',vendor_description) AS pos
-                                FROM products
-                                WHERE vendor_description LIKE '%$term%' 
-                                AND products.inactive=0  $whereWithVendorCondition  $whereWithExcludeProductCondition  
-                                GROUP BY vendor_description
-                                ORDER BY pos, vendor_description
-                                 Limit 0,10");
-        if (count($queries) != 0) {
-            foreach ($queries as $query) {
-                $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
-            }
-            echo json_encode($results);
-        } else {
-            echo json_encode(array('id' => 0, 'value' => "No Match"));
-        }
+        $product = new Product();
+        $data = $product->getAutoComplete($term, $vendorId, $excludeProductsIds);
+        $data = $data->map(function ($row) {
+            return [
+                'id' => $row->id,
+                'value' => $row->vendor_description
+            ];
+        });
+        return $data->all() ?: ['id' => 0, 'value' => "No Match"] ;
     }
 
     public function getProductdata()
@@ -1981,7 +1948,8 @@ class OrderController extends Controller
         if (empty($vendor_id)) {
             $vendor_id = 0;
         }
-        return \DB::table('vendor')->select('bill_account_num')->where('id', $vendor_id)->get();
+        return vendor::select('bill_account_num')->where('id', $vendor_id)->get();
+        //return \DB::table('vendor')->select('bill_account_num')->where('id', $vendor_id)->get();
     }
 
     function getComboselect(Request $request)
@@ -1991,16 +1959,21 @@ class OrderController extends Controller
             $param = explode(':', $request->input('filter'));
             $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
+            $rows  = [];
             //for order type Advance Replacement
             if (isset($param[3]) && !empty($param[3]) && isset($param[4])) {
+                $orderStatus = new OrderStatus();
                 if ($param[3] == "order_type_id" && $param[4] == 0) {
-                    $rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '6')->orderBy('status', 'asc')->get();
+                    //$rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '6')->orderBy('status', 'asc')->get();
+                    $rows = $orderStatus->getOrderStatusesByIds(['1', '6']);
                 } //for ordet type other than Advance Replacement
                 elseif ($param[3] == "order_type_id" && $param[4] == 1) {
-                    $rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '2')->orderBy('status', 'asc')->get();
+                    //$rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '2')->orderBy('status', 'asc')->get();
+                    $rows = $orderStatus->getOrderStatusesByIds(['1', '2']);
                 }
             } else {
-                $rows = $this->model->getComboselect($param, $limit, $parent);
+                $order = new Order();
+                $rows = $order->getComboselect($param, $limit, $parent);
             }
             $items = array();
 
@@ -2012,7 +1985,6 @@ class OrderController extends Controller
                     if ($val != "") $value .= $row->$val . " ";
                 }
                 $items[] = array($row->$param['1'], $value);
-
             }
 
             return json_encode($items);
@@ -2274,7 +2246,6 @@ class OrderController extends Controller
         }
     }
 
-
     public function getUpdateProductVariantsWithDefaultExpenseCategoryHavingDifferentPrice(){
 
         $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category','vendor_id')
@@ -2327,7 +2298,6 @@ class OrderController extends Controller
         }
     }
 
-
     public function getUpdateProductVariantsWithDefaultExpenseCategory(){
 
         $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category')
@@ -2366,9 +2336,6 @@ class OrderController extends Controller
 
 
     }
-
-
-
 
     public function getCorrectOrdersBug242($step = '1'){
         die("Script blocked. To run this script please contact your development team. Thanks!");

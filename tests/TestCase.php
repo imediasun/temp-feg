@@ -2,12 +2,23 @@
 
 class TestCase extends Illuminate\Foundation\Testing\TestCase
 {
-    /**
-     * The base URL to use while testing the application.
-     *
-     * @var string
-     */
+    const TEST_SUPER_ADMIN_EMAIL = 'greg@element5digital.com';
+    const FEG_TITLE = ' FEG LLC ';
+    const TEST_VENDOR = '114';
+    const TEST_PRODUCT_TYPE = 'Instant Win Prizes';
+
+
     protected $baseUrl = 'http://localhost';
+    public $superAdmin = null;
+
+    public function setUp()
+    {
+        parent::setUp();
+        if(!defined('CNF_APPNAME')){
+            require __DIR__.'/../setting.php';
+        }
+        $this->superAdmin = \App\User::where('email', self::TEST_SUPER_ADMIN_EMAIL)->first();
+    }
 
     /**
      * Creates the application.
