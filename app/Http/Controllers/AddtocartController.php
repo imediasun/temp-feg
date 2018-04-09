@@ -7,6 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Mockery\CountValidator\Exception;
 use Validator, Input, Redirect;
 use App\Models\Core\Groups;
+use App\Http\Controllers\OrderController;
 
 class AddtocartController extends Controller
 {
@@ -30,6 +31,7 @@ class AddtocartController extends Controller
             'pageUrl' => url('addtocart'),
             'return' => self::returnUrl()
         );
+
 
     }
 
@@ -121,6 +123,24 @@ class AddtocartController extends Controller
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
 // Render into template
+
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        global $casePriceOrders;
+        $casePriceOrders = explode(",",$pass['calculate price according to case price']->data_options.",2");
+        $this->data['rowData'] = array_map(function($rowData){
+            global $casePriceOrders;
+            if(in_array($rowData->prod_type_id,$casePriceOrders)){
+                $rowData->lineTotal = $rowData->case_price * $rowData->qty;
+            }else{
+                $rowData->lineTotal = $rowData->unit_price * $rowData->qty;
+            }
+
+            return $rowData;
+
+        }, $this->data['rowData']);
+//dd($this->data['rowData']);
+
         return view('addtocart.table', $this->data);
 
     }
@@ -232,8 +252,12 @@ class AddtocartController extends Controller
 
         }
         // delete multipe rows
-        if (count($request->input('ids')) >= 1) {
-            $this->model->destroy($request->input('ids'));
+        $ids = $request->input('ids');
+        if(!is_array($request->input('ids'))){
+            $ids = [$request->input('ids')];
+        }
+        if (count($ids) >= 1) {
+            $this->model->destroy($ids);
 
             return response()->json(array(
                 'status' => 'success',
