@@ -95,7 +95,7 @@ class PostSaveOrderEventHandler
                 $message .='Reserved Quantity: '.$adjustmentAmount.'<br>';
                 self::sendProductReservedQtyEmail($message);
             }
-            if ($adjustmentAmount < $product->reserved_qty_limit && $inactive == 0) {
+            if ($adjustmentAmount <= $product->reserved_qty_limit && $inactive == 0) {
                /* When reserved quantity par amount is met or exceeded (reserve quantity reduced to par amount or less):
 
                 > Hello FEG Team,
@@ -116,7 +116,7 @@ class PostSaveOrderEventHandler
                 $message .='Product Name: '.$product->vendor_description.'<br>';
                 $message .='Product SKU: '.$product->sku.'<br>';
                 $message .='Reserved Qty Par Amount: '.$product->reserved_qty_limit.'<br>';
-                $message .='Remaining Reserved Quantity:'.$adjustmentAmount."<br>";
+                $message .='Remaining Reserved Quantity: '.$adjustmentAmount."<br>";
                 self::sendProductReservedQtyEmail($message);
 
             }
