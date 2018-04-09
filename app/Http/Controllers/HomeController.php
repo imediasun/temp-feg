@@ -172,7 +172,7 @@ class HomeController extends Controller
         $this->data['editLink'] = '';
        return view('pages.terms',$this->data);
     }
-    function PrivacyPolicty(Request $request){
+    function PrivacyPolicy(Request $request){
         $this->data['pageTitle'] = "Privacy Policy";
         $this->data['editLink'] = '';
         return view('pages.privacypolicy',$this->data);
