@@ -182,7 +182,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
 										 ?>
 									 @elseif($field['field']=='is_default_expense_category')
 
-										 state:{{ $value }}<br><input type='checkbox' name="mycheckbox" @if($value == 0) checked
+										 <input type='checkbox' name="mycheckbox" @if($value == 'Yes') checked
 												@endif data-field="is_default_expense_category" data-size="mini"
 												data-animate="true" data-on-text="Yes" data-off-text="No"
 												data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
