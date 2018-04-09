@@ -682,7 +682,7 @@ class OrderController extends Controller
         $order->alt_address = $this->getAltAddress($request);
         $order->request_ids = $where_in_expression;
         $order->po_notes = $po_notes;
-        //$order->po_notes_additionaltext = $po_notes_additionaltext;
+        $order->po_notes_additionaltext = $po_notes_additionaltext;
 
         if ($editmode == "edit") {
             $force_remove_items = explode(',', $force_remove_items);
