@@ -149,7 +149,7 @@
                         <td>{{CurrencyHelpers::formatPrice( $row->retail_price) }}</td>
                         <td class="notes"><textarea id="notes" name="notes" style="width: 100%;">{{ $row->notes }}</textarea></td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
-                            {!! AjaxHelpers::buttonAction('addtocart',$access,$id ,$setting) !!}
+                            <div class=" action dropup"><a href="#" onclick="return removeItemFromCart('{{ $row->id }}'); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Remove"><i class="fa fa-remove"></i></a></div>
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -318,8 +318,29 @@
         $('#new_locationdiv').hide();
     });
     -->
+function removeItemFromCart(itemId){
+    $('.ajaxLoading').show();
+        $.ajax({
+            type:"POST",
+            data:{ids:itemId},
+            url:'{{ Url('addtocart/delete') }}',
+            success:function(data){
+                if(data.status =='success')
+                {
+                    //console.log("called succes");
+                    notyMessage(data.message);
+                    reloadData('#addtocart','addtocart/data?return=');
+                } else {
+                    //console.log("called error");
+                    notyMessageError(data.message);
+                }
+            }
+        });
+    return false;
+}
+$(function(){
 
-
+});
 </script>
 <style>
     .table th.right {
