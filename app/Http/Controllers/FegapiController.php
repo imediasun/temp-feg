@@ -89,6 +89,7 @@ class FegapiController extends Controller
 
             if($class == 'Product'){
                 $results = $class1::getRows($param, null, null, null, true);
+
                global $includedProductIds;
                 $includedProductIds = [];
                 $results['rows'] = array_map(function ($rows) {
@@ -119,33 +120,45 @@ class FegapiController extends Controller
                     return $rows;
                 }, $results['rows']);
 
-            // excluding those products and variations which are already part of the result
-             $param['exculdeProducts'] =  implode(",",$includedProductIds);
 
-              $mergeProducts = $class1::getMergeRows($param, null, null, null, true);
-                if(count($mergeProducts)>0) {
-                     foreach($mergeProducts as $row) {
-                        $productRow = product::find($row->product_id);
-                        if($productRow) {
-                            $productVariations = $productRow->getProductVariations();
-                            $totalVariations = $productVariations->count();
-                            foreach ($productVariations as $variation) {
-                                if ($variation->is_default_expense_category == 1) {
-                                    $where = [
-                                        'vendor_id' => $variation->vendor_id,
-                                        'case_price' => $variation->case_price,
-                                        'sku' => $variation->sku,
-                                        'vendor_description' => $variation->vendor_description,
-                                    ];
-                                    $result = product::getRows($where, null, null, null, true); // preparing product record for api
-                                    $result['rows'][0]->inactive = implode(",", array_fill(0, $totalVariations, '0'));
-                                    $results['rows'][] = $result['rows'][0];
-                                    $results['total'] = $results['total'] + 1;
+                    // excluding those products and variations which are already part of the result
+                    $param['exculdeProducts'] = '';// implode(",", $includedProductIds);
+                    $mergeValues = [];
+                    $mergeProducts = $class1::getMergeRows($param, null, null, null, true);
+                    if (count($mergeProducts) > 0) {
+                        foreach ($mergeProducts as $row) {
+                            $productRow = product::find($row->product_id);
+                            if ($productRow) {
+                                $productVariations = $productRow->getProductVariations();
+                                $totalVariations = $productVariations->count();
+                                foreach ($productVariations as $variation) {
+                                    if ($variation->is_default_expense_category == 1) {
+                                        $where = [
+                                            'vendor_id' => $variation->vendor_id,
+                                            'case_price' => $variation->case_price,
+                                            'sku' => $variation->sku,
+                                            'vendor_description' => addslashes($variation->vendor_description),
+                                        ];
+                                        $result = product::getRows($where, null, null, null, true); // preparing product record for api
+                                        $result['rows'][0]->inactive = implode(",", array_fill(0, $totalVariations, '0'));
+                                        $result['rows'][0]->updated_at = $row->api_created_at;
+                                        $mergeValues[] =  $result['rows'][0];
+                                        $results['rows']=product::array_remove_object($results['rows'],$variation->id,'id');
+
+
+                                    }
                                 }
                             }
                         }
                     }
+                    $results['total'] = count($results['rows']) + count($mergeValues);
+
+                    if(count($results['rows']) == 0){
+                    foreach($mergeValues as $mergeValue) {
+                        $results['rows'][] = $mergeValue;
+                    }
                 }
+
 
                 $qry = $class1::$getRowsQuery;
             }

@@ -6,14 +6,14 @@ use Illuminate\Support\Facades\DB;
 use Log;
 
 class product extends Sximo  {
-
+	
 	protected $table = 'products';
 	protected $primaryKey = 'id';
     protected $guarded = [];
 
 	public function __construct() {
 		parent::__construct();
-
+		
 	}
 
     function orderedProduct()
@@ -221,7 +221,7 @@ FROM `products`
         }
         return $return;
 	}
-
+	
 	public static function queryGroup(){
 		return "  ";
 	}
@@ -325,7 +325,7 @@ FROM `products`
         }
 
         Log::info("Query : ".$select . " {$params}  {$groupConditions} {$orderConditional}  {$limitConditional} ");
-        // return $select . " {$params} {$groupConditions} {$orderConditional}  {$limitConditional} ";
+
         $result=\DB::select($select." {$params} {$groupConditions} {$orderConditional}  {$limitConditional} ");
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
         $counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
@@ -362,7 +362,7 @@ FROM `products`
         ), $args ));
 
         $sql ='SELECT
- DISTINCT order_contents.product_id
+ DISTINCT order_contents.product_id,orders.api_created_at
 FROM orders
   JOIN order_contents
     ON orders.id = order_contents.order_id
@@ -397,7 +397,6 @@ WHERE orders.is_api_visible = 1
         $products = DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku, 'case_price' => $product->case_price])->get();
         return $products;
     }
-
 
     public function checkIsDefaultExpenseCategory($id)
     {
@@ -497,6 +496,10 @@ WHERE orders.is_api_visible = 1
         $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price' => $this->case_price])->get();
         return $items;
     }
-
-
+    public static function array_remove_object(&$array, $value, $prop)
+    {
+        return array_filter($array, function($a) use($value, $prop) {
+            return $a->$prop !== $value;
+        });
+    }
 }
