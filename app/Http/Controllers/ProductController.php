@@ -1116,7 +1116,7 @@ GROUP BY mapped_expense_category");
             $searchProduct->is_default_expense_category = $isdefaultexp;
             $searchProduct->save();
 
-            //  $this->model->toggleDefaultExpenseCategory($isdefaultexp,$id);
+              $this->model->toggleDefaultExpenseCategory($isdefaultexp,$id);
         } else {
             $this->model->setDefaultExpenseCategory($id);
         }
