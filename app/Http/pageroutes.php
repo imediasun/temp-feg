@@ -1,4 +1,5 @@
-<?php 
+<?php
+Route::get("terms-and-conditions","HomeController@TermsAndConditions");
 Route::get('holidays', 'HomeController@index');
 Route::get('preemployment', 'HomeController@index');
 Route::get('currentemployees', 'HomeController@index');
@@ -15,4 +16,7 @@ Route::get('trainingmatrials', 'HomeController@index');
 Route::get('popupblocker', 'HomeController@index');
 Route::get('expanse-report', 'HomeController@index');
 Route::get('coming-soon', 'HomeController@index');
+Route::get('terms-and-conditions', 'HomeController@index');
+Route::get('privacy-policy', 'HomeController@index');
+
 ?>
