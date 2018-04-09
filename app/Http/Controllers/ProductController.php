@@ -1103,7 +1103,7 @@ GROUP BY mapped_expense_category");
     public function postSetdefaultcategory(Request $request)
     {
         $id = $request->input('productId');
-        $isdefaultexp = (bool)$request->input('isdefault');
+        $isdefaultexp = $request->input('isdefault');
         $searchProduct = Product::find($id);
         $products = $this->model->checkProducts($id);
 
