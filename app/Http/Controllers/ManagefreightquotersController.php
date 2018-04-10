@@ -587,7 +587,7 @@ class ManagefreightquotersController extends Controller
                 if(!empty($to_loading_info)){
                     $toLoadingInfo[] = $to_loading_info;
                 }
-                if($liftgate == 1){
+                if($to_liftgate == 1){
                     $toLoadingInfo[] = ' REQUIRES LIFTGATE';
                 }
                 $to_loading_info = implode(" |",$toLoadingInfo);
