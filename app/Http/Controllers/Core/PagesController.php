@@ -131,7 +131,7 @@ class PagesController extends Controller
                 if (file_exists($filename)) {
                     $this->data['content'] = file_get_contents($filename);
                 } else {
-                    $this->data['content'] = '';
+                    $this->data['content'] = '<div class="page-content-wrapper m-t">' . $this->data['content'] . '</div>';
                 }
             }
             else
@@ -163,7 +163,7 @@ class PagesController extends Controller
         $patternStop = '/@stop/im';
 
         $this->data['content'] = preg_replace(array($patternExtend, $patternSection, $patternTitle, $patternStop), '', $this->data['content']);
-        
+
         return view('core.pages.form', $this->data);
     }
 
