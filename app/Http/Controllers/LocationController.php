@@ -294,6 +294,10 @@ class LocationController extends Controller
 
             $id = $this->model->insertRow($data, $id);
 
+            // clean orphan user location assignmens
+            \SiteHelpers::cleanUpUserLocations();
+            \SiteHelpers::refreshUserLocations(\Session::get('uid'));
+
 
             return response()->json(array(
                 'status' => 'success',
