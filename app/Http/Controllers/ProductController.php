@@ -82,7 +82,17 @@ class ProductController extends Controller
 
         $fields = $info['config']['grid'];
         $rows = $results['rows'];
-
+        if($t == 'excel') {
+            $results['rows'] = array_map(function ($row) {
+                // changing status only for excel correction
+                if ($row->inactive == 0) {
+                    $row->inactive = 1;
+                } else {
+                    $row->inactive = 0;
+                }
+                return $row;
+            }, $results['rows']);
+        }
         $extra = array(
             'field' => '',
             'alias' => 'departments',
