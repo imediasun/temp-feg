@@ -71,6 +71,19 @@
                         </div>
                     </div>
                     <div class="form-group  ">
+                        <label for="SKU" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('SKU', (isset($fields['sku']['language'])?
+                            $fields['sku']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <input type="text" name="sku" id="sku" value="{{$row['sku']}}" class="form-control"  @if(!(in_array($row['prod_type_id'], [1,4,20]))) required='required' @endif>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group  ">
                         <label for="Item Description" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Item Description',
                             (isset($fields['item_description']['language'])? $fields['item_description']['language'] :
@@ -110,6 +123,46 @@
 
                         </div>
                     </div>
+                    <div class="form-group  ">
+                        <label for="Case Price" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])?
+                            $fields['case_price']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <div class="input-group ig-full">
+                                <span class="input-group-addon">$</span>
+                                {!! Form::text('case_price',
+                                $row['case_price'] == ''?'':(double)$row['case_price'],array('class'=>'form-control fixDecimal',
+                                'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'case_price_input' ))
+                                !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group  ">
+                        <label for="Unit Price" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Unit Price',
+                            (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <div class="input-group ig-full">
+                                <span class="input-group-addon">$</span>
+                                {!! Form::text('unit_price',
+                                $row['unit_price'] == ''?'':(double)$row['unit_price'],array('class'=>'form-control fixDecimal',
+                                'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1', 'id'=>'unit_price_input' ))
+                                !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+
                     <span class="product_types">
                     <div class="form-group  ">
                         <label for="Prod Type Id" class=" control-label col-md-4 text-left">
@@ -162,11 +215,11 @@
                                 }
                                 ?>
                                 <label class='checked checkbox-inline'>
-                              <input type="hidden" {{ $disabledcheckbox }}   name="is_default_expense_category"
-                                     value="0"/>
-                                <input type='checkbox' {{ $disabledcheckbox }} name='is_default_expense_category'
-                                       value='1' class=''
-                                       @if($row['is_default_expense_category']==1) checked @endif /> Make Default</label>
+                                    <input type="hidden" {{ $disabledcheckbox }}   name="is_default_expense_category"
+                                           value="0"/>
+                                    <input type='checkbox' {{ $disabledcheckbox }} name='is_default_expense_category'
+                                           value='1' class=''
+                                           @if($row['is_default_expense_category']==1) checked @endif /> Make Default</label>
                             @endif
                         </div>
                     </div>
@@ -209,57 +262,12 @@
                         </span>
                         <a id="add_more_types" class="btn btn-primary pull-right">Add More</a>
                     @endif
-                    <div class="form-group  ">
-                        <label for="SKU" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('SKU', (isset($fields['sku']['language'])?
-                            $fields['sku']['language'] : array())) !!}
-                        </label>
 
-                        <div class="col-md-6">
-                            <input type="text" name="sku" id="sku" value="{{$row['sku']}}" class="form-control"  @if(!(in_array($row['prod_type_id'], [1,4,20]))) required='required' @endif>
-                        </div>
-                        <div class="col-md-2">
 
-                        </div>
-                    </div>
-                    <div class="form-group  ">
-                        <label for="Case Price" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])?
-                            $fields['case_price']['language'] : array())) !!}
-                        </label>
 
-                        <div class="col-md-6">
-                            <div class="input-group ig-full">
-                                <span class="input-group-addon">$</span>
-                                {!! Form::text('case_price',
-                                $row['case_price'] == ''?'':(double)$row['case_price'],array('class'=>'form-control fixDecimal',
-                                'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'case_price_input' ))
-                                !!}
-                            </div>
-                        </div>
-                        <div class="col-md-2">
 
-                        </div>
-                    </div>
-                    <div class="form-group  ">
-                        <label for="Unit Price" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Unit Price',
-                            (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
-                        </label>
 
-                        <div class="col-md-6">
-                            <div class="input-group ig-full">
-                                <span class="input-group-addon">$</span>
-                                {!! Form::text('unit_price',
-                                $row['unit_price'] == ''?'':(double)$row['unit_price'],array('class'=>'form-control fixDecimal',
-                                'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1', 'id'=>'unit_price_input' ))
-                                !!}
-                            </div>
-                        </div>
-                        <div class="col-md-2">
 
-                        </div>
-                    </div>
 
                     <div class="form-group clearfix">
                         <label for="vendor_id" class="control-label col-md-4 text-left">
@@ -303,6 +311,31 @@
 
                         </div>
                     </div>
+
+                    <div class="form-group  ">
+                        <label for="Img" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Img', (isset($fields['img']['language'])?
+                            $fields['img']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+
+                            <!--<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('img')"><i class="fa fa-plus"></i></a>-->
+
+                            <div class="imgUpl">
+                                <input type='file' name='img'/>
+                            </div>
+
+                            <div class="col-md-2 row" style="padding-top: 3px;">
+                                <?php
+                                echo SiteHelpers::showUploadedFile($row['img'], '/uploads/products/', 30, false)
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+
+
+
                     <div class="form-group">
                         <label for="allow_negative_reserve_qty" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Allow Negative Reserved Qty', (isset($fields['allow_negative_reserve_qty']['language'])?
@@ -336,27 +369,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group  ">
-                        <label for="Img" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Img', (isset($fields['img']['language'])?
-                            $fields['img']['language'] : array())) !!}
-                        </label>
 
-                        <div class="col-md-6">
-
-                            <!--<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('img')"><i class="fa fa-plus"></i></a>-->
-
-                            <div class="imgUpl">
-                                <input type='file' name='img'/>
-                            </div>
-
-                            <div class="col-md-2 row" style="padding-top: 3px;">
-                                <?php
-                                echo SiteHelpers::showUploadedFile($row['img'], '/uploads/products/', 30, false)
-                                ?>
-                            </div>
-                        </div>
-                    </div>
                 </fieldset>
 
 
