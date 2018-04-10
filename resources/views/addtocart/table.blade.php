@@ -135,9 +135,9 @@
                         endif;
                         endforeach;
                         ?>
-                        <td class="notes"><textarea id="notes" name="notes" style="width: 100%;">{{ $row->notes }}</textarea></td>
+                        <td class="notes"><textarea id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" class="notesfield notesfield_{{ $row->id }}"  name="notes" style="width: 100%;">{{ $row->notes }}</textarea></td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
-                            <div class=" action dropup"><a href="#" onclick="return removeItemFromCart('{{ $row->id }}'); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Remove"><i class="fa fa-remove"></i></a></div>
+                            <div class=" action dropup"><a href="#" onclick="if(confirm('Are you sure you want to remove this item from cart?')){ return removeItemFromCart('{{ $row->id }}'); } return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Remove"><i class="fa fa-trash-o"></i></a></div>
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -323,16 +323,16 @@ function removeItemFromCart(itemId){
     return false;
 }
 $(function(){
-    $(".qtyfield").on("focus",function(){
+    $(".qtyfield,.notesfield").on("focus",function(){
         $(".cartsubmitaction").attr("disabled","disabled");
         $(".cartsubmitaction").removeClass("btn-success").addClass("btn-disable");
     });
-    $(".qtyfield").on("change",function(){
+    $(".qtyfield,.notesfield").on("change",function(){
         var qtyfield = $(this);
             var vendor=qtyfield.data('vendor');
             var id= qtyfield.attr('id');
             var qty= qtyfield.val();
-            var notes = qtyfield.parent().siblings('.notes').children('#notes').val();
+            var notes = $('.notesfield_'+id).val();
             $('.ajaxLoading').show();
         $.ajax({
             url:"addtocart/save/"+id+"/"+qty+"/"+encodeURIComponent(vendor)+"/"+notes ,
