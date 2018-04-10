@@ -273,15 +273,6 @@
                         </div>
                     </div>
                     <div style="clear:both"></div>
-                    {{--   <div class="form-group">
-                           <br/>
-                           <label class="label-control col-md-4"> PO Note Additional Text</label>
-                           <div class="col-md-8">
-                               <textarea name="po_notes_additionaltext" class="form-control" rows="5" placeholder="PO Note Additional Text">{!! $row['po_notes_additionaltext'] !!}</textarea>
-                               <b>Place <code>EMAIL_ADDRESS</code> this keyword where you want to show your email address.</b>
-                           </div>
-                           <div style="clear:both"></div>
-                       </div>--}}
 
                     <div style="clear:both"></div>
                     <input type="hidden" id="hidden_num_items" name="hidden_num_items">
@@ -315,7 +306,6 @@
                         <th width="200">Item Description</th>
                         <th width="90">Unit Price ( $ )</th>
                         <th width="90">Case Price ( $ )</th>
-                        {{--<th>Retail Price</th>--}}
                         <th width="90">Quantity</th>
                         <th class="game" style="display:none" width="200">Game</th>
                         <th width="90">Total ( $ )</th>
@@ -409,7 +399,6 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div style="width: 180px; float: right;">
-                {{--<td class="game"></td>--}}
                 <td></td>
                 <td colspan="6" class="text-left"><strong> Subtotal($) </strong></td>
                 <td><input type="text" name="Subtotal"
@@ -430,8 +419,7 @@
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>                    
                     @if($id && Order::isApiable($id, $row) && !Order::isApified($id, $row) && $data['prefill_type'] != 'clone')
-                       {{-- <button type="button" class="btn btn-success btn-sm exposeAPI">
-                        {{ Lang::get('core.order_api_expose_button_label') }} </button>--}}
+
                     @endif
                     <button type="button" onclick="reloadOrder()" class="btn btn-success btn-sm cancelButton">
                         <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
