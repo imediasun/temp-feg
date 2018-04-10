@@ -34,7 +34,7 @@ class addtocart extends Sximo
   products.unit_price,
   products.case_price,
   products.retail_price,
-    '' AS lineTotal,,
+    '' AS lineTotal,
   products.ticket_value,
   location.location_name_short,
   merch_request_status.status,
