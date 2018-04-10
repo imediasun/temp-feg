@@ -422,7 +422,7 @@ class ManagefreightquotersController extends Controller
                 $fromLoadingInfo[] = ' REQUIRES LIFTGATE';
             }
             $from_loading_info = implode(" |",$fromLoadingInfo);
-            
+
             if (!empty($from_loading_info)) {
 
                 $from_loading_info = '<b>**' . $from_loading_info . '**</b> <br>';
