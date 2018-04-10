@@ -1385,6 +1385,15 @@ class OrderController extends Controller
 
             if (!empty($data[0]['loading_info']) && ( in_array($data[0]['order_type_id'],Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM) || $data[0]['order_type_id'] == Order::FIXED_ASSET_ID)) //IF ORDER TYPE IS TICKTS/TOKENS OR FIXED ASSET -- AKA LARGE ITEMS
             {
+                $loadinInfo =[];
+                if(!empty($data[0]['loading_info'])){
+                    $loadinInfo[] =$data[0]['loading_info'];
+                }
+                if(isset($data[0]['liftgate']) && $data[0]['liftgate'] ==1 ){
+                    $loadinInfo[] = ' REQUIRES LIFTGATE';
+                }
+                $data[0]['loading_info'] = implode(" |",$loadinInfo);
+
                 $data[0]['freight_type'] = $data[0]['freight_type'] . "\n" . 'DELIVERY NOTES: **' . $data[0]['loading_info'] . '**';
             }
 

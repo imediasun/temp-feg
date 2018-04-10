@@ -1418,6 +1418,7 @@ class Sximo extends Model {
                       L.location_name_short AS loc_name_short,
                       L.id                  AS loc_id,
                       L.loading_info,
+                      L.liftgate,
                       L.loc_ship_to         AS loc_ship_to,
                       U2.email              AS loc_contact_email,
                       U3.email              AS loc_merch_contact_email,
