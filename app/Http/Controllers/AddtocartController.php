@@ -126,14 +126,26 @@ class AddtocartController extends Controller
 
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
-        global $casePriceOrders;
-        $casePriceOrders = explode(",",$pass['calculate price according to case price']->data_options.",2");
+        global $casePriceOrders,$unitPriceOrders;
+        $casePriceOrders = explode(",",$pass['calculate price according to case price']->data_options);
+        $unitPriceOrders = explode(",",$pass['use case price if unit price is 0.00']->data_options);
         $this->data['rowData'] = array_map(function($rowData){
-            global $casePriceOrders;
+            global $casePriceOrders,$unitPriceOrders;
+
             if(in_array($rowData->prod_type_id,$casePriceOrders)){
                 $rowData->lineTotal = $rowData->case_price * $rowData->qty;
+                $rowData->using = 'Case Price';
+            }elseif(in_array($rowData->prod_type_id,$unitPriceOrders)){
+                if($rowData->unit_price <= 0) {
+                    $rowData->lineTotal = $rowData->case_price * $rowData->qty;
+                    $rowData->using = 'Case Price if unit price <= 0 ';
+                }else{
+                    $rowData->lineTotal = $rowData->unit_price * $rowData->qty;
+                    $rowData->using = 'unit price';
+                }
             }else{
-                $rowData->lineTotal = $rowData->unit_price * $rowData->qty;
+                $rowData->lineTotal = $rowData->case_price * $rowData->qty;
+                $rowData->using = 'if no product type found then it will be using case price';
             }
 
             return $rowData;
@@ -335,7 +347,6 @@ class AddtocartController extends Controller
         if (empty($new_location)) {
             return Redirect::to('/shopfegrequeststore')->with('messagetext', 'Submitted successfully')->with('msgstatus', 'success');
             \Session::put('total_cart', 0);
-            //redirect('fegllc/popupCart', 'refresh');
         } else {
             /* @todo refactor code
              * comment line because $new_location value always come null from addtocart/table.blade

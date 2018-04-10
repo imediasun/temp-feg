@@ -61,12 +61,6 @@
                                 }
                             endif;
                         endforeach; ?>
-                        <th width="100">Vendor</th>
-                        <th width="100">Part Number</th>
-                        <th width="100">Size</th>
-                        <th width="100">Ticket Value</th>
-                        <th width="100">Case Price</th>
-                        <th width="100">Retail Price</th>
                         <th width="100">Notes</th>
                         <th width="70"><?php echo Lang::get('core.btn_action');?></th>
 
@@ -128,7 +122,7 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                 @if($field['field']=='qty')
-                                    <input type="number" value="{{ $value }}" min="1" step="1" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeydown="changeTotal(this.value,this.id,event)"/>
+                                    <input type="number" value="{{ $value }}" min="1" step="1" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="qtyfield"/>
                                 @elseif($field['field']=='already_order_qty' && $row->already_order_qty > 0)
                                     <span class="cart_already_ordered">{{$row->already_order_qty}}</span>
                                 @else
@@ -141,12 +135,6 @@
                         endif;
                         endforeach;
                         ?>
-                        <td>{{ $row->vendor_name }}</td>
-                        <td>{{ $row->sku }}</td>
-                        <td>{{ $row->size }}</td>
-                        <td>{{ $row->ticket_value }}</td>
-                        <td>{{CurrencyHelpers::formatPrice($row->case_price) }}</td>
-                        <td>{{CurrencyHelpers::formatPrice( $row->retail_price) }}</td>
                         <td class="notes"><textarea id="notes" name="notes" style="width: 100%;">{{ $row->notes }}</textarea></td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             <div class=" action dropup"><a href="#" onclick="return removeItemFromCart('{{ $row->id }}'); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Remove"><i class="fa fa-remove"></i></a></div>
@@ -202,13 +190,9 @@
 
                 <div class="col-md-offset-4 col-sm-offset-2 col-md-8 col-sm-10">
                     <div class="row">
-                    
-                   <div class="col-md-2 col-sm-3 col-xs-12">
-                       <button  class="btn btn-sm btn-primary" id="update-cart-values" onclick="updateCart();">Update Cart</button>
-                   </div>
                
                     <div class="col-md-10 col-sm-9 col-xs-12">
-                    <input type="button" style="font-weight: bold;" class="btn btn-sm btn-success"
+                    <input type="button" style="font-weight: bold;" class="btn btn-sm btn-success cartsubmitaction"
                            value="Submit Weekly Requests totalling {{\CurrencyHelpers::formatCurrency($cartData['shopping_cart_total'])}}"
                            onClick="confirmSubmit({{ json_encode($cartData['amt_short_message']) }});" id = "cartbtn"></button>
                     </div>
@@ -339,7 +323,31 @@ function removeItemFromCart(itemId){
     return false;
 }
 $(function(){
-
+    $(".qtyfield").on("focus",function(){
+        $(".cartsubmitaction").attr("disabled","disabled");
+        $(".cartsubmitaction").removeClass("btn-success").addClass("btn-disable");
+    });
+    $(".qtyfield").on("change",function(){
+        var qtyfield = $(this);
+            var vendor=qtyfield.data('vendor');
+            var id= qtyfield.attr('id');
+            var qty= qtyfield.val();
+            var notes = qtyfield.parent().siblings('.notes').children('#notes').val();
+            $('.ajaxLoading').show();
+        $.ajax({
+            url:"addtocart/save/"+id+"/"+qty+"/"+encodeURIComponent(vendor)+"/"+notes ,
+            method:'get',
+            dataType:'json',
+            success:function(data){
+                reloadData('#addtocart','addtocart/data?return=');
+                $(".cartsubmitaction").removeAttr("disabled");
+                $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
+            },
+            error: function(){
+                unblockUI();
+            },
+        });
+    });
 });
 </script>
 <style>
