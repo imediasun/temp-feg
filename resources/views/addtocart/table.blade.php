@@ -122,7 +122,7 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                 @if($field['field']=='qty')
-                                    <input type="number" value="{{ $value }}" min="1" step="1" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="qtyfield"/>
+                                    <input type="number" value="{{ $value }}" min="1" step="1" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="qtyfield qtyfield_{{ $row->id }}"/>
                                 @elseif($field['field']=='already_order_qty' && $row->already_order_qty > 0)
                                     <span class="cart_already_ordered">{{$row->already_order_qty}}</span>
                                 @else
@@ -331,22 +331,27 @@ $(function(){
         var qtyfield = $(this);
             var vendor=qtyfield.data('vendor');
             var id= qtyfield.attr('id');
-            var qty= qtyfield.val();
+            var qty= $(".qtyfield_"+id).val();
             var notes = $('.notesfield_'+id).val();
             $('.ajaxLoading').show();
-        $.ajax({
-            url:"addtocart/save/"+id+"/"+qty+"/"+encodeURIComponent(vendor)+"/"+notes ,
-            method:'get',
-            dataType:'json',
-            success:function(data){
-                reloadData('#addtocart','addtocart/data?return=');
-                $(".cartsubmitaction").removeAttr("disabled");
-                $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
-            },
-            error: function(){
-                unblockUI();
-            },
-        });
+        if(qty > 0) {
+            $.ajax({
+                url: "addtocart/save/" + id + "/" + qty + "/" + encodeURIComponent(vendor) + "/" + notes,
+                method: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    reloadData('#addtocart', 'addtocart/data?return=');
+                    $(".cartsubmitaction").removeAttr("disabled");
+                    $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
+                },
+                error: function () {
+                    unblockUI();
+                },
+            });
+        }else{
+            notyMessageError('Case Quantity can not be zero.');
+            $('.ajaxLoading').hide();
+        }
     });
 });
 </script>
