@@ -151,14 +151,14 @@ class FegapiController extends Controller
                             }
                         }
                     }
-                    $results['total'] = count($results['rows']) + count($mergeValues);
+                    $results['total'] = $results['total'] + count($mergeValues);
+
 
                     if(count($results['rows']) == 0){
                     foreach($mergeValues as $mergeValue) {
                         $results['rows'][] = $mergeValue;
                     }
                 }
-
 
                 $qry = $class1::$getRowsQuery;
             }
@@ -193,7 +193,6 @@ class FegapiController extends Controller
                     $json[] = $rows;
                 }
             }
-
 
             $json = $class1::processApiData($json, $param);
 
