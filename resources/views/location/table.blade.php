@@ -309,6 +309,16 @@ if (!$colconfigs) {
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
     });
+    $(function () {
+        $(document).ajaxComplete(function (event, xhr, settings) {
+            var $urlArray = settings.url.split('/');
+            if (typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null) {
+                if (settings.url === "location/save/" + $urlArray[2]) {
+                    $('a[data-original-title="Reload Data"]').trigger("click");
+                }
+            }
+        });
+    });
 </script>
 <style>
     .table th.right {
