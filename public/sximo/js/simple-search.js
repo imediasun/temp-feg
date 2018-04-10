@@ -36,7 +36,9 @@ function performSimpleSearch(params) {
             value = '';
         }
         if (typeof value == 'string') {
+            //Trim and remove any character other than ASCII
             value = $.trim(value);
+            /*value = $.trim(value).replace(/[^\x00-\x7F]/g, "");*/
         }
         // not required to be included
         if (!fieldName || fieldName === '_token' || value === '') {

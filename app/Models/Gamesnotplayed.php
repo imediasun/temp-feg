@@ -50,6 +50,7 @@ class gamesnotplayed extends Sximo  {
             'game_title_id' => ''
         ));        
         extract($filters);
+        $game_id = urldecode($game_id);
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
         }  

@@ -15,6 +15,8 @@ return [
 
     'debug' => env('APP_DEBUG'),
 
+    'version' => env('APP_VERSION', '1.0'),
+
     'ADMIN_EMAIL' => env('ADMIN_EMAIL'),
     'GRAPHIC_REQUEST_ADMIN_EMAIL' => env('GRAPHIC_REQUEST_ADMIN_EMAIL'),
 
