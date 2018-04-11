@@ -95,69 +95,14 @@
     <!-- End Search and storage  -->
     @yield('beforeheadend', '')
 </head>
-<body class="sxim-init" >
+<body style="background:url('{{ Url('sximo/images/feg-login-bg.jpg') }}');background-size: 100% auto;background-attachment: fixed;background-position: center top;background-size: cover; background-color:#003673" >
 @yield('afterbodystart', '')
 <div id="wrapper" {!! (isset($sid) && $sid!='') ? 'style="pointer-events:none"' : '' !!}>
-    @include('layouts/sidemenu')
-    <div class="gray-bg " id="page-wrapper">
-       {{-- @include('layouts/headmenu')--}}
-        <div class="ajaxLoading"></div>
+
+        <div style="width:75%; margin:20px auto;">
         @yield('content')
-    </div>
-
-    <div class="footer fixed">
-        <div class="pull-right">
-
         </div>
-        <div>
-            <strong>Copyright</strong> &copy; 2014-{{ date('Y')}} . {{ CNF_COMNAME }}
-        </div>
-    </div>
-
 </div>
-
-<div class="modal fade" id="sximo-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-default">
-                <button type="button " class="btn-xs collapse-close btn btn-danger pull-right" data-dismiss="modal"  aria-hidden="true"><i class="fa fa fa-times"></i></button>
-                <h4 class="modal-title">&nbsp;</h4>
-            </div>
-            <div class="modal-body" id="sximo-modal-content">
-
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<div class="theme-config">
-    <div class="theme-config-box">
-        <!--   <div class="spin-icon">
-               <i class="fa fa-cogs fa-spin"></i>
-           </div> -->
-        <div class="skin-setttings">
-            <div class="title">Select Color Schema</div>
-            <div class="setings-item">
-                <ul>
-                    <li><a href="{{ url('home/skin/sximo') }}"> Default Skin  <span class="pull-right default-skin"> </span></a></li>
-                    <li><a href="{{ url('home/skin/sximo-dark-blue') }}"> Dark Blue Skin <span class="pull-right dark-blue-skin"> </span> </a></li>
-                    <li><a href="{{ url('home/skin/sximo-light-blue') }}"> Light Blue Skin <span class="pull-right light-blue-skin"> </span> </a></li>
-
-                </ul>
-
-
-            </div>
-
-        </div>
-    </div>
-</div>
-
-{{ Sitehelpers::showNotification() }}
-@yield('beforebodyend', '')
-@include('sximo.module.utility.inlinegrid')
-@yield('inlinedit', '')
-<div class="custom_overlay"></div>
 </body>
 @yield('afterbodyend', '')
 </html>
