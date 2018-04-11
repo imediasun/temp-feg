@@ -349,7 +349,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group  ">
+                     <div class="form-group  " >
                         <label for="Img" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Image', (isset($fields['img']['language'])?
                             $fields['img']['language'] : array())) !!}
