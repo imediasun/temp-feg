@@ -3,12 +3,10 @@
     {!! Form::open(array('url'=>'managefegrequeststore/multirequestorderfill/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
     <div >
         <div class="col-md-2 m-b">
-
+       <!-- Bug-306 Archive section has been commented -->
         <select name="type" class="select3" id="request_type">
-            <option value="archive" @if($view == 'archive'): selected @endif>FEG Store Requests Archives</option>
-            <option value="manage" @if($view == 'manage'): selected @endif> Open Requests</option>
+            <option value="manage" selected> Open Requests</option>
         </select>
-
     </div>
     @if($view == "manage")
         <div class="col-md-2 sm13">

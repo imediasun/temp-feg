@@ -195,7 +195,7 @@ class ManagefegrequeststoreController extends Controller
             $this->data['TID'] = $manageRequestInfo['TID'];
             $this->data['LID'] = $manageRequestInfo['LID'];
             $this->data['VID'] = $manageRequestInfo['VID'];
-            $this->data['view'] = $request->get('view');
+            $this->data['view'] =  $request->get('view'); //Bug-306 Archive section has been commented
             $data_options_array = array_flatten($manageRequestInfo['order_dropdown-data']);
              if (!empty($data_options_array) && !in_array($this->data['TID'], $data_options_array)) {
                 $this->data['TID'] = "";

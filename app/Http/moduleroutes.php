@@ -17,7 +17,7 @@ Route::controller('game', 'GameController');
 Route::controller('ticketcomment', 'TicketcommentController');
 Route::controller('gamestitle', 'GamestitleController');
 Route::controller('order', 'OrderController');
-Route::controller('pendingrequest', 'PendingrequestController');
+/*Route::controller('pendingrequest', 'PendingrequestController'); Bug-306 pending request module has been commented */
 Route::controller('tablecols', 'TablecolsController');
 Route::controller('mylocationgame', 'MylocationgameController');
 Route::controller('merchandisebudget', 'MerchandisebudgetController');

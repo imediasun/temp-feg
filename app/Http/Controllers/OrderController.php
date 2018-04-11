@@ -905,6 +905,11 @@ class OrderController extends Controller
             \Session::put('redirect', $redirect_link);
 
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
+
+            if (!empty($where_in)) {
+                \DB::update('DELETE FROM requests WHERE id IN(' . $where_in . ')');
+            }
+
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
