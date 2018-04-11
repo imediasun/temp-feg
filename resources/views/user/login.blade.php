@@ -137,7 +137,7 @@
                 </div>
                 <div style="padding: 15px 0px 10px 0px;  text-align: center;" class="tabs-footer">
                     <div style="margin-bottom:2px; center">
-                        <a style="color:#012c5f !important;" href="{{ Route('termsofservice') }}" target="_blank">Terms of Service</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a style="color:#012c5f !important;" href="{{ Route('privacyplicy') }}" target="_blank">Privacy</a>
+                        <a style="color:#012c5f !important;" href="{{ Route('termsofservice') }}" target="_blank">Terms and Conditions</a> | <a style="color:#012c5f !important;" href="{{ Route('privacyplicy') }}" target="_blank">Privacy</a>
                     </div>
                 </div>
             </div>
