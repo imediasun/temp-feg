@@ -103,7 +103,7 @@
                         <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>" onkeypress="disableEnter(event)"/></td>
                         @endif
                         <td> <?php
-                            echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false, 0,false,'',true);
+                            echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false, 0,false,'',false);
                             ?></td>
                         @if($setting['view-method']=='expand')
                             <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}"

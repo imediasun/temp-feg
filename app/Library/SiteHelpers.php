@@ -1575,7 +1575,7 @@ class SiteHelpers
     }
 
 
-    public static function showUploadedFile($file, $path, $width = 50, $circle = true, $id = 0,$setdescription=false,$description='',$hidenav=false)
+    public static function showUploadedFile($file, $path, $width = 50, $circle = true, $id = 0,$setdescription=false,$description='',$hidenav=true)
     {
         $files = public_path() . $path . $file;
 
@@ -1591,7 +1591,7 @@ class SiteHelpers
                     $class = 'img';
                 }
                 $rel="";
-                if($hidenav == false) {
+                if($hidenav == true) {
                     $rel = "gallery" . $id;
                 }
                 $onclick="";
