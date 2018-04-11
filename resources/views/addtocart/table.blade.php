@@ -337,9 +337,13 @@ function removeItemFromCart(itemId){
     return false;
 }
 $(function(){
-    $(".qtyfield,.notesfield").on("focus",function(){
+    $(".qtyfield,.notesfield").on("keypress",function(){
         $(".cartsubmitaction").attr("disabled","disabled");
         $(".cartsubmitaction").removeClass("btn-success").addClass("btn-disable");
+    });
+    $(".qtyfield,.notesfield").on("focusout",function(){
+        $(".cartsubmitaction").removeAttr("disabled");
+        $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
     });
     $(".qtyfield,.notesfield").on("change",function(){
         var qtyfield = $(this);
