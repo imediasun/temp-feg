@@ -105,7 +105,6 @@ Route::group(['middleware' => 'auth'], function()
 
     Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
     Route::get('ticketsetting','TicketsettingController@getSetting');
-    Route::get('ordersetting', 'OrdersettingController@getSetting');
     Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
     Route::get('removeblocked', 'ManagefegrequeststoreController@removeBlockedCheck')->name('remove_blocked_check');
     Route::get('addmoreblockedtime', 'ManagefegrequeststoreController@AddBlockedCheck')->name('add_more_blocked_time');
@@ -126,7 +125,7 @@ Route::get('/forget-password', 'UserController@getForgetPassword');
 Route::get('/', 'UserController@getLogin');
 Route::get('/restric',function(){
 
-    return view('errors.blocked');
+	return view('errors.blocked');
 
 });
 
@@ -166,21 +165,21 @@ Route::get('/{type}/download/{id}',function($type,$id){
 Route::group(['middleware' => 'auth'], function()
 {
 
-    Route::get('core/elfinder', 'Core\ElfinderController@getIndex');
-    Route::post('core/elfinder', 'Core\ElfinderController@getIndex');
-    Route::controller('/dashboard', 'DashboardController');
-    Route::controller('/cron', 'CronController');
-    Route::controllers([
-        'core/users'		=> 'Core\UsersController',
-        'notification'		=> 'NotificationController',
-        'core/logs'			=> 'Core\LogsController',
-        'core/pages' 		=> 'Core\PagesController',
-        'core/groups' 		=> 'Core\GroupsController',
-        'core/template' 	=> 'Core\TemplateController',
-        'feg/system/tasks'	=> 'Feg\System\TasksController',
-        'feg/system/systememailreportmanager'	=> 'Feg\System\SystemEmailReportManagerController',
-    ]);
-
+	Route::get('core/elfinder', 'Core\ElfinderController@getIndex');
+	Route::post('core/elfinder', 'Core\ElfinderController@getIndex');
+	Route::controller('/dashboard', 'DashboardController');
+	Route::controller('/cron', 'CronController');
+	Route::controllers([
+		'core/users'		=> 'Core\UsersController',
+		'notification'		=> 'NotificationController',
+		'core/logs'			=> 'Core\LogsController',
+		'core/pages' 		=> 'Core\PagesController',
+		'core/groups' 		=> 'Core\GroupsController',
+		'core/template' 	=> 'Core\TemplateController',
+		'feg/system/tasks'	=> 'Feg\System\TasksController',
+		'feg/system/systememailreportmanager'	=> 'Feg\System\SystemEmailReportManagerController',        
+	]);
+    
     Route::get('feg/system/utils/{slug}', function($slug) {
         $app = app();
         $parameters = [];
@@ -189,20 +188,20 @@ Route::group(['middleware' => 'auth'], function()
         $method = "index";
         do {
             $path = str_replace('-', '', ucwords(ucwords(implode('\\', $paths), '-'), '\\'));
-            $classPath = $classRootPath . $path . 'Controller' ;
+            $classPath = $classRootPath . $path . 'Controller' ;            
             try {
                 $controller = $app->make( $classPath );
-            }
+            } 
             catch (Exception $ex) {
-                array_unshift($parameters, array_pop($paths)) ;
+                array_unshift($parameters, array_pop($paths)) ;                
             }
-
+            
         } while (empty($controller) && count($paths) > 0);
-
+        
         if (!empty($parameters[0])) {
             $method = array_shift($parameters);
         }
-        if (empty($controller)) {
+        if (empty($controller)) {        
             $classPath = $classRootPath .'UtilsController';
             $controller = $app->make( $classPath );
             $parameters = [['params' => $parameters, 'slug' => $slug]];
@@ -216,12 +215,12 @@ Route::group(['middleware' => 'auth'], function()
             $method = "index";
             $called  = $controller->callAction($method, $parameters);
         }
-
+        
         return $called;
 
-    })->where('slug','.+');
+    })->where('slug','.+');    
 
-    Route::post('feg/system/utils/{slug}', function($slug) {
+   Route::post('feg/system/utils/{slug}', function($slug) {
         $app = app();
         $parameters = [];
         $paths = explode('/', $slug);
@@ -265,16 +264,14 @@ Route::group(['middleware' => 'auth'], function()
 Route::group(['middleware' => 'auth' , 'middleware'=>'sximoauth'], function()
 {
 
-    Route::controllers([
-        'feg/menu'		=> 'Sximo\MenuController',
-        'feg/config' 		=> 'Sximo\ConfigController',
-        'feg/module' 		=> 'Sximo\ModuleController',
-        'feg/tables'		=> 'Sximo\TablesController',
-    ]);
+	Route::controllers([
+		'feg/menu'		=> 'Sximo\MenuController',
+		'feg/config' 		=> 'Sximo\ConfigController',
+		'feg/module' 		=> 'Sximo\ModuleController',
+		'feg/tables'		=> 'Sximo\TablesController',
+	]);
 
 
 
 });
 Route::get('download/expense-report/{file}', 'Core\PagesController@downloadExpanseReports');
-Route::get("terms-of-service","HomeController@TermsAndConditions")->name('termsofservice');
-Route::get("privacy-policy","HomeController@PrivacyPolicy")->name('privacyplicy');
