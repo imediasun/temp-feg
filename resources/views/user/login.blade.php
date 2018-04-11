@@ -130,13 +130,13 @@
                             <div class="clr"></div>
 
                         </div>
-                        <a style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;"
+                        <a style="background-color:#DD4B39; margin-bottom: 15px; border-color: #DD4B39; color: #ffffff;"
                            class="btn btn-block" target="_blank" href="{{url('forget-password')}}"> {{ Lang::get('core.forgotpassword') }} ? </a>
 
                     </form>
                 </div>
-                <div style="padding: 10px 0px;  text-align: left;" class="tabs-footer">
-                    <div style="margin-bottom:2px;">
+                <div style="padding: 15px 0px 10px 0px;  text-align: center;" class="tabs-footer">
+                    <div style="margin-bottom:2px; center">
                         <a style="color:#012c5f !important;" href="{{ Route('termsofservice') }}" target="_blank">Terms of Service</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a style="color:#012c5f !important;" href="{{ Route('privacyplicy') }}" target="_blank">Privacy</a>
                     </div>
                 </div>
