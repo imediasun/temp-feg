@@ -33,6 +33,7 @@ class managefegrequeststore extends Sximo
 
     public static function queryWhere($cond = null)
     {
+        $cond['view'] = 'manage';
         $order_type_id = isset($cond['order_type_id']) ? $cond['order_type_id'] : "";
         $location_id = isset($cond['location_id']) ? $cond['location_id'] : "";
         $vendor_id = isset($cond['vendor_id']) ? $cond['vendor_id'] : "";
@@ -63,8 +64,10 @@ class managefegrequeststore extends Sximo
             }
         } elseif ($cond['view'] == 'archive') {
 
-            $where .= " AND requests.status_id IN(2,3)";
-
+            /*$where .= " AND requests.status_id IN(2,3)";*/
+            $where .= " AND requests.status_id IN(1) ";
+        }else{
+            $where .= " AND requests.status_id IN(1) ";
         }
         return $where;
 
