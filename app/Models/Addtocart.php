@@ -39,6 +39,7 @@ class addtocart extends Sximo
   location.location_name_short,
   merch_request_status.status,
   products.size,
+  products.num_items,
   V1.vendor_name,
   order_type.order_type,
   product_type.type_description,
