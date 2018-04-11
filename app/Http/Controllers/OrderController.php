@@ -1384,7 +1384,7 @@ class OrderController extends Controller
             }
             $loadinInfo =[];
             if(!empty($data[0]['loading_info'])){
-                $loadinInfo[] =$data[0]['loading_info'];
+                $loadinInfo[] ="| Shipping Restriction: ".$data[0]['loading_info'];
             }
             if(isset($data[0]['liftgate']) && $data[0]['liftgate'] ==1 ){
                 $loadinInfo[] = ' REQUIRES LIFTGATE';
@@ -1395,7 +1395,7 @@ class OrderController extends Controller
             {
 
 
-                $data[0]['freight_type'] = $data[0]['freight_type'] . "\n" . 'DELIVERY NOTES: **' . $data[0]['loading_info'] . '**';
+                $data[0]['freight_type'] = $data[0]['freight_type'] . "\n" . ' ' . $data[0]['loading_info'] . '';
             }
 
             if (!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == Order::ORDER_TYPE_REDEMPTION || $data[0]['order_type_id'] == Order::ORDER_TYPE_INSTANT_WIN_PRIZE)) {

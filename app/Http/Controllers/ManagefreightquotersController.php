@@ -413,6 +413,9 @@ class ManagefreightquotersController extends Controller
             }
             $fromLoadingInfo =[];
             if(!empty($from_loading_info)){
+                $from_loading_info = "Shipping Restriction: ".$from_loading_info;
+            }
+            if(!empty($from_loading_info)){
                 $fromLoadingInfo[] = $from_loading_info;
             }
             if($liftgate == 1){
@@ -540,6 +543,9 @@ class ManagefreightquotersController extends Controller
                     $toMessage.= '<br>';
                     $toLoadingInfo =[];
                     if(!empty($to_loading_info[$i])){
+                        $to_loading_info[$i] = "Shipping Restriction: ".$to_loading_info[$i];
+                    }
+                    if(!empty($to_loading_info[$i])){
                         $toLoadingInfo[] = $to_loading_info[$i];
                     }
                     if($to_liftgate[$i] == 1){
@@ -584,6 +590,9 @@ class ManagefreightquotersController extends Controller
                 }
                 $toMessage.= '<br>';
                 $toLoadingInfo =[];
+                if(!empty($to_loading_info)){
+                    $to_loading_info = "Shipping Restriction: ".$to_loading_info;
+                }
                 if(!empty($to_loading_info)){
                     $toLoadingInfo[] = $to_loading_info;
                 }
