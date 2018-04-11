@@ -276,7 +276,7 @@ Route::group(['middleware' => 'auth' , 'middleware'=>'sximoauth'], function()
 });
 Route::get('download/expense-report/{file}', 'Core\PagesController@downloadExpanseReports');
 Route::get("terms-of-service","HomeController@TermsAndConditions")->name('termsofservice');
-Route::get("privacy","HomeController@PrivacyPolicy")->name('privacyplicy');
+Route::get("privacy-policy","HomeController@PrivacyPolicy")->name('privacyplicy');
 
 
 
