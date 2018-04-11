@@ -33,65 +33,65 @@
 						<td width='30%' class='label-view text-right'>
 						January
 								</td>
-						<td>{{ $row->Jan }} </td>
+						<td>{{ \CurrencyHelpers::formatPrice($row->Jan) }} </td>
 
 					</tr>
 
 					<tr>
 						<td width='30%' class='label-view text-right'>
 						February</td>
-						<td>{{ $row->Feb }} </td>
+						<td>{{ \CurrencyHelpers::formatPrice($row->Feb) }} </td>
 
 					</tr>
                     <tr>
                         <td width='30%' class='label-view text-right'>
                             March</td>
-                        <td>{{ $row->March }} </td>
+                        <td>{{ \CurrencyHelpers::formatPrice($row->March) }} </td>
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>
                             April</td>
-                        <td>{{ $row->April }} </td>
+                        <td>{{ \CurrencyHelpers::formatPrice($row->April) }} </td>
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>
                             May</td>
-                        <td>{{ $row->May }} </td>
+                        <td>{{ \CurrencyHelpers::formatPrice($row->May )}} </td>
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>
                             June</td>
-                        <td>{{ $row->June }} </td>
+                        <td>{{ \CurrencyHelpers::formatPrice($row->June )}} </td>
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>
                             July</td>
-                        <td>{{ $row->July }} </td>
+                        <td>{{ \CurrencyHelpers::formatPrice($row->July) }} </td>
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>
                             August</td>
-                        <td>{{ $row->August }} </td>
+                        <td>{{ \CurrencyHelpers::formatPrice($row->August) }} </td>
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>
                         September</td>
-                        <td>{{ $row->September }} </td>
+                        <td>{{ \CurrencyHelpers::formatPrice($row->September )}} </td>
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>
                             October</td>
-                        <td>{{ $row->October }} </td>
+                        <td>{{ \CurrencyHelpers::formatPrice($row->October )}} </td>
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>
                             November</td>
-                        <td>{{ $row->November }} </td>
+                        <td>{{ \CurrencyHelpers::formatPrice($row->November) }} </td>
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>
                             December</td>
-                        <td>{{ $row->December }} </td>
+                        <td>{{ \CurrencyHelpers::formatPrice($row->December) }} </td>
 
                     </tr>
 
