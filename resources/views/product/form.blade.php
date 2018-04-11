@@ -331,6 +331,24 @@
                         </div>
                     </div>
 
+
+
+
+                    <div class="form-group">
+                        <label for="Reserved Qty Limit" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Reserved Quantity Par Amount', (isset($fields['reserved_qty_limit']['language'])?
+                            $fields['reserved_qty_limit']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            {!! Form::text('reserved_qty_limit', $row['reserved_qty_limit'],array('class'=>'form-control',
+                            'placeholder'=>'', )) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+
                     <div class="form-group  ">
                         <label for="Img" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Image', (isset($fields['img']['language'])?
@@ -350,24 +368,6 @@
                                 echo SiteHelpers::showUploadedFile($row['img'], '/uploads/products/', 30, false)
                                 ?>
                             </div>
-                        </div>
-                    </div>
-
-
-
-
-                    <div class="form-group">
-                        <label for="Reserved Qty Limit" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Reserved Quantity Par Amount', (isset($fields['reserved_qty_limit']['language'])?
-                            $fields['reserved_qty_limit']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            {!! Form::text('reserved_qty_limit', $row['reserved_qty_limit'],array('class'=>'form-control',
-                            'placeholder'=>'', )) !!}
-                        </div>
-                        <div class="col-md-2">
-
                         </div>
                     </div>
 
