@@ -431,7 +431,7 @@
                 </div>
                 <div class="form-group  ">
                     <label for="Exclude From Export" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Exclude From Export', (isset($fields['exclude_export']['language'])?
+                        {!! SiteHelpers::activeLang('Exclude from Export', (isset($fields['exclude_export']['language'])?
                         $fields['exclude_export']['language'] : array())) !!}
                     </label>
                     <div class="col-md-6 check-no">
