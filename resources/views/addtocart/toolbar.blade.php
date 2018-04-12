@@ -44,6 +44,7 @@
 
     function getCartData(isOnLoad,vendor,subtotal)
     {
+        $('.ajaxLoading').show();
         vendor = vendor || "no";
         subtotal=subtotal || "no";
 
@@ -53,7 +54,7 @@
             url: siteUrl + '/addtocart/cartdata',
             method:'get',
             success:function(data){
-
+                $('.ajaxLoading').hide();
                 var row,cell1,cell2,vendor_name,vendor_total,total_row,total_cell1,total_cell2;
                 if(isOnLoad) {
                     for (var i = 0; i < data['subtotals'].length; i++) {
