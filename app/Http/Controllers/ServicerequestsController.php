@@ -110,9 +110,9 @@ class servicerequestsController extends Controller
         {
             \Session::put('showAllChecked',true);
         }
-        $filter = str_replace("AND last_updated_elapsed_days =", "HAVING last_updated_elapsed_days =", $filter);
-        $filter = str_replace("AND last_updated_elapsed_days LIKE", "HAVING last_updated_elapsed_days LIKE", $filter);
-        
+
+        $filter = str_replace("AND last_updated_elapsed_days", "HAVING last_updated_elapsed_days", $filter);
+        $filter = str_replace("AND (last_updated_elapsed_days BETWEEN", "HAVING (last_updated_elapsed_days BETWEEN", $filter);
         return $filter;
     }
     public function postData(Request $request)
