@@ -123,7 +123,8 @@ class AddtocartController extends Controller
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
 // Render into template
-
+        //here i have to refactor this code which will create a separate function in model
+        //i will call this function
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
         global $casePriceOrders,$unitPriceOrders;
