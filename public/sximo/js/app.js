@@ -1177,6 +1177,7 @@ App.initAutoComplete = function (elm, options) {
 
 function getCartTotal()
 {
+    $('.ajaxLoading').show()
     $.ajax({
         url: siteUrl + '/addtocart/cartdata',
         method:'get',
@@ -1186,6 +1187,7 @@ function getCartTotal()
             if(data['total_cart_items'] > 0){
                 $("#update_text_to_add_cart").text(data['total_cart_items']);
             }
+            $('.ajaxLoading').hide();
         }
     });
 }
