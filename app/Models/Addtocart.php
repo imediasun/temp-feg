@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Core\Groups;
@@ -281,5 +282,30 @@ FROM requests
         return $count;
     }
 
-
+    /**
+     * calculates products total according to product type defined in configuration
+     * @param array $data
+     * @return array
+     */
+    public function calculateProductTotalAccordingToProductType(array $data){
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $casePriceOrders = explode(",",$pass['calculate price according to case price']->data_options);
+        $unitPriceOrders = explode(",",$pass['use case price if unit price is 0.00']->data_options);
+        foreach($data as $product){
+            if(in_array($product->prod_type_id,$casePriceOrders)){
+                $product->lineTotal = $product->case_price * $product->qty;
+            }
+            elseif(in_array($product->prod_type_id,$unitPriceOrders)){
+                $product->lineTotal = $product->unit_price * $product->qty;
+                if((int)$product->unit_price <= 0){
+                    $product->lineTotal = $product->case_price * $product->qty;
+                }
+            }
+            else{
+                $product->lineTotal = $product->case_price * $product->qty;
+            }
+        }
+        return $data;
+    }
 }

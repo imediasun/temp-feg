@@ -123,37 +123,8 @@ class AddtocartController extends Controller
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
 // Render into template
-        //here i have to refactor this code which will create a separate function in model
-        //i will call this function
-        $module = new OrderController();
-        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
-        global $casePriceOrders,$unitPriceOrders;
-        $casePriceOrders = explode(",",$pass['calculate price according to case price']->data_options);
-        $unitPriceOrders = explode(",",$pass['use case price if unit price is 0.00']->data_options);
-        $this->data['rowData'] = array_map(function($rowData){
-            global $casePriceOrders,$unitPriceOrders;
-
-            if(in_array($rowData->prod_type_id,$casePriceOrders)){
-                $rowData->lineTotal = $rowData->case_price * $rowData->qty;
-                $rowData->using = 'Case Price';
-            }elseif(in_array($rowData->prod_type_id,$unitPriceOrders)){
-                if($rowData->unit_price <= 0) {
-                    $rowData->lineTotal = $rowData->case_price * $rowData->qty;
-                    $rowData->using = 'Case Price if unit price <= 0 ';
-                }else{
-                    $rowData->lineTotal = $rowData->unit_price * $rowData->qty;
-                    $rowData->using = 'unit price';
-                }
-            }else{
-                $rowData->lineTotal = $rowData->case_price * $rowData->qty;
-                $rowData->using = 'if no product type found then it will be using case price';
-            }
-
-            return $rowData;
-
-        }, $this->data['rowData']);
-//dd($this->data['rowData']);
-
+        $addToCart = new Addtocart();
+        $this->data['rowData'] = $addToCart->calculateProductTotalAccordingToProductType($this->data['rowData']);
         return view('addtocart.table', $this->data);
 
     }
