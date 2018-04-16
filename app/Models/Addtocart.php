@@ -5,13 +5,14 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Core\Groups;
 use Illuminate\Support\Facades\Session;
-use App\Http\Controllers\OrderController;
+//use App\Http\Controllers\OrderController;
 
 class addtocart extends Sximo
 {
 
     protected $table = 'requests';
     protected $primaryKey = 'id';
+    const REQUEST_STATUS_ID = 4;
 
     public function __construct()
     {
@@ -85,7 +86,7 @@ FROM requests
     {
         return self::where('product_id', $productId)->where('request_user_id', \Session::get('uid'))
             ->where('location_id', \Session::get('selected_location'))
-            ->where('status_id', 4)
+            ->where('status_id', REQUEST_STATUS_ID)
             ->first();
     }
 
@@ -178,31 +179,14 @@ FROM requests
 
             $query = \DB::select($select);
 
-            if($query) {
-                $query = array_map(function ($rowData) {
-                    global $casePriceOrders, $unitPriceOrders;
 
-                    if (in_array($rowData->prod_type_id, $casePriceOrders)) {
-                        $rowData->lineTotal = $rowData->case_price * $rowData->qty;
-                        $rowData->using = 'Case Price';
-                    } elseif (in_array($rowData->prod_type_id, $unitPriceOrders)) {
-                        if ($rowData->unit_price <= 0) {
-                            $rowData->total = $rowData->case_price * $rowData->qty;
-                            $rowData->using = 'Case Price if unit price <= 0 ';
-                        } else {
-                            $rowData->total = $rowData->unit_price * $rowData->qty;
-                            $rowData->using = 'unit price';
-                        }
-                    } else {
-                        $rowData->lineTotal = $rowData->case_price * $rowData->qty;
-                        $rowData->using = 'if no product type found then it will be using case price';
-                    }
-
-                    return $rowData;
-
-                }, $query);
-
-            }
+            $cartProductsAddedByUser = $this->getCartProductsAddedByUser($location_id,$userID);
+            $cartProductsAddedByUser = collect($this->calculateProductTotalAccordingToProductType($cartProductsAddedByUser));
+            $cartLineTotal = $cartProductsAddedByUser->groupBy('vendor_id')->map(function ($row) {
+                $row->total = $row->sum('lineTotal');
+                $row->lineTotal = $row->sum('lineTotal');
+                return $row;
+            });
 
             $amt_short_message="";
             foreach ($query as $row)
@@ -211,9 +195,9 @@ FROM requests
                     'vendor_name' => $row->vendor_name,
                     'vendor_id' => $row->vendor_id,
                     'vendor_min_order_amt' => \CurrencyHelpers::formatPrice($row->min_order_amt, Order::ORDER_PERCISION, false),
-                    'vendor_total' => \CurrencyHelpers::formatPrice($row->total, Order::ORDER_PERCISION, false),
+                    'vendor_total' => \CurrencyHelpers::formatPrice($cartLineTotal[$row->vendor_id]->lineTotal, Order::ORDER_PERCISION, false),
                     'cart_items' => $row->cart_items,
-                    'total'=>$row->total,
+                    'total'=> $cartLineTotal[$row->vendor_id]->total,
                     'amt_short' => \CurrencyHelpers::formatPrice($row->amt_short, Order::ORDER_PERCISION, false)
                 );
 
@@ -293,6 +277,9 @@ FROM requests
         $casePriceOrders = explode(",",$pass['calculate price according to case price']->data_options);
         $unitPriceOrders = explode(",",$pass['use case price if unit price is 0.00']->data_options);
         foreach($data as $product){
+
+            $product = is_array($product)?(object)$product:$product;
+
             if(in_array($product->prod_type_id,$casePriceOrders)){
                 $product->lineTotal = $product->case_price * $product->qty;
             }
@@ -307,5 +294,13 @@ FROM requests
             }
         }
         return $data;
+    }
+    function getCartProductsAddedByUser($location_id,$userID){
+
+        $cartData =  self::where("requests.location_id",$location_id)
+            ->select('products.prod_type_id', 'products.unit_price','products.case_price','products.vendor_id','requests.qty')
+            ->where('requests.request_user_id', $userID)
+            ->where('requests.status_id',self::REQUEST_STATUS_ID)->join("products",'requests.product_id','=','products.id')->get()->all();
+            return $cartData;
     }
 }
