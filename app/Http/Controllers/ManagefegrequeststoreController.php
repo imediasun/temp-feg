@@ -584,7 +584,7 @@ class ManagefegrequeststoreController extends Controller
             $whereQuery .= " AND requests.location_id = '" . $locationId . "' ";
             $result = $this->model->getSearchFilterResult($whereQuery); // selecting first vendor from searched product type and location
         }
-        if(empty($result)){
+        if(empty($result) && $productTypeId >0){
             $whereQuery = " products.prod_type_id in(" . $productTypeId . ") ";
             $result = $this->model->getSearchFilterResult($whereQuery); // selecting first location and vendor from search product type
         }
