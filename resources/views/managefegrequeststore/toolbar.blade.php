@@ -1,12 +1,12 @@
 <div class="row c-margin">
 
     {!! Form::open(array('url'=>'managefegrequeststore/multirequestorderfill/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
-    <div >
+    <div>
         <div class="col-md-2 m-b">
        <!-- Bug-306 Archive section has been commented -->
-        <select name="type" class="select3" id="request_type">
-            <option value="manage" selected> Open Requests</option>
-        </select>
+        {{--<select name="type" class="select3" id="request_type">--}}
+            {{--<option value="manage" selected> Open Requests</option>--}}
+        {{--</select>--}}
     </div>
     @if($view == "manage")
         <div class="col-md-2 sm13">
@@ -137,7 +137,7 @@
     });
     $("#request_type").on('change', function () {
 
-        var request_type = $(this).val();
+        var request_type = "manage";
         if (request_type == "manage") {
             $('number_requests').show();
         }
@@ -145,7 +145,7 @@
             $('number_requests').hide();
         }
 
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type+getSimpleSearchParams());
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' +request_type+getSimpleSearchParams());
     });
     function setType() {
         $('#request_type option').each(function () {
@@ -155,7 +155,7 @@
         });
     }
     $("#col-config").on('change', function () {
-        var request_type = $("#request_type").val();
+        var request_type = "manage";
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' + request_type + getFooterFilters());
     });
     function removeParam(key, sourceURL) {
@@ -178,7 +178,7 @@
     function pageRefresh(type) {
 
         var url = document.URL;
-        var request_type = $("#request_type").val();
+        var request_type = "manage";
         var urlLength = url.length;
         var pos = url.search(type);
         var get = "?";
@@ -244,7 +244,7 @@
                 get+="&v1=T"+$('#order_type').val();
             }
         }
-            get += "&view="+request_type;
+            get += "&view="+"manage";
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get +getSimpleSearchParams());
 
     }
