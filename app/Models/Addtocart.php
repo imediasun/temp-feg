@@ -5,6 +5,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Core\Groups;
 use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\OrderController;
 
 class addtocart extends Sximo
 {
@@ -156,9 +157,14 @@ FROM requests
             $data['shopping_cart_total'] = 0;
             $data['amt_short'] = '';
             $data['amt_short_message'] = '';
+            $module = new OrderController();
+            $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+            global $casePriceOrders,$unitPriceOrders;
+            $casePriceOrders = explode(",",$pass['calculate price according to case price']->data_options);
+            $unitPriceOrders = explode(",",$pass['use case price if unit price is 0.00']->data_options);
 
                                        $select='SELECT V.vendor_name,  V.id AS vendor_id, V.min_order_amt, SUM(R.qty*P.case_price) AS total, COUNT(V.id) AS cart_items,
-                                       V.min_order_amt - SUM(R.qty*P.case_price) AS amt_short FROM requests R
+                                       V.min_order_amt - SUM(R.qty*P.case_price) AS amt_short,P.prod_type_id,P.case_price,P.unit_price,R.qty FROM requests R
                                        LEFT JOIN products P ON P.id = R.product_id
 								       LEFT JOIN vendor V ON V.id = P.vendor_id
 									   WHERE R.status_id = "' . $statusId . '" AND V.vendor_name !="null"
@@ -171,6 +177,32 @@ FROM requests
             }
 
             $query = \DB::select($select);
+
+            if($query) {
+                $query = array_map(function ($rowData) {
+                    global $casePriceOrders, $unitPriceOrders;
+
+                    if (in_array($rowData->prod_type_id, $casePriceOrders)) {
+                        $rowData->lineTotal = $rowData->case_price * $rowData->qty;
+                        $rowData->using = 'Case Price';
+                    } elseif (in_array($rowData->prod_type_id, $unitPriceOrders)) {
+                        if ($rowData->unit_price <= 0) {
+                            $rowData->total = $rowData->case_price * $rowData->qty;
+                            $rowData->using = 'Case Price if unit price <= 0 ';
+                        } else {
+                            $rowData->total = $rowData->unit_price * $rowData->qty;
+                            $rowData->using = 'unit price';
+                        }
+                    } else {
+                        $rowData->lineTotal = $rowData->case_price * $rowData->qty;
+                        $rowData->using = 'if no product type found then it will be using case price';
+                    }
+
+                    return $rowData;
+
+                }, $query);
+
+            }
 
             $amt_short_message="";
             foreach ($query as $row)

@@ -267,6 +267,7 @@ class AddtocartController extends Controller
     function getSubmitRequests($new_location = null)
     {
 
+
         $now = date('Y-m-d');
         $inputs = \Input::all();
         $products = $inputs['products'];
@@ -304,7 +305,7 @@ class AddtocartController extends Controller
             $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px;'>";
             $count = count($check);
             foreach ($check as $key => $request){
-                $productsNames .= "<li>".$request->vendor_description."</li>";
+                $productsNames .= "<li>".addslashes($request->vendor_description)."</li>";
             }
             $productsNames .= "</ul>";
             return redirect('/addtocart')->with('messagetext', "Another employee at your location has already ordered the following product(s): $productsNames Please remove the duplicate product(s) from your cart to submit your order and contact the head of the department relevant to Order Type to make any further quantity adjustments for this product.")->with('msgstatus', 'error');
@@ -349,6 +350,7 @@ class AddtocartController extends Controller
     {
         $productId = \Session::get('productId');
         $cart_data = $this->model->popupCartData($productId);
+
         if($ajax){
             return response()->json($cart_data);
         }else{

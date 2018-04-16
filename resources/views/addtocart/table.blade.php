@@ -137,7 +137,7 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                 @if($field['field']=='qty')
-                                    <input type="number" value="{{ $value }}" min="1" step="1" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="qtyfield qtyfield_{{ $row->id }}"/>
+                                    <input type="number" value="{{ $value }}" min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="qtyfield qtyfield_{{ $row->id }}"/>
                                     @else
 
                                     {!! $value !!}
@@ -352,7 +352,10 @@ $(function(){
             var qty= $(".qtyfield_"+id).val();
             var notes = $('.notesfield_'+id).val();
             $('.ajaxLoading').show();
-        if(qty > 0) {
+        if(qty < 1) {
+            notyMessageError('Case Quantity can not be less than 1.');
+            $('.ajaxLoading').hide();
+        }else{
             $.ajax({
                 url: "addtocart/save/" + id + "/" + qty + "/" + encodeURIComponent(vendor) + "/" + notes,
                 method: 'get',
@@ -366,9 +369,6 @@ $(function(){
                     unblockUI();
                 },
             });
-        }else{
-            notyMessageError('Case Quantity can not be zero.');
-            $('.ajaxLoading').hide();
         }
     });
 });
