@@ -12,7 +12,6 @@ class addtocart extends Sximo
 
     protected $table = 'requests';
     protected $primaryKey = 'id';
-    const REQUEST_STATUS_ID = 4;
 
     public function __construct()
     {
@@ -86,7 +85,7 @@ FROM requests
     {
         return self::where('product_id', $productId)->where('request_user_id', \Session::get('uid'))
             ->where('location_id', \Session::get('selected_location'))
-            ->where('status_id', REQUEST_STATUS_ID)
+            ->where('status_id', 4)
             ->first();
     }
 
@@ -300,7 +299,7 @@ FROM requests
         $cartData =  self::where("requests.location_id",$location_id)
             ->select('products.prod_type_id', 'products.unit_price','products.case_price','products.vendor_id','requests.qty')
             ->where('requests.request_user_id', $userID)
-            ->where('requests.status_id',self::REQUEST_STATUS_ID)->join("products",'requests.product_id','=','products.id')->get()->all();
+            ->where('requests.status_id',4)->join("products",'requests.product_id','=','products.id')->get()->all();
             return $cartData;
     }
 }
