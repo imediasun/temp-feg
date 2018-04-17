@@ -15,6 +15,22 @@ class product extends Sximo  {
 		parent::__construct();
 		
 	}
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function(product $model){
+            Log::info("------------Product has been saved---------------");
+            Log::info("------------Product ID: ".$model->id."---------------");
+            if($model->is_reserved == 1) {
+                if ($model->reserved_qty > $model->reserved_qty_limit) {
+                    Log::info("-----------Product email alert flag has been updated to true------------");
+                    $model->send_email_alert = 0;
+                }
+            }
+            return $model;
+        });
+    }
 
     function orderedProduct()
     {

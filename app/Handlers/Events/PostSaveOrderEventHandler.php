@@ -73,7 +73,7 @@ class PostSaveOrderEventHandler
                 $inactive = 0;
             }
             $product->updateProduct(['reserved_qty' => $adjustmentAmount, 'inactive' => $inactive], true);
-            $product->save();
+
 
             if($inactive == 1){
                 // When product with reserved quantity becomes inactive due to not allowing negative quantities:
@@ -93,7 +93,7 @@ class PostSaveOrderEventHandler
                 $message .='Product Name: '.$product->vendor_description.'<br>';
                 $message .='Product SKU: '.$product->sku.'<br>';
                 $message .='Reserved Quantity: '.$adjustmentAmount.'<br>';
-                self::sendProductReservedQtyEmail($message);
+                self::sendProductReservedQtyEmail($message,$product);
             }
             if ($adjustmentAmount <= $product->reserved_qty_limit && $inactive == 0) {
                /* When reserved quantity par amount is met or exceeded (reserve quantity reduced to par amount or less):
@@ -117,10 +117,11 @@ class PostSaveOrderEventHandler
                 $message .='Product SKU: '.$product->sku.'<br>';
                 $message .='Reserved Qty Par Amount: '.$product->reserved_qty_limit.'<br>';
                 $message .='Remaining Reserved Quantity: '.$adjustmentAmount."<br>";
-                self::sendProductReservedQtyEmail($message);
+                self::sendProductReservedQtyEmail($message,$product);
 
             }
         }
+        $product->save();
 
     }
     public static function setPositiveAdjustement($item,$product,$type,$qty){
@@ -137,14 +138,19 @@ class PostSaveOrderEventHandler
         $reservedQtyLog->insert($reservedLogData);
     }
 
-    public static function sendProductReservedQtyEmail($message)
+    public static function sendProductReservedQtyEmail($message,$product)
     {
         /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
-        $receipts = FEGSystemHelper::getSystemEmailRecipients("Product Reserved Quantity Email");
-        FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
-            'subject' => "Product Reserved Quantity Email Alert",
-            'message' => $message,
-            'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-        )));
+        if($product->send_email_alert == 0) {
+            $product->send_email_alert = 1;
+            $product->save();
+
+            $receipts = FEGSystemHelper::getSystemEmailRecipients("Product Reserved Quantity Email");
+            FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
+                'subject' => "Product Reserved Quantity Email Alert",
+                'message' => $message,
+                'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+            )));
+        }
     }
 }
