@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class managefegrequeststore extends Sximo
 {
@@ -466,8 +467,10 @@ class managefegrequeststore extends Sximo
                 AND blocked_at IS NULL  '.$queryWhere.' 
             GROUP BY order_type,location_id,vendor_id
             ORDER BY order_type.order_type,requests.location_id,vendor.vendor_name ASC limit 1';
-
+        \Log::info("Dropdown Query before execution");
+        \Log::info("Dropdown Query :".$sql);
         $result = \DB::select($sql);
+        \Log::info("Dropdown Query after execution");
         if($result){
             return $result[0];
         }else{
