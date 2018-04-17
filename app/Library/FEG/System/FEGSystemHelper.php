@@ -1879,4 +1879,21 @@ $message" .
     }
 
 
+    public static function cleanProductMeta($params = []) {
+        $table = "product_meta";
+        $errorMessage = [];
+        $messages = [];
+        extract(array_merge(array(
+            '_task' => array(),
+            '_logger' => null,
+        ), $params));
+
+        /** @var  $commandObj */
+        /** @var  $_logger */
+        /** @var  $_task */
+
+        $q = "UPDATE $table SET posted_to_api_at=null, posted_to_api_expired_at=null WHERE posted_to_api_expired_at < NOW()";
+        DB::update($q);
+
+    }
 }
