@@ -305,6 +305,10 @@
 	
 <script>
 $(document).ready(function(){
+	setTimeout(function () {
+		$("a").removeAttr('target');
+	}, 500);
+
 	$('.dd').nestable();
     update_out('#list2',"#reorder");
     

@@ -189,7 +189,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
 												data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
 												id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 									 @elseif($field['field']=='exclude_export')
-										 <input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif data-field="exclude_export"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}" id="exclude_export_{{$row->id}}" onSwitchChange="trigger()" />
+										 <input type='checkbox' name="mycheckbox" @if(strtolower($value) == 'yes') checked  @endif data-field="exclude_export"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}" id="exclude_export_{{$row->id}}" onSwitchChange="trigger()" />
                                 @else
                                     {!! $value !!}
                                 @endif

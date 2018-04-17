@@ -275,7 +275,3 @@ Route::group(['middleware' => 'auth' , 'middleware'=>'sximoauth'], function()
 
 });
 Route::get('download/expense-report/{file}', 'Core\PagesController@downloadExpanseReports');
-
-
-
-

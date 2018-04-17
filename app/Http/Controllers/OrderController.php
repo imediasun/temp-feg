@@ -1,25 +1,35 @@
 <?php namespace App\Http\Controllers;
 
+use App\Events\ordersEvent;
+use App\Events\PostEditOrderEvent;
+use App\Events\PostOrdersEvent;
+use App\Events\Event;
+use App\Events\PostSaveOrderEvent;
 use App\Http\Controllers\controller;
+use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
-use App\Models\OrderSendDetails;
 use App\Models\product;
+use App\Models\OrderSendDetails;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\SximoDB;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
 use PHPMailerOAuth;
+use App\Models\ReservedQtyLog;
 
 class OrderController extends Controller
 {
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'order';
     static $per_page = '10';
 
@@ -47,7 +57,8 @@ class OrderController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
-
+        $this->sortMapping = ['status_id' => 'OS.status', 'vendor_id' => 'V.vendor_name', 'user_id' => 'U.username', 'order_type_id' => 'OT.order_type', 'location_id' => 'L.location_name'];
+        $this->sortUnMapping = ['OS.status' => 'status_id', 'V.vendor_name' => 'vendor_id', 'U.username' => 'user_id', 'OT.order_type' => 'order_type_id', 'L.location_name' => 'location_id'];
 
     }
 
@@ -108,17 +119,48 @@ class OrderController extends Controller
         });
         //$results = $this->model->getExportRows($params);
 
+        foreach($results['rows'] as  &$rs){
+            $result = $this->model->getProductInfo($rs->id);
+            $infoString = '';
+            foreach($result as $r){
+                if(!isset($r->sku)){
+                    $sku = " (SKU: No Data) ";
+                }else{
+                    $sku = " (SKU: ".$r->sku.")";
+                }
+
+                $infoString = $infoString . '(' . $r->qty . ') ' . $r->item_name . ' ' . \CurrencyHelpers::formatPrice($r->total, 2, true, ',', '.', true) . $sku . '; ';
+            }
+            $rs->productInfo = rtrim($infoString,'; ');
+        }
+
+
         $fields = $info['config']['grid'];
         $rows = $results['rows'];
 
         //$rows = $this->updateDateInAllRows($rows);
+        $rowss=[];
+        foreach($rows as $row1) {
+            $row1 = (array) $row1;
+            $rowss[] = (array)self::array_move('created_at', 3, (array)$row1);
+        }
+        $rowsobjects = [];
+        foreach($rowss as $rowobj){
+            $rowsobjects[] = (object)$rowobj;
+        }
+
+        $out = array_splice($fields, 27, 1);
+        array_splice($fields, 3, 0, $out);
+
+
 
         $content = array(
             'exportID' => $exportSessionID,
             'fields' => $fields,
-            'rows' => $rows,
+            'rows' => $rowsobjects,
             'title' => $this->data['pageTitle'],
         );
+
 
         if ($t == 'word') {
 
@@ -148,16 +190,13 @@ class OrderController extends Controller
     {
 
         /*
-                                \App\Library\FEG\System\Sync::transferEarnings();
-                                \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
-                                \App\Library\FEG\System\Sync::generateDailySummary();
-                                \App\Library\FEG\System\Email\Report::daily();
-                                \App\Library\FEG\System\Email\Report::missingDataReport();
-             echo "done transfer";
-
-             exit;
-        */
-
+        \App\Library\FEG\System\Sync::transferEarnings();
+        \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
+        \App\Library\FEG\System\Sync::generateDailySummary();
+        \App\Library\FEG\System\Email\Report::daily();
+        \App\Library\FEG\System\Email\Report::missingDataReport();
+        echo "done transfer";
+        exit;*/
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $this->data['sid'] = "";
@@ -191,9 +230,7 @@ class OrderController extends Controller
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-        if ($sort == 'order_type_id') {
-            $sort = 'OT.order_type';
-        }
+
         // End Filter sort and order for query
 
         // Get order_type search filter value and location_id saerch filter values
@@ -222,6 +259,9 @@ class OrderController extends Controller
 
 
         $page = $request->input('page', 1);
+
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
+
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
@@ -249,7 +289,7 @@ class OrderController extends Controller
                     $sku = " (SKU: " . $r->sku . ")";
                 }
 
-                $info = $info . '(' . $r->qty . ') ' . $r->item_name . ' ' . \CurrencyHelpers::formatPrice($r->total, 3, true, ',', '.', true) . $sku . '; ';
+                $info = $info . '(' . $r->qty . ') ' . $r->item_name . ' ' . \CurrencyHelpers::formatPrice($r->total, 2, true, ',', '.', true) . $sku . '; ';
             }
             $rs->productInfo = rtrim($info, '; ');
         }
@@ -268,7 +308,12 @@ class OrderController extends Controller
         $pagination->setPath('order/data');
         $rows = $results['rows'];
         foreach ($rows as $index => $data) {
-            $rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
+            if ($data->date_ordered == '0000-00-00')
+            {
+                $rows[$index]->date_ordered = $data->date_ordered;
+            }else{
+                $rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
+            }
             //$location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
             // $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
             $user = \DB::select("Select username FROM users WHERE id = '" . $data->user_id . "'");
@@ -281,10 +326,12 @@ class OrderController extends Controller
 
             $order_status = \DB::select("Select status FROM order_status WHERE id = '" . $data->status_id . "'");
             //  $partial = $data->status_id == 10 ? ' ' : ' (Partial)';
-            $partial = $data->is_partial == 1 ? ' (Partial)' : '';
-            if ($data->status_id == 10)
+            $partial =  '';
+            if ($data->is_partial == 1 && $data->status_id == Order::OPENID1)
             {
-                $partial = "";
+                $partial = ' (Partial)';
+            }else{
+                $partial = '';
             }
             $rows[$index]->status_value = $rows[$index]->status_id;
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
@@ -292,9 +339,8 @@ class OrderController extends Controller
 
         }
 
-        if ($sort == 'OT.order_type') {
-            $params['sort'] = 'order_type_id';
-        }
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
@@ -322,13 +368,13 @@ class OrderController extends Controller
         // Render into template
         /*$this->data['set_removed'] = "others";
         if (strpos($_SESSION['searchParamsForOrder'], 'status_id:equal:removed|') > 0) {
+            // $is_removed_flag = true;
             $this->data['set_removed'] = 'set_removed';
         }*/
 
         return view('order.table', $this->data);
 
     }
-
 
     function getUpdate(Request $request, $id = 0, $mode = '')
     {
@@ -374,12 +420,15 @@ class OrderController extends Controller
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
-        return view('order.form', $this->data)->with('fromStore', $fromStore);
+
+        return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
     public function getShow($id = null)
     {
 
+
+        $this->data['case_price_permission'] = $this->pass['calculate price according to case price'];
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -559,6 +608,24 @@ class OrderController extends Controller
             $altShipTo = $request->get('alt_ship_to');
             $alt_address = '';
             $order_description = '';
+            $totalQuanity = \DB::select("SELECT SUM(qty) AS total_quantity FROM order_contents WHERE order_id=$order_id")[0]->total_quantity;
+            $orderQuantity =  array_sum($request->qty);
+            $orderQuantity = $orderQuantity - $totalQuanity;
+            //When order quantity will be increase then order status will be updated to open (Partial)
+
+            $received_quantity = \DB::select("SELECT SUM(quantity) as total_received_qty FROM order_received WHERE  order_id=$order_id")[0]->total_received_qty;
+
+            if ($orderQuantity > 0 && $received_quantity < $totalQuanity) {
+                \DB::update('update orders set status_id=1, is_partial=1 where id="'.$order_id.'"');
+            } elseif ($received_quantity == $totalQuanity) {
+                \DB::update('update orders set status_id=1, is_partial=0 where id="' . $order_id . '"');
+            }
+
+            $itemReceivedcount = \DB::select("SELECT COUNT(*) AS itemReceivedcount FROM order_contents WHERE order_id=$order_id AND item_received>0")[0]->itemReceivedcount;
+
+            if($itemReceivedcount==0){
+                \DB::update('update orders set status_id=1, is_partial=0 where id="'.$order_id.'"');
+            }
             if (!empty($altShipTo)) {
                 $rules = array(
                     'to_add_name' => 'required|max:60',
@@ -592,6 +659,7 @@ class OrderController extends Controller
             $item_received = $request->get('item_received');
             $item_received = $request->get('item_received');
             $denied_SIDs = $request->get('denied_SIDs');
+            //  $po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
@@ -605,7 +673,18 @@ class OrderController extends Controller
                 }
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i]
                     . ') ' . $itemsArray[$i] . ' @ $' .
-                    $itemsPriceArray[$i] . ' ea.';
+                    $itemsPriceArray[$i] . ' ea. (SKU: ' . $skuNumArray[$i] . ')';
+            }
+            if ($is_freehand == 0) {
+                $validationResponse = $this->validateProductForReserveQty($request);
+
+                if (!empty($validationResponse) && $validationResponse['error'] == true) {
+                    return response()->json(array(
+                        'message' => $validationResponse['message'],
+                        'status' => 'error',
+                        'adjustQty' => $validationResponse['adjustQty']
+                    ));
+                }
             }
             if ($editmode == "edit") {
                 $orderData = array(
@@ -617,7 +696,8 @@ class OrderController extends Controller
                     'freight_id' => $freight_type_id,
                     'alt_address' => $alt_address,
                     'request_ids' => $where_in,
-                    'po_notes' => $notes
+                    'po_notes' => $notes,
+                    //'po_notes_additionaltext'=>$po_notes_additionaltext,
                 );
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
@@ -642,7 +722,8 @@ class OrderController extends Controller
                     'request_ids' => $where_in,
                     'new_format' => 1,
                     'is_freehand' => $is_freehand,
-                    'po_notes' => $notes
+                    'po_notes' => $notes,
+                    //'po_notes_additionaltext'=>$po_notes_additionaltext,
                 );
                 if ($editmode == "clone") {
                     $id = 0;
@@ -711,7 +792,6 @@ class OrderController extends Controller
                     'order_id' => $order_id,
                     'request_id' => $request_id,
                     'product_id' => $product_id,
-                    'product_description' => $itemsArray[$i],
                     'price' => $priceArray[$i],
                     'qty' => $qtyArray[$i],
                     'game_id' => $game_id,
@@ -726,6 +806,10 @@ class OrderController extends Controller
                     'vendor_id' => $prodVendorId,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
+                if (!empty($itemsArray[$i])) {
+                    $contentsData['product_description'] = $itemsArray[$i];
+                }
+
                 if ($editmode == "clone") {
                     $items_received_qty = 0;
                 }
@@ -733,6 +817,11 @@ class OrderController extends Controller
                     \DB::table('order_contents')->insert($contentsData);
                 } else {
                     \DB::table('order_contents')->where('id', $order_content_id[$i])->update($contentsData);
+                }
+
+                $contentsData['prev_qty'] = $request->input('prev_qty')[$i];
+                if ($is_freehand == 0) {
+                    event(new PostSaveOrderEvent($contentsData));
                 }
 
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
@@ -809,9 +898,12 @@ class OrderController extends Controller
                 \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
             }
 
+
+
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
             \Session::put('redirect', $redirect_link);
+
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
@@ -822,7 +914,7 @@ class OrderController extends Controller
 
         } elseif ($id != 0) {
             $data = $this->validatePost('orders', true);
-
+            $orderTotal = \CurrencyHelpers::formatPrice(Order::find($id)->order_total,2, false);
             if (isset($data['order_type_id'])) {
                 $order_contents = \DB::table('order_contents')->where('order_id', $id)->get();
                 $orderTotal = 0;
@@ -843,8 +935,10 @@ class OrderController extends Controller
                 $data['order_total'] = $orderTotal;
             }
             $this->model->insertRow($data, $id);
+
             \Session::put('order_id', $id);
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
+
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
@@ -864,6 +958,36 @@ class OrderController extends Controller
 
     }
 
+    public function validateProductForReserveQty($request)
+    {
+        $item_names = $request->input('item_name');
+        $productInformation = [];
+        for ($i = 0; $i < count($item_names); $i++) {
+            $product = \DB::table('products')->where(['id' => $request->input('product_id')[$i], 'is_reserved' => 1])->first();
+            if (!empty($product)) {
+                $product->item_name = $item_names[$i];
+                $product->qty = $request->input('qty')[$i];
+                $product->prev_qty = $request->input('prev_qty')[$i];
+                $product->order_product_id = ($request->input('product_id')[$i] == $product->id) ? $request->input('product_id')[$i] : 0;
+                $productInformation[] = $product;
+            }
+        }
+
+        $collect = collect($productInformation);
+        $groups = $collect->groupBy('id');
+
+        $productInformationCombined = [];
+        //TODO: This functionality don't needed when double product restriction will be applied.
+        //This loop will combine duplicate products
+        foreach ($groups as $key => $group) {
+            $group[0]->qty = $group->sum('qty');
+            $group[0]->prev_qty = $group->sum('prev_qty');
+            $productInformationCombined[] = $group[0];
+        }
+
+        return event(new ordersEvent($productInformationCombined, $request->order_id))[0];
+    }
+
     public function getSaveOrSendEmail($isPop = null)
     {
         $order_id = \Session::get('order_id');
@@ -879,7 +1003,7 @@ class OrderController extends Controller
         $cc1 = "";
         // for Instant Win, Redemption Prize, Tickets, Uniforms and Office Supply categories send a copy of PO to
         // marissa sexton,mandee cook,lisa price
-        if (($order_type_id == 7 || $order_type_id == 8 || $order_type_id == 4 || $order_type_id == 6))// && CNF_MODE != "development" )
+        if (($order_type_id == Order::ORDER_TYPE_REDEMPTION || in_array($order_type_id, Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM) || $order_type_id == Order::ORDER_TYPE_OFFICE_SUPPLIES))// && CNF_MODE != "development" )
         {
             $cc1 = $cc;
 
@@ -986,30 +1110,20 @@ class OrderController extends Controller
         $orderId = $request->input('ids');
         $explanations = trim(strip_tags($request->input('explaination')));
         $order = Order::withTrashed()->where('id', $orderId)->first();
-        if (empty($order)) {
+        if(empty($order)){
             return Redirect::to('order')->with('messagetext', "Invalid Order")->with('msgstatus', 'error');
         }
 
-        if ($order->canRestoreAllReservedProducts() === false) {
-            return Redirect::to('order')->with('messagetext', "Order has not been restored, Reason: Insufficient reserved quantity")->with('msgstatus', 'error');
-        }
+        $id = $request->input('ids');
+        $explaination = $request->input('explaination');
 
-        $order->notes = $order->notes . '<br>' . $explanations;
+        $result = \DB::update("update orders set notes = concat(notes,'<br>',".\DB::connection()->getPdo()->quote($explaination)."), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
 
-        try {
-            $result = $order->restore();
-            $message = "Order ID : {$order->id} has been restored successfully!";
-        } catch (\Exception $e) {
-            $result = false;
-            $message = "Order ID : {$order->id} has not been restored. Reason: " . $e->getMessage();
-        }
         if ($result) {
-            return Redirect::to('order')->with('messagetext', $message)->with('msgstatus', 'success');
+            return Redirect::to('order')->with('messagetext', 'Order has been restored successfully!')->with('msgstatus', 'success');
         } else {
-            return Redirect::to('order')->with('messagetext', $message)->with('msgstatus', 'error');
+            return Redirect::to('order')->with('messagetext', 'This order has already been restored!')->with('msgstatus', 'error');
         }
-
-
     }
 
     public function postRemoveorderexplaination(Request $request)
@@ -1060,7 +1174,7 @@ class OrderController extends Controller
         $uid = \Session::get('uid');
         $query = "";
         $result = false;
-        $orders = Order::whereIn('po_number', $poNumbers)->get();
+        $orders = Order::whereIn('po_number',$poNumbers)->get();
 
         $index = 0;
         foreach($orders as $order){
@@ -1124,6 +1238,7 @@ class OrderController extends Controller
 
     function getRemoveorder($poNumber = "")
     {
+
         $this->data['ids'] = $poNumber;
         $totalIdsCount = 1;
         $ids = $poNumber;
@@ -1166,6 +1281,7 @@ class OrderController extends Controller
 //            return Redirect::to('order')->with('messagetext', 'This PO has already been removed!')->with('msgstatus', 'error');
 //        }
         //\Session::flash('success', 'Po  deleted successfully!');
+
     }
 
     public function getSearchFilterQuery($customQueryString = null)
@@ -1203,7 +1319,8 @@ class OrderController extends Controller
                 'orders.notes',
                 'orders.is_partial',
                 'orders.tracking_number',
-                'YN.yesno'
+                'YN.yesno',
+                'OC.sku'
             ];
             $dateSearchFields = [
                 'orders.date_ordered',
@@ -1215,25 +1332,24 @@ class OrderController extends Controller
                 'fields' => $searchFields, 'dateFields' => $dateSearchFields];
 
             if (!empty($statusIdFilter)) {
-                if ($statusIdFilter == 6) {
+                if ($statusIdFilter == Order::ORDER_INSTALLED_AND_RETURNED_STATUS) {
                     $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "' OR (orders.status_id = '2' AND orders.tracking_number!='') ";
                 } else {
-                    /* if($statusIdFilter=="removed") {
-                         $orderStatusCondition = "AND orders.deleted_at is not null ";
-                     }else{*/
-                    $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "' ";
-                    /* }*/
+                    $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "'";
                 }
             }
 
         } else {
             if (!empty($statusIdFilter)) {
-                if ($statusIdFilter == 6) {
+                if ($statusIdFilter == Order::ORDER_INSTALLED_AND_RETURNED_STATUS) {
                     $orderStatusCondition = " OR (orders.status_id = '2' AND orders.tracking_number!='') AND orders.deleted_at is null ";
                 } elseif ($statusIdFilter == 10) {
+                    //@todo update order status after code merge
                     $orderStatusCondition = " AND orders.deleted_at is not null  ";
                 } else {
-                    $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter' AND  orders.tracking_number!='') AND orders.deleted_at is null ";
+                   // $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter' AND  orders.tracking_number!='') AND orders.deleted_at is null ";
+                    $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter') AND orders.deleted_at is null ";
+
                 }
 
             }
@@ -1244,11 +1360,6 @@ class OrderController extends Controller
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
-   // dd($filter);
-        /*if ($statusIdFilter == "removed") {
-            $filter = str_replace("orders.status_id = 'removed'", " orders.deleted_at is not null ", $filter);
-        }*/
-        // dd( $filter);
         return $filter;
     }
 
@@ -1272,21 +1383,21 @@ class OrderController extends Controller
                 $data[0]['po_location'] = '**WILL PICKUP FROM ' . $data[0]['vendor_name'] . '**' . "\n" . $data[0]['po_location'];
             }
 
-            if (!empty($data[0]['loading_info']) && ($data[0]['order_type_id'] == 4 || $data[0]['order_type_id'] == 9)) //IF ORDER TYPE IS TICKTS/TOKENS OR FIXED ASSET -- AKA LARGE ITEMS
+            if (!empty($data[0]['loading_info']) && ( in_array($data[0]['order_type_id'],Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM) || $data[0]['order_type_id'] == Order::FIXED_ASSET_ID)) //IF ORDER TYPE IS TICKTS/TOKENS OR FIXED ASSET -- AKA LARGE ITEMS
             {
                 $data[0]['freight_type'] = $data[0]['freight_type'] . "\n" . 'DELIVERY NOTES: **' . $data[0]['loading_info'] . '**';
             }
 
-            if (!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == 7 || $data[0]['order_type_id'] == 8)) {
+            if (!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == Order::ORDER_TYPE_REDEMPTION || $data[0]['order_type_id'] == Order::ORDER_TYPE_INSTANT_WIN_PRIZE)) {
                 $data[0]['loc_contact_email'] = $data[0]['loc_merch_contact_email'];
             }
 
-            if ($data[0]['email'] != $data[0]['loc_contact_email']) {
+            if ($data[0]['email'] != $data[0]['loc_contact_email'] && !empty($data[0]['loc_contact_email'])) {
                 $data[0]['loc_contact_email'] = ' AND ' . $data[0]['loc_contact_email'];
             } else {
                 $data[0]['loc_contact_email'] = '';
             }
-            if ($data[0]['order_type_id'] == 3 || $data[0]['order_type_id'] == 4) {
+            if ($data[0]['order_type_id'] == Order::ORDER_TYPE_REPAIR_LABOUR || in_array($data[0]['order_type_id'],Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM)) {
                 $data[0]['cc_email'] = ', lisa.price@fegllc.com';
             } else {
                 $data[0]['cc_email'] = '';
@@ -1380,7 +1491,7 @@ class OrderController extends Controller
                         'filename' => $filename,
                         'encoding' => 'base64',
                         'type' => 'application/pdf',
-                        'preferGoogleOAuthMail' => true
+                        'preferGoogleOAuthMail' => false
                     ];
                     if (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) {
 
@@ -1585,7 +1696,7 @@ class OrderController extends Controller
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";
         }
-        if ($order_status == 2 && $order_type_id == 2) // Advanced Replacement Returned.. require tracking number
+        if ($order_status == Order::CLOSEID1 && $order_type_id == Order::ORDER_TYPE_ADVANCED_REPLACEMENT) // Advanced Replacement Returned.. require tracking number
         {
             $rules['tracking_number'] = "required|min:3";
             $tracking_number = trim($request->get('tracking_number'));
@@ -1652,7 +1763,12 @@ class OrderController extends Controller
             if ($request->get('mode') == 'update') {
                 $this->updateOrderReceipt($request);
             }
-
+            /**
+             * Updating order status to open partial if received Items qty is less than ordered items qty
+             */
+            $order = Order::find($order_id);
+            $order->setOrderStatus();
+            $order->save();
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -1746,18 +1862,36 @@ class OrderController extends Controller
     public function getAutocomplete()
     {
         $term = Input::get('term');
-        $vendorId = Input::get('vendor_id', 0);
-        $whereWithVendorCondition = "";
+        $vendorId = Input::get('vendor_id',0);
+        $excludeProducts = Input::get('exclude_products', null);
+        $whereWithVendorCondition = $whereWithExcludeProductCondition = "";
+
         //get products related to selected vendor only
         if (!empty($vendorId)) {
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
         }
+
+        if ($excludeProducts) {
+            $excludeProductsArray = explode(',', $excludeProducts);
+            $excludeProductsIds = [];
+            foreach ($excludeProductsArray as $item) {
+                $product = product::find($item);
+                $variations = $product->getProductVariations();
+                array_map(function ($row) use (&$excludeProductsIds) {
+                    $excludeProductsIds[] = $row->id;
+                }, $variations->all());
+            }
+            $excludeProductsIds = implode(',', $excludeProductsIds);
+            $whereWithExcludeProductCondition = " AND products.id NOT IN ($excludeProductsIds) ";
+        }
+
         $results = array();
         $term = addslashes($term);
         //fixing for https://www.screencast.com/t/vwFYE3AlF
         $queries = \DB::select("SELECT *,LOCATE('$term',vendor_description) AS pos
                                 FROM products
-                                WHERE vendor_description LIKE '%$term%' AND products.inactive=0 AND products.exclude_export=0 $whereWithVendorCondition
+                                WHERE vendor_description LIKE '%$term%' 
+                                AND products.inactive=0  $whereWithVendorCondition  $whereWithExcludeProductCondition  
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
                                  Limit 0,10");
@@ -1773,8 +1907,8 @@ class OrderController extends Controller
 
     public function getProductdata()
     {
-        $vendor_description = Input::get('product_id');
-        $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . addslashes($vendor_description) . "'");
+        $product_id = Input::get('product_id');
+        $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE id='" . addslashes($product_id) . "'");
         $json = [];
         if (!empty($row)) {
             //$row = Order::hydrate($row);
@@ -2012,13 +2146,13 @@ class OrderController extends Controller
     {
 
     }
-    // This is testing comment
-    public function getEmailHistory(Request $request){
+
+    public function getEmailHistory(Request $request)
+    {
 
         $returnSelf = !empty($request->input('returnSelf'));
 
-        $searchFor = !is_null($request->input('search')) ? trim($request->input('search')) : ''; //This is third comment
-        //This is an other test comment
+        $searchFor = !is_null($request->input('search')) ? trim($request->input('search')) : '';
         $searchFor = empty($searchFor) || $searchFor == '@' ? '' : $searchFor;
 
         $startAt = !is_null($request->input('start')) ? trim($request->input('start')) : '';
@@ -2053,19 +2187,510 @@ class OrderController extends Controller
         $notes = \DB::table('requests')->select('notes')->whereIn('id', $request->sids)->get();
         return $notes;
     }
-    public function getProductvariationid(){
-        $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category','vendor_id')
-            ->groupBy('vendor_description','vendor_id','sku','case_price')
-            ->get();
 
-        $products = product::hydrate($products); // converting product array to product object
-
-        foreach($products as $product){
-             $variationId = \SiteHelpers::encryptID($product->id);
-            echo "Update default Expense Category For (ID: {$product->id} Variation ID:{$variationId} Item Name:{$product->vendor_description} SKU:{$product->sku} Case Price: {$product->case_price} ) <br>";
-            \DB::update("update products set variation_id='".$variationId."' where vendor_description='".addcslashes($product->vendor_description,"'")."' and vendor_id='".$product->vendor_id."' and sku='".addcslashes($product->sku,"'")."' and case_price='".$product->case_price."' and variation_id is  null ");
+   public static function array_splice_assoc(&$input, $offset, $length, $replacement) {
+        $replacement = (array) $replacement;
+        $key_indices = array_flip(array_keys($input));
+        if (isset($input[$offset]) && is_string($offset)) {
+            $offset = $key_indices[$offset];
         }
-        die("Variation Id has been updated for all products.");
+        if (isset($input[$length]) && is_string($length)) {
+            $length = $key_indices[$length] - $offset;
+        }
+
+        $input = array_slice($input, 0, $offset, TRUE)
+            + $replacement
+            + array_slice($input, $offset + $length, NULL, TRUE);
+    }
+public static function array_move($which, $where, $array)
+    {
+
+        $tmpWhich = $which;
+        $j=0;
+        $keys = array_keys($array);
+
+        for($i=0;$i<count($array);$i++)
+        {
+            if($keys[$i]==$tmpWhich)
+                $tmpWhich = $j;
+            else
+                $j++;
+        }
+        $tmp  = array_splice($array, $tmpWhich, 1);
+        self::array_splice_assoc($array, $where, 0, $tmp);
+        return $array;
+    }
+    public static function changeProductReservedQtyOnRestoreOrder($order_id){
+        if($order_id>0) {
+            $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
+            $result = \DB::select($sql);
+            if(count($result)>0) {
+                $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
+                if(!empty($product)) {
+                    $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
+                    foreach($items as $itms){
+                        $res = \DB::update("update products set  reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
+                    }
+                }
+            }
+        }
     }
 
+
+    public function getUpdateProductVariantsWithDefaultExpenseCategoryHavingDifferentPrice(){
+
+        $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category','vendor_id')
+            ->groupBy('vendor_description','vendor_id','sku')
+            ->havingRaw('COUNT(vendor_description) > 1 AND GROUP_CONCAT(is_default_expense_category) = "0,0"')
+            ->get();
+
+        $products = Product::hydrate($products);
+
+
+        foreach($products as $product){
+
+            if($product->hasDefaultExpenseCategory($product->id)){
+                echo "Skipping For (ID: {$product->id} === Item Name:{$product->vendor_description} === SKU:{$product->sku} === Case Price: {$product->case_price} ) <br>";
+                continue;
+            }
+            $variants = Product::where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku, 'vendor_id' => $product->vendor_id])->get();
+            foreach ($variants as $item){
+                $item->is_default_expense_category = 1;
+                $item->save();
+                echo "Update default Expense Category For (ID: {$item->id} === Item Name:{$item->vendor_description} === SKU:{$item->sku} === Case Price: {$item->case_price} ) <br>";
+            }
+
+        }
+    }
+
+    public function getUpdateProductVariantsWithDefaultExpenseCategoryHavingDifferentSku(){
+
+        $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category','vendor_id')
+            ->groupBy('vendor_description','vendor_id','case_price')
+            ->havingRaw('COUNT(vendor_description) > 1 AND GROUP_CONCAT(is_default_expense_category) = "0,0"')
+            ->get();
+
+        $products = Product::hydrate($products);
+
+
+        foreach($products as $product){
+
+            if($product->hasDefaultExpenseCategory($product->id)){
+                echo "Skipping For (ID: {$product->id} === Item Name:{$product->vendor_description} === SKU:{$product->sku} === Case Price: {$product->case_price} ) <br>";
+                continue;
+            }
+            $variants = Product::where(['vendor_description' => $product->vendor_description, 'case_price' => $product->case_price, 'vendor_id' => $product->vendor_id])->get();
+            foreach ($variants as $item){
+                $item->is_default_expense_category = 1;
+                $item->save();
+                echo "Update default Expense Category For (ID: {$item->id} === Item Name:{$item->vendor_description} === SKU:{$item->sku} === Case Price: {$item->case_price} ) <br>";
+            }
+
+        }
+    }
+
+
+    public function getUpdateProductVariantsWithDefaultExpenseCategory(){
+
+        $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category')
+            ->groupBy('vendor_description','vendor_id','sku','case_price')
+            ->havingRaw('COUNT(vendor_description) > 1')
+            ->get();
+
+        $products = Product::hydrate($products);
+
+        foreach($products as $product){
+
+            if($product->hasDefaultExpenseCategory($product->id)){
+                echo "Skipping For (ID: {$product->id} Item Name:{$product->vendor_description} SKU:{$product->sku} Case Price: {$product->case_price} ) <br>";
+                continue;
+            }
+            $variants = $product->getProductVariations();
+            $sorted = $variants->sortBy('inactive');
+
+            $activeItemFound = false;
+            foreach ($sorted as $item){
+                if($item->inactive == 0){
+                    $activeItemFound = true;
+                    $item->is_default_expense_category = 1;
+                    $item->save();
+                    break;
+                }
+            }
+
+            if(!$activeItemFound){
+                $item = $variants->sortBy('id')->first();
+                $item->is_default_expense_category = 1;
+                $item->save();
+            }
+            echo "Update default Expense Category For (ID: {$product->id} Item Name:{$product->vendor_description} SKU:{$product->sku} Case Price: {$product->case_price} ) <br>";
+        }
+
+
+    }
+
+
+
+
+    public function getCorrectOrdersBug242($step = '1'){
+        die("Script blocked. To run this script please contact your development team. Thanks!");
+
+        $records = \DB::select("SELECT
+              orders.id AS aa_id,
+              orders.po_number,
+              orders.date_ordered,
+              IF(orders.is_partial = 0,'No','Yes') AS is_partial,
+              IF(orders.is_freehand = 0,'No','Yes') AS is_freehand,
+              order_type.order_type,
+              IF(orders.invoice_verified = 0,'No','Yes') AS `invoice verified`,
+              
+            (SELECT SUM(order_contents.qty)
+            FROM orders
+            LEFT JOIN order_contents ON orders.id = order_contents.order_id
+            WHERE orders.id = aa_id
+            GROUP BY order_contents.order_id) AS items_ordered,
+            
+            (SELECT SUM(order_received.quantity)
+            FROM orders
+            LEFT JOIN order_received ON orders.id = order_received.order_id
+            WHERE orders.id = aa_id
+            GROUP BY order_received.order_id) AS items_received
+            
+            FROM orders
+            JOIN order_type ON order_type.id = orders.order_type_id
+            WHERE     status_id = 2
+                AND is_partial = 0    
+                AND is_api_visible = 0
+                AND is_freehand = 0
+                AND order_type_id IN (8,17,4,6,7)
+                
+                AND YEAR(date_ordered) = 2017
+                AND date_ordered < '2017-06-06'
+            HAVING items_ordered < items_received
+            ORDER BY aa_id");
+
+        if($step == '1'){
+            $ids = array_map(function($row){
+                return $row->aa_id;
+            }, $records);
+            \DB::table('order_received')->whereIn('order_id', $ids)->update(['deleted_at' => Carbon::now()]);
+            die("Step 1 completed!");
+        }
+
+        foreach ($records as $record){
+            $order = Order::find($record->aa_id);
+
+            $order_contents = \DB::table('order_contents')->where('order_id', $order->id)->get();
+
+            $notes = '';
+
+            foreach ($order_contents as $order_content){
+                $order_received = \DB::table('order_received')
+                    ->where('order_id', $order->id)
+                    ->where('order_line_item_id', $order_content->id)
+                    ->whereNull('deleted_at')
+                    ->get();
+
+
+                if(empty($order_received)){
+                    \DB::table('order_received')->insert([
+                        'order_id' => $order->id,
+                        'order_line_item_id' => $order_content->id,
+                        'quantity' => $order_content->qty,
+                        'received_by' => '238',
+                        'date_received' => Carbon::now(),
+                        'api_created_at' => Carbon::now(),
+                        'notes' => '(System generated) All Items Received',
+                        'status' => 1
+                    ]);
+
+                    $notes .= '(System generated) All Items Received <br>----------------------<br>';
+
+                }else{
+
+                    $qty_received = collect($order_received)->sum('quantity');
+
+                    if($qty_received < $order_content->qty){
+                        $qty_left = $order_content->qty - $qty_received;
+                    }else{
+                        $qty_left = $order_content->qty;
+                    }
+
+                    \DB::table('order_received')->insert([
+                        'order_id' => $order->id,
+                        'order_line_item_id' => $order_content->id,
+                        'quantity' => $qty_left,
+                        'received_by' => '238',
+                        'date_received' => Carbon::now(),
+                        'api_created_at' => Carbon::now(),
+                        'notes' => '(System generated) Some Items Received',
+                        'status' => 1
+                    ]);
+
+                    $notes .= '(System generated) Some Items Received <br>----------------------<br>';
+                }
+
+                \DB::table('order_contents')->where('id', $order_content->id)->update(['item_received' => $order_content->qty]);
+            }
+
+            $order->status_id = 2;
+            $order->invoice_verified = 1;
+            $order->invoice_verified_date = Carbon::now();
+            $order->is_api_visible = 1;
+            $order->api_created_at = Carbon::now();
+            $order->date_received = Carbon::now();
+            $order->updated_at = Carbon::now();
+            $order->received_by = '238';
+            $order->notes = $notes;
+            $order->save();
+        }
+
+        die("Script Completed!");
+    }
+
+    public function getCloseOrdersWithNoContent()
+    {
+        die("Script blocked. To run this script please contact your development team. Thanks!");
+        $records = \DB::select("SELECT
+                                  orders.id,
+                                  orders.po_number,
+                                  orders.date_ordered,
+                                  orders.status_id,
+                                  order_contents.id
+                                FROM orders
+                                  LEFT JOIN order_contents
+                                    ON order_contents.order_id = orders.id
+                                WHERE YEAR(date_ordered) <= 2016
+                                    AND order_contents.id IS NULL
+                                    AND orders.status_id <> 2
+                                    AND orders.order_type_id IN(8,17,4,6,7)");
+
+        if (!empty($records)) {
+            foreach ($records as $order) {
+                \DB::update("update orders set status_id = 2, notes='(System generated) Order has been closed.', updated_at='" . Carbon::now() . "' where po_number='" . $order->po_number . "'");
+            }
+        }
+        die("Script Completed!");
+    }
+
+    public function getCorrectOrdersBug2016($step = '1')
+    {
+        die("Script blocked. To run this script please contact your development team. Thanks!");
+
+        $records = \DB::select("SELECT
+                              orders.id             AS aa_id,
+                              orders.po_number,
+                              orders.date_ordered,
+                              IF(orders.is_partial = 0,'No','Yes') AS is_partial,
+                              IF(orders.is_freehand = 0,'No','Yes') AS is_freehand,
+                              order_type.order_type,
+                              IF(orders.invoice_verified = 0,'No','Yes') AS `invoice verified`,
+                              (SELECT
+                                 SUM(order_contents.qty)
+                               FROM orders
+                                 LEFT JOIN order_contents
+                                   ON orders.id = order_contents.order_id
+                               WHERE orders.id = aa_id
+                               GROUP BY order_contents.order_id) AS items_ordered,
+                              (SELECT
+                                 SUM(order_received.quantity)
+                               FROM orders
+                                 LEFT JOIN order_received
+                                   ON orders.id = order_received.order_id
+                               WHERE orders.id = aa_id
+                                   AND order_received.deleted_at IS NULL
+                               GROUP BY order_received.order_id) AS items_received
+                            FROM orders
+                              JOIN order_type
+                                ON order_type.id = orders.order_type_id
+                            WHERE is_api_visible = 0
+                                AND is_freehand = 0
+                                AND order_type_id IN(8,17,4,6,7)
+                                AND YEAR(date_ordered) <= 2016
+                            HAVING items_ordered < items_received
+                            ORDER BY aa_id");
+
+        if ($step == '1') {
+            $ids = array_map(function ($row) {
+                return $row->aa_id;
+            }, $records);
+            \DB::table('order_received')->whereIn('order_id', $ids)->update(['deleted_at' => Carbon::now()]);
+            die("Step 1 completed!");
+        }
+
+        foreach ($records as $record) {
+            $order = Order::find($record->aa_id);
+
+            $order_contents = \DB::table('order_contents')->where('order_id', $order->id)->get();
+
+            $notes = '';
+
+            foreach ($order_contents as $order_content) {
+                $order_received = \DB::table('order_received')
+                    ->where('order_id', $order->id)
+                    ->where('order_line_item_id', $order_content->id)
+                    ->whereNull('deleted_at')
+                    ->get();
+
+
+                if (empty($order_received)) {
+                    \DB::table('order_received')->insert([
+                        'order_id' => $order->id,
+                        'order_line_item_id' => $order_content->id,
+                        'quantity' => $order_content->qty,
+                        'received_by' => '238',
+                        'date_received' => Carbon::now(),
+                        'api_created_at' => Carbon::now(),
+                        'notes' => '(System generated) All Items Received',
+                        'status' => 1
+                    ]);
+
+                    $notes .= '(System generated) All Items Received <br>----------------------<br>';
+
+                } else {
+
+                    $qty_received = collect($order_received)->sum('quantity');
+
+                    if ($qty_received < $order_content->qty) {
+                        $qty_left = $order_content->qty - $qty_received;
+                    } else {
+                        $qty_left = $order_content->qty;
+                    }
+
+                    \DB::table('order_received')->insert([
+                        'order_id' => $order->id,
+                        'order_line_item_id' => $order_content->id,
+                        'quantity' => $qty_left,
+                        'received_by' => '238',
+                        'date_received' => Carbon::now(),
+                        'api_created_at' => Carbon::now(),
+                        'notes' => '(System generated) Some Items Received',
+                        'status' => 1
+                    ]);
+
+                    $notes .= '(System generated) Some Items Received <br>----------------------<br>';
+                }
+
+                \DB::table('order_contents')->where('id', $order_content->id)->update(['item_received' => $order_content->qty]);
+            }
+
+            $order->status_id = 2;
+            $order->invoice_verified = 1;
+            $order->invoice_verified_date = Carbon::now();
+            $order->is_api_visible = 1;
+            $order->api_created_at = Carbon::now();
+            $order->date_received = Carbon::now();
+            $order->updated_at = Carbon::now();
+            $order->received_by = '238';
+            $order->notes = $notes;
+            $order->save();
+        }
+
+        die("Script Completed!");
+    }
+    public function getCorrectOrdersBugExtended242($step = '1'){
+        //die("Script blocked. To run this script please contact your development team. Thanks!");
+
+        $records = \DB::select("SELECT
+  orders.id             AS aa_id,
+  orders.po_number,
+  orders.date_ordered,
+  IF(orders.is_partial = 0,'No','Yes') AS is_partial,
+  IF(orders.is_freehand = 0,'No','Yes') AS is_freehand,
+  order_type.order_type,
+  IF(orders.invoice_verified = 0,'No','Yes') AS `invoice verified`,
+  IFNULL((SELECT SUM(order_contents.qty) FROM orders LEFT JOIN order_contents ON orders.id = order_contents.order_id WHERE orders.id = aa_id GROUP BY order_contents.order_id),0) AS items_ordered,
+  IFNULL((SELECT SUM(order_received.quantity) FROM orders LEFT JOIN order_received ON orders.id = order_received.order_id WHERE orders.id = aa_id GROUP BY order_received.order_id),0) AS items_received
+FROM orders
+  JOIN order_type
+    ON order_type.id = orders.order_type_id
+WHERE status_id = 2
+    AND is_partial = 0
+    AND is_api_visible = 0
+    AND is_freehand = 0
+    AND order_type_id IN(8,17,4,6,7)
+    AND YEAR(date_ordered) <= 2017
+    AND date_ordered < '2017-06-06'
+ORDER BY aa_id");
+
+        /*
+        if($step == '1'){
+            $ids = array_map(function($row){
+                return $row->aa_id;
+            }, $records);
+            \DB::table('order_received')->whereIn('order_id', $ids)->update(['deleted_at' => Carbon::now()]);
+            die("Step 1 completed!");
+        }*/
+
+        foreach ($records as $record){
+            $order = Order::find($record->aa_id);
+
+            /*
+            $order_contents = \DB::table('order_contents')->where('order_id', $order->id)->get();
+
+            $notes = '';
+
+            foreach ($order_contents as $order_content){
+                $order_received = \DB::table('order_received')
+                    ->where('order_id', $order->id)
+                    ->where('order_line_item_id', $order_content->id)
+                    ->whereNull('deleted_at')
+                    ->get();
+
+
+                if(empty($order_received)){
+                    \DB::table('order_received')->insert([
+                        'order_id' => $order->id,
+                        'order_line_item_id' => $order_content->id,
+                        'quantity' => $order_content->qty,
+                        'received_by' => '238',
+                        'date_received' => Carbon::now(),
+                        'api_created_at' => Carbon::now(),
+                        'notes' => '(System generated) All Items Received',
+                        'status' => 1
+                    ]);
+
+                    $notes .= '(System generated) All Items Received <br>----------------------<br>';
+
+                }else{
+
+                    $qty_received = collect($order_received)->sum('quantity');
+
+                    if($qty_received < $order_content->qty){
+                        $qty_left = $order_content->qty - $qty_received;
+                    }else{
+                        $qty_left = $order_content->qty;
+                    }
+
+                    \DB::table('order_received')->insert([
+                        'order_id' => $order->id,
+                        'order_line_item_id' => $order_content->id,
+                        'quantity' => $qty_left,
+                        'received_by' => '238',
+                        'date_received' => Carbon::now(),
+                        'api_created_at' => Carbon::now(),
+                        'notes' => '(System generated) Some Items Received',
+                        'status' => 1
+                    ]);
+
+                    $notes .= '(System generated) Some Items Received <br>----------------------<br>';
+                }
+
+                \DB::table('order_contents')->where('id', $order_content->id)->update(['item_received' => $order_content->qty]);
+            }*/
+
+            $order->status_id = 2;
+            $order->invoice_verified = 1;
+            $order->invoice_verified_date = Carbon::now();
+            $order->is_api_visible = 1;
+            $order->api_created_at = '2017-06-06 00:00:00';
+            $order->date_received = Carbon::now();
+            $order->updated_at = Carbon::now();
+            $order->received_by = '238';
+            $order->notes = '(System generated) Some Items Received <br>----------------------<br>';
+            $order->save();
+        }
+
+        die("Script Completed!");
+    }
 }
