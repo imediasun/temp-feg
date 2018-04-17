@@ -95,9 +95,11 @@ class ProductMeta extends Sximo  {
 
             if($createdFlag){
                 $select .= " OR products.updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                $select .= " OR (product_meta.posted_to_api_at >= now()-1 AND product_meta.posted_to_api_expired_at <= NOW()+1)";
 
             } else{
-                $select .= " AND products.updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                $select .= " AND (products.updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                $select .= " OR (product_meta.posted_to_api_at <= now()-1 AND product_meta.posted_to_api_expired_at >= NOW()+1) )";
             }
 
         }
@@ -110,6 +112,9 @@ class ProductMeta extends Sximo  {
         }
         if(!empty($vendor_id)){
             $select .= " AND vendor_id='$vendor_id'";
+        }
+        if(!empty($product_ids)){
+            $select .= " AND products.id IN ($product_ids)";
         }
 
         //$limitConditional = 'LIMIT 0 , 1';
@@ -139,16 +144,20 @@ class ProductMeta extends Sximo  {
 
 //showAllAsActive
         $showAllAsActive = isset($showAllAsActive) && $showAllAsActive == 1;
-        $inactive = $showAllAsActive ? "0": "IF (NOW()-1 >= product_meta.posted_to_api_at AND NOW()+1 <= product_meta.posted_to_api_expired_at, 0, products.inactive)";
+        $postedToAPIDateQuery = "(NOW()-1 >= product_meta.posted_to_api_at AND NOW()+1 <= product_meta.posted_to_api_expired_at)";
+        $inactive = $showAllAsActive ? "0": "IF($postedToAPIDateQuery, 0, products.inactive)";
         $retailPriceQuery = "IF(products.retail_price = 0.00, TRUNCATE(products.case_price/products.num_items,5), products.retail_price)";
+        $updatedAt = "IF (ISNULL(product_meta.posted_to_api_at),products.updated_at, 
+                        IF ($postedToAPIDateQuery, product_meta.posted_to_api_at, products.updated_at) 
+                       )";
 
         $sql = "SELECT
                   
-                  IFNULL(mp.id, products.id),
-                  IFNULL(mp.item_description, products.item_description),
-                  IFNULL(mp.netsuite_description, products.netsuite_description),
-                  IFNULL(mp.expense_category, products.expense_category),
-                  IFNULL(mp.is_default_expense_category, products.is_default_expense_category),
+                  IFNULL(mp.id, products.id) AS id,
+                  IFNULL(mp.item_description, products.item_description) AS item_description,
+                  IFNULL(mp.netsuite_description, products.netsuite_description) AS netsuite_description,
+                  IFNULL(mp.expense_category, products.expense_category) AS expense_category,
+                  IFNULL(mp.is_default_expense_category, products.is_default_expense_category) AS is_default_expense_category,
                                     
                   products.sku,
                   products.vendor_description,
@@ -158,15 +167,10 @@ class ProductMeta extends Sximo  {
                   products.vendor_id,
                   products.unit_price,
                   products.case_price,
-                  products.retail_price,
-                  products.ticket_value,
-                  products.prod_type_id,
-                  products.prod_sub_type_id,
                   products.is_reserved,
                   products.reserved_qty,
                   products.min_order_amt,
                   products.img,
-                  products.inactive,
                   products.inactive_by,
                   products.eta,
                   products.in_development,
@@ -174,19 +178,19 @@ class ProductMeta extends Sximo  {
                   products.date_added,
                   products.hot_item,
                   products.created_at,
-                  products.updated_at,
+                  $updatedAt AS updated_at,
                   products.exclude_export,
                   products.allow_negative_reserve_qty,
                   products.reserved_qty_limit,
                   
                   GROUP_CONCAT(O.order_type)          AS prod_type_id,
                   GROUP_CONCAT(T.type_description)    AS prod_sub_type_id,
-                  GROUP_CONCAT(products.id)           AS `product_id`,
-                  GROUP_CONCAT($retailPriceQuery)     AS `retail_price`,
+                  GROUP_CONCAT(products.id)           AS product_id,
+                  GROUP_CONCAT($retailPriceQuery)     AS retail_price,
                   GROUP_CONCAT(products.ticket_value) AS ticket_value,
                   GROUP_CONCAT($inactive)             AS inactive
                   
-                FROM products
+                FROM products 
                   LEFT JOIN product_meta ON products.id = product_meta.product_id 
                   LEFT JOIN products mp ON mp.id = product_meta.variation_master_product_id 
                   LEFT JOIN order_type O ON (O.id = products.prod_type_id)
