@@ -969,9 +969,11 @@ class order extends Sximo
             }
             \DB::update("UPDATE order_received SET api_created_at = '$now' WHERE order_id = $id");
 
+            $model = self::where('id', $id)->update($updateData);
+
             FEGSystemHelper::updateMetaFromOrder($id);
 
-            return self::where('id', $id)->update($updateData);
+            return $model;
         }
         return false;
     }
