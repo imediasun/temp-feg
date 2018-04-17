@@ -464,7 +464,7 @@ class managefegrequeststore extends Sximo
           LEFT JOIN location
             ON location.id = requests.location_id
             WHERE `status_id` = 1
-                AND blocked_at IS NULL  '.$queryWhere.' 
+                AND blocked_at IS NULL AND location.active = 1  '.$queryWhere.' 
             GROUP BY order_type,location_id,vendor_id
             ORDER BY order_type.order_type,requests.location_id,vendor.vendor_name ASC limit 1';
         \Log::info("Dropdown Query before execution");
