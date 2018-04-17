@@ -91,7 +91,7 @@ class FegapiController extends Controller
 
             if($class == 'Product'){
                 $param['product_ids'] = Input::get('product_ids');
-                $param['limit'] = !is_null($limit) && $limit > 0 ? $limit : 0;
+                //$param['limit'] = !is_null($limit) && $limit > 0 ? $limit : 0;
                 $class2 = "App\\Models\\ProductMeta" ;
                 $showAllAsActive = FEGSystemHelper::getOption('all_product_active_in_api', 0);
                 $activeLimit = FEGSystemHelper::getOption('product_active_in_api_till', '24 hours');
