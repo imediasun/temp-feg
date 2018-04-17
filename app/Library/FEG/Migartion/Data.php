@@ -2,6 +2,10 @@
 
 namespace App\Library\FEG\Migration;
 
+use App\Models\ProductMeta;
+use App\Models\product;
+
+use Illuminate\Support\Collection;
 use PDO;
 use DB;
 use Carbon\Carbon;
@@ -175,6 +179,92 @@ class Data
             $messages[] = " However, having ".count($data)." records with 0 as expense category value. Please check and correct and then run again.";
         }
         
+        $L->log("RESULT:", $messages);
+        return $messages;
+    }
+
+
+    public static function createProductMeta($params = array()) {
+        $table = "products";
+        $targetTable = "product_meta";
+        $errorMessage = [];
+        $messages = [];
+        extract(array_merge(array(
+            'cleanFirst' => 0,
+            'date' => null,
+            '_task' => array(),
+            '_logger' => null,
+            'product' => null,
+        ), $params));
+
+        /** @var  $commandObj */
+        /** @var  $_logger */
+        /** @var  $cleanFirst */
+        /** @var  $_task */
+        /** @var  $date */
+        /** @var  $product */
+
+        $L = FEGSystemHelper::setLogger($_logger, 'ProductMeta.log', 'FEGTasks');
+
+        $params = array_merge(compact('cleanFirst', 'table', 'targetTable'), $params);
+
+        $messages = [];
+        $L->log("Start Iterating products");
+        if (isset($commandObj)) {
+            $commandObj->line("Start Iterating products");
+        }
+        else {
+            $commandObj = null;
+        }
+
+
+        if ($cleanFirst == '1') {
+            DB::statement('truncate table product_meta');
+        }
+
+        /** @var  $products Collection */
+        if (!empty($product)) {
+            $products = \App\Models\product::where('id', $product)->get();
+        }
+        else {
+            $products = \App\Models\product::all();
+        }
+        if (isset($products) && !$products->isEmpty()) {
+            foreach($products as $product) {
+                $now = date('Y-m-d H:i:s');
+                $L->log("[$product->id] Update/Add product - ");
+                if (isset($commandObj)) {
+                    $commandObj->line("[$now][$product->id] Update/Add product - ");
+                }
+
+                //$meta = FEGSystemHelper::updateProductMeta($product, [], $commandObj);
+                $meta = FEGSystemHelper::updateProductMeta($product);
+                if (is_string($meta)) {
+                    $L->log("       ERROR: $meta");
+                    if (isset($commandObj)) {
+                        $commandObj->line("     ERROR: $meta");
+                    }
+                   // break;
+                }
+
+                $L->log("       DONE: Update/Add product");
+                if (isset($commandObj)) {
+                    $commandObj->line("     DONE: Update/Add product");
+                }
+
+            }
+
+        } else {
+            $L->log("No Product found!");
+            $messages[] = " No Product found!!";
+        }
+        $L->log("End Iterating products");
+        if (isset($commandObj)) {
+            $commandObj->line("End Iterating products");
+        }
+
+        $messages[] = " All Data updated successfully!";
+
         $L->log("RESULT:", $messages);
         return $messages;
     }

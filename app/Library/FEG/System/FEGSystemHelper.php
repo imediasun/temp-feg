@@ -1772,4 +1772,111 @@ $message" .
         return $innerHTML;*/
     }
 
+
+
+    public static function updateProductMeta($product, $data = [], $options = []) {
+
+        $productId = $product->id;
+        $master = $product->master();
+//        $variations = $product->getProductVariations();
+//
+//        if (empty($variations) || $variations->isEmpty()) {
+//            return "Variations not found";
+//        }
+        if (empty($master)) {
+            $master = $product;
+            //return "Master not found";
+        }
+
+        $matsterVariationProductId = $master->id;
+        $variationId = \SiteHelpers::encryptID($matsterVariationProductId);
+
+        $createData = [
+            'product_id' => $productId,
+            'variation_id' => $variationId,
+            'variation_master_product_id' => $matsterVariationProductId,
+        ];
+        if (isset($comm )) {
+            $comm->line("Product ID: $productId");
+            $comm->line("Master ID: $matsterVariationProductId");
+            $comm->line("VID: $variationId");
+//            $comm->line("V count: ". $variations->count());
+            $comm->line(json_encode($createData));
+        }
+
+        \App\Models\ProductMeta::updateOrCreate(
+            [
+                'product_id' => $productId
+            ],
+            $createData
+        );
+
+        /** @var \App\Models\ProductMeta $meta */
+        $meta =  \App\Models\ProductMeta::where('product_id', $productId)->first();
+
+        $productAllActive = self::getOption('all_product_active_in_api', 0);
+        $activeLimit = self::getOption('product_active_in_api_till', '24 hours');
+
+        if ($productAllActive == 1) {
+            $data['posted_to_api_at'] = null;
+        }
+        else {
+
+            if (!isset($data['posted_to_api_at'])) {
+
+                if (empty($options['order'])) {
+                    $thresholdTimestamp = date("Y-m-d H:i:s", strtotime("-".$activeLimit));
+                    $order =  \App\Models\order::where('is_api_visible', 1)
+                        ->where('api_created_at', '>=', $thresholdTimestamp)
+                        ->whereHas('contents.product', function ($query) use($productId) {
+                            $query->where('id', $productId);
+                        })
+                        ->orderBy('api_created_at', 'desc')
+                        ->first();
+
+                } else {
+                    $order = $options['order'];
+                }
+
+
+                if (!empty($order)) {
+                    $postedToApi = date('Y-m-d H:i:s', strtotime($order->api_created_at));
+                    $data['posted_to_api_at'] = $postedToApi;
+
+                } else {
+                    $data['posted_to_api_at'] = null;
+                }
+            }
+
+            if (!isset($data['posted_to_api_expired_at']) && !empty($data['posted_to_api_at'])) {
+                $expirationTimestamp = date("Y-m-d H:i:s", strtotime($data['posted_to_api_at']." +".$activeLimit));
+                $data['posted_to_api_expired_at'] = $expirationTimestamp;
+            }
+
+        }
+
+        if ($data['posted_to_api_at'] == null) {
+            $data['posted_to_api_expired_at'] = null;
+        }
+
+        if (!empty($data)) {
+            $meta->update($data);
+        }
+
+        return $meta;
+    }
+
+    public static function updateMetaFromOrder($orderID, $data = [], $options = []) {
+        $order = \App\Models\order::where('id', $orderID)->first();
+        $options['order'] = $order;
+        if (!empty($order)) {
+            $contents = $order->orderedContent;
+            foreach($contents as $item) {
+                $product = $item->product;
+                $meta = self::updateMeta($product, $data, $options);
+            }
+        }
+    }
+
+
 }

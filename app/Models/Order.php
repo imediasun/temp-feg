@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use App\Http\Controllers\OrderController;
+use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Sximo\Module;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -967,6 +968,9 @@ class order extends Sximo
                 $updateData['api_created_at'] = $now;
             }
             \DB::update("UPDATE order_received SET api_created_at = '$now' WHERE order_id = $id");
+
+            FEGSystemHelper::updateMetaFromOrder($id);
+
             return self::where('id', $id)->update($updateData);
         }
         return false;
