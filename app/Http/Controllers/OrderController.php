@@ -914,6 +914,9 @@ class OrderController extends Controller
 
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
+            if(!empty($denied_SIDs) && empty($where_in)){
+                $redirect_link = "managefegrequeststore";
+            }
             \Session::put('redirect', $redirect_link);
 
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
