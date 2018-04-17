@@ -95,11 +95,11 @@ class ProductMeta extends Sximo  {
 
             if($createdFlag){
                 $select .= " OR products.updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                $select .= " OR (product_meta.posted_to_api_at >= now()-1 AND product_meta.posted_to_api_expired_at <= NOW()+1)";
+                $select .= " OR (product_meta.posted_to_api_at <= NOW() AND product_meta.posted_to_api_expired_at >= NOW())";
 
             } else{
                 $select .= " AND (products.updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                $select .= " OR (product_meta.posted_to_api_at <= now()-1 AND product_meta.posted_to_api_expired_at >= NOW()+1) )";
+                $select .= " OR (product_meta.posted_to_api_at <= NOW() AND product_meta.posted_to_api_expired_at >= NOW()) )";
             }
 
         }
@@ -144,7 +144,7 @@ class ProductMeta extends Sximo  {
 
 //showAllAsActive
         $showAllAsActive = isset($showAllAsActive) && $showAllAsActive == 1;
-        $postedToAPIDateQuery = "(NOW()-1 >= product_meta.posted_to_api_at AND NOW()+1 <= product_meta.posted_to_api_expired_at)";
+        $postedToAPIDateQuery = "(NOW() >= product_meta.posted_to_api_at AND NOW() <= product_meta.posted_to_api_expired_at)";
         $inactive = $showAllAsActive ? "0": "IF($postedToAPIDateQuery, 0, products.inactive)";
         $retailPriceQuery = "IF(products.retail_price = 0.00, TRUNCATE(products.case_price/products.num_items,5), products.retail_price)";
         $updatedAt = "IF (ISNULL(product_meta.posted_to_api_at),products.updated_at, 
