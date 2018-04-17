@@ -95,8 +95,9 @@ class FegapiController extends Controller
                 $class2 = "App\\Models\\ProductMeta" ;
                 $showAllAsActive = FEGSystemHelper::getOption('all_product_active_in_api', 0);
                 $activeLimit = FEGSystemHelper::getOption('product_active_in_api_till', '24 hours');
-                //return \Response::json($param, 200);
-                $results = $class2::getRowsAPI($param, compact('showAllAsActive', 'activeLimit'));
+                $exposeInactive = FEGSystemHelper::getOption('product_api_expose_all_inactivate_as_active', 0);
+
+                $results = $class2::getRowsAPI($param, compact('showAllAsActive', 'activeLimit', 'exposeInactive'));
                 $qry = $results['query'];
             }
             elseif($class != 'Order' && $class != "Itemreceipt")

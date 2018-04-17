@@ -86,6 +86,15 @@ class ProductMeta extends Sximo  {
         $select=self::querySelectAPI($options);
         $select.=\App\Models\product::queryWhere();
 
+
+        extract($options);
+        /** @var  $showAllAsActive */
+        /** @var  activeLimit */
+        /** @var  $exposeInactive */
+        if (isset($exposeInactive) && $exposeInactive == 1) {
+            $select .= " OR products.inactive=1 ";
+        }
+
         $createdFlag = false;
         if(!empty($createdFrom)){
             $select .= " AND (products.created_at BETWEEN '$createdFrom' AND '$createdTo'";
@@ -142,10 +151,16 @@ class ProductMeta extends Sximo  {
 //        $expense_category = self::getDefaultExpenseCategoryQuery("expns_p.expense_category", "expense_category");
 //        $is_default_expense_category = self::getDefaultExpenseCategoryQuery("expns_p.is_default_expense_category", "is_default_expense_category");
 
-//showAllAsActive
+
+        extract($options);
+        /** @var  $showAllAsActive */
+        /** @var  activeLimit */
+        /** @var  $exposeInactive */
+
         $showAllAsActive = isset($showAllAsActive) && $showAllAsActive == 1;
+        $exposeInactive = isset($exposeInactive) && $exposeInactive == 1;
         $postedToAPIDateQuery = "(NOW() >= product_meta.posted_to_api_at AND NOW() <= product_meta.posted_to_api_expired_at)";
-        $inactive = $showAllAsActive ? "0": "IF($postedToAPIDateQuery, 0, products.inactive)";
+        $inactive = $showAllAsActive || $exposeInactive ? "0": "IF($postedToAPIDateQuery, 0, products.inactive)";
         $retailPriceQuery = "IF(products.retail_price = 0.00, TRUNCATE(products.case_price/products.num_items,5), products.retail_price)";
         $updatedAt = "IF (ISNULL(product_meta.posted_to_api_at),products.updated_at, 
                         IF ($postedToAPIDateQuery, product_meta.posted_to_api_at, products.updated_at) 
