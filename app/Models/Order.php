@@ -971,7 +971,7 @@ class order extends Sximo
 
             $model = self::where('id', $id)->update($updateData);
 
-            FEGSystemHelper::updateMetaFromOrder($id);
+            FEGSystemHelper::updateMetaFromOrder($id, ['posted_to_api_at' => $now]);
 
             return $model;
         }

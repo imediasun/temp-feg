@@ -1873,7 +1873,7 @@ $message" .
             $contents = $order->orderedContent;
             foreach($contents as $item) {
                 $product = $item->product;
-                $meta = self::updateMeta($product, $data, $options);
+                $meta = self::updateProductMeta($product, $data, $options);
             }
         }
     }
