@@ -190,8 +190,8 @@ class ProductMeta extends Sximo  {
                   GROUP_CONCAT(products.ticket_value) AS ticket_value,
                   GROUP_CONCAT($inactive)             AS inactive
                   
-                FROM products 
-                  LEFT JOIN product_meta ON products.id = product_meta.product_id 
+                FROM  product_meta
+                  LEFT JOIN products ON products.id = product_meta.product_id 
                   LEFT JOIN products mp ON mp.id = product_meta.variation_master_product_id 
                   LEFT JOIN order_type O ON (O.id = products.prod_type_id)
                   LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id) ";
