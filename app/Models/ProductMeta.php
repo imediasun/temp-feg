@@ -128,7 +128,8 @@ class ProductMeta extends Sximo  {
 
         //$limitConditional = 'LIMIT 0 , 1';
 
-        $groupConditions = " GROUP BY product_meta.variation_id ";
+        //$groupConditions = " GROUP BY product_meta.variation_id ";
+        $groupConditions = " ";
 
         $tq =  $select. " {$params} {$groupConditions} {$orderConditional}  ";
         $q = $tq ." {$limitConditional} ";
@@ -144,14 +145,6 @@ class ProductMeta extends Sximo  {
 
     }
     public static function querySelectAPI($options = []){
-
-//        $id = self::getDefaultExpenseCategoryQuery("expns_p.id", "id");
-//        $item_description = self::getDefaultExpenseCategoryQuery("expns_p.item_description", "item_description");
-//        $netsuite_description = self::getDefaultExpenseCategoryQuery("expns_p.netsuite_description", "netsuite_description");
-//        $expense_category = self::getDefaultExpenseCategoryQuery("expns_p.expense_category", "expense_category");
-//        $is_default_expense_category = self::getDefaultExpenseCategoryQuery("expns_p.is_default_expense_category", "is_default_expense_category");
-
-
         extract($options);
         /** @var  $showAllAsActive */
         /** @var  activeLimit */
@@ -162,55 +155,87 @@ class ProductMeta extends Sximo  {
         $postedToAPIDateQuery = "(NOW() >= product_meta.posted_to_api_at AND NOW() <= product_meta.posted_to_api_expired_at)";
         $inactive = $showAllAsActive || $exposeInactive ? "0": "IF($postedToAPIDateQuery, 0, products.inactive)";
         $retailPriceQuery = "IF(products.retail_price = 0.00, TRUNCATE(products.case_price/products.num_items,5), products.retail_price)";
-        $updatedAt = "IF (ISNULL(product_meta.posted_to_api_at),products.updated_at, 
+        $updatedAt = "IF (ISNULL(product_meta.posted_to_api_at), products.updated_at, 
                         IF ($postedToAPIDateQuery, product_meta.posted_to_api_at, products.updated_at) 
                        )";
 
-        $sql = "SELECT
-                  
-                  IFNULL(mp.id, products.id) AS id,
-                  IFNULL(mp.item_description, products.item_description) AS item_description,
-                  IFNULL(mp.netsuite_description, products.netsuite_description) AS netsuite_description,
-                  IFNULL(mp.expense_category, products.expense_category) AS expense_category,
-                  IFNULL(mp.is_default_expense_category, products.is_default_expense_category) AS is_default_expense_category,
-                                    
-                  products.sku,
-                  products.vendor_description,
-                  products.size,
-                  products.details,
-                  products.num_items,
-                  products.vendor_id,
-                  products.unit_price,
-                  products.case_price,
-                  products.is_reserved,
-                  products.reserved_qty,
-                  products.min_order_amt,
-                  products.img,
-                  products.inactive_by,
-                  products.eta,
-                  products.in_development,
-                  products.limit_to_loc_group_id,
-                  products.date_added,
-                  products.hot_item,
-                  products.created_at,
-                  $updatedAt AS updated_at,
-                  products.exclude_export,
-                  products.allow_negative_reserve_qty,
-                  products.reserved_qty_limit,
-                  
-                  GROUP_CONCAT(O.order_type)          AS prod_type_id,
-                  GROUP_CONCAT(T.type_description)    AS prod_sub_type_id,
-                  GROUP_CONCAT(products.id)           AS product_id,
-                  GROUP_CONCAT($retailPriceQuery)     AS retail_price,
-                  GROUP_CONCAT(products.ticket_value) AS ticket_value,
-                  GROUP_CONCAT($inactive)             AS inactive
-                  
-                FROM  product_meta
+
+        $mAlias = 'mp';
+        $masterFields = [
+            'sku',
+            'vendor_description',
+            'size',
+            'details',
+            'num_items',
+            'vendor_id',
+            'unit_price',
+            'case_price',
+            'is_reserved',
+            'min_order_amt',
+            'eta',
+            'img',
+            'in_development',
+            'limit_to_loc_group_id',
+            'hot_item',
+            'exclude_export',
+            'reserved_qty',
+            'allow_negative_reserve_qty',
+            'reserved_qty_limit',
+            'date_added',
+            'expense_category',
+        ];
+
+        $vAlias = 'products';
+        $variationFields = [
+            'id',
+            'item_description',
+            'netsuite_description',
+            'ticket_value',
+            'inactive_by',
+            'is_default_expense_category',
+            'created_at',
+
+            'inactive' => $inactive,
+            'retail_price' => $retailPriceQuery,
+            'updated_at' => $updatedAt,
+
+            'prod_sub_type_id' => 'T.type_description',
+            'prod_type_id' => 'O.order_type',
+            'product_id' => 'products.id',
+        ];
+
+        $sql = "SELECT ";
+
+        $selects = [];
+        foreach($masterFields as $key => $def) {
+            if (is_numeric($key)) {
+                $selects[] = "IFNULL($mAlias.$def, $vAlias.$def) as `$def`";
+            }
+            else {
+                $selects[] = "$def as `$key`";
+            }
+        }
+        foreach($variationFields as $key => $def) {
+            if (is_numeric($key)) {
+                $selects[] = "$vAlias.$def as `$def`";
+            }
+            else {
+                $selects[] = "$def as `$key`";
+            }
+        }
+
+        $selectsSeparator = ",\r\n";
+        $selectsQuery = implode($selectsSeparator, $selects);
+        if (empty($selectsQuery)) {
+            $selectsQuery = "*";
+        }
+        $sql .= $selectsQuery;
+
+        $sql .= " FROM  product_meta
                   LEFT JOIN products ON products.id = product_meta.product_id 
                   LEFT JOIN products mp ON mp.id = product_meta.variation_master_product_id 
                   LEFT JOIN order_type O ON (O.id = products.prod_type_id)
                   LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id) ";
-
 
         return $sql;
     }
