@@ -104,7 +104,13 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                     @if(SiteHelpers::filterColumn($limited ))
                                         <td data-form="{{ $t['field'] }}"
                                             data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+                                            @if($t['field'] == 'reserved_qty_reason')
+                                                <input type="text" style="display:none;"   name="reserved_qty_reason" class="form-control input-sm reserved_qty_reason_text1" value="">
+                                                @elseif($t['field'] == 'reserved_qty')
+                                                <input type="text" name="reserved_qty" id="reserved_qty_text" class="form-control input-sm reserved_qty_text" value="">
+                                                @else
                                             {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
+                                                @endif
                                         </td>
                                     @endif
                                 @endif
@@ -651,6 +657,22 @@ $(document).ready(function() {
             },
             error:function(res){
                 console.log(res);
+            }
+        });
+
+        $(document).on("change",".reserved_qty_text",function(){
+            var prev_reserved_qty = $(this).parent('td[data-field="reserved_qty"]').attr("data-values");
+            var textfield = $(this).parent('td[data-field="reserved_qty"]').parent('tr').children('td[data-field="reserved_qty_reason"]').children('input[type="text"]');
+            if(Number(prev_reserved_qty) < Number($(this).val())){
+                textfield.val('');
+                textfield.attr("disabled","disabled");
+                textfield.removeAttr("required");
+                textfield.css("display","none");
+            }else{
+                textfield.val('');
+                textfield.removeAttr("disabled");
+                textfield.attr("required","required");
+                textfield.css("display","block");
             }
         });
     });

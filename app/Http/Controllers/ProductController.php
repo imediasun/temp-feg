@@ -604,9 +604,7 @@ class ProductController extends Controller
                 $data = $this->validatePost('products',true);
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
             }
-            if(isset($data['reserved_qty_reason'])){
-                unset($data['reserved_qty_reason']);
-            }
+
             if($id == 0 || empty($id)){
                 $UniqueID = substr(md5(md5(time()+time())."-".md5(time())),0,10);
                 $data['variation_id'] = $UniqueID;
