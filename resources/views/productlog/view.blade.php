@@ -93,6 +93,7 @@
                     </div>
                 </div>
                 <br />
+
                 <?php
                 $logContents = $productLogContent['Contents'];
                 ?>
