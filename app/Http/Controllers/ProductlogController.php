@@ -189,7 +189,6 @@ class ProductlogController extends Controller {
 
             }
         }
-        dd($productLogContentData['Contents']);
 
         $this->data['productLogContent'] = $productLogContentData;
         $this->data['tableGrid'] = $this->info['config']['grid'];
