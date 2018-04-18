@@ -322,7 +322,7 @@ class ProductlogController extends Controller {
             'Item Name',
             'Po #',
             'Amount',
-            'Added/ Reduced	',
+            'Reserved Quantity',
             'Reason	',
             'Logged By',
             'Logged At',
@@ -372,6 +372,20 @@ class ProductlogController extends Controller {
                 $userData = User::find($item->adjusted_by);
                 return $item->adjusted_by = $userData->first_name . " " . $userData->last_name;
             });
+
+            $totalRecords = $Contents->count();
+            $Contents[$totalRecords-1]->reservedQty = $Contents[$totalRecords-1]->adjustment_amount;
+            $initialAmount = $Contents[$totalRecords-1]->adjustment_amount;
+            $Contents[$totalRecords-1]->reservedQuantity = $initialAmount;
+            for($i = ($totalRecords-2); $i>=0; $i--){
+                if($Contents[$i]->adjustment_type == 'negative'){
+                    $Contents[$totalRecords-1]->reservedQty -= $Contents[$i]->adjustment_amount;
+                }else{
+                    $Contents[$totalRecords-1]->reservedQty += $Contents[$i]->adjustment_amount;
+                }
+                $Contents[$i]->reservedQuantity = $Contents[$totalRecords-1]->reservedQty;
+            }
+
             $productLogContentData = $Contents;
         }
         $this->data['productLogContentData'] = $productLogContentData;
