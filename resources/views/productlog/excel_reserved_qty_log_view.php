@@ -18,8 +18,8 @@ foreach ($data as $d) {
     $content .= '<tr>';
         $content .= '<td> '. $row->vendor_description  .'</td>';
         $content .= '<td>'.((!empty($poNumber) || $poNumber=0)?$poNumber:"No Data").'</td>';
-        $content .= '<td>'.($d->adjustment_amount > 0 ? $d->adjustment_amount:($d->adjustment_amount * -1)).'</td>';
-        $content .= '<td>'.(!empty($d->adjustment_type=='negative') ? 'Reduced':'Added').'</td>';
+        $content .= '<td>'.($d->adjustment_type =='negative' ? ($d->adjustment_amount<0) ? $d->adjustment_amount:$d->adjustment_amount * -1:$d->adjustment_amount).'</td>';
+        $content .= '<td>'.$d->reservedQuantity.'</td>';
         $content .= '<td>'.(!empty($d->reserved_qty_reason) ? $d->reserved_qty_reason:"No Data").'</td>';
         $content .= '<td>'.$d->adjusted_by.'</td>';
         $content .= '<td>'.$d->created_at.'</td>';
