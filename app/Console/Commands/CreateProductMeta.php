@@ -40,25 +40,19 @@ class CreateProductMeta extends Command
     {
         set_time_limit(0);
         $L = new MyLog("CreateProductMeta.log", "FEGTasks", "Tasks");
-        $L->log('Start Cron Tasks');
+
         $this->line('Start Create Product Meta');
+        $L->log('Start Create Product Meta');
 
         $messages = \App\Library\FEG\Migration\Data::createProductMeta(['commandObj' => $this]);
+
         foreach($messages as $message) {
             $this->line($message);
+            $L->log($message);
         }
 
-        try {
-
-
-            
-        } catch(\Exception $e) {
-
-            $this->line('Error: ', $e->getMessage());
-        }
-
+        $L->log('End Create Product Meta');
         $this->line('End Create Product Meta');
-        $L->log('End Cron Tasks');
     }
 
 }

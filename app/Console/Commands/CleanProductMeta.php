@@ -39,15 +39,20 @@ class CleanProductMeta extends Command
      */
     public function handle()
     {
-        set_time_limit(0);
+
         $L = new MyLog("CleanProductMeta.log", "FEGCronTasks/clean-product-meta", "Tasks");
-        $this->line('Start Create Product Meta Cron Task');
+        $this->line('Start clean Product Meta Cron Task');
+        $L->log('Start clean Product Meta Cron Task');
 
         $messages = FEGSystemHelper::cleanProductMeta(['commandObj' => $this]);
+
         foreach($messages as $message) {
             $this->line($message);
-        };
-        $L->log('End Create Product Cron Tasks');
+            $L->log($message);
+        }
+
+        $L->log('End Clean Product Cron Tasks');
+        $this->line('End Clean Product Cron Tasks');
     }
 
 }
