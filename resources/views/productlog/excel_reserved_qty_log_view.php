@@ -13,7 +13,7 @@ foreach ($data as $d) {
     if(!empty($orderID) && $orderID!=0)
     {
         $orderDetails = \App\Models\Order::where('id',$orderID)->first();
-        $poNumber = $orderDetails->po_number;
+        $poNumber = isset($orderDetails->po_number)?$orderDetails->po_number:'No Data';
     }
     $content .= '<tr>';
         $content .= '<td> '. $row->vendor_description  .'</td>';
