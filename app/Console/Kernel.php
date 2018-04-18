@@ -48,7 +48,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('restore:po')->everyMinute();
         $schedule->command('check:stuff')->daily();
 
-        $schedule->command('cleanproductmeta')->daily();
+        $schedule->command('cleanproductmeta')->hourly();
 
     }
 }
