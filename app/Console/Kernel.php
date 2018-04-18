@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\AutoCloseOrder::class,
         \App\Console\Commands\Elm5TaskManager::class,
         \App\Console\Commands\CreateProductMeta::class,
+        \App\Console\Commands\CleanProductMeta::class,
         \App\Console\Commands\CreateDummyOrders::class,
         \App\Console\Commands\SyncUserLocations::class,
         \App\Console\Commands\RefreshOAuthToken::class,
