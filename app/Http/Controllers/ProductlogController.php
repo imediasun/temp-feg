@@ -173,18 +173,18 @@ class ProductlogController extends Controller
                 return $item->adjusted_by = $userData->first_name . " " . $userData->last_name;
             });
             $productLogContentData['Contents'] = $Contents;
-            $productLogContentData['reducedByOrder'] = $Contents->filter(function ($item) {
-                if ($item['order_id'] > 0) {
-                    return $item;
+            $totalRecords = $productLogContentData['Contents']->count();
+            $productLogContentData['Contents'][$totalRecords-1]->reservedQty = $productLogContentData['Contents'][$totalRecords-1]->adjustment_amount;
+            $initialAmount = $productLogContentData['Contents'][$totalRecords-1]->adjustment_amount;
+            $productLogContentData['Contents'][$totalRecords-1]->reservedQuantity = $initialAmount;
+            for($i = ($totalRecords-2); $i>=0; $i--){
+                if($productLogContentData['Contents'][$i]->adjustment_type == 'negative'){
+                    $productLogContentData['Contents'][$totalRecords-1]->reservedQty -= $productLogContentData['Contents'][$i]->adjustment_amount;
+                }else{
+                    $productLogContentData['Contents'][$totalRecords-1]->reservedQty += $productLogContentData['Contents'][$i]->adjustment_amount;
                 }
-
-            });
-            $productLogContentData['addedFromProductList'] = $Contents->filter(function ($item) {
-                if ($item['order_id'] == 0 || $item['order_id'] == '') {
-                    return $item;
-                }
-
-            });
+                $productLogContentData['Contents'][$i]->reservedQuantity = $productLogContentData['Contents'][$totalRecords-1]->reservedQty;
+            }
         }
 
         $this->data['productLogContent'] = $productLogContentData;
