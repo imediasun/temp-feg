@@ -200,6 +200,7 @@ class ProductlogController extends Controller {
         $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		return view('productlog.view',$this->data);
+
 	}
 
 
