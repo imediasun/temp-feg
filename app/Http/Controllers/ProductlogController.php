@@ -1,12 +1,13 @@
 <?php namespace App\Http\Controllers;
 
+
 use App\Http\Controllers\controller;
 use App\Models\Productlog;
 use App\Models\ReservedQtyLog;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ;
-use App\User;
 
 class ProductlogController extends Controller {
 
@@ -283,7 +284,6 @@ class ProductlogController extends Controller {
         // build sql query based on search filters
 
 
-
         $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'reserved_qty' => '']);
         $skipFilters = ['search_all_fields'];
         $mergeFilters = [];
@@ -307,6 +307,75 @@ class ProductlogController extends Controller {
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         return $filter;
+    }
+
+    public function getExport($t = 'excel')
+    {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+
+        $ID = Input::get('id');
+
+        $fields = [
+            'Item Name',
+            'Po #',
+            'Amount',
+            'Added/ Reduced	',
+            'Reason	',
+            'Logged By',
+            'Logged At',
+        ];
+
+        $rows = $this->getDataForExcel($ID);
+
+        $content = array(
+            'fields' => $fields,
+            'data' => $rows['productLogContentData'],
+            'row' => $rows['row'],
+            'title' => $this->data['pageTitle'],
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('productlog.excel_reserved_qty_log_view', $content);
+        }
+    }
+
+    function getDataForExcel($id)
+    {
+        $row = $this->model->getRow($id);
+        $this->data['row'] = $row;
+
+        $productLogContentData = "";
+        if (!empty($row->variation_id)) {
+            $productLogContent = ReservedQtyLog::where("variation_id", "=", $row->variation_id);
+            $Contents = $productLogContent->orderBy('id', 'DESC')->get()->filter(function ($item) {
+                $userData = User::find($item->adjusted_by);
+                return $item->adjusted_by = $userData->first_name . " " . $userData->last_name;
+            });
+            $productLogContentData = $Contents;
+        }
+        $this->data['productLogContentData'] = $productLogContentData;
+
+        return $this->data;
     }
 
 }
