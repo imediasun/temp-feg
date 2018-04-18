@@ -1895,5 +1895,7 @@ $message" .
         $q = "UPDATE $table SET posted_to_api_at=null, posted_to_api_expired_at=null WHERE posted_to_api_expired_at < NOW()";
         DB::update($q);
 
+        return $messages;
+
     }
 }
