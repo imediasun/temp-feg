@@ -178,15 +178,16 @@ class ProductlogController extends Controller {
             });
             $productLogContentData['Contents'] = $Contents;
             $totalRecords = $productLogContentData['Contents']->count();
-            $productLogContentData['Contents'][$totalRecords-1]->adjustments = $productLogContentData['Contents'][$totalRecords-1]->adjustment_amount;
+            $productLogContentData['Contents'][$totalRecords-1]->reservedQty = $productLogContentData['Contents'][$totalRecords-1]->adjustment_amount;
+            $initialAmount = $productLogContentData['Contents'][$totalRecords-1]->adjustment_amount;
+            $productLogContentData['Contents'][$totalRecords-1]->reservedQuantity = $initialAmount;
             for($i = ($totalRecords-2); $i>=0; $i--){
-                if($productLogContentData['Contents'][$i]->adjustment_type == 'positive'){
-                    $productLogContentData['Contents'][$totalRecords-1]->adjustments +=$productLogContentData['Contents'][$i]->adjustment_amount;
+                if($productLogContentData['Contents'][$i]->adjustment_type == 'negative'){
+                    $productLogContentData['Contents'][$totalRecords-1]->reservedQty -= $productLogContentData['Contents'][$i]->adjustment_amount;
                 }else{
-                    $productLogContentData['Contents'][$totalRecords-1]->adjustments -=$productLogContentData['Contents'][$i]->adjustment_amount;
+                    $productLogContentData['Contents'][$totalRecords-1]->reservedQty += $productLogContentData['Contents'][$i]->adjustment_amount;
                 }
-                $productLogContentData['Contents'][$i]->adjustments = $productLogContentData['Contents'][$totalRecords-1]->adjustments;
-
+                $productLogContentData['Contents'][$i]->reservedQuantity = $productLogContentData['Contents'][$totalRecords-1]->reservedQty;
             }
         }
 
