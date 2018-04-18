@@ -179,8 +179,11 @@ class ProductlogController extends Controller {
             });
             $productLogContentData['Contents'] = $Contents;
             $totalRecords = $productLogContentData['Contents']->count();
-            $productLogContentData['Contents'][$totalRecords-1]->reservedQty = $productLogContentData['Contents'][$totalRecords-1]->adjustment_amount;
             $initialAmount = $productLogContentData['Contents'][$totalRecords-1]->adjustment_amount;
+            if($productLogContentData['Contents'][$totalRecords-1]->adjustment_type == 'negative'){
+                $initialAmount = $initialAmount * -1;
+            }
+            $productLogContentData['Contents'][$totalRecords-1]->reservedQty = $initialAmount;
             $productLogContentData['Contents'][$totalRecords-1]->reservedQuantity = $initialAmount;
             for($i = ($totalRecords-2); $i>=0; $i--){
                 if($productLogContentData['Contents'][$i]->adjustment_type == 'negative'){
