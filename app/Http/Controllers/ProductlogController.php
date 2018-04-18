@@ -177,19 +177,19 @@ class ProductlogController extends Controller {
                 return $item->adjusted_by = $userData->first_name." ".$userData->last_name;
             });
             $productLogContentData['Contents'] = $Contents;
-            $productLogContentData['reducedByOrder'] = $Contents->filter(function ($item) {
-                if($item['order_id']>0){
-                    return $item;
+            $totalRecords = $productLogContentData['Contents']->count();
+            $productLogContentData['Contents'][$totalRecords-1]->adjustments = $productLogContentData['Contents'][$totalRecords-1]->adjustment_amount;
+            for($i = ($totalRecords-2); $i>=0; $i--){
+                if($productLogContentData['Contents'][$i]->adjustment_type == 'positive'){
+                    $productLogContentData['Contents'][$totalRecords-1]->adjustments +=$productLogContentData['Contents'][$i]->adjustment_amount;
+                }else{
+                    $productLogContentData['Contents'][$totalRecords-1]->adjustments -=$productLogContentData['Contents'][$i]->adjustment_amount;
                 }
+                $productLogContentData['Contents'][$i]->adjustments = $productLogContentData['Contents'][$totalRecords-1]->adjustments;
 
-            });
-            $productLogContentData['addedFromProductList'] = $Contents->filter(function ($item) {
-                if($item['order_id'] == 0 || $item['order_id'] == ''){
-                    return $item;
-                }
-
-            });
+            }
         }
+        dd($productLogContentData['Contents']);
 
         $this->data['productLogContent'] = $productLogContentData;
         $this->data['tableGrid'] = $this->info['config']['grid'];
