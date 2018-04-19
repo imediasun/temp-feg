@@ -1411,6 +1411,11 @@
                             request.vendor_id = $("#vendor_id").val();
                         }
 
+                        var orderTypeId = $(obj).closest('form').find("#order_type_id").val() || '';
+                        if (orderTypeId != "") {
+                            request.order_type_id = orderTypeId;
+                        }
+
                         var already_added_products = [], exclude_products = '';
                         $('.clonedInput').each(function (i, ele) {
                             var product_id = $(ele).find("[name='product_id[]']").first().val();

@@ -1893,6 +1893,13 @@ class OrderController extends Controller
         $excludeProducts = Input::get('exclude_products', null);
         $whereWithVendorCondition = $whereWithExcludeProductCondition = "";
 
+        $orderTypeId = Input::get('order_type_id', 0);
+        $whereOrderTypeCondition = "";
+        // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies
+        if (!empty($orderTypeId) && in_array($orderTypeId, [6,7,8,17])) {
+            $whereOrderTypeCondition = " AND products.prod_type_id = $orderTypeId";
+        }
+
         //get products related to selected vendor only
         if (!empty($vendorId)) {
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
@@ -1919,6 +1926,7 @@ class OrderController extends Controller
                                 FROM products
                                 WHERE vendor_description LIKE '%$term%' 
                                 AND products.inactive=0  $whereWithVendorCondition  $whereWithExcludeProductCondition  
+                                  $whereOrderTypeCondition
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
                                  Limit 0,10");
