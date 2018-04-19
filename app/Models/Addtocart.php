@@ -282,14 +282,8 @@ FROM requests
             if(in_array($product->prod_type_id,$casePriceOrders)){
                 $product->lineTotal = $product->case_price * $product->qty;
             }
-            elseif(in_array($product->prod_type_id,$unitPriceOrders)){
-                $product->lineTotal = $product->unit_price * $product->qty;
-                if((int)$product->unit_price <= 0){
-                    $product->lineTotal = $product->case_price * $product->qty;
-                }
-            }
             else{
-                $product->lineTotal = $product->case_price * $product->qty;
+                Product::calculateLineTotalForUnitPrice($product);
             }
         }
         return $data;
