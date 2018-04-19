@@ -1176,6 +1176,7 @@
                                 $('.itemstable .clonedInput textarea.item').attr('readonly', 'readonly');
                                 $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                                 $('.itemstable .clonedInput:first-child textarea').val('');
+                                $('.itemstable .clonedInput input.item_name').removeAttr('readonly');
                                 $('#total_cost').val(0.00);
                                 $('input[name="Subtotal"]').val(0.00);
                             },
