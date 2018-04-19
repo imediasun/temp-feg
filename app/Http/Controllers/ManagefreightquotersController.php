@@ -114,6 +114,7 @@ class ManagefreightquotersController extends Controller
         $this->data['bottomMessage'] = @$results['bottomMessage'];
 
         $this->data['rowData'] = $results['rows'];
+
 // Build Pagination
         $this->data['pagination'] = $pagination;
 // Build pager number and append current param GET
@@ -332,6 +333,7 @@ class ManagefreightquotersController extends Controller
                     $from_state = $query[0]->loc_state;
                     $from_zip = $query[0]->loc_zip;
                     $from_loading_info = $query[0]->loading_info;
+                    $liftgate = $query[0]->liftgate;
                     $from_contact_full_name = $query[0]->user_first_name . ' ' . $query[0]->user_last_name;
                     $from_contact_email = $query[0]->user_email;
                     $from_contact_phone = $query[0]->user_phone;
@@ -346,6 +348,7 @@ class ManagefreightquotersController extends Controller
                     $from_state = $query[0]->state;
                     $from_zip = $query[0]->zip;
                     $from_loading_info = '';
+                    $liftgate = 0;
                     $from_contact_full_name = $query[0]->games_contact_name;
                     $from_contact_email = $query[0]->games_contact_email;
                     $from_contact_phone = $query[0]->games_contact_phone;
@@ -360,6 +363,7 @@ class ManagefreightquotersController extends Controller
                 $from_contact_email = $request->get('from_contact_email');
                 $from_contact_phone = $request->get('from_contact_phone');
                 $from_loading_info = $request->get('from_loading_info');
+                $liftgate = 0;
 
 ///ADD VENDOR LOGIC COMING SOON
             }
@@ -374,6 +378,7 @@ class ManagefreightquotersController extends Controller
                         $to_state[] = $query[0]->loc_state;
                         $to_zip[] = $query[0]->loc_zip;
                         $to_loading_info[] = $query[0]->loading_info;
+                        $to_liftgate[] = $query[0]->liftgate;
                         $to_contact_full_name[] = $query[0]->user_first_name . ' ' . $query[0]->user_last_name;
                         $to_contact_email[] = $query[0]->user_email;
                         $to_contact_phone[] = $query[0]->user_phone;
@@ -389,6 +394,7 @@ class ManagefreightquotersController extends Controller
                     $to_state = $query[0]->state;
                     $to_zip = $query[0]->zip;
                     $to_loading_info = '';
+                    $to_liftgate = 0;
                     $to_contact_full_name = $query[0]->games_contact_name;
                     $to_contact_email = $query[0]->games_contact_email;
                     $to_contact_phone = $query[0]->games_contact_phone;
@@ -403,9 +409,22 @@ class ManagefreightquotersController extends Controller
                 $to_contact_email = $request->get('to_contact_email');
                 $to_contact_phone = $request->get('to_contact_phone');
                 $to_loading_info = $request->get('to_loading_info');
+                $to_liftgate = 0;
             }
-            
+            $fromLoadingInfo =[];
+            if(!empty($from_loading_info)){
+                $from_loading_info = "Shipping Restriction: ".$from_loading_info;
+            }
+            if(!empty($from_loading_info)){
+                $fromLoadingInfo[] = $from_loading_info;
+            }
+            if($liftgate == 1){
+                $fromLoadingInfo[] = ' REQUIRES LIFTGATE';
+            }
+            $from_loading_info = implode(" |",$fromLoadingInfo);
+
             if (!empty($from_loading_info)) {
+
                 $from_loading_info = '<b>**' . $from_loading_info . '**</b> <br>';
             }
             $subject = 'FREIGHT QUOTE For Family Entertainment Group - ';
@@ -522,6 +541,17 @@ class ManagefreightquotersController extends Controller
                         $toMessage .= ((!empty($to_contact_full_name[$i]) && !empty($to_contact_phone[$i])) ? ' | ' : '') . $to_contact_email[$i];
                     }
                     $toMessage.= '<br>';
+                    $toLoadingInfo =[];
+                    if(!empty($to_loading_info[$i])){
+                        $to_loading_info[$i] = "Shipping Restriction: ".$to_loading_info[$i];
+                    }
+                    if(!empty($to_loading_info[$i])){
+                        $toLoadingInfo[] = $to_loading_info[$i];
+                    }
+                    if($to_liftgate[$i] == 1){
+                        $toLoadingInfo[] = ' REQUIRES LIFTGATE';
+                    }
+                    $to_loading_info[$i] = implode(" |",$toLoadingInfo);
                     if(!empty($to_loading_info[$i]))
                     {
                         $toMessage.=   '<b style="color:red">**' . $to_loading_info[$i] . '**</b>';
@@ -559,8 +589,20 @@ class ManagefreightquotersController extends Controller
                     $toMessage .= ((!empty($to_contact_full_name) && !empty($to_contact_phone)) ? ' | ' : '') . $to_contact_email;
                 }
                 $toMessage.= '<br>';
+                $toLoadingInfo =[];
+                if(!empty($to_loading_info)){
+                    $to_loading_info = "Shipping Restriction: ".$to_loading_info;
+                }
+                if(!empty($to_loading_info)){
+                    $toLoadingInfo[] = $to_loading_info;
+                }
+                if($to_liftgate == 1){
+                    $toLoadingInfo[] = ' REQUIRES LIFTGATE';
+                }
+                $to_loading_info = implode(" |",$toLoadingInfo);
                 if(!empty($to_loading_info))
                 {
+
                     $toMessage.=   '<b style="color:red">**' . $to_loading_info . '**</b>';
                 }
                 $toMessage .= '<br><br>';

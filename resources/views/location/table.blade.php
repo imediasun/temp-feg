@@ -143,7 +143,27 @@ if (!$colconfigs) {
                                                data-on-text="Active" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
                                                id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
                                     @else
+                                        @if($field['field'] == 'loading_info')
+                                           @if($row->liftgate == 1)
+                                            <?php $loading_info=[];
+                                                if(!empty($row->loading_info)){
+                                                    $loading_info[] = $row->loading_info;
+                                                }
+                                                $loading_info[] = ' REQUIRES LIFTGATE';
+                                                ?>
+                                               {{ implode(" |",$loading_info) }}
+                                            @else
+                                                <?php
+                                                if(!empty($row->loading_info)){
+                                                    echo $row->loading_info;
+                                                }else{
+                                                    echo "No Data";
+                                                }
+                                                ?>
+                                               @endif
+                                            @else
                                     {!! $value !!}
+                                            @endif
                                 @endif
                                 </td>
                         @endif
@@ -288,6 +308,16 @@ if (!$colconfigs) {
         }
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+    });
+    $(function () {
+        $(document).ajaxComplete(function (event, xhr, settings) {
+            var $urlArray = settings.url.split('/');
+            if (typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null) {
+                if (settings.url === "location/save/" + $urlArray[2]) {
+                    $('a[data-original-title="Reload Data"]').trigger("click");
+                }
+            }
+        });
     });
 </script>
 <style>

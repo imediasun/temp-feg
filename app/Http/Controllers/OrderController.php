@@ -1382,10 +1382,18 @@ class OrderController extends Controller
             if ($data[0]['freight_type'] == 'Employee Pickup') {
                 $data[0]['po_location'] = '**WILL PICKUP FROM ' . $data[0]['vendor_name'] . '**' . "\n" . $data[0]['po_location'];
             }
+            $loadingInfo =[];
+            if(!empty($data[0]['loading_info'])){
+                $loadingInfo[] =" | Shipping Restriction: ".$data[0]['loading_info'];
+            }
+            if(isset($data[0]['liftgate']) && $data[0]['liftgate'] ==1 ){
+                $loadingInfo[] = '| REQUIRES LIFTGATE';
+            }
+            $data[0]['loading_info'] = implode(" ",$loadingInfo);
 
-            if (!empty($data[0]['loading_info']) && ( in_array($data[0]['order_type_id'],Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM) || $data[0]['order_type_id'] == Order::FIXED_ASSET_ID)) //IF ORDER TYPE IS TICKTS/TOKENS OR FIXED ASSET -- AKA LARGE ITEMS
+            if (!empty($data[0]['loading_info']))
             {
-                $data[0]['freight_type'] = $data[0]['freight_type'] . "\n" . 'DELIVERY NOTES: **' . $data[0]['loading_info'] . '**';
+                $data[0]['freight_type'] = $data[0]['freight_type'] . "\n" . ' ' . $data[0]['loading_info'] . '';
             }
 
             if (!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == Order::ORDER_TYPE_REDEMPTION || $data[0]['order_type_id'] == Order::ORDER_TYPE_INSTANT_WIN_PRIZE)) {
