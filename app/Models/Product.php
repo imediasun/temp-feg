@@ -502,4 +502,21 @@ WHERE orders.is_api_visible = 1
             return $a->$prop !== $value;
         });
     }
+
+        public static function calculateLineTotalForUnitPrice($product){
+            $price = $product->unit_price <= 0 ? $product->case_price : $product->unit_price;
+            $product->lineTotal = $product->qty * $price;
+        }
+
+    public function master()
+    {
+        $query = self::where([
+            'vendor_description' => $this->vendor_description,
+            'sku' => $this->sku,
+            'case_price' => $this->case_price,
+            'is_default_expense_category' => 1,
+        ]);
+
+        return $query->first();
+    }
 }
