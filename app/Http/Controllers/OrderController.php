@@ -1118,19 +1118,27 @@ class OrderController extends Controller
         $orderId = $request->input('ids');
         $explanations = trim(strip_tags($request->input('explaination')));
         $order = Order::withTrashed()->where('id', $orderId)->first();
-        if(empty($order)){
+        if (empty($order)) {
             return Redirect::to('order')->with('messagetext', "Invalid Order")->with('msgstatus', 'error');
         }
 
-        $id = $request->input('ids');
-        $explaination = $request->input('explaination');
+        if ($order->canRestoreAllReservedProducts() === false) {
+            return Redirect::to('order')->with('messagetext', "Order has not been restored, Reason: Insufficient reserved quantity")->with('msgstatus', 'error');
+        }
 
-        $result = \DB::update("update orders set notes = concat(notes,'<br>',".\DB::connection()->getPdo()->quote($explaination)."), deleted_at=null,status_id=1, deleted_by=null where id in($id) ");
+        $order->notes = $order->notes . '<br>' . $explanations;
 
+        try {
+            $result = $order->restore();
+            $message = "Order ID : {$order->id} has been restored successfully!";
+        } catch (\Exception $e) {
+            $result = false;
+            $message = "Order ID : {$order->id} has not been restored. Reason: " . $e->getMessage();
+        }
         if ($result) {
-            return Redirect::to('order')->with('messagetext', 'Order has been restored successfully!')->with('msgstatus', 'success');
+            return Redirect::to('order')->with('messagetext', $message)->with('msgstatus', 'success');
         } else {
-            return Redirect::to('order')->with('messagetext', 'This order has already been restored!')->with('msgstatus', 'error');
+            return Redirect::to('order')->with('messagetext', $message)->with('msgstatus', 'error');
         }
     }
 
