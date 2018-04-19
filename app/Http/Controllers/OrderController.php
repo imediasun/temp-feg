@@ -1895,8 +1895,8 @@ class OrderController extends Controller
 
         $orderTypeId = Input::get('order_type_id', 0);
         $whereOrderTypeCondition = "";
-        // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies
-        if (!empty($orderTypeId) && in_array($orderTypeId, [6,7,8,17])) {
+        // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
+        if (!empty($orderTypeId) && in_array($orderTypeId, [6,7,8,17,22])) {
             $whereOrderTypeCondition = " AND products.prod_type_id = $orderTypeId";
         }
 
