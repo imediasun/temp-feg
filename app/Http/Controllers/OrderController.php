@@ -1810,49 +1810,52 @@ class OrderController extends Controller
         $date_received = date("Y-m-d", strtotime($request->get('date_received')));
         $user_id = $request->get('user_id');
         $updateProducts = [];
-        $receiveHistory = \DB::select("SELECT sum(quantity) AS total_qty, order_received.* FROM order_received WHERE order_id = $order_id AND order_line_item_id IN (" . implode(',', $item_ids) . ") GROUP BY order_line_item_id ORDER BY order_line_item_id");
+        $receiveHistory = [];
+        if (!empty($item_ids) && $item_ids != 'NULL' && $item_ids != 'null' && $item_ids != 'undefined') {
+            $receiveHistory = \DB::select("SELECT sum(quantity) AS total_qty, order_received.* FROM order_received WHERE order_id = $order_id AND order_line_item_id IN (" . implode(',', $item_ids) . ") GROUP BY order_line_item_id ORDER BY order_line_item_id");
 
 
-        foreach ($receiveHistory as $key => $item) {
-            if ($item->total_qty != $updateQty[$key]) {
-                array_push($updateProducts, $item->order_line_item_id);
-            }
-        }
-
-
-        foreach ($item_ids as $i => $item_id) {
-            if ($updateOrigQty[$i] == $updateQty[$i]) {
-                $status = 1;
-            } else {
-                $status = 2;
+            foreach ($receiveHistory as $key => $item) {
+                if ($item->total_qty != $updateQty[$key]) {
+                    array_push($updateProducts, $item->order_line_item_id);
+                }
             }
 
-            if (in_array($item_id, $updateProducts) && $updateQty[$i] <= $updateOrigQty[$i]) {
 
-                \DB::table('order_received')->where('order_line_item_id', $item_id)->delete();
-
-                if ($updateQty[$i] != 0) {
-                    \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
-							 	  		   VALUES (' . $order_id . ',' . $item_id . ',' . $updateQty[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . $item_notes[$i] . '" )');
+            foreach ($item_ids as $i => $item_id) {
+                if ($updateOrigQty[$i] == $updateQty[$i]) {
+                    $status = 1;
+                } else {
+                    $status = 2;
                 }
 
-                \DB::update('UPDATE order_contents
+                if (in_array($item_id, $updateProducts) && $updateQty[$i] <= $updateOrigQty[$i]) {
+
+                    \DB::table('order_received')->where('order_line_item_id', $item_id)->delete();
+
+                    if ($updateQty[$i] != 0) {
+                        \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
+							 	  		   VALUES (' . $order_id . ',' . $item_id . ',' . $updateQty[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . $item_notes[$i] . '" )');
+                    }
+
+                    \DB::update('UPDATE order_contents
 								 	 	 SET item_received = ' . $updateQty[$i] . '
 							   	   	   WHERE id = ' . $item_id);
 
-                if ($updateQty[$i] < $receivedQty[$i]) {
-                    \DB::update('UPDATE orders
+                    if ($updateQty[$i] < $receivedQty[$i]) {
+                        \DB::update('UPDATE orders
 								 	 	 SET status_id =  1
 							   	   	   WHERE id = ' . $order_id);
+                    }
                 }
+
             }
 
+            /*return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));*/
         }
-
-        /*return response()->json(array(
-            'status' => 'success',
-            'message' => \Lang::get('core.note_success')
-        ));*/
     }
 
     public function getSubmitorder($SID)
