@@ -701,6 +701,27 @@ class OrderController extends Controller
                 );
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
+                //$productIdArray
+
+                $orderContent = Order::find($last_insert_id);
+                $supperSetofProducts = $orderContent->orderedContent->pluck('product_id')->toArray();
+                $supperSetofProducts = array_diff($supperSetofProducts,$productIdArray);
+                $removedProducts = $orderContent->orderedContent()->whereIn("product_id",$supperSetofProducts)->get();
+                foreach($removedProducts as $removedProduct){
+                    $product = product::find($removedProduct->product_id);
+                    $product->reserved_qty +=$removedProduct->qty;
+                    $product->save();
+                    $reservedLogData = [
+                        "product_id" => $product->id,
+                        "order_id" => $last_insert_id,
+                        "adjustment_amount" => $removedProduct->qty,
+                        "adjustment_type" => 'positive',
+                        "variation_id" => $product->variation_id,
+                        "adjusted_by" => \AUTH::user()->id,
+                    ];
+                    $reservedQtyLog = new ReservedQtyLog();
+                    $reservedQtyLog->insert($reservedLogData);
+                }
                 $force_remove_items = explode(',', $force_remove_items);
                 \DB::table('order_contents')->where('order_id', $last_insert_id)->where('item_received', '0')->delete();
                 \DB::table('order_contents')->whereIn('id', $force_remove_items)->delete();
