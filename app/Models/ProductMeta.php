@@ -104,11 +104,11 @@ class ProductMeta extends Sximo  {
 
             if($createdFlag){
                 $select .= " OR products.updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                $select .= " OR (product_meta.posted_to_api_at <= NOW() AND product_meta.posted_to_api_expired_at >= NOW())";
+                $select .= " OR (product_meta.posted_to_api_at BETWEEN '$updatedFrom' AND '$updatedTo')";
 
             } else{
                 $select .= " AND (products.updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                $select .= " OR (product_meta.posted_to_api_at <= NOW() AND product_meta.posted_to_api_expired_at >= NOW()) )";
+                $select .= " OR (product_meta.posted_to_api_at BETWEEN '$updatedFrom' AND '$updatedTo') )";
             }
 
         }
