@@ -1462,7 +1462,7 @@
                             url: "{{url()}}/order/productdata",
                             type: "get",
                             dataType: 'json',
-                            data: {'product_id': ui.item.value},
+                            data: {'product_id': ui.item.id},
                             success: function (result) {
                                 if (result.unit_price == 0 && result.case_price == 0) {
                                     notyMessageError("Retail Price and Case Price Unavailable...");

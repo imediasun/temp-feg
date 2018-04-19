@@ -673,7 +673,7 @@ class OrderController extends Controller
                 }
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i]
                     . ') ' . $itemsArray[$i] . ' @ $' .
-                    $itemsPriceArray[$i] . ' ea.';
+                    $itemsPriceArray[$i] . ' ea. (SKU: ' . $skuNumArray[$i] . ')';
             }
             if ($is_freehand == 0) {
                 $validationResponse = $this->validateProductForReserveQty($request);
@@ -1319,7 +1319,8 @@ class OrderController extends Controller
                 'orders.notes',
                 'orders.is_partial',
                 'orders.tracking_number',
-                'YN.yesno'
+                'YN.yesno',
+                'OC.sku'
             ];
             $dateSearchFields = [
                 'orders.date_ordered',
@@ -1906,8 +1907,8 @@ class OrderController extends Controller
 
     public function getProductdata()
     {
-        $vendor_description = Input::get('product_id');
-        $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . addslashes($vendor_description) . "'");
+        $product_id = Input::get('product_id');
+        $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE id='" . addslashes($product_id) . "'");
         $json = [];
         if (!empty($row)) {
             //$row = Order::hydrate($row);
