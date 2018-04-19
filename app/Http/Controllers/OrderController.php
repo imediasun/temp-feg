@@ -746,7 +746,7 @@ class OrderController extends Controller
             for ($i = 0; $i < $num_items_in_array; $i++) {
 
                 if (empty($productIdArray[$i])) {
-                    $product_id = '0';
+                    $product_id = 0;
                 } else {
                     $product_id = $productIdArray[$i];
                 }
