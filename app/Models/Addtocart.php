@@ -1,9 +1,11 @@
 <?php namespace App\Models;
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Core\Groups;
 use Illuminate\Support\Facades\Session;
+//use App\Http\Controllers\OrderController;
 
 class addtocart extends Sximo
 {
@@ -19,17 +21,49 @@ class addtocart extends Sximo
 
     public static function querySelect()
     {
-        return "SELECT requests.*, (SELECT COALESCE(SUM(qty),0) FROM requests WHERE location_id = location.id AND status_id = 1 AND product_id = products.id) as already_order_qty, u1.username,products.img,IF(product_id = 0, requests.description, products.vendor_description) as description,
-                products.sku,products.case_price,products.retail_price,products.case_price*requests.qty,products.ticket_value,location.location_name_short,
-                merch_request_status.status,products.size,V1.vendor_name,order_type.order_type,product_type.type_description,If(products.reserved_qty = 0, '' , products.reserved_qty) as reserved_qty,
-                (products.reserved_qty - requests.qty) as reserved_difference,products.prod_type_id,products.prod_sub_type_id FROM requests
-                LEFT JOIN users u1 ON (requests.request_user_id = u1.id)
-			    LEFT JOIN products ON (requests.product_id = products.id)
-			LEFT JOIN vendor V1 ON (products.vendor_id = V1.id)
-			LEFT JOIN location ON (requests.location_id = location.id)
-			LEFT JOIN merch_request_status ON (requests.status_id = merch_request_status.id)
-			LEFT JOIN order_type ON (order_type.id = products.prod_type_id)
-			LEFT JOIN product_type ON (product_type.id = products.prod_sub_type_id)";
+        return "SELECT
+  requests.*,
+  (SELECT
+     COALESCE(SUM(qty),0)
+   FROM requests
+   WHERE location_id = location.id
+       AND status_id = 1
+       AND product_id = products.id) AS already_order_qty,
+  u1.username,
+  products.img,
+  IF(product_id = 0, requests.description, products.vendor_description) AS description,
+  products.sku,
+  products.unit_price,
+  products.case_price,
+  products.retail_price,
+    '' AS lineTotal,
+  products.ticket_value,
+  location.location_name_short,
+  merch_request_status.status,
+  products.size,
+  products.num_items,
+  V1.vendor_name,
+  order_type.order_type,
+  product_type.type_description,
+  IF(products.reserved_qty = 0, '', products.reserved_qty) AS reserved_qty,
+  (products.reserved_qty - requests.qty) AS reserved_difference,
+  products.prod_type_id,
+  products.prod_sub_type_id
+FROM requests
+  LEFT JOIN users u1
+    ON (requests.request_user_id = u1.id)
+  LEFT JOIN products
+    ON (requests.product_id = products.id)
+  LEFT JOIN vendor V1
+    ON (products.vendor_id = V1.id)
+  LEFT JOIN location
+    ON (requests.location_id = location.id)
+  LEFT JOIN merch_request_status
+    ON (requests.status_id = merch_request_status.id)
+  LEFT JOIN order_type
+    ON (order_type.id = products.prod_type_id)
+  LEFT JOIN product_type
+    ON (product_type.id = products.prod_sub_type_id)";
     }
 
     public static function queryWhere()
@@ -123,9 +157,14 @@ class addtocart extends Sximo
             $data['shopping_cart_total'] = 0;
             $data['amt_short'] = '';
             $data['amt_short_message'] = '';
+            $module = new OrderController();
+            $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+            global $casePriceOrders,$unitPriceOrders;
+            $casePriceOrders = explode(",",$pass['calculate price according to case price']->data_options);
+            $unitPriceOrders = explode(",",$pass['use case price if unit price is 0.00']->data_options);
 
                                        $select='SELECT V.vendor_name,  V.id AS vendor_id, V.min_order_amt, SUM(R.qty*P.case_price) AS total, COUNT(V.id) AS cart_items,
-                                       V.min_order_amt - SUM(R.qty*P.case_price) AS amt_short FROM requests R
+                                       V.min_order_amt - SUM(R.qty*P.case_price) AS amt_short,P.prod_type_id,P.case_price,P.unit_price,R.qty FROM requests R
                                        LEFT JOIN products P ON P.id = R.product_id
 								       LEFT JOIN vendor V ON V.id = P.vendor_id
 									   WHERE R.status_id = "' . $statusId . '" AND V.vendor_name !="null"
@@ -139,6 +178,15 @@ class addtocart extends Sximo
 
             $query = \DB::select($select);
 
+
+            $cartProductsAddedByUser = $this->getCartProductsAddedByUser($location_id,$userID);
+            $cartProductsAddedByUser = collect($this->calculateProductTotalAccordingToProductType($cartProductsAddedByUser));
+            $cartLineTotal = $cartProductsAddedByUser->groupBy('vendor_id')->map(function ($row) {
+                $row->total = $row->sum('lineTotal');
+                $row->lineTotal = $row->sum('lineTotal');
+                return $row;
+            });
+
             $amt_short_message="";
             foreach ($query as $row)
             {
@@ -146,9 +194,9 @@ class addtocart extends Sximo
                     'vendor_name' => $row->vendor_name,
                     'vendor_id' => $row->vendor_id,
                     'vendor_min_order_amt' => \CurrencyHelpers::formatPrice($row->min_order_amt, Order::ORDER_PERCISION, false),
-                    'vendor_total' => \CurrencyHelpers::formatPrice($row->total, Order::ORDER_PERCISION, false),
+                    'vendor_total' => \CurrencyHelpers::formatPrice($cartLineTotal[$row->vendor_id]->lineTotal, Order::ORDER_PERCISION, false),
                     'cart_items' => $row->cart_items,
-                    'total'=>$row->total,
+                    'total'=> $cartLineTotal[$row->vendor_id]->total,
                     'amt_short' => \CurrencyHelpers::formatPrice($row->amt_short, Order::ORDER_PERCISION, false)
                 );
 
@@ -217,5 +265,41 @@ class addtocart extends Sximo
         return $count;
     }
 
+    /**
+     * calculates products total according to product type defined in configuration
+     * @param array $data
+     * @return array
+     */
+    public function calculateProductTotalAccordingToProductType(array $data){
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $casePriceOrders = explode(",",$pass['calculate price according to case price']->data_options);
+        $unitPriceOrders = explode(",",$pass['use case price if unit price is 0.00']->data_options);
+        foreach($data as $product){
 
+            $product = is_array($product)?(object)$product:$product;
+
+            if(in_array($product->prod_type_id,$casePriceOrders)){
+                $product->lineTotal = $product->case_price * $product->qty;
+            }
+            elseif(in_array($product->prod_type_id,$unitPriceOrders)){
+                $product->lineTotal = $product->unit_price * $product->qty;
+                if((int)$product->unit_price <= 0){
+                    $product->lineTotal = $product->case_price * $product->qty;
+                }
+            }
+            else{
+                $product->lineTotal = $product->case_price * $product->qty;
+            }
+        }
+        return $data;
+    }
+    function getCartProductsAddedByUser($location_id,$userID){
+
+        $cartData =  self::where("requests.location_id",$location_id)
+            ->select('products.prod_type_id', 'products.unit_price','products.case_price','products.vendor_id','requests.qty')
+            ->where('requests.request_user_id', $userID)
+            ->where('requests.status_id',4)->join("products",'requests.product_id','=','products.id')->get()->all();
+            return $cartData;
+    }
 }

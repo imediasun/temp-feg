@@ -49,6 +49,8 @@
                         @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                         <th width="50"><input type="checkbox" class="checkall"/></th>
                         @endif
+                        <th width="100">Already on Order</th>
+                        <th width="70"><?php echo Lang::get('core.btn_action');?></th>
                         <th width="100">Image</th>
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
@@ -56,19 +58,15 @@
                             if ($t['view'] == '1'):
                                 $limited = isset($t['limited']) ? $t['limited'] : '';
                                 if (SiteHelpers::filterColumn($limited)) {
-                                    echo '<th style=text-align:'.$t['align'].' width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
 
+                                    if($t['label'] !='No' && $t['label'] !='Image' && $t['label'] !='Already on Order'){
+                                    echo '<th style=text-align:'.$t['align'].' width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
+                                    }
                                 }
                             endif;
                         endforeach; ?>
-                        <th width="100">Vendor</th>
-                        <th width="100">Part Number</th>
-                        <th width="100">Size</th>
-                        <th width="100">Ticket Value</th>
-                        <th width="100">Case Price</th>
-                        <th width="100">Retail Price</th>
                         <th width="100">Notes</th>
-                        <th width="70"><?php echo Lang::get('core.btn_action');?></th>
+
 
                     </tr>
                     </thead>
@@ -108,13 +106,22 @@
                         @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                         <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>" onkeypress="disableEnter(event)"/></td>
                         @endif
-                        <td> <?php
-                            echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false);
-                            ?></td>
+
                         @if($setting['view-method']=='expand')
                             <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}"
                                    data-url="{{ url('addtocart/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
                         @endif
+                        <td>
+                            <span class="cart_already_ordered">{{$row->already_order_qty}}</span>
+                        </td>
+                        <td data-values="action" data-key="<?php echo $row->id;?>">
+                            <div class=" action dropup"><a href="#" onclick="if(confirm('Are you sure you want to remove this item from cart?')){ return removeItemFromCart('{{ $row->id }}'); } return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Remove"><i class="fa fa-trash-o"></i></a></div>
+                        </td>
+                        <td>
+                            <?php
+                            echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false, 0,false,'',false);
+                            ?>
+                        </td>
                         <?php foreach ($tableGrid as $field) :
                         if($field['view'] == '1') :
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
@@ -123,34 +130,29 @@
                         $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
+
                         @if(SiteHelpers::filterColumn($limited ))
+                            @if($field['field'] !='' && $field['field'] !='img' && $field['field'] !='already_order_qty')
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                 @if($field['field']=='qty')
-                                    <input type="number" value="{{ $value }}" min="1" step="1" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeydown="changeTotal(this.value,this.id,event)"/>
-                                @elseif($field['field']=='already_order_qty' && $row->already_order_qty > 0)
-                                    <span class="cart_already_ordered">{{$row->already_order_qty}}</span>
-                                @else
+                                    <input type="number" value="{{ $value }}" min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="qtyfield qtyfield_{{ $row->id }}"/>
+                                    @else
+
                                     {!! $value !!}
+
                                 @endif
 
                             </td>
+                            @endif
                         @endif
                         <?php
                         endif;
                         endforeach;
                         ?>
-                        <td>{{ $row->vendor_name }}</td>
-                        <td>{{ $row->sku }}</td>
-                        <td>{{ $row->size }}</td>
-                        <td>{{ $row->ticket_value }}</td>
-                        <td>{{CurrencyHelpers::formatPrice($row->case_price) }}</td>
-                        <td>{{CurrencyHelpers::formatPrice( $row->retail_price) }}</td>
-                        <td class="notes"><textarea id="notes" name="notes" style="width: 100%;">{{ $row->notes }}</textarea></td>
-                        <td data-values="action" data-key="<?php echo $row->id;?>">
-                            {!! AjaxHelpers::buttonAction('addtocart',$access,$id ,$setting) !!}
-                        </td>
+                        <td class="notes"><textarea id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" class="notesfield notesfield_{{ $row->id }}"  name="notes" style="width: 100%;">{{ $row->notes }}</textarea></td>
+
                     </tr>
                     @if($setting['view-method']=='expand')
                         <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -202,13 +204,9 @@
 
                 <div class="col-md-offset-4 col-sm-offset-2 col-md-8 col-sm-10">
                     <div class="row">
-                    
-                   <div class="col-md-2 col-sm-3 col-xs-12">
-                       <button  class="btn btn-sm btn-primary" id="update-cart-values" onclick="updateCart();">Update Cart</button>
-                   </div>
                
                     <div class="col-md-10 col-sm-9 col-xs-12">
-                    <input type="button" style="font-weight: bold;" class="btn btn-sm btn-success"
+                    <input type="button" style="font-weight: bold;" class="btn btn-sm btn-success cartsubmitaction"
                            value="Submit Weekly Requests totalling {{\CurrencyHelpers::formatCurrency($cartData['shopping_cart_total'])}}"
                            onClick="confirmSubmit({{ json_encode($cartData['amt_short_message']) }});" id = "cartbtn"></button>
                     </div>
@@ -318,8 +316,62 @@
         $('#new_locationdiv').hide();
     });
     -->
-
-
+function removeItemFromCart(itemId){
+    $('.ajaxLoading').show();
+        $.ajax({
+            type:"POST",
+            data:{ids:itemId},
+            url:'{{ Url('addtocart/delete') }}',
+            success:function(data){
+                if(data.status =='success')
+                {
+                    //console.log("called succes");
+                    notyMessage(data.message);
+                    reloadData('#addtocart','addtocart/data?return=');
+                } else {
+                    //console.log("called error");
+                    notyMessageError(data.message);
+                }
+            }
+        });
+    return false;
+}
+$(function(){
+    $(".qtyfield,.notesfield").on("keypress",function(){
+        $(".cartsubmitaction").attr("disabled","disabled");
+        $(".cartsubmitaction").removeClass("btn-success").addClass("btn-disable");
+    });
+    $(".qtyfield,.notesfield").on("focusout",function(){
+        $(".cartsubmitaction").removeAttr("disabled");
+        $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
+    });
+    $(".qtyfield,.notesfield").on("change",function(){
+        var qtyfield = $(this);
+            var vendor=qtyfield.data('vendor');
+            var id= qtyfield.attr('id');
+            var qty= $(".qtyfield_"+id).val();
+            var notes = $('.notesfield_'+id).val();
+            $('.ajaxLoading').show();
+        if(qty < 1) {
+            notyMessageError('Case Quantity can not be less than 1.');
+            $('.ajaxLoading').hide();
+        }else{
+            $.ajax({
+                url: "addtocart/save/" + id + "/" + qty + "/" + encodeURIComponent(vendor) + "/" + notes,
+                method: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    reloadData('#addtocart', 'addtocart/data?return=');
+                    $(".cartsubmitaction").removeAttr("disabled");
+                    $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
+                },
+                error: function () {
+                    unblockUI();
+                },
+            });
+        }
+    });
+});
 </script>
 <style>
     .table th.right {
