@@ -92,6 +92,7 @@
                             Excel</a>
                     </div>
                 </div>
+            <div style="clear:both;"></div>
                 <br />
 
                 <?php
