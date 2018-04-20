@@ -102,7 +102,7 @@
 					@endif
 
 
-                    <td data-values="{{$row->location}}" data-field="location" data-format="{{$row->location}}">{{ $row->location }}</td>
+                    <td data-values="{{$row->location_name_short}}" data-field="location" data-format="{{$row->location_name_short}}">{{ $row->location_name_short }}</td>
                     <td style="display: none" data-values="{{\Session::get('budget_year')}}" data-field="budget_year" data-format="{{\Session::get('budget_year')}}">{{\Session::get('budget_year')}}</td>
                     <td data-values="{{$row->Jan}}" data-field="jan" data-format="{{$row->Jan}}">{{ $row->Jan }}</td>
                     <td data-values="{{$row->Feb}}" data-field="feb" data-format="{{$row->Feb}}">{{ $row->Feb }}</td>
