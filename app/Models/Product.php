@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Library\FEG\System\FEGSystemHelper;
 use Log;
 
 class product extends Sximo  {
