@@ -274,7 +274,6 @@ FROM requests
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
         $casePriceOrders = explode(",",$pass['calculate price according to case price']->data_options);
-        $unitPriceOrders = explode(",",$pass['use case price if unit price is 0.00']->data_options);
         foreach($data as $product){
 
             $product = is_array($product)?(object)$product:$product;
