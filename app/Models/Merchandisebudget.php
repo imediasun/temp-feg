@@ -17,7 +17,7 @@ class merchandisebudget extends Sximo
 
     public static function querySelect()
     {
-        return "SELECT CONCAT(location.id,' | ',location.location_name) as location,location.location_name,location_budget.location_id,location_budget.id,YEAR(location_budget.budget_date) As budget_year,
+        return "SELECT CONCAT(location.id,' | ',location.location_name) as location,location.location_name,location_budget.location_id,location.location_name_short as location_name_short,location_budget.id,YEAR(location_budget.budget_date) As budget_year,
  SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Jan' THEN location_budget.budget_value ELSE 0 END) Jan
  , SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Feb' THEN location_budget.budget_value ELSE 0 END) Feb
  , SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Mar' THEN location_budget.budget_value ELSE 0 END) March ,
@@ -34,6 +34,7 @@ class merchandisebudget extends Sximo
     }
     public static function querySelectVal()
     {
+        
         return "SELECT 
             CONCAT(location.id,' | ',location.location_name) as location,location.location_name,
             location_budget.location_id,
@@ -56,25 +57,42 @@ class merchandisebudget extends Sximo
         FROM location,location_budget ";
     }
 
-    public static function queryWhere($current_year = null)
+    public static function queryWhere($current_year = 0 , $advanceSearch)
     {
+
         if (!$current_year) {
             $year=\Session::get('budget_year');
             if(isset($year))
             {
                 $current_year=$year;
-            }
-            else {
+            } else {
                 $current_year = date('Y');
+            }
+            if($advanceSearch == true)
+            {
+                $current_year = null;
             }
             }
         $selectedLocations = \SiteHelpers::getCurrentUserLocationsFromSession();
-        return " WHERE location.id=location_budget.location_id AND YEAR(location_budget.budget_date)=$current_year AND location_budget.id IS NOT NULL AND location.id IN ($selectedLocations)";
+        if($current_year==null)
+        {
+            $yearWhere = '';
+        }
+        else{
+            $yearWhere = ' AND YEAR(location_budget.budget_date)='.$current_year;
+        }
+
+        return " WHERE location.id=location_budget.location_id$yearWhere AND location_budget.id IS NOT NULL AND location.id IN ($selectedLocations)";
     }
 
-    public static function queryGroup()
+    public static function queryGroup($advanceSearch)
     {
-        return " GROUP BY location_budget.location_id ";
+        $advanceGroupBy = '';
+        if($advanceSearch==true)
+        {
+            $advanceGroupBy =',YEAR(location_budget.budget_date)';
+        }
+        return " GROUP BY location_budget.location_id ".$advanceGroupBy;
     }
 
     public function insertRow($data, $id = null, $location_id = null, $budget_year = null)
@@ -87,6 +105,7 @@ class merchandisebudget extends Sximo
             $budget['budget_value'] = str_replace('$','',$budget['budget_value']);
             $vals[] = $budget;
         }
+
 
         if ($id == NULL) {
 

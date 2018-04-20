@@ -42,7 +42,6 @@ class MerchandisebudgetController extends Controller
 
     public function postData(Request $request)
     {
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'merchandisebudget')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -79,7 +78,14 @@ class MerchandisebudgetController extends Controller
         $budget_year = isset($budget_year) ? $budget_year : date('Y');
         $budget_year = isset($_GET['budget_year']) ? Input::get('budget_year') : $budget_year;
         \Session::put('budget_year', $budget_year);
-        $results = $this->model->getRows($params, $budget_year);
+        $simpleSearch = isset($_GET['simplesearch']) ? Input::get('simplesearch') : 0;
+        $advanceSearch = false;
+        if($simpleSearch == 0 && !isset($_GET['budget_year']) && isset($_GET['search']))
+        {
+            $budget_year = null;
+            $advanceSearch = true;
+        }
+        $results = $this->model->getRows($params, $budget_year ,$advanceSearch);
 
 
         $results["rows"] = array_map(function($row){
@@ -277,13 +283,27 @@ class MerchandisebudgetController extends Controller
 
     function buildSearch($customSearchString = null)
     {
+        $months = [
+            'Jan'=>'Jan',
+            'Feb'=>'Feb',
+            'March'=>'Mar',
+            'April'=>'Apr',
+            'May'=>'May',
+            'June'=>'Jun',
+            'July'=>'Jul',
+            'August'=>'Aug',
+            'September'=>'Sep',
+            'October'=>'Oct',
+            'November'=>'Nov',
+            'December'=>'Dec',
+        ];
         $keywords = '';
         $fields = '';
         $param = '';
         $allowsearch = $this->info['config']['forms'];
-        $searchQuerystring = !is_null($customSearchString) ? $customSearchString : 
+        $searchQuerystring = !is_null($customSearchString) ? $customSearchString :
                 (isset($_GET['search']) ? $_GET['search'] : '');
-        
+
         foreach ($allowsearch as $as) $arr[$as['field']] = $as;
         if ($searchQuerystring != '') {
             $type = explode("|", $searchQuerystring);
@@ -299,7 +319,7 @@ class MerchandisebudgetController extends Controller
                             } else if($arr[$keys[0]]['alias'] . "." . $keys[0] == 'location_budget.location_id') {
                                 $values = explode(',',addslashes($keys[2]));
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IN ('" . implode("','",$values) . "') ";
-                            } else {
+                            }  else {
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
                             }
                         } else {
@@ -315,10 +335,33 @@ class MerchandisebudgetController extends Controller
                             } else if ($operate == 'between') {
                                 $param .= " AND (" . $arr[$keys[0]]['alias'] . "." . $keys[0] . " BETWEEN '" . addslashes($keys[2]) . "' AND '" . addslashes($keys[3]) . "' ) ";
                             } else {
+                                if(!in_array($keys[0],$months,true))
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
                             }
                         }
                     endif;
+                }
+                $hasMonths = false;
+                $count = 0;
+                foreach ($type as $t) {
+                    $keys = explode(":", $t);
+                    if(in_array($keys[0],$months,true)) {
+                        $count++;
+                        if($count==1)
+                        {
+                            $param .= "AND (";
+                        }
+                        else
+                        {
+                            $param .= 'OR ';
+                        }
+                        $hasMonths = true;
+                        $param .=" (DATE_FORMAT(location_budget.budget_date,'%b')='".$months[$keys[0]]."'  AND location_budget.budget_value=".$keys[2].") ";
+                    }
+                }
+                if($hasMonths)
+                {
+                    $param .= ")";
                 }
             }
         }
