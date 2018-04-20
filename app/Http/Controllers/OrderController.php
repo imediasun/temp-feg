@@ -1910,10 +1910,13 @@ class OrderController extends Controller
             $excludeProductsIds = [];
             foreach ($excludeProductsArray as $item) {
                 $product = product::find($item);
-                $variations = $product->getProductVariations();
-                array_map(function ($row) use (&$excludeProductsIds) {
-                    $excludeProductsIds[] = $row->id;
-                }, $variations->all());
+                //Hot fixing isuse on live environment https://www.screencast.com/t/DvCOTKqD8
+                if($product){
+                    $variations = $product->getProductVariations();
+                    array_map(function ($row) use (&$excludeProductsIds) {
+                        $excludeProductsIds[] = $row->id;
+                    }, $variations->all());
+                }
             }
             $excludeProductsIds = implode(',', $excludeProductsIds);
             $whereWithExcludeProductCondition = " AND products.id NOT IN ($excludeProductsIds) ";
