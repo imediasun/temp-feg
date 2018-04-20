@@ -397,7 +397,7 @@
                    \Session::put('filter_before_redirect','no');
                }
             ?>
-               //reloadData('#order', 'order/data' + searchParams.replace("&amp;", "&"));
+               //reloadData('#order', 'order/data' + searchParams.replace("&amp;", "&")); // bug-310 this line was producing a bug while redirecting to manage feg request store on closing order saveorsend email popup
 
         }
     </script>
