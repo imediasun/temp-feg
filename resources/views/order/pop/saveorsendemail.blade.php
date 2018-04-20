@@ -397,7 +397,7 @@
                    \Session::put('filter_before_redirect','no');
                }
             ?>
-               reloadData('#order', 'order/data' + searchParams.replace("&amp;", "&"));
+               //reloadData('#order', 'order/data' + searchParams.replace("&amp;", "&"));
 
         }
     </script>
