@@ -356,7 +356,8 @@ class MerchandisebudgetController extends Controller
                             $param .= 'OR ';
                         }
                         $hasMonths = true;
-                        $param .=" (DATE_FORMAT(location_budget.budget_date,'%b')='".$months[$keys[0]]."'  AND location_budget.budget_value=".$keys[2].") ";
+                        $this->removeCommas($keys[2]);
+                        $param .=" (DATE_FORMAT(location_budget.budget_date,'%b')='".$months[$keys[0]]."'  AND location_budget.budget_value=".$this->removeCommas($keys[2]).") ";
                     }
                 }
                 if($hasMonths)
@@ -367,6 +368,15 @@ class MerchandisebudgetController extends Controller
         }
         return $param;
 
+    }
+
+    public function removeCommas($value)
+    {
+        $value = htmlspecialchars($value);
+        $value = str_replace("%2C","",$value);
+        $value = str_replace("%24","",$value);
+        $value = str_replace("%20","",$value);
+        return $value;
     }
 //script for getting data from location_old table and inserting into location_budget
     /*public function getTest()
