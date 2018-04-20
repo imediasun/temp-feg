@@ -1918,8 +1918,11 @@ class OrderController extends Controller
                     }, $variations->all());
                 }
             }
-            $excludeProductsIds = implode(',', $excludeProductsIds);
-            $whereWithExcludeProductCondition = " AND products.id NOT IN ($excludeProductsIds) ";
+            //Hot fixing isuse on live environment https://www.screencast.com/t/DvCOTKqD8
+            if(!empty($excludeProductsIds)){
+                $excludeProductsIds = implode(',', $excludeProductsIds);
+                $whereWithExcludeProductCondition = " AND products.id NOT IN ($excludeProductsIds) ";
+            }
         }
 
         $results = array();
