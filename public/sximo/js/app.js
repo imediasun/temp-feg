@@ -1174,24 +1174,23 @@ App.initAutoComplete = function (elm, options) {
     }
     return elm.select2(acOptions);
 };
-
 function getCartTotal()
 {
-    $('.ajaxLoading').show()
     $.ajax({
         url: siteUrl + '/addtocart/cartdata',
         method:'get',
         success:function(data){
-            var total = data['shopping_cart_total'] || "0.00";
-            $('#nav_cart_total').text('$ '+total);
-            if(data['total_cart_items'] > 0){
-                $("#update_text_to_add_cart").text(data['total_cart_items']);
-            }
-            $('.ajaxLoading').hide();
+            setShopingCartTotal(data);
         }
     });
 }
-
+function setShopingCartTotal(data){
+    var total = data['shopping_cart_total'] || "0.00";
+    $('#nav_cart_total').text('$ '+total);
+    if(data['total_cart_items'] > 0){
+        $("#update_text_to_add_cart").text(data['total_cart_items']);
+    }
+}
 String.prototype.rtrim = function() {
     var trimmed = this.replace(/0+$/g, '');
     return trimmed;

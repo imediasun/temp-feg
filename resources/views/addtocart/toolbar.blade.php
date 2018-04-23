@@ -54,6 +54,8 @@
             url: siteUrl + '/addtocart/cartdata',
             method:'get',
             success:function(data){
+                console.log("debug me");
+                console.log(data);
 
                 var row,cell1,cell2,vendor_name,vendor_total,total_row,total_cell1,total_cell2;
                 if(isOnLoad) {
@@ -93,15 +95,9 @@
                     $("#cartbtn").val(" Submit Weekly Requests totalling $ "+ data['shopping_cart_total']);
 
                 }
-                //getCartTotal();
+                setShopingCartTotal(data); // on Page reloading and updating cart item quantity set number of items and  Cart total on Cart icon.
             }
         });
     }
-
-    $(document).ajaxComplete(function(event, xhr, options) {
-        if(options.url == siteUrl+'/addtocart/delete'){
-            getCartTotal();
-        }
-    });
 
 </script>
