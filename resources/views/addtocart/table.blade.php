@@ -225,9 +225,10 @@
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>
-    $("inputqty").on(function (e) {
-        return event.charCode >= 48 && event.charCode <= 57;
+    $( ".inputqty" ).keypress(function(e) {
+        return e.charCode >= 48 && e.charCode <= 57;
     });
+
 
     function disableEnter(e)
     {
