@@ -44,7 +44,7 @@
 
     function getCartData(isOnLoad,vendor,subtotal)
     {
-        $('.ajaxLoading').show();
+        //$('.ajaxLoading').show();
         vendor = vendor || "no";
         subtotal=subtotal || "no";
 
