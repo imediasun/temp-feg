@@ -70,7 +70,7 @@
                             vendor_name = vendor_name + "( $" + data['subtotals'][i].vendor_min_order_amt + " Minimum )";
                         }
 
-// Add some text to the new cells:
+            // Add some text to the new cells:
                         cell1.innerHTML = vendor_name;
                         cell2.innerHTML = vendor_total;
                     }
@@ -80,9 +80,7 @@
                     total_cell2 = total_row.insertCell(1);
                     total_cell2.id="total_amount";
 
-
-
-// Add some text to the new cells:
+            // Add some text to the new cells:
                     total_cell1.innerHTML = "TOTAL";
                     total_cell2.innerHTML =" $ "+  data['shopping_cart_total'];
                 }
@@ -95,9 +93,7 @@
                     $("#cartbtn").val(" Submit Weekly Requests totalling $ "+ data['shopping_cart_total']);
 
                 }
-                getCartTotal();
-
-
+                //getCartTotal();
             }
         });
     }
