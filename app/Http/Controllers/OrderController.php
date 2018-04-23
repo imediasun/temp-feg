@@ -62,6 +62,10 @@ class OrderController extends Controller
 
     }
 
+    /**
+     * @param string $t
+     * @return \Illuminate\View\View
+     */
     public function getExport($t = 'excel')
     {
         global $exportSessionID;
