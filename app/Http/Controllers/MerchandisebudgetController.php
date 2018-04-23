@@ -341,29 +341,29 @@ class MerchandisebudgetController extends Controller
                         }
                     endif;
                 }
-                $hasMonths = false;
-                $count = 0;
-                foreach ($type as $t) {
-                    $keys = explode(":", $t);
-                    if(in_array($keys[0],$months,true)) {
-                        $count++;
-                        if($count==1)
-                        {
-                            $param .= "AND (";
-                        }
-                        else
-                        {
-                            $param .= 'OR ';
-                        }
-                        $hasMonths = true;
-                        $this->removeCommas($keys[2]);
-                        $param .=" (DATE_FORMAT(location_budget.budget_date,'%b')='".$months[$keys[0]]."'  AND location_budget.budget_value=".$this->removeCommas($keys[2]).") ";
-                    }
-                }
-                if($hasMonths)
-                {
-                    $param .= ")";
-                }
+//                $hasMonths = false;
+//                $count = 0;
+//                foreach ($type as $t) {
+//                    $keys = explode(":", $t);
+//                    if(in_array($keys[0],$months,true)) {
+//                        $count++;
+//                        if($count==1)
+//                        {
+//                            $param .= "AND (";
+//                        }
+//                        else
+//                        {
+//                            $param .= 'OR ';
+//                        }
+//                        $hasMonths = true;
+//                        $this->removeCommas($keys[2]);
+//                        $param .=" (DATE_FORMAT(location_budget.budget_date,'%b')='".$months[$keys[0]]."'  AND location_budget.budget_value=".$this->removeCommas($keys[2]).") ";
+//                    }
+//                }
+//                if($hasMonths)
+//                {
+//                    $param .= ")";
+//                }
             }
         }
         return $param;
