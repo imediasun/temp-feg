@@ -58,7 +58,7 @@ class merchandisebudget extends Sximo
         FROM location,location_budget ";
     }
 
-    public static function queryWhere($current_year = 0 , $advanceSearch)
+    public static function queryWhere($current_year = 0 , $advanceSearch=false)
     {
 
         if (!$current_year) {
