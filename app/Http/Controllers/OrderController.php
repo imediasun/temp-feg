@@ -22,6 +22,7 @@ use Validator, Input, Redirect, Cache;
 use PHPMailer;
 use PHPMailerOAuth;
 use App\Models\ReservedQtyLog;
+use Log;
 
 class OrderController extends Controller
 {
@@ -1899,9 +1900,10 @@ class OrderController extends Controller
 
         $orderTypeId = Input::get('order_type_id', 0);
         $whereOrderTypeCondition = "";
+        $restrictedOrderTypes = [Order::ORDER_TYPE_REDEMPTION,Order::ORDER_TYPE_INSTANT_WIN_PRIZE];
         // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
-        if (!empty($orderTypeId) && in_array($orderTypeId, [6,7,8,17,22])) {
-            $whereOrderTypeCondition = " AND products.prod_type_id = $orderTypeId";
+        if (!empty($orderTypeId) && in_array($orderTypeId,$restrictedOrderTypes)) {
+            $whereOrderTypeCondition = " AND products.prod_type_id in(".implode(",",$restrictedOrderTypes).")";
         }
 
         //get products related to selected vendor only
@@ -1932,17 +1934,26 @@ class OrderController extends Controller
         $results = array();
         $term = addslashes($term);
         //fixing for https://www.screencast.com/t/vwFYE3AlF
-        $queries = \DB::select("SELECT *,LOCATE('$term',vendor_description) AS pos
+        $sql = "SELECT *,LOCATE('$term',vendor_description) AS pos
                                 FROM products
                                 WHERE vendor_description LIKE '%$term%' 
                                 AND products.inactive=0  $whereWithVendorCondition  $whereWithExcludeProductCondition  
                                   $whereOrderTypeCondition
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
-                                 Limit 0,10");
+                                 Limit 0,10";
+        $queries = \DB::select($sql);
         if (count($queries) != 0) {
             foreach ($queries as $query) {
-                $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
+                    $orderTypeId = (int) $orderTypeId;
+                    $product = product::find($query->id);
+                    $productVariations = $product->getProductVariations()->where("prod_type_id",$orderTypeId)->first();
+
+                    if($productVariations){
+                            $results[] = ['id' => $productVariations->id, 'value' => $productVariations->vendor_description];
+                    }else{
+                        $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
+                    }
             }
             echo json_encode($results);
         } else {
