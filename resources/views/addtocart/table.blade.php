@@ -137,7 +137,7 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                 @if($field['field']=='qty')
-                                    <input type="number" value="{{ $value }}" min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="qtyfield qtyfield_{{ $row->id }}"/>
+                                    <input type="number" value="{{ $value }}" min="1" step="1" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="inputqty qtyfield qtyfield_{{ $row->id }}"/>
                                     @else
 
                                     {!! $value !!}
@@ -225,6 +225,10 @@
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>
+    $(document).on("keypress",".inputqty",function(e) {
+        return event.charCode >= 48 && event.charCode <= 57;
+    });
+
     function disableEnter(e)
     {
         if (e.which == 13) {
