@@ -82,7 +82,7 @@ class Sximo extends Model {
         return number_format((float)$num, 3, '.', '');
     }
 
-    public static function getRows($args, $cond = null , $advanceSearch = false) {
+    public static function getRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         extract(array_merge(array(
@@ -127,10 +127,10 @@ class Sximo extends Model {
         $createdFlag = false;
 
         if ($cond != null) {
-            $select .= self::queryWhere($cond , $advanceSearch);
+            $select .= self::queryWhere($cond);
         }
         else {
-                $select .= self::queryWhere(null , $advanceSearch);
+            $select .= self::queryWhere();
         }
 
         if(!empty($createdFrom)){
@@ -180,8 +180,8 @@ class Sximo extends Model {
             $select .= " AND location.active='$active'";
         }
 
-        Log::info("Total Query : ---------------".$select . " {$params} " . self::queryGroup($advanceSearch) . " {$orderConditional}");
-        $counter_select =\DB::select($select . " {$params} " . self::queryGroup($advanceSearch) . " {$orderConditional}");
+        Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
+        $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $total= count($counter_select);
         if($table=="img_uploads")
         {
@@ -195,10 +195,10 @@ class Sximo extends Model {
         }
 
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
-       // echo $select . " {$params} " . self::queryGroup($advanceSearch) . " {$orderConditional}  {$limitConditional} ";
-        Log::info("Query : ".$select . " {$params} " . self::queryGroup($advanceSearch) . " {$orderConditional}  {$limitConditional} ");
-        self::$getRowsQuery = $select . " {$params} " . self::queryGroup($advanceSearch) . " {$orderConditional}  {$limitConditional} ";
-        $result = \DB::select($select . " {$params} " . self::queryGroup($advanceSearch) . " {$orderConditional}  {$limitConditional} ");
+       // echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
+        Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
+        self::$getRowsQuery = $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
+        $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
         if ($key == '') {
             $key = '*';
@@ -212,13 +212,13 @@ class Sximo extends Model {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
 
-        Log::info("Get Row Query : ".self::querySelect() .self::queryWhere() ." AND " . $table . "." . $key . " = '{$id}' " .self::queryGroup($advanceSearch));
+        Log::info("Get Row Query : ".self::querySelect() .self::queryWhere() ." AND " . $table . "." . $key . " = '{$id}' " .self::queryGroup());
 
         $result = \DB::select(
                         self::querySelect() .
                         self::queryWhere() .
                         " AND " . $table . "." . $key . " = '{$id}' " .
-                        self::queryGroup($advanceSearch)
+                        self::queryGroup()
         );
         if (count($result) <= 0) {
             $result = array();
