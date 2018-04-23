@@ -86,7 +86,7 @@ class merchandisebudget extends Sximo
         return " WHERE location.id=location_budget.location_id$yearWhere AND location_budget.id IS NOT NULL AND location.id IN ($selectedLocations)";
     }
 
-    public static function queryGroup($advanceSearch)
+    public static function queryGroup($advanceSearch = false)
     {
         $advanceGroupBy = '';
         if($advanceSearch==true)
