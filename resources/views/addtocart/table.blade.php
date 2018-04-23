@@ -351,8 +351,16 @@ $(function(){
         $(".cartsubmitaction").removeClass("btn-success").addClass("btn-disable");
     });
     $(".qtyfield,.notesfield").on("focusout",function(){
-        $(".cartsubmitaction").removeAttr("disabled");
-        $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
+        var qty= $(".qtyfield_"+id).val();
+        qty = $.trim(qty);
+        if(qty == '' || Number(qty) < 1){
+            $(".cartsubmitaction").attr("disabled","disabled");
+            $(".cartsubmitaction").removeClass("btn-success").addClass("btn-disable");
+        }else{
+            $(".cartsubmitaction").removeAttr("disabled");
+            $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
+        }
+
     });
     $(".qtyfield,.notesfield").on("change",function(){
         var qtyfield = $(this);
@@ -362,7 +370,10 @@ $(function(){
             var notes = $('.notesfield_'+id).val();
             $('.ajaxLoading').show();
         if(qty < 1) {
+            $(".cartsubmitaction").attr("disabled","disabled");
+            $(".cartsubmitaction").removeClass("btn-success").addClass("btn-disable");
             notyMessageError('Case Quantity can not be less than 1.');
+
             $('.ajaxLoading').hide();
         }else{
             $.ajax({
