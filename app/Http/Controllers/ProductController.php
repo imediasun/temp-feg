@@ -481,8 +481,21 @@ class ProductController extends Controller
 
         $reserved_qty_reason = $request->input('reserved_qty_reason');
         $rules = $this->validateForm();
+        if(!empty($request->product_id) || $id){
+            $productID = !empty($request->product_id) ?  $request->product_id:$id;
+            $product = product::find($productID);
+            $isReserved = $product->is_reserved;
+            $reservedQty = $product->reserved_qty;
+            if($isReserved == 0 && $request->is_reserved ==1 && $reservedQty > $request->reserved_qty){
+                $rules['reserved_qty_reason'] = 'required';
+            }elseif ($request->is_reserved == 1 && $reservedQty > $request->reserved_qty){
+                $rules['reserved_qty_reason'] = 'required';
+            }
 
-        if(isset($_POST['reserved_qty_reason'])){
+        }
+
+
+        if(isset($_POST['reserved_qty_reason']) && empty($request->product_id) && $request->is_reserved == 1 && $request->reserved_qty <0){
             $rules['reserved_qty_reason'] = 'required';
         }
 

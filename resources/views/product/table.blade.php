@@ -512,6 +512,7 @@ $(document).ready(function() {
         }
 
         if (typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null) {
+            console.log("debug me");
             if (settings.url === "product/save/" + $urlArray[2]) {
                 singleRowObjectId=$urlArray[2];
                 settings.url = "";
@@ -635,12 +636,6 @@ $(document).ready(function() {
                                         }
                                 }
 
-                                //console.log($("select[name='vendor_id'] option:selected").text());
-                                //	row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-                                //	row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
-                                //expense_category
-                                //row.find('td[data-field="expense_category"]').text($.trim(mainRow.children('td[data-field="expense_category"]').attr("data-format")));
-                                //	row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').attr("data-format")));
 
                                 //row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
                                 //row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
@@ -693,6 +688,25 @@ $(document).ready(function() {
             }
         });
 
+        $(document).on("change",".reserved_qty_text",function(){
+            var prev_reserved_qty = $(this).parent('td[data-field="reserved_qty"]').attr("data-values");
+            var textfield = $(this).parent('td[data-field="reserved_qty"]').parent('tr').children('td[data-field="reserved_qty_reason"]').children('input[type="text"]');
+            var isReserved = $(this).parent('td[data-field="reserved_qty"]').parent('tr').children('td[data-field="is_reserved"]').children('select[name="is_reserved"]').val();
+
+            if(Number(prev_reserved_qty) < Number($(this).val())){
+                textfield.val('');
+                textfield.attr("disabled","disabled");
+                textfield.removeAttr("required");
+                textfield.css("display","none");
+            }else{
+                if(Number(isReserved) == 1 || isReserved == "Yes") {
+                    textfield.val('');
+                    textfield.removeAttr("disabled");
+                    textfield.attr("required", "required");
+                    textfield.css("display", "block");
+                }
+            }
+        });
     });
 
 </script>
