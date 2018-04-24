@@ -709,7 +709,9 @@ class OrderController extends Controller
                 $removedProducts = $orderContent->orderedContent()->whereIn("product_id",$supperSetofProducts)->get();
                 foreach($removedProducts as $removedProduct){
                     $product = product::find($removedProduct->product_id);
+                    $productVariations = $product->getProductVariations();
                     $product->reserved_qty +=$removedProduct->qty;
+                   $product->updateProduct(['reserved_qty'=>$product->reserved_qty]);
                     $product->save();
                     $reservedLogData = [
                         "product_id" => $product->id,

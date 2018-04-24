@@ -323,7 +323,7 @@ class ProductlogController extends Controller {
 
         $fields = [
             'Item Name',
-            'Po #',
+            'Order ID',
             'Amount',
             'Reserved Quantity',
             'Reason	',

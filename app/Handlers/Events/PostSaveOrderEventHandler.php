@@ -8,6 +8,7 @@ use App\Models\product;
 use App\Models\ReservedQtyLog;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Log;
 
 class PostSaveOrderEventHandler
 {
@@ -72,13 +73,18 @@ class PostSaveOrderEventHandler
             } else {
                 $inactive = 0;
             }
-            $product->updateProduct(['reserved_qty' => $adjustmentAmount, 'inactive' => $inactive], true);
-            $sendEmail = $product->send_email_alert;
-            if($product->send_email_alert == 0){
-                $product->send_email_alert = 1;
+            $sendEmail = (int) $product->send_email_alert;
+            $attributes = ['reserved_qty' => $adjustmentAmount, 'inactive' => $inactive];
+            if($sendEmail == 0){
+                $attributes['send_email_alert'] = 1;
             }
-            $product->save();
+            $product->updateProduct($attributes, true);
+            $product = product::find($product->id);
 
+            Log::info("-----------------Email Flag = ".$product->send_email_alert);
+
+            $product->save();
+            Log::info("----------------Email Flag after sending email= ".$product->send_email_alert);
             if($inactive == 1){
                 // When product with reserved quantity becomes inactive due to not allowing negative quantities:
                 /* > Hello FEG Team,
