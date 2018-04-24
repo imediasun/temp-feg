@@ -485,6 +485,7 @@ $(document).ready(function() {
         }
 
         if (typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null) {
+            console.log("debug me");
             if (settings.url === "product/save/" + $urlArray[2]) {
                 singleRowObjectId=$urlArray[2];
                 settings.url = "";
@@ -504,17 +505,14 @@ $(document).ready(function() {
                     var old_sku = $('#sku-' + $urlArray[2]).val();
                     var old_vd = $('#vd-' + $urlArray[2]).val();
                     var count = 1;
-                    $("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
+                    /*$("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
                         row = $(row);
                         if (row.attr('id') != undefined) {
-                            //divOverlay_6442
-                         //   console.log($("#divOverlay_"+idSplited[1]).children('a[data-original-title="Cancel"]').click())
-                          //  cancelInlineEdit("'"+row.attr('id')+"'", event, this,0)
-                            if (1==1) {
+
                                 var requestdata = decodeURIComponent(settings.data);
                                 var requestArray = requestdata.split("&");
                                 //	console.log(requestArray);
-                                for (var i = 0; i < requestArray.length; i++) {
+                                /!*for (var i = 0; i < requestArray.length; i++) {
                                     var requestElement = (requestArray[i]).split("=");
                                     var key = $.trim(requestElement[0]);
                                     var value = (requestElement[1]).replace(/\+/g, " ");
@@ -600,28 +598,15 @@ $(document).ready(function() {
 
 
                                         }
-                                }
+                                }*!/
 
-                                //console.log($("select[name='vendor_id'] option:selected").text());
-                                //	row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-                                //	row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
-                                //expense_category
-                                //row.find('td[data-field="expense_category"]').text($.trim(mainRow.children('td[data-field="expense_category"]').attr("data-format")));
-                                //	row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').attr("data-format")));
 
-                                //row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
-                                //row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
-                                //row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
-                                //row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
-                                //row.find('td[data-field="details"]').text($.trim(mainRow.children('td[data-field="details"]').text()));
-                                //row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
-                                //	row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
-                                //row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
-                                //	$('#vd-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-                                //	$('#sku-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="sku"]').text()));
-                            }
                         }
-                    });
+                    });*/
+                    if(responsetext.status == 'success') {
+                        $('a[data-original-title="Reload Data"]').trigger("click");
+                    }
+
                 }
             }
         }
@@ -663,16 +648,20 @@ $(document).ready(function() {
         $(document).on("change",".reserved_qty_text",function(){
             var prev_reserved_qty = $(this).parent('td[data-field="reserved_qty"]').attr("data-values");
             var textfield = $(this).parent('td[data-field="reserved_qty"]').parent('tr').children('td[data-field="reserved_qty_reason"]').children('input[type="text"]');
+            var isReserved = $(this).parent('td[data-field="reserved_qty"]').parent('tr').children('td[data-field="is_reserved"]').children('select[name="is_reserved"]').val();
+
             if(Number(prev_reserved_qty) < Number($(this).val())){
                 textfield.val('');
                 textfield.attr("disabled","disabled");
                 textfield.removeAttr("required");
                 textfield.css("display","none");
             }else{
-                textfield.val('');
-                textfield.removeAttr("disabled");
-                textfield.attr("required","required");
-                textfield.css("display","block");
+                if(Number(isReserved) == 1 || isReserved == "Yes") {
+                    textfield.val('');
+                    textfield.removeAttr("disabled");
+                    textfield.attr("required", "required");
+                    textfield.css("display", "block");
+                }
             }
         });
     });
