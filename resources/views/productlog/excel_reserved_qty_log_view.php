@@ -10,14 +10,13 @@ $content .= '</tr>';
 foreach ($data as $d) {
     $orderID = $d->order_id;
     $poNumber = "";
-    if(!empty($orderID) && $orderID!=0)
+    if(empty($orderID) || $orderID ==0)
     {
-        $orderDetails = \App\Models\Order::where('id',$orderID)->first();
-        $poNumber = isset($orderDetails->po_number)?$orderDetails->po_number:'No Data';
+        $orderID = 'No Data';
     }
     $content .= '<tr>';
         $content .= '<td> '. $row->vendor_description  .'</td>';
-        $content .= '<td>'.((!empty($poNumber) || $poNumber=0)?$poNumber:"No Data").'</td>';
+        $content .= '<td>'.((!empty($orderID) || $orderID=0)?$orderID:"No Data").'</td>';
         $content .= '<td>'.($d->adjustment_type =='negative' ? ($d->adjustment_amount<0) ? $d->adjustment_amount:$d->adjustment_amount * -1:$d->adjustment_amount).'</td>';
         $content .= '<td>'.$d->reservedQuantity.'</td>';
         $content .= '<td>'.(!empty($d->reserved_qty_reason) ? $d->reserved_qty_reason:"No Data").'</td>';
