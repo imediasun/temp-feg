@@ -91,5 +91,19 @@ class CurrencyHelpers
         }
         return '';
     }
+    public static function truncateDecimalValue($value, $decimalPlaces = 5)
+    {
+        $number = $value;
+        $split = explode('.', $value);
+        if(isset($split[1])){
+            $decimalSection = $split[1];
+            $lengthDecimal = strlen($decimalSection);
+            if($lengthDecimal>$decimalPlaces)
+            {
+                $number = $split[0].".".substr($decimalSection,0,$decimalPlaces);
+            }
+        }
+        return $number;
+    }
 
 }
