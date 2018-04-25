@@ -1968,13 +1968,13 @@ class OrderController extends Controller
     public function getProductdata()
     {
         $product_id = Input::get('product_id');
-        $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE id='" . addslashes($product_id) . "'");
+        $row = \DB::select("select id,vendor_description,sku,item_description,unit_price,case_price,retail_price from products WHERE id='" . addslashes($product_id) . "'");
         $json = [];
         if (!empty($row)) {
             //$row = Order::hydrate($row);
             $json = array(
                 'sku' => $row[0]->sku,
-                'item_description' => $row[0]->item_description,
+                'item_description' => !empty($row[0]->item_description) ? $row[0]->item_description: $row[0]->vendor_description." (SKU-".$row[0]->sku.")",
                 'unit_price' => \CurrencyHelpers::formatPrice($row[0]->unit_price, Order::ORDER_PERCISION, false),
                 'case_price' => \CurrencyHelpers::formatPrice($row[0]->case_price, Order::ORDER_PERCISION, false),
                 'retail_price' => \CurrencyHelpers::formatPrice($row[0]->retail_price, Order::ORDER_PERCISION, false),
