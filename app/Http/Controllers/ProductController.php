@@ -508,6 +508,8 @@ class ProductController extends Controller
                     $type = "negative";
                     if ($NewReservedQty > $Product->reserved_qty) {
                         $type = "positive";
+                        $Product->updateProduct(['send_email_alert'=>0]);
+                        $Product->save();
                     } else if ($NewReservedQty < $Product->reserved_qty) {
                         $type = "negative";
                     }
