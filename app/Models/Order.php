@@ -684,7 +684,6 @@ class order extends Sximo
                       
                       WHERE O.id = ' . $order_id . '');
             if (count($query) == 1) {
-                $data['requestIds'] = $query[0]->request_ids;
                 $data['order_type'] = $query[0]->order_type_id;
                 $data['po_number'] = $query[0]->po_number;
                 $data['location_id'] = $query[0]->location_id;
@@ -700,30 +699,14 @@ class order extends Sximo
                 $data['date_received']=$query[0]->date_received;
                 $data['tracking_number']=$query[0]->tracking_number;
                 $data['status_id']=$query[0]->status_id;
-            }
-            if (!empty($data['requestIds']) && ($data['order_type'] == Order::ORDER_TYPE_REDEMPTION || $data['order_type'] == Order::ORDER_TYPE_INSTANT_WIN_PRIZE)) //INSTANT WIN AND REDEMPTION PRIZES
-            {
-                $item_count = substr_count($data['requestIds'], ',') + 1;
-                $data['item_count'] = $item_count;
-                $requestIdString = $data['requestIds'];
-                for ($i = 1; $i <= $item_count; $i++) {
-                    $comma = strpos($requestIdString, ',');
-
-                    if (!empty($comma)) {
-                        $id = substr($requestIdString, 0, $comma);
-                        $requestIdString = substr($requestIdString, $comma + 1);
-                    } else {
-                        $id = $requestIdString;
-                    }
-
-                    $query = \DB::select('SELECT   R.product_id,R.qty,P.case_price,P.prod_type_id,R.location_id,CONCAT(P.vendor_description," (SKU-",P.sku,")") AS description FROM requests R
-                           LEFT JOIN products P ON P.id = R.product_id WHERE R.id = ' . $id);
-                    if (count($query) == 1) {
-                        $data['product_id_' . $i] = $query[0]->product_id;
-                        $data['order_qty_' . $i] = $query[0]->qty;
-                        $data['order_description_' . $i] = $query[0]->description;
-                        $data['order_price_' . $i] = $query[0]->case_price;
-                    }
+                $orderContent = OrderContent::where('order_id',$order_id)->get();
+                $i = 1;
+                foreach ($orderContent as $item){
+                    $data['product_id_' . $i] = $item->product_id;
+                    $data['order_qty_' . $i] = $item->qty;
+                    $data['order_description_' . $i] = $item->product_description;
+                    $data['order_price_' . $i] = $item->case_price;
+                    $i++;
                 }
             }
             //  $data['status_options'] = $this->create_all_options_list('order_status','id','status','','id','YES','');
