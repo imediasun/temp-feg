@@ -858,10 +858,11 @@ class FEGSystemHelper
      * @param string $configName Name of the Configuration from /system/systememailreportmanager
      * @param number /string $location   [optional] Pass the location id if you want to filter user assigned to that location. Can pass null to skip it
      * @param boolean $isTest [optional] Pass true to get recipients only from the 'Email recipients while testing' section
+     * @param boolean $sanitizeEmails [optional] If set to true then removes all invalid emails (default: true)
      * @return array    {'to' => '<string comma_separated_emails>', 'cc' => '<string comma_separated_emails>', 'bcc' => '<string comma_separated_emails>', }
      */
-    public static function getSystemEmailRecipients($configName, $location = null, $isTest = false)
-    {
+    public static function getSystemEmailRecipients($configName, $location = null, $isTest = false, $sanitizeEmails = true)
+{
         $emails = array('configName' => $configName, 'to' => '', 'cc' => '', 'bcc' => '');
         $q = "SELECT * from system_email_report_manager WHERE report_name='$configName' AND is_active=1 order by id desc";
         $data = DB::select($q);
@@ -931,6 +932,12 @@ class FEGSystemHelper
                         $locationUsers['bcc'], $users['bcc'], $inclues['bcc'])),
                     $excludes['bcc']);
 
+                if ($sanitizeEmails) {
+                    $to = self::sanitiseEmails($to);
+                    $cc = self::sanitiseEmails($cc);
+                    $bcc = self::sanitiseEmails($bcc);
+                }
+
                 $emails['to'] = implode(',', $to);
                 $emails['cc'] = implode(',', $cc);
                 $emails['bcc'] = implode(',', $bcc);
@@ -939,6 +946,24 @@ class FEGSystemHelper
         return $emails;
     }
 
+    /**
+     * @param array $emails preferably indexed array of emails
+     * @return array
+     */
+    public static function sanitiseEmails($emails = []) {
+        if (count($emails) > 0) {
+            $newEmails = [];
+            foreach ($emails as $key => $email) {
+                $invalid = filter_var($email, FILTER_VALIDATE_EMAIL) === FALSE;
+                if (!$invalid) {
+                    $newEmails[$key] = $email;
+                }
+            }
+            return $newEmails;
+        }
+        return $emails;
+    }
+    
     public static function getLocationContactsEmails($fields = '', $location = null, $skipIfNoGroup = false)
     {
         $emails = [];
