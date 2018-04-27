@@ -27,8 +27,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\EnableBlockedOrderItems::class,
         \App\Console\Commands\RestorePONumber::class,
         \App\Console\Commands\CheckStuff::class,
+        \App\Console\Commands\CheckNetSuiteApi::class,
         \App\Console\Commands\InjectFieldToModule::class,
-
     ];
 
     /**
