@@ -85,10 +85,12 @@
                                     id="to_email_individuals" 
                                     class='select2'></select></td>
                         <td><textarea name='to_include_emails' 
-                                      id="to_include_emails"  
+                                      id="to_include_emails"
+                                      parsley-emails="pass-blank"
                                       class="form-control" >{!! $row['to_include_emails'] !!}</textarea></td>
                         <td><textarea name='to_exclude_emails' 
-                                      id="to_exclude_emails"  
+                                      id="to_exclude_emails"
+                                      parsley-emails="pass-blank"
                                       class="form-control"  >{!! $row['to_exclude_emails'] !!}</textarea></td> 
                     </tr>
                     <tr>
@@ -111,10 +113,12 @@
                                     id="cc_email_individuals" 
                                     class='select2'></select></td>
                         <td><textarea name='cc_include_emails' 
-                                      id="cc_include_emails"  
+                                      id="cc_include_emails"
+                                      parsley-emails="pass-blank"
                                       class="form-control" >{!! $row['cc_include_emails'] !!}</textarea></td>
                         <td><textarea name='cc_exclude_emails' 
-                                      id="cc_exclude_emails"  
+                                      id="cc_exclude_emails"
+                                      parsley-emails="pass-blank"
                                       class="form-control"  >{!! $row['cc_exclude_emails'] !!}</textarea></td>                   
                     </tr>
                     <tr>
@@ -137,10 +141,12 @@
                                     id="bcc_email_individuals" 
                                     class='select2'></select></td>
                         <td><textarea name='bcc_include_emails' 
-                                      id="bcc_include_emails"  
+                                      id="bcc_include_emails"
+                                      parsley-emails="pass-blank"
                                       class="form-control" >{!! $row['bcc_include_emails'] !!}</textarea></td>
                         <td><textarea name='bcc_exclude_emails' 
-                                      id="bcc_exclude_emails"  
+                                      id="bcc_exclude_emails"
+                                      parsley-emails="pass-blank"
                                       class="form-control"  >{!! $row['bcc_exclude_emails'] !!}</textarea></td>
                     </tr>
                 </tbody>
@@ -156,7 +162,7 @@
                 {!! SiteHelpers::activeLang('TO (comma separated)', (isset($fields['test_email']['language'])? $fields['test_email']['language'] : array())) !!}
                 </label>
                 <div class="col-md-6">
-                  {!! Form::text('test_to_emails', $row['test_to_emails'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                  {!! Form::text('test_to_emails', $row['test_to_emails'],array('class'=>'form-control', 'placeholder'=>'',  'parsley-emails'=> 'pass-blank', )) !!}
                  </div> 
                  <div class="col-md-2">
 
@@ -167,7 +173,7 @@
                 {!! SiteHelpers::activeLang('CC (comma separated)', (isset($fields['test_email_cc']['language'])? $fields['test_email_cc']['language'] : array())) !!}
                 </label>
                 <div class="col-md-6">
-                  {!! Form::text('test_cc_emails', $row['test_cc_emails'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                  {!! Form::text('test_cc_emails', $row['test_cc_emails'],array('class'=>'form-control', 'placeholder'=>'', 'parsley-emails'=> 'pass-blank',  )) !!}
                  </div> 
                  <div class="col-md-2">
 
@@ -178,7 +184,7 @@
                 {!! SiteHelpers::activeLang('BCC (comma separated)', (isset($fields['test_email_bcc']['language'])? $fields['test_email_bcc']['language'] : array())) !!}
                 </label>
                 <div class="col-md-6">
-                  {!! Form::text('test_bcc_emails', $row['test_bcc_emails'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                  {!! Form::text('test_bcc_emails', $row['test_bcc_emails'],array('class'=>'form-control', 'placeholder'=>'', 'parsley-emails'=> 'pass-blank',  )) !!}
                  </div> 
                  <div class="col-md-2">
 

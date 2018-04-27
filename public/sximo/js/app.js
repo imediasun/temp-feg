@@ -1058,6 +1058,21 @@ $.fn.parsley.defaults.listeners.onFormValidate = function (isFormValid, event, P
     console.log([event, isFormValid, ParsleyForm]);
     return ret;
 };
+
+$.fn.parsley.defaults.validators.emails = function() {
+    return {
+        validate: function(val, param) {
+            if (param) {
+                return App.validateEmails(val, param == 'pass-blank');
+            }
+            return true;
+        },
+        priority: 2
+    };
+};
+
+$.fn.parsley.defaults.messages.emails = "Enter comma separated valid emails";
+
 // pass actions as {'email': ['trim'], 'email_2': ['trim']}
 // pass options as {'skipTrimForRequiredFields':true} to skip trim on required fields
 App.functions.cleanupForm = function (form, myActionList, options) {
@@ -1174,6 +1189,34 @@ App.initAutoComplete = function (elm, options) {
     }
     return elm.select2(acOptions);
 };
+
+
+App.validateEmails = function(values, skipBlank) {
+    skipBlank = skipBlank === UNDEFINED ? true : skipBlank;
+    var emails = App.formats.trim(values || '').split(/[,;]/),
+        emailsLength = emails.length,
+        email,
+        valid = skipBlank,
+        i;
+    if (emails.length) {
+        for(i = 0; i < emailsLength; i++) {
+            email = App.formats.trim(emails[i] || '');
+            if (skipBlank && !email) {
+                continue;
+            }
+            valid = App.validateEmail(email);
+            if (!valid) {
+                break;
+            }
+        }
+    }
+    return valid;
+};
+App.validateEmail = function(email) {
+    var regExp = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))){2,6}$/i;
+    return regExp.test(email);
+};
+
 function getCartTotal()
 {
     $.ajax({
