@@ -71,6 +71,13 @@
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
                                 {!! Form::text('username', $row['username'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
+                                @if ($errors->has('username'))
+                                    <div class="error">
+                                        <span class="text-danger">
+                                        {{ $errors->first('username') }}
+                                        </span>
+                                    </div>
+                                @endif
                             </div>
                             <div class="col-md-2">
 
@@ -100,6 +107,13 @@
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
                                 {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true', 'parsley-type'=>'email'   )) !!}
+                                @if ($errors->has('email'))
+                                    <div class="error">
+                                        <span class="text-danger">
+                                        {{ $errors->first('email') }}
+                                        </span>
+                                    </div>
+                                @endif
                             </div>
                             <div class="col-md-2">
 
@@ -111,11 +125,9 @@
                             <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
-                                    <input type='radio' name='active' value='0' required
-                                           @if($row['active'] == '0') checked="checked" @endif > Inactive </label>
-                                <label class='radio radio-inline'>
-                                    <input type='radio' name='active' value='1'
-                                           @if($row['active'] == '1') checked="checked" @endif > Active </label>
+                                    {!! Form::radio('active' , '0', (Input::old('active') == '0'), array('class'=>'radio')) !!}Inactive
+                                    <span style="margin-right: 15px"></span>
+                                    {!! Form::radio('active', '1', (Input::old('active') == '1'), array('class'=>'radio')) !!}Active</label>
                             </div>
                             <div class="col-md-2">
 
@@ -209,7 +221,7 @@
                                 {!! SiteHelpers::activeLang('Street', (isset($fields['street']['language'])? $fields['street']['language'] : array())) !!}:
                             </label>
                             <div class="col-md-6">
-					  <input type="text" name='street' id='street' class='form-control ' value="{{ $row['street'] }}">
+                                {!! Form::text('street', $row['street'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
                             </div>
                             <div class="col-md-2">
 
@@ -265,11 +277,9 @@
                             <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
-                                    <input type='radio' name='is_tech_contact' value='0' required
-                                           @if($row['is_tech_contact'] == '0') checked="checked" @endif > No </label>
-                                <label class='radio radio-inline'>
-                                    <input type='radio' name='is_tech_contact' value='1'
-                                           @if($row['is_tech_contact'] == '1') checked="checked" @endif > Yes </label>
+                                    {!! Form::radio('is_tech_contact' , '0', (Input::old('is_tech_contact') == '0'), array('class'=>'radio')) !!}No
+                                    <span style="margin-right: 15px"></span>
+                                    {!! Form::radio('is_tech_contact', '1', (Input::old('is_tech_contact') == '1'), array('class'=>'radio')) !!}Yes</label>
                             </div>
                             <div class="col-md-2">
 
@@ -280,11 +290,9 @@
                             <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
-                                    <input type='radio' name='restricted_mgr_email' value='0' required
-                                           @if($row['restricted_mgr_email'] == '0') checked="checked" @endif > No </label>
-                                <label class='radio radio-inline'>
-                                    <input type='radio' name='restricted_mgr_email' value='1'
-                                           @if($row['restricted_mgr_email'] == '1') checked="checked" @endif > Yes </label>
+                                    {!! Form::radio('restricted_mgr_email' , '0', (Input::old('restricted_mgr_email') == '0'), array('class'=>'radio')) !!}No
+                                    <span style="margin-right: 15px"></span>
+                                    {!! Form::radio('restricted_mgr_email', '1', (Input::old('restricted_mgr_email') == '1'), array('class'=>'radio')) !!}Yes</label>
                             </div>
                             <div class="col-md-2">
 
@@ -295,11 +303,9 @@
                             <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
-                                    <input type='radio' name='restricted_user_email' value='0' required
-                                           @if($row['restricted_user_email'] == '0') checked="checked" @endif > No </label>
-                                <label class='radio radio-inline'>
-                                    <input type='radio' name='restricted_user_email' value='1'
-                                           @if($row['restricted_user_email'] == '1') checked="checked" @endif > Yes </label>
+                                    {!! Form::radio('restricted_user_email' , '0', (Input::old('restricted_user_email') == '0'), array('class'=>'radio')) !!}No
+                                    <span style="margin-right: 15px"></span>
+                                    {!! Form::radio('restricted_user_email', '1', (Input::old('restricted_user_email') == '1'), array('class'=>'radio')) !!}Yes</label>
                             </div>
                             <div class="col-md-2">
 
@@ -310,11 +316,9 @@
                             <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
-                                    <input type='radio' name='restrict_merch' value='0' required
-                                           @if($row['restrict_merch'] == '0') checked="checked" @endif > No </label>
-                                <label class='radio radio-inline'>
-                                    <input type='radio' name='restrict_merch' value='1'
-                                           @if($row['restrict_merch'] == '1') checked="checked" @endif > Yes </label>
+                                    {!! Form::radio('restrict_merch' , '0', (Input::old('restrict_merch') == '0'), array('class'=>'radio')) !!}No
+                                    <span style="margin-right: 15px"></span>
+                                    {!! Form::radio('restrict_merch', '1', (Input::old('restrict_merch') == '1'), array('class'=>'radio')) !!}Yes</label>
                             </div>
                             <div class="col-md-2">
 
@@ -364,7 +368,7 @@
                                         {!! $errors->has('password_confirmation')? "style='border-color: #cc0000;'":"" !!}
                                 />
                                 @if ($errors->has('password_confirmation'))
-                                    <span class="error_styles">
+                                    <span class="text-danger">
                                         <strong>{{ $errors->first('password_confirmation') }}</strong>
                                     </span>
                                 @endif
@@ -442,7 +446,7 @@
                     <div style="clear:both"></div>
 
                     <div class="col-sm-12">
-                        
+
                         <div class="form-group">
 
                             <div class="col-sm-12 text-center btn-margin text-left-xs">
@@ -455,11 +459,11 @@
                                             class="fa  fa-arrow-circle-left "></i> {{ Lang::get('core.sb_cancel') }}
                                 </button>
                             </div>
-                            
+
                         </div>
-                        
+
                     </div>
-                    
+
 
                     {!! Form::close() !!}
                 </div>
