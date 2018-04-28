@@ -18,6 +18,7 @@ class Test extends Controller
         $this->client = $client;
         $this->data = "";
         $this->products = array();
+        $this->orderIds = array();
     }
 
     /**
@@ -30,6 +31,7 @@ class Test extends Controller
     protected $tokenString = '&token=f1a9bE1f7M208M3eIb0b048L0d0O921Vd8bEbaa6ow35l23HaxcAn2Ddaf245I';
     protected $data;
     protected $products;
+    protected $orderIds;
 
     public function handle()
     {
@@ -45,18 +47,8 @@ class Test extends Controller
             $this->data[$module] = $this->getResponse($module, $currentDate, $currentDate, $fromTime, $toTime);
         }
         $this->getProductIds();
+        $this->getorderIdsFromReceipts();
         $this->validateOrders();
-//        if($orders['code'] == 200)
-//        {
-//            $data = json_decode($orders['data']);
-//            $total = $data->total;
-//            if($total>0)
-//            {
-//
-//            }
-//        }
-
-//        echo $data;
     }
 
     public function validateOrders()
@@ -71,9 +63,21 @@ class Test extends Controller
                     $product_id = $item->product_id;
                     $this->checkProduct($product_id);
                 }
+                $this->checkReceipts($row->id);
             }
         }
-//        var_dump($orderTotal);
+    }
+
+    public function checkReceipts($id)
+    {
+        if(in_array($id,$this->orderIds))
+        {
+            return true;
+        }
+        else
+        {
+            $this->sendErrorMail('OrdersReceipts', null, 404, 'Receipt For Order id '.$id.' not Found');
+        }
     }
 
     public function checkProduct($id)
@@ -94,6 +98,15 @@ class Test extends Controller
         $rows = $products->rows;
         foreach ($rows as $row) {
             array_push($this->products,$row->id);
+        }
+    }
+
+    public function getorderIdsFromReceipts()
+    {
+        $products = json_decode($this->data['itemreceipt']['data']);
+        $rows = $products->rows;
+        foreach ($rows as $row) {
+            array_push($this->orderIds,$row->order_id);
         }
     }
 
