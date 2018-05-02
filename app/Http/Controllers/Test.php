@@ -36,15 +36,20 @@ class Test extends Controller
     public function handle()
     {
         //
+       
         $modules = ['order', 'product', 'itemreceipt'];
         $dateFormat = 'Y-m-d';
         $timeFormat = 'H:i:s';
         $currentDate = date($dateFormat);
         $fromTime = date($timeFormat, time() - (3600 * 2));
         $toTime = date($timeFormat, time() - (3600 * 1));
+        $timeString = '&created_from=' . $currentDate . ' ' . $fromTime;
+        $timeString .= 'updated_from=' . $currentDate . ' ' . $fromTime;
+        $timeString .= 'created_to=' . $currentDate . ' ' . $toTime;
+        $timeString .= 'updated_to=' . $currentDate . ' ' . $toTime;
 
         foreach ($modules as $module) {
-            $this->data[$module] = $this->getResponse($module, $currentDate, $currentDate, $fromTime, $toTime);
+            $this->data[$module] = $this->getResponse($module, $timeString);
         }
         $this->getProductIds();
         $this->getorderIdsFromReceipts();
@@ -110,21 +115,9 @@ class Test extends Controller
         }
     }
 
-    private function getResponse($module, $from_date = null, $to_date = null, $from_time = null, $to_time = null, $limit = 50)
+    private function getResponse($module, $timeString = '', $limit = 50)
     {
-        $timeString = "";
-        if ($from_date && $from_time) {
-            $timeString = '&created_from=' . $from_date . ' ' . $from_time;
-        }
-        if ($from_date && $from_time) {
-            $timeString .= '&updated_from=' . $from_date . ' ' . $from_time;
-        }
-//        if ($to_date && $from_time) {
-//            $toString = '&created_to=' . $to_date . ' ' . $to_time;
-//        }
-        if ($to_date && $from_time) {
-            $timeString .= '&updated_to=' . $to_date . ' ' . $to_time;
-        }
+
         $url = $this->urlString . '?module=' . $module . $timeString. $this->tokenString;
 //        $url = 'http://demo.fegllc.com/fegapi?module=' . $module . '&limit=50&page=1&token=f1a9bE1f7M208M3eIb0b048L0d0O921Vd8bEbaa6ow35l23HaxcAn2Ddaf245I';
         $status = "";
