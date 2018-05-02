@@ -112,17 +112,21 @@ class Test extends Controller
 
     private function getResponse($module, $from_date = null, $to_date = null, $from_time = null, $to_time = null, $limit = 50)
     {
-        $fromString = "";
-        $toString = "";
+        $timeString = "";
         if ($from_date && $from_time) {
-            $fromString = '&created_from=' . $from_date . ' ' . $from_time;
+            $timeString = '&created_from=' . $from_date . ' ' . $from_time;
         }
+        if ($from_date && $from_time) {
+            $timeString .= '&updated_from=' . $from_date . ' ' . $from_time;
+        }
+//        if ($to_date && $from_time) {
+//            $toString = '&created_to=' . $to_date . ' ' . $to_time;
+//        }
         if ($to_date && $from_time) {
-            $toString = '&created_to=' . $to_date . ' ' . $to_time;
+            $timeString .= '&updated_to=' . $to_date . ' ' . $to_time;
         }
-        $url = $this->urlString . '?module=' . $module . $fromString;
-        $url .= $toString . $this->tokenString;
-        $url = 'http://demo.fegllc.com/fegapi?module=' . $module . '&limit=50&page=1&token=f1a9bE1f7M208M3eIb0b048L0d0O921Vd8bEbaa6ow35l23HaxcAn2Ddaf245I';
+        $url = $this->urlString . '?module=' . $module . $timeString. $this->tokenString;
+//        $url = 'http://demo.fegllc.com/fegapi?module=' . $module . '&limit=50&page=1&token=f1a9bE1f7M208M3eIb0b048L0d0O921Vd8bEbaa6ow35l23HaxcAn2Ddaf245I';
         $status = "";
         $response = "";
         try {
@@ -137,7 +141,7 @@ class Test extends Controller
         if ($response) {
             $status = $response->getStatusCode();
             if ($status == 200) {
-                $this->addDataLog($module, $url, $status, 'Record Found.');
+//                $this->addDataLog($module, $url, $status, 'Record Found.');
                 return [
                     'code' => 200,
                     'data' => $response->getBody()
@@ -151,7 +155,7 @@ class Test extends Controller
     {
         $to = 'dev1@shayansolutions.com';
         $subject = 'Error';
-        $message = $errorCode . $url . $errorMsg;
+        $message = 'Error Code = '.$errorCode . 'Error url = '. $url . "Error Message = ". $errorMsg;
         FEGSystemHelper::sendEmail($to, $subject, $message);
     }
 
