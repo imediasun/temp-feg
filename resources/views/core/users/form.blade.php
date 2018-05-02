@@ -70,7 +70,7 @@
                             <label for="Username" class=" control-label col-md-4 text-left"> Username: <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
-                                {!! Form::text('username', $row['username'],array('class'=>'form-control','placeholder'=>'', 'required'=>'true'  )) !!}
+                                {!! Form::text('username', $row['username'],array('class'=>'form-control','placeholder'=>''  )) !!}
                                 <div class="error">
                                         <span class="text-danger validation-error" id="username-error">
                                         @if ($errors->has('username'))
@@ -106,7 +106,7 @@
                             <label for="Email" class=" control-label col-md-4 text-left"> Email: <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
-                                {!! Form::text('email', $row['email'],array('class'=>'form-control' , 'placeholder'=>'', 'required'=>'true', 'parsley-type'=>'email'   )) !!}
+                                {!! Form::text('email', $row['email'],array('class'=>'form-control' , 'placeholder'=>'' )) !!}
                                     <div class="error">
                                         <span class="text-danger validation-error" id="email-error">
                                             @if ($errors->has('email'))
@@ -126,9 +126,11 @@
                             <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
-                                    {!! Form::radio('active' , '0', (Input::old('active') == '0'), array('class'=>'radio')) !!}Inactive
-                                    <span style="margin-right: 15px"></span>
-                                    {!! Form::radio('active', '1', (Input::old('active') == '1'), array('class'=>'radio')) !!}Active</label>
+                                    <input type='radio' name='active' value='0' required
+                                           @if($row['active'] == '0') checked="checked" @endif > Inactive </label>
+                                <label class='radio radio-inline'>
+                                    <input type='radio' name='active' value='1'
+                                           @if($row['active'] == '1') checked="checked" @endif > Active </label>
                             </div>
                             <div class="col-md-2">
 
@@ -222,7 +224,7 @@
                                 {!! SiteHelpers::activeLang('Street', (isset($fields['street']['language'])? $fields['street']['language'] : array())) !!}:
                             </label>
                             <div class="col-md-6">
-                                {!! Form::text('street', $row['street'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  <input type="text" name='street' id='street' class='form-control ' value="{{ $row['street'] }}">
                             </div>
                             <div class="col-md-2">
 
@@ -278,9 +280,11 @@
                             <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
-                                    {!! Form::radio('is_tech_contact' , '0', (Input::old('is_tech_contact') == '0'), array('class'=>'radio')) !!}No
-                                    <span style="margin-right: 15px"></span>
-                                    {!! Form::radio('is_tech_contact', '1', (Input::old('is_tech_contact') == '1'), array('class'=>'radio')) !!}Yes</label>
+                                    <input type='radio' name='is_tech_contact' value='0' required
+                                           @if($row['is_tech_contact'] == '0') checked="checked" @endif > No </label>
+                                <label class='radio radio-inline'>
+                                    <input type='radio' name='is_tech_contact' value='1'
+                                           @if($row['is_tech_contact'] == '1') checked="checked" @endif > Yes </label>
                             </div>
                             <div class="col-md-2">
 
@@ -291,9 +295,11 @@
                             <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
-                                    {!! Form::radio('restricted_mgr_email' , '0', (Input::old('restricted_mgr_email') == '0'), array('class'=>'radio')) !!}No
-                                    <span style="margin-right: 15px"></span>
-                                    {!! Form::radio('restricted_mgr_email', '1', (Input::old('restricted_mgr_email') == '1'), array('class'=>'radio')) !!}Yes</label>
+                                    <input type='radio' name='restricted_mgr_email' value='0' required
+                                           @if($row['restricted_mgr_email'] == '0') checked="checked" @endif > No </label>
+                                <label class='radio radio-inline'>
+                                    <input type='radio' name='restricted_mgr_email' value='1'
+                                           @if($row['restricted_mgr_email'] == '1') checked="checked" @endif > Yes </label>
                             </div>
                             <div class="col-md-2">
 
@@ -304,9 +310,11 @@
                             <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
-                                    {!! Form::radio('restricted_user_email' , '0', (Input::old('restricted_user_email') == '0'), array('class'=>'radio')) !!}No
-                                    <span style="margin-right: 15px"></span>
-                                    {!! Form::radio('restricted_user_email', '1', (Input::old('restricted_user_email') == '1'), array('class'=>'radio')) !!}Yes</label>
+                                    <input type='radio' name='restricted_user_email' value='0' required
+                                           @if($row['restricted_user_email'] == '0') checked="checked" @endif > No </label>
+                                <label class='radio radio-inline'>
+                                    <input type='radio' name='restricted_user_email' value='1'
+                                           @if($row['restricted_user_email'] == '1') checked="checked" @endif > Yes </label>
                             </div>
                             <div class="col-md-2">
 
@@ -317,9 +325,11 @@
                             <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
-                                    {!! Form::radio('restrict_merch' , '0', (Input::old('restrict_merch') == '0'), array('class'=>'radio')) !!}No
-                                    <span style="margin-right: 15px"></span>
-                                    {!! Form::radio('restrict_merch', '1', (Input::old('restrict_merch') == '1'), array('class'=>'radio')) !!}Yes</label>
+                                    <input type='radio' name='restrict_merch' value='0' required
+                                           @if($row['restrict_merch'] == '0') checked="checked" @endif > No </label>
+                                <label class='radio radio-inline'>
+                                    <input type='radio' name='restrict_merch' value='1'
+                                           @if($row['restrict_merch'] == '1') checked="checked" @endif > Yes </label>
                             </div>
                             <div class="col-md-2">
 
@@ -345,7 +355,7 @@
                                 <input name="password" type="password" id="password" class="form-control input-sm"
                                        value=""
                                        @if($row['id'] =='')
-                                       required
+
                                         @endif
                                         {!! $errors->has('password')? "style='border-color: #cc0000;'":"" !!}
                                 />
@@ -365,7 +375,7 @@
                                 <input name="password_confirmation" type="password" id="password_confirmation"
                                        class="form-control input-sm" value=""
                                        @if($row['id'] =='')
-                                       required
+
                                         @endif
                                         {!! $errors->has('password_confirmation')? "style='border-color: #cc0000;'":"" !!}
                                 />
@@ -474,6 +484,9 @@
     </div>
 
     <style>
+        .text-danger{
+            color: #cc0000 !important;
+        }
         #parsley-active{
             position: absolute;
             margin-top: 4px;
@@ -542,12 +555,6 @@
 
         var form_validate = false;
         form.on("submit", function(e){
-            if(form_validate==true)
-            {
-                return true;
-            }
-            else{
-                e.preventDefault();
                 $('.validation-error').text('');
                 $.ajax({
                     type: "POST",
@@ -557,6 +564,7 @@
                     success: function(data) {
                         if(data['status']=='error')
                         {
+                            e.preventDefault();
                             var errors = data['errors'];
                             for (var key in errors) {
                                 if (errors.hasOwnProperty(key)) {
@@ -564,14 +572,8 @@
                                 }
                             }
                         }
-                        else {
-                            form_validate = true;
-                            $('.add-employee').click();
-                        }
                     }
                 });
-            }
-
         });
 
     </script>
