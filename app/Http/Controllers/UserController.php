@@ -780,7 +780,9 @@ class UserController extends Controller
 
     function getSocialize($social)
     {
-        return Socialize::with($social)->scopes(['openid', 'profile', 'email', 'https://mail.google.com'])->with(['access_type' => 'offline','prompt' => 'consent'])->redirect();
+        $scope1 = 'https://www.googleapis.com/auth/gmail.readonly';
+        $scope2 = 'https://www.googleapis.com/auth/gmail.send';
+        return Socialize::with($social)->scopes(['openid', 'profile', 'email', $scope1,$scope2])->with(['access_type' => 'offline','prompt' => 'consent'])->redirect();
     }
 
     function getAutosocial($social)
