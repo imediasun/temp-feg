@@ -51,6 +51,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('check:stuff')->daily();
 
         $schedule->command('cleanproductmeta')->hourly();
+        $schedule->command('checkapi')->hourly();
 
     }
 }
