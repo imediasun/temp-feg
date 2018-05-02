@@ -32,6 +32,8 @@ class CheckNetSuiteApi extends Command
 
     protected $client;
 
+    private $to;
+
     public function __construct(Client $client)
     {
         parent::__construct();
@@ -39,6 +41,12 @@ class CheckNetSuiteApi extends Command
         $this->data = "";
         $this->products = array();
         $this->orderIds = array();
+        $this->to = array([
+            'shayansolutions@gmail.com',
+            'gabes@inmedianetworks.com',
+            'dev1@shayansolutions.com',
+            'qa@shayansolutions.com'
+        ]);
     }
 
     /**
@@ -47,7 +55,7 @@ class CheckNetSuiteApi extends Command
      * @return mixed
      */
 
-    protected $urlString = 'http://admin1.fegllc.com/fegapi';
+    protected $urlString = 'http://demo.fegllc.com/fegapi';
     protected $tokenString = '&token=f1a9bE1f7M208M3eIb0b048L0d0O921Vd8bEbaa6ow35l23HaxcAn2Ddaf245I';
     protected $data;
     protected $products;
@@ -55,7 +63,7 @@ class CheckNetSuiteApi extends Command
 
     public function handle()
     {
-        //
+
         $modules = ['order', 'product', 'itemreceipt'];
         $dateFormat = 'Y-m-d';
         $timeFormat = 'H:i:s';
@@ -165,10 +173,13 @@ class CheckNetSuiteApi extends Command
 
     private function sendErrorMail($module, $url, $errorCode, $errorMsg)
     {
-        $to = 'arslan.shah.cs@gmail.com';
-        $subject = 'Error';
-        $message = 'Error Code = '.$errorCode . 'Error url = '. $url . "Error Message = ". $errorMsg;
-        FEGSystemHelper::sendEmail($to, $subject, $message);
+        foreach ($this->to[0] as $to)
+        {
+            $subject = 'Error';
+            $message = 'Error Code = '.$errorCode . 'Error url = '. $url . "Error Message = ". $errorMsg;
+            FEGSystemHelper::sendEmail($to, $subject, $message);
+        }
+
     }
 
     private function addDataLog($module, $url, $code, $message)
