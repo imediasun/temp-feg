@@ -32,11 +32,11 @@
                     </h4>
                 </div>
                 <div class="sbox-content">
-                   {{-- <ul class="parsley-error-list">
+                   <!-- <ul class="parsley-error-list">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
-                    </ul>--}}
+                    </ul>-->
 
                     {!! Form::open(array('url'=>'core/users/save?return='.$return, 'id'=>'user_form','class'=>'form-horizontal clearfix','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
                     <div class="col-md-6">
@@ -215,7 +215,7 @@
 
                             </div>
                         </div>
-                        {{--<div class="form-group  " >
+                        <!--<div class="form-group  " >
                             <label for="City" class=" control-label col-md-4 text-left">
                                 {!! SiteHelpers::activeLang('City', (isset($fields['city']['language'])? $fields['city']['language'] : array())) !!}
                             </label>
@@ -225,7 +225,7 @@
                             <div class="col-md-2">
 
                             </div>
-                        </div>--}}
+                        </div>-->
                         <div class="form-group  " >
                             <label for="State" class=" control-label col-md-4 text-left">
                                 {!! SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) !!}:
@@ -395,9 +395,9 @@
                                             @endif
                                         @endforeach
                                     </optgroup>
-                                    {{--<optgroup label="Dashboards">
+                                    <!--<optgroup label="Dashboards">
                                         <option value="dashboard">Dashboard</option>
-                                    </optgroup>--}}
+                                    </optgroup>-->
                                     <optgroup label="Page CMS">
                                         @foreach($pages as $page)
                                             <option value="{{ $page->alias}}"
@@ -428,10 +428,10 @@
                                         <a href="{{$oauth_url}}" class="connectGmail btn" style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;padding: 5px 8.5px;"><i class="icon-google-plus"></i> Reconnect </a>
                                     @else
                                         <a href="{{$oauth_url}}" class="connectGmail btn btn-block" style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;"><i class="icon-google-plus"></i> Google </a>
-                                       {{-- <button type="button" onclick="location.href='{{$oauth_url}}' "
+                                       <!-- <button type="button" onclick="location.href='{{$oauth_url}}' "
                                                 class="btn btn-success btn-sm connectGmail">
                                             <i class="fa  fa-check-circle-o "></i> Connect
-                                        </button>--}}
+                                        </button>-->
                                     @endif
                                 </div>
                             </div>
