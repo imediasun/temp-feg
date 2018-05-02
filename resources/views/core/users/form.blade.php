@@ -561,6 +561,7 @@
                     url: '{{url('core/users/save')}}',
                     data: form.serialize() + '&ajax=1',
                     dataType: 'json',
+                    async:false,
                     success: function(data) {
                         if(data['status']=='error')
                         {
