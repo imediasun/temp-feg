@@ -325,7 +325,6 @@
 
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label for="allow_negative_reserve_qty" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Allow Negative Reserved Qty', (isset($fields['allow_negative_reserve_qty']['language'])?

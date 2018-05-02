@@ -537,49 +537,6 @@ class ProductController extends Controller
             ));
         }
 
-        $reserved_qty_reason = $request->input('reserved_qty_reason');
-        $rules = $this->validateForm();
-
-        if(isset($_POST['reserved_qty_reason'])){
-            $rules['reserved_qty_reason'] = 'required';
-        }
-
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->passes()) {
-            if ($id != 0) {
-                $Product = product::find($id);
-                $NewReservedQty = $request->input('reserved_qty');
-                if ($Product->reserved_qty != $NewReservedQty && $NewReservedQty != '') {
-                    $type = "negative";
-                    if ($NewReservedQty > $Product->reserved_qty) {
-                        $type = "positive";
-                    } else if ($NewReservedQty < $Product->reserved_qty) {
-                        $type = "negative";
-                    }
-                    $NewReservedQty = $NewReservedQty - $Product->reserved_qty;
-                    if($NewReservedQty < 0 ){
-                        $NewReservedQty = $NewReservedQty * -1;
-                    }
-                    $ReservedQtyLog = new ReservedQtyLog();
-                    $reservedLogData = [
-                        "product_id" => $id,
-                        "adjustment_amount" => $NewReservedQty,
-                        "adjustment_type" => $type,
-                        "variation_id" => !empty($Product->variation_id) ? $Product->variation_id:null,
-                        "reserved_qty_reason" => $reserved_qty_reason,
-                        "adjusted_by" => \AUTH::user()->id,
-                    ];
-                    $ReservedQtyLog->insertRow($reservedLogData, 0);
-                }
-            }
-        }else{
-            $message = $this->validateListError($validator->getMessageBag()->toArray());
-            return response()->json(array(
-                'message' => $message,
-                'status' => 'error'
-            ));
-        }
-
         //to remove the extra spaces im between the string
         $request->vendor_description = trim(preg_replace('/\s+/',' ', $request->vendor_description));
 

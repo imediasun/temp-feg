@@ -273,6 +273,17 @@
                         </div>
                     </div>
                     <div style="clear:both"></div>
+                    <div class="form-group">
+                        <br/>
+                        <label class="label-control col-md-4"> PO Note Additional Text</label>
+                        <div class="col-md-8">
+                            <textarea name="po_notes_additionaltext" class="form-control" rows="5" placeholder="PO Note Additional Text">{!! $row['po_notes_additionaltext'] !!}</textarea>
+                            <b>Place <code>MERCHANDISE_CONTACT</code>, <code>GENERAL_MANAGER</code>, <code>REGIONL_DIRECTOR</code>,
+                                <code>SVP_CONTACT</code>, <code>TECHNICAL_CONTACT</code>, these keywords where you want
+                                to show the email addresses.</b>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
 
                     <div style="clear:both"></div>
                     <input type="hidden" id="hidden_num_items" name="hidden_num_items">
