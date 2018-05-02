@@ -70,14 +70,14 @@
                             <label for="Username" class=" control-label col-md-4 text-left"> Username: <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
-                                {!! Form::text('username', $row['username'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
-                                @if ($errors->has('username'))
-                                    <div class="error">
-                                        <span class="text-danger">
-                                        {{ $errors->first('username') }}
+                                {!! Form::text('username', $row['username'],array('class'=>'form-control','placeholder'=>'', 'required'=>'true'  )) !!}
+                                <div class="error">
+                                        <span class="text-danger validation-error" id="username-error">
+                                        @if ($errors->has('username'))
+                                            {{ $errors->first('username') }}
+                                            @endif
                                         </span>
-                                    </div>
-                                @endif
+                                </div>
                             </div>
                             <div class="col-md-2">
 
@@ -106,14 +106,15 @@
                             <label for="Email" class=" control-label col-md-4 text-left"> Email: <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
-                                {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true', 'parsley-type'=>'email'   )) !!}
-                                @if ($errors->has('email'))
+                                {!! Form::text('email', $row['email'],array('class'=>'form-control' , 'placeholder'=>'', 'required'=>'true', 'parsley-type'=>'email'   )) !!}
                                     <div class="error">
-                                        <span class="text-danger">
-                                        {{ $errors->first('email') }}
+                                        <span class="text-danger validation-error" id="email-error">
+                                            @if ($errors->has('email'))
+                                                {{ $errors->first('email') }}
+                                            @endif
                                         </span>
                                     </div>
-                                @endif
+
                             </div>
                             <div class="col-md-2">
 
@@ -348,11 +349,12 @@
                                         @endif
                                         {!! $errors->has('password')? "style='border-color: #cc0000;'":"" !!}
                                 />
-                                @if ($errors->has('password'))
-                                    <span class="error_styles">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                                @endif
+                                <span class="error_styles text-danger validation-error" id="password-error">
+                                        @if ($errors->has('password'))
+                                         <strong>{{ $errors->first('password') }}</strong>
+                                        @endif
+                                </span>
+
                             </div>
                         </div>
 
@@ -367,12 +369,11 @@
                                         @endif
                                         {!! $errors->has('password_confirmation')? "style='border-color: #cc0000;'":"" !!}
                                 />
-                                @if ($errors->has('password_confirmation'))
-                                    <span class="text-danger">
+                                <span class="text-danger validation-error" id="password_confirmation-error">
+                                        @if ($errors->has('password_confirmation'))
                                         <strong>{{ $errors->first('password_confirmation') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
+                                        @endif
+                            </span></div>
                         </div>
 
                         <div class="form-group  int-link">
@@ -450,7 +451,7 @@
                         <div class="form-group">
 
                             <div class="col-sm-12 text-center btn-margin text-left-xs">
-                                <button type="submit" name="apply" class="btn btn-info btn-sm"><i
+                                <button type="submit" name="apply" class="btn btn-info btn-sm add-employee"><i
                                             class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
                                 <button type="submit" name="submit" class="btn btn-primary btn-sm"><i
                                             class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
