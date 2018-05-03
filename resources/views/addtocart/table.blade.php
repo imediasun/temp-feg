@@ -351,6 +351,7 @@ $(function(){
         $(".cartsubmitaction").removeClass("btn-success").addClass("btn-disable");
     });
     $(".qtyfield,.notesfield").on("focusout",function(){
+        var id = $(this).attr("id");
         var qty= $(".qtyfield_"+id).val();
         qty = $.trim(qty);
         if(qty == '' || Number(qty) < 1){
