@@ -12,6 +12,10 @@ class game extends Sximo  {
 		parent::__construct();
 		
 	}
+	public function gameTitle()
+	{
+		return $this->hasOne('App\Models\Gamestitle','id','game_title_id');
+	}
 
 	public static function querySelect(  ){
 		

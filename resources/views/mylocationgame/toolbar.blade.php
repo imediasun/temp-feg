@@ -54,7 +54,7 @@
 <div class="row">
     <div class="c-margin clearfix">
 
-    <div class="col-md-7 form-inline">
+    <div class="col-md-6 form-inline">
         @if($access['is_add'] ==1)
             {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
         @endif
@@ -102,10 +102,18 @@
             
         @endif
     </div>
-    <div class="col-md-5">
+    <div class="col-md-6">
         <div class="pull-right">
             <div class="pull-left m-r-xs-f lh-2p5"><strong>Download</strong></div>
 
+            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/excel/inspection-checklist'),
+                'class'=>'form-inline pull-left m-l-xxs-f downloadGameInspectionCheckList downloadForm',
+                'target'=>'_self')) !!}
+            <input name="exportID" value="{{ uniqid('gamehistory', true) }}" type="hidden"/>
+            <input name="footerfiters" value="" type="hidden"/>
+            <input name='validateDownload' type='hidden' value='1'/>
+            <button type="submit" class="btn btn-sm btn-white submitButton">Game Inspection Checklist</button>
+            {!! Form::close() !!}
             {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/history'),
                 'class'=>'form-inline pull-left m-l-xxs-f downloadGameMoveHistory downloadForm',
                 'target'=>'_self')) !!}

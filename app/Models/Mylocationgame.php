@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Models\GameTypes;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -205,5 +206,14 @@ FROM game
 
 		return $result;
 	}
+    public function getInspectionChecklist(){
+        $location  = \Session::get('selected_location');
+        $exceptGametypesIds = GameTypes::where('game_type','Furniture and Fixtures')->select('id')->first();
+        $exceptGametypesIds = $exceptGametypesIds->id;
+        $data = game::with('gameTitle')->where('game_type_id','!=',$exceptGametypesIds)
+            ->where('location_id',$location)
+            ->get();
+        return $data;
+    }
 
 }

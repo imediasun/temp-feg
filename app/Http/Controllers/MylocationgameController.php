@@ -5,6 +5,7 @@ use App\Models\Mylocationgame;
 use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect;
 
 class MylocationgameController extends Controller
@@ -784,6 +785,9 @@ class MylocationgameController extends Controller
             case "forsale":
                 return $this->getForsale($request, $exportType);
                 break;
+            case "inspection-checklist":
+                return $this->getInspectionChecklist($request, $exportType);
+                break;
             default:
                 die($source);
                 return parent::getExport($exportType);
@@ -985,6 +989,64 @@ class MylocationgameController extends Controller
         $content['exportID'] = $exportSessionID;
 
         return view('mylocationgame.csvhistory', $content);
+    }
+    /**
+     * getExport
+     * @param Request $requestData
+     * @return type
+     */
+    public function getInspectionChecklist(Request $requestData = null, $exportType = null)
+    {
+//        dd(\Session::get('selected_location'));
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+
+        $request = $requestData->all();
+        $rows = $this->model->getInspectionChecklist();
+
+        if (!empty($request['validateDownload'])) {
+            $status = [];
+            if (empty($rows)) {
+                $status['error'] = 'Game Move history is not found for the selected Games, 
+                    so the download has been aborted. 
+                    Please select a different Game Title and/or Location combination.';
+            }
+            else {
+                $status['success'] = 1;
+            }
+            return response()->json($status);
+        }
+
+        $fields = array(
+            'Game Title',
+            'Asset ID',
+            'Score',
+            'Coin up',
+            'All Controls',
+            'Motors / Feedback',
+            'Ticket / Prize',
+            'Lighting',
+            'Exterior',
+            'Cleanliness',
+            'Other'
+        );
+        $this->data['pageTitle'] = 'Games Inspection Checklist';
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'type' => 'move',
+            'title' => $this->data['pageTitle'],
+        );
+
+        global $exportSessionID;
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        $content['exportID'] = $exportSessionID;
+
+        return view('mylocationgame.excel_game_inspection_checklist', $content);
     }
 
     /**

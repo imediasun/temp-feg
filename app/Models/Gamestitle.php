@@ -3,7 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class gamestitle extends Sximo  {
+class Gamestitle extends Sximo  {
 	
 	protected $table = 'game_title';
 	protected $primaryKey = 'id';

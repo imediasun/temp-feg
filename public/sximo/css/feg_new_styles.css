@@ -8,11 +8,11 @@
 }
 
 .nav-tabs > li:last-child a {
-	margin-right: 0;
+    margin-right: 0;
 }
 
 .nav-tabs > li > a {
-	margin-right: 5px;
+    margin-right: 5px;
 }
 
 .sbox-content .nav.nav-tabs li.active {
@@ -123,22 +123,22 @@
     border-color:#14457a;
     color: #FFFFFF;
 }
- .nav-tabs > li.active > a:hover
-  {
-     background-color: #14457a!important;
-     border-color:#14457a!important;
-     color:#FFF!important;
-  }
- .darkblue-btn
- {
-     background: #012c5f;
-     color:#FFF;
-     border-color:#012c5f;
- }
- .darkblue-btn:hover,.darkblue-btn:hover:active
- {
-     color:#f0ad4e;
- }
+.nav-tabs > li.active > a:hover
+{
+    background-color: #14457a!important;
+    border-color:#14457a!important;
+    color:#FFF!important;
+}
+.darkblue-btn
+{
+    background: #012c5f;
+    color:#FFF;
+    border-color:#012c5f;
+}
+.darkblue-btn:hover,.darkblue-btn:hover:active
+{
+    color:#f0ad4e;
+}
 .has-feedback .form-control-feedback
 {
     top:21px!important;
@@ -200,4 +200,10 @@ table.budget-summery td:nth-child(2){
     background-color: #14457a!important;
     color: #FFF;
     cursor: pointer !important;
+}
+
+@media (min-width: 1281px) and (max-width: 1440px) {
+    .downloadGameForSale{
+        margin-left: 66px !important;
+    }
 }
