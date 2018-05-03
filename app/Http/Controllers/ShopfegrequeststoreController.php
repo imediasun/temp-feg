@@ -70,7 +70,8 @@ class ShopfegrequeststoreController extends Controller
                 'vendor.vendor_name',
                 'products.ticket_value',
                 'O.order_type',
-                'T.product_type'
+                'T.product_type',
+                'products.sku'
             ];
             $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
         }

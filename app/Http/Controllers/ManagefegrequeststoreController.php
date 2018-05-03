@@ -212,7 +212,7 @@ class ManagefegrequeststoreController extends Controller
                 $searchQuery = explode(":", $searchQuery);
                 if ($searchQuery[0] == 'description') {
                     $searchQuery = !empty($searchQuery[2]) ? explode("|", $searchQuery[2])[0] : '';
-                    $filter = $this->getSearchFilterQuery(['query' => $searchQuery, 'fields' => ['products.vendor_description', 'u1.username']]);
+                    $filter = $this->getSearchFilterQuery(['query' => $searchQuery, 'fields' => ['products.vendor_description', 'u1.username','products.sku']]);
                 }
 
                 $searchQueryArray = $this->model->getSearchQueryStringToArray($request->input('search'));
