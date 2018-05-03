@@ -1443,6 +1443,7 @@ class Sximo extends Model {
                           U4.email              AS loc_merch_contact_email,
                           U5.email              AS loc_svp_contact_email,
                           U6.email              AS loc_technical_user_email,
+                          U2.email              AS loc_contact_email,
                           V.vendor_name,
                           V.street1             AS vend_street1,
                           V.city                AS vend_city,
