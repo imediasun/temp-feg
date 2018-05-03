@@ -39,6 +39,7 @@ class PostSaveOrderEventHandler
         if ($product->is_reserved == 1) {
 
             $ReservedProductQtyLogObj = ReservedQtyLog::where('order_id', $item->order_id)
+                ->where('variation_id', $product->variation_id)
                 ->where('adjustment_type', 'negative')
                 ->orderBy('id', 'DESC')
                 ->first();
@@ -61,9 +62,9 @@ class PostSaveOrderEventHandler
             } else {
                 $adjustmentAmount = $product->reserved_qty - $item->qty;
 
-                    $qty = ($item->qty) < 0 ? ( ($item->qty) * -1 ):($item->qty);
+                $qty = ($item->qty) < 0 ? ( ($item->qty) * -1 ):($item->qty);
 
-                    self::setPositiveAdjustement($item,$product,"negative",$qty);
+                self::setPositiveAdjustement($item,$product,"negative",$qty);
             }
 
             $inactive = 0;
@@ -105,18 +106,18 @@ class PostSaveOrderEventHandler
                 self::sendProductReservedQtyEmail($message,$sendEmail);
             }
             if ($adjustmentAmount <= $product->reserved_qty_limit && $inactive == 0) {
-               /* When reserved quantity par amount is met or exceeded (reserve quantity reduced to par amount or less):
+                /* When reserved quantity par amount is met or exceeded (reserve quantity reduced to par amount or less):
 
-                > Hello FEG Team,
-                >
-                > The following product has met or exceeded it's par amount.
-                >
-                > Product Name:
-                > Product SKU:
-                > Reserved Qty Par Amount:
-                > Remaining Reserved Quantity:
-                >
-                 */
+                 > Hello FEG Team,
+                 >
+                 > The following product has met or exceeded it's par amount.
+                 >
+                 > Product Name:
+                 > Product SKU:
+                 > Reserved Qty Par Amount:
+                 > Remaining Reserved Quantity:
+                 >
+                  */
 
                 $message = 'Hello FEG Team,';
                 $message .='<br><br>';
@@ -137,6 +138,7 @@ class PostSaveOrderEventHandler
             "order_id" => $item->order_id,
             "adjustment_amount" => $qty,
             "adjustment_type" => $type,
+            "variation_id" => $product->variation_id,
             "adjusted_by" => \AUTH::user()->id,
         ];
 
