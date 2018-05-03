@@ -294,6 +294,10 @@ class LocationController extends Controller
 
             $id = $this->model->insertRow($data, $id);
 
+            // clean orphan user location assignmens
+            \SiteHelpers::addLocationToAllLocationUsers();
+            \SiteHelpers::refreshUserLocations(\Session::get('uid'));
+
 
             return response()->json(array(
                 'status' => 'success',
@@ -379,7 +383,7 @@ class LocationController extends Controller
         $this->data['id'] = $id;
         return view('location.index', $this->data);
     }
-function getIsLocationAvailable($id)
+    function getIsLocationAvailable($id)
 {
     $isAvailable=\DB::select("select count('id') as count from location where id=$id");
     if($isAvailable[0]->count > 0)

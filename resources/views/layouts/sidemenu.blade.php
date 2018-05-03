@@ -103,6 +103,7 @@ $selected_loc=\Session::get('selected_location');?>
             @foreach ($sidebar as $menu)
                 <?php
                 $mName = $menu['menu_name'];
+                $moduleId = str_slug($mName, '-');
                 $mType = $menu['menu_type'];
                 $mIsDivider = $mType == 'divider';
                 $mUrl = trim($menu['url'] .'');
@@ -118,8 +119,8 @@ $selected_loc=\Session::get('selected_location');?>
                 $class = Request::url() == $mUrl ? "active" : "";
                 ?>
                 <li class="{{$class}}" >
-                    <a  href="{{ $mUrl }}"
-                    @if(count($menu['childs']) > 0 ) class="expand level-closed" @endif>
+                    <a  href="{{ $mUrl }}" id="{{$moduleId}}"
+                    @if(true || count($menu['childs']) > 0 ) class="expand level-closed" @endif>
                         <i class="{{$menu['menu_icons']}}"></i> <span class="nav-label">
 					
 					@if(CNF_MULTILANG ==1 && isset($menu['menu_lang']['title'][Session::get('lang')]))
@@ -135,6 +136,7 @@ $selected_loc=\Session::get('selected_location');?>
                             @foreach ($menu['childs'] as $menu2)
                                 <?php
                                 $mName2 = $menu2['menu_name'];
+                                $mId = str_slug($mName2, '-');
                                 $mType2 = $menu2['menu_type'];
                                 $mIsDivider2 = $mType2 == 'divider';
                                 $mUrl2 = trim($menu2['url'] .'');
@@ -154,7 +156,7 @@ $selected_loc=\Session::get('selected_location');?>
                                 }
                                 ?>
                                 <li  class="{{$class2}}")>
-                                    <a href="{{ $mUrl2 }}" >
+                                    <a href="{{ $mUrl2 }}" id="{{$mId}}" >
                                         <i class="{{$menu2['menu_icons']}}"></i>
                                         @if(CNF_MULTILANG ==1 && isset($menu2['menu_lang']['title'][Session::get('lang')]))
                                             {{ $menu2['menu_lang']['title'][Session::get('lang')] }}

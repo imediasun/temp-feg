@@ -63,4 +63,6 @@ Route::controller('excludedreaders', 'ExcludedreadersController');
 Route::controller('ordertyperestrictions', 'OrdertyperestrictionsController');
 Route::controller('inventoryreport', 'InventoryreportController');
 Route::controller('expensecategories', 'ExpensecategoriesController');
+Route::controller('ordersetting', 'OrdersettingController');
+Route::controller('productlog', 'ProductlogController');
 ?>

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="google-site-verification" content="Fykw9_aQCQ8gaf5Ei_mtcIQrtNDyyZIcTP4zkGR2PNw"/>
 <title>{{ CNF_APPNAME }}</title>
 <link rel="shortcut icon" href="{{ asset('fegpo.png')}}" type="image/x-icon">
 

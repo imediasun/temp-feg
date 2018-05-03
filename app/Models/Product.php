@@ -505,6 +505,26 @@ WHERE orders.is_api_visible = 1
         $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price' => $this->case_price])->get();
         return $items;
     }
+
+    public function getAutoComplete($term, $vendorId, $excludeProductsIds){
+        $products = self::select(DB::raw("*,LOCATE('$term',vendor_description) AS pos"))
+            ->where('vendor_description', 'like', "%$term%")
+            ->where('inactive', 0)
+            ->groupBy('vendor_description')
+            ->orderBy('pos')
+            ->orderBy('vendor_description');
+
+        if (!empty($vendorId)) {
+            $products = $products->where('vendor_id', $vendorId);
+        }
+
+        if (!empty($excludeProductsIds)) {
+            $products = $products->whereNotIn('id', $excludeProductsIds);
+        }
+
+        return $products->take(10)->get();
+    }
+    
     public static function array_remove_object(&$array, $value, $prop)
     {
         return array_filter($array, function($a) use($value, $prop) {
