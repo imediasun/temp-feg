@@ -460,7 +460,6 @@ class ProductController extends Controller
                     "product_id" => $Product->id,
                     "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1) : $Product->reserved_qty),
                     "adjustment_type" => $type,
-                    "variation_id" => $Product->variation_id,
                     "adjusted_by" => \AUTH::user()->id,
                 ];
                 $ReservedQtyLog->insertRow($reservedLogData, 0);
@@ -507,7 +506,6 @@ class ProductController extends Controller
                         "product_id" => $id,
                         "adjustment_amount" => $NewReservedQty,
                         "adjustment_type" => $type,
-                        "variation_id" => !empty($Product->variation_id) ? $Product->variation_id:null,
                         "reserved_qty_reason" => $reserved_qty_reason,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
@@ -630,10 +628,6 @@ class ProductController extends Controller
             if(isset($data['reserved_qty_reason'])){
                 unset($data['reserved_qty_reason']);
             }
-            if($id == 0 || empty($id)){
-                $UniqueID = substr(md5(md5(time()+time())."-".md5(time())),0,10);
-                $data['variation_id'] = $UniqueID;
-            }
             $postedtoNetSuite = $data['vendor_description'];
 
             if(strlen( $data['vendor_description'])>53){
@@ -735,7 +729,6 @@ class ProductController extends Controller
                             "product_id" => $Product->id,
                             "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1):$Product->reserved_qty),
                             "adjustment_type" => $type,
-                            "variation_id" => $Product->variation_id,
                             "reserved_qty_reason" => $reserved_qty_reason,
                             "adjusted_by" => \AUTH::user()->id,
                         ];
