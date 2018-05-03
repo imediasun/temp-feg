@@ -60,7 +60,6 @@ class PostEditOrderEventHandler
                         "product_id" => $products->id,
                         "order_id" => $event->order_id,
                         "adjustment_amount" => $adjustmentAmount,
-                        "variation_id" => $products->variation_id,
                         "adjusted_by" => $user_id,
                     ];
                     $ProductReservedQtyObject = new ReservedQtyLog();
@@ -88,7 +87,6 @@ class PostEditOrderEventHandler
                         "product_id" => $product_id,
                         "order_id" => $order_id,
                         "adjustment_amount" => $products->qty,
-                        "variation_id" => $products->variation_id,
                         "adjusted_by" => $user_id,
                     ];
                     $ProductReservedQtyObject = new ReservedQtyLog();

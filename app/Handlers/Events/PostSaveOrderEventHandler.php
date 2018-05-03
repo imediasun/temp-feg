@@ -38,7 +38,6 @@ class PostSaveOrderEventHandler
         if ($product->is_reserved == 1) {
 
             $ReservedProductQtyLogObj = ReservedQtyLog::where('order_id', $item->order_id)
-                ->where('variation_id', $product->variation_id)
                 ->where('adjustment_type', 'negative')
                 ->orderBy('id', 'DESC')
                 ->first();
@@ -129,7 +128,6 @@ class PostSaveOrderEventHandler
             "order_id" => $item->order_id,
             "adjustment_amount" => $qty,
             "adjustment_type" => $type,
-            "variation_id" => $product->variation_id,
             "adjusted_by" => \AUTH::user()->id,
         ];
 
