@@ -671,7 +671,6 @@ class OrderController extends Controller
             $item_received = $request->get('item_received');
             $item_received = $request->get('item_received');
             $denied_SIDs = $request->get('denied_SIDs');
-            $po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
@@ -709,7 +708,6 @@ class OrderController extends Controller
                     'alt_address' => $alt_address,
                     'request_ids' => $where_in,
                     'po_notes' => $notes,
-                    'po_notes_additionaltext'=>$po_notes_additionaltext,
                 );
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
@@ -735,7 +733,6 @@ class OrderController extends Controller
                     'new_format' => 1,
                     'is_freehand' => $is_freehand,
                     'po_notes' => $notes,
-                    'po_notes_additionaltext'=>$po_notes_additionaltext,
                 );
                 if ($editmode == "clone") {
                     $id = 0;
