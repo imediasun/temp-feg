@@ -40,6 +40,34 @@ class ManagefegrequeststoreController extends Controller
 
 
     }
+    function returnUrl()
+    {
+        $pages = (isset($_GET['page']) ? $_GET['page'] : '');
+        $sort = (isset($_GET['sort']) ? $_GET['sort'] : '');
+        $order = (isset($_GET['order']) ? $_GET['order'] : '');
+        $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
+        $search = (isset($_GET['search']) ? $_GET['search'] : '');
+        $v1 = (isset($_GET['v1']) ? $_GET['v1'] : '');
+        $v2 = (isset($_GET['v2']) ? $_GET['v2'] : '');
+        $v3 = (isset($_GET['v3']) ? $_GET['v3'] : '');
+
+        $appends = array();
+        if ($pages != '') $appends['page'] = $pages;
+        if ($sort != '') $appends['sort'] = $sort;
+        if ($order != '') $appends['order'] = $order;
+        if ($rows != '') $appends['rows'] = $rows;
+        if ($search != '') $appends['search'] = $search;
+        if ($v1 != '') $appends['v1'] = $v1;
+        if ($v2 != '') $appends['v2'] = $v2;
+        if ($v2 != '') $appends['v3'] = $v3;
+
+        $url = "";
+        foreach ($appends as $key => $val) {
+            $url .= "&$key=$val";
+        }
+        return $url;
+
+    }
 
     public function getIndex()
     {
@@ -139,12 +167,16 @@ class ManagefegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
+        if($request->input('search') == ''){
+            \Session::put('searchParamsForManageFEGStore','');
+        }
 
-        $this->getSearchParamsForRedirect('manageFegStore');
+        $searchUrl = $this->getSearchParamsForRedirect('manageFegStore');
         $user_level = \Session::get('gid');
         if ($user_level == Groups::PARTNER) {
             return redirect('dashboard');
         } else {
+
             $v1 = $request->get('v1');
             $v2 = $request->get('v2');
             $v3 = $request->get('v3');
@@ -274,6 +306,10 @@ class ManagefegrequeststoreController extends Controller
             }
 
 // Render into template
+            $this->data['searchUrl']="";
+            if(!empty($searchUrl)){
+                $this->data['searchUrl'] = $searchUrl;
+            }
             return view('managefegrequeststore.table', $this->data);
         }
     }
@@ -516,5 +552,80 @@ class ManagefegrequeststoreController extends Controller
             }
         }
         return 'requestIds are empty!';
+    }
+    function getSearchfilterparemsresult(Request $request){
+
+        $productTypeId = $request->get('v1');
+        $locationId = $request->get('v2');
+        $vendorId = $request->get('v3');
+        if(!empty($productTypeId)){
+            $productTypeId = str_replace("T","",$productTypeId);
+            $productTypeId = str_replace("-",',',$productTypeId);
+        }
+        if(!empty($locationId)){
+            $locationId = str_replace("L","",$locationId);
+        }
+        if(!empty($vendorId)){
+            $vendorId = str_replace("V","",$vendorId);
+        }
+        $response = ['product_type_id'=>'','location_id'=>'','vendor_id'=>''];
+        $responseSet = true;
+        if(empty($productTypeId)){
+            $productTypeId = 0 ;
+        }
+
+        $whereQuery = " products.prod_type_id in(" . $productTypeId . ") ";
+        $whereQuery .= " AND requests.location_id = '".$locationId."' ";
+        $whereQuery .= " AND products.vendor_id = '".$vendorId."' ";
+        $result  = $this->model->getSearchFilterResult($whereQuery); // Select from Search Parems
+
+        if(empty($result)) {
+            $whereQuery = " products.prod_type_id in(" . $productTypeId . ") ";
+            $whereQuery .= " AND requests.location_id = '" . $locationId . "' ";
+            $result = $this->model->getSearchFilterResult($whereQuery); // selecting first vendor from searched product type and location
+        }
+        if(empty($result) && $productTypeId >0){
+            $whereQuery = " products.prod_type_id in(" . $productTypeId . ") ";
+            $result = $this->model->getSearchFilterResult($whereQuery); // selecting first location and vendor from search product type
+        }
+        if(empty($result)){
+            $result = $this->model->getSearchFilterResult(); // selecting first product type, location and vendor
+        }
+
+        if(!empty($result)){
+            $response = [
+                'product_type_id'=> ($result->product_type_id == 7 || $result->product_type_id == 8) ? '7-8':$result->product_type_id,
+                'location_id'=>$result->location_id,
+                'vendor_id'=>$result->vendor_id,
+                    ];
+        }
+        $url="?";
+        if(!isset($_GET['v1'])){
+            $_GET['v1'] ='';
+        }
+        if(!isset($_GET['v2'])){
+            $_GET['v2'] ='';
+        }
+        if(!isset($_GET['v3'])){
+            $_GET['v3'] ='';
+        }
+        foreach($_GET as $paramName=>$paramValue)
+        {
+            $value = $paramValue;
+            if($paramName=='v1'){
+                $value = 'T'.$response['product_type_id'];
+            }
+            if($paramName=='v2'){
+                $value = 'L'.$response['location_id'];
+            }
+            if($paramName=='v3'){
+                $value = 'V'.$response['vendor_id'];
+            }
+            $url .= $paramName."=".$value."&";
+        }
+        $url=substr($url,0,strlen($url)-1);
+
+        return $url;
+
     }
 }

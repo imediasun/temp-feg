@@ -5,7 +5,7 @@ use App\Models\Core\Pages;
 use App\Models\Core\Groups;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect, Session, Auth, DB;
+use Validator, Input, Redirect, Session, Auth, DB, Log;
 use Illuminate\Support\Facades\Response;
 
 
@@ -309,6 +309,7 @@ class PagesController extends Controller
             }
             $this->model->destroy($request->input('ids'));
 
+
             self::createRouters();
             return Redirect::to('core/pages')
                 ->with('messagetext', \Lang::get('core.note_success_delete'))->with('msgstatus', 'success');
@@ -367,7 +368,5 @@ class PagesController extends Controller
             'Content-type: application/octet-stream',
         );
         return Response::download($file, $fileName, $headers);
-
     }
-
 }

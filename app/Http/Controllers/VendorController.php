@@ -12,6 +12,8 @@ class VendorController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'vendor';
     static $per_page = '10';
 
@@ -30,6 +32,8 @@ class VendorController extends Controller
             'pageUrl' => url('vendor'),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['country_id' => 'countries.country_name'];
+        $this->sortUnMapping = ['countries.country_name' => 'country_id'];
 
 
     }
@@ -110,6 +114,7 @@ class VendorController extends Controller
         return view('vendor.index', $this->data);
     }
 
+
     public function postData(Request $request)
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'vendor')->pluck('module_id');
@@ -136,6 +141,8 @@ class VendorController extends Controller
         //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
         $page = $request->input('page', 1);
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
+
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
@@ -146,6 +153,8 @@ class VendorController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         foreach ($results['rows'] as $result) {
 
             if ($result->partner_hide == 1) {
@@ -232,6 +241,8 @@ class VendorController extends Controller
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
+        $this->data['countries'] = \DB::select('select * from countries where active=1 order by id asc ');
+
         $this->data['id'] = $id;
 
         return view('vendor.form', $this->data);
@@ -282,8 +293,8 @@ class VendorController extends Controller
     private function getVendor($id) {
 
         $result = \DB::select('
-        SELECT vendor.* FROM vendor 
-        WHERE id IS NOT NULL
+        SELECT vendor.*,countries.country_name FROM vendor left join countries on countries.id = vendor.country_id
+        WHERE vendor.id IS NOT NULL
         AND vendor.id = '.$id.' 
         ');
         if (count($result) <= 0) {
@@ -341,17 +352,13 @@ class VendorController extends Controller
         $rules["vendor_name"] = "required|unique:vendor,vendor_name," . $id;
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            if(empty($id))
-            {
-                $data = $this->validatePost('vendor');
-            }
-            else
-            {
-                $data = $this->validatePost('vendor', true);
-            }
+            //No one tested for 1 year that edit was not saving missing data
+            $data = $this->validatePost('vendor');
             $data['updated_by'] = \Session::get('uid');
             $data['hide'] = $request->get('hide') == "1" ?1:0;
-            $data['status'] = $request->get('status') == "1" ?1:0;
+            if (!empty($request->get('status'))) {
+                $data['status'] = $request->get('status') == "1" ? 1 : 0;
+            }
             if (!empty($data['website'])) {
                 if (preg_match('/^https?\:\/\//', trim($data['website'])) !== 1) {
                     $data['website'] = 'http://' . trim($data['website']);

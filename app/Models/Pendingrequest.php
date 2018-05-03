@@ -7,6 +7,7 @@ class pendingrequest extends Sximo  {
 	
 	protected $table = 'requests';
 	protected $primaryKey = 'id';
+    public $timestamps = false;
 
 	public function __construct() {
 		parent::__construct();
@@ -45,6 +46,7 @@ FROM requests
 	public static function queryGroup(){
 		return "  ";
 	}
+
     public static function getRow( $id )
     {
         $table = with(new static)->table;
@@ -70,5 +72,23 @@ left outer join products p on requests.product_id=p.id'.
         return $result;
     }
 
+    public function getPendingRequests($location_id, $vendor_id){
+        $requests = self::with('product')
+            ->where('location_id', $location_id)
+            ->where('status_id', 1)
+            ->whereHas('product', function($q) use($vendor_id) {
+                $q->where('vendor_id', $vendor_id);
+            })
+            ->get();
 
+        return $requests;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function product()
+    {
+        return $this->belongsTo("App\Models\product");
+    }
 }

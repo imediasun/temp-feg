@@ -557,6 +557,9 @@ abstract class Controller extends BaseController
         $order = (isset($_GET['order']) ? $_GET['order'] : '');
         $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
         $search = (isset($_GET['search']) ? $_GET['search'] : '');
+        $v1 = (isset($_GET['v1']) ? $_GET['v1'] : '');
+        $v2 = (isset($_GET['v2']) ? $_GET['v2'] : '');
+        $v3 = (isset($_GET['v3']) ? $_GET['v3'] : '');
 
         $appends = array();
         if ($pages != '') $appends['page'] = $pages;
@@ -564,7 +567,6 @@ abstract class Controller extends BaseController
         if ($order != '') $appends['order'] = $order;
         if ($rows != '') $appends['rows'] = $rows;
         if ($search != '') $appends['search'] = $search;
-
         $url = "";
         foreach ($appends as $key => $val) {
             $url .= "&$key=$val";
@@ -1155,6 +1157,8 @@ abstract class Controller extends BaseController
             \Session::put('searchParams',$url);
         }else{
             \Session::put('searchParamsForManageFEGStore',$url);
+            return $url;
+
         }
     }
     function destroyRedirectFilters()

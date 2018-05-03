@@ -87,7 +87,7 @@
     </script>
     <script type="text/javascript" src="{{ asset('sximo/js/plugins/ajax/noty/packaged/jquery.noty.packaged.min.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('sximo/js/app.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('sximo/js/app.js?vertime=2018-04-27-16-28-00') }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/search.js?version='.config('app.version')) }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js?version='.config('app.version')) }}"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>

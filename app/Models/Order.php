@@ -7,6 +7,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Log;
 
@@ -30,7 +31,6 @@ class order extends Sximo
     const ORDER_TYPE_ADVANCED_REPLACEMENT = 2;
     const ORDER_TYPE_PRODUCT_IN_DEVELOPMENT = 18;
 
-
     const ORDER_DELETED_STATUS = 10;
     const ORDER_ACTIVE_STATUS = 1;
 
@@ -50,6 +50,11 @@ class order extends Sximo
         return $this->hasMany("App\Models\OrderedContent");
     }
 
+    public function orderReceived()
+    {
+        return $this->hasMany("App\Models\OrderReceived");
+    }
+
     public static function boot()
     {
         parent::boot();
@@ -64,7 +69,6 @@ class order extends Sximo
 
         //separating pre delete and post delete functions
         static::deleted(function(Order $model){
-
             $model->restoreReservedProductQuantities();
         });
 
@@ -121,7 +125,6 @@ class order extends Sximo
                         "order_id" => $orderContent->order_id,
                         "adjustment_amount" => $orderContent->qty,
                         "adjustment_type" => "negative",
-                        "variation_id" => $orderedProduct->variation_id,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
 
@@ -145,7 +148,6 @@ class order extends Sximo
                         "order_id" => $orderContent->order_id,
                         "adjustment_amount" => $orderContent->qty,
                         "adjustment_type" => "positive",
-                        "variation_id" => $orderedProduct->variation_id,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
 
@@ -192,6 +194,7 @@ class order extends Sximo
                 LEFT OUTER JOIN order_status OS ON orders.status_id=OS.id
                 LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id";
     }
+
     public static function getProductInfo($id){
 
         $select ="SELECT IF(order_contents.sku IS null OR order_contents.sku = '', products.sku,order_contents.sku) as sku, order_contents.qty,order_contents.item_name,order_contents.total FROM order_contents
@@ -310,7 +313,6 @@ class order extends Sximo
         return $data;
     }
 
-
     public static function getExportRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
@@ -403,7 +405,6 @@ class order extends Sximo
         }
         return $results = array('rows' => $result, 'total' => $total);
     }
-
 
     public static function queryGroup()
     {
@@ -673,28 +674,23 @@ class order extends Sximo
         else{
             return 1;
         }
-
-
-
-
     }
-    function isPOAvailable($po_full)
-    {
-        $query = \DB::select("SELECT po_number FROM po_track WHERE po_number = '".$po_full."'" );
-        if(count($query) > 0 ) {
 
-            return false;
-        }
-        else{
-            return true;
-        }
+    function isPOAvailable($po_full){
+        $po = PoTrack::where('po_number', $po_full)->first();
+        return $po ? false : true;
     }
-    function createPOTrack($po_full,$location_id)
-    {
+
+    function createPOTrack($po_full,$location_id) {
         $count = explode('-', $po_full);
-        $data=array('po_number'=>$po_full,'location_id'=>$location_id, 'sort' => $count[2]);
-        \DB::table('po_track')->insert($data);
+        $data = [
+            'po_number' => $po_full,
+            'location_id' => $location_id,
+            'sort' => $count[2]
+        ];
+        return PoTrack::create($data);
     }
+
     public function get_local_time($type = null)
     {
         $year = date('Y');
@@ -755,7 +751,7 @@ class order extends Sximo
             $data['title'] = 'Order Receipt';
             return $data;
         } else {
-            Redirect::to('orders');
+            \Redirect::to('orders');
         }
     }
 
@@ -877,7 +873,6 @@ class order extends Sximo
         }
     }
 
-
     public static function getComboselect($params, $limit = null, $parent = null)
     {
         $tableName = $params[0];
@@ -892,6 +887,7 @@ class order extends Sximo
         return Sximo::parseNumber($this->attributes['unit_price']);
         //return number_format($this->attributes['unit_price'],3); //causing problem with inputs
     }
+
     public function getCasePriceAttribute(){
         return Sximo::parseNumber($this->attributes['case_price']);
         //return number_format($this->attributes['case_price'],3); //causing problem with inputs
@@ -900,12 +896,15 @@ class order extends Sximo
     public static function isClonable($id, $data = null) {
 
     }
+
     public static function isEditable($id, $data = null) {
 
     }
+
     public static function isReceivable($id, $data = null) {
 
     }
+
     public static function isPartiallyReceived($id, $data = null) {
         $partial = false;
         if (self::isVoided($id, $data)){
@@ -933,6 +932,7 @@ class order extends Sximo
         $isClosed = in_array($statusId, self::ORDER_CLOSED_STATUS);
         return $isClosed;
     }
+
     public static function isVoided($id, $data = null) {
         if (!empty($data)) {
             $statusId = is_object($data) ? $data->status_id : $data['status_id'];
@@ -943,6 +943,7 @@ class order extends Sximo
         $isVoided = $statusId == self::ORDER_VOID_STATUS;
         return $isVoided;
     }
+
     public static function isFreehand($id, $data = null) {
         if (!empty($data)) {
             $freehand = is_object($data) ? $data->is_freehand : $data['is_freehand'];
@@ -965,10 +966,12 @@ class order extends Sximo
         $isApiable = Ordertyperestrictions::isApiable($oType);
         return $isApiable;
     }
+
     public static function isApiable($id, $data = null, $ignoreVoid = false) {
         return !self::isFreehand($id, $data) && self::isApiableFromType($id, $data) &&
             ($ignoreVoid || !self::isVoided($id, $data));
     }
+
     public static function isApified($id, $data = null) {
         if (!empty($data)) {
             $api = is_object($data) ? $data->is_api_visible : $data['is_api_visible'];
@@ -979,6 +982,7 @@ class order extends Sximo
         $isApified = !empty($api);
         return $isApified;
     }
+
     public static function apified($id, $isUnset = false) {
         if (self::isApiable($id, null, true)) {
             $now = date("Y-m-d H:i:s");
@@ -1000,6 +1004,7 @@ class order extends Sximo
         }
         return false;
     }
+
     public static function voidify($id) {
         $now = date("Y-m-d H:i:s");
         $updateData = ['status_id' => self::ORDER_VOID_STATUS];
@@ -1048,7 +1053,6 @@ class order extends Sximo
             return false;
         }
     }
-
 
     public static function cloneOrder($id, $data = null, $options = array()) {
 
@@ -1171,6 +1175,7 @@ class order extends Sximo
 
         return $poNumber;
     }
+
     public static function relateOrder($rType, $originalOrderID, $targetOrderID) {
 
         $typeIDs = \FEGHelp::getEnumTable('orders_relation_types', 'relation_name', 'id');
@@ -1219,4 +1224,32 @@ class order extends Sximo
             $this->is_partial = 1;
         }
     }
+
+    public function setOrderStatusPost($request_qty){
+        $total_qty = $this->contents->sum('qty');
+        $received_qty = $this->orderReceived->sum('quantity');
+        $new_qty = $request_qty - $total_qty;
+        $final_qty = $new_qty + $total_qty;
+
+        if ($received_qty and $final_qty != $received_qty) {
+            $this->status_id = 1;
+            $this->is_partial = 1;
+        } elseif(!$received_qty or($final_qty == $received_qty and $this->status_id != '2')) {
+            $this->status_id = 1;
+            $this->is_partial = 0;
+        } elseif ($final_qty == $received_qty and $this->status_id != '1'){
+            $this->status_id = 2;
+            $this->is_partial = 0;
+        }
+    }
+
+    public function updateRequest(array $request_ids){
+        pendingrequest::whereIn('id', $request_ids)->update([
+            'status_id' => 2,
+            'process_user_id' => Auth::user()->id,
+            'process_date' => $this->get_local_time('date'),
+            'blocked_at' => null,
+        ]);
+    }
+
 }

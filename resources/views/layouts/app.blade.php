@@ -5,6 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="google-site-verification" content="Fykw9_aQCQ8gaf5Ei_mtcIQrtNDyyZIcTP4zkGR2PNw"/>
 <title> {{ CNF_APPNAME }} </title>
 <meta name="keywords" content="">
 <meta name="description" content=""/>
@@ -86,11 +87,12 @@
 	</script>
 	<script type="text/javascript" src="{{ asset('sximo/js/plugins/ajax/noty/packaged/jquery.noty.packaged.min.js') }}"></script>
 
-	<script type="text/javascript" src="{{ asset('sximo/js/app.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('sximo/js/app.js?vertime=2018-04-27-16-28-00') }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/search.js?version='.config('app.version')) }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js?version='.config('app.version')) }}"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
-    <!-- End Search and storage  -->
+
+	<!-- End Search and storage  -->
     @yield('beforeheadend', '')	
   	</head>
   	<body class="sxim-init" >

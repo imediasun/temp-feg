@@ -44,7 +44,6 @@
 
     function getCartData(isOnLoad,vendor,subtotal)
     {
-        $('.ajaxLoading').show();
         vendor = vendor || "no";
         subtotal=subtotal || "no";
 
@@ -54,7 +53,6 @@
             url: siteUrl + '/addtocart/cartdata',
             method:'get',
             success:function(data){
-
                 var row,cell1,cell2,vendor_name,vendor_total,total_row,total_cell1,total_cell2;
                 if(isOnLoad) {
                     for (var i = 0; i < data['subtotals'].length; i++) {
@@ -70,7 +68,7 @@
                             vendor_name = vendor_name + "( $" + data['subtotals'][i].vendor_min_order_amt + " Minimum )";
                         }
 
-// Add some text to the new cells:
+            // Add some text to the new cells:
                         cell1.innerHTML = vendor_name;
                         cell2.innerHTML = vendor_total;
                     }
@@ -80,9 +78,7 @@
                     total_cell2 = total_row.insertCell(1);
                     total_cell2.id="total_amount";
 
-
-
-// Add some text to the new cells:
+            // Add some text to the new cells:
                     total_cell1.innerHTML = "TOTAL";
                     total_cell2.innerHTML =" $ "+  data['shopping_cart_total'];
                 }
@@ -95,17 +91,9 @@
                     $("#cartbtn").val(" Submit Weekly Requests totalling $ "+ data['shopping_cart_total']);
 
                 }
-                getCartTotal();
-
-
+                setShopingCartTotal(data); // on Page reloading and updating cart item quantity set number of items and  Cart total on Cart icon.
             }
         });
     }
-
-    $(document).ajaxComplete(function(event, xhr, options) {
-        if(options.url == siteUrl+'/addtocart/delete'){
-            getCartTotal();
-        }
-    });
 
 </script>

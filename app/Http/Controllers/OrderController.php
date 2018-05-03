@@ -1,16 +1,24 @@
 <?php namespace App\Http\Controllers;
 
+use App\Events\ordersEvent;
+use App\Events\PostEditOrderEvent;
+use App\Events\PostOrdersEvent;
+use App\Events\Event;
+use App\Events\PostSaveOrderEvent;
 use App\Http\Controllers\controller;
+use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
-use App\Models\OrderSendDetails;
 use App\Models\product;
+use App\Models\OrderSendDetails;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\SximoDB;
+use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
 use PHPMailerOAuth;
@@ -22,6 +30,8 @@ class OrderController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'order';
     static $per_page = '10';
 
@@ -49,7 +59,8 @@ class OrderController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
-
+        $this->sortMapping = ['status_id' => 'OS.status', 'vendor_id' => 'V.vendor_name', 'user_id' => 'U.username', 'order_type_id' => 'OT.order_type', 'location_id' => 'L.location_name'];
+        $this->sortUnMapping = ['OS.status' => 'status_id', 'V.vendor_name' => 'vendor_id', 'U.username' => 'user_id', 'OT.order_type' => 'order_type_id', 'L.location_name' => 'location_id'];
 
     }
 
@@ -114,17 +125,48 @@ class OrderController extends Controller
         });
         //$results = $this->model->getExportRows($params);
 
+        foreach($results['rows'] as  &$rs){
+            $result = $this->model->getProductInfo($rs->id);
+            $infoString = '';
+            foreach($result as $r){
+                if(!isset($r->sku)){
+                    $sku = " (SKU: No Data) ";
+                }else{
+                    $sku = " (SKU: ".$r->sku.")";
+                }
+
+                $infoString = $infoString . '(' . $r->qty . ') ' . $r->item_name . ' ' . \CurrencyHelpers::formatPrice($r->total, 2, true, ',', '.', true) . $sku . '; ';
+            }
+            $rs->productInfo = rtrim($infoString,'; ');
+        }
+
+
         $fields = $info['config']['grid'];
         $rows = $results['rows'];
 
         //$rows = $this->updateDateInAllRows($rows);
+        $rowss=[];
+        foreach($rows as $row1) {
+            $row1 = (array) $row1;
+            $rowss[] = (array)self::array_move('created_at', 3, (array)$row1);
+        }
+        $rowsobjects = [];
+        foreach($rowss as $rowobj){
+            $rowsobjects[] = (object)$rowobj;
+        }
+
+        $out = array_splice($fields, 27, 1);
+        array_splice($fields, 3, 0, $out);
+
+
 
         $content = array(
             'exportID' => $exportSessionID,
             'fields' => $fields,
-            'rows' => $rows,
+            'rows' => $rowsobjects,
             'title' => $this->data['pageTitle'],
         );
+
 
         if ($t == 'word') {
 
@@ -154,16 +196,13 @@ class OrderController extends Controller
     {
 
         /*
-                                \App\Library\FEG\System\Sync::transferEarnings();
-                                \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
-                                \App\Library\FEG\System\Sync::generateDailySummary();
-                                \App\Library\FEG\System\Email\Report::daily();
-                                \App\Library\FEG\System\Email\Report::missingDataReport();
-             echo "done transfer";
-
-             exit;
-        */
-
+        \App\Library\FEG\System\Sync::transferEarnings();
+        \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
+        \App\Library\FEG\System\Sync::generateDailySummary();
+        \App\Library\FEG\System\Email\Report::daily();
+        \App\Library\FEG\System\Email\Report::missingDataReport();
+        echo "done transfer";
+        exit;*/
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $this->data['sid'] = "";
@@ -175,7 +214,10 @@ class OrderController extends Controller
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'order')->pluck('module_id');
         $this->data['module_id'] = $module_id;
-        $this->getSearchParamsForRedirect();
+        if(Session::get('redirect') != "managefegrequeststore") {
+
+            $this->getSearchParamsForRedirect();
+        }
 
         session_start();
         $_SESSION['searchParamsForOrder'] = \Session::get('searchParams');
@@ -197,9 +239,7 @@ class OrderController extends Controller
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-        if ($sort == 'order_type_id') {
-            $sort = 'OT.order_type';
-        }
+
         // End Filter sort and order for query
 
         // Get order_type search filter value and location_id saerch filter values
@@ -228,6 +268,9 @@ class OrderController extends Controller
 
 
         $page = $request->input('page', 1);
+
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
+
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
@@ -255,7 +298,7 @@ class OrderController extends Controller
                     $sku = " (SKU: " . $r->sku . ")";
                 }
 
-                $info = $info . '(' . $r->qty . ') ' . $r->item_name . ' ' . \CurrencyHelpers::formatPrice($r->total, 3, true, ',', '.', true) . $sku . '; ';
+                $info = $info . '(' . $r->qty . ') ' . $r->item_name . ' ' . \CurrencyHelpers::formatPrice($r->total, 2, true, ',', '.', true) . $sku . '; ';
             }
             $rs->productInfo = rtrim($info, '; ');
         }
@@ -274,7 +317,12 @@ class OrderController extends Controller
         $pagination->setPath('order/data');
         $rows = $results['rows'];
         foreach ($rows as $index => $data) {
-            $rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
+            if ($data->date_ordered == '0000-00-00')
+            {
+                $rows[$index]->date_ordered = $data->date_ordered;
+            }else{
+                $rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
+            }
             //$location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
             // $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
             $user = \DB::select("Select username FROM users WHERE id = '" . $data->user_id . "'");
@@ -287,10 +335,12 @@ class OrderController extends Controller
 
             $order_status = \DB::select("Select status FROM order_status WHERE id = '" . $data->status_id . "'");
             //  $partial = $data->status_id == 10 ? ' ' : ' (Partial)';
-            $partial = $data->is_partial == 1 ? ' (Partial)' : '';
-            if ($data->status_id == 10)
+            $partial =  '';
+            if ($data->is_partial == 1 && $data->status_id == Order::OPENID1)
             {
-                $partial = "";
+                $partial = ' (Partial)';
+            }else{
+                $partial = '';
             }
             $rows[$index]->status_value = $rows[$index]->status_id;
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
@@ -298,9 +348,8 @@ class OrderController extends Controller
 
         }
 
-        if ($sort == 'OT.order_type') {
-            $params['sort'] = 'order_type_id';
-        }
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
@@ -328,13 +377,13 @@ class OrderController extends Controller
         // Render into template
         /*$this->data['set_removed'] = "others";
         if (strpos($_SESSION['searchParamsForOrder'], 'status_id:equal:removed|') > 0) {
+            // $is_removed_flag = true;
             $this->data['set_removed'] = 'set_removed';
         }*/
 
         return view('order.table', $this->data);
 
     }
-
 
     function getUpdate(Request $request, $id = 0, $mode = '')
     {
@@ -380,12 +429,15 @@ class OrderController extends Controller
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
-        return view('order.form', $this->data)->with('fromStore', $fromStore);
+
+        return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
     public function getShow($id = null)
     {
 
+
+        $this->data['case_price_permission'] = $this->pass['calculate price according to case price'];
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -634,6 +686,17 @@ class OrderController extends Controller
                     . ') ' . $itemsArray[$i] . ' @ $' .
                     $itemsPriceArray[$i] . ' ea. (SKU: ' . $skuNumArray[$i] . ')';
             }
+            if ($is_freehand == 0) {
+                $validationResponse = $this->validateProductForReserveQty($request);
+
+                if (!empty($validationResponse) && $validationResponse['error'] == true) {
+                    return response()->json(array(
+                        'message' => $validationResponse['message'],
+                        'status' => 'error',
+                        'adjustQty' => $validationResponse['adjustQty']
+                    ));
+                }
+            }
             if ($editmode == "edit") {
                 $orderData = array(
                     'company_id' => $company_id,
@@ -644,7 +707,7 @@ class OrderController extends Controller
                     'freight_id' => $freight_type_id,
                     'alt_address' => $alt_address,
                     'request_ids' => $where_in,
-                    'po_notes' => $notes
+                    'po_notes' => $notes,
                 );
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
@@ -692,7 +755,7 @@ class OrderController extends Controller
                     'request_ids' => $where_in,
                     'new_format' => 1,
                     'is_freehand' => $is_freehand,
-                    'po_notes' => $notes
+                    'po_notes' => $notes,
                 );
                 if ($editmode == "clone") {
                     $id = 0;
@@ -761,7 +824,6 @@ class OrderController extends Controller
                     'order_id' => $order_id,
                     'request_id' => $request_id,
                     'product_id' => $product_id,
-                    'product_description' => $itemsArray[$i],
                     'price' => $priceArray[$i],
                     'qty' => $qtyArray[$i],
                     'game_id' => $game_id,
@@ -776,6 +838,10 @@ class OrderController extends Controller
                     'vendor_id' => $prodVendorId,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
+                if (!empty($itemsArray[$i])) {
+                    $contentsData['product_description'] = $itemsArray[$i];
+                }
+
                 if ($editmode == "clone") {
                     $items_received_qty = 0;
                 }
@@ -783,6 +849,11 @@ class OrderController extends Controller
                     \DB::table('order_contents')->insert($contentsData);
                 } else {
                     \DB::table('order_contents')->where('id', $order_content_id[$i])->update($contentsData);
+                }
+
+                $contentsData['prev_qty'] = $request->input('prev_qty')[$i];
+                if ($is_freehand == 0) {
+                    event(new PostSaveOrderEvent($contentsData));
                 }
 
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
@@ -859,9 +930,15 @@ class OrderController extends Controller
                 \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
             }
 
+
+
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
+            if(!empty($denied_SIDs) && empty($where_in)){
+                $redirect_link = "managefegrequeststore";
+            }
             \Session::put('redirect', $redirect_link);
+
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
 
             if (!empty($where_in)) {
@@ -877,7 +954,7 @@ class OrderController extends Controller
 
         } elseif ($id != 0) {
             $data = $this->validatePost('orders', true);
-
+            $orderTotal = \CurrencyHelpers::formatPrice(Order::find($id)->order_total,2, false);
             if (isset($data['order_type_id'])) {
                 $order_contents = \DB::table('order_contents')->where('order_id', $id)->get();
                 $orderTotal = 0;
@@ -898,8 +975,10 @@ class OrderController extends Controller
                 $data['order_total'] = $orderTotal;
             }
             $this->model->insertRow($data, $id);
+
             \Session::put('order_id', $id);
             $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
+
             return response()->json(array(
                 'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
@@ -919,6 +998,36 @@ class OrderController extends Controller
 
     }
 
+    public function validateProductForReserveQty($request)
+    {
+        $item_names = $request->input('item_name');
+        $productInformation = [];
+        for ($i = 0; $i < count($item_names); $i++) {
+            $product = \DB::table('products')->where(['id' => $request->input('product_id')[$i], 'is_reserved' => 1])->first();
+            if (!empty($product)) {
+                $product->item_name = $item_names[$i];
+                $product->qty = $request->input('qty')[$i];
+                $product->prev_qty = $request->input('prev_qty')[$i];
+                $product->order_product_id = ($request->input('product_id')[$i] == $product->id) ? $request->input('product_id')[$i] : 0;
+                $productInformation[] = $product;
+            }
+        }
+
+        $collect = collect($productInformation);
+        $groups = $collect->groupBy('id');
+
+        $productInformationCombined = [];
+        //TODO: This functionality don't needed when double product restriction will be applied.
+        //This loop will combine duplicate products
+        foreach ($groups as $key => $group) {
+            $group[0]->qty = $group->sum('qty');
+            $group[0]->prev_qty = $group->sum('prev_qty');
+            $productInformationCombined[] = $group[0];
+        }
+
+        return event(new ordersEvent($productInformationCombined, $request->order_id))[0];
+    }
+
     public function getSaveOrSendEmail($isPop = null)
     {
         $order_id = \Session::get('order_id');
@@ -934,7 +1043,7 @@ class OrderController extends Controller
         $cc1 = "";
         // for Instant Win, Redemption Prize, Tickets, Uniforms and Office Supply categories send a copy of PO to
         // marissa sexton,mandee cook,lisa price
-        if (($order_type_id == 7 || $order_type_id == 8 || $order_type_id == 4 || $order_type_id == 6))// && CNF_MODE != "development" )
+        if (($order_type_id == Order::ORDER_TYPE_REDEMPTION || in_array($order_type_id, Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM) || $order_type_id == Order::ORDER_TYPE_OFFICE_SUPPLIES))// && CNF_MODE != "development" )
         {
             $cc1 = $cc;
 
@@ -1063,8 +1172,6 @@ class OrderController extends Controller
         } else {
             return Redirect::to('order')->with('messagetext', $message)->with('msgstatus', 'error');
         }
-
-
     }
 
     public function postRemoveorderexplaination(Request $request)
@@ -1115,7 +1222,7 @@ class OrderController extends Controller
         $uid = \Session::get('uid');
         $query = "";
         $result = false;
-        $orders = Order::whereIn('po_number', $poNumbers)->get();
+        $orders = Order::whereIn('po_number',$poNumbers)->get();
 
         $index = 0;
         foreach($orders as $order){
@@ -1179,6 +1286,7 @@ class OrderController extends Controller
 
     function getRemoveorder($poNumber = "")
     {
+
         $this->data['ids'] = $poNumber;
         $totalIdsCount = 1;
         $ids = $poNumber;
@@ -1221,6 +1329,7 @@ class OrderController extends Controller
 //            return Redirect::to('order')->with('messagetext', 'This PO has already been removed!')->with('msgstatus', 'error');
 //        }
         //\Session::flash('success', 'Po  deleted successfully!');
+
     }
 
     public function getSearchFilterQuery($customQueryString = null)
@@ -1271,25 +1380,24 @@ class OrderController extends Controller
                 'fields' => $searchFields, 'dateFields' => $dateSearchFields];
 
             if (!empty($statusIdFilter)) {
-                if ($statusIdFilter == 6) {
+                if ($statusIdFilter == Order::ORDER_INSTALLED_AND_RETURNED_STATUS) {
                     $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "' OR (orders.status_id = '2' AND orders.tracking_number!='') ";
                 } else {
-                    /* if($statusIdFilter=="removed") {
-                         $orderStatusCondition = "AND orders.deleted_at is not null ";
-                     }else{*/
-                    $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "' ";
-                    /* }*/
+                    $orderStatusCondition = "AND orders.status_id = '" . $statusIdFilter . "'";
                 }
             }
 
         } else {
             if (!empty($statusIdFilter)) {
-                if ($statusIdFilter == 6) {
+                if ($statusIdFilter == Order::ORDER_INSTALLED_AND_RETURNED_STATUS) {
                     $orderStatusCondition = " OR (orders.status_id = '2' AND orders.tracking_number!='') AND orders.deleted_at is null ";
                 } elseif ($statusIdFilter == 10) {
+                    //@todo update order status after code merge
                     $orderStatusCondition = " AND orders.deleted_at is not null  ";
                 } else {
-                    $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter' AND  orders.tracking_number!='') AND orders.deleted_at is null ";
+                   // $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter' AND  orders.tracking_number!='') AND orders.deleted_at is null ";
+                    $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter') AND orders.deleted_at is null ";
+
                 }
 
             }
@@ -1300,11 +1408,6 @@ class OrderController extends Controller
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
-   // dd($filter);
-        /*if ($statusIdFilter == "removed") {
-            $filter = str_replace("orders.status_id = 'removed'", " orders.deleted_at is not null ", $filter);
-        }*/
-        // dd( $filter);
         return $filter;
     }
 
@@ -1341,16 +1444,16 @@ class OrderController extends Controller
                 $data[0]['freight_type'] = $data[0]['freight_type'] . "\n" . ' ' . $data[0]['loading_info'] . '';
             }
 
-            if (!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == 7 || $data[0]['order_type_id'] == 8)) {
+            if (!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == Order::ORDER_TYPE_REDEMPTION || $data[0]['order_type_id'] == Order::ORDER_TYPE_INSTANT_WIN_PRIZE)) {
                 $data[0]['loc_contact_email'] = $data[0]['loc_merch_contact_email'];
             }
 
-            if ($data[0]['email'] != $data[0]['loc_contact_email']) {
+            if ($data[0]['email'] != $data[0]['loc_contact_email'] && !empty($data[0]['loc_contact_email'])) {
                 $data[0]['loc_contact_email'] = ' AND ' . $data[0]['loc_contact_email'];
             } else {
                 $data[0]['loc_contact_email'] = '';
             }
-            if ($data[0]['order_type_id'] == 3 || $data[0]['order_type_id'] == 4) {
+            if ($data[0]['order_type_id'] == Order::ORDER_TYPE_REPAIR_LABOUR || in_array($data[0]['order_type_id'],Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM)) {
                 $data[0]['cc_email'] = ', lisa.price@fegllc.com';
             } else {
                 $data[0]['cc_email'] = '';
@@ -1444,7 +1547,7 @@ class OrderController extends Controller
                         'filename' => $filename,
                         'encoding' => 'base64',
                         'type' => 'application/pdf',
-                        'preferGoogleOAuthMail' => true
+                        'preferGoogleOAuthMail' => false
                     ];
                     if (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) {
 
@@ -1649,7 +1752,7 @@ class OrderController extends Controller
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";
         }
-        if ($order_status == 2 && $order_type_id == 2) // Advanced Replacement Returned.. require tracking number
+        if ($order_status == Order::CLOSEID1 && $order_type_id == Order::ORDER_TYPE_ADVANCED_REPLACEMENT) // Advanced Replacement Returned.. require tracking number
         {
             $rules['tracking_number'] = "required|min:3";
             $tracking_number = trim($request->get('tracking_number'));
@@ -1716,7 +1819,12 @@ class OrderController extends Controller
             if ($request->get('mode') == 'update') {
                 $this->updateOrderReceipt($request);
             }
-
+            /**
+             * Updating order status to open partial if received Items qty is less than ordered items qty
+             */
+            $order = Order::find($order_id);
+            $order->setOrderStatus();
+            $order->save();
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -2121,13 +2229,13 @@ class OrderController extends Controller
     {
 
     }
-    // This is testing comment
-    public function getEmailHistory(Request $request){
+
+    public function getEmailHistory(Request $request)
+    {
 
         $returnSelf = !empty($request->input('returnSelf'));
 
-        $searchFor = !is_null($request->input('search')) ? trim($request->input('search')) : ''; //This is third comment
-        //This is an other test comment
+        $searchFor = !is_null($request->input('search')) ? trim($request->input('search')) : '';
         $searchFor = empty($searchFor) || $searchFor == '@' ? '' : $searchFor;
 
         $startAt = !is_null($request->input('start')) ? trim($request->input('start')) : '';

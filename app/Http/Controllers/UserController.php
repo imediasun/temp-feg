@@ -156,6 +156,7 @@ class UserController extends Controller
     }
     public function getGoogle()
     {
+
         $user = Socialite::driver('google')->stateless()->user();
         $email = $user->email;
         $userCheck = User::where('email', '=', $user->email)->first();

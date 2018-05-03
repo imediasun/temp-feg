@@ -556,27 +556,40 @@ class ProductController extends Controller
             $type = is_array($request->prod_type_id)?$request->prod_type_id[0]:$request->prod_type_id;
             $subtype = is_array($request->prod_sub_type_id)?$request->prod_sub_type_id[1]:$request->prod_sub_type_id;
 
-            $productName = Product::find($id)->vendor_description;
 
-            /*return response()->json(array(
-                'message' => $productName,
-                'status' => 'error'
-            ));*/
+            $productName = $request->vendor_description;
 
             $duplicate = Product::
             where('prod_type_id',$type)
             ->where('prod_sub_type_id',$subtype)
             ->where('sku',$request->sku)
             ->where('id','!=',$id)
-            ->where('vendor_description',$request->vendor_description)->first();
-            if($duplicate)
+            ->where('vendor_description',$productName)
+                ->first();
+            if(!empty($duplicate))
             {
                 return response()->json(array(
                     'message' => "A product with same Product Type & Sub Type already exist",
                     'status' => 'error'
                 ));
             }
-        ;
+
+            $productName = Product::find($id)->vendor_description;
+
+            $duplicate = Product::
+            where('prod_type_id', $type)
+                ->where('prod_sub_type_id', $subtype)
+                ->where('sku', $request->sku)
+                ->where('id', '!=', $id)
+                ->where('vendor_description', $productName)
+                ->first();
+            if (!empty($duplicate)) {
+                return response()->json(array(
+                    'message' => "A product with same Product Type & Sub Type already exist",
+                    'status' => 'error'
+                ));
+            }
+
         }
 
         if ($request->hasFile('img'))
@@ -601,6 +614,17 @@ class ProductController extends Controller
 
         $rules['expense_category'] = 'required';
 
+
+        $request->Product_Type = $request->prod_type_id;
+        $request->Vendor = $request->vendor_id;
+
+        $rules['vendor_description'] = 'required';
+        $rules['prod_type_id'] = 'required';
+        $rules['sku'] = "required";
+        $rules['case_price'] = 'required';
+        $rules['unit_price'] = 'required';
+        $rules['vendor_id'] = 'required';
+
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
@@ -612,7 +636,6 @@ class ProductController extends Controller
                 $data = $this->validatePost('products');
 
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
-
             }
             else {
                 //for inline editing all fields do not get saved
@@ -629,6 +652,9 @@ class ProductController extends Controller
             if(strlen( $data['vendor_description'])>53){
                 $postedtoNetSuite = substr($data['vendor_description'],0.53);
             }
+
+
+            $data['netsuite_description'] = "$id...".$data['vendor_description'];
             if($id>0) {
                 $products_combined = $this->model->checkProducts($id);
                 $hot_items=0;
@@ -722,8 +748,6 @@ class ProductController extends Controller
                             "product_id" => $Product->id,
                             "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1):$Product->reserved_qty),
                             "adjustment_type" => $type,
-                            "variation_id" => $Product->variation_id,
-                            "reserved_qty_reason" => $reserved_qty_reason,
                             "adjusted_by" => \AUTH::user()->id,
                         ];
                         $ReservedQtyLog->insertRow($reservedLogData, 0);
@@ -760,7 +784,6 @@ class ProductController extends Controller
                 foreach($products_combined as $pc){
                     if($pc->id == $id){
                         $this->model->insertRow($data, $id);
-
                     }else{
 
                         unset($data_attached_products['prod_type_id']);
@@ -1064,9 +1087,7 @@ GROUP BY mapped_expense_category");
         }
         return $items;
     }
-
-    function getExpenseCategoryAjax(Request $request)
-    {
+    function getExpenseCategoryAjax(Request $request){
 
         $expense_category = \DB::select("SELECT expense_category_mapping.id,expense_category_mapping.mapped_expense_category,order_type.`order_type`,CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | ')) as order_type
 FROM expense_category_mapping
@@ -1075,7 +1096,7 @@ WHERE product_type IS NULL
 GROUP BY mapped_expense_category");
 
         $items = ['<option value=""> -- Select  -- </option>'];
-        foreach ($expense_category as $category) {
+        foreach ($expense_category as $category){
             $orderType = $category->order_type;
             $categoryId = $category->mapped_expense_category;
             if ($categoryId == 0) {
@@ -1086,14 +1107,14 @@ GROUP BY mapped_expense_category");
             }
 
         }
-        $options = implode("", $items);
+        $options = implode("",$items);
         echo $options;
     }
 
     public function postSetdefaultcategory(Request $request)
     {
         $id = $request->input('productId');
-        $isdefaultexp = (bool)$request->input('isdefault');
+        $isdefaultexp = $request->input('isdefault');
         $searchProduct = Product::find($id);
         $products = $this->model->checkProducts($id);
 
@@ -1106,7 +1127,7 @@ GROUP BY mapped_expense_category");
             $searchProduct->is_default_expense_category = $isdefaultexp;
             $searchProduct->save();
 
-            //  $this->model->toggleDefaultExpenseCategory($isdefaultexp,$id);
+              $this->model->toggleDefaultExpenseCategory($isdefaultexp,$id);
         } else {
             $this->model->setDefaultExpenseCategory($id);
         }

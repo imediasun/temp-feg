@@ -4,6 +4,7 @@ use App\Library\FEG\System\FEGSystemHelper;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Log, View, Auth;
+use App\Models\Ordersetting;
 
 class shopfegrequeststore extends Sximo  {
 	
@@ -254,21 +255,16 @@ class shopfegrequeststore extends Sximo  {
         }else{
             $description=$data['description'];
         }
-        /*$baseMessage = '
-                    <b>Project:</b> '.$game_info[0].'<br>
-                    <b>Date:</b> '. \DateHelpers::formatDate($data['request_date']).'<br>
-					<b>Submitter:</b> '.\Session::get('fid').'<br>
-					<b>Location:</b> '.$data['location_id'].' | '.$locationName.'<br>
-					<b>Description:</b> '.$description.'<a href="'.$mangeGraphicRequestURL.'">See full request</a>
-					<br><em>';
 
-        $links = 'Please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
-					to Approve/Deny this graphic request <br><br>&nbsp;&nbsp;&nbsp;';
+        $OrderSetting = new Ordersetting();
+        $GraphicsSender = "";
+        $GraphicsReceiver = "";
 
-        $messageEnd = '<br> To fast-track the completion of this task, please contact the Graphics Department at (847) 852-4270 to arrange an expedited deadline.';
-
-        //$messageEnd = 'Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
-					//**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';*/
+        $GraphicsRequestSetting = $OrderSetting->where("is_graphics_setting", 1)->first();
+        if ($GraphicsRequestSetting) {
+            $GraphicsSender = $GraphicsRequestSetting->graphics_sender_content;
+            $GraphicsReceiver = $GraphicsRequestSetting->graphics_recever_content;
+        }
 
         $messageWithLink = View::make('shopfegrequeststore.emails.graphic-request-submitter-link', array(
             'title' => $game_info[0],
@@ -279,7 +275,9 @@ class shopfegrequeststore extends Sximo  {
             'description' => $description,
             'request_link' => $mangeGraphicRequestURL,
             'approve_link' => $graphicApproveLink,
-            'deny_link' => $graphicDenyLink
+            'deny_link' => $graphicDenyLink,
+            'GraphicsReceiverContent' => $GraphicsReceiver
+
         ))->render();
 
         $from = \Session::get('eid');
@@ -305,7 +303,8 @@ class shopfegrequeststore extends Sximo  {
         $receipientsForEmailWihtoutLinks = FEGSystemHelper::getSystemEmailRecipients($receipientsForEmailWihtoutLinksConfigName,$data['location_id']);
 
         $messageWithoutLink = View::make('shopfegrequeststore.emails.graphic-request-submitter', array(
-            'submitterEmailAddress' => \Session::get('eid')
+            'submitterEmailAddress' => \Session::get('eid'),
+            'GraphicsSenderContent' => $GraphicsSender
         ))->render();
 
         if(empty($receipientsForEmailWihtoutLinks['to'])){

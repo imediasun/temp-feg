@@ -80,6 +80,24 @@ class MerchandisebudgetController extends Controller
         $budget_year = isset($_GET['budget_year']) ? Input::get('budget_year') : $budget_year;
         \Session::put('budget_year', $budget_year);
         $results = $this->model->getRows($params, $budget_year);
+
+
+        $results["rows"] = array_map(function($row){
+            $row->Jan = \CurrencyHelpers::formatPrice($row->Jan);
+            $row->Feb = \CurrencyHelpers::formatPrice($row->Feb);
+            $row->March = \CurrencyHelpers::formatPrice($row->March);
+            $row->April = \CurrencyHelpers::formatPrice($row->April);
+            $row->May = \CurrencyHelpers::formatPrice($row->May);
+            $row->June = \CurrencyHelpers::formatPrice($row->June);
+            $row->July = \CurrencyHelpers::formatPrice($row->July);
+            $row->August = \CurrencyHelpers::formatPrice($row->August);
+            $row->September = \CurrencyHelpers::formatPrice($row->September);
+            $row->October = \CurrencyHelpers::formatPrice($row->October);
+            $row->November = \CurrencyHelpers::formatPrice($row->November);
+            $row->December = \CurrencyHelpers::formatPrice($row->December);
+            return $row;
+        },$results["rows"]);
+
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
         $pagination = new Paginator($results['rows'], $results['total'],

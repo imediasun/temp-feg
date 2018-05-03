@@ -137,7 +137,7 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                 @if($field['field']=='qty')
-                                    <input type="number" value="{{ $value }}" min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="qtyfield qtyfield_{{ $row->id }}"/>
+                                    <input type="number" value="{{ $value }}" min="1" step="1" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="inputqty qtyfield qtyfield_{{ $row->id }}"/>
                                     @else
 
                                     {!! $value !!}
@@ -225,6 +225,15 @@
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>
+    $(".inputqty").on("keypress",function (e) {
+        var keycode = e.which || e.charCode || e.keyCode;
+        if (keycode == 8){
+            return true;
+        }
+        return keycode >= 48 && keycode <= 57;
+    });
+
+
     function disableEnter(e)
     {
         if (e.which == 13) {
@@ -342,8 +351,17 @@ $(function(){
         $(".cartsubmitaction").removeClass("btn-success").addClass("btn-disable");
     });
     $(".qtyfield,.notesfield").on("focusout",function(){
-        $(".cartsubmitaction").removeAttr("disabled");
-        $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
+        var id = $(this).attr("id");
+        var qty= $(".qtyfield_"+id).val();
+        qty = $.trim(qty);
+        if(qty == '' || Number(qty) < 1){
+            $(".cartsubmitaction").attr("disabled","disabled");
+            $(".cartsubmitaction").removeClass("btn-success").addClass("btn-disable");
+        }else{
+            $(".cartsubmitaction").removeAttr("disabled");
+            $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
+        }
+
     });
     $(".qtyfield,.notesfield").on("change",function(){
         var qtyfield = $(this);
@@ -353,7 +371,10 @@ $(function(){
             var notes = $('.notesfield_'+id).val();
             $('.ajaxLoading').show();
         if(qty < 1) {
+            $(".cartsubmitaction").attr("disabled","disabled");
+            $(".cartsubmitaction").removeClass("btn-success").addClass("btn-disable");
             notyMessageError('Case Quantity can not be less than 1.');
+
             $('.ajaxLoading').hide();
         }else{
             $.ajax({
