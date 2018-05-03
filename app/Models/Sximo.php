@@ -1457,7 +1457,7 @@ class Sximo extends Model {
                           O.alt_address,
                           F.freight_type,
                           O.new_format,
-                          O.po_notes,O.po_notes_additionaltext';
+                          O.po_notes ';
 
         $sqlJoins = "  LEFT JOIN company C
                             ON C.id = O.company_id
