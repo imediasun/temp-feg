@@ -29,7 +29,7 @@ class ReservedQtyLog extends Sximo
         if (empty($attributes)) {
             return false;
         }
-        $attributes['adjustment_type'] = "negative";
+        $attributes['adjustment_type']="negative";
         $this->insertRow($attributes, $id);
     }
 
@@ -38,7 +38,7 @@ class ReservedQtyLog extends Sximo
         if (empty($attributes)) {
             return false;
         }
-        $attributes['adjustment_type'] = "Positive";
+        $attributes['adjustment_type']="Positive";
         $this->insertRow($attributes, $id);
     }
 }

@@ -178,8 +178,8 @@
 				  <div class="form-group  int-link" >
 					<label for="ipt" class=" control-label col-md-4 text-right"> Module </label>
 					<div class="col-md-8">
-					  <select name='module' rows='5' id='module'  style="width:100%"
-							class='select-liquid '    >
+                        <select name='module' rows='5' id='module' style="width:100%"
+                                class='select-liquid '    >
 							<option value=""> -- Select Module or Page -- </option>
 							<optgroup label="Module ">
 							@foreach($modules as $mod)
@@ -246,18 +246,33 @@
 
 			  <div class="form-group">
 				<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_maccess') }}  <code>*</code></label>
-				<div class="col-md-8">
-						<?php 
-					$pers = json_decode($row['access_data'],true);
+				  <div class="col-md-8 menupermissions" style="position: relative;">
+					  <div id="permission-overlay"
+						   style=" <?php if ($row['menu_type'] == "external") {
+							   echo "display:none;";
+						   } ?> z-index:1000; cursor:not-allowed; background:rgba(128, 128, 128, 0);; width: 100%; height: 100%; position: absolute;"></div>
+                      <?php
+
 					foreach($groups as $group) {
 						$checked = '';
-						if(isset($pers[$group->group_id]) && $pers[$group->group_id]=='1')
-						{
-							$checked= ' checked="checked"';
-						}						
+
+
+					  if ($row['menu_type'] == "external") {
+						  $pers = json_decode($row['access_data'], true);
+						  if (isset($pers[$group->group_id]) && $pers[$group->group_id] == '1') {
+							  $checked = ' checked="checked"';
+						  }
+					  } else {
+						  if (in_array($group->group_id, $usergroupAccess)) {
+							  $checked = ' checked="checked"';
+						  }
+					  }
+
 							?>		
 				  <label class="checkbox">
-				  <input type="checkbox" name="groups[<?php echo $group->group_id;?>]" value="<?php echo $group->group_id;?>" <?php echo $checked;?>  />   
+                      <input type="checkbox"
+                             name="groups[<?php echo $group->group_id;?>]"
+                             value="<?php echo $group->group_id;?>" <?php echo $checked;?> />
 				  <?php echo $group->name;?>  
 				  </label>
 			
@@ -269,8 +284,8 @@
 					<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_mpublic') }}   </label>
 					<div class="col-md-8">
 					<label class="checkbox"><input  type='checkbox' name='allow_guest' 
- 						@if($row['allow_guest'] ==1 ) checked  @endif	
-					   value="1"	/> Yes  </lable>
+ 						@if($row['allow_guest'] ==1 ) checked  @endif
+													value="1"/> Yes  </lable>
 					</label>   
 				  </div>
 				</div>
@@ -321,7 +336,8 @@ $(document).ready(function(){
 
 	$('.menutype input:radio').on('ifClicked', function() {
 	 	 val = $(this).val();
-  			mType(val);
+		mType(val);
+
 	  
 	});
 	
@@ -332,20 +348,49 @@ $(document).ready(function(){
 
 function mType( val )
 {
+	var permisionoverlay = document.getElementById("permission-overlay");
+	console.log(val);
 		if(val == 'external') {
 			$('.ext-link').show(); 
 			$('.int-link').hide();
+			permisionoverlay.style.display = 'none';
+
 		}
 		else if(val == 'divider') {
 			$('.ext-link').hide();
 			$('.int-link').hide();
+
+			permisionoverlay.style.display = 'block';
 		}
         else {
 			$('.ext-link').hide(); 
 			$('.int-link').show();
-		}	
+			$("select[name='module']").change();
+			permisionoverlay.style.display = 'block';
+		}
+
 }
 
+$("select[name='module']").change(function () {
+    var module_name = $(this).val();
+	$('.ajaxLoading').show();
+    $.ajax({
+        type: "POST",
+        url: '{{ url('feg/menu/') }}/view-permission',
+        data: {module_name: module_name},
+        success: function (response) {
+            $(".menupermissions").html(response);
+			var permisionoverlay = document.getElementById("permission-overlay");
+			$(permisionoverlay).show();
+			console.log($('.menupermissions input[type="checkbox"]').length);
+			$('.menupermissions input[type="checkbox"]').iCheck({
+				checkboxClass: 'icheckbox_square-blue'
+			});
+			$('.ajaxLoading').hide();
+        }
+    })
+
+});
 	
 function update_out(selector, sel2){
 	

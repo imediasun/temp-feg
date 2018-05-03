@@ -11,7 +11,7 @@
 |
 */
 
-
+//I create a feature branch
 
 Route::group(array('before' => 'authorization'), function()
 {
@@ -105,6 +105,7 @@ Route::group(['middleware' => 'auth'], function()
 
     Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
     Route::get('ticketsetting','TicketsettingController@getSetting');
+    Route::get('ordersetting', 'OrdersettingController@getSetting');
     Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
     Route::get('removeblocked', 'ManagefegrequeststoreController@removeBlockedCheck')->name('remove_blocked_check');
     Route::get('addmoreblockedtime', 'ManagefegrequeststoreController@AddBlockedCheck')->name('add_more_blocked_time');
@@ -281,7 +282,6 @@ Route::get("terms-of-service",function(){
 Route::get("privacy-policy",function(){
     return view("pages.privacypolicy");
 })->name('privacyplicy');
-
 
 
 
