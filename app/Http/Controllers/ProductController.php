@@ -477,14 +477,7 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
-        $reserved_qty_reason = $request->input('reserved_qty_reason');
         $rules = $this->validateForm();
-
-        if(isset($_POST['reserved_qty_reason'])){
-            $rules['reserved_qty_reason'] = 'required';
-        }
-
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             if ($id != 0) {
@@ -506,7 +499,6 @@ class ProductController extends Controller
                         "product_id" => $id,
                         "adjustment_amount" => $NewReservedQty,
                         "adjustment_type" => $type,
-                        "reserved_qty_reason" => $reserved_qty_reason,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
                     $ReservedQtyLog->insertRow($reservedLogData, 0);
@@ -625,9 +617,6 @@ class ProductController extends Controller
                 $data = $this->validatePost('products',true);
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
             }
-            if(isset($data['reserved_qty_reason'])){
-                unset($data['reserved_qty_reason']);
-            }
             $postedtoNetSuite = $data['vendor_description'];
 
             if(strlen( $data['vendor_description'])>53){
@@ -729,7 +718,6 @@ class ProductController extends Controller
                             "product_id" => $Product->id,
                             "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1):$Product->reserved_qty),
                             "adjustment_type" => $type,
-                            "reserved_qty_reason" => $reserved_qty_reason,
                             "adjusted_by" => \AUTH::user()->id,
                         ];
                         $ReservedQtyLog->insertRow($reservedLogData, 0);

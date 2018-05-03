@@ -210,18 +210,7 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Reserved Qty Reason" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Reserved Qty Reason', (isset($fields['reserved_qty_reason']['language'])? $fields['reserved_qty_reason']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('reserved_qty_reason', $row['reserved_qty_reason'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
+				  </div>
 				  <div class="form-group  " >
 					<label for="Min Order Amt" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Min Order Amt', (isset($fields['min_order_amt']['language'])? $fields['min_order_amt']['language'] : array())) !!}
