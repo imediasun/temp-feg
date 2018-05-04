@@ -11,7 +11,7 @@
 |
 */
 
-//I create a feature branch
+
 
 Route::group(array('before' => 'authorization'), function()
 {
@@ -282,6 +282,7 @@ Route::get("terms-of-service",function(){
 Route::get("privacy-policy",function(){
     return view("pages.privacypolicy");
 })->name('privacyplicy');
+
 
 
 
