@@ -3,6 +3,7 @@
 use App\Http\Controllers\Controller;
 use App\Models\Core\Pages;
 use App\Models\Core\Groups;
+use App\Models\Sximo\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Session, Auth, DB, Log;
@@ -256,6 +257,14 @@ class PagesController extends Controller
             }
 
             $data['alias']=str_slug($request->input('alias'), '-');
+
+            $mapPermissions  = $data['access'];
+
+            $pageName = Pages::where('pageID',$request->input('pageID'))
+                ->select('alias')->first()->alias;
+
+            Menu::where('module', $pageName)
+                ->update(['access_data' => $mapPermissions]);
 
             $this->model->insertRow($data, $request->input('pageID'));
             self::createRouters();
