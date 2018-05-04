@@ -1439,9 +1439,7 @@ class OrderController extends Controller
                 $PONote = $PONoteSettings[0]->po_note;
                 $is_merchandiseorder = $PONoteSettings[0]->is_merchandiseorder;
             }
-
             $addonPONote = !empty($data[0]['po_notes_additionaltext']) ? $data[0]['po_notes_additionaltext'] : $PONote;
-
             if (!empty($addonPONote)) {
                 $addonPONote = str_replace("MERCHANDISE_CONTACT", (!empty($data[0]['loc_merch_contact_email']) ? $data[0]['loc_merch_contact_email'] : ""), $addonPONote);
                 $addonPONote = str_replace("GENERAL_MANAGER", (!empty($data[0]['loc_general_manager_email']) ? $data[0]['loc_general_manager_email'] : ""), $addonPONote);
