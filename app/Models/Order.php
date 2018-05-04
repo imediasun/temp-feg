@@ -124,6 +124,7 @@ class order extends Sximo
                         "product_id" => $orderContent->product_id,
                         "order_id" => $orderContent->order_id,
                         "adjustment_amount" => $orderContent->qty,
+                        "variation_id"=>$orderedProduct->variation_id,
                         "adjustment_type" => "negative",
                         "adjusted_by" => \AUTH::user()->id,
                     ];
@@ -147,6 +148,7 @@ class order extends Sximo
                         "product_id" => $orderContent->product_id,
                         "order_id" => $orderContent->order_id,
                         "adjustment_amount" => $orderContent->qty,
+                        "variation_id"=>$orderedProduct->variation_id,
                         "adjustment_type" => "positive",
                         "adjusted_by" => \AUTH::user()->id,
                     ];
