@@ -445,7 +445,7 @@ class FEGSystemHelper
                     'allow_self_signed' => true
                 )
             );
-            $mail->SMTPDebug = 0;
+            $mail->SMTPDebug = 1;
             $mail->IsSMTP(); // enable SMTP
             $mail->Host = 'smtp.gmail.com';
             $mail->Port = 587; // or 587
