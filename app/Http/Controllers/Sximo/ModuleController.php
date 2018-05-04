@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\Sximo;
 
 use App\Models\Core\Groups;
+use App\Models\Sximo\Menu;
 use App\Models\Sximo\Module;
 use App\Library\ZipHelpers as helper;
 use App\Library\SximoHelpers;
@@ -1058,7 +1059,10 @@ class ModuleController extends Controller
         }
 
         $permission = array();
+        $mapPermissions = array();
         $groupID = $request->input('group_id');
+        $moduleId = $request->input('module_id');
+
         for ($i = 0; $i < count($groupID); $i++) {
             // remove current group_access             
             $group_id = $groupID[$i];
@@ -1073,6 +1077,7 @@ class ModuleController extends Controller
                 $arr[$t] = (isset($_POST[$t][$id]) ? "1" : "0");
 
             }
+            $mapPermissions[$group_id] = $arr['is_view'];
             $permissions = json_encode($arr);
 
             $data = array
@@ -1084,6 +1089,13 @@ class ModuleController extends Controller
             \DB::table('tb_groups_access')->insert($data);
         }
 
+        $moduleName = Module::where('module_id',$moduleId)
+            ->select('module_name')->first()->module_name;
+        $mapPermissions = json_encode($mapPermissions);
+
+        Menu::where('module', $moduleName)
+            ->update(['access_data' => $mapPermissions]);
+        
         return Redirect::to('feg/module/permission/' . $row->module_name)
             ->with('messagetext', 'Permission updated successfully.')->with('msgstatus', 'success');
     }

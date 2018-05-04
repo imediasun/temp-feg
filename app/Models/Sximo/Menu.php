@@ -7,6 +7,7 @@ class Menu extends Sximo {
 
 	protected $table 		= 'tb_menu';
 	protected $primaryKey 	= 'menu_id';
+	public $timestamps = false;
 
 	public function __construct() {
 		parent::__construct();
