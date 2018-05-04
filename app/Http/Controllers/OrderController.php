@@ -1388,20 +1388,8 @@ class OrderController extends Controller
                 $data[0]['freight_type'] = $data[0]['freight_type'] . "\n" . 'DELIVERY NOTES: **' . $data[0]['loading_info'] . '**';
             }
 
-            /*  if (!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == Order::ORDER_TYPE_REDEMPTION || $data[0]['order_type_id'] == Order::ORDER_TYPE_INSTANT_WIN_PRIZE)) {
-                  $data[0]['loc_contact_email'] = $data[0]['loc_merch_contact_email'];
-              }
+            $data[0]['cc_email'] = '';
 
-              if ($data[0]['email'] != $data[0]['loc_contact_email'] && !empty($data[0]['loc_contact_email'])) {
-                  $data[0]['loc_contact_email'] = ' AND ' . $data[0]['loc_contact_email'];
-              } else {
-                  $data[0]['loc_contact_email'] = '';
-              }*/
-            if ($data[0]['order_type_id'] == Order::ORDER_TYPE_REPAIR_LABOUR || in_array($data[0]['order_type_id'],Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM)) {
-                $data[0]['cc_email'] = ', lisa.price@fegllc.com';
-            } else {
-                $data[0]['cc_email'] = '';
-            }
             if (!empty($data[0]['po_attn'])) {
                 $data[0]['po_location'] = $data[0]['po_location'] . "\n" . $data[0]['po_attn'];
             }
@@ -1416,7 +1404,7 @@ class OrderController extends Controller
             }
 
             $addonPONote = !empty($data[0]['po_notes_additionaltext']) ? $data[0]['po_notes_additionaltext'] : $PONote;
-            $addonPONote .= " " . $data[0]['email'] . (!empty($data[0]['cc_email']) ? $data[0]['cc_email'] : "");
+
             if (!empty($addonPONote)) {
                 $addonPONote = str_replace("MERCHANDISE_CONTACT", (!empty($data[0]['loc_merch_contact_email']) ? $data[0]['loc_merch_contact_email'] : ""), $addonPONote);
                 $addonPONote = str_replace("GENERAL_MANAGER", (!empty($data[0]['loc_general_manager_email']) ? $data[0]['loc_general_manager_email'] : ""), $addonPONote);
