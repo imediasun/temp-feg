@@ -25,6 +25,7 @@ class InjectFieldToModule extends Command
             {--field-default=null} 
             {--field-unsigned} 
             {--field-length=null}
+            {--field-decimals=5}
             
             {--grid-label=null}
             {--grid-view=true}
@@ -34,18 +35,18 @@ class InjectFieldToModule extends Command
             {--grid-download=true}
             {--grid-api=true}
             {--grid-inline}
-            {--grid-nodata=0}
+            {--grid-nodata}
             {--grid-width=100}
             {--grid-align=left}
             {--grid-sortlist=null}
 
             {--form-label=null}
-            {--form-required}
+            {--form-required=0}
             {--form-view=true}
             {--form-type=textarea}
             {--form-add=true}
             {--form-size=0}
-            {--form-edit=true},
+            {--form-edit=true}
             {--form-search}
             {--form-simplesearch}
             {--form-sortlist=null}';
@@ -130,9 +131,9 @@ class InjectFieldToModule extends Command
 
         ];
 
-        $logPath .= $module.'-'.$uuid;
+        $logPath .= $module . '-' . $uuid;
         $L = new MyLog("InjectFieldToModule.log", $logPath, "MODULE");
-        FEGHelp::logPlus("Initiate Inject Field - $field to Module - $module", $L, null, $this);
+        FEGHelp::logPlus("\nInitiate Process to Inject `$field` field to `$module`` module", $L, null, $this);
 
         $L->log('Arguments:', $arguments);
         $options = $this->option();
@@ -140,21 +141,21 @@ class InjectFieldToModule extends Command
         $L->log('Options:', $options);
 
         if (!empty($options['simulate'])) {
-            FEGHelp::logPlus("***** THIS IS A SIMULATION AND WILL NOT WRITE TO DATABASE *******", $L, null, $this);
+            FEGHelp::logPlus("\n***** THIS IS A SIMULATION AND WILL NOT WRITE TO DATABASE *******", $L, null, $this);
             FEGHelp::logPlus("***      but will create data files for manual injection    *****", $L, null, $this);
             FEGHelp::logPlus("***               and logs for debugging                    *****", $L, null, $this);
-            FEGHelp::logPlus("*****************************************************************", $L, null, $this);
+            FEGHelp::logPlus("*****************************************************************\n", $L, null, $this);
         }
 
 
         $messages = \App\Library\FEG\Utils\Tools::injectFieldToModule($module, $options,
             ['logger' => $L, 'commandObj' => $this, 'logPath' => $logPath]);
 
-        foreach($messages as $key => $message) {
+        foreach ($messages as $key => $message) {
             FEGHelp::logPlus($message, $L, null, $this, $key);
         }
 
-        FEGHelp::logPlus("End Inject Field - $field to Module - $module", $L, null, $this);
+        FEGHelp::logPlus("\nEnd injecting `$field` field to `$module` module.\n ", $L, null, $this);
 
     }
 
