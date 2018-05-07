@@ -204,7 +204,7 @@ class ProductMeta extends Sximo  {
             'product_id' => 'products.id',
         ];
 
-        $sql = "SELECT ";
+        $sql = "SELECT distinct(products.id) as product_id, ";
 
         $selects = [];
         foreach($masterFields as $key => $def) {
