@@ -621,7 +621,7 @@ class ProductController extends Controller
             $postedtoNetSuite = $data['vendor_description'];
 
             if(strlen( $data['vendor_description'])>53){
-                $postedtoNetSuite = substr($data['vendor_description'],0.53);
+                $postedtoNetSuite = mb_substr($data['vendor_description'],0,53);
             }
 
 
@@ -728,7 +728,7 @@ class ProductController extends Controller
                     $postedtoNetSuite = $data['vendor_description'];
 
                     if(strlen( $data['vendor_description'])>53){
-                        $postedtoNetSuite = substr($data['vendor_description'],0.53);
+                        $postedtoNetSuite = mb_substr($data['vendor_description'],0, 53);
                     }
 
                     $updates = array();
