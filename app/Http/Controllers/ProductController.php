@@ -610,7 +610,7 @@ class ProductController extends Controller
             if ($id == 0) {
                 $data = $this->validatePost('products');
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
-                $data['netsuite_description'] = time()."...".$data['vendor_description'];
+
             }
             else {
                 //for inline editing all fields do not get saved
@@ -696,6 +696,7 @@ class ProductController extends Controller
                     $prodData['prod_type_id'] = $category;
                     $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count])) ? $data['prod_sub_type_id'][$count] : 0;
                     $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count])) ? $data['expense_category'][$count] : 0;
+                    $prodData['netsuite_description'] = mb_substr(time()."-".$count."...".$data['vendor_description'],0,60);
                     $count++;
                     /*
                      * commented as per Gabe request on 9/13/2017
