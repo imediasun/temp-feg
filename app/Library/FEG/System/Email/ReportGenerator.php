@@ -8,6 +8,7 @@ use App\Library\MyLog;
 use App\Library\ReportHelpers;
 use App\Library\FEG\System\SyncHelpers;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\order;
 
 class ReportGenerator
 {  
@@ -2104,5 +2105,131 @@ class ReportGenerator
 
 
     }
-    
+
+    public static function sendLocationWiseDailyPendingOrdersToReceiveEmail($params = [])
+    {
+        global $__logger;
+
+        /** @var $_task */
+        /** @var $date */
+        /** @var $location */
+        /** @var $_logger */
+        /** @var $sleepFor */
+        extract(array_merge([
+            'date' => date('Y-m-d H:i:s'),
+            'location' => null,
+            'sleepFor' => 0,
+            '_task' => [],
+            '_logger' => null,
+        ], $params));
+
+        if (empty($_logger)) {
+            if (empty($__logger)) {
+                $_logger = new MyLog('pending-orders-to-receive.log', 'FEGCronTasks/daily-reports/orders-to-receive', 'Reports');
+                $__logger = $_logger;
+            } else {
+                $_logger = $__logger;
+            }
+        }
+
+        //dd($_logger);
+
+        if (empty($location)) {
+            $reportingLocations = [];//\App\Models\location::all()->pluck('id');
+        } else {
+            $reportingLocations = explode($location);
+        }
+
+        if (empty($date) || empty(strtotime($date))) {
+            $date = date('Y-m-d H:i:s');
+        }
+        //$humanDate = FEGSystemHelper::getHumanDate($date);
+        $humanDate = \DateHelpers::formatDate($date);
+
+        $locationParams = array_merge($params, ['location' => $reportingLocations, 'date' => $date]);
+        $locationwiseReport = self::getLocationWiseDailyPendingOrdersToReceiveReport($locationParams);
+
+        $_logger->log("PARAMS", $locationParams);
+        $_logger->log("REPORT", $locationwiseReport);
+
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
+        $isTest = $task->is_test_mode;
+
+        // each location report
+        $_logger->log("Start Locationwise Report for $date");
+        foreach ($locationwiseReport as $locationId => $report) {
+
+            $locationName = \SiteHelpers::getLocationInfoById($locationId, "location_name");
+
+            $_logger->log("    Start Report for Location $locationId for $date");
+
+            $configName = 'Daily Pending Order Receipt Report';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $locationId);
+            self::sendEmailReport(array_merge($emailRecipients, [
+                'subject' => "Orders which need to be Received - $locationName ($locationId) - $humanDate",
+                'message' => $report,
+                'isTest' => $isTest,
+                'configName' => $configName,
+                'configNameSuffix' => "$locationId - $humanDate",
+            ]));
+
+            $_logger->log("    End sending email Report for Location $locationId for $date");
+            //sleep($sleepFor);
+        }
+
+        $_logger->log("End Locationwise Report for $date");
+
+    }
+
+    public static function getLocationWiseDailyPendingOrdersToReceiveReport($params)
+    {
+        /** @var $date */
+        /** @var $location */
+        /** @var $_task */
+        /** @var $_logger */
+        extract(array_merge([
+            'date' => date('Y-m-d H:i:s'),
+            'location' => null,
+            '_task' => [],
+            '_logger' => null,
+        ], $params));
+
+        $lf = "daily-order-to-receive-data.log";
+        $lp = "FEGCronTasks/daily-reports/orders-to-receive";
+        $report = [];
+        $reportData = [];
+
+        $query = order::where('invoice_verified_date', '<=', $date)->where('invoice_verified', true);
+        $query->whereIn('status_id', [order::OPENID1, order::OPENID2, order::OPENID3]);
+        if (!empty($location) && is_array($location)) {
+            $query->whereIn('location_id', $location);
+        }
+        $query->orderBy('location_id', 'asc');
+
+        $data = $query->get();
+
+        $_logger->log("DATA", $data);
+
+        foreach($data as $item) {
+            if(empty($reportData[$item->location_id])) {
+                $reportData[$item->location_id] = [];
+            }
+            $reportData[$item->location_id][] = $item->po_number;
+        }
+        $_logger->log("REPORT DATA", $reportData);
+
+        foreach($reportData as $locationId => $poItems) {
+            if (!empty($poItems)) {
+                $reportText = \Lang::get('core.reports.daily_pending_order_receipt_report.head') ;//"";
+                $reportText .= implode("<br/>", $poItems);
+                $reportText .= \Lang::get('core.reports.daily_pending_order_receipt_report.foot');
+                $report[$locationId] = $reportText;
+            }
+        }
+
+        //        FEGSystemHelper::logit("Games Not Played for Location $location", $lf, $lp);
+        $_logger->log("REPORT MAIN", $report);
+
+        return $report;
+    }
 }

@@ -247,4 +247,11 @@ return array(
 
     "unauthorized" => "Unauthorized to perform operation",
 
+    "reports" => [
+        "daily_pending_order_receipt_report" => [
+            "head" => "<p>The following Purchase Orders need to be received in the FEG Admin.</p> <br/>",
+            "foot" => "<br/> <p></p>",
+        ]
+    ]
+
 );
