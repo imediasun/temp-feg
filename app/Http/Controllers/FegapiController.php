@@ -222,7 +222,7 @@ class FegapiController extends Controller
             $activeLimit = FEGSystemHelper::getOption('product_active_in_api_till', '24 hours');
             $exposeInactive = FEGSystemHelper::getOption('product_api_expose_all_inactivate_as_active', 0);
             $results = $class2::getRowsAPI($param, compact('showAllAsActive', 'activeLimit', 'exposeInactive'));
-            $jsonData = $results['rows'][0];
+            $jsonData = isset($results['rows'][0]) ? $results['rows'][0]:$jsonData;
         }
 
         if($class == "Itemreceipt")
