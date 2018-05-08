@@ -356,7 +356,7 @@
                                          required>
                             <input type="hidden" name="prev_qty[]" value="0"/>
                         </td>
-                        <td class="game" style="display:none">
+                        <td class="game game_dropdown" style="display:none">
                             <br/> <input type='hidden' name='game[]' id='game_0'>
                         </td>
                         <input type='hidden' name='product_id[]' id="product_id">
@@ -1235,6 +1235,8 @@
                     $('.item_name').last().removeAttr('readonly');
                 }
             }, 500);
+            var gameDropDown = $('.game_dropdown').last().find('.select2-container').first();
+            $(gameDropDown).css('display','none');
             $(".calculate").keyup(function () {
                 calculateSum();
             }).blur(function () {
@@ -1611,6 +1613,7 @@
                             $("#can-freehand span").text('Enable Freehand');
                             $('#is_freehand').val(0);
                             $('#can_select_product_list').val(1);
+                            $('#can_slect_product_list').val(1);
                             $('.itemstable .clonedInput:not(:first-child)').remove();
                             $('.itemstable .clonedInput input.sku').attr('readonly','readonly');
                             $('.itemstable .clonedInput textarea.item').attr('readonly', 'readonly');
@@ -1693,15 +1696,6 @@
         .ui-corner-all {
             width: 25% !important;
         }
-
-        [id^="s2id_game_0"]:first-of-type {
-            display: none !important;
-        }
-
-        #s2id_game_0 {
-            display: inline-block !important;
-        }
-
         [id^="game_0"] {
             width: 90%;
         }
