@@ -2137,7 +2137,7 @@ class ReportGenerator
         if (empty($location)) {
             $reportingLocations = [];//\App\Models\location::all()->pluck('id');
         } else {
-            $reportingLocations = explode($location);
+            $reportingLocations = explode(',', $location);
         }
 
         if (empty($date) || empty(strtotime($date))) {
