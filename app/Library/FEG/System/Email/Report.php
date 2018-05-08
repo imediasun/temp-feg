@@ -29,6 +29,13 @@ class Report
         $params['_logger'] = $L;
         ReportGenerator::missingDataReport($params);
     }
+
+    public static function pendingOrdersToReceive($params = array()) {
+        $L = isset($params['_logger']) ? $params['_logger'] :
+            new MyLog('pending-orders-to-receive-report.log', 'FEGCronTasks/daily-reports/orders-to-receive', 'Reports');
+        $params['_logger'] = $L;
+        ReportGenerator::sendLocationWiseDailyPendingOrdersToReceiveEmail($params);
+    }
        
     
 }
