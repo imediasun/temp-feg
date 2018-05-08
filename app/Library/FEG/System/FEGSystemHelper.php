@@ -1195,10 +1195,11 @@ class FEGSystemHelper
         extract($options);
 
         $configNameSanitized = preg_replace('/[\W]/', '-', strtolower($configName));
+
         $lf = "email-"
-            . (empty($configNamePrefix) ? "" : "{$configNamePrefix}-")
+            . (empty($configNamePrefix) ? "" :  preg_replace('/[\W]/', '-', "{$configNamePrefix}-"))
             . $configNameSanitized
-            . (empty($configNameSuffix) ? "" : "-{$configNameSuffix}")
+            . (empty($configNameSuffix) ? "" :  preg_replace('/[\W]/', '-', "-{$configNameSuffix}"))
             . ".log";
 
         if ($isTest) {
