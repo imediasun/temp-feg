@@ -609,13 +609,14 @@ class ProductController extends Controller
 
             if ($id == 0) {
                 $data = $this->validatePost('products');
-
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
+                $data['netsuite_description'] = time()."...".$data['vendor_description'];
             }
             else {
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
+                $data['netsuite_description'] = "$id...".$data['vendor_description'];
             }
             $postedtoNetSuite = $data['vendor_description'];
 
@@ -624,7 +625,7 @@ class ProductController extends Controller
             }
 
 
-            $data['netsuite_description'] = "$id...".$data['vendor_description'];
+
             if($id>0) {
                 $products_combined = $this->model->checkProducts($id);
                 $hot_items=0;
@@ -767,7 +768,7 @@ class ProductController extends Controller
                     $postedtoNetSuite = $data['vendor_description'];
 
                     if(strlen( $data['vendor_description'])>53){
-                        $postedtoNetSuite = substr($data['vendor_description'],0.53);
+                        $postedtoNetSuite = mb_substr($data['vendor_description'],0,53);
                     }
                     $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     $this->model->insertRow($netsuite_description, $pc->id);
