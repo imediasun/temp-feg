@@ -133,7 +133,6 @@ class FegapiController extends Controller
             }
 
             $json = $class1::processApiData($json, $param);
-
             $jsonData = array(
                 'total' => $results['total'],
                 'records' => count($json),
@@ -188,27 +187,46 @@ class FegapiController extends Controller
         $config = $class1::makeInfo($class);
         $tables = $config['config']['grid'];
         $jsonData = $class1::getRow($id);
+        if ($class != "Itemreceipt") {
+            $apiData = new \stdClass();
+            foreach ($tables as $gridSetting) {
+                if (isset($jsonData->$gridSetting['field'])) {
+                    $apiData->$gridSetting['field'] = $jsonData->$gridSetting['field'];
+                }
+            }
+            $jsonData = $apiData;
+        }
+        if($class == "Vendor")
+        {
+            $jsonData= (array)$jsonData;
+            $jsonData = $class1::processApiData([$jsonData]);
+            $jsonData = isset($jsonData[0])?$jsonData[0]:$jsonData;
+        }
+        if($class == 'Product'){
+            $param['product_ids'] = $id;
+            $class2 = "App\\Models\\ProductMeta" ;
+            $showAllAsActive = FEGSystemHelper::getOption('all_product_active_in_api', 0);
+            $activeLimit = FEGSystemHelper::getOption('product_active_in_api_till', '24 hours');
+            $exposeInactive = FEGSystemHelper::getOption('product_api_expose_all_inactivate_as_active', 0);
+            $results = $class2::getRowsAPI($param, compact('showAllAsActive', 'activeLimit', 'exposeInactive'));
+            $jsonData = $results['rows'][0];
+        }
+
         if($class == "Itemreceipt")
         {
             $jsonData = $class1::processApiData($jsonData,['id'=>$id , 'for_api' => 1]);
             $jsonData = isset($jsonData[0])?$jsonData[0]:$jsonData;
         }
 
+
         if($class=="Order"){
-
-               if (!empty($jsonData->po_notes)) {
-                   if (strlen($jsonData->po_notes) > 300) {
-                       $jsonData->po_notes =  Order::truncatePoNotes($jsonData->po_notes);
-
-                   }
-           }
-           /* if (!empty($jsonData->po_notes)) {
+            if (!empty($jsonData->po_notes)) {
                 if (strlen($jsonData->po_notes) > 300) {
-                    $jsonData->po_notes =  \CurrencyHelpers::truncateLongText($jsonData->po_notes,300);
-
+                    $jsonData->po_notes =  Order::truncatePoNotes($jsonData->po_notes);
                 }
-            }*/
+            }
         }
+
 
         if (!empty($jsonData)) {
 
@@ -426,7 +444,7 @@ class FegapiController extends Controller
         return $data;
     }*/
 
-    
+
 
     private function getClientIp() {
         $ipaddress = '';
