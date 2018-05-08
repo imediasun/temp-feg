@@ -380,8 +380,21 @@ class UsersController extends Controller
 
             $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
             $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
+            $gmailScopes = implode('+',[
+//                'https://www.googleapis.com/auth/gmail.send',
+//                'https://www.googleapis.com/auth/gmail.compose',
+//                'https://www.googleapis.com/auth/gmail.settings.basic',
+//                'https://www.googleapis.com/auth/gmail.modify',
+//                'https://www.googleapis.com/auth/gmail.metadata',
+//                'https://www.googleapis.com/auth/gmail.settings.basic',
+//                'https://www.googleapis.com/auth/gmail.settings.sharing',
+                'https://mail.google.com/',
+                'profile',
+                'email'
+            ]);
+
             //$this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com/&approval_prompt=force&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri='.url('/').env('G_REDIRECT').'&response_type=code&client_id='.env('G_ID');
-            $this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&scope=https://www.googleapis.com/auth/gmail.send+https://www.googleapis.com/auth/gmail.settings.basic+profile+email&access_type=offline&include_granted_scopes=true&state=' . $id . '&redirect_uri=' . url('/') . env('G_REDIRECT_2') . '&response_type=code&client_id=' . env('G_ID');
+            $this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope='.$gmailScopes.'&access_type=offline&include_granted_scopes=true&state=' . $id . '&redirect_uri=' . url('/') . env('G_REDIRECT_2') . '&response_type=code&client_id=' . env('G_ID');
             //$this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&scope=https://mail.google.com+profile+email&access_type=offline&include_granted_scopes=true&state=' . $id . '&redirect_uri=' . url('/') . env('G_REDIRECT_2') . '&response_type=code&client_id=' . env('G_ID');
             //prompt=consent&
             return view('core.users.form', $this->data);
