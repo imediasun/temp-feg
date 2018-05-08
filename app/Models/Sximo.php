@@ -206,7 +206,7 @@ class Sximo extends Model {
         return $results = array('rows' => $result, 'total' => $total);
     }
 
-    public static function getRow($id) {
+    public static function getRow($id,$isApi=false) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
 
@@ -224,7 +224,11 @@ class Sximo extends Model {
 
             $result = $result[0];
         }
-        return $result;
+        if($isApi) {
+            return $results = array('rows' => $result, 'total' => count($result));
+        }else {
+            return $result;
+        }
     }
 
     public function cleanData($data){
