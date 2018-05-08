@@ -175,6 +175,17 @@ class FegapiController extends Controller
 
     public function show($id)
     {
+        $param = array('page' => 1, 'sort' => '', 'order' => 'asc', 'vendor_id' => '', 'active'=>'');
+        $limit = Input::get('limit');
+        $sort = Input::get('order');
+        $order = Input::get('sort');
+        $active = Input::get('active');
+
+        if (!is_null($limit) or $limit != 0) $param['limit'] = $limit;
+        if (is_null($limit)) $param['limit'] = 500;
+        if (!is_null($order)) $param['order'] = $order;
+        if (!is_null($sort)) $param['sort'] = $sort;
+        if (!is_null($active)) $param['active'] = $active;
 
         $class = ucwords(Input::get('module'));
         if ($class == "Users") {
@@ -186,7 +197,9 @@ class FegapiController extends Controller
         }
         $config = $class1::makeInfo($class);
         $tables = $config['config']['grid'];
-        $jsonData = $class1::getRow($id);
+        $jsonData = $class1::getRow($id,true);
+        $total = $jsonData['total'];
+        $jsonData = $jsonData['rows'];
         if ($class != "Itemreceipt") {
             $apiData = new \stdClass();
             foreach ($tables as $gridSetting) {
@@ -218,7 +231,6 @@ class FegapiController extends Controller
             $jsonData = isset($jsonData[0])?$jsonData[0]:$jsonData;
         }
 
-
         if($class=="Order"){
             if (!empty($jsonData->po_notes)) {
                 if (strlen($jsonData->po_notes) > 300) {
@@ -226,10 +238,29 @@ class FegapiController extends Controller
                 }
             }
         }
-
-
+        $jsonData = array(
+            'total' => $total,
+            'records' => $total,
+            'rows' => $jsonData,
+            'control' => $param,
+            'key' => $config['key']
+        );
+        $option = Input::get('option');
+        if (!is_null($option) && $option == 'true') {
+            $label = array();
+            foreach ($tables as $table) {
+                $label[] = $table['label'];
+            }
+            $field = array();
+            foreach ($tables as $table) {
+                $field[] = $table['field'];
+            }
+            $jsonData['option'] = array(
+                'label' => $label,
+                'field' => $field
+            );
+        }
         if (!empty($jsonData)) {
-
             return \Response::json($jsonData, 200);
         } else {
             return \Response::json(array('Status' => \Lang::get('restapi.StatusError'), "Message" => \Lang::get('restapi.NothingFound')));
