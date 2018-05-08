@@ -244,7 +244,6 @@ orders.id=order_received.order_id ";
                         'received_by' => $record->received_by,
                         'date_received' => $record->date_received,
                         'created_at' => $record->created_at,
-                        'api_created_at' => $record->api_created_at,
                         'notes' => $record->notes,
                         'status' => $record->status
                     ];
