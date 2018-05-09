@@ -38,20 +38,22 @@ class VendorAPI extends Sximo
 
         //loop over all records and check if website is not empty then add http:// prefix for it
         $data = array();
-        foreach ($json as $record) {
-            if (!empty($record['website'])) {
-                if (strpos($record['website'], 'http') === false) {
-                    $record['website'] = 'http://' . $record['website'];
+        if (!empty($json[0])){
+            foreach ($json as $record) {
+                if (!empty($record['website'])) {
+                    if (strpos($record['website'], 'http') === false) {
+                        $record['website'] = 'http://' . $record['website'];
+                    }
                 }
-            }
 
-            if (!empty($record['country_id'])) {
-                $record['country_name'] = self::vendorCountry($record['country_id'])[0]->country_name;
-            } else {
-                $record['country_name'] = '';
+                if (!empty($record['country_id'])) {
+                    $record['country_name'] = self::vendorCountry($record['country_id'])[0]->country_name;
+                } else {
+                    $record['country_name'] = '';
+                }
+                $data[] = $record;
             }
-            $data[] = $record;
-        }
+    }
         return $data;
     }
 
