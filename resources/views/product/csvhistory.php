@@ -21,6 +21,7 @@ foreach ($rows as $row) {
         $row->Vendor,
         $row->Description,
         $row->sku,
+        $row->upc_barcode,
         $row->Unit_Price,
         $row->Items_Per_Case,
         $row->Case_Price,
