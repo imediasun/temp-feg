@@ -237,6 +237,8 @@ class FegapiController extends Controller
                     $jsonData->po_notes =  Order::truncatePoNotes($jsonData->po_notes);
                 }
             }
+            $jsonData = (array) $jsonData;
+            $jsonData = $class1::processApiData([$jsonData], $param); //appending order items on Single order Api Call
         }
         $jsonData = array(
             'total' => $total,
