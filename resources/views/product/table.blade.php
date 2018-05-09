@@ -155,6 +155,9 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         if($field['view'] == '1') :
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
                         $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn, isset($field['nodata']) ? $field['nodata'] : 0);
+                       if($field['field'] == 'reserved_qty' && (strtolower($value) =='no data' || empty($value))){
+                           $value = 0;
+                       }
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
