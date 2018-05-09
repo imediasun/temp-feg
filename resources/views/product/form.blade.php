@@ -84,6 +84,19 @@
                         </div>
                     </div>
                     <div class="form-group  ">
+                        <label for="UPC/Barcode" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('UPC/Barcode', (isset($fields['upc_barcode']['language'])?
+                            $fields['upc_barcode']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <input type="text" name="upc_barcode" id="upc_barcode" value="{{$row['upc_barcode']}}" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group  ">
                         <label for="Item Description" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Item Description',
                             (isset($fields['item_description']['language'])? $fields['item_description']['language'] :
