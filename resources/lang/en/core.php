@@ -250,7 +250,25 @@ return array(
     "reports" => [
         "daily_pending_order_receipt_report" => [
             "head" => "<p>The following Purchase Orders need to be received in the FEG Admin.</p> <br/>",
-            "foot" => "<br/> <p></p>",
+            "foot" => "<br/> <p>To Receive an Order:</p>
+                <ol>
+                    <li>Log into the FEG Admin.</li>
+                    <li>Go to the Orders module, under Orders/Requests in the left-hand navigation bar.</li>
+                    <li>Locate the order you need to receive, either visually or by searching for the PO number.</li>
+                    <li>Scroll to the far right and click on the Receive button (it has a truck icon).
+                    <br/><br/></li>
+                    <li>Are all items present? YES<br/><br/>
+                    Change the order status to Closed. Enter any necessary notes and click the Submit button.
+                    <br/><br/>Are all items present? NO<br/>
+                    <p>Check the packing slip to ensure that the products and # of cases there matches what you're seeing in the Order Receipt.</p>
+                    - If all items on packing list are present, proceed with step 6.
+                    <br/>- If not, contact the corporate Merchandise Team. <br/><br/></li>
+                    
+                    <li>Click the Is Partial checkbox on the row corresponding to the partially received product. Then, change the # of cases to the # actually received.</li>
+                    <li>Enter an explanation into the Notes field.</li>
+                    <li>Click the Submit button.</li>
+                </ol>",
+
         ]
     ]
 
