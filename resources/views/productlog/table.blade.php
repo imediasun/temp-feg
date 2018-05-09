@@ -120,7 +120,10 @@
 
 
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,$field['nodata']);
-						 	?>
+						if($field['field'] == 'reserved_qty' && (strtolower($value) =='no data' || empty($value))){
+							$value = 0;
+						}
+						?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
