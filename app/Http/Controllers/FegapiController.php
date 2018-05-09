@@ -133,6 +133,7 @@ class FegapiController extends Controller
             }
 
             $json = $class1::processApiData($json, $param);
+
             $jsonData = array(
                 'total' => $results['total'],
                 'records' => count($json),
@@ -175,14 +176,23 @@ class FegapiController extends Controller
 
     public function show($id)
     {
-        $param = array('page' => 1, 'sort' => '', 'order' => 'asc', 'vendor_id' => '', 'active'=>'');
-        $limit = Input::get('limit');
+        if(env('DISABLE_API',false) === true){
+            $jsonData = array(
+                'total' => 0,
+                'records' => 0,
+                'rows' => [],
+                'control' => '',
+                'key' => ''
+            );
+            return \Response::json($jsonData, 200);
+        }
+
+        $param = array('page' => 1, 'sort' => '', 'order' => 'asc', 'active'=>'');
+        $results = array('rows' => [], 'total' => 0);
         $sort = Input::get('order');
         $order = Input::get('sort');
         $active = Input::get('active');
 
-        if (!is_null($limit) or $limit != 0) $param['limit'] = $limit;
-        if (is_null($limit)) $param['limit'] = 500;
         if (!is_null($order)) $param['order'] = $order;
         if (!is_null($sort)) $param['sort'] = $sort;
         if (!is_null($active)) $param['active'] = $active;
@@ -197,24 +207,6 @@ class FegapiController extends Controller
         }
         $config = $class1::makeInfo($class);
         $tables = $config['config']['grid'];
-        $jsonData = $class1::getRow($id,true);
-        $total = $jsonData['total'];
-        $jsonData = $jsonData['rows'];
-        if ($class != "Itemreceipt") {
-            $apiData = new \stdClass();
-            foreach ($tables as $gridSetting) {
-                if (isset($jsonData->$gridSetting['field'])) {
-                    $apiData->$gridSetting['field'] = $jsonData->$gridSetting['field'];
-                }
-            }
-            $jsonData = $apiData;
-        }
-        if($class == "Vendor")
-        {
-            $jsonData= (array)$jsonData;
-            $jsonData = $class1::processApiData([$jsonData]);
-            $jsonData = isset($jsonData[0])?$jsonData[0]:$jsonData;
-        }
         if($class == 'Product'){
             $param['product_ids'] = $id;
             $class2 = "App\\Models\\ProductMeta" ;
@@ -222,28 +214,36 @@ class FegapiController extends Controller
             $activeLimit = FEGSystemHelper::getOption('product_active_in_api_till', '24 hours');
             $exposeInactive = FEGSystemHelper::getOption('product_api_expose_all_inactivate_as_active', 0);
             $results = $class2::getRowsAPI($param, compact('showAllAsActive', 'activeLimit', 'exposeInactive'));
-            $jsonData = isset($results['rows'][0]) ? $results['rows'][0]:$jsonData;
+        }else{
+            $results = $class1::getApiRow($id);
         }
-
-        if($class == "Itemreceipt")
-        {
-            $jsonData = $class1::processApiData($jsonData,['id'=>$id , 'for_api' => 1]);
-            $jsonData = isset($jsonData[0])?$jsonData[0]:$jsonData;
-        }
-
-        if($class=="Order"){
-            if (!empty($jsonData->po_notes)) {
-                if (strlen($jsonData->po_notes) > 300) {
-                    $jsonData->po_notes =  Order::truncatePoNotes($jsonData->po_notes);
+        $json = array();
+        //condition necessary to show additional fields in api response
+        if ($class == "Itemreceipt") {
+            $json = $results['rows'];
+        } else {
+            foreach ($results['rows'] as $row) {
+                $rows = array();
+                foreach ($tables as $table) {
+                    $conn = (isset($table['conn']) ? $table['conn'] : array());
+                    if(isset($row->$table['field'])){
+                        $rows[$table['field']] = $row->$table['field'];
+                    }
                 }
+                //removing exclude export field for netsuite from product -> bug-161
+                if(isset($rows['exclude_export']))
+                {
+                    unset($rows['exclude_export']);
+                }
+                $json[] = $rows;
             }
-            $jsonData = (array) $jsonData;
-            $jsonData = $class1::processApiData([$jsonData], $param); //appending order items on Single order Api Call
         }
+        $json = $class1::processApiData($json,$param);
+
         $jsonData = array(
-            'total' => $total,
-            'records' => $total,
-            'rows' => $jsonData,
+            'total' => $results['total'],
+            'records' => count($json),
+            'rows' => $json,
             'control' => $param,
             'key' => $config['key']
         );

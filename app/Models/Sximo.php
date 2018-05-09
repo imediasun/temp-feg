@@ -206,7 +206,7 @@ class Sximo extends Model {
         return $results = array('rows' => $result, 'total' => $total);
     }
 
-    public static function getRow($id,$isApi=false) {
+    public static function getRow($id) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
 
@@ -224,11 +224,47 @@ class Sximo extends Model {
 
             $result = $result[0];
         }
-        if($isApi) {
-            return $results = array('rows' => $result, 'total' => count($result));
-        }else {
+
             return $result;
+
+    }
+    public static function getApiRow($id,$cond=null) {
+        $table = with(new static)->table;
+        $key = with(new static)->primaryKey;
+
+        if($cond == 'only_api_visible')
+        {
+            $fromApi = 1;
+            $cond = " AND orders.is_api_visible = 1 And orders.api_created_at IS NOT NULL";
         }
+        else
+        {
+            $cond="";
+        }
+        $where  = self::queryWhere();
+        if($cond == 'only_api_visible')
+        {
+            $where  = self::queryWhere($cond);
+        }
+
+        Log::info("Get Row Query : ".self::querySelect() .$where ." AND " . $table . "." . $key . " = '{$id}' " .self::queryGroup());
+
+        $result = \DB::select(
+            self::querySelect() .
+            $where .
+            " AND " . $table . "." . $key . " = '{$id}' " .
+            self::queryGroup()
+        );
+        if (count($result) <= 0) {
+            $result = array();
+        }
+        if ($key == '') {
+            $key = '*';
+        } else {
+            $key = $table . "." . $key;
+        }
+        return $results = array('rows' => $result, 'total' => count($result));
+
     }
 
     public function cleanData($data){
