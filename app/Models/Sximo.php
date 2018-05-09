@@ -224,9 +224,7 @@ class Sximo extends Model {
 
             $result = $result[0];
         }
-
             return $result;
-
     }
     public static function getApiRow($id,$cond=null) {
         $table = with(new static)->table;
