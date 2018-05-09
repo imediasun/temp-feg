@@ -950,7 +950,7 @@ class ProductController extends Controller
         
         $vendor_id = $request->vendor_id;
         $rows = $this->model->getVendorPorductlist($vendor_id);
-        $fields = array('Vendor', 'Description', 'Sku', 'Unit Price', 'Item Per Case', 'Case Price', 'Ticket Value', 'Order Type', 'Product Type', 'INACTIVE', 'Reserved Qty');
+        $fields = array('Vendor', 'Description', 'Sku','UPC/Barcode', 'Unit Price', 'Item Per Case', 'Case Price', 'Ticket Value', 'Order Type', 'Product Type', 'INACTIVE', 'Reserved Qty');
         $this->data['pageTitle'] = 'ProductList_';
         $content = array(
             'exportID' => $exportSessionID,
