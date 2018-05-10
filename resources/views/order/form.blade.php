@@ -273,6 +273,22 @@
                         </div>
                     </div>
                     <div style="clear:both"></div>
+                    <div class="form-group">
+                        <br/>
+                        <label class="label-control col-md-4"> PO Note Additional Text</label>
+                        <div class="col-md-8">
+                            <textarea name="po_notes_additionaltext" class="form-control" rows="5" placeholder="PO Note Additional Text">{!! $row['po_notes_additionaltext'] or '' !!}</textarea>
+                            <b>This is the default PO Note which appears on the PO PDF. To include the location's listing for a specific job position, please use one of the following tags in your note text:
+                                <br> <code>MERCHANDISE_CONTACT</code><br>
+                                <code>GENERAL_MANAGER</code><br>
+                                <code>REGIONAL_DIRECTOR</code><br>
+                                <code>SVP_CONTACT</code><br>
+                                <code>TECHNICAL_CONTACT</code><br>
+                                The tag above will be swapped out for whichever Employee is listed in that position in the Locations module. If no employee is listed in a position and that position's tag is used, then no name will appear in the PDF Note.
+                            </b>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
 
                     <div style="clear:both"></div>
                     <input type="hidden" id="hidden_num_items" name="hidden_num_items">
@@ -457,6 +473,21 @@
         var type_permissions = "<?php echo $type_permissions ?>";
         type_permissions = type_permissions.split(",").map(Number);
 
+        $(function () {
+        $("#order_type_id").change(function (e) {
+            $.ajax({
+                type: "POST",
+                url: '{{ Url('order/additionalponote') }}',
+                data: {
+                    ordertype_id: $(this).val(),
+                    order_id: '<?php echo is_object($row) && $row->id ? $row->id : 0 ?>'
+                },
+                success: function (response) {
+                    $("textarea[name='po_notes_additionaltext']").text(response.PoNoteText);
+                }
+            });
+        });
+        });
         var case_price_if_no_unit_categories = "<?php echo $case_price_if_no_unit_categories; ?>";
         case_price_if_no_unit_categories = case_price_if_no_unit_categories.split(",").map(Number);
 
