@@ -70,7 +70,14 @@
                             <label for="Username" class=" control-label col-md-4 text-left"> Username: <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
-                                {!! Form::text('username', $row['username'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
+                                {!! Form::text('username', $row['username'],array('class'=>'form-control','placeholder'=>''  )) !!}
+                                <div class="error">
+                                        <span class="text-danger validation-error" id="username-error">
+                                        @if ($errors->has('username'))
+                                            {{ $errors->first('username') }}
+                                            @endif
+                                        </span>
+                                </div>
                             </div>
                             <div class="col-md-2">
 
@@ -99,7 +106,15 @@
                             <label for="Email" class=" control-label col-md-4 text-left"> Email: <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
-                                {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true', 'parsley-type'=>'email'   )) !!}
+                                {!! Form::text('email', $row['email'],array('class'=>'form-control' , 'placeholder'=>'' )) !!}
+                                    <div class="error">
+                                        <span class="text-danger validation-error" id="email-error">
+                                            @if ($errors->has('email'))
+                                                {{ $errors->first('email') }}
+                                            @endif
+                                        </span>
+                                    </div>
+
                             </div>
                             <div class="col-md-2">
 
@@ -340,15 +355,16 @@
                                 <input name="password" type="password" id="password" class="form-control input-sm"
                                        value=""
                                        @if($row['id'] =='')
-                                       required
+
                                         @endif
                                         {!! $errors->has('password')? "style='border-color: #cc0000;'":"" !!}
                                 />
-                                @if ($errors->has('password'))
-                                    <span class="error_styles">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                                @endif
+                                <span class="error_styles text-danger validation-error" id="password-error">
+                                        @if ($errors->has('password'))
+                                         <strong>{{ $errors->first('password') }}</strong>
+                                        @endif
+                                </span>
+
                             </div>
                         </div>
 
@@ -359,16 +375,15 @@
                                 <input name="password_confirmation" type="password" id="password_confirmation"
                                        class="form-control input-sm" value=""
                                        @if($row['id'] =='')
-                                       required
+
                                         @endif
                                         {!! $errors->has('password_confirmation')? "style='border-color: #cc0000;'":"" !!}
                                 />
-                                @if ($errors->has('password_confirmation'))
-                                    <span class="error_styles">
+                                <span class="text-danger validation-error" id="password_confirmation-error">
+                                        @if ($errors->has('password_confirmation'))
                                         <strong>{{ $errors->first('password_confirmation') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
+                                        @endif
+                            </span></div>
                         </div>
 
                         <div class="form-group  int-link">
@@ -442,11 +457,11 @@
                     <div style="clear:both"></div>
 
                     <div class="col-sm-12">
-                        
+
                         <div class="form-group">
 
                             <div class="col-sm-12 text-center btn-margin text-left-xs">
-                                <button type="submit" name="apply" class="btn btn-info btn-sm"><i
+                                <button type="submit" name="apply" class="btn btn-info btn-sm add-employee"><i
                                             class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
                                 <button type="submit" name="submit" class="btn btn-primary btn-sm"><i
                                             class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
@@ -455,11 +470,11 @@
                                             class="fa  fa-arrow-circle-left "></i> {{ Lang::get('core.sb_cancel') }}
                                 </button>
                             </div>
-                            
+
                         </div>
-                        
+
                     </div>
-                    
+
 
                     {!! Form::close() !!}
                 </div>
@@ -469,6 +484,9 @@
     </div>
 
     <style>
+        .text-danger{
+            color: #cc0000 !important;
+        }
         #parsley-active{
             position: absolute;
             margin-top: 4px;
@@ -534,5 +552,30 @@
         form.submit(function(){
             App.functions.cleanupForm(form, {'email': ['trim'], 'email_2': ['trim']});
         });
+
+        var form_validate = false;
+        form.on("submit", function(e){
+                $('.validation-error').text('');
+                $.ajax({
+                    type: "POST",
+                    url: '{{url('core/users/save')}}',
+                    data: form.serialize() + '&ajax=1',
+                    dataType: 'json',
+                    async:false,
+                    success: function(data) {
+                        if(data['status']=='error')
+                        {
+                            e.preventDefault();
+                            var errors = data['errors'];
+                            for (var key in errors) {
+                                if (errors.hasOwnProperty(key)) {
+                                    $('#'+key+'-error').text(errors[key]);
+                                }
+                            }
+                        }
+                    }
+                });
+        });
+
     </script>
 @stop

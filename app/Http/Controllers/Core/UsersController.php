@@ -482,6 +482,16 @@ class UsersController extends Controller
         }
 
         $validator = Validator::make($request->all(), $rules);
+        $ajax = $request->get('ajax','');
+        if($ajax!=="")
+        {
+            if($validator->passes()){
+                return response()->json(['status'=>'ok']);
+            }
+            else{
+                return response()->json(['status'=>'error' , 'errors'=>$validator->errors()]);
+            }
+        }
         if ($validator->passes()) {
             $data = $this->validatePost('users');
 
