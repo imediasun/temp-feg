@@ -435,7 +435,7 @@ class ProductController extends Controller
 
         $sql = "INSERT INTO products (" . implode(",", $columns) . ") ";
         $columns[1] = "CONCAT('copy ".mt_rand()." ',vendor_description)";
-        $column = implode(",", $columns);
+        $column = str_replace("variation_id"," SUBSTRING(UUID(),1,10) as variation_id ",implode(",", $columns));
 
         $sql .= " SELECT " .$column. " FROM products WHERE id IN (" . $toCopy . ")";
 
@@ -460,6 +460,7 @@ class ProductController extends Controller
                     "product_id" => $Product->id,
                     "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1) : $Product->reserved_qty),
                     "adjustment_type" => $type,
+                    "variation_id" => $Product->variation_id,
                     "adjusted_by" => \AUTH::user()->id,
                 ];
                 $ReservedQtyLog->insertRow($reservedLogData, 0);
@@ -477,7 +478,27 @@ class ProductController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
+        $reserved_qty_reason = $request->input('reserved_qty_reason');
         $rules = $this->validateForm();
+        if(!empty($request->product_id) || $id){
+            $productID = !empty($request->product_id) ?  $request->product_id:$id;
+            $product = product::find($productID);
+            $isReserved = $product->is_reserved;
+            $reservedQty = $product->reserved_qty;
+            if($isReserved == 0 && $request->is_reserved ==1 && $reservedQty > $request->reserved_qty){
+                $rules['reserved_qty_reason'] = 'required';
+            }elseif ($request->is_reserved == 1 && $reservedQty > $request->reserved_qty){
+                $rules['reserved_qty_reason'] = 'required';
+            }
+
+        }
+
+
+        if(isset($_POST['reserved_qty_reason']) && empty($request->product_id) && $request->is_reserved == 1 && $request->reserved_qty <0){
+            $rules['reserved_qty_reason'] = 'required';
+        }
+
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             if ($id != 0) {
@@ -487,6 +508,8 @@ class ProductController extends Controller
                     $type = "negative";
                     if ($NewReservedQty > $Product->reserved_qty) {
                         $type = "positive";
+                        $Product->updateProduct(['send_email_alert'=>0]);
+                        $Product->save();
                     } else if ($NewReservedQty < $Product->reserved_qty) {
                         $type = "negative";
                     }
@@ -499,6 +522,8 @@ class ProductController extends Controller
                         "product_id" => $id,
                         "adjustment_amount" => $NewReservedQty,
                         "adjustment_type" => $type,
+                        "variation_id" => !empty($Product->variation_id) ? $Product->variation_id:null,
+                        "reserved_qty_reason" => $reserved_qty_reason,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
                     $ReservedQtyLog->insertRow($reservedLogData, 0);
@@ -617,6 +642,11 @@ class ProductController extends Controller
                 $data = $this->validatePost('products',true);
                 $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
                 $data['netsuite_description'] = "$id...".$data['vendor_description'];
+            }
+
+            if($id == 0 || empty($id)){
+                $UniqueID = substr(md5(md5(time()+time())."-".md5(time())),0,10);
+                $data['variation_id'] = $UniqueID;
             }
             $postedtoNetSuite = $data['vendor_description'];
 

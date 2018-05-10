@@ -104,7 +104,13 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                     @if(SiteHelpers::filterColumn($limited ))
                                         <td data-form="{{ $t['field'] }}"
                                             data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+                                            @if($t['field'] == 'reserved_qty_reason')
+                                                <input type="text" style="display:none;"   name="reserved_qty_reason" class="form-control input-sm reserved_qty_reason_text1" value="">
+                                                @elseif($t['field'] == 'reserved_qty')
+                                                <input type="text" name="reserved_qty" id="reserved_qty_text" class="form-control input-sm reserved_qty_text" value="">
+                                                @else
                                             {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
+                                                @endif
                                         </td>
                                     @endif
                                 @endif
@@ -149,6 +155,9 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         if($field['view'] == '1') :
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
                         $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn, isset($field['nodata']) ? $field['nodata'] : 0);
+                       if($field['field'] == 'reserved_qty' && (strtolower($value) =='no data' || empty($value))){
+                           $value = 0;
+                       }
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
@@ -470,6 +479,33 @@ $(document).ready(function() {
         showAction();
     });
 
+    var reserved_qty_status = "";
+    var reserved_qty_reason_old = "";
+    var reserved_qty_field = "";
+
+    $(document).on("change",".reserved_qty_text",function(){
+        var prev_reserved_qty = $(this).parent('td[data-field="reserved_qty"]').attr("data-values");
+        var textfield = $(this).parent('td[data-field="reserved_qty"]').parent('tr').children('td[data-field="reserved_qty_reason"]').children('input[type="text"]');
+        reserved_qty_field = textfield;
+        if(reserved_qty_reason_old == "")
+        {
+            reserved_qty_reason_old = textfield.val();
+        }
+        if(Number(prev_reserved_qty) < Number($(this).val())){
+            reserved_qty_status = "increased";
+            textfield.val('');
+            textfield.attr("disabled","disabled");
+            textfield.removeAttr("required");
+            textfield.css("display","none");
+        }else{
+            reserved_qty_status = "decreased";
+            textfield.val('');
+            textfield.removeAttr("disabled");
+            textfield.attr("required","required");
+            textfield.css("display","block");
+        }
+    });
+
     $(document).ajaxComplete(function (event, xhr, settings) {
 
         var $urlArray = settings.url.split('/');
@@ -490,6 +526,11 @@ $(document).ready(function() {
                 if(responsetext.message!=='A product with same Product Type & Sub Type already exist' && responsetext.status !=='error'){
                     var mainRow = $('#form-' + $urlArray[2]);
                     var detailText = mainRow.children('td[data-field="details"]').text();
+                    var reservedQtyReasonText = mainRow.children('td[data-field="reserved_qty_reason"]');
+                    if(reserved_qty_status == "increased")
+                    {
+                        reservedQtyReasonText.text(reserved_qty_reason_old);
+                    }
                     if (detailText.length >= 20) {
                         var new_details = detailText.substr(0, 20) + '<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
                         mainRow.children('td[data-field="details"]').empty();
@@ -498,17 +539,14 @@ $(document).ready(function() {
                     var old_sku = $('#sku-' + $urlArray[2]).val();
                     var old_vd = $('#vd-' + $urlArray[2]).val();
                     var count = 1;
-                    $("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
+                    /*$("tr[product-id='"+EditedProductId+"']").each(function (key, row) {
                         row = $(row);
                         if (row.attr('id') != undefined) {
-                            //divOverlay_6442
-                         //   console.log($("#divOverlay_"+idSplited[1]).children('a[data-original-title="Cancel"]').click())
-                          //  cancelInlineEdit("'"+row.attr('id')+"'", event, this,0)
-                            if (1==1) {
+
                                 var requestdata = decodeURIComponent(settings.data);
                                 var requestArray = requestdata.split("&");
                                 //	console.log(requestArray);
-                                for (var i = 0; i < requestArray.length; i++) {
+                                /!*for (var i = 0; i < requestArray.length; i++) {
                                     var requestElement = (requestArray[i]).split("=");
                                     var key = $.trim(requestElement[0]);
                                     var value = (requestElement[1]).replace(/\+/g, " ");
@@ -594,28 +632,15 @@ $(document).ready(function() {
 
 
                                         }
-                                }
+                                }*!/
 
-                                //console.log($("select[name='vendor_id'] option:selected").text());
-                                //	row.find('td[data-field="vendor_description"]').text($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-                                //	row.find('td[data-field="sku"]').text($.trim(mainRow.children('td[data-field="sku"]').text()));
-                                //expense_category
-                                //row.find('td[data-field="expense_category"]').text($.trim(mainRow.children('td[data-field="expense_category"]').attr("data-format")));
-                                //	row.find('td[data-field="vendor_id"]').text($.trim(mainRow.children('td[data-field="vendor_id"]').attr("data-format")));
 
-                                //row.find('td[data-field="item_description"]').text($.trim(mainRow.children('td[data-field="item_description"]').text()));
-                                //row.find('td[data-field="size"]').text($.trim(mainRow.children('td[data-field="size"]').text()));
-                                //row.find('td[data-field="unit_price"]').text($.trim(mainRow.children('td[data-field="unit_price"]').text()));
-                                //row.find('td[data-field="case_price"]').text($.trim(mainRow.children('td[data-field="case_price"]').text()));
-                                //row.find('td[data-field="details"]').text($.trim(mainRow.children('td[data-field="details"]').text()));
-                                //row.find('td[data-field="hot_item"]').text($.trim(mainRow.children('td[data-field="hot_item"]').text()));
-                                //	row.find('td[data-field="reserved_qty"]').text($.trim(mainRow.children('td[data-field="reserved_qty"]').text()));
-                                //row.find('td[data-field="is_reserved"]').text($.trim(mainRow.children('td[data-field="is_reserved"]').text()));
-                                //	$('#vd-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="vendor_description"]').text()));
-                                //	$('#sku-'+$urlArray[2]).val($.trim(mainRow.children('td[data-field="sku"]').text()));
-                            }
                         }
-                    });
+                    });*/
+                    if(responsetext.status == 'success') {
+                        $('a[data-original-title="Reload Data"]').trigger("click");
+                    }
+
                 }
             }
         }
@@ -653,6 +678,26 @@ $(document).ready(function() {
                 console.log(res);
             }
         });
+
+        $(document).on("change",".reserved_qty_text",function(){
+            var prev_reserved_qty = $(this).parent('td[data-field="reserved_qty"]').attr("data-values");
+            var textfield = $(this).parent('td[data-field="reserved_qty"]').parent('tr').children('td[data-field="reserved_qty_reason"]').children('input[type="text"]');
+            var isReserved = $(this).parent('td[data-field="reserved_qty"]').parent('tr').children('td[data-field="is_reserved"]').children('select[name="is_reserved"]').val();
+
+            if(Number(prev_reserved_qty) < Number($(this).val())){
+                textfield.val('');
+                textfield.attr("disabled","disabled");
+                textfield.removeAttr("required");
+                textfield.css("display","none");
+            }else{
+                if(Number(isReserved) == 1 || isReserved == "Yes") {
+                    textfield.val('');
+                    textfield.removeAttr("disabled");
+                    textfield.attr("required", "required");
+                    textfield.css("display", "block");
+                }
+            }
+        });
     });
 
 </script>
@@ -667,7 +712,6 @@ $(document).ready(function() {
     }
 
     .btn-imagee {
-
         font-size: 10px;
         padding: 7px 11px;
         border: 1px solid transparent;

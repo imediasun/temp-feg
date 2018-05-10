@@ -22,9 +22,9 @@ class productlog extends Sximo  {
 FROM reserved_qty_log pLOG
   INNER JOIN products
     ON pLOG.variation_id = products.variation_id
-  INNER JOIN order_contents
+  LEFT JOIN order_contents
     ON products.id = order_contents.product_id
-  INNER JOIN orders
+  LEFT JOIN orders
     ON orders.id = order_contents.order_id  ";
 	}	
 

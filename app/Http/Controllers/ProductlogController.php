@@ -1,25 +1,26 @@
 <?php namespace App\Http\Controllers;
 
+
 use App\Http\Controllers\controller;
 use App\Models\Productlog;
 use App\Models\ReservedQtyLog;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ;
-use App\User;
 
 class ProductlogController extends Controller {
 
 	protected $layout = "layouts.main";
-	protected $data = array();	
+	protected $data = array();
 	public $module = 'productlog';
 	static $per_page	= '10';
-	
-	public function __construct() 
+
+	public function __construct()
 	{
 		parent::__construct();
 		$this->model = new Productlog();
-		
+
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
 
@@ -30,7 +31,7 @@ class ProductlogController extends Controller {
 			'pageUrl'			=>  url('productlog'),
 			'return' 			=> 	self::returnUrl()
 		);
-		
+
 
 
 	}
@@ -61,7 +62,7 @@ class ProductlogController extends Controller {
         $config = $this->model->getModuleConfig($module_id, $config_id);
         if(!empty($config))
         {
-            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);        
+            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
         }
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
@@ -87,15 +88,15 @@ class ProductlogController extends Controller {
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
-        $pagination = new Paginator($results['rows'], $results['total'], 
-            (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
-				($results['total'] > 0 ? $results['total'] : '1')));        
+        $pagination = new Paginator($results['rows'], $results['total'],
+            (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] :
+				($results['total'] > 0 ? $results['total'] : '1')));
 		$pagination->setPath('productlog/data');
 		$this->data['param']		= $params;
         $this->data['topMessage']	= @$results['topMessage'];
 		$this->data['message']          = @$results['message'];
 		$this->data['bottomMessage']	= @$results['bottomMessage'];
-        
+
 		$this->data['rowData']		= $results['rows'];
 		// Build Pagination
 		$this->data['pagination']	= $pagination;
@@ -147,7 +148,7 @@ class ProductlogController extends Controller {
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		
+
 		$this->data['id'] = $id;
 
 		return view('productlog.form',$this->data);
@@ -177,18 +178,21 @@ class ProductlogController extends Controller {
                 return $item->adjusted_by = $userData->first_name." ".$userData->last_name;
             });
             $productLogContentData['Contents'] = $Contents;
-            $productLogContentData['reducedByOrder'] = $Contents->filter(function ($item) {
-                if($item['order_id']>0){
-                    return $item;
+            $totalRecords = $productLogContentData['Contents']->count();
+            $initialAmount = $productLogContentData['Contents'][$totalRecords-1]->adjustment_amount;
+            if($productLogContentData['Contents'][$totalRecords-1]->adjustment_type == 'negative'){
+                $initialAmount = $initialAmount * -1;
+            }
+            $productLogContentData['Contents'][$totalRecords-1]->reservedQty = $initialAmount;
+            $productLogContentData['Contents'][$totalRecords-1]->reservedQuantity = $initialAmount;
+            for($i = ($totalRecords-2); $i>=0; $i--){
+                if($productLogContentData['Contents'][$i]->adjustment_type == 'negative'){
+                    $productLogContentData['Contents'][$totalRecords-1]->reservedQty -= $productLogContentData['Contents'][$i]->adjustment_amount;
+                }else{
+                    $productLogContentData['Contents'][$totalRecords-1]->reservedQty += $productLogContentData['Contents'][$i]->adjustment_amount;
                 }
-
-            });
-            $productLogContentData['addedFromProductList'] = $Contents->filter(function ($item) {
-                if($item['order_id'] == 0 || $item['order_id'] == ''){
-                    return $item;
-                }
-
-            });
+                $productLogContentData['Contents'][$i]->reservedQuantity = $productLogContentData['Contents'][$totalRecords-1]->reservedQty;
+            }
         }
 
         $this->data['productLogContent'] = $productLogContentData;
@@ -199,6 +203,7 @@ class ProductlogController extends Controller {
         $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		return view('productlog.view',$this->data);
+
 	}
 
 
@@ -231,7 +236,7 @@ class ProductlogController extends Controller {
 			$data = $this->validatePost('products');
 
 			$id = $this->model->insertRow($data , $request->input('id'));
-			
+
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
@@ -263,7 +268,7 @@ class ProductlogController extends Controller {
 		if(count($request->input('ids')) >=1)
 		{
 			$this->model->destroy($request->input('ids'));
-			
+
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success_delete')
@@ -281,7 +286,6 @@ class ProductlogController extends Controller {
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
-
 
 
         $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'reserved_qty' => '']);
@@ -307,6 +311,95 @@ class ProductlogController extends Controller {
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         return $filter;
+    }
+
+    public function getExport($t = 'excel')
+    {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+
+        $ID = Input::get('id');
+
+        $fields = [
+            'Item Name',
+            'Order ID',
+            'Amount',
+            'Reserved Quantity',
+            'Reason	',
+            'Logged By',
+            'Logged At',
+        ];
+
+        $rows = $this->getDataForExcel($ID);
+
+        $content = array(
+            'fields' => $fields,
+            'data' => $rows['productLogContentData'],
+            'row' => $rows['row'],
+            'title' => $this->data['pageTitle'],
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('productlog.excel_reserved_qty_log_view', $content);
+        }
+    }
+
+    function getDataForExcel($id)
+    {
+        $row = $this->model->getRow($id);
+        $this->data['row'] = $row;
+
+        $productLogContentData = "";
+        if (!empty($row->variation_id)) {
+            $productLogContent = ReservedQtyLog::where("variation_id", "=", $row->variation_id);
+            $Contents = $productLogContent->orderBy('id', 'DESC')->get()->filter(function ($item) {
+                $userData = User::find($item->adjusted_by);
+                return $item->adjusted_by = $userData->first_name . " " . $userData->last_name;
+            });
+
+            $totalRecords = $Contents->count();
+
+            $initialAmount = $Contents[$totalRecords-1]->adjustment_amount;
+            if($Contents[$totalRecords-1]->adjustment_type == 'negative'){
+                $initialAmount = $initialAmount * -1;
+            }
+            $Contents[$totalRecords-1]->reservedQty = $initialAmount;
+            $Contents[$totalRecords-1]->reservedQuantity = $initialAmount;
+
+
+            for($i = ($totalRecords-2); $i>=0; $i--){
+                if($Contents[$i]->adjustment_type == 'negative'){
+                    $Contents[$totalRecords-1]->reservedQty -= $Contents[$i]->adjustment_amount;
+                }else{
+                    $Contents[$totalRecords-1]->reservedQty += $Contents[$i]->adjustment_amount;
+                }
+                $Contents[$i]->reservedQuantity = $Contents[$totalRecords-1]->reservedQty;
+            }
+
+            $productLogContentData = $Contents;
+        }
+        $this->data['productLogContentData'] = $productLogContentData;
+
+        return $this->data;
     }
 
 }
