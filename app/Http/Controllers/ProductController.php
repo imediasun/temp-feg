@@ -739,20 +739,22 @@ class ProductController extends Controller
                 }
                 if (isset($ids) && count($ids) > 0) {
                     $Product = product::find($ids[0]);
+                    $type = "negative";
+                    if ($Product->reserved_qty > 0) {
+                        $type = "positive";
+                    } else if ($Product->reserved_qty < 0) {
                         $type = "negative";
-                        if ($Product->reserved_qty > 0) {
-                            $type = "positive";
-                        } else if ($Product->reserved_qty < 0) {
-                            $type = "negative";
-                        }
-                        $ReservedQtyLog = new ReservedQtyLog();
-                        $reservedLogData = [
-                            "product_id" => $Product->id,
-                            "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1):$Product->reserved_qty),
-                            "adjustment_type" => $type,
-                            "adjusted_by" => \AUTH::user()->id,
-                        ];
-                        $ReservedQtyLog->insertRow($reservedLogData, 0);
+                    }
+                    $ReservedQtyLog = new ReservedQtyLog();
+                    $reservedLogData = [
+                        "product_id" => $Product->id,
+                        "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1):$Product->reserved_qty),
+                        "adjustment_type" => $type,
+                        "variation_id" => $Product->variation_id,
+                        "reserved_qty_reason" => $reserved_qty_reason,
+                        "adjusted_by" => \AUTH::user()->id,
+                    ];
+                    $ReservedQtyLog->insertRow($reservedLogData, 0);
                 }
                 foreach ($ids as $id)
                 {
