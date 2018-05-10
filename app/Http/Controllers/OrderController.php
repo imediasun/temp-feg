@@ -887,11 +887,6 @@ class OrderController extends Controller
                              blocked_at = null
                        WHERE id=' . $request_id);
                     }
-
-                    //// SUBTRACT QTY OF RESERVED AMT ITEMS
-                    $item_count = substr_count($SID_string, '-') - 1;
-                    $SID_new = $SID_string;
-                    $this->updateRequestAndProducts($item_count, $SID_new);
                 } else {
                     $redirect_link = "order";
                 }
