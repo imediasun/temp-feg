@@ -2776,4 +2776,18 @@ ORDER BY aa_id");
 
         die("Script Completed!");
     }
+    public function getProductvariationid(){
+        $products = \Db::table('products')->select('id','sku','vendor_description','case_price','is_default_expense_category','vendor_id')
+            ->groupBy('vendor_description','vendor_id','sku','case_price')
+            ->get();
+
+        $products = product::hydrate($products); // converting product array to product object
+
+        foreach($products as $product){
+            $variationId = \SiteHelpers::encryptID($product->id);
+            echo "Update default Expense Category For (ID: {$product->id} Variation ID:{$variationId} Item Name:{$product->vendor_description} SKU:{$product->sku} Case Price: {$product->case_price} ) <br>";
+            \DB::update("update products set variation_id='".$variationId."' where vendor_description='".addcslashes($product->vendor_description,"'")."' and vendor_id='".$product->vendor_id."' and sku='".addcslashes($product->sku,"'")."' and case_price='".$product->case_price."' and variation_id is  null ");
+        }
+        die("Variation Id has been updated for all products.");
+    }
 }
