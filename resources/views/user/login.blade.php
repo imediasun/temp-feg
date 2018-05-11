@@ -49,10 +49,15 @@
                                                 class="icon-facebook"></i> Facebook </a>
                                 @endif
                                 @if($socialize['google']['client_id'] !='')
-                                    <a href="{{ URL::to('user/socialize/google')}}"
+                                    <!--a href="{{ URL::to('user/socialize/google')}}"
                                        style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;"
-                                       class="btn btn-block"><i class="icon-google-plus"></i> Google </a>
-                                @endif
+                                       class="btn btn-block"><i class="icon-google-plus"></i> Google </a-->
+
+                                        <a href="{{ URL::to('user/socialize/google')}}">
+                                            <img id="ctl00_XXX" src="{{asset('images/btn_google_signin_light_normal_web@2x.png')}}" style="border: 1px solid #ececec; height:40px !important; width:327px !important;" />
+                                            {{--<span id="XXX">Some text right here</span>--}}
+                                        </a>
+                                    @endif
                                 @if($socialize['twitter']['client_id'] !='')
                                     <a href="{{ URL::to('user/socialize/twitter')}}" class="btn btn-info"><i
                                                 class="icon-twitter"></i> Twitter </a>
