@@ -14,6 +14,8 @@ class AddtocartController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
     public $module = 'addtocart';
     static $per_page = '10';
 
@@ -31,7 +33,8 @@ class AddtocartController extends Controller
             'pageUrl' => url('addtocart'),
             'return' => self::returnUrl()
         );
-
+        $this->sortMapping = ['prod_sub_type_id' => 'product_type.type_description'];
+        $this->sortUnMapping = ['product_type.type_description' => 'prod_sub_type_id'];
 
     }
 
@@ -83,6 +86,7 @@ class AddtocartController extends Controller
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
         $filter .= ' AND requests.request_user_id='.\Session::get('uid');
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -95,6 +99,8 @@ class AddtocartController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
         $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
