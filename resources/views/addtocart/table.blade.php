@@ -50,7 +50,7 @@
                         <th width="50"><input type="checkbox" class="checkall"/></th>
                         @endif
                         <th width="100">Already on Order</th>
-                        <th width="70"><?php echo Lang::get('core.btn_action');?></th>
+                       <!-- <th width="70"><?php echo Lang::get('core.btn_action');?></th> -->
                         <th width="100">Image</th>
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
@@ -132,9 +132,9 @@
                         <td>
                             <span class="cart_already_ordered">{{$row->already_order_qty}}</span>
                         </td>
-                        <td data-values="action" data-key="<?php echo $row->id;?>">
+                        <!--td data-values="action" data-key="<?php echo $row->id;?>">
                             <div class=" action dropup"><a href="#" onclick="if(confirm('Are you sure you want to remove this item from cart?')){ return removeItemFromCart('{{ $row->id }}'); } return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Remove"><i class="fa fa-trash-o"></i></a></div>
-                        </td>
+                        </td-->
                         <td>
                             <?php
                             echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false, 0,false,'',false);
