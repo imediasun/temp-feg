@@ -918,7 +918,7 @@ class ReportHelpers
                             AND status_id IN(".implode(',',order::ORDER_CLOSED_STATUS).") 
                         GROUP BY location_id) O 
                     ON L.id = O.location_id
-                LEFT JOIN (
+                INNER  JOIN (
                         SELECT sum(budget_value) as budget_value, location_id 
                             FROM location_budget 
                             WHERE budget_date >= '$dateStart' 
