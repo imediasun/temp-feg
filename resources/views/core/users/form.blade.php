@@ -440,9 +440,13 @@
                                                 class="btn btn-success btn-sm connectGmail">
                                             <i class="fa  fa-check-circle "></i> Connected
                                         </button>
-                                        <a href="{{$oauth_url}}" class="connectGmail btn" style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;padding: 5px 8.5px;"><i class="icon-google-plus"></i> Reconnect </a>
+                                        <a href="{{$oauth_url}}">
+                                            <img id="ctl00_XXX" src="{{asset('images/for_reconnect_btn_google_signin_dark_normal_web.png')}}"/>
+                                        </a>
                                     @else
-                                        <a href="{{$oauth_url}}" class="connectGmail btn btn-block" style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;"><i class="icon-google-plus"></i> Google </a>
+                                    <a href="{{$oauth_url}}">
+                                        <img id="ctl00_XXX" src="{{asset('images/btn_google_signin_dark_pressed_web.png')}}" style="width: 190px;height: 37px;" />
+                                    </a>
                                        <!-- <button type="button" onclick="location.href='{{$oauth_url}}' "
                                                 class="btn btn-success btn-sm connectGmail">
                                             <i class="fa  fa-check-circle-o "></i> Connect
