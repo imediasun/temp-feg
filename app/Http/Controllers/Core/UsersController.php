@@ -388,7 +388,7 @@ class UsersController extends Controller
 //                'https://www.googleapis.com/auth/gmail.metadata',
 //                'https://www.googleapis.com/auth/gmail.settings.basic',
 //                'https://www.googleapis.com/auth/gmail.settings.sharing',
-                'https://mail.google.com/',
+                'https://mail.google.com',
                 'profile',
                 'email'
             ]);
