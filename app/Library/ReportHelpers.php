@@ -918,7 +918,7 @@ class ReportHelpers
                             AND status_id IN(".implode(',',order::ORDER_CLOSED_STATUS).") 
                         GROUP BY location_id) O 
                     ON L.id = O.location_id
-                LEFT JOIN (
+                INNER  JOIN (
                         SELECT sum(budget_value) as budget_value, location_id 
                             FROM location_budget 
                             WHERE budget_date >= '$dateStart' 
@@ -927,7 +927,7 @@ class ReportHelpers
                     ON LB.location_id = L.id
                 LEFT JOIN debit_type D ON D.id = L.debit_type_id
 
-                WHERE L.can_ship = 1 AND L.active = 1";
+                WHERE L.active = 1";
 
         if (!empty($location)) {
             $Q .= " AND L.id IN ($location)";

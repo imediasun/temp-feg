@@ -1923,4 +1923,29 @@ $message" .
         return $messages;
 
     }
+
+    public static function logPlus($message = '', $logger = null, $obj = null, $command = null, $msgType = 'line') {
+        if (!is_null($logger)) {
+            if (is_null($obj)) {
+                $logger->log($message);
+            }
+            else {
+                $logger->log($message, $obj);
+            }
+        }
+        if (!is_null($command)) {
+            if (!is_string($message)) {
+                $message = json_encode($message, JSON_PRETTY_PRINT);
+            }
+            if (!method_exists($command, $msgType)) {
+                $msgType = 'line';
+            }
+            call_user_func(array($command, $msgType), $message);
+            if (!is_null($obj)) {
+                $message = json_encode($obj, JSON_PRETTY_PRINT);
+                call_user_func(array($command, $msgType), $message);
+            }
+        }
+    }
+
 }

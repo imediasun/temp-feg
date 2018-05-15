@@ -42,7 +42,7 @@
         <?php echo Form::open(array('url' => 'addtocart/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">
             @if(count($rowData)>=1)
-                <table class="table table-striped  " id="{{ $pageModule }}Table">
+                <table class="table table-striped  datagrid" id="{{ $pageModule }}Table">
                     <thead>
                     <tr>
                         <th width="30"> No</th>
@@ -50,7 +50,7 @@
                         <th width="50"><input type="checkbox" class="checkall"/></th>
                         @endif
                         <th width="100">Already on Order</th>
-                        <th width="70"><?php echo Lang::get('core.btn_action');?></th>
+                       <!-- <th width="70"><?php echo Lang::get('core.btn_action');?></th> -->
                         <th width="100">Image</th>
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
@@ -58,10 +58,28 @@
                             if ($t['view'] == '1'):
                                 $limited = isset($t['limited']) ? $t['limited'] : '';
                                 if (SiteHelpers::filterColumn($limited)) {
-
-                                    if($t['label'] !='No' && $t['label'] !='Image' && $t['label'] !='Already on Order'){
-                                    echo '<th style=text-align:'.$t['align'].' width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
-                                    }
+                                    $sortBy = $param['sort'];
+                                    $orderBy = strtolower($param['order']);
+                                    $colField = $t['field'];
+                                    $colIsSortable = $t['sortable'] == '1';
+                                    $colIsSorted = $colIsSortable && $colField == $sortBy;
+                                    $colClass = $colIsSortable ? ' dgcsortable' : '';
+                                    $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+                                    $th = '<th'.
+                                        ' class="'.$colClass.'"'.
+                                        ' data-field="'.$colField.'"'.
+                                        ' data-sortable="'.$colIsSortable.'"'.
+                                        ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                        ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                        ' style=text-align:'.$t['align'].
+                                        ' width="'.$t['width'].'"';
+                                    $th .= '>';
+                                    $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                                    $th .= '</th>';
+                                    echo $th;
+//                                    if($t['label'] !='No' && $t['label'] !='Image' && $t['label'] !='Already on Order'){
+//                                    echo '<th style=text-align:'.$t['align'].' width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
+//                                }
                                 }
                             endif;
                         endforeach; ?>
@@ -114,9 +132,9 @@
                         <td>
                             <span class="cart_already_ordered">{{$row->already_order_qty}}</span>
                         </td>
-                        <td data-values="action" data-key="<?php echo $row->id;?>">
+                        <!--td data-values="action" data-key="<?php echo $row->id;?>">
                             <div class=" action dropup"><a href="#" onclick="if(confirm('Are you sure you want to remove this item from cart?')){ return removeItemFromCart('{{ $row->id }}'); } return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Remove"><i class="fa fa-trash-o"></i></a></div>
-                        </td>
+                        </td-->
                         <td>
                             <?php
                             echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false, 0,false,'',false);

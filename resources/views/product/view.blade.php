@@ -114,6 +114,13 @@
                     <td>{{ CurrencyHelpers::formatPrice($row->case_price,\App\Models\Order::ORDER_PERCISION) }} </td>
 
                 </tr>
+                <tr>
+                    <td width='30%' class='label-view text-right'>
+                        {{ SiteHelpers::activeLang('UPC/Barcode', (isset($fields['upc_barcode']['language'])? $fields['upc_barcode']['language'] : array())) }}
+                    </td>
+                    <td>{{ $row->upc_barcode }} </td>
+
+                </tr>
 
                 </tbody>
             </table>
