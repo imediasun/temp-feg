@@ -445,7 +445,7 @@
                                         </a>
                                     @else
                                     <a href="{{$oauth_url}}">
-                                        <img id="ctl00_XXX" src="{{asset('images/btn_google_signin_dark_pressed_web.png')}}" style="width: 190px;height: 37px;" />
+                                        <img id="ctl00_XXX" src="{{asset('images/btn_google_signin_dark_pressed_web.png')}}" />
                                     </a>
                                        <!-- <button type="button" onclick="location.href='{{$oauth_url}}' "
                                                 class="btn btn-success btn-sm connectGmail">
