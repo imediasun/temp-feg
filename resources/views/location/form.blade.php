@@ -43,7 +43,7 @@
 
                         </div>
                     </div>
-                    {{--  <div class="form-group  " >
+                    <!--  <div class="form-group  " >
                         <label for="Location Detail" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Location Detail', (isset($fields['ipaddress']['language'])? $fields['ipaddress']['language'] : array())) !!}
                         </label>
@@ -53,7 +53,7 @@
                          <div class="col-md-2">
 
                          </div>
-                      </div> --}}
+                      </div> -->
                     <div class="form-group  ">
                         <label for="FEG Owned" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('FEG Owned', (isset($fields['self_owned']['language'])? $fields['self_owned']['language'] : array())) !!}
@@ -70,7 +70,7 @@
 
                         </div>
                     </div>
-                    {{--  <div class="form-group  " >
+                    <!--  <div class="form-group  " >
                         <label for="ID" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('ID', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}
                         </label>
@@ -80,7 +80,7 @@
                          <div class="col-md-2">
 
                          </div>
-                      </div> --}}
+                      </div> -->
                     <div class="form-group  ">
                         <label for="Store ID" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Store ID', (isset($fields['store_id']['language'])? $fields['store_id']['language'] : array())) !!}
@@ -112,7 +112,7 @@
 
                         </div>
                     </div>
-                    {{-- <div class="form-group  ">
+                    <!-- <div class="form-group  ">
                         <label for="Region " class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Region ', (isset($fields['region_id']['language'])? $fields['region_id']['language'] : array())) !!}
                         </label>
@@ -122,7 +122,7 @@
                         <div class="col-md-2">
 
                         </div>
-                    </div> --}}
+                    </div> -->
                     <div class="form-group  ">
                         <label for="Company " class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Company ', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}
@@ -134,7 +134,7 @@
 
                         </div>
                     </div>
-                    {{--<div class="form-group  ">
+                    <!--<div class="form-group  ">
                         <label for="Contact " class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Inernal Contact ', (isset($fields['contact_id']['language'])? $fields['contact_id']['language'] : array())) !!}
                         </label>
@@ -144,7 +144,7 @@
                         <div class="col-md-2">
 
                         </div>
-                    </div>--}}
+                    </div>-->
                     <div class="form-group  ">
                         <label for="Merch Contact " class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Merch Contact ', (isset($fields['merch_contact_id']['language'])? $fields['merch_contact_id']['language'] : array())) !!}
@@ -473,12 +473,13 @@
     function showRequest() {
         $('.ajaxLoading').show();
     }
-    function showResponse(data) {
 
+    function showResponse(data) {
         if (data.status == 'success') {
             ajaxViewClose('#{{ $pageModule }}');
             ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
             notyMessage(data.message);
+            // repopulateLocationFromSession();
             $('#sximo-modal').modal('hide');
         } else {
             notyMessageError(data.message);
@@ -486,6 +487,7 @@
             return false;
         }
     }
+
     $('#location_id').on('change', function () {
         var location_id = parseInt($(this).val(),10);
         if(isNaN(location_id))

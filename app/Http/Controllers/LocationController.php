@@ -5,6 +5,8 @@ use App\Models\Core\Users;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect;
 
 class LocationController extends Controller
@@ -433,6 +435,11 @@ class LocationController extends Controller
             ));
         }
 
+    }
+    public function getUserActiveLocation(){
+        $locationId = \Session::get('selected_location');
+        $allLocations = Location::all();
+        return response()->json(['location_id'=>$locationId,'all_location'=>$allLocations]);
     }
 
 }

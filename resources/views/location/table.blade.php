@@ -308,6 +308,9 @@ if (!$colconfigs) {
         }
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+        App.autoCallbacks.registerCallback('reloaddata', function (params) {
+            repopulateLocationFromSession();
+        });
     });
     $(function () {
         $(document).ajaxComplete(function (event, xhr, settings) {
@@ -319,6 +322,16 @@ if (!$colconfigs) {
             }
         });
     });
+    function repopulateLocationFromSession(){
+
+        var locations = $.parseJSON('<?php  echo json_encode(\Session::get('user_locations'));?>');
+        var $select = $("#user_locations.sidebar_loc_dropdown");
+        $select.empty();
+        $.each(locations,function(i,item){
+            $select.append('<option value=' + item.id + '>' + item.id + ' || ' +item.location_name+'</option>');
+        });
+    }
+
 </script>
 <style>
     .table th.right {
