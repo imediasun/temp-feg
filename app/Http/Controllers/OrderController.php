@@ -1042,7 +1042,7 @@ class OrderController extends Controller
         $cc1 = "";
         // for Instant Win, Redemption Prize, Tickets, Uniforms and Office Supply categories send a copy of PO to
         // marissa sexton,mandee cook,lisa price
-        if (($order_type_id == Order::ORDER_TYPE_REDEMPTION || in_array($order_type_id, Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM) || $order_type_id == Order::ORDER_TYPE_OFFICE_SUPPLIES))// && CNF_MODE != "development" )
+        if (($order_type_id == Order::ORDER_TYPE_INSTANT_WIN_PRIZE || Order::ORDER_TYPE_PARTY_SUPPLIES || Order::ORDER_TYPE_REDEMPTION || in_array($order_type_id, Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM) || $order_type_id == Order::ORDER_TYPE_OFFICE_SUPPLIES))// && CNF_MODE != "development" )
         {
             $cc1 = $cc;
 
