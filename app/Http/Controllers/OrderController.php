@@ -1047,8 +1047,11 @@ class OrderController extends Controller
         $cc1 = "";
         // for Instant Win, Redemption Prize, Tickets, Uniforms and Office Supply categories send a copy of PO to
         // marissa sexton,mandee cook,lisa price
-        if (($order_type_id == Order::ORDER_TYPE_INSTANT_WIN_PRIZE || Order::ORDER_TYPE_PARTY_SUPPLIES || Order::ORDER_TYPE_REDEMPTION || in_array($order_type_id, Order::ORDER_TYPE_TICKET_TOKEN_UNIFORM) || $order_type_id == Order::ORDER_TYPE_OFFICE_SUPPLIES))// && CNF_MODE != "development" )
-        {
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $order_types = $pass['display email address in cc box for order types']->data_options;
+        $order_types = explode(",",$order_types);
+       if(in_array($order_type_id,$order_types)){
             $cc1 = $cc;
 
         } else {
