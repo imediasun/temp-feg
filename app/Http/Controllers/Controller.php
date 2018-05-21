@@ -25,20 +25,12 @@ abstract class Controller extends BaseController
         if(!empty(\Session::get('uid'))){
             $newLocations = \SiteHelpers::getLocationDetails(\Session::get('uid'));
             $oldLocations = \Session::get('user_locations');
-            $selected_location = \Session::get('selected_location');
-            $result1 = array_udiff($oldLocations,$newLocations,"self::compareArrays");
-            $result2 = array_udiff($newLocations,$oldLocations,"self::compareArrays");
-            $combine_result = array_merge($result1,$result2);
-            if(!empty($combine_result)){
+            $result=array_udiff($newLocations,$oldLocations,"self::compareArrays");
+
+            if(!empty($result)){
                 \Session::flash('messagetext', 'Your location has been changed by administrator');
                 \Session::flash('msgstatus', 'info');
-                foreach ($combine_result as $res){
-                    if ($res->id == $selected_location){
-                        \Session::forget('selected_location');
-                        \Session::forget('selected_location_name');
-                    }
-                }
-                \SiteHelpers::refreshUserLocations(\Session::get('uid'));
+                \SiteHelpers::refreshUserLocations(\Session::get('uid'),true);
             }
         }
         
