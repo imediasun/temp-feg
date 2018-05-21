@@ -442,7 +442,7 @@ class UserController extends Controller
                         } else {
                             \Session::put('selected_location', 0);
                         }*/
-                        \SiteHelpers::refreshUserLocations($row->id);
+                        \SiteHelpers::refreshUserLocations($row->id,true);
                         \Session::put('get_locations_by_region', $row->get_locations_by_region);
                         \Session::put('email_2', $row->email_2);
                         \Session::put('primary_phone', $row->primary_phone);

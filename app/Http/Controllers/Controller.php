@@ -30,7 +30,7 @@ abstract class Controller extends BaseController
             if(!empty($result)){
                 \Session::flash('messagetext', 'Your location has been changed by administrator');
                 \Session::flash('msgstatus', 'info');
-                \SiteHelpers::refreshUserLocations(\Session::get('uid'));
+                \SiteHelpers::refreshUserLocations(\Session::get('uid'),true);
             }
         }
         
