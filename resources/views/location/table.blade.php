@@ -323,13 +323,14 @@ if (!$colconfigs) {
         });
     });
     function repopulateLocationFromSession(){
-
+        var selected_location = $.parseJSON('<?php  echo json_encode(\Session::get('selected_location'));?>');
         var locations = $.parseJSON('<?php  echo json_encode(\Session::get('user_locations'));?>');
         var $select = $("#user_locations.sidebar_loc_dropdown");
         $select.empty();
         $.each(locations,function(i,item){
             $select.append('<option value=' + item.id + '>' + item.id + ' || ' +item.location_name+'</option>');
         });
+        $('#user_locations option[value="'+selected_location+'"]').prop('selected', true);
     }
 
 </script>
