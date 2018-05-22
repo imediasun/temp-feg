@@ -2581,13 +2581,7 @@ class SiteHelpers
     static function getLocationName($id = null)
     {
         $location_name = \DB::select('select location_name from location where id=' . $id);
-        if (empty($location_name)){
-//            $loc= App\Models\location::where('active',1)->first();
-//            return $loc->location_name;
-            self::refreshUserLocations(\Session::get('uid'),true);
-            $location_name[0]->location_name = \Session::get('selected_location_name');
-        }
-        return $location_name[0]->location_name;
+        return !empty($location_name) ? $location_name[0]->location_name : "";
     }
 
     static function configureSimpleSearchForm($data)
@@ -2770,20 +2764,19 @@ class SiteHelpers
         return $value;
     }
 
-    public static function refreshUserLocations($userId, $setLocation=false)
+    public static function refreshUserLocations($userId)
     {
 
         $user_locations = self::getLocationDetails($userId);
         $user_location_ids = self::getIdsFromLocationDetails($user_locations);
 
-        if (!empty($user_locations)) {
-            \Session::put('user_locations', $user_locations);
-            if($setLocation) {
+        $selectedLocation = \Session::get('selected_location');
+        \Session::put('user_locations', $user_locations);
+        \Session::put('user_location_ids', $user_location_ids);
+        if(!empty($user_locations) && empty($selectedLocation)) {
             \Session::put('selected_location', $user_locations[0]->id);
-           \Session::put('selected_location_name', $user_locations[0]->location_name_short);
-            }
-            \Session::put('user_location_ids', $user_location_ids);
-        } else {
+            \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+        } else if(empty($user_locations)) {
             \Session::put('selected_location', 0);
         }
     }
