@@ -479,25 +479,16 @@ class ProductController extends Controller
     function postSave(Request $request, $id = 0)
     {
 
-        $reserved_qty_reason = $request->input('reserved_qty_reason');
+
         $rules = $this->validateForm();
         if(!empty($request->product_id) || $id){
             $productID = !empty($request->product_id) ?  $request->product_id:$id;
             $product = product::find($productID);
-            $isReserved = $product->is_reserved;
-            $reservedQty = $product->reserved_qty;
-            if($isReserved == 0 && $request->is_reserved ==1 && $reservedQty > $request->reserved_qty){
-                $rules['reserved_qty_reason'] = 'required';
-            }elseif ($request->is_reserved == 1 && $reservedQty > $request->reserved_qty){
-                $rules['reserved_qty_reason'] = 'required';
-            }
 
         }
 
 
-        if(isset($_POST['reserved_qty_reason']) && empty($request->product_id) && $request->is_reserved == 1 && $request->reserved_qty <0){
-            $rules['reserved_qty_reason'] = 'required';
-        }
+
 
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
@@ -525,7 +516,6 @@ class ProductController extends Controller
                         "adjustment_amount" => $NewReservedQty,
                         "adjustment_type" => $type,
                         "variation_id" => !empty($Product->variation_id) ? $Product->variation_id:null,
-                        "reserved_qty_reason" => $reserved_qty_reason,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
                     $ReservedQtyLog->insertRow($reservedLogData, 0);
@@ -753,7 +743,6 @@ class ProductController extends Controller
                         "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1):$Product->reserved_qty),
                         "adjustment_type" => $type,
                         "variation_id" => $Product->variation_id,
-                        "reserved_qty_reason" => $reserved_qty_reason,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
                     $ReservedQtyLog->insertRow($reservedLogData, 0);

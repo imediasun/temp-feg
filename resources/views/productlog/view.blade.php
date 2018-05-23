@@ -101,7 +101,7 @@
                 <table class="table table-striped table-bordered" >
                     <tbody>
                     <tr>
-                        <th colspan="7"><h4>Reserved Quantity Log</h4></th>
+                        <th colspan="6"><h4>Reserved Quantity Log</h4></th>
                     </tr>
                     <tr>
                         <th>Item ID</th>
@@ -109,7 +109,6 @@
                         <th>Amount</th>
                         {{--<th>Added/<br>Reduced</th>--}}
                         <th>Reserved Quantity</th>
-                        <th>Reason</th>
                         <th>Logged By</th>
                         <th>Logged At</th>
                     </tr>
@@ -121,7 +120,6 @@
                                 <td>{{ $logContent->adjustment_type =='negative' ? ($logContent->adjustment_amount<0) ? $logContent->adjustment_amount:$logContent->adjustment_amount * -1:$logContent->adjustment_amount }}</td>
                                 <td>{{$logContent->reservedQuantity}}</td>
                                 {{--				<td>{{ !empty($logContent->adjustment_type=='negative') ? 'Reduced':'Added' }}</td>--}}
-                                <td>{{ !empty($logContent->reserved_qty_reason) ? $logContent->reserved_qty_reason:"No Data" }}</td>
                                 <td>{{ $logContent->adjusted_by }}</td>
                                 <td>{{ $logContent->created_at }}</td>
                             </tr>

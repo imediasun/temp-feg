@@ -324,21 +324,6 @@
 
                         </div>
                     </div>
-                    <div class="form-group" id="reserved_qty_reason"  style="display:none;">
-                        <label for="Reserved Qty Reason" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Reserved Qty Reason', (isset($fields['reserved_qty']['language'])?
-                            $fields['reserved_qty']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            {!! Form::textarea('reserved_qty_reason', '',array('class'=>'form-control',
-                            'placeholder'=>'','rows'=>'10','id'=>'reserved_qty_reasontxt',"disabled"=>"disabled" )) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-
                     <div class="form-group">
                         <label for="allow_negative_reserve_qty" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Allow Negative Reserved Qty', (isset($fields['allow_negative_reserve_qty']['language'])?
@@ -500,21 +485,6 @@
 <script type="text/javascript">
     var types_counter = 1;
     $(document).ready(function () {
-        $(document).on("change",'input[name="reserved_qty"]',function(e){
-            var recentValue = Number($(this).attr("reserved-quantity"));
-            var currentValue = Number($(this).val());
-
-            var reservedQtyReason = $("#reserved_qty_reason");
-            if(currentValue < recentValue){
-                reservedQtyReason.slideDown("slow");
-                $('textarea[name="reserved_qty_reason"]').empty();
-                $('textarea[name="reserved_qty_reason"]').attr("required",'required').removeAttr("disabled");
-            }else if(currentValue > recentValue){
-                reservedQtyReason.slideUp("slow");
-                $('textarea[name="reserved_qty_reason"]').empty();
-                $('textarea[name="reserved_qty_reason"]').removeAttr("required").attr("disabled",'disabled');
-            }
-        });
 
         numberFieldValidationChecks($("#qty_input"));
         var form = $('#productFormAjax');

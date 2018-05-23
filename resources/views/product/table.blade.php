@@ -104,13 +104,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                     @if(SiteHelpers::filterColumn($limited ))
                                         <td data-form="{{ $t['field'] }}"
                                             data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-                                            @if($t['field'] == 'reserved_qty_reason')
-                                                <input type="text" style="display:none;"   name="reserved_qty_reason" class="form-control input-sm reserved_qty_reason_text1" value="">
-                                                @elseif($t['field'] == 'reserved_qty')
-                                                <input type="text" name="reserved_qty" id="reserved_qty_text" class="form-control input-sm reserved_qty_text" value="">
-                                                @else
                                             {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
-                                                @endif
                                         </td>
                                     @endif
                                 @endif
@@ -479,32 +473,7 @@ $(document).ready(function() {
         showAction();
     });
 
-    var reserved_qty_status = "";
-    var reserved_qty_reason_old = "";
-    var reserved_qty_field = "";
 
-    $(document).on("change",".reserved_qty_text",function(){
-        var prev_reserved_qty = $(this).parent('td[data-field="reserved_qty"]').attr("data-values");
-        var textfield = $(this).parent('td[data-field="reserved_qty"]').parent('tr').children('td[data-field="reserved_qty_reason"]').children('input[type="text"]');
-        reserved_qty_field = textfield;
-        if(reserved_qty_reason_old == "")
-        {
-            reserved_qty_reason_old = textfield.val();
-        }
-        if(Number(prev_reserved_qty) < Number($(this).val())){
-            reserved_qty_status = "increased";
-            textfield.val('');
-            textfield.attr("disabled","disabled");
-            textfield.removeAttr("required");
-            textfield.css("display","none");
-        }else{
-            reserved_qty_status = "decreased";
-            textfield.val('');
-            textfield.removeAttr("disabled");
-            textfield.attr("required","required");
-            textfield.css("display","block");
-        }
-    });
 
     $(document).ajaxComplete(function (event, xhr, settings) {
 
@@ -526,11 +495,6 @@ $(document).ready(function() {
                 if(responsetext.message!=='A product with same Product Type & Sub Type already exist' && responsetext.status !=='error'){
                     var mainRow = $('#form-' + $urlArray[2]);
                     var detailText = mainRow.children('td[data-field="details"]').text();
-                    var reservedQtyReasonText = mainRow.children('td[data-field="reserved_qty_reason"]');
-                    if(reserved_qty_status == "increased")
-                    {
-                        reservedQtyReasonText.text(reserved_qty_reason_old);
-                    }
                     if (detailText.length >= 20) {
                         var new_details = detailText.substr(0, 20) + '<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
                         mainRow.children('td[data-field="details"]').empty();

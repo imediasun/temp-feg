@@ -326,7 +326,6 @@ class ProductlogController extends Controller {
             'Order ID',
             'Amount',
             'Reserved Quantity',
-            'Reason	',
             'Logged By',
             'Logged At',
         ];
