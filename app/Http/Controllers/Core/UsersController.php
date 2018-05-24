@@ -381,14 +381,15 @@ class UsersController extends Controller
             $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
             $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
             $gmailScopes = implode('+',[
-//                'https://www.googleapis.com/auth/gmail.send',
+                'https://www.googleapis.com/auth/gmail.readonly',
+                'https://www.googleapis.com/auth/gmail.send',
 //                'https://www.googleapis.com/auth/gmail.compose',
 //                'https://www.googleapis.com/auth/gmail.settings.basic',
 //                'https://www.googleapis.com/auth/gmail.modify',
 //                'https://www.googleapis.com/auth/gmail.metadata',
 //                'https://www.googleapis.com/auth/gmail.settings.basic',
 //                'https://www.googleapis.com/auth/gmail.settings.sharing',
-                'https://mail.google.com',
+//                'https://mail.google.com',
                 'profile',
                 'email'
             ]);
