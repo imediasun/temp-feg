@@ -19,7 +19,7 @@ foreach ($rows->chunk(6) as $chunk)
     foreach ($chunk  as $r) {
         $iterator++;
         $content .= '<tr>';
-        $content .= '<td >'.$r->gameTitle->game_title.'</td>';
+        $content .= '<td >'.$r->game_name.'</td>';
         $content .= '<td >'.$r->id.'</td>';
         $content .= '<td ></td>';
         $content .= '<td ></td>';

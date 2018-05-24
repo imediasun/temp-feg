@@ -210,9 +210,10 @@ FROM game
         $location  = \Session::get('selected_location');
         $exceptGametypesIds = GameTypes::where('game_type','Furniture and Fixtures')->select('id')->first();
         $exceptGametypesIds = $exceptGametypesIds->id;
-        $data = game::with('gameTitle')->where('game_type_id','!=',$exceptGametypesIds)
-            ->where('location_id',$location)
-            ->get();
+        $data = \DB::select('SELECT g.id, gt.game_title AS game_name FROM game AS g
+                LEFT JOIN game_title AS gt ON gt.id = g.game_title_id
+                WHERE g.location_id = '.$location.'
+                and g.game_type_id !='.$exceptGametypesIds.' and gt.game_title is not null  group by gt.game_title ORDER BY gt.game_title ASC ');
         return $data;
     }
 
