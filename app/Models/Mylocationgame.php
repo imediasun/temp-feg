@@ -3,6 +3,7 @@
 use App\Models\GameTypes;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class mylocationgame extends Sximo  {
 	
@@ -208,12 +209,17 @@ FROM game
 	}
     public function getInspectionChecklist(){
         $location  = \Session::get('selected_location');
-        $exceptGametypesIds = GameTypes::where('game_type','Furniture and Fixtures')->select('id')->first();
-        $exceptGametypesIds = $exceptGametypesIds->id;
-        $data = \DB::select('SELECT g.id, gt.game_title AS game_name FROM game AS g
-                LEFT JOIN game_title AS gt ON gt.id = g.game_title_id
-                WHERE g.location_id = '.$location.'
-                and g.game_type_id !='.$exceptGametypesIds.' and gt.game_title is not null  group by gt.game_title ORDER BY gt.game_title ASC ');
+        $excludedGametypesIds = GameTypes::where('game_type','Furniture and Fixtures')->select('id')->first();
+        $excludedGametypesIds = $excludedGametypesIds->id;
+        $data = Game::join('game_title',function($join){
+            $join->on('game.game_title_id', '=', 'game_title.id');
+        })
+        ->select('game.id','game_title.game_title AS game_name')
+        ->where('game.location_id','=',$location)
+        ->where('game.game_type_id','!=',$excludedGametypesIds)
+        ->whereNotNull('game_title.game_title')
+        ->orderBy('game_title.game_title')
+        ->get();
         return $data;
     }
 

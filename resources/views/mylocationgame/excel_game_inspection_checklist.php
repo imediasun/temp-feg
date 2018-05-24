@@ -7,7 +7,7 @@ $pages = 0;
 $offset = .70;
 
 $content .= '<table border="1">';
-foreach (array_chunk($rows,6)as $chunk)
+foreach ($rows->chunk(6) as $chunk)
 {
     $pages++;
     $content .= '<tr>';
