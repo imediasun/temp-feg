@@ -477,7 +477,7 @@ class order extends Sximo
                 $data['alt_address'] = $order_query[0]->alt_address;
             }
             $data['prefill_type'] = 'clone';
-            $content_query = \DB::select('SELECT  O.id as order_content_id,
+            $content_query = \DB::select('SELECT  O.id as order_content_id,O.upc_barcode,
             if((g.game_name is null or g.game_name = ""),gt.game_title,g.game_name) as game_name, O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku
 												,O.item_received as item_received,O.game_id FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
 												  LEFT JOIN game g ON g.id = O.game_id
@@ -507,6 +507,7 @@ class order extends Sximo
                     $orderitemnamesArray[] = $row->item_name;
                     $skuNumArray[] = $row->sku;
                     $orderitemcasepriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, self::ORDER_PERCISION, false);
+                    $orderUpcBarcodeArray[] = $row->upc_barcode;
                     $orderretailpriceArray[] = \CurrencyHelpers::formatPrice($row->retail_price, self::ORDER_PERCISION, false);
                     $ordergameidsArray[] = $row->game_id;
                     $ordergamenameArray[] = $row->game_name;
@@ -526,6 +527,7 @@ class order extends Sximo
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
                 $data['skuNumArray'] = $skuNumArray;
+                $data['orderUpcBarcodeArray'] = $orderUpcBarcodeArray;
                 $data['orderProductIdArray'] = $orderProductIdArray;
                 $data['gamenameArray'] = $ordergamenameArray;
                 /*     if(count($prod_data)!=0) {
