@@ -13,7 +13,7 @@ class AddUpcBarcodeToOrderContents extends Migration
     public function up()
     {
         Schema::table('order_contents', function (Blueprint $table) {
-            $table->string('upc_barcode', 40)->after('vendor_id');
+            $table->string('upc_barcode', 40)->after('vendor_id')->nullable();
         });
     }
 

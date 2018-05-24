@@ -811,13 +811,12 @@ class OrderController extends Controller
                 }
                 if ($product_id != 0) {
                     $prodData = \DB::select("SELECT * from products where id =$product_id");
-                    $bar_code = $prodData[0]->upc_barcode ? $prodData[0]->upc_barcode : 'null';
                     $prodType = $prodData[0]->prod_type_id;
                     $prodSubtype = $prodData[0]->prod_sub_type_id;
                     $qty_per_case = $prodData[0]->num_items;
                     $prodTicketValue = $prodData[0]->ticket_value;
                     $prodVendorId = $prodData[0]->vendor_id;
-                    $upc_barcode = $bar_code;
+                    $upc_barcode = $prodData[0]->upc_barcode;
                 } else {
                     $prodType = $order_type;
                     $prodSubtype = 0;
