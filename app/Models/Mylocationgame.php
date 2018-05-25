@@ -3,7 +3,6 @@
 use App\Models\GameTypes;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class mylocationgame extends Sximo  {
 	
