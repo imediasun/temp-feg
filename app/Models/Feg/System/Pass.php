@@ -232,23 +232,31 @@ class Pass extends Sximo  {
 
         return $grid;
     }
-    
+
+    public static function getRemoveColumns () {
+
+        $configPath = 'feg.specialPermissions.';
+        $moduleDetector = config($configPath.'moduleDetector', []);
+
+        $module = '';
+        foreach($moduleDetector as $pattern => $moduleName) {
+            if (\Request::is($pattern)) {
+                $module = $moduleName;
+                break;
+            }
+        }
+        $defaultRemoveColumns = ['id', 'created_at', 'updated_at',
+            'permission_id','data_type','data_options', 'module_id', 'is_global',
+            'default_value',
+        ];
+        $removeColumns = config($configPath."{$module}.removeColumns", $defaultRemoveColumns);
+
+        return $removeColumns;
+    }
+
     public static function buildGrid($columns) {
-        $url = explode('/',\Request::url());
-        if(($url[count($url)-1]) == 'order')
-        {
-            $removeColumns = ['id', 'created_at', 'updated_at',
-                'permission_id', 'module_id', 'is_global',
-                'default_value',
-            ];
-        }
-        else
-        {
-            $removeColumns = ['id', 'created_at', 'updated_at',
-                'permission_id','data_type','data_options', 'module_id', 'is_global',
-                'default_value',
-            ];
-        }
+
+        $removeColumns = self::getRemoveColumns();
 
         $labels = [
             'group_ids' => 'user_groups',
