@@ -8,6 +8,9 @@ use FEGFormat;
 use Illuminate\Http\Request;
 
 class Pass extends Sximo  {
+
+    const APP_CONFIG_PATH = 'feg.specialPermissions';
+
 	protected $table = 'feg_special_permissions';
 	protected $tableMaster = 'feg_special_permissions_master';
 
@@ -123,15 +126,7 @@ class Pass extends Sximo  {
     }
     
     public static function addNewPass($item) {
-        $url = explode('/',\Request::url());
-        if(($url[count($url)-1]) == 'order')
-        {
-            $masterFields = ['config_title', 'config_name','data_type','data_options', 'config_description'];
-        }
-        else
-        {
-            $masterFields = ['config_title', 'config_name', 'config_description'];
-        }
+        $masterFields = self::getMasterFields();
         $passFields = ['module_id', 'group_ids', 'user_ids', 'exclude_user_ids', 'is_active'];
         try {        
             $pass = new self;
@@ -163,15 +158,8 @@ class Pass extends Sximo  {
         return false;
     }
     public static function updatePass($id, $item) {
-        $url = explode('/',\Request::url());
-        if(($url[count($url)-1]) == 'order')
-        {
-            $masterFields = ['config_title', 'config_name','data_type','data_options', 'config_description'];
-        }
-        else
-        {
-            $masterFields = ['config_title', 'config_name', 'config_description'];
-        }
+
+        $masterFields = self::getMasterFields();
         $passFields = ['group_ids', 'user_ids', 'exclude_user_ids', 'is_active'];
         try {
             $pass = self::with('master')->find($id);
@@ -187,8 +175,10 @@ class Pass extends Sximo  {
                 }
                 $pass->$field = $item[$field];                
             }
-            return $pass->save();            
-        } 
+            $ret = $pass->save();
+            return $ret;
+            return $pass->save();
+        }
         catch (QueryException $ex) {
             throw self::passException($ex, $item);
             return false;
@@ -231,27 +221,6 @@ class Pass extends Sximo  {
         $grid = self::buildGrid(array_merge($parentColumns, $columns));
 
         return $grid;
-    }
-
-    public static function getRemoveColumns () {
-
-        $configPath = 'feg.specialPermissions.';
-        $moduleDetector = config($configPath.'moduleDetector', []);
-
-        $module = '';
-        foreach($moduleDetector as $pattern => $moduleName) {
-            if (\Request::is($pattern)) {
-                $module = $moduleName;
-                break;
-            }
-        }
-        $defaultRemoveColumns = ['id', 'created_at', 'updated_at',
-            'permission_id','data_type','data_options', 'module_id', 'is_global',
-            'default_value',
-        ];
-        $removeColumns = config($configPath."{$module}.removeColumns", $defaultRemoveColumns);
-
-        return $removeColumns;
     }
 
     public static function buildGrid($columns) {
@@ -374,6 +343,44 @@ class Pass extends Sximo  {
             }     
         }
         return $grid;
+    }
+
+    public static function detectModuleInConfig() {
+
+        $moduleDetector = config(self::APP_CONFIG_PATH.'.moduleDetector', []);
+
+        $module = '';
+        foreach($moduleDetector as $pattern => $moduleName) {
+            if (\Request::is($pattern)) {
+                $module = $moduleName;
+                break;
+            }
+        }
+
+        return $module;
+    }
+
+    public static function getDataFromConfig ($dataSourceName, $defaults = []) {
+        $module = self::detectModuleInConfig();
+        $values = config(self::APP_CONFIG_PATH.".{$module}.{$dataSourceName}", $defaults);
+        return $values;
+    }
+
+    public static function getMasterFields () {
+
+        $defaults = ['config_title', 'config_name', 'config_description'];
+        return self::getDataFromConfig('masterFields', $defaults);
+
+    }
+
+    public static function getRemoveColumns () {
+
+        $defaults = ['id', 'created_at', 'updated_at',
+            'permission_id','data_type','data_options', 'module_id', 'is_global',
+            'default_value',
+        ];
+        return self::getDataFromConfig('removeColumns', $defaults);
+
     }
 
 }
