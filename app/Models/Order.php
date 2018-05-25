@@ -311,6 +311,7 @@ class order extends Sximo
                     break;
                 }
             }
+            unset($item->upc_barcode);
             $record['items'][] = (array)$item;
         }
         return $data;
