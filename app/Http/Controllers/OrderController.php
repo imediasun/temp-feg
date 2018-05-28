@@ -25,6 +25,7 @@ use PHPMailerOAuth;
 use App\Models\OrdersettingContent;
 use App\Models\ReservedQtyLog;
 use Log;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -2819,5 +2820,24 @@ ORDER BY aa_id");
             \DB::update("update products set variation_id='".$variationId."' where vendor_description='".addcslashes($product->vendor_description,"'")."' and vendor_id='".$product->vendor_id."' and sku='".addcslashes($product->sku,"'")."' and case_price='".$product->case_price."' and variation_id is  null ");
         }
         die("Variation Id has been updated for all products.");
+    }
+    public function getUpdateRecordsIsApiVisible(){
+        $records = DB::select('SELECT orders.id
+        FROM orders
+        LEFT OUTER JOIN location L ON orders.location_id=L.id
+        LEFT OUTER JOIN vendor V ON orders.vendor_id=V.id
+        LEFT OUTER JOIN users U ON orders.user_id=U.id
+        LEFT OUTER JOIN order_type OT ON orders.order_type_id=OT.id
+        LEFT OUTER JOIN order_contents OC ON orders.id=OC.order_id
+        LEFT OUTER JOIN order_status OS ON orders.status_id=OS.id
+        LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id WHERE orders.id IS NOT NULL  AND orders.status_id IN ("2","6")  AND orders.order_type_id IN("8","7","6","17")  AND DATE(orders.created_at) <= "2017-06-06"  AND orders.is_freehand = "1"  AND orders.is_api_visible = "0"  AND orders.invoice_verified = "1" AND orders.deleted_at IS NULL  AND (orders.location_id IN ( SELECT id FROM location WHERE active = 1) )
+        GROUP BY orders.id
+        ORDER BY id DESC');
+        foreach ($records as $record) {
+            $order = Order::find($record->id);
+            $order->is_api_visible = 1;
+            $order->save();
+        }
+        dd('records saved');
     }
 }
