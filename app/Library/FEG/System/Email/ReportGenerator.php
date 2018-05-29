@@ -2110,6 +2110,7 @@ class ReportGenerator
     public static function sendLocationWiseDailyPendingOrdersToReceiveEmail($params = [])
     {
         global $__logger;
+        $today = empty($options['date']) ? date('Y-m-d H:i:s') : $options['date'];
 
         $daysThreshold = Options::getOption('order_receipt_reminder_days_threshold', 10);
         $defaultSeekDate = strtotime('now');
@@ -2127,6 +2128,7 @@ class ReportGenerator
             'sleepFor' => 0,
             '_task' => [],
             '_logger' => null,
+            'isTest' => null,
         ], $params));
 
         if (empty($_logger)) {
@@ -2147,10 +2149,11 @@ class ReportGenerator
         }
 
         if (empty($date) || empty(strtotime($date))) {
-            $date = date('Y-m-d H:i:s');
+            $date = date('Y-m-d H:i:s', $defaultSeekDate);
         }
+
         //$humanDate = FEGSystemHelper::getHumanDate($date);
-        $humanDate = \DateHelpers::formatDate($date);
+        $humanDate = \DateHelpers::formatDate($today);
 
         $locationParams = array_merge($params, ['location' => $reportingLocations, 'date' => $date]);
         $locationwiseReport = self::getLocationWiseDailyPendingOrdersToReceiveReport($locationParams);
@@ -2159,31 +2162,31 @@ class ReportGenerator
         $_logger->log("REPORT", $locationwiseReport);
 
         $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
-        $isTest = $task->is_test_mode;
+        $isTest = !empty($isTest) ?  $isTest : $task->is_test_mode;
 
         // each location report
-        $_logger->log("Start Locationwise Report for $date");
+        $_logger->log("Start Location wise Report for $humanDate");
         foreach ($locationwiseReport as $locationId => $report) {
 
             $locationName = \SiteHelpers::getLocationInfoById($locationId, "location_name");
 
-            $_logger->log("    Start Report for Location $locationId for $date");
+            $_logger->log("    Start Report for Location $locationId for $humanDate");
 
             $configName = 'Daily Pending Order Receipt Report';
             $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $locationId);
             self::sendEmailReport(array_merge($emailRecipients, [
-                'subject' => "Orders which need to be Received - $locationName ($locationId) - $humanDate",
+                'subject' => "Orders which need to be Received - $locationName ($locationId)- $humanDate",
                 'message' => $report,
                 'isTest' => $isTest,
                 'configName' => $configName,
-                'configNameSuffix' => "$locationId - $humanDate",
+                'configNameSuffix' => "$locationId-$humanDate",
             ]));
 
-            $_logger->log("    End sending email Report for Location $locationId for $date");
+            $_logger->log("    End sending email Report for Location $locationId for $humanDate");
             //sleep($sleepFor);
         }
 
-        $_logger->log("End Locationwise Report for $date");
+        $_logger->log("End Location wise Report for $humanDate");
 
     }
 
