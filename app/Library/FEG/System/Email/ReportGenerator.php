@@ -2,6 +2,7 @@
 
 namespace App\Library\FEG\System\Email;
 
+use App\Models\Feg\System\Options;
 use PDO;
 use DB;
 use App\Library\MyLog;
@@ -2110,13 +2111,18 @@ class ReportGenerator
     {
         global $__logger;
 
+        $daysThreshold = Options::getOption('order_receipt_reminder_days_threshold', 10);
+        $defaultSeekDate = strtotime('now');
+        if (!empty($daysThreshold)) {
+            $defaultSeekDate = strtotime("now -{$daysThreshold} days");
+        }
         /** @var $_task */
         /** @var $date */
         /** @var $location */
         /** @var $_logger */
         /** @var $sleepFor */
         extract(array_merge([
-            'date' => date('Y-m-d H:i:s'),
+            'date' => date('Y-m-d H:i:s', $defaultSeekDate),
             'location' => null,
             'sleepFor' => 0,
             '_task' => [],
@@ -2183,12 +2189,18 @@ class ReportGenerator
 
     public static function getLocationWiseDailyPendingOrdersToReceiveReport($params)
     {
+
+        $daysThreshold = Options::getOption('order_receipt_reminder_days_threshold', 10);
+        $defaultSeekDate = strtotime('now');
+        if (!empty($daysThreshold)) {
+            $defaultSeekDate = strtotime("now -{$daysThreshold} days");
+        }
         /** @var $date */
         /** @var $location */
         /** @var $_task */
         /** @var $_logger */
         extract(array_merge([
-            'date' => date('Y-m-d H:i:s'),
+            'date' => date('Y-m-d H:i:s', $defaultSeekDate),
             'location' => null,
             '_task' => [],
             '_logger' => null,
