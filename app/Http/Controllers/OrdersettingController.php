@@ -9,11 +9,17 @@ use App\Models\OrdersettingContent;
 
 class OrdersettingController extends Controller
 {
-
     protected $layout = "layouts.main";
     protected $data = array();
     public $module = 'ordersetting';
     static $per_page = '10';
+
+    /**
+     * Constant representing FEG Settings for Orders
+     *
+     * @var array
+     */
+    const FEG_SETTINGS = ['order_receipt_reminder_days_threshold'];
 
     public function __construct()
     {
@@ -72,6 +78,13 @@ class OrdersettingController extends Controller
         $this->data['GraphicsReceiver'] = $GraphicsReceiver;
 
         $this->data['access'] = $this->access;
+
+        $settingsData = [];
+        foreach(self::FEG_SETTINGS as $fegSetting) {
+            $settingsData[camel_case($fegSetting)] = \FEGHelp::getOption($fegSetting, '', false, true, true);
+        }
+        $this->data['fegSettings'] = $settingsData;
+
         return view('ordersetting.setting', $this->data);
     }
 
@@ -140,6 +153,13 @@ class OrdersettingController extends Controller
         $GraphicsRequestSetting->is_graphics_setting = 1;
         $GraphicsRequestSetting->save();
 
+
+        $requestData = $request->all();
+        foreach(self::FEG_SETTINGS as $fegSetting) {
+            if (isset($requestData[$fegSetting])) {
+                \FEGHelp::updateOption($fegSetting, $requestData[$fegSetting]);
+            }
+        }
 
         return response()->json(array(
             'message' => 'Order Setting has been saved successfully.',

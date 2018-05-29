@@ -14,6 +14,9 @@ class Options extends Model  {
             $value->option_value = $default;
             $value->is_active = 1;
             $value->notes = '';
+            $value->option_title = '';
+            $value->option_description = '';
+            $value->option_form_element_details = '';
             $value->created_at = null;
             $value->updated_at = null;
         }
@@ -52,13 +55,13 @@ class Options extends Model  {
                 'option_name' => $optionName,
                 'option_value' => $value
             ];
-        $data['notes'] = isset($options['notes']) ? $options['notes'] : '';
-        if (isset($options['is_active'])) {
-            $data['is_active'] = 1 * (bool)$options['is_active'];
+        $data = array_merge($data, $options);
+        if (isset($data['is_active'])) {
+            $data['is_active'] = 1 * (bool)$data['is_active'];
         }
         
-        if (isset($option['id'])) {
-            $optionId = $option['id'];
+        if (isset($data['id'])) {
+            $optionId = $data['id'];
             $id = self::where('id', $optionId)->pluck('id');
             if (empty($id)) {
                 if (!empty($optionName)) {
@@ -88,9 +91,9 @@ class Options extends Model  {
                 'option_name' => $optionName,
                 'option_value' => $value
             ];
-        $data['notes'] = isset($options['notes']) ? $options['notes'] : '';
-        if (isset($options['is_active'])) {
-            $data['is_active'] = 1 * (bool)$options['is_active'];
+        $data = array_merge($data, $options);
+        if (isset($data['is_active'])) {
+            $data['is_active'] = 1 * (bool)$data['is_active'];
         }
         self::insert($data);
         return $value;        

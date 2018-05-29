@@ -107,6 +107,22 @@
 
                                 </td>
                             </tr>
+                            @if (!empty($fegSettings))
+                                @foreach($fegSettings as $settingItem)
+                                    <tr>
+                                        <td>{!! $settingItem['option_title'] !!}</td>
+                                        <td>{!! $settingItem['option_description'] !!}</td>
+                                        <td>
+                                            <input type="number" min="0" class="form-control"
+                                                name="{!! $settingItem['option_name'] !!}"
+                                                value="{!! $settingItem['option_value'] !!}"
+                                            />
+                                        </td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
                             </tbody>
                         </table>
                     </div>
