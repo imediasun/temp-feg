@@ -3,7 +3,7 @@ namespace App\Library;
 
 use App\Library\MyLog;
 use App\Models\order;
-
+use App\Models\productusagereport;
 class ReportHelpers
 {
     public static function getLocationRanksQuery($dateStart, $dateEnd, $location = "", 
@@ -871,7 +871,7 @@ class ReportHelpers
         return $count;           
     }
         
-    
+
     public static function getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", 
             $debit = "", $sortby = "location_id", $order = ""){
         
@@ -906,11 +906,15 @@ class ReportHelpers
         return $Q;        
     }
     public static function _getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", $debit = ""){
-        
+        $excludedOrders = productusagereport::excludeOrderFromProductUsageAndMerchandiseExpense();
+        $whereNotInPoNumber = '';
+        if (!empty($excludedOrders)){
+            $whereNotInPoNumber = "AND O.po_number NOT IN($excludedOrders) ";
+        }
         $Q = "
                 FROM location L
 				LEFT JOIN (
-                    SELECT sum(order_total) as order_total, location_id 
+                    SELECT sum(order_total) as order_total, location_id,po_number 
                         FROM orders 
                         WHERE date_ordered >= '$dateStart' 
                             and date_ordered <= '$dateEnd' 
@@ -927,7 +931,7 @@ class ReportHelpers
                     ON LB.location_id = L.id
                 LEFT JOIN debit_type D ON D.id = L.debit_type_id
 
-                WHERE L.active = 1";
+                WHERE L.active = 1 $whereNotInPoNumber";
 
         if (!empty($location)) {
             $Q .= " AND L.id IN ($location)";

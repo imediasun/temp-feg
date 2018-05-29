@@ -1,5 +1,7 @@
 <?php namespace App\Models;
 
+use App\Http\Controllers\OrderController;
+use App\Library\FEG\System\FEGSystemHelper;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use SiteHelpers;
@@ -77,6 +79,7 @@ class productusagereport extends Sximo  {
             $whereOrderType ="";
             $whereProdType = "";
             $whereProdSubType = "";
+            $whereNotInPoNumber= "";
             if (!empty($location_id)) {
                 $whereLocation = "AND O.location_id IN ($location_id) ";
             }
@@ -153,6 +156,7 @@ class productusagereport extends Sximo  {
             {
                 $separator = "' , '";
             }
+            $excludedOrders = self::excludeOrderFromProductUsageAndMerchandiseExpense();
                 $mainQuery = "SELECT UUID() as unique_column, max(OCID) as OCID,
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ') AS Order_Type,
@@ -187,6 +191,7 @@ class productusagereport extends Sximo  {
 				   IF(D.type_description = '' OR D.type_description IS NULL, OCD.type_description,D.type_description) AS type_description,
 				   O.location_id,
 				   L.location_name,
+				   O.po_number,
 				   O.created_at AS start_date,
 				   O.created_at AS end_date 
                         ";
@@ -209,10 +214,13 @@ class productusagereport extends Sximo  {
             {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
+            if (!empty($excludedOrders)){
+                $whereNotInPoNumber = "  AND O.po_number NOT IN($excludedOrders) ";
+            }
 
             $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
                             AND O.created_at <= '$date_end' 
-                             $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
+                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
             $groupQuery = " GROUP BY Product ,num_items ,Case_Price,Product_Type, sku";
 //            $groupQuery = " GROUP BY P.id ";
@@ -303,5 +311,17 @@ class productusagereport extends Sximo  {
             $newRows[] = $row;
         }
         return $newRows;
+    }
+    public static function excludeOrderFromProductUsageAndMerchandiseExpense(){
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $po_numbers = $pass['exclude order from product usage and merchandise expense report']->data_type;
+        $array = FEGSystemHelper::split_trim($po_numbers);
+        $string_po = [];
+        foreach ($array as $arr){
+            $string_po[] = "'".$arr."'";
+        }
+        $po_numbers= implode(",",$string_po);
+        return $po_numbers;
     }
 }
