@@ -216,6 +216,7 @@ FROM game
         ->select('game.id','game_title.game_title AS game_name')
         ->where('game.location_id','=',$location)
         ->where('game.game_type_id','!=',$excludedGametypesIds)
+        ->where('game.sold','=','0')
         ->whereNotNull('game_title.game_title')
         ->orderBy('game_title.game_title')
         ->get();
