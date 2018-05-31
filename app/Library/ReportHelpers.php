@@ -927,7 +927,7 @@ class ReportHelpers
                     ON LB.location_id = L.id
                 LEFT JOIN debit_type D ON D.id = L.debit_type_id
 
-                WHERE L.active = 1";
+                WHERE L.active = 1 AND L.id not in (6000,6030)";
 
         if (!empty($location)) {
             $Q .= " AND L.id IN ($location)";
@@ -937,7 +937,7 @@ class ReportHelpers
         }
         
         // GROUP BY
-        $Q .= " ";     
+        $Q .= " ";
 
         return $Q;        
         

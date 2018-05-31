@@ -83,7 +83,7 @@ class merchandisebudget extends Sximo
             $yearWhere = ' AND YEAR(location_budget.budget_date)='.$current_year;
         }
 
-        return " WHERE location.id=location_budget.location_id$yearWhere AND location_budget.id IS NOT NULL AND location.id IN ($selectedLocations)";
+        return " WHERE location.id=location_budget.location_id$yearWhere AND location_budget.id IS NOT NULL AND location.id IN ($selectedLocations) AND location.id not in (6000,6030)";
     }
 
     public static function queryGroup($advanceSearch = false)

@@ -210,7 +210,7 @@ class productusagereport extends Sximo  {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
 
-            $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
+            $whereQuery = " WHERE O.location_id not in(6000,6030) and O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
                             AND O.created_at <= '$date_end' 
                              $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
