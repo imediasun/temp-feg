@@ -941,7 +941,7 @@ class ReportHelpers
         }
         
         // GROUP BY
-        $Q .= " ";     
+        $Q .= " ";
 
         return $Q;        
         
