@@ -33,4 +33,14 @@ class DigitalPackingList extends Sximo
             return $flagCheck = false;
         }
     }
+    public function getTruncateString($string)
+    {
+        if (strlen($string) < 50 || strlen($string) == 50 ) {
+            return $string;
+        }
+        else{
+            $string = substr($string,0,50);
+            return $string;
+        }
+    }
 }
