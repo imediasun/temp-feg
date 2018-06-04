@@ -117,4 +117,15 @@ class DigitalPackingList extends Sximo
             return $string;
         }
     }
+    public function isOrderReceived($order_id)
+    {
+        $order = Order::where("id",'=',$order_id)->first();
+         $orderedQty = $order->contents->sum('qty');
+         $receivedQty = $order->orderReceived->sum('quantity');
+        if($orderedQty == $receivedQty){
+           return $flagCheck = true;
+        }else{
+            return $flagCheck = false;
+        }
+    }
 }
