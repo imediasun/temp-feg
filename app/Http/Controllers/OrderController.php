@@ -9,6 +9,7 @@ use App\Http\Controllers\controller;
 use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\DigitalPackingList;
 use App\Models\Order;
 use App\Models\product;
 use App\Models\OrderSendDetails;
@@ -196,7 +197,6 @@ class OrderController extends Controller
 
     public function getIndex()
     {
-
         /*
         \App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
