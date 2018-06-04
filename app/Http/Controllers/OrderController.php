@@ -12,6 +12,7 @@ use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\location;
 use App\Models\managefegrequeststore;
+use App\Models\DigitalPackingList;
 use App\Models\Order;
 use App\Models\product;
 use App\Models\OrderSendDetails;
