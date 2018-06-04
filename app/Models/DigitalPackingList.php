@@ -12,7 +12,7 @@ class DigitalPackingList extends Sximo
         parent::__construct();
 
     }
-    public function getTruncateString($string)
+    public function truncateString($string)
     {
         if (strlen($string) < 50 || strlen($string) == 50 ) {
            return $string;
