@@ -12,7 +12,7 @@ class DigitalPackingList extends Sximo
         parent::__construct();
 
     }
-    public function truncateString($string)
+    public function getTruncateString($string)
     {
         if (strlen($string) < 50 || strlen($string) == 50 ) {
            return $string;
@@ -25,7 +25,7 @@ class DigitalPackingList extends Sximo
     public function truncateString($string)
     {
         if (strlen($string) < 50 || strlen($string) == 50 ) {
-           return $string;
+            return $string;
         }
         else{
             $string = substr($string,0,50);
@@ -35,19 +35,19 @@ class DigitalPackingList extends Sximo
     public function isOrderReceived($order_id)
     {
         $order = Order::where("id",'=',$order_id)->first();
-            $orderedQty = 0;
-            $receivedQty = -1;
-            if( $order->contents) {
-                $orderedQty = $order->contents->sum('qty');
-            }
-            if($order->orderReceived) {
-                $receivedQty = $order->orderReceived->sum('quantity');
-            }
-            if ($orderedQty == $receivedQty && $order->is_freehand == 0) {
-                return $flagCheck = true;
-            } else {
-                return $flagCheck = false;
-            }
+        $orderedQty = 0;
+        $receivedQty = -1;
+        if( $order->contents) {
+            $orderedQty = $order->contents->sum('qty');
+        }
+        if($order->orderReceived) {
+            $receivedQty = $order->orderReceived->sum('quantity');
+        }
+        if ($orderedQty == $receivedQty && $order->is_freehand == 0) {
+            return $flagCheck = true;
+        } else {
+            return $flagCheck = false;
+        }
 
     }
 }
