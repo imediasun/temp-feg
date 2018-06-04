@@ -1694,10 +1694,11 @@ class OrderController extends Controller
 
     function getOrderreceipt($order_id = null)
     {
-
+        $dpl = new DigitalPackingList();
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
         $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name, O.id as id  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
-
+        $showdblbutton = $dpl->isOrderReceived($order_id);
+        $this->data['showdblbutton']=$showdblbutton;
         return view('order.order-receipt', $this->data);
     }
 
