@@ -10,6 +10,7 @@ use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\DigitalPackingList;
+use App\Models\location;
 use App\Models\Order;
 use App\Models\product;
 use App\Models\OrderSendDetails;
@@ -19,6 +20,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\SximoDB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
@@ -27,6 +29,7 @@ use App\Models\OrdersettingContent;
 use App\Models\ReservedQtyLog;
 use Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 
 class OrderController extends Controller
 {
@@ -2840,4 +2843,65 @@ ORDER BY aa_id");
         }
         dd('records saved');
     }
+    public function getDplFile($order_id){
+        $FileExists = DigitalPackingList::where("order_id","=",$order_id);
+        if($FileExists->count() == 0) {
+            $order = Order::where("id", '=', $order_id)->first();
+            $orderedQty = $order->contents->sum('qty');
+            $receivedQty = $order->orderReceived->sum('quantity');
+            if ($orderedQty == $receivedQty) {
+                $location = location::find($order->location_id);
+                $locationId = $order->location_id; // as Customer Id for Embed and Store Id for Sacoa
+                $PONumber = $order->po_number; //Sales Order Number for Embed  and DPL number for Sacoa
+                $digitalPackingList = new DigitalPackingList();
+                $inserData = [
+                    'order_id' => $order->id,
+                    'name' => $PONumber,
+                    'location_id' => $order->location_id,
+                    'type_id' => $location->debit_type_id
+                ];
+
+                $id = $digitalPackingList->insertRow($inserData, 0);
+                $fileName = $PONumber . "_" . $id . ".dpl";
+
+                $id = $digitalPackingList->insertRow(['name' => $fileName],$id);
+                $filePath = public_path("uploads/dpl-files/");
+                $newLine = "\r\n";
+                File::put($filePath . $fileName, $locationId . ", " . $PONumber . $newLine);
+                foreach ($order->contents as $product) {
+                    $itemId = $product->product->upc_barcode;
+                    $itemName = $digitalPackingList->truncateString($product->product->vendor_description);
+                    $module = new OrderController();
+                    $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+                    $order_types = $pass['calculate price according to case price']->data_options;
+                    $order_types = explode(",", $order_types);
+                    $UnitType_UOM = 'Each';
+                    $receivedQty = $receivedQty;
+                    $unitPrice = $product->product->unit_price;
+                    $tickets = $product->product->ticket_value;
+                    $QtyPerCase = $product->product->num_items;
+                    $pricePerItem = $product->product->retail_price;
+                    $category = $product->product->expense_category;
+                    if (in_array($product->product->prod_type_id, $order_types)) {
+                        $UnitType_UOM = 'Case';
+                    }
+                    if ($location->debit_type_id == 1) {
+                        //Sacoa type
+                        $fileContent = $itemId . "," . $itemName . "," . $UnitType_UOM . "," . $receivedQty . "," . $unitPrice . "," . $tickets . "," . $QtyPerCase . "," . $pricePerItem . $newLine;
+                    } else {
+                        //Embed Type
+                        $fileContent = $itemId . "," . $itemName . "," . $UnitType_UOM . "," . $receivedQty . "," . $unitPrice . "," . $tickets . "," . $QtyPerCase . "," . $pricePerItem . "," . $category . $newLine;
+                    }
+                    File::append($filePath . $fileName, $fileContent);
+                }
+            }
+        }
+        $FileExists = DigitalPackingList::where("order_id","=",$order_id)->first();
+        $headers = array(
+            'Content-type: '.mime_content_type(public_path()."/uploads/dpl-files/".$FileExists->name),
+        );
+
+        return Response::download(public_path()."/uploads/dpl-files/".$FileExists->name,$FileExists->name,$headers);
+    }
+
 }
