@@ -256,6 +256,44 @@ orders.id=order_received.order_id ";
 
         return array_values($result);
     }
+    public static function getApiRow($id,$cond=null) {
+        $table = with(new static)->table;
+        $key = 'order_id';
+
+        if($cond == 'only_api_visible')
+        {
+            $fromApi = 1;
+            $cond = " AND orders.is_api_visible = 1 And orders.api_created_at IS NOT NULL";
+        }
+        else
+        {
+            $cond="";
+        }
+        $where  = self::queryWhere();
+        if($cond == 'only_api_visible')
+        {
+            $where  = self::queryWhere($cond);
+        }
+
+        \Log::info("Get Row Query : ".self::querySelect() .$where ." AND " . $table . "." . $key . " = '{$id}' " .self::queryGroup());
+
+        $result = \DB::select(
+            self::querySelect() .
+            $where .
+            " AND " . $table . "." . $key . " = '{$id}' " .
+            self::queryGroup()
+        );
+        if (count($result) <= 0) {
+            $result = array();
+        }
+        if ($key == '') {
+            $key = '*';
+        } else {
+            $key = $table . "." . $key;
+        }
+        return $results = array('rows' => $result, 'total' => count($result));
+
+    }
 
 
 
