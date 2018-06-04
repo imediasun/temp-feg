@@ -22,6 +22,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\SximoDB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
@@ -30,6 +31,7 @@ use App\Models\OrdersettingContent;
 use App\Models\ReservedQtyLog;
 use Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 
 class OrderController extends Controller
 {
