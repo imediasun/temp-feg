@@ -2902,7 +2902,18 @@ ORDER BY aa_id");
                     $tickets = $product->product->ticket_value;
                     $QtyPerCase = $product->product->num_items;
                     $pricePerItem = $product->product->retail_price;
-                    $category = $product->product->expense_category;
+                    $category = $order->order_type_id;
+                    $orderTypes = [
+                        6=>'OffSuppl',
+                        7=>'RedPrize',
+                        8=>'InstWin',
+                        17=>'PartySup',
+                        24=>'Uniforms'
+                                   ];
+                    $orderKeys = array_keys($orderTypes);
+                    if(in_array($category,$orderKeys)){
+                        $category = $orderTypes[$category];
+                    }
                     if (in_array($product->product->prod_type_id, $order_types)) {
                         $UnitType_UOM = 'Case';
                     }
