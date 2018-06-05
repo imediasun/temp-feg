@@ -817,6 +817,7 @@ class OrderController extends Controller
                     $qty_per_case = $prodData[0]->num_items;
                     $prodTicketValue = $prodData[0]->ticket_value;
                     $prodVendorId = $prodData[0]->vendor_id;
+                    $upc_barcode = ($prodData[0]->upc_barcode == 'null' || empty($prodData[0]->upc_barcode)) ? '':$prodData[0]->upc_barcode;
                 } else {
                     $prodType = $order_type;
                     $prodSubtype = 0;
@@ -843,6 +844,9 @@ class OrderController extends Controller
                     'vendor_id' => $prodVendorId,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
+                if(!empty($upc_barcode)){
+                    $contentsData['upc_barcode'] = $upc_barcode;
+                }
                 if (!empty($itemsArray[$i])) {
                     $contentsData['product_description'] = $itemsArray[$i];
                 }
