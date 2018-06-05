@@ -2967,7 +2967,6 @@ ORDER BY aa_id");
                     'order_id' => $order->id,
                     'name' => $order->po_number,
                     'location_id' => $order->location_id,
-                    'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                     'type_id' => $location->debit_type_id
                 ];
                 $dpl = $dpl->saveOrUpdateDPL($insertData, $downloadId);

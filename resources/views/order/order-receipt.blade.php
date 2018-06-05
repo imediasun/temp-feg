@@ -156,7 +156,14 @@
                             <br><hr><br>
                         </div>
                         @if($showdblbutton)
-                        <a href="/order/dpl-file/{{ $data['order_id'] }}" class="btn btn-primary pull-right" role="button">Download Full DPL</a>
+                        <a href="/order/dpl-file/{{ $data['order_id'] }}" class="btn btn-primary pull-right removetarget" >Download Full DPL</a>
+                       <script>
+                           $(function(){
+                              setTimeout(function(){
+                                  $(".removetarget").removeAttr('target');
+                              },700);
+                           });
+                       </script>
                         @endif
                         <div class="collapse in" id="receiveItemsPan">
                             <b><h3>Receive Items:</h3></b>
