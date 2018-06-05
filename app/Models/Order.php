@@ -53,7 +53,7 @@ class order extends Sximo
 
     public function orderReceived()
     {
-        return $this->hasMany("App\Models\OrderReceived");
+        return $this->hasMany("App\Models\OrderReceived"); //OrderReceived Model Has Many Relation with Order
     }
 
     public static function boot()
