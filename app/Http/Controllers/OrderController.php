@@ -2852,6 +2852,7 @@ ORDER BY aa_id");
         dd('records saved');
     }
     public function getDplFile($order_id){
+        $id=0;
         $FileExists = DigitalPackingList::where("order_id","=",$order_id);
         if($FileExists->count() == 0) {
             $order = Order::where("id", '=', $order_id)->first();
@@ -2866,13 +2867,14 @@ ORDER BY aa_id");
                     'order_id' => $order->id,
                     'name' => $PONumber,
                     'location_id' => $order->location_id,
+                    'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                     'type_id' => $location->debit_type_id
                 ];
 
                 $id = $digitalPackingList->insertRow($inserData, 0);
                 $fileName = $PONumber . "_" . $id . ".dpl";
 
-                $id = $digitalPackingList->insertRow(['name' => $fileName],$id);
+                $digitalPackingList->insertRow(['name' => $fileName],$id);
                 $filePath = public_path("uploads/dpl-files/");
                 $newLine = "\r\n";
                 File::put($filePath . $fileName, $locationId . ", " . $PONumber . $newLine);
@@ -2908,7 +2910,11 @@ ORDER BY aa_id");
         $headers = array(
             'Content-type: '.mime_content_type(public_path()."/uploads/dpl-files/".$FileExists->name),
         );
-
+        $updData = [
+            'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            'downloaded_at' => Carbon::now()->format('Y-m-d H:i:s'),
+        ];
+        DigitalPackingList::where("order_id",$order_id)->update($updData);
         return Response::download(public_path()."/uploads/dpl-files/".$FileExists->name,$FileExists->name,$headers);
     }
 
