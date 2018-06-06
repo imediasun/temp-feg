@@ -2975,7 +2975,7 @@ ORDER BY aa_id");
                 $dplFileContent = $dpl->getDPLFileData();
                 $dpl->saveFile($dplFileContent);
             }
-        }
+    }
         $headers = array(
             'Content-type: '.mime_content_type(public_path()."/uploads/dpl-files/".$dpl->name),
         );
