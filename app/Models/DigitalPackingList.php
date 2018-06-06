@@ -33,7 +33,7 @@ class DigitalPackingList extends Sximo
             if($order->orderReceived) {
                 $receivedQty = $order->orderReceived->sum('quantity');
             }
-            if ($orderedQty == $receivedQty) {
+            if ($orderedQty == $receivedQty && $order->is_freehand == 0) {
                 return $flagCheck = true;
             } else {
                 return $flagCheck = false;
