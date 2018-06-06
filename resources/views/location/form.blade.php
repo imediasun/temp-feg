@@ -95,7 +95,7 @@
                             {!! SiteHelpers::activeLang('Location Name', (isset($fields['location_name']['language'])? $fields['location_name']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('location_name', $row['location_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                            {!! Form::text('location_name', $row['location_name'],array('class'=>'form-control checkInputValidation', 'placeholder'=>'',   )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -106,7 +106,7 @@
                             {!! SiteHelpers::activeLang('Short Name', (isset($fields['location_name_short']['language'])? $fields['location_name_short']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('location_name_short', $row['location_name_short'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                            {!! Form::text('location_name_short', $row['location_name_short'],array('class'=>'form-control checkInputValidation', 'placeholder'=>'',   )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -398,6 +398,14 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        $(".checkInputValidation").keyup(function(e) {
+         var value = $(this).val();
+            var regx = new RegExp(/[-!$%^&*()_+|@#~=`{}\[\]:";'<>?,.\/]+/);
+            var result  = regx.test(value);
+            if(result === true){
+               $(this).val(value.substr(0,(value.length-1)));
+            }
+        });
         $('#location_available').hide();
         /*$("#region_id").jCombo("{{ URL::to('location/comboselect?filter=region:id:region') }}",
                 {selected_value: '{{ $row["region_id"] }}'});*/

@@ -322,17 +322,9 @@ if (!$colconfigs) {
             }
         });
     });
-    <?php
-    $selectedLocation = \Session::get('selected_location');
-    $userLocations = array_map(function($location){
-        $location->location_name = str_replace(["'",'"'],"`",$location->location_name);
-        $location->location_name_short = str_replace(["'",'"'],"`",$location->location_name_short);
-        return $location;
-    },\Session::get('user_locations'));
-    ?>
     function repopulateLocationFromSession(){
-        var selected_location = $.parseJSON('<?php  echo json_encode($selectedLocation);?>');
-        var locations = $.parseJSON('<?php  echo json_encode($userLocations);?>');
+        var selected_location = $.parseJSON('<?php  echo json_encode(\Session::get('selected_location'));?>');
+        var locations = $.parseJSON('<?php  echo json_encode(\Session::get('user_locations'));?>');
         var $select = $("#user_locations.sidebar_loc_dropdown");
         $select.empty();
         $.each(locations,function(i,item){

@@ -139,7 +139,6 @@
                                                 <input type="hidden" name="updateAlreadyReceivedQty[]" value="{{$order_item->item_received}}">
                                             </td>
 
-
                                             <!--<td style="text-align: center">
                                                 <input type="checkbox" class="updateBox" name="updateProducts[]" value="{{ $order_item->id }}" />
                                             </td>-->
