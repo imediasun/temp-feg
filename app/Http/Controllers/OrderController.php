@@ -2893,20 +2893,20 @@ ORDER BY aa_id");
                 $newLine = "\r\n";
                 File::put($filePath . $fileName, $locationId . ", " . $PONumber . $newLine);
                 foreach ($order->contents as $product) {
-                    Log::info("DPL Product Name:".$product->product->vendor_description);
-                    $itemId = $product->product->upc_barcode;
-                    $itemName = $digitalPackingList->truncateString($product->product->vendor_description);
+                    Log::info("DPL Product Name:".$product->item_name);
+                    $itemId = $product->upc_barcode;
+                    $itemName = $digitalPackingList->truncateString($product->item_name);
                     $module = new OrderController();
                     $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
                     $order_types = $pass['calculate price according to case price']->data_options;
                     $order_types = explode(",", $order_types);
                     $UnitType_UOM = 'Each';
                     $receivedQty = $receivedQty;
-                    $unitPrice = $product->product->unit_price;
-                    $tickets = $product->product->ticket_value;
-                    $QtyPerCase = $product->product->num_items;
+                    $unitPrice = $product->price; // ordered product unit price
+                    $tickets = $product->ticket_value;
+                    $QtyPerCase = $product->qty_per_case;
                     $pricePerItem = $product->product->retail_price;
-                    $category = $product->product->prod_type_id;
+                    $category = $product->prod_type_id;
                     $orderTypes = [
                         6=>'OffSuppl',
                         7=>'RedPrize',
@@ -2918,7 +2918,7 @@ ORDER BY aa_id");
                     if(in_array($category,$orderKeys)){
                         $category = $orderTypes[$category];
                     }
-                    if (in_array($product->product->prod_type_id, $order_types)) {
+                    if (in_array($product->prod_type_id, $order_types)) {
                         $UnitType_UOM = 'Case';
                     }
                     if ($location->debit_type_id == 1) {
