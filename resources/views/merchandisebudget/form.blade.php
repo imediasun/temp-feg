@@ -200,9 +200,11 @@
     $(document).ready(function () {
 
         $("#location_id").jCombo("{{ URL::to('merchandisebudget/comboselect?filter=location:id:id|location_name:active:1') }}",
-                {selected_value: '{{ $row['location_id'] }}' ,
+                {excludeItems:[6030,6000],selected_value: '{{ $row['location_id'] }}' ,
                     <?php $row["location_id"] == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$row['location_id']." , 'Location', 'active' , 'id|location_name' )") ?>
+
                 });
+
 
         $('.editor').summernote();
         $('.previewImage').fancybox();
