@@ -315,7 +315,7 @@ class productusagereport extends Sximo  {
     public static function excludeOrderFromProductUsageAndMerchandiseExpense(){
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
-        $po_numbers = $pass['exclude order from product usage and merchandise expense report']->data_type;
+        $po_numbers = !empty($pass['exclude order from product usage and merchandise expense report']) ? $pass['exclude order from product usage and merchandise expense report']->data_type:'';
         $array = FEGSystemHelper::split_trim($po_numbers);
         $string_po = [];
         foreach ($array as $arr){
