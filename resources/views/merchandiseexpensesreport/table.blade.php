@@ -216,6 +216,10 @@ $(document).ready(function() {
                 event: event,
                 container: simpleSearch
 });
+            setTimeout(function(){
+                $(".select3[name='location_id'] option[value='6030'],.select3[name='location_id'] option[value='6000']").remove();
+                $(".select3[name='location_id']").change();
+            },1000);
         });        
     }
 	$(".select3[name='location_id'] option[value='6030'],.select3[name='location_id'] option[value='6000']").remove();
