@@ -207,6 +207,10 @@ $(document).ready(function() {
     $(".select3[name='location_id']").change();
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
+$(document).ajaxComplete(function(){
+    $(".select3[name='location_id'] option[value='6030'],.select3[name='location_id'] option[value='6000']").remove();
+    $(".select3[name='location_id']").change();
+});
 </script>
 <style>
 .table th.right { text-align:right !important;}
