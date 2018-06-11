@@ -306,9 +306,7 @@ class ProductController extends Controller
         $filter = $this->getSearchFilterQuery();
         //(!is_null($request->input('search')) ? $this->buildSearch() : '');
 
-        if(strpos($filter,"products.in_development") == false){
-            $filter .= ' AND products.in_development = 0 ';
-        }
+
         $simpleSearchParems = $request->input('search');
         if(!empty($simpleSearchParems)){
             if(strpos($simpleSearchParems,'in_development:equal:') !=false){
@@ -316,7 +314,9 @@ class ProductController extends Controller
                 $inDevelopmentStatus = rtrim($inDevelopmentStatus,"|");
                 $filter .= " AND products.in_development = '".$inDevelopmentStatus."' ";
             }
-
+        }
+        if(strpos($filter,"products.in_development") == false){
+        $filter .= ' AND products.in_development = 0 ';
         }
         $filter = str_replace("AND products.in_development = '2'"," ",$filter);
 
