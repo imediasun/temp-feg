@@ -303,10 +303,20 @@ class ProductController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = $this->getSearchFilterQuery();//(!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $filter = $this->getSearchFilterQuery();
+        //(!is_null($request->input('search')) ? $this->buildSearch() : '');
 
         if(strpos($filter,"products.in_development") == false){
             $filter .= ' AND products.in_development = 0 ';
+        }
+        $simpleSearchParems = $request->input('search');
+        if(!empty($simpleSearchParems)){
+            if(strpos($simpleSearchParems,'in_development:equal:') !=false){
+                $inDevelopmentStatus = substr($simpleSearchParems,strpos($simpleSearchParems,"in_development:equal:")+strlen("in_development:equal:"),strpos($simpleSearchParems,"in_development:equal:"));
+                $inDevelopmentStatus = rtrim($inDevelopmentStatus,"|");
+                $filter .= " AND products.in_development = '".$inDevelopmentStatus."' ";
+            }
+
         }
         $filter = str_replace("AND products.in_development = '2'"," ",$filter);
 
