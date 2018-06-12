@@ -37,6 +37,7 @@ class Servicerequests extends Observerable  {
     ) sbc ON sbc.TicketID = sb_tickets.TicketID
 
 	LEFT JOIN users U ON U.id = sbc.UserID
+	LEFT JOIN users UC ON UC.id = sb_tickets.entry_by
 	INNER JOIN location L ON ( sb_tickets.location_id = L.id )
     LEFT JOIN debit_type D ON (L.debit_type_id = D.id)
 	";
