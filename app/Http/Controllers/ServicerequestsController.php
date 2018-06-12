@@ -100,13 +100,16 @@ class servicerequestsController extends Controller
                 'sb_tickets.TicketID',
                 'sb_tickets.Description',
                 'sb_tickets.location_id',
+                'L.location_name',
                 'sb_tickets.Subject',
                 'sb_tickets.entry_by',
+                'UC.first_name',
+                'UC.last_name',
+                'sbc.USERNAME',
             ];
             $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
             $filter .= is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
         }
-
         if (!empty($debitType)) {
             $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
         } 
