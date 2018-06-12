@@ -439,7 +439,6 @@ $(document).ready(function() {
                     event: event,
                     container: simpleSearch
                 });
-
             });
         }
 
