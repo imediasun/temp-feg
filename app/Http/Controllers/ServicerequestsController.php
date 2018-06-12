@@ -89,7 +89,8 @@ class servicerequestsController extends Controller
                     ];
             }
         }
-// rebuild search query skipping 'ticket_custom_type' filter
+        
+        // rebuild search query skipping 'ticket_custom_type' filter
         $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
 
         // Filter Search for query
