@@ -68,7 +68,6 @@ class servicerequestsController extends Controller
         
         // Get custom Ticket Type filter value 
         $customTicketTypeFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'ticket_custom_type' => '', 'Status' => 'status','showAll'=>0]);
-
         $showAll = $customTicketTypeFilter['showAll'];
         unset($customTicketTypeFilter['showAll']);
         $skipFilters = ['search_all_fields','ticket_custom_type','getSearchFilterQuerye'];
@@ -89,7 +88,7 @@ class servicerequestsController extends Controller
                     ];
             }
         }
-        
+
         // rebuild search query skipping 'ticket_custom_type' filter
         $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
 
@@ -111,6 +110,7 @@ class servicerequestsController extends Controller
             $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
             $filter .= is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
         }
+
         if (!empty($debitType)) {
             $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
         } 
