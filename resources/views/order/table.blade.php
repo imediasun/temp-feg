@@ -290,7 +290,14 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-refresh " aria-hidden="true"></i>
                             </a>
                         @endif
-					</td>
+                        <?php
+                            $dpl = new \App\Models\DigitalPackingList();
+                            $showdblbutton = $dpl->isOrderReceived($row->id);
+                            ?>
+                            @if($showdblbutton)
+                            <a href="/order/dpl-file/{{ $row->id }}" class="tips btn btn-xs btn-white" title="Download DPL File"><i class="fa fa-download"></i></a>
+					@endif
+                    </td>
                 </tr>
 
 
