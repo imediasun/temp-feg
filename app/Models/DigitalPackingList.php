@@ -109,6 +109,7 @@ class DigitalPackingList extends Sximo
     }
     public function getTruncateString($string)
     {
+        $string = str_replace(["&","'",'"'],"",$string);
         if (strlen($string) < 50 || strlen($string) == 50 ) {
             return $string;
         }
