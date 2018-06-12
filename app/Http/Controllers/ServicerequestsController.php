@@ -88,13 +88,24 @@ class servicerequestsController extends Controller
                     ];
             }
         }
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                'sb_tickets.TicketID',
+                'sb_tickets.Description',
+                'sb_tickets.location_id',
+                'sb_tickets.Subject',
+                'sb_tickets.entry_by',
+            ];
+            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+        }
+
 
         // rebuild search query skipping 'ticket_custom_type' filter
         $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
-
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery,$searchInput);
+        dd($filter);
         if (!empty($debitType)) {
             $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
         }
