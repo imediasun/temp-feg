@@ -871,7 +871,7 @@ class ReportHelpers
         return $count;           
     }
         
-
+    
     public static function getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", 
             $debit = "", $sortby = "location_id", $order = ""){
         
