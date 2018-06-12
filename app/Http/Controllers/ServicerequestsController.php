@@ -110,7 +110,6 @@ class servicerequestsController extends Controller
             $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
             $filter .= is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
         }
-
         if (!empty($debitType)) {
             $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
         } 
