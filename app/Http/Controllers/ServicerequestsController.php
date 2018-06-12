@@ -68,9 +68,10 @@ class servicerequestsController extends Controller
         
         // Get custom Ticket Type filter value 
         $customTicketTypeFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'ticket_custom_type' => '', 'Status' => 'status','showAll'=>0]);
+
         $showAll = $customTicketTypeFilter['showAll'];
         unset($customTicketTypeFilter['showAll']);
-        $skipFilters = ['ticket_custom_typgetSearchFilterQuerye'];
+        $skipFilters = ['search_all_fields','ticket_custom_type','getSearchFilterQuerye'];
         $mergeFilters = [];
         extract($customTicketTypeFilter); //$ticket_custom_type, $status
         
@@ -88,6 +89,12 @@ class servicerequestsController extends Controller
                     ];
             }
         }
+// rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
         if (!empty($search_all_fields)) {
             $searchFields = [
                 'sb_tickets.TicketID',
@@ -97,15 +104,9 @@ class servicerequestsController extends Controller
                 'sb_tickets.entry_by',
             ];
             $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+            $filter .= is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
         }
 
-
-        // rebuild search query skipping 'ticket_custom_type' filter
-        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
-        // Filter Search for query
-        // build sql query based on search filters
-        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery,$searchInput);
-        dd($filter);
         if (!empty($debitType)) {
             $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
         } 
