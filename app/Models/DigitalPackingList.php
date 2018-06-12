@@ -14,6 +14,7 @@ class DigitalPackingList extends Sximo
     }
     public function truncateString($string)
     {
+        $string = str_replace(["&","'",'"'],"",$string);
         if (strlen($string) < 50 || strlen($string) == 50 ) {
            return $string;
         }

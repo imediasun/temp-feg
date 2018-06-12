@@ -2912,7 +2912,7 @@ ORDER BY aa_id");
                     $order_types = $pass['calculate price according to case price']->data_options;
                     $order_types = explode(",", $order_types);
                     $UnitType_UOM = 'Each';
-                    $receivedQty = $receivedQty;
+                    $receivedQty = $product->item_received;
                     $unitPrice = $product->price; // ordered product unit price
                     $tickets = $product->ticket_value;
                     $QtyPerCase = $product->qty_per_case;
