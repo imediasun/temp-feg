@@ -28,12 +28,14 @@ class DigitalPackingList extends Sximo
         $order = Order::where("id",'=',$order_id)->first();
             $orderedQty = 0;
             $receivedQty = -1;
-            if( $order->contents) {
+        if($order) {
+            if ($order->contents) {
                 $orderedQty = $order->contents->sum('qty');
             }
-            if($order->orderReceived) {
+            if ($order->orderReceived) {
                 $receivedQty = $order->orderReceived->sum('quantity');
             }
+        }
             if ($orderedQty == $receivedQty && $order->is_freehand == 0) {
                 return $flagCheck = true;
             } else {
