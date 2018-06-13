@@ -295,7 +295,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                             $showdblbutton = $dpl->isOrderReceived($row->id);
                             ?>
                             @if($showdblbutton)
-                            <a href="/order/dpl-file/{{ $row->id }}" class="tips btn btn-xs btn-white" title="Download DPL File"><i class="fa fa-download"></i></a>
+                            <a href="/order/dpl-file/{{ $row->id }}" class="tips btn btn-xs btn-white" title="Download Full DPL"><i class="fa fa-download"></i></a>
 					@endif
                     </td>
                 </tr>
