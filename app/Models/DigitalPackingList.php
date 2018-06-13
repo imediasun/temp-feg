@@ -26,19 +26,21 @@ class DigitalPackingList extends Sximo
     public function isOrderReceived($order_id)
     {
         $order = Order::where("id",'=',$order_id)->first();
-        $orderedQty = 0;
-        $receivedQty = -1;
-        if( $order->contents) {
-            $orderedQty = $order->contents->sum('qty');
+            $orderedQty = 0;
+            $receivedQty = -1;
+        if($order) {
+            if ($order->contents) {
+                $orderedQty = $order->contents->sum('qty');
+            }
+            if ($order->orderReceived) {
+                $receivedQty = $order->orderReceived->sum('quantity');
+            }
         }
-        if($order->orderReceived) {
-            $receivedQty = $order->orderReceived->sum('quantity');
-        }
-        if ($orderedQty == $receivedQty && $order->is_freehand == 0) {
-            return $flagCheck = true;
-        } else {
-            return $flagCheck = false;
-        }
+            if ($orderedQty == $receivedQty && $order->is_freehand == 0) {
+                return $flagCheck = true;
+            } else {
+                return $flagCheck = false;
+            }
 
     }
 }
