@@ -1539,7 +1539,6 @@ class OrderController extends Controller
                     $output = $pdf->output();
                     $file_to_save = public_path() . '/orders/' . $filename;
                     file_put_contents($file_to_save, $output);
-                    $message = $message;
                     if (is_array($cc)) {
                         $cc = implode(',', $cc);
                     }
@@ -1559,8 +1558,7 @@ class OrderController extends Controller
                         'type' => 'application/pdf',
                         'preferGoogleOAuthMail' => false
                     ];
-                    $configName = 'Send Email Local';
-                    $sent = FEGSystemHelper::sendEmail(implode(',', $to), $subject, $message, $google_acc->email, $options);
+                    $configName = 'Send Email';
                     $sent = FEGSystemHelper::sendSystemEmail(array(
                         'to' => implode(',', $to),
                         'cc' => $cc,
