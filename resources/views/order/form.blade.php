@@ -333,6 +333,7 @@
                         <th width="90">Quantity</th>
                         <th class="game" style="display:none" width="200">Game</th>
                         <th width="90">Total ( $ )</th>
+                        <th width="90">Broken Case</th>
                         <th width="60" align="center"><span id="remove-col">Remove </span></th>
 
 
@@ -390,6 +391,10 @@
 
                         <td><br/><input type="text" name="total" value="" placeholder="0.00" readonly
                                         class="form-control fixDecimal"/></td>
+                        <td>
+                            <br />
+                            <input type="checkbox" class="broken-case" name="broken_case[]" value='1'>
+                        </td>
                         <td align="center" class="remove-container"><br/>
 
                             <p id="hide-button" data-id=""
@@ -574,20 +579,16 @@
                 unitPrice = $(this).find("input[name*='price']").val();
                 casePrice = $(this).find("input[name*='case_price']").val();
                 orderType=$("#order_type_id").val();
+                isBrokenCase = $(this).find("input[name*='broken_case']").prop('checked');
 
                 // if order type is Instant Win prizes=8, redemption prizes=7,Office Supplies=6
-                if($.inArray(parseInt(orderType),case_price_categories) != -1)
-                {
+                if(isBrokenCase) {
+                    Price = unitPrice;
+                } else if($.inArray(parseInt(orderType),case_price_categories) != -1) {
                      Price = casePrice;
-                }
-                else if($.inArray(parseInt(orderType),case_price_if_no_unit_categories) != -1)
-                {
-
-                     Price=(unitPrice == 0)?casePrice:unitPrice;
-
-                }
-                else
-                {
+                } else if($.inArray(parseInt(orderType),case_price_if_no_unit_categories) != -1) {
+                     Price = (unitPrice == 0) ? casePrice : unitPrice;
+                } else {
                     Price = unitPrice;
                 }
                 sum = (Qty * Price).toFixed(6);
@@ -724,6 +725,7 @@
 
         }
         $(document).ready(function () {
+
             numberFieldValidationChecks($("input[name^=qty]"));
             var inc = 1;
             hideShowAltLocation();
@@ -1760,7 +1762,22 @@
 
     <script>
     $(document).ready(function () {
-        
+
+
+        $('input[type="checkbox"]').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue'
+        });
+
+        $('.broken-case').on('ifChanged', function (event) {
+            $(event.target).trigger('change');
+        });
+
+        $(".broken-case").change((event) => {
+            calculateSum();
+        });
+
+
         $(".exposeAPI").on('click', function() {
             return false; //Functionality removed!
 
