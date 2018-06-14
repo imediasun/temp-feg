@@ -1559,18 +1559,25 @@ class OrderController extends Controller
                         'type' => 'application/pdf',
                         'preferGoogleOAuthMail' => false
                     ];
-                    if (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) {
-
-                        $sent = FEGSystemHelper::sendEmail(implode(',', $to), $subject, $message, $google_acc->email, $options);
-                        if (!$sent) {
-                            return 3;
-                        } else {
-                            return 1;
-                        }
-                    } else {
-                        $sent = $this->sendPhpEmail($message, $to, $from, $subject, $pdf, $filename, $cc, $bcc);
-                        return $sent;
-                    }
+                    $configName = 'Send Email Local';
+                    $sent = FEGSystemHelper::sendEmail(implode(',', $to), $subject, $message, $google_acc->email, $options);
+                    $sent = FEGSystemHelper::sendSystemEmail(array(
+                        'to' => implode(',', $to),
+                        'cc' => $cc,
+                        'bcc' => $bcc,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'preferGoogleOAuthMail' => false,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'configName' => $configName,
+                        'from' => (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) ? $google_acc->email : $from,
+                        'replyTo' => $from,
+                        'attach' => $file_to_save,
+                        'filename' => $filename,
+                        'encoding' => 'base64',
+                        'type' => 'application/pdf',
+                    ));
+                    return $sent;
                 }
             } else {
                 return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');

@@ -1212,6 +1212,12 @@ class FEGSystemHelper
                     $attachments[$key] = substr($file, strrpos($file, '/') + 1);
                 }
             }*/
+            if(is_array($attach)){
+                $attachmentContent = implode("<li>", $attach);
+            }
+            else{
+                $attachmentContent = $attach;
+            }
 
             $message = "
 *************** EMAIL START --- DEBUG INFO *******************<br>
@@ -1223,7 +1229,7 @@ class FEGSystemHelper
 
 ***************** DEBUG INFO END *****************************<br><br>
 $message" .
-                (isset($attach) ? "<br><br> ================ ATTACHMENTS ===================================<br><ul><li>" . (implode("<li>", $attach)) . '</ul>' : '') .
+                (isset($attach) ? "<br><br> ================ ATTACHMENTS ===================================<br><ul><li>" . ($attachmentContent) . '</ul>' : '') .
                 "<br><br>******************************************* EMAIL END ********************************<br><br/>";
 
             $options['message'] = $message;
