@@ -1575,7 +1575,11 @@ class OrderController extends Controller
                         'encoding' => 'base64',
                         'type' => 'application/pdf',
                     ));
-                    return $sent;
+                    if (!$sent) {
+                        return 3;
+                    } else {
+                        return 1;
+                    }
                 }
             } else {
                 return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
