@@ -2366,7 +2366,7 @@ class SiteHelpers
                 ->where('location.active', 1)
                 ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc');
 
-            if(!empty($extra)) {
+            if(!empty($extra) && isset($extra['method']) && isset($extra['field']) && isset($extra['data'])) {
                 $locations = $locations->{$extra['method']}($extra['field'], $extra['data']);
             }
 
