@@ -1712,9 +1712,11 @@ class OrderController extends Controller
 
     function getOrderreceipt($order_id = null)
     {
+        //create object of order with find
         $dpl = new DigitalPackingList();
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
         $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name, O.id as id  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
+        //move function in model of order. without passing paramter of order
         $showdblbutton = $dpl->isOrderReceived($order_id);
         $this->data['showdblbutton']=$showdblbutton;
         return view('order.order-receipt', $this->data);
@@ -2868,33 +2870,31 @@ ORDER BY aa_id");
         $downloadId = 0;
         $isFileNeedToBeRegenerated = true;
         $dpl = DigitalPackingList::where("order_id","=",$orderId)->first();
-        if(!is_null($dpl)){
-            $downloadId = $dpl->id;
-        }
         //logic ends here
         $order = Order::where("id", '=', $orderId)->first();
-        //$orderUpdatedAt = $order->updated_at;
         $location = $order->location;
-        if($dpl) {
-                $isFileNeedToBeRegenerated = $dpl->isFileNeedToBeRegenerated($order);
+
+        if(!is_null($dpl)){
+            $downloadId = $dpl->id;
+            $isFileNeedToBeRegenerated = $dpl->isFileNeedToBeRegenerated($order);
         }
+
         if($isFileNeedToBeRegenerated){
             Log::info("DPL FILE Order ID:".$orderId);
-            if($order->isOrderFullyReceived($order)){
+            if($order->isFullyReceived()){
 
-                $PONumber = $order->po_number; //Sales Order Number for Embed  and DPL number for Sacoa
                 $dpl = new DigitalPackingList();
-                $inserData = [
+                $insertData = [
                     'order_id' => $order->id,
-                    'name' => $PONumber,
+                    'name' => $order->po_number,
                     'location_id' => $order->location_id,
                     'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                     'type_id' => $location->debit_type_id
                 ];
-                $dpl = $dpl->saveOrdUpdateDPL($inserData, $downloadId);
+                $dpl = $dpl->saveOrUpdateDPL($insertData, $downloadId);
 
                 //refactor to use eloquent mutator instead of hardcoded .
-                $dpl->saveOrdUpdateDPL(['name' => $dpl->name],$dpl->id);
+                $dpl->saveOrUpdateDPL(['name' => $dpl->name],$dpl->id);
                 $dplFileContent = $dpl->getDPLFileData(); // Generating DPL File content
                 //Save file in function
                 $dpl->saveFile($dplFileContent);
