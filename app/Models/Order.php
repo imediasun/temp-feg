@@ -1069,7 +1069,11 @@ class order extends Sximo
         return self::where('id', $id)->update($updateData);
     }
 
-    public function isOrderFullyReceived(){
+    /**
+     *
+     * @return bool
+     */
+    public function isFullyReceived(){
         $orderedQty = $this->contents->sum('qty');
         $receivedQty = $this->orderReceived->sum('quantity');
         if ($orderedQty == $receivedQty) {

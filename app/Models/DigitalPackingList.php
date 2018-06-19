@@ -22,7 +22,7 @@ class DigitalPackingList extends Sximo
     public function fileExists(){
 
     }
-    public function saveOrdUpdateDPL($data,$id=0){
+    public function saveOrUpdateDPL($data, $id=0){
         $id = $this->insertRow($data, $id);
         return self::find($id);
     }
@@ -40,7 +40,8 @@ class DigitalPackingList extends Sximo
         foreach ($this->order->contents as $product) {
             Log::info("DPL Product Name:".$product->item_name);
             $itemId = $product->upc_barcode;
-            $itemName = $this->truncateString($product->item_name);
+            $itemName = $this->cleanAndTruncateString($product->item_name);
+            //separate function : getUnitOfMeasurementForOrderType
             $module = new OrderController();
             $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
             $order_types = $pass['calculate price according to case price']->data_options;
@@ -52,9 +53,12 @@ class DigitalPackingList extends Sximo
                 $unitTypeUOM = 'Case';
                 $price = $product->case_price; // ordered product case price
             }
+            //separate function : getUnitOfMeasurementForOrderType
 
             $tickets = $product->ticket_value;
+            //refactor variable name to qtyPerCase
             $QtyPerCase = $product->qty_per_case;
+            //refactor with ternary operator
             $productType = $product->prod_type_id;
 
             $orderTypes = [
@@ -64,16 +68,14 @@ class DigitalPackingList extends Sximo
                 Order::ORDER_TYPE_PARTY_SUPPLIES => 'PartySup',
                 Order::ORDER_TYPE_UNIFORM => 'Uniforms'
             ];
-            //simple logic
+            //refactor with ternary operator
             if(isset($orderTypes[$productType])){
                 $productType = $orderTypes[$productType];
             }
-
+            //use constant instead of value 1
             if ($this->order->location->debit_type_id == 1) {
-                //Sacoa type
-                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOM . "," . $product->item_received . "," . $price . "," . $tickets . "," . $QtyPerCase . "," . $product->price . $newLine;
+                $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOM, $product->item_received, $price, $tickets, $QtyPerCase, $product->price]) . $newLine;
             } else {
-                //Embed Type
                 $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOM . "," . $product->item_received . "," . $price . "," . $tickets . "," . $QtyPerCase . "," . $product->price . "," . $productType . $newLine;
             }
         }
@@ -95,16 +97,10 @@ class DigitalPackingList extends Sximo
     }
 
 
-    public function truncateString($string)
+    public function cleanAndTruncateString($string, $length = 50)
     {
         $string = str_replace(["&",",",'"'],"",$string);
-        if (strlen($string) < 50 || strlen($string) == 50 ) {
-           return $string;
-        }
-        else{
-            $string = substr($string,0,50);
-            return $string;
-        }
+        return $this->truncateString($string, $length);
     }
     public function isOrderReceived($order_id)
     {
