@@ -1212,7 +1212,7 @@ class FEGSystemHelper
                     $attachments[$key] = substr($file, strrpos($file, '/') + 1);
                 }
             }*/
-            if(!empty($attach)){
+            if(isset($attach) && is_array($attach)){
                 $attachmentContent = implode("<li>", $attach);
             }
             else{
