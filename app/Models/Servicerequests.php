@@ -29,7 +29,7 @@ class Servicerequests extends Observerable  {
                 FROM sb_tickets
 
         LEFT JOIN (
-            SELECT sb_ticketcomments.TicketID, Posted, UserID, USERNAME
+            SELECT sb_ticketcomments.TicketID, Posted, UserID, USERNAME,sb_ticketcomments.Comments
 				FROM sb_ticketcomments
 				LEFT JOIN (SELECT tc.TicketID, max(tc.Posted) as max_posted from sb_ticketcomments tc group by TicketID) tcm
 					ON tcm.TicketID = sb_ticketcomments.TicketID
