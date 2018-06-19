@@ -12,6 +12,7 @@ use Mail;
 use PHPMailerOAuth;
 use App\Models\Feg\System\Options;
 use App\Models\Core\Users;
+use Log;
 
 
 class FEGSystemHelper
@@ -1192,6 +1193,7 @@ class FEGSystemHelper
             'configNamePrefix' => "",
             'configNameSuffix' => "",
         ), $options);
+
         extract($options);
 
         $configNameSanitized = preg_replace('/[\W]/', '-', strtolower($configName));
@@ -1214,9 +1216,8 @@ class FEGSystemHelper
             }*/
             if(isset($attach) && is_array($attach)){
                 $attachmentContent = implode("<li>", $attach);
-            }
-            else{
-                $attachmentContent = $attach;
+            }else{
+                $attachmentContent =isset($attach) ? $attach: '';
             }
 
             $message = "
