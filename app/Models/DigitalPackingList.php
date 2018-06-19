@@ -7,11 +7,30 @@ class DigitalPackingList extends Sximo
 {
     protected $table = 'digital_packing_lists';
     protected $primaryKey = 'id';
+    const DPL_FILE_PATH  = 'uploads/dpl-files/';
 
     public function __construct() {
         parent::__construct();
 
     }
+
+    public function fileExists(){
+
+    }
+
+    public function getNameAttribute(){
+        $this->order->po_number."_".$this->id."_";
+    }
+
+    public function order(){
+        return $this->belongsTo("App\Models\Order");
+    }
+
+    public function isFileNeedToBeRegenerated(Order $order){
+
+    }
+
+
     public function truncateString($string)
     {
         $string = str_replace(["&",",",'"'],"",$string);
