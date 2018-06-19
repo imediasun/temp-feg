@@ -2876,6 +2876,7 @@ ORDER BY aa_id");
         $orderUpdatedAt = $order->updated_at;
         $location = location::find($order->location_id);
         $locationType = $location->debit_type_id;
+        $orderTypeId = $order->order_type_id;
         if(Carbon::parse($orderUpdatedAt)->gt(Carbon::parse($fileUpdatedAt)) || $locationType != $FileExists->type_id){
             Log::info("DPL FILE Order ID:".$order_id);
             $orderedQty = $order->contents->sum('qty');
@@ -2913,10 +2914,17 @@ ORDER BY aa_id");
                     $order_types = explode(",", $order_types);
                     $UnitType_UOM = 'Each';
                     $receivedQty = $product->item_received;
-                    $unitPrice = $product->price; // ordered product unit price
+                    $price = $product->price; // ordered product unit price
+                    $pricePerItem = $product->price;
+                    if (in_array($orderTypeId, $order_types)) {
+                        $UnitType_UOM = 'Case';
+                        $price = $product->case_price; // ordered product case price
+                        $pricePerItem = $product->case_price / $product->qty_per_case; // if using case price then showing Cost of each piece
+                    }
+
                     $tickets = $product->ticket_value;
                     $QtyPerCase = $product->qty_per_case;
-                    $pricePerItem = $product->product->retail_price;
+
                     $category = $product->prod_type_id;
                     $orderTypes = [
                         6=>'OffSuppl',
@@ -2929,16 +2937,15 @@ ORDER BY aa_id");
                     if(in_array($category,$orderKeys)){
                         $category = $orderTypes[$category];
                     }
-                    if (in_array($product->prod_type_id, $order_types)) {
-                        $UnitType_UOM = 'Case';
-                    }
+
                     if ($location->debit_type_id == 1) {
                         //Sacoa type
-                        $fileContent = $itemId . "," . $itemName . "," . $UnitType_UOM . "," . $receivedQty . "," . $unitPrice . "," . $tickets . "," . $QtyPerCase . "," . $pricePerItem . $newLine;
+                        $fileContent = $itemId . "," . $itemName . "," . $UnitType_UOM . "," . $receivedQty . "," . $price . "," . $tickets . "," . $QtyPerCase . "," . $pricePerItem . $newLine;
                     } else {
                         //Embed Type
-                        $fileContent = $itemId . "," . $itemName . "," . $UnitType_UOM . "," . $receivedQty . "," . $unitPrice . "," . $tickets . "," . $QtyPerCase . "," . $pricePerItem . "," . $category . $newLine;
+                        $fileContent = $itemId . "," . $itemName . "," . $UnitType_UOM . "," . $receivedQty . "," . $price . "," . $tickets . "," . $QtyPerCase . "," . $pricePerItem . "," . $category . $newLine;
                     }
+
                     File::append($filePath . $fileName, $fileContent);
                     Log::info("DPL File Created:".$filePath.$fileName);
                 }
