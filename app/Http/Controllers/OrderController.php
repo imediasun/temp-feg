@@ -2919,7 +2919,6 @@ ORDER BY aa_id");
                     if (in_array($orderTypeId, $order_types)) {
                         $UnitType_UOM = 'Case';
                         $price = $product->case_price; // ordered product case price
-                        $pricePerItem = $product->case_price / $product->qty_per_case; // if using case price then showing Cost of each piece
                     }
 
                     $tickets = $product->ticket_value;
