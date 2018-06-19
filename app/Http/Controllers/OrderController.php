@@ -365,8 +365,7 @@ class OrderController extends Controller
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
 
             $order  = Order::find($data->id);
-            $rows[$index]->isFullyReceived = !is_null($order) ? $order->isOrderReceived():'false';
-
+            $rows[$index]->isFullyReceived = !is_null($order) ? $order->isOrderReceived():false;
         }
 
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
