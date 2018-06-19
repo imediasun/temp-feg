@@ -32,7 +32,12 @@ class sbticket extends Sximo  {
 	public static function getComboselect($params, $limit = null, $parent = null) {
 		$tableName = $params[0];
 		if($tableName == 'location'){
-			return parent::getUserAssignedLocation($params,$limit,$parent);
+		    $extra = [
+		        'method' => 'whereNotIn',
+                'field' => 'location.id',
+                'data' => [ 6000, 6001, 6030]
+            ];
+			return parent::getUserAssignedLocation($extra);
 
 		}
 		else{

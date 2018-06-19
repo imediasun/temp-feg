@@ -1105,8 +1105,8 @@ class Sximo extends Model {
         return $comma_separated_emails;
     }
 
-    public static function getUserAssignedLocation(){
-        $locations = \SiteHelpers::getLocationDetails(\Session::get('uid'));
+    public static function getUserAssignedLocation($extra = []){
+        $locations = \SiteHelpers::getLocationDetails(\Session::get('uid'), false, $extra);
         return $locations;
     }
 

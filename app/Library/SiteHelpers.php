@@ -2328,7 +2328,7 @@ class SiteHelpers
      * @param number $id User ID
      * @return array
      */
-    static function getLocationDetails($id,$canSeeAllLocations = false)
+    static function getLocationDetails($id,$canSeeAllLocations = false, $extra = [])
     {
     	if($canSeeAllLocations)
 	    {
@@ -2364,8 +2364,13 @@ class SiteHelpers
                     'location.city',
                     'location.zip'])))
                 ->where('location.active', 1)
-                ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
-                ->get();
+                ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc');
+
+            if(!empty($extra) && isset($extra['method']) && isset($extra['field']) && isset($extra['data'])) {
+                $locations = $locations->{$extra['method']}($extra['field'], $extra['data']);
+            }
+
+            $locations = $locations->get();
 	    }
 
         return $locations;
