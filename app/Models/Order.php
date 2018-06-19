@@ -1342,5 +1342,23 @@ class order extends Sximo
     $userGroups = !empty($this->getExcludedOrderSpecifiedGroups()) ? explode(",",$this->getExcludedOrderSpecifiedGroups()):[];
     return in_array(\Session::get('gid'),$userGroups);
     }
+    public function isOrderReceived(){
+        if ($this->contents->sum('qty') == $this->orderReceived->sum('quantity') && $this->is_freehand == 0) {
+            return  true;
+        } else {
+            return false;
+        }
+    }
+    public function getUnitOfMeasurementForOrderType(){
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $order_types = $pass['calculate price according to case price']->data_options;
+        $order_types = explode(",", $order_types);
+        if (in_array($this->order_type_id, $order_types)) {
+            return 'Case';
+        }
+            return "Each";
+
+    }
 
 }
