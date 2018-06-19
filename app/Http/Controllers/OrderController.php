@@ -2854,39 +2854,25 @@ ORDER BY aa_id");
     public function getDplFile($orderId){
         //logic start here
         //check if dpl file is already generated
-
         $downloadId = 0;
+        $isFileNeedToBeRegenerated = true;
         $dpl = DigitalPackingList::where("order_id","=",$orderId)->first();
-        $fileUpdatedAt = "0000-00-00 00:00:00";
         if(!is_null($dpl)){
             $downloadId = $dpl->id;
-            $fileUpdatedAt = $dpl->created_at;
         }
-
         //logic ends here
-
         $order = Order::where("id", '=', $orderId)->first();
         //$orderUpdatedAt = $order->updated_at;
         $location = $order->location;
-        //$locationType = $location->debit_type_id;
-        $orderTypeId = $order->order_type_id;
-        if($dpl->isFileNeedToBeRegenerated(order)){
-
+        if($dpl) {
+                $isFileNeedToBeRegenerated = $dpl->isFileNeedToBeRegenerated($order);
         }
-        if(Carbon::parse($order->updated_at)->gt(Carbon::parse($fileUpdatedAt)) || $location->debit_type_id != $dpl->type_id){
+        if($isFileNeedToBeRegenerated){
             Log::info("DPL FILE Order ID:".$orderId);
-            $orderedQty = $order->contents->sum('qty');
-            $receivedQty = $order->orderReceived->sum('quantity');
-            Log::info("Ordered Qty:".$orderedQty);
-            Log::info("Received Qty:".$receivedQty);
-            if($order->isOrderFullyReceived()){
+            if($order->isOrderFullyReceived($order)){
 
-            }
-            if ($orderedQty == $receivedQty) {
-
-                $locationId = $order->location_id; // as Customer Id for Embed and Store Id for Sacoa
                 $PONumber = $order->po_number; //Sales Order Number for Embed  and DPL number for Sacoa
-                $digitalPackingList = new DigitalPackingList();
+                $dpl = new DigitalPackingList();
                 $inserData = [
                     'order_id' => $order->id,
                     'name' => $PONumber,
@@ -2894,83 +2880,25 @@ ORDER BY aa_id");
                     'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                     'type_id' => $location->debit_type_id
                 ];
-               $id =  $downloadId;
-                $id = $digitalPackingList->insertRow($inserData, $id);
+                $dpl = $dpl->saveOrdUpdateDPL($inserData, $downloadId);
+
                 //refactor to use eloquent mutator instead of hardcoded .
-                $fileName = $PONumber . "_" . $id . ".dpl";
-
-                $digitalPackingList->insertRow(['name' => $digitalPackingList->name],$id);
+                $dpl->saveOrdUpdateDPL(['name' => $dpl->name],$dpl->id);
+                $dplFileContent = $dpl->getDPLFileData(); // Generating DPL File content
                 //Save file in function
-                $digitalPackingList->saveFile();
-                Log::info("DPL File Name:".$fileName);
-                $filePath = public_path("uploads/dpl-files/");
-                $newLine = "\r\n";
-                File::put($filePath . $fileName, $locationId . ", " . $PONumber . $newLine);
-                //Save file in function
-                foreach ($order->contents as $product) {
-                    Log::info("DPL Product Name:".$product->item_name);
-                    $itemId = $product->upc_barcode;
-                    $itemName = $digitalPackingList->truncateString($product->item_name);
-                    $module = new OrderController();
-                    $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
-                    $order_types = $pass['calculate price according to case price']->data_options;
-                    $order_types = explode(",", $order_types);
-                    $UnitType_UOM = 'Each';
-                    $receivedQty = $product->item_received;
-                    $price = $product->price; // ordered product unit price
-                    $pricePerItem = $product->price;
-                    if (in_array($order->order_type_id, $order_types)) {
-                        $UnitType_UOM = 'Case';
-                        $price = $product->case_price; // ordered product case price
-                    }
-
-                    $tickets = $product->ticket_value;
-                    $QtyPerCase = $product->qty_per_case;
-
-                    $category = $product->prod_type_id;
-                    $orderTypes = [
-                        6=>'OffSuppl',
-                        7=>'RedPrize',
-                        8=>'InstWin',
-                        17=>'PartySup',
-                        24=>'Uniforms'
-                    ];
-                    //simple logic
-                    if(isset($orderTypes[$category])){
-                        $category = $orderTypes[$category];
-                    }
-
-                    //complex logic
-                    $orderKeys = array_keys($orderTypes);
-                    if(in_array($category,$orderKeys)){
-                        $category = $orderTypes[$category];
-                    }
-
-                    if ($location->debit_type_id == 1) {
-                        //Sacoa type
-                        $fileContent = $itemId . "," . $itemName . "," . $UnitType_UOM . "," . $receivedQty . "," . $price . "," . $tickets . "," . $QtyPerCase . "," . $pricePerItem . $newLine;
-                    } else {
-                        //Embed Type
-                        $fileContent = $itemId . "," . $itemName . "," . $UnitType_UOM . "," . $receivedQty . "," . $price . "," . $tickets . "," . $QtyPerCase . "," . $pricePerItem . "," . $category . $newLine;
-                    }
-
-                    File::append($filePath . $fileName, $fileContent);
-                    Log::info("DPL File Created:".$filePath.$fileName);
-                }
+                $dpl->saveFile($dplFileContent);
             }
         }
-
-        $FileExists = DigitalPackingList::where("order_id","=",$orderId)->first();
         $headers = array(
-            'Content-type: '.mime_content_type(public_path()."/uploads/dpl-files/".$FileExists->name),
+            'Content-type: '.mime_content_type(public_path()."/uploads/dpl-files/".$dpl->name),
         );
         $updData = [
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'downloaded_at' => Carbon::now()->format('Y-m-d H:i:s'),
         ];
-        DigitalPackingList::where("order_id",$orderId)->update($updData);
-        Log::info("DPL File Downloaded:".public_path()."/uploads/dpl-files/".$FileExists->name);
-        return Response::download(public_path()."/uploads/dpl-files/".$FileExists->name,$FileExists->name,$headers);
+        $dpl->saveOrdUpdateDPL($updData,$downloadId);
+        Log::info("DPL File Downloaded:".public_path(DigitalPackingList::DPL_FILE_PATH).$dpl->name);
+        return Response::download(public_path(DigitalPackingList::DPL_FILE_PATH).$dpl->name,$dpl->name,$headers);
     }
 
 }
