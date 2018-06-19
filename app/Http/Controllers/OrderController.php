@@ -2851,9 +2851,9 @@ ORDER BY aa_id");
         }
         dd('records saved');
     }
-    public function getDplFile($order_id){
+    public function getDplFile($orderId){
         $downloadId=0;
-        $FileExists = DigitalPackingList::where("order_id","=",$order_id)->first();
+        $FileExists = DigitalPackingList::where("order_id","=",$orderId)->first();
         $fileUpdatedAt ="0000-00-00 00:00:00";
 
         if(!empty($FileExists->created_at)) {
@@ -2861,13 +2861,13 @@ ORDER BY aa_id");
             $fileUpdatedAt = $FileExists->created_at;
         }
 
-        $order = Order::where("id", '=', $order_id)->first();
+        $order = Order::where("id", '=', $orderId)->first();
         $orderUpdatedAt = $order->updated_at;
         $location = location::find($order->location_id);
         $locationType = $location->debit_type_id;
         $orderTypeId = $order->order_type_id;
         if(Carbon::parse($orderUpdatedAt)->gt(Carbon::parse($fileUpdatedAt)) || $locationType != $FileExists->type_id){
-            Log::info("DPL FILE Order ID:".$order_id);
+            Log::info("DPL FILE Order ID:".$orderId);
             $orderedQty = $order->contents->sum('qty');
             $receivedQty = $order->orderReceived->sum('quantity');
             Log::info("Ordered Qty:".$orderedQty);
@@ -2940,7 +2940,7 @@ ORDER BY aa_id");
             }
         }
 
-        $FileExists = DigitalPackingList::where("order_id","=",$order_id)->first();
+        $FileExists = DigitalPackingList::where("order_id","=",$orderId)->first();
         $headers = array(
             'Content-type: '.mime_content_type(public_path()."/uploads/dpl-files/".$FileExists->name),
         );
@@ -2948,7 +2948,7 @@ ORDER BY aa_id");
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'downloaded_at' => Carbon::now()->format('Y-m-d H:i:s'),
         ];
-        DigitalPackingList::where("order_id",$order_id)->update($updData);
+        DigitalPackingList::where("order_id",$orderId)->update($updData);
         Log::info("DPL File Downloaded:".public_path()."/uploads/dpl-files/".$FileExists->name);
         return Response::download(public_path()."/uploads/dpl-files/".$FileExists->name,$FileExists->name,$headers);
     }
