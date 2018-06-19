@@ -289,7 +289,6 @@ class OrderController extends Controller
         //\Session::put('params',$params);
         $results = $this->model->getRows($params, $order_selected);
 
-
         foreach ($results['rows'] as &$rs) {
             $result = $this->model->getProductInfo($rs->id);
             $info = '';

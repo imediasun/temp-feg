@@ -504,8 +504,8 @@
         var show_freehand = <?php echo $show_freehand  ; ?>;
         var mode = "{{ $data['prefill_type'] }}";
         var forceRemoveOrderContentIds = [];
-        console.log(type_permissions);
-        console.log('Createing order '+show_freehand);
+        //console.log(type_permissions);
+        //console.log('Createing order '+show_freehand);
         $(document).ready(function () {
 
             if(mode == 'SID'){
@@ -564,15 +564,17 @@
                 $("#ship_address").hide();
         }
         function calculateSum() {
-            //console.log('Calculating Sum');
+            ////console.log('Calculating Sum');
             var Subtotal = 0.00;
             var Price = 0.00;
+
             $('table tr.clone ').each(function (i) {
+
                 Qty = $(this).find("input[name*='qty']").val();
                 unitPrice = $(this).find("input[name*='price']").val();
                 casePrice = $(this).find("input[name*='case_price']").val();
                 orderType=$("#order_type_id").val();
-                isBrokenCase = $(this).find("input[name*='broken_case']").prop('checked');
+                isBrokenCase = parseInt($(this).find("input[name*='broken_case_value']").val());
 
                 // if order type is Instant Win prizes=8, redemption prizes=7,Office Supplies=6
                 if(isBrokenCase) {
@@ -585,7 +587,7 @@
                     Price = unitPrice;
                 }
                 sum = (Qty * Price).toFixed(6);
-                console.log("sum calculated "+sum);
+                //console.log("sum calculated "+sum);
                 Subtotal += parseFloat(sum);
                 //sum = sum.toFixed(PRECISION);
                 $(this).find("input[name*='total']").val(sum);
@@ -599,7 +601,7 @@
             $("#total_cost").blur();
         }
         var games_options_js = "{{ json_encode($games_options) }}";
-        //console.log(JSON.stringify(games_options_js));
+        ////console.log(JSON.stringify(games_options_js));
         games_options_js = games_options_js.replace(/&amp;/g, '&');
         games_options_js = games_options_js.replace(/&#039;/g, "'");
         games_options_js = games_options_js.replace(/\\/g, "\\\\");
@@ -637,7 +639,7 @@
                             }
                         });
                     }else{
-                        console.log('Current item ('+id+') not received yet removing it ');
+                        //console.log('Current item ('+id+') not received yet removing it ');
                         if (counter <= 1) {
                             beforeLastRemove(id);
                         }else{
@@ -679,10 +681,10 @@
     
             /*App.ajax.submit(siteUrl+'/managefegrequeststore/deny',
                     {data:{request_id: rid}, blockUI:true, method: 'POST'});*/
-            console.log('request id to remove = '+rid);
+            //console.log('request id to remove = '+rid);
             if(rid != '' && rid != undefined && rid != ' ')
             {
-                console.log('removing request id from blocked list = '+rid);
+                //console.log('removing request id from blocked list = '+rid);
                 removeItemURL(rid);
 
                 /*$.ajax({
@@ -693,10 +695,10 @@
                     }
                 })
                 .success(function (data) {
-                    console.log(data);
+                    //console.log(data);
                 })
                 .error(function (data) {
-                    console.log(data);
+                    //console.log(data);
                 });*/
             }
 
@@ -814,7 +816,7 @@
                     return false;
 
                 } else {
-                    console.log("parsley validation error");
+                    //console.log("parsley validation error");
                     return false;
                 }
             });
@@ -916,9 +918,9 @@
                 let isBrokenCase = order_is_broken_case_array[i] ? true : false;
                 let isBrokenCaseValue = order_is_broken_case_array[i] ? 1 : 0;
 
-                console.log('!!!!!!!!!!!!!!!!!!!!!!!!!');
-                console.log(isBrokenCase);
-                console.log($('input[name^=broken_case]').eq(i).length);
+                //console.log('!!!!!!!!!!!!!!!!!!!!!!!!!');
+                //console.log(isBrokenCase);
+                //console.log($('input[name^=broken_case]').eq(i).length);
 
                 $('.broken-case').eq(i).prop('checked', isBrokenCase);
                 $('input[name^=broken_case_value]').eq(i).val(isBrokenCaseValue);
@@ -987,13 +989,16 @@
 
 
             $(document).on("ifChanged", ".broken-case", function(event) {
-                $(event.target).trigger('change');
+                //$(event.target).trigger('change');
+                let checked = $(event.target).prop('checked');
+                let isChecked = checked ? 1 : 0;
+                $(event.target).prop('checked', checked);
+                $(event.target).closest('td').find('input[type=hidden]').val(isChecked);
+                calculateSum();
             });
 
             $(document).on("change", ".broken-case", function(event) {
-                let isChecked = $(event.target).prop('checked') ? 1 : 0;
-                $(event.target).closest('td').find('input[type=hidden]').val(isChecked);
-                calculateSum();
+
             });
 
 
@@ -1029,7 +1034,7 @@
             $('.ajaxLoading').hide();
             clearTimeout(hidePopup);
             clearTimeout(showFirstPopup);
-            console.log('timeoutcleared');
+            //console.log('timeoutcleared');
             if (data.status == 'success') {
                 notyMessage(data.message);
                 ajaxViewChange("#order", data.saveOrSendContent);
@@ -1086,7 +1091,7 @@
             vendor = $(this);
             if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
             {
-                console.log('vendorChangeCount > 1');
+                //console.log('vendorChangeCount > 1');
                 if($('#item_name').val()) {
                     $('#submit_btn').attr('disabled','disabled');
                     App.notyConfirm({
@@ -1119,7 +1124,7 @@
 
                             if(vendor.attr('lastSelected'))
                             {
-                                console.log('selecting lastSelected');
+                                //console.log('selecting lastSelected');
 
                                 $('#vendor_id option[value = '+vendor.attr('lastSelected')+']').attr('selected', true);
                                 vendorChangeCount = 1;
@@ -1128,7 +1133,7 @@
                             }
                             else
                             {
-                                console.log('no previous vendor selected');
+                                //console.log('no previous vendor selected');
                                 $('#vendor_id option').removeAttr('selected');
                                 vendorChangeCount = 1;
                                 vendor.trigger("change");
@@ -1140,7 +1145,7 @@
                 }
                 else
                 {
-                    console.log('in else vendorChangeCount');
+                    //console.log('in else vendorChangeCount');
                     $.ajax({
                         type: "GET",
                         url: "{{ url() }}/order/bill-account",
@@ -1167,7 +1172,7 @@
                 });
             }
             }else{
-                console.log('free hand order');
+                //console.log('free hand order');
                 $.ajax({
                     type: "GET",
                     url: "{{ url() }}/order/bill-account",
@@ -1274,7 +1279,7 @@
             if($.inArray(parseInt(selected_type),type_permissions) != -1 && show_freehand)
             {
                 $('#can-freehand').show();
-                console.log('I have permission for order type ' + selected_type);
+                //console.log('I have permission for order type ' + selected_type);
             }
             else if($(this).val() && show_freehand)
             {
@@ -1302,7 +1307,7 @@
 
                                 if(orderType.attr('lastSelected'))
                                 {
-                                    console.log('selecting lastSelected order type');
+                                    //console.log('selecting lastSelected order type');
 
                                     $('#order_type_id option[value = '+orderType.attr('lastSelected')+']').attr('selected', true);
                                     orderType.trigger("change");
@@ -1319,7 +1324,7 @@
             else
             {
                 $('#can-freehand').hide();
-                console.log("I don't have any permission");
+                //console.log("I don't have any permission");
             }
             gameShowHide();
             calculateSum();
@@ -1403,7 +1408,7 @@
              }
              $('input[name^=item_num]').each(function () {
              if(mode == "add") {
-             console.log(counter);
+             //console.log(counter);
              counter = counter + 1;
              $('input[name^=item_num]').eq(counter-1).val(counter);
 
@@ -1414,7 +1419,7 @@
              counter = counter-1;
              $('input[name^=item_num]').eq(counter-1).val(counter);
 
-             console.log(counter);
+             //console.log(counter);
              }
 
              });*/
@@ -1424,7 +1429,7 @@
         }
         function showPopups()
         {
-            console.log('settingtimeout');
+            //console.log('settingtimeout');
             showFirstPopup = setTimeout(function () {
                 App.notyConfirm({
                     message: "You have not saved your order yet , Do you want to cancel this order!",
@@ -1440,14 +1445,14 @@
                             url:"{{route('add_more_blocked_time')}}",
                             data:{requestIds:requestIds}
                         }).success(function (data) {
-                            console.log(data);
+                            //console.log(data);
                             clearTimeout(hidePopup);
-                            console.log('timeoutcleared');
+                            //console.log('timeoutcleared');
                             var settimeout =  showPopups();
-                            console.log(settimeout);
+                            //console.log(settimeout);
                         })
                             .error(function (data) {
-                                console.log(data);
+                                //console.log(data);
                             })
                     }
                 });
@@ -1465,7 +1470,7 @@
         ?>
 
                    var settimeout =  showPopups();
-                   console.log(settimeout);
+                   //console.log(settimeout);
 
         <?php
             }
@@ -1495,7 +1500,7 @@
             var trid = $(obj).closest('tr').attr('id');
 
 
-            console.log(trid, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+            //console.log(trid, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
             var skuid = $("#" + trid + "  input[id^='sku_num']");
             var priceid = $("#" + trid + "  input[id^='price']");
@@ -1651,7 +1656,7 @@
         });
         function reloadOrder(redirectToClickedItem) {
             redirectToClickedItem = redirectToClickedItem || 0;
-            console.log('redirectToClickedItem = ' + redirectToClickedItem);
+            //console.log('redirectToClickedItem = ' + redirectToClickedItem);
             var requestIds = $('#where_in_expression').val();
             if(requestIds)
             {
@@ -1663,7 +1668,7 @@
                     }
                 })
                     .success(function (data) {
-                        console.log(data);
+                        //console.log(data);
                         var moduleUrl = '{{ $pageUrl }}',
                             redirect = "{{ \Session::get('redirect') }}",
                             redirectLink = "{{ url() }}/" + redirect;
@@ -1681,7 +1686,7 @@
                         }
                     })
                     .error(function (data) {
-                        console.log(data);
+                        //console.log(data);
                     })
             }
             else
@@ -1863,7 +1868,7 @@
         }
         $("#denied_SIDs").val($("#denied_SIDs").val()+','+id);
         getNotesOfSIDProducts();
-        console.log(sid_uri);
+        //console.log(sid_uri);
     }
 
     function reAssignSubmit() {
@@ -1878,10 +1883,10 @@
                 }
             })
             .success(function (data) {
-                console.log(data);
+                //console.log(data);
             })
             .error(function (data) {
-                console.log(data);
+                //console.log(data);
             })
         }
     }
@@ -1948,7 +1953,7 @@
             $('#notes').val(notes);
         })
         .error(function (data) {
-            console.log(data);
+            //console.log(data);
         })
     }
 
@@ -1960,7 +1965,7 @@
     });
 
     $(document).on("blur", ".fixDecimal", function () {
-        console.log("blur of .fixDecimal value :"+ $(this).val());
+        //console.log("blur of .fixDecimal value :"+ $(this).val());
         $(this).val($(this).fixDecimal());
     });
 
