@@ -723,20 +723,22 @@ class OrderController extends Controller
                 $removedProducts = $orderContent->orderedContent()->whereIn("product_id",$supperSetofProducts)->get();
                 foreach($removedProducts as $removedProduct){
                     $product = product::find($removedProduct->product_id);
-                    $productVariations = $product->getProductVariations();
-                    $product->reserved_qty +=$removedProduct->qty;
-                   $product->updateProduct(['reserved_qty'=>$product->reserved_qty]);
-                    $product->save();
-                    $reservedLogData = [
-                        "product_id" => $product->id,
-                        "order_id" => $last_insert_id,
-                        "adjustment_amount" => $removedProduct->qty,
-                        "adjustment_type" => 'positive',
-                        "variation_id" => $product->variation_id,
-                        "adjusted_by" => \AUTH::user()->id,
-                    ];
-                    $reservedQtyLog = new ReservedQtyLog();
-                    $reservedQtyLog->insert($reservedLogData);
+                    if($product->is_reserved == 1) {
+                        $productVariations = $product->getProductVariations();
+                        $product->reserved_qty += $removedProduct->qty;
+                        $product->updateProduct(['reserved_qty' => $product->reserved_qty]);
+                        $product->save();
+                        $reservedLogData = [
+                            "product_id" => $product->id,
+                            "order_id" => $last_insert_id,
+                            "adjustment_amount" => $removedProduct->qty,
+                            "adjustment_type" => 'positive',
+                            "variation_id" => $product->variation_id,
+                            "adjusted_by" => \AUTH::user()->id,
+                        ];
+                        $reservedQtyLog = new ReservedQtyLog();
+                        $reservedQtyLog->insert($reservedLogData);
+                    }
                 }
                 $force_remove_items = explode(',', $force_remove_items);
                 \DB::table('order_contents')->where('order_id', $last_insert_id)->where('item_received', '0')->delete();
