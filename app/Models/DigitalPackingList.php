@@ -41,25 +41,12 @@ class DigitalPackingList extends Sximo
             Log::info("DPL Product Name:".$product->item_name);
             $itemId = $product->upc_barcode;
             $itemName = $this->cleanAndTruncateString($product->item_name);
-            //separate function : getUnitOfMeasurementForOrderType
-            $module = new OrderController();
-            $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
-            $order_types = $pass['calculate price according to case price']->data_options;
-            $order_types = explode(",", $order_types);
-            $unitTypeUOM = 'Each';
-            $price = $product->price; // ordered product unit price
 
-            if (in_array($this->order->order_type_id, $order_types)) {
-                $unitTypeUOM = 'Case';
-                $price = $product->case_price; // ordered product case price
-            }
-            //separate function : getUnitOfMeasurementForOrderType
+            $unitTypeUOM = $this->order->getUnitOfMeasurementForOrderType();
+            $price =($unitTypeUOM == "Case") ? $price = $product->case_price : $product->price;
 
             $tickets = $product->ticket_value;
-            //refactor variable name to qtyPerCase
-            $QtyPerCase = $product->qty_per_case;
-            //refactor with ternary operator
-            $productType = $product->prod_type_id;
+            $qtyPerCase = $product->qty_per_case;
 
             $orderTypes = [
                 Order::ORDER_TYPE_OFFICE_SUPPLIES => 'OffSuppl',
@@ -68,15 +55,13 @@ class DigitalPackingList extends Sximo
                 Order::ORDER_TYPE_PARTY_SUPPLIES => 'PartySup',
                 Order::ORDER_TYPE_UNIFORM => 'Uniforms'
             ];
-            //refactor with ternary operator
-            if(isset($orderTypes[$productType])){
-                $productType = $orderTypes[$productType];
-            }
-            //use constant instead of value 1
-            if ($this->order->location->debit_type_id == 1) {
-                $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOM, $product->item_received, $price, $tickets, $QtyPerCase, $product->price]) . $newLine;
+
+            $productType = isset($orderTypes[$product->prod_type_id]) ? $orderTypes[$product->prod_type_id]:$product->prod_type_id;
+
+            if ($this->order->location->debit_type_id == Location::LOCATION_TYPE_SACOA) {
+                $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOM, $product->item_received, $price, $tickets, $qtyPerCase, $product->price]) . $newLine;
             } else {
-                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOM . "," . $product->item_received . "," . $price . "," . $tickets . "," . $QtyPerCase . "," . $product->price . "," . $productType . $newLine;
+                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOM . "," . $product->item_received . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
             }
         }
         return $fileContent;
@@ -101,25 +86,5 @@ class DigitalPackingList extends Sximo
     {
         $string = str_replace(["&",",",'"'],"",$string);
         return $this->truncateString($string, $length);
-    }
-    public function isOrderReceived($order_id)
-    {
-        $order = Order::where("id",'=',$order_id)->first();
-            $orderedQty = 0;
-            $receivedQty = -1;
-        if($order) {
-            if ($order->contents) {
-                $orderedQty = $order->contents->sum('qty');
-            }
-            if ($order->orderReceived) {
-                $receivedQty = $order->orderReceived->sum('quantity');
-            }
-        }
-            if ($orderedQty == $receivedQty && $order->is_freehand == 0) {
-                return $flagCheck = true;
-            } else {
-                return $flagCheck = false;
-            }
-
     }
 }
