@@ -2852,26 +2852,36 @@ ORDER BY aa_id");
         dd('records saved');
     }
     public function getDplFile($orderId){
-        $downloadId=0;
-        $FileExists = DigitalPackingList::where("order_id","=",$orderId)->first();
-        $fileUpdatedAt ="0000-00-00 00:00:00";
+        //logic start here
+        //check if dpl file is already generated
 
-        if(!empty($FileExists->created_at)) {
-            $downloadId = $FileExists->id;
-            $fileUpdatedAt = $FileExists->created_at;
+        $downloadId = 0;
+        $dpl = DigitalPackingList::where("order_id","=",$orderId)->first();
+        $fileUpdatedAt = "0000-00-00 00:00:00";
+        if(!is_null($dpl)){
+            $downloadId = $dpl->id;
+            $fileUpdatedAt = $dpl->created_at;
         }
 
+        //logic ends here
+
         $order = Order::where("id", '=', $orderId)->first();
-        $orderUpdatedAt = $order->updated_at;
-        $location = location::find($order->location_id);
-        $locationType = $location->debit_type_id;
+        //$orderUpdatedAt = $order->updated_at;
+        $location = $order->location;
+        //$locationType = $location->debit_type_id;
         $orderTypeId = $order->order_type_id;
-        if(Carbon::parse($orderUpdatedAt)->gt(Carbon::parse($fileUpdatedAt)) || $locationType != $FileExists->type_id){
+        if($dpl->isFileNeedToBeRegenerated(order)){
+
+        }
+        if(Carbon::parse($order->updated_at)->gt(Carbon::parse($fileUpdatedAt)) || $location->debit_type_id != $dpl->type_id){
             Log::info("DPL FILE Order ID:".$orderId);
             $orderedQty = $order->contents->sum('qty');
             $receivedQty = $order->orderReceived->sum('quantity');
             Log::info("Ordered Qty:".$orderedQty);
             Log::info("Received Qty:".$receivedQty);
+            if($order->isOrderFullyReceived()){
+
+            }
             if ($orderedQty == $receivedQty) {
 
                 $locationId = $order->location_id; // as Customer Id for Embed and Store Id for Sacoa
@@ -2886,13 +2896,17 @@ ORDER BY aa_id");
                 ];
                $id =  $downloadId;
                 $id = $digitalPackingList->insertRow($inserData, $id);
+                //refactor to use eloquent mutator instead of hardcoded .
                 $fileName = $PONumber . "_" . $id . ".dpl";
 
-                $digitalPackingList->insertRow(['name' => $fileName],$id);
+                $digitalPackingList->insertRow(['name' => $digitalPackingList->name],$id);
+                //Save file in function
+                $digitalPackingList->saveFile();
                 Log::info("DPL File Name:".$fileName);
                 $filePath = public_path("uploads/dpl-files/");
                 $newLine = "\r\n";
                 File::put($filePath . $fileName, $locationId . ", " . $PONumber . $newLine);
+                //Save file in function
                 foreach ($order->contents as $product) {
                     Log::info("DPL Product Name:".$product->item_name);
                     $itemId = $product->upc_barcode;
@@ -2905,7 +2919,7 @@ ORDER BY aa_id");
                     $receivedQty = $product->item_received;
                     $price = $product->price; // ordered product unit price
                     $pricePerItem = $product->price;
-                    if (in_array($orderTypeId, $order_types)) {
+                    if (in_array($order->order_type_id, $order_types)) {
                         $UnitType_UOM = 'Case';
                         $price = $product->case_price; // ordered product case price
                     }
@@ -2921,6 +2935,12 @@ ORDER BY aa_id");
                         17=>'PartySup',
                         24=>'Uniforms'
                     ];
+                    //simple logic
+                    if(isset($orderTypes[$category])){
+                        $category = $orderTypes[$category];
+                    }
+
+                    //complex logic
                     $orderKeys = array_keys($orderTypes);
                     if(in_array($category,$orderKeys)){
                         $category = $orderTypes[$category];
