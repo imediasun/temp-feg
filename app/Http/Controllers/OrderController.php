@@ -351,7 +351,7 @@ class OrderController extends Controller
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
 
             $order  = Order::find($data->id);
-            $rows[$index]->isFullyReceived = $order->isOrderReceived();
+            $rows[$index]->isFullyReceived = !is_null($order) ? $order->isOrderReceived():'false';
 
         }
 
