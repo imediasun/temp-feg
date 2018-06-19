@@ -106,6 +106,7 @@ class servicerequestsController extends Controller
                 'UC.first_name',
                 'UC.last_name',
                 'sbc.USERNAME',
+                'sbc.Comments'
             ];
             $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
             $filter .= is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
