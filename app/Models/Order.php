@@ -56,6 +56,10 @@ class order extends Sximo
         return $this->hasMany("App\Models\OrderReceived"); //OrderReceived Model Has Many Relation with Order
     }
 
+    public function location(){
+        return $this->belongsTo("App\Models\Location");
+    }
+
     public static function boot()
     {
         parent::boot();
@@ -1062,6 +1066,15 @@ class order extends Sximo
         }
         $updateData['updated_at'] = $now;
         return self::where('id', $id)->update($updateData);
+    }
+
+    public function isOrderFullyReceived(){
+        $orderedQty = $this->contents->sum('qty');
+        $receivedQty = $this->orderReceived->sum('quantity');
+        if ($orderedQty == $receivedQty) {
+            return true;
+        }
+        return false;
     }
 
     /**
