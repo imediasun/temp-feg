@@ -1523,4 +1523,13 @@ class Sximo extends Model {
 
         return $query;
     }
+
+    public function truncateString($string, $length){
+        if (mb_strlen($string) < $length || mb_strlen($string) == $length ) {
+            return $string;
+        }
+        else{
+            return mb_substr($string,0,$length);
+        }
+    }
 }
