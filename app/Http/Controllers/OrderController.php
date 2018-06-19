@@ -350,11 +350,12 @@ class OrderController extends Controller
             $rows[$index]->status_value = $rows[$index]->status_id;
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
 
+            $order  = Order::find($data->id);
+            $rows[$index]->isFullyReceived = $order->isOrderReceived();
 
         }
 
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
-
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
@@ -1702,11 +1703,11 @@ class OrderController extends Controller
     function getOrderreceipt($order_id = null)
     {
         //create object of order with find
-        $dpl = new DigitalPackingList();
+        $order = Order::find($order_id);
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
         $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name, O.id as id  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
         //move function in model of order. without passing paramter of order
-        $showdblbutton = $dpl->isOrderReceived($order_id);
+        $showdblbutton = $order->isOrderReceived();
         $this->data['showdblbutton']=$showdblbutton;
         return view('order.order-receipt', $this->data);
     }
@@ -2854,12 +2855,12 @@ ORDER BY aa_id");
         dd('records saved');
     }
     public function getDplFile($orderId){
-        //logic start here
+
         //check if dpl file is already generated
         $downloadId = 0;
         $isFileNeedToBeRegenerated = true;
         $dpl = DigitalPackingList::where("order_id","=",$orderId)->first();
-        //logic ends here
+
         $order = Order::where("id", '=', $orderId)->first();
         $location = $order->location;
 
@@ -2882,10 +2883,8 @@ ORDER BY aa_id");
                 ];
                 $dpl = $dpl->saveOrUpdateDPL($insertData, $downloadId);
 
-                //refactor to use eloquent mutator instead of hardcoded .
                 $dpl->saveOrUpdateDPL(['name' => $dpl->name],$dpl->id);
-                $dplFileContent = $dpl->getDPLFileData(); // Generating DPL File content
-                //Save file in function
+                $dplFileContent = $dpl->getDPLFileData();
                 $dpl->saveFile($dplFileContent);
             }
         }
@@ -2896,7 +2895,7 @@ ORDER BY aa_id");
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'downloaded_at' => Carbon::now()->format('Y-m-d H:i:s'),
         ];
-        $dpl->saveOrdUpdateDPL($updData,$downloadId);
+        $dpl->saveOrUpdateDPL($updData,$dpl->id);
         Log::info("DPL File Downloaded:".public_path(DigitalPackingList::DPL_FILE_PATH).$dpl->name);
         return Response::download(public_path(DigitalPackingList::DPL_FILE_PATH).$dpl->name,$dpl->name,$headers);
     }
