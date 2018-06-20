@@ -167,7 +167,15 @@ class productusagereport extends Sximo  {
             vendor_id,Product,max(ticket_value) as ticket_value
             , Unit_Price,
             SUM(qty) AS Cases_Ordered,
-            Case_Price,SUM(IF((prod_type_id NOT IN (".$casePriceCats.") OR is_broken_case),(Unit_Price*qty), (Case_Price * qty))) AS Total_Spent,
+            Case_Price,SUM(IF(
+                is_broken_case, 
+                (qty/num_items*Case_Price), 
+                (IF(
+                    prod_type_id NOT IN (".$casePriceCats."),
+                    (Unit_Price*qty), 
+                    (Case_Price * qty)
+                    )
+                ))) AS Total_Spent,
             TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS OC_Total_Spent,
             location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR $separator) as location_name,
             start_date,end_date
