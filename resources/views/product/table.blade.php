@@ -442,9 +442,26 @@ $(document).ready(function() {
             });
         }
 
+    setTimeout(function(){
+        if($('.select3[name="in_development"]').val() =='') {
+            $('.select3[name="in_development"]').val(0);
+        }
+        $('.select3[name="in_development"]').change();
+    },500);
+
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
     });
+$(document).ajaxComplete(function(a,b,d){
+    if(d.url.indexOf("search")>0){
+        setTimeout(function(){
+            if($('.select3[name="in_development"]').val() =='') {
+                $('.select3[name="in_development"]').val(0);
+            }
+            $('.select3[name="in_development"]').change();
+        },1000);
+    }
 
+});
 
     function calculateUnitPrice(id) {
         var case_price = $('#form-' + id + ' input[name = "case_price"]').val();
