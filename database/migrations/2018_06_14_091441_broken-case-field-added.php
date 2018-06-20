@@ -12,7 +12,9 @@ class BrokenCaseFieldAdded extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE `order_contents` ADD COLUMN `is_broken_case` TINYINT(1) DEFAULT 0 NOT NULL AFTER `upc_barcode`;");
+        Schema::table('order_contents', function ($table) {
+            $table->tinyInteger('is_broken_case')->default('0')->after('upc_barcode');
+        });
     }
 
     /**
@@ -22,6 +24,8 @@ class BrokenCaseFieldAdded extends Migration
      */
     public function down()
     {
-        DB::statement("ALTER TABLE `order_contents` DROP COLUMN `is_broken_case`; ");
+        Schema::table('order_contents', function ($table) {
+            $table->dropColumn('is_broken_case');
+        });
     }
 }
