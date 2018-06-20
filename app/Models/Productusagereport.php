@@ -220,7 +220,7 @@ class productusagereport extends Sximo  {
                 $whereNotInPoNumber = "  AND O.po_number NOT IN($excludedOrders) ";
             }
 
-            $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
+            $whereQuery = " WHERE O.location_id not in(6000,6030) and O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
                             AND O.created_at <= '$date_end' 
                              $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
@@ -317,7 +317,7 @@ class productusagereport extends Sximo  {
     public static function excludeOrderFromProductUsageAndMerchandiseExpense(){
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
-        $po_numbers = $pass['exclude order from product usage and merchandise expense report']->data_type;
+        $po_numbers = !empty($pass['exclude order from product usage and merchandise expense report']) ? $pass['exclude order from product usage and merchandise expense report']->data_type:'';
         $array = FEGSystemHelper::split_trim($po_numbers);
         $string_po = [];
         foreach ($array as $arr){

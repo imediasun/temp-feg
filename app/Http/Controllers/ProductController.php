@@ -40,7 +40,33 @@ class ProductController extends Controller
 
 
     }
+    function returnUrl()
+    {
+        $pages = (isset($_GET['page']) ? $_GET['page'] : '');
+        $sort = (isset($_GET['sort']) ? $_GET['sort'] : '');
+        $order = (isset($_GET['order']) ? $_GET['order'] : '');
+        $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
+        $search = (isset($_GET['search']) ? $_GET['search'] : '');
+        $v1 = (isset($_GET['v1']) ? $_GET['v1'] : '');
+        $v2 = (isset($_GET['v2']) ? $_GET['v2'] : '');
+        $v3 = (isset($_GET['v3']) ? $_GET['v3'] : '');
 
+        if(strpos($search,"in_development:equal") == false){
+            $search .="in_development:equal:0|";
+        }
+        $appends = array();
+        if ($pages != '') $appends['page'] = $pages;
+        if ($sort != '') $appends['sort'] = $sort;
+        if ($order != '') $appends['order'] = $order;
+        if ($rows != '') $appends['rows'] = $rows;
+        if ($search != '') $appends['search'] = $search;
+        $url = "";
+        foreach ($appends as $key => $val) {
+            $url .= "&$key=$val";
+        }
+        return $url;
+
+    }
     public
     function getExport($t = 'excel')
     {
@@ -277,7 +303,23 @@ class ProductController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = $this->getSearchFilterQuery();//(!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $filter = $this->getSearchFilterQuery();
+        //(!is_null($request->input('search')) ? $this->buildSearch() : '');
+
+
+        $simpleSearchParems = $request->input('search');
+        if(!empty($simpleSearchParems)){
+            if(strpos($simpleSearchParems,'in_development:equal:') !=false){
+                $inDevelopmentStatus = substr($simpleSearchParems,strpos($simpleSearchParems,"in_development:equal:")+strlen("in_development:equal:"),strpos($simpleSearchParems,"in_development:equal:"));
+                $inDevelopmentStatus = rtrim($inDevelopmentStatus,"|");
+                $filter .= " AND products.in_development = '".$inDevelopmentStatus."' ";
+            }
+        }
+        if(strpos($filter,"products.in_development") == false){
+        $filter .= ' AND products.in_development = 0 ';
+        }
+        $filter = str_replace("AND products.in_development = '2'"," ",$filter);
+
         $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);

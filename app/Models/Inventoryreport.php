@@ -107,7 +107,7 @@ class inventoryreport extends Sximo  {
             $whereProdType = "";
             $whereProdSubType = "";
             if (!empty($location_id)) {
-                $whereLocation = "AND O.location_id IN ($location_id) ";
+                $whereLocation = "AND O.location_id IN ($location_id) AND O.location_id not in(6000,6030)";
             }
             if (!empty($vendor_id)) {
                 $whereVendor = "AND V.id IN ($vendor_id) ";
