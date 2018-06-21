@@ -122,7 +122,9 @@
                         input.val((''+originalValue).split('-')[0]);
                     }
                     else {
+                        console.log("Before: "+originalValue);
                         input.val(originalValue);
+                        console.log("After: "+originalValue);
                         if (input.val() == '') {
                             input.find('option').filter(function(){
                                     return this.text.toLowerCase() == 
