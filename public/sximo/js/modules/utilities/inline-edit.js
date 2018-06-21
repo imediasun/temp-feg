@@ -104,7 +104,7 @@
             cell.html("");
             cell.append(input);            
             cell.attr('data-edit', 1);
-            
+            console.log("Value: "+originalValue);
             switch (inputType) {
                 case 'text_date':
                 case 'text_datetime':
@@ -122,7 +122,6 @@
                         input.val((''+originalValue).split('-')[0]);
                     }
                     else {
-                        console.log("Before: "+originalValue);
                         input.val(originalValue);
                         console.log("After: "+originalValue);
                         if (input.val() == '') {
