@@ -100,25 +100,9 @@ class servicerequestsController extends Controller
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
-        if (!empty($search_all_fields)) {
-            $searchFields = [
-                'sb_tickets.TicketID',
-                'sb_tickets.Description',
-                'sb_tickets.location_id',
-                'L.location_name',
-                'sb_tickets.Subject',
-                'sb_tickets.entry_by',
-                'UC.first_name',
-                'UC.last_name',
-                'sbc.USERNAME',
-                'sbc.Comments'
-            ];
-            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
-            $filter .= is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
-        }
         if (!empty($debitType)) {
             $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
-        } 
+        }
         if (empty($status) && $showAll == 0) {
             $filter .= " AND sb_tickets.Status != 'closed' ";
         }
@@ -129,6 +113,28 @@ class servicerequestsController extends Controller
         {
             \Session::put('showAllChecked',true);
         }
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                'sb_tickets.TicketID',
+                'sb_tickets.Description',
+                'sb_tickets.location_id',
+                'locationname',
+                'sb_tickets.Subject',
+                'sb_tickets.entry_by',
+                'firstname',
+                'lastname',
+                'sbcusername',
+                'sbcComments',
+                'location_full_name'
+            ];
+            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+            $filter .= is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
+
+            if(!empty($filter)){
+                $filter  = str_replace("AND ( sb_tickets.TicketID LIKE"," HAVING ( sb_tickets.TicketID LIKE",$filter);
+            }
+        }
+
 
         $filter = str_replace("AND last_updated_elapsed_days", "HAVING last_updated_elapsed_days", $filter);
         $filter = str_replace("AND (last_updated_elapsed_days BETWEEN", "HAVING (last_updated_elapsed_days BETWEEN", $filter);
