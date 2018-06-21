@@ -24,8 +24,13 @@ class Servicerequests extends Observerable  {
                     IF(ISNULL(sbc.Posted),
                         DATEDIFF('$date', sb_tickets.Created),
                         DATEDIFF('$date', sbc.Posted)) AS last_updated_elapsed_days,
-                    sb_tickets.*, D.company as debit_type
-
+                    sb_tickets.*, D.company as debit_type,
+                      CONCAT(L.id,' ',L.location_name) AS location_full_name,
+                      L.location_name AS locationname,
+                      UC.first_name   AS firstname,
+                      UC.last_name    AS lastname,
+                      sbc.USERNAME    AS sbcusername,
+                      sbc.Comments    AS sbcComments
                 FROM sb_tickets
 
         LEFT JOIN (
