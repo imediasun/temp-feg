@@ -52,7 +52,7 @@
                             <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description:</b></td><td style="white-space: inherit;">{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
                             <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatPrice($data['order_total'],\App\Models\Order::ORDER_PERCISION ) }}</td></tr>
-                            <tr><td><b>Edit Receipt:</b></td> <td> {<!--<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button>-->
+                            <tr><td><b>Edit Receipt:</b></td> <td> <!--<button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#editItemsPan" style="float: right;margin-top: 19px;" id="edit_receipt_btn"><i class="fa fa-edit"></i> Edit Receipt</button>-->
                                    <input type='checkbox' name="toggle_trigger" data-handle-width="100px" data-size="mini" data-on-text="Active" data-off-text="Inactive" id="toggle_trigger" onSwitchChange="trigger()" /> </td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
@@ -108,7 +108,7 @@
                                     <th>Case Price</th>
                                     <th>Qty</th>
                                     <th>Received Qty</th>
-                                    {<!--<th>Update Qty</th>-->
+                                    <!--<th>Update Qty</th>-->
                                     <th>Edit Received Qty</th>
                                     <th>Total($)</th>
                                 </tr>
@@ -139,7 +139,7 @@
                                                 <input type="hidden" name="updateAlreadyReceivedQty[]" value="{{$order_item->item_received}}">
                                             </td>
 
-                                            {<!--<td style="text-align: center">
+                                            <!--<td style="text-align: center">
                                                 <input type="checkbox" class="updateBox" name="updateProducts[]" value="{{ $order_item->id }}" />
                                             </td>-->
                                             <td>
@@ -257,7 +257,7 @@
                             <input type="hidden" name='tracking_number' value="{{ $data['tracking_number'] }}" id='tracking_number'/>
                         @endif
 
-                        {<!--<div class="form-group clearfix" id="tracking_numberdiv" style="displaynone">
+                        <!--<div class="form-group clearfix" id="tracking_numberdiv" style="displaynone">
                             
                             <label id ="tracking_number_lbl" for="vendor_id" class=" control-label col-md-4 text-left">
                                 Tracking Number:
@@ -288,7 +288,7 @@
                             <div class="col-md-8">
                                 <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                             class="fa  fa-save "></i>  Receive Order </button>
-                                {<!--<button type="submit" class="btn btn-primary btn-sm " id="update_receipt_btn"><i
+                                <!--<button type="submit" class="btn btn-primary btn-sm " id="update_receipt_btn"><i
                                             class="fa fa-refresh"></i>  Update Receipt </button>-->
                                 <button type="button" onclick="window.history.back();" class="btn btn-success btn-sm">
                                     <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
