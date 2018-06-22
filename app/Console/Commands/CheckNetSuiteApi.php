@@ -3,11 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Library\FEG\System\FEGSystemHelper;
-use App\Models\NetSuiteApiLog;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Console\Command;
 use App\Http\Requests;
+use Log;
 
 class CheckNetSuiteApi extends Command
 {
@@ -41,10 +41,12 @@ class CheckNetSuiteApi extends Command
         $this->data = "";
         $this->products = array();
         $this->orderIds = array();
+        $this->productData = array();
         $this->to = array([
             'shayansolutions@gmail.com',
-            'gabes@inmedianetworks.com',
-            'dev1@shayansolutions.com',
+            //'gabes@inmedianetworks.com',
+            'stanlymarian@gmail.com',
+            'dev3@shayansolutions.com',
             'qa@shayansolutions.com'
         ]);
     }
@@ -55,11 +57,12 @@ class CheckNetSuiteApi extends Command
      * @return mixed
      */
 
-    protected $urlString = 'http://demo.fegllc.com/fegapi';
+    protected $urlString = 'http://dev.fegllc.com/fegapi';
     protected $tokenString = '&token=f1a9bE1f7M208M3eIb0b048L0d0O921Vd8bEbaa6ow35l23HaxcAn2Ddaf245I';
     protected $data;
     protected $products;
     protected $orderIds;
+    protected $productData;
 
     public function handle()
     {
@@ -74,9 +77,14 @@ class CheckNetSuiteApi extends Command
         $timeString .= 'updated_from=' . $currentDate . ' ' . $fromTime;
         $timeString .= 'created_to=' . $currentDate . ' ' . $toTime;
         $timeString .= 'updated_to=' . $currentDate . ' ' . $toTime;
-
+        Log::info("NetSuite Api:-*-*--*-*--*-*--*-*-Api process started-*-*--*-*--*-*--*-*-");
         foreach ($modules as $module) {
-            $this->data[$module] = $this->getResponse($module, $timeString);
+            Log::info("NetSuite Api: ".$module." api triggered checking record from ".date('Y-m-d')." ".$fromTime." to ".date('Y-m-d')." ".$toTime);
+            if($module == 'product'){
+                $this->data[$module] = $this->getProductResponse($module,'',2000);
+            }else {
+                $this->data[$module] = $this->getResponse($module, $timeString);
+            }
         }
         $this->getProductIds();
         $this->getorderIdsFromReceipts();
@@ -146,7 +154,7 @@ class CheckNetSuiteApi extends Command
     {
 
         $url = $this->urlString . '?module=' . $module . $timeString. $this->tokenString;
-//        $url = 'http://demo.fegllc.com/fegapi?module=' . $module . '&limit=50&page=1&token=f1a9bE1f7M208M3eIb0b048L0d0O921Vd8bEbaa6ow35l23HaxcAn2Ddaf245I';
+        Log::info('NetSuite Api: Url: '. $url);
         $status = "";
         $response = "";
         try {
@@ -155,16 +163,57 @@ class CheckNetSuiteApi extends Command
             //this Will Catch All error response code and body
             $errorCode = $e->getResponse()->getStatusCode();
             $errorMsg = $e->getResponse()->getBody();
+            Log::info("NetSuite Api: Status Code: ".$errorCode." [".$errorMsg." ]");
             $this->sendErrorMail($module, $url, $errorCode, $errorMsg);
-            $this->addDataLog($module, $url, $errorCode, $errorMsg);
         }
         if ($response) {
             $status = $response->getStatusCode();
             if ($status == 200) {
-//                $this->addDataLog($module, $url, $status, 'Record Found.');
+                Log::info("NetSuite Api: Status Code: ".$status." [".$module." api record found ]"." Data: ".$response->getBody());
                 return [
                     'code' => 200,
                     'data' => $response->getBody()
+                ];
+            }
+        }
+        return $status;
+    }
+    private function getProductResponse($module, $timeString = '', $limit = 1){
+        $url = $this->urlString . '?module=' . $module . $timeString. $this->tokenString."&limit=1&page=1";
+        Log::info('NetSuite Api: Url: '. $url);
+        $status = "";
+        $response = "";
+        $totalResponseData = "";
+        try {
+            $response = $this->client->request('GET', $url);
+            if($response){
+                $data = json_decode($response->getBody());
+                for($i=1; $i<=ceil($data->total/$limit); $i++) {
+                    $url = $this->urlString . '?module=' . $module . $timeString . $this->tokenString . "&limit=".$limit."&page=".$i;
+                    $httpResponse = $this->client->request('GET', $url);
+                    $responseData = json_decode($httpResponse->getBody());
+                    if(isset($responseData->rows)){
+                        foreach ($responseData->rows as $row):
+                        array_push($this->productData,$row);
+                            endforeach;
+                    }
+                }
+                $totalResponseData = json_encode(["total"=>count($this->productData),"records"=>count($this->productData),'rows'=>$this->productData]);
+            }
+        } catch (BadResponseException $e) {
+            //this Will Catch All error response code and body
+            $errorCode = $e->getResponse()->getStatusCode();
+            $errorMsg = $e->getResponse()->getBody();
+            Log::info("NetSuite Api: Status Code: ".$errorCode." [".$errorMsg." ]");
+            $this->sendErrorMail($module, $url, $errorCode, $errorMsg);
+        }
+        if ($response) {
+            $status = $response->getStatusCode();
+            if ($status == 200) {
+                Log::info("NetSuite Api: Status Code: ".$status." [".$module." api record found ]"." Data: ".$totalResponseData);
+                return [
+                    'code' => 200,
+                    'data' => $totalResponseData
                 ];
             }
         }
@@ -176,21 +225,12 @@ class CheckNetSuiteApi extends Command
         foreach ($this->to[0] as $to)
         {
             $subject = 'Error';
-            $message = 'Error Code = '.$errorCode . 'Error url = '. $url . "Error Message = ". $errorMsg;
+            $message = 'Error Code = '.$errorCode . ' Error url = '. $url . "<br>Error Message = ". $errorMsg;
+            Log::info("NetSuite Api:".$subject." : ".$message);
             FEGSystemHelper::sendEmail($to, $subject, $message);
+            Log::info("NetSuite Api:".$subject." : Notification sent to ");
         }
 
-    }
-
-    private function addDataLog($module, $url, $code, $message)
-    {
-        $nsa = new NetSuiteApiLog();
-        $nsa->module = $module;
-        $nsa->url = $url;
-        $nsa->response_code = $code;
-        $nsa->response_message = $message;
-        $nsa->save();
-        return "success";
     }
 
 }
