@@ -110,20 +110,31 @@ class CheckNetSuiteApi extends Command
                     $product_id = $item->product_id;
                     $this->checkProduct($item);
                 }
-                $this->checkReceipts($row->id);
+                $this->checkReceipts(item);
             }
         }
     }
 
-    public function checkReceipts($id)
+    public function checkReceipts($item)
     {
-        if(in_array($id,$this->orderIds))
+        if(in_array($item->id,$this->orderIds))
         {
             return true;
         }
         else
         {
-            $this->sendErrorMail('OrdersReceipts', null, 404, 'Receipt For Order id '.$id.' not Found');
+            $errorMessage = [
+                'Error code 404 : Product not found.',
+                'Error URL : '.$this->urlString."/".$item->product_id."?module=itemreciept&token=".$this->tokenString,
+                'Order Id : '.$item->id,
+                'Module Effected : product',
+                'Error occurred Date time : '.date("Y-m-d H:i:s"),
+            ];
+            echo "<pre>";
+            print_r($errorMessage);
+            echo "</pre>";
+
+            $this->sendErrorMail('OrdersReceipts', null, 404, $errorMessage);
         }
     }
 
@@ -178,9 +189,24 @@ class CheckNetSuiteApi extends Command
         } catch (BadResponseException $e) {
             //this Will Catch All error response code and body
             $errorCode = $e->getResponse()->getStatusCode();
-            $errorMsg = $e->getResponse()->getBody();
-            Log::info("NetSuite Api: Status Code: ".$errorCode." [".$errorMsg." ]");
-            $this->sendErrorMail($module, $url, $errorCode, $errorMsg);
+            $errorMsg = [];
+            if($errorCode == 401){
+            $errorMsg = [
+                'Error code 401 : raised in case of Invalid authenticated params',
+                'Error URL : '.$url,
+                'Module Effected : '.$module,
+                'Error occurred Date time : '.date("Y-m-d H:i:s"),
+            ];
+            }elseif ($errorCode == 500){
+                $errorMsg = [
+                    'Error code  500 : format issue in code',
+                    'Error URL : '.$url,
+                    'Module Effected : '.$module,
+                    'Error occurred Date time : '.date("Y-m-d H:i:s"),
+                ];
+            }
+            Log::info("NetSuite Api: Status Code: ".$errorCode." [".implode('<br>',$errorMsg)." ]");
+            $this->sendErrorMail($module, $url, $errorCode, implode('<br>',$errorMsg));
         }
         if ($response) {
             $status = $response->getStatusCode();
@@ -240,11 +266,10 @@ class CheckNetSuiteApi extends Command
     {
         foreach ($this->to[0] as $to)
         {
-            $subject = 'Error';
-            $message = 'Error Code = '.$errorCode . ' Error url = '. $url . "<br>Error Message = ". $errorMsg;
-            Log::info("NetSuite Api:".$subject." : ".$message);
-            FEGSystemHelper::sendEmail($to, $subject, $message);
-            Log::info("NetSuite Api:".$subject." : Notification sent to ");
+            $subject = 'Netsuite API Error';
+            Log::info("NetSuite Api:".$subject." : ".$errorMsg);
+            FEGSystemHelper::sendEmail($to, $subject, $errorMsg);
+            Log::info("NetSuite Api:".$subject." : Notification sent to :".$to);
         }
 
     }
