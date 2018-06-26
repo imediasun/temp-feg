@@ -57,12 +57,13 @@ class CheckNetSuiteApi extends Command
      * @return mixed
      */
 
-    protected $urlString = 'http://demo.fegllc.com/fegapi';
+    protected $urlString = 'http://feg-laravel/fegapi';
     protected $tokenString = '&token=f1a9bE1f7M208M3eIb0b048L0d0O921Vd8bEbaa6ow35l23HaxcAn2Ddaf245I';
     protected $data;
     protected $products;
     protected $orderIds;
     protected $productData;
+    protected $parems =[];
 
     public function handle()
     {
@@ -77,6 +78,12 @@ class CheckNetSuiteApi extends Command
         $timeString .= 'updated_from=' . $currentDate . ' ' . $fromTime;
         $timeString .= 'created_to=' . $currentDate . ' ' . $toTime;
         $timeString .= 'updated_to=' . $currentDate . ' ' . $toTime;
+        $this->parems = [
+            'created_from=' . $currentDate . ' ' . $fromTime,
+            'updated_from=' . $currentDate . ' ' . $fromTime,
+            'created_to=' . $currentDate . ' ' . $toTime,
+            'updated_to=' . $currentDate . ' ' . $toTime
+        ];
         Log::info("NetSuite Api:-*-*--*-*--*-*--*-*-Api process started-*-*--*-*--*-*--*-*-");
         foreach ($modules as $module) {
             Log::info("NetSuite Api: ".$module." api triggered checking record from ".date('Y-m-d')." ".$fromTime." to ".date('Y-m-d')." ".$toTime);
@@ -101,7 +108,7 @@ class CheckNetSuiteApi extends Command
                 $items = $row->items;
                 foreach ($items as $item) {
                     $product_id = $item->product_id;
-                    $this->checkProduct($product_id);
+                    $this->checkProduct($item);
                 }
                 $this->checkReceipts($row->id);
             }
@@ -120,15 +127,24 @@ class CheckNetSuiteApi extends Command
         }
     }
 
-    public function checkProduct($id)
+    public function checkProduct($item)
     {
-        if(in_array($id,$this->products))
+        if(in_array($item->product_id,$this->products))
         {
             return true;
         }
         else
         {
-            $this->sendErrorMail('Product', null, 404, 'Product id '.$id.' not Found');
+            $errorMessage = [
+                'Error code 404 : Product not found.',
+                'Error URL : '.$this->urlString."/".$item->product_id."?module=product&token=".$this->tokenString,
+                'Product Id : '.$item->product_id,
+                'Item Name : '.$item->item_name,
+                'Item Description : '.$item->product_description,
+                'Module Effected : product',
+                'Error occurred Date time : '.date("Y-m-d H:i:s"),
+            ];
+            $this->sendErrorMail('Product', null, 404, implode("<br>",$errorMessage));
         }
     }
 
