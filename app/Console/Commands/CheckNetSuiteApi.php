@@ -110,31 +110,26 @@ class CheckNetSuiteApi extends Command
                     $product_id = $item->product_id;
                     $this->checkProduct($item);
                 }
-                $this->checkReceipts(item);
+                $this->checkReceipts($item,$row);
             }
         }
     }
 
-    public function checkReceipts($item)
+    public function checkReceipts($item,$row)
     {
-        if(in_array($item->id,$this->orderIds))
-        {
-            return true;
-        }
-        else
-        {
-            $errorMessage = [
-                'Error code 404 : Product not found.',
-                'Error URL : '.$this->urlString."/".$item->product_id."?module=itemreciept&token=".$this->tokenString,
-                'Order Id : '.$item->id,
-                'Module Effected : product',
-                'Error occurred Date time : '.date("Y-m-d H:i:s"),
-            ];
-            echo "<pre>";
-            print_r($errorMessage);
-            echo "</pre>";
+        try {
+            $response = $this->client->request('GET', $this->urlString."/".$row->id."?module=itemreciept&token=".$this->tokenString);
+        } catch (BadResponseException $e) {
 
-            $this->sendErrorMail('OrdersReceipts', null, 404, $errorMessage);
+                $errorMessage = [
+                    'Error code 404 : Order receipt not found.',
+                    'Error URL : '.$this->urlString."/".$row->id."?module=itemreciept&token=".$this->tokenString,
+                    'Order Id : '.$row->id,
+                    'PO Number:'.$row->po_number,
+                    'Module Effected : itemreciept',
+                    'Error occurred Date time : '.date("Y-m-d H:i:s"),
+                ];
+                $this->sendErrorMail('OrdersReceipts', null, 404, implode('<br>',$errorMessage));
         }
     }
 
@@ -198,6 +193,13 @@ class CheckNetSuiteApi extends Command
                 'Error occurred Date time : '.date("Y-m-d H:i:s"),
             ];
             }elseif ($errorCode == 500){
+                $errorMsg = [
+                    'Error code  500 : format issue in code',
+                    'Error URL : '.$url,
+                    'Module Effected : '.$module,
+                    'Error occurred Date time : '.date("Y-m-d H:i:s"),
+                ];
+            }else{
                 $errorMsg = [
                     'Error code  500 : format issue in code',
                     'Error URL : '.$url,
