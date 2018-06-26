@@ -30,7 +30,10 @@ class Servicerequests extends Observerable  {
                       UC.first_name   AS firstname,
                       UC.last_name    AS lastname,
                       sbc.USERNAME    AS sbcusername,
-                      sbc.Comments    AS sbcComments
+                      (SELECT
+                     GROUP_CONCAT(sb_ticketcomments.Comments)
+                    FROM sb_ticketcomments
+                  WHERE sb_ticketcomments.TicketID = sb_tickets.TicketID) AS sbcComments
                 FROM sb_tickets
 
         LEFT JOIN (
