@@ -123,7 +123,7 @@ class CheckNetSuiteApi extends Command
 
                 $errorMessage = [
                     'Error code 404 : Order receipt not found.',
-                    'Error URL : '.$this->urlString."/".$row->id."?module=itemreciept&token=".$this->tokenString,
+                    'Error URL : '.$this->urlString."/".$row->id."?module=itemreceipt&token=".$this->tokenString,
                     'Order Id : '.$row->id,
                     'PO Number:'.$row->po_number,
                     'Module Effected : itemreciept',
