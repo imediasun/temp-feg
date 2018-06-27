@@ -69,6 +69,7 @@ class CheckNetSuiteApi extends Command
     protected $errorMessage;
     protected $orderId;
     protected $errorMessageText;
+    protected $errorCode;
     protected $orderContents = [];
     protected $orderReceipts = [];
 
@@ -99,13 +100,18 @@ class CheckNetSuiteApi extends Command
             Log::info("NetSuite Api: ".$module." api triggered checking record");
             if($module == 'product'){
                 $this->data[$module] = $this->getProductResponse($module,'',5000);
+            }elseif($module == 'itemreceipt'){
+                $this->data[$module] = $this->getResponse($module,'',50000);
             }else {
                 $this->data[$module] = $this->getResponse($module, $timeString,5000);
             }
         }
         $this->getProductIds();
         $this->getorderIdsFromReceipts();
+        $this->getReceiptLineItemId();
         $this->validateOrders();
+
+        echo "\r\n\r\nScript Executed successfully\r\n";
     }
 
     public function validateOrders()
@@ -118,6 +124,7 @@ class CheckNetSuiteApi extends Command
                 $this->orderId = $row->id;
                 $items = $row->items;
                 foreach ($items as $item) {
+                    $this->getOrderedContents($this->orderId,$item);
                     $this->checkProduct($item);
                 }
                 $this->checkReceipts($item,$row);
@@ -128,40 +135,38 @@ class CheckNetSuiteApi extends Command
     public function checkReceipts($item,$row)
     {
         try {
-            $response = $this->client->request('GET', $this->urlString."/".$row->id."?module=itemreciept&token=".$this->tokenString);
+            $response = $this->client->request('GET', $this->urlString."/".$row->id."?module=itemreceipt&token=".$this->tokenString);
+        if($response) {
+            if ($response->getStatusCode() == 200) {
+                $this->notifyReceiptNotExists($row->id);
+            }
+        }
         } catch (BadResponseException $e) {
 
-                $errorMessage = [
-                    'Error code 404 : Order receipt not found.',
-                    'Error URL : '.$this->orderApiUrl,
-                    'Order Id : '.$row->id,
-                    'PO Number:'.$row->po_number,
-                    'Module Effected : itemreciept',
-                    'Error occurred Date time : '.date("Y-m-d H:i:s"),
-                ];
-                $this->sendErrorMail('OrdersReceipts', null, 404, implode('<br>',$errorMessage));
+            $this->errorMessageText = 'Order receipt not found.';
+            $this->errorCode = 401;
+            $this->apiResponse = $e;
+
+            $this->sendErrorMail('OrdersReceipts', null, 404, $this->prepareErrorMessage());
         }
     }
 
     public function checkProduct($item)
     {
-        if(in_array($item->product_id,$this->products))
-        {
-            return true;
-        }
-        else
-        {
+        try{
+            if(in_array($item->product_id,$this->products))
+            {
+                return true;
+            }else{
+                $this->errorMessageText = 'Product not found.';
+                $this->errorCode = 401;
+                $this->sendErrorMail('Product', null, 404, $this->prepareErrorMessage());
+            }
+        }catch (BadResponseException $e) {
+            $this->apiResponse = $e;
             $this->errorMessageText = 'Product not found.';
-            $errorMessage = [
-                'Error code 404 : Product not found.',
-                'Error URL : '.$this->urlString."/".$item->product_id."?module=product&token=".$this->tokenString,
-                'Product Id : '.$item->product_id,
-                'Item Name : '.$item->item_name,
-                'Item Description : '.$item->product_description,
-                'Module Effected : product',
-                'Error occurred Date time : '.date("Y-m-d H:i:s"),
-            ];
-            $this->sendErrorMail('Product', null, 404, implode("<br>",$errorMessage));
+            $this->errorCode = 401;
+            $this->sendErrorMail('Product', null, 404, $this->prepareErrorMessage());
         }
     }
 
@@ -171,6 +176,17 @@ class CheckNetSuiteApi extends Command
         $rows = $products->rows;
         foreach ($rows as $row) {
             array_push($this->products,$row->id);
+        }
+    }
+    public function getReceiptLineItemId(){
+        $receipts = json_decode($this->data['itemreceipt']['data']);
+        $rows = $receipts->rows;
+        foreach ($rows as $row) {
+            if(!empty($row->receipts)) {
+                foreach ($row->receipts as $receipts) {
+                    $this->orderReceipts[] = $receipts->order_line_item_id;
+                }
+            }
         }
     }
 
@@ -192,19 +208,17 @@ class CheckNetSuiteApi extends Command
         $response = "";
         try {
             $response = $this->client->request('GET', $url);
+            $this->apiResponse = $response;
         } catch (BadResponseException $e) {
             //this Will Catch All error response code and body
-            $errorCode = $e->getResponse()->getStatusCode();
-            $errorMsg = [];
+            $this->apiResponse = $e;
             $this->errorMessageText = 'Internal Server Error.';
-
-            Log::info("NetSuite Api: Status Code: ".$errorCode." [".$this->prepareErrorMessage()." ]");
-            $this->sendErrorMail($module, $url, $errorCode, $this->prepareErrorMessage());
+            $this->sendErrorMail($module, $url, 500, $this->prepareErrorMessage());
         }
         if ($response) {
             $status = $response->getStatusCode();
             if ($status == 200) {
-                Log::info("NetSuite Api: Status Code: ".$status." [".$module." api record found ]"." Data: ".$response->getBody());
+                Log::info("NetSuite Api: Status Code: ".$status." [".$module." api record found ]");
                 return [
                     'code' => 200,
                     'data' => $response->getBody()
@@ -235,8 +249,10 @@ class CheckNetSuiteApi extends Command
                 }
                 $totalResponseData = json_encode(["total"=>count($this->productData),"records"=>count($this->productData),'rows'=>$this->productData]);
             }
+            $this->apiResponse = $response;
         } catch (BadResponseException $e) {
             //this Will Catch All error response code and body
+            $this->apiResponse = $e;
             $errorCode = $e->getResponse()->getStatusCode();
             $errorMsg = $e->getResponse()->getBody();
             Log::info("NetSuite Api: Status Code: ".$errorCode." [".$errorMsg." ]");
@@ -245,7 +261,7 @@ class CheckNetSuiteApi extends Command
         if ($response) {
             $status = $response->getStatusCode();
             if ($status == 200) {
-                Log::info("NetSuite Api: Status Code: ".$status." [".$module." api record found ]"." Data: ".$totalResponseData);
+                Log::info("NetSuite Api: Status Code: ".$status." [".$module." api record found ]");
                 return [
                     'code' => 200,
                     'data' => $totalResponseData
@@ -270,7 +286,11 @@ class CheckNetSuiteApi extends Command
         return implode(' ',$this->parems);
     }
     private function getResonseCode(){
-        return $this->apiResponse->getResponse()->getStatusCode();
+        if(method_exists ($this->apiResponse,'getResponse')){
+            return $this->apiResponse->getResponse()->getStatusCode();
+        }else {
+            return $this->apiResponse->getStatusCode();
+        }
     }
     private function getResonseBody(){
         return $this->apiResponse->getResponse()->getStatusCode();
@@ -279,9 +299,8 @@ class CheckNetSuiteApi extends Command
         return $this->errorMessageText;
     }
     private function prepareErrorMessage(){
-        $errorCode = $this->getResonseCode();
+        $errorCode = !empty($this->errorCode)?$this->errorCode:$this->getResonseCode();
         $orderId = $this->orderId;
-
         if($errorCode == 401){
             $this->errorMessage = implode('<br>',[
                 'Order Id: '.$orderId,
@@ -310,17 +329,25 @@ class CheckNetSuiteApi extends Command
 
        return $this->errorMessage;
     }
-    private function getOrderedContents(){
-        $orderContents = json_decode($this->data['order']['data']);
-        if ($orderContents->total > 0) {
-            $rows = $orderContents->rows;
-            foreach ($rows as $row) {
-                $items = $row->items;
-                foreach ($items as $item) {
-                   $this->orderContents[] = ['order_id'=>$row->id,'item'=>$item];
+    private function getOrderedContents($orderId,$items){
+                   $this->orderContents[] = ['order_id'=>$orderId,'item'=>$items];
+    }
+    private function notifyReceiptNotExists($orderId){
+        $dataArray[] = ['content'=>$this->orderContents,'id'=>$orderId];
+        array_map(function($data){
+            foreach ($data['content'] as $orderData) {
+                if ($orderData["order_id"] == $data['id']) {
+                    $orderedContent = $orderData['item'];
+                    $orderReceiptIds = $this->orderReceipts;
+                        if (!in_array($orderedContent->id, $orderReceiptIds)) {
+                            $this->errorMessageText = 'Order receipt not found.';
+                            $this->errorCode = 401;
+                            $this->sendErrorMail('ItemReceipt', null, 404, $this->prepareErrorMessage());
+                        }
                 }
             }
+        },$dataArray);
+
         }
-    }
 
 }
