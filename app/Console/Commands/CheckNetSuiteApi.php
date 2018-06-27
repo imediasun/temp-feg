@@ -151,6 +151,7 @@ class CheckNetSuiteApi extends Command
         }
         else
         {
+            $this->errorMessageText = 'Product not found.';
             $errorMessage = [
                 'Error code 404 : Product not found.',
                 'Error URL : '.$this->urlString."/".$item->product_id."?module=product&token=".$this->tokenString,
