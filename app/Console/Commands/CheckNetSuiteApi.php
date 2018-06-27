@@ -195,30 +195,10 @@ class CheckNetSuiteApi extends Command
             //this Will Catch All error response code and body
             $errorCode = $e->getResponse()->getStatusCode();
             $errorMsg = [];
-            if($errorCode == 401){
-            $errorMsg = [
-                'Error code 401 : raised in case of Invalid authenticated params',
-                'Error URL : '.$this->orderApiUrl,
-                'Module Effected : '.$module,
-                'Error occurred Date time : '.$this->getApiDateTimeParems(),
-            ];
-            }elseif ($errorCode == 500){
-                $errorMsg = [
-                    'Error code  500 : format issue in code',
-                    'Error URL : '.$this->orderApiUrl,
-                    'Module Effected : '.$module,
-                    'Error occurred Date time : '.$this->getApiDateTimeParems(),
-                ];
-            }else{
-                $errorMsg = [
-                    'Error code  500 : format issue in code',
-                    'Error URL : '.$this->orderApiUrl,
-                    'Module Effected : '.$module,
-                    'Error occurred Date time : '.$this->getApiDateTimeParems(),
-                ];
-            }
-            Log::info("NetSuite Api: Status Code: ".$errorCode." [".implode('<br>',$errorMsg)." ]");
-            $this->sendErrorMail($module, $url, $errorCode, implode('<br>',$errorMsg));
+            $this->errorMessageText = 'Internal Server Error.';
+
+            Log::info("NetSuite Api: Status Code: ".$errorCode." [".$this->prepareErrorMessage()." ]");
+            $this->sendErrorMail($module, $url, $errorCode, $this->prepareErrorMessage());
         }
         if ($response) {
             $status = $response->getStatusCode();
@@ -329,14 +309,14 @@ class CheckNetSuiteApi extends Command
 
        return $this->errorMessage;
     }
-    private function getOrderContents(){
+    private function getOrderedContents(){
         $orderContents = json_decode($this->data['order']['data']);
         if ($orderContents->total > 0) {
             $rows = $orderContents->rows;
             foreach ($rows as $row) {
                 $items = $row->items;
                 foreach ($items as $item) {
-                   $this->orderContents[] = ['order_id'=>$row->id];
+                   $this->orderContents[] = ['order_id'=>$row->id,'item'=>$item];
                 }
             }
         }
