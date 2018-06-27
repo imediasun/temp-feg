@@ -158,13 +158,13 @@ class CheckNetSuiteApi extends Command
             {
                 return true;
             }else{
-                $this->errorMessageText = 'Product not found.';
+                $this->errorMessageText = 'Product not found.<br>Item Id: '.$item->product_id."<br>Item Name: ".$item->item_name;
                 $this->errorCode = 401;
                 $this->sendErrorMail('Product', null, 401, $this->prepareErrorMessage());
             }
         }catch (BadResponseException $e) {
             $this->apiResponse = $e;
-            $this->errorMessageText = 'Product not found.';
+            $this->errorMessageText = 'Product not found.<br>Product Id: '.$item->product_id."<br>Item Name: ".$item->item_name;
             $this->errorCode = 401;
             $this->sendErrorMail('Product', null, 401, $this->prepareErrorMessage());
         }
@@ -255,7 +255,6 @@ class CheckNetSuiteApi extends Command
             $this->apiResponse = $e;
             $errorCode = $e->getResponse()->getStatusCode();
             $errorMsg = $e->getResponse()->getBody();
-            Log::info("NetSuite Api: Status Code: ".$errorCode." [".$errorMsg." ]");
             $this->sendErrorMail($module, $url, $errorCode, $errorMsg);
         }
         if ($response) {
@@ -340,7 +339,7 @@ class CheckNetSuiteApi extends Command
                     $orderedContent = $orderData['item'];
                     $orderReceiptIds = $this->orderReceipts;
                         if (!in_array($orderedContent->id, $orderReceiptIds)) {
-                            $this->errorMessageText = 'Order receipt not found.';
+                            $this->errorMessageText = 'Order receipt not found.<br>Item Id:'.$orderedContent->product_id."<br>Item Name: ".$orderedContent->item_name;;
                             $this->errorCode = 401;
                             $this->sendErrorMail('ItemReceipt', null, 401, $this->prepareErrorMessage());
                         }
