@@ -5,6 +5,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Core\Groups;
 use Illuminate\Support\Facades\Session;
+use Log;
 //use App\Http\Controllers\OrderController;
 
 class addtocart extends Sximo
@@ -176,6 +177,7 @@ FROM requests
             {
                 $select .= ' HAVING V.vendor_name="'.$v1.'"';
             }
+            Log::info('Query for Add to cart Sub total: '.$select);
 
             $query = \DB::select($select);
 
