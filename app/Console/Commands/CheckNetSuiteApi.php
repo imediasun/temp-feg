@@ -57,13 +57,21 @@ class CheckNetSuiteApi extends Command
      * @return mixed
      */
 
-    protected $urlString = 'http://demo.fegllc.com/fegapi';
+    protected $urlString = 'http://feg-laravel/fegapi';
     protected $tokenString = '&token=f1a9bE1f7M208M3eIb0b048L0d0O921Vd8bEbaa6ow35l23HaxcAn2Ddaf245I';
     protected $data;
     protected $products;
     protected $orderIds;
     protected $productData;
     protected $parems =[];
+    protected $orderApiUrl;
+    protected $apiResponse;
+    protected $errorMessage;
+    protected $orderId;
+    protected $errorMessageText;
+    protected $orderContents = [];
+    protected $orderReceipts = [];
+
 
     public function handle()
     {
@@ -75,9 +83,9 @@ class CheckNetSuiteApi extends Command
         $fromTime = date($timeFormat, time() - (3600 * 2));
         $toTime = date($timeFormat, time() - (3600 * 1));
         $timeString = '&created_from=' . $currentDate . ' ' . $fromTime;
-        $timeString .= 'updated_from=' . $currentDate . ' ' . $fromTime;
-        $timeString .= 'created_to=' . $currentDate . ' ' . $toTime;
-        $timeString .= 'updated_to=' . $currentDate . ' ' . $toTime;
+        $timeString .= '&updated_from=' . $currentDate . ' ' . $fromTime;
+        $timeString .= '&created_to=' . $currentDate . ' ' . $toTime;
+        $timeString .= '&updated_to=' . $currentDate . ' ' . $toTime;
         $this->parems = [
             'created_from=' . $currentDate . ' ' . $fromTime,
             'updated_from=' . $currentDate . ' ' . $fromTime,
@@ -85,12 +93,14 @@ class CheckNetSuiteApi extends Command
             'updated_to=' . $currentDate . ' ' . $toTime
         ];
         Log::info("NetSuite Api:-*-*--*-*--*-*--*-*-Api process started-*-*--*-*--*-*--*-*-");
+        $this->orderApiUrl = $this->urlString . '?module=order'  . $timeString. $this->tokenString."&page=1&limit=5000";
+        Log::info("NetSuite Api: Order Api Url: ".$this->orderApiUrl);
         foreach ($modules as $module) {
-            Log::info("NetSuite Api: ".$module." api triggered checking record from ".date('Y-m-d')." ".$fromTime." to ".date('Y-m-d')." ".$toTime);
+            Log::info("NetSuite Api: ".$module." api triggered checking record");
             if($module == 'product'){
-                $this->data[$module] = $this->getProductResponse($module,'',2000);
+                $this->data[$module] = $this->getProductResponse($module,'',5000);
             }else {
-                $this->data[$module] = $this->getResponse($module, $timeString);
+                $this->data[$module] = $this->getResponse($module, $timeString,5000);
             }
         }
         $this->getProductIds();
@@ -105,9 +115,9 @@ class CheckNetSuiteApi extends Command
         if ($orderTotal > 0) {
             $rows = $orders->rows;
             foreach ($rows as $row) {
+                $this->orderId = $row->id;
                 $items = $row->items;
                 foreach ($items as $item) {
-                    $product_id = $item->product_id;
                     $this->checkProduct($item);
                 }
                 $this->checkReceipts($item,$row);
@@ -123,7 +133,7 @@ class CheckNetSuiteApi extends Command
 
                 $errorMessage = [
                     'Error code 404 : Order receipt not found.',
-                    'Error URL : '.$this->urlString."/".$row->id."?module=itemreceipt&token=".$this->tokenString,
+                    'Error URL : '.$this->orderApiUrl,
                     'Order Id : '.$row->id,
                     'PO Number:'.$row->po_number,
                     'Module Effected : itemreciept',
@@ -175,8 +185,8 @@ class CheckNetSuiteApi extends Command
     private function getResponse($module, $timeString = '', $limit = 50)
     {
 
-        $url = $this->urlString . '?module=' . $module . $timeString. $this->tokenString;
-        Log::info('NetSuite Api: Url: '. $url);
+        $url = $this->urlString . '?module=' . $module . $timeString. $this->tokenString."&page=1&limit=".$limit;
+        Log::info('NetSuite Api: Triggered Url: '. $url);
         $status = "";
         $response = "";
         try {
@@ -188,23 +198,23 @@ class CheckNetSuiteApi extends Command
             if($errorCode == 401){
             $errorMsg = [
                 'Error code 401 : raised in case of Invalid authenticated params',
-                'Error URL : '.$url,
+                'Error URL : '.$this->orderApiUrl,
                 'Module Effected : '.$module,
-                'Error occurred Date time : '.date("Y-m-d H:i:s"),
+                'Error occurred Date time : '.$this->getApiDateTimeParems(),
             ];
             }elseif ($errorCode == 500){
                 $errorMsg = [
                     'Error code  500 : format issue in code',
-                    'Error URL : '.$url,
+                    'Error URL : '.$this->orderApiUrl,
                     'Module Effected : '.$module,
-                    'Error occurred Date time : '.date("Y-m-d H:i:s"),
+                    'Error occurred Date time : '.$this->getApiDateTimeParems(),
                 ];
             }else{
                 $errorMsg = [
                     'Error code  500 : format issue in code',
-                    'Error URL : '.$url,
+                    'Error URL : '.$this->orderApiUrl,
                     'Module Effected : '.$module,
-                    'Error occurred Date time : '.date("Y-m-d H:i:s"),
+                    'Error occurred Date time : '.$this->getApiDateTimeParems(),
                 ];
             }
             Log::info("NetSuite Api: Status Code: ".$errorCode." [".implode('<br>',$errorMsg)." ]");
@@ -274,6 +284,62 @@ class CheckNetSuiteApi extends Command
             Log::info("NetSuite Api:".$subject." : Notification sent to :".$to);
         }
 
+    }
+    private function getApiDateTimeParems(){
+        return implode(' ',$this->parems);
+    }
+    private function getResonseCode(){
+        return $this->apiResponse->getResponse()->getStatusCode();
+    }
+    private function getResonseBody(){
+        return $this->apiResponse->getResponse()->getStatusCode();
+    }
+    private function getErrorMessageText(){
+        return $this->errorMessageText;
+    }
+    private function prepareErrorMessage(){
+        $errorCode = $this->getResonseCode();
+        $orderId = $this->orderId;
+
+        if($errorCode == 401){
+            $this->errorMessage = implode('<br>',[
+                'Order Id: '.$orderId,
+                'Error code  401 : '.$this->getErrorMessageText(),
+                'Error URL : '.$this->orderApiUrl,
+                'Module Effected : Order',
+                'Error occurred Date time : '.$this->getApiDateTimeParems(),
+            ]);
+        }elseif ($errorCode == 500){
+            $this->errorMessage = implode('<br>',[
+                'Order Id: '.$orderId,
+                'Error code  500 : format issue in code',
+                'Error URL : '.$this->orderApiUrl,
+                'Module Effected : Order',
+                'Error occurred Date time : '.$this->getApiDateTimeParems(),
+            ]);
+        }else{
+            $this->errorMessage = implode('<br>',[
+                'Order Id: '.$orderId,
+                'Error code  500 : format issue in code',
+                'Error URL : '.$this->orderApiUrl,
+                'Module Effected : Order',
+                'Error occurred Date time : '.$this->getApiDateTimeParems(),
+            ]);
+        }
+
+       return $this->errorMessage;
+    }
+    private function getOrderContents(){
+        $orderContents = json_decode($this->data['order']['data']);
+        if ($orderContents->total > 0) {
+            $rows = $orderContents->rows;
+            foreach ($rows as $row) {
+                $items = $row->items;
+                foreach ($items as $item) {
+                   $this->orderContents[] = ['order_id'=>$row->id];
+                }
+            }
+        }
     }
 
 }
