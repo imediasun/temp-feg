@@ -340,7 +340,8 @@ class AddtocartController extends Controller
         try {
             $data = array('qty' => $qty, 'notes' => $notes);
             \DB::table('requests')->where('id', $id)->update($data);
-            $vendor_name = str_replace('_', ' ', $vendor_name);
+           // $vendor_name = str_replace('_', ' ', $vendor_name);
+            // Bug found while regression testing.If products have vendor name e5_Test_Vendor on updating qty of product in cart it shows error popup
 
             $updated = $this->model->popupCartData(null, $vendor_name);
             return json_encode(array('vendor_name' => $updated['subtotals'][0]['vendor_name'], 'subtotal' => $updated['subtotals'][0]['vendor_total']));
