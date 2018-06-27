@@ -57,7 +57,7 @@ class CheckNetSuiteApi extends Command
      * @return mixed
      */
 
-    protected $urlString = 'http://dev.fegllc.com/fegapi';
+    protected $urlString = 'http://demo.fegllc.com/fegapi';
     protected $tokenString = '&token=f1a9bE1f7M208M3eIb0b048L0d0O921Vd8bEbaa6ow35l23HaxcAn2Ddaf245I';
     protected $data;
     protected $products;
