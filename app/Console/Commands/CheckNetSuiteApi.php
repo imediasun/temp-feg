@@ -160,13 +160,13 @@ class CheckNetSuiteApi extends Command
             }else{
                 $this->errorMessageText = 'Product not found.';
                 $this->errorCode = 401;
-                $this->sendErrorMail('Product', null, 404, $this->prepareErrorMessage());
+                $this->sendErrorMail('Product', null, 401, $this->prepareErrorMessage());
             }
         }catch (BadResponseException $e) {
             $this->apiResponse = $e;
             $this->errorMessageText = 'Product not found.';
             $this->errorCode = 401;
-            $this->sendErrorMail('Product', null, 404, $this->prepareErrorMessage());
+            $this->sendErrorMail('Product', null, 401, $this->prepareErrorMessage());
         }
     }
 
@@ -342,7 +342,7 @@ class CheckNetSuiteApi extends Command
                         if (!in_array($orderedContent->id, $orderReceiptIds)) {
                             $this->errorMessageText = 'Order receipt not found.';
                             $this->errorCode = 401;
-                            $this->sendErrorMail('ItemReceipt', null, 404, $this->prepareErrorMessage());
+                            $this->sendErrorMail('ItemReceipt', null, 401, $this->prepareErrorMessage());
                         }
                 }
             }
