@@ -431,7 +431,6 @@ class OrderController extends Controller
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
-
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
@@ -2010,7 +2009,7 @@ class OrderController extends Controller
     public function getProductdata()
     {
         $product_id = Input::get('product_id');
-        $row = \DB::select("select id,vendor_description,sku,item_description,unit_price,case_price,retail_price from products WHERE id='" . addslashes($product_id) . "'");
+        $row = \DB::select("select id,vendor_description,sku,item_description,unit_price,case_price,retail_price,num_items from products WHERE id='" . addslashes($product_id) . "'");
         $json = [];
         if (!empty($row)) {
             //$row = Order::hydrate($row);
@@ -2020,9 +2019,11 @@ class OrderController extends Controller
                 'unit_price' => \CurrencyHelpers::formatPrice($row[0]->unit_price, Order::ORDER_PERCISION, false),
                 'case_price' => \CurrencyHelpers::formatPrice($row[0]->case_price, Order::ORDER_PERCISION, false),
                 'retail_price' => \CurrencyHelpers::formatPrice($row[0]->retail_price, Order::ORDER_PERCISION, false),
-                'id' => $row[0]->id
+                'id' => $row[0]->id,
+                'qty_per_case' => $row[0]->num_items,
             );
         }
+
         return json_encode($json);
     }
 

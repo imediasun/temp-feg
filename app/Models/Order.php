@@ -446,6 +446,7 @@ class order extends Sximo
         $data['orderProductIdArray'] = '';
         $data['itemNameArray'] = "";
         $data['skuNumArray'] = "";
+        $data['qtyPerCase'] = "";
         $data['itemCasePrice'] = "";
         $data['itemRetailPrice'] = "";
         $data['gameIdsArray']="";
@@ -480,7 +481,7 @@ class order extends Sximo
             $data['prefill_type'] = 'clone';
             $content_query = \DB::select('SELECT  O.id as order_content_id,O.upc_barcode,
             if((g.game_name is null or g.game_name = ""),gt.game_title,g.game_name) as game_name, O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku
-												,O.item_received as item_received,O.game_id FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
+												,O.item_received as item_received,O.game_id,O.qty_per_case FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
 												  LEFT JOIN game g ON g.id = O.game_id
 												  left join game_title gt on gt.id = g.game_title_id
 												  WHERE O.order_id = ' . $order_id);
@@ -507,6 +508,7 @@ class order extends Sximo
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
                     $skuNumArray[] = $row->sku;
+                    $qtyPerCase[] = $row->qty_per_case;
                     $orderitemcasepriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, self::ORDER_PERCISION, false);
                     $orderUpcBarcodeArray[] = $row->upc_barcode;
                     $orderretailpriceArray[] = \CurrencyHelpers::formatPrice($row->retail_price, self::ORDER_PERCISION, false);
@@ -528,6 +530,7 @@ class order extends Sximo
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
                 $data['skuNumArray'] = $skuNumArray;
+                $data['qtyPerCase'] = $qtyPerCase;
                 $data['orderUpcBarcodeArray'] = $orderUpcBarcodeArray;
                 $data['orderProductIdArray'] = $orderProductIdArray;
                 $data['gamenameArray'] = $ordergamenameArray;
@@ -603,6 +606,7 @@ class order extends Sximo
 											  R.location_id,
 											  L.company_id,
 											  P.prod_type_id,
+											  P.num_items,
 										  TRUNCATE(SUM(R.qty*P.case_price),5) AS total,
 									   CONCAT(P.vendor_description," (SKU-",P.sku,")",IF(R.notes = "", "", CONCAT(" **note: ",R.notes,"**"))) AS description
 										 FROM requests R
@@ -631,6 +635,7 @@ class order extends Sximo
                     $orderQtyArray[] = $query[0]->qty;
 
                     $skuNumArray[] = $query[0]->sku;
+                    $qtyPerCase[] = $query[0]->num_items;
                     $orderProductIdArray[] = $query[0]->product_id;
                     //   $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
                     $item_name_array[] = $query[0]->vendor_description;
@@ -647,6 +652,7 @@ class order extends Sximo
                 $data['orderRequestIdArray'] = $orderRequestIdArray;
                 $data['itemNameArray'] = $item_name_array;
                 $data['skuNumArray'] = $skuNumArray;
+                $data['qtyPerCase'] = $qtyPerCase;
                 $data['itemCasePrice'] = $item_case_price;
                 $data['requests_item_count'] = $item_count-1;
                 $data['today'] = date('m/d/y');
