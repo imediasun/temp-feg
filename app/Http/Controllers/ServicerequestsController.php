@@ -91,6 +91,7 @@ class servicerequestsController extends Controller
 
         // rebuild search query skipping 'ticket_custom_type' filter
         $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
