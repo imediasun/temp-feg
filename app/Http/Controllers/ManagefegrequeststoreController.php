@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\location;
 use App\Models\Managefegrequeststore;
 use App\Models\Sximo;
 use Illuminate\Http\Request;
@@ -275,6 +276,14 @@ class ManagefegrequeststoreController extends Controller
             $cond = array('view' => $view, 'order_type_id' => $this->data['TID'], 'location_id' => $this->data['LID'], 'vendor_id' => $this->data['VID']);
             $this->data['view'] = $view;
             $results = $this->model->getRows($params, $cond);
+            foreach ($results['rows'] as $row){
+                $fedex_number = "";
+                $location = location::find($row->location_id);
+                if($location)
+                    $fedex_number = $location->fedex_number ? $location->fedex_number : "";
+
+                $row->fedex_number = $fedex_number;
+            }
             $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
             // Build pagination setting
@@ -371,6 +380,12 @@ class ManagefegrequeststoreController extends Controller
 
         $row = $this->model->getRow($id);
         if ($row) {
+            $fedex_number = "No Data";
+            $location = location::find($row->location_id);
+            if($location)
+                $fedex_number = $location->fedex_number ? $location->fedex_number : "No Data";
+
+            $row->fedex_number = $fedex_number;
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('requests');

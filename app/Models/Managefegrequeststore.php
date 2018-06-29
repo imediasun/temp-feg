@@ -16,6 +16,12 @@ class managefegrequeststore extends Sximo
 
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function location(){
+        return $this->belongsTo(location::class);
+    }
     public static function querySelect()
     {
 

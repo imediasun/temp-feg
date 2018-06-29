@@ -86,6 +86,12 @@ class order extends Sximo
         return $this->hasMany('App\Models\OrderContent');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function location(){
+        return $this->belongsTo(location::class);
+    }
     public function restoreReservedProductQuantities(){
         if($this->is_freehand === 1){
             return ;

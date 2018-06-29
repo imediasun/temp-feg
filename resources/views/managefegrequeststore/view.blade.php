@@ -61,6 +61,12 @@
                         <td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name',$nodata['location_id']) !!} </td>
 
 					</tr>
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ Lang::get('core.fedex_number')}}
+						</td>
+                        <td>{!! $row->fedex_number !!} </td>
+					</tr>
 
 					<tr>
 						<td width='30%' class='label-view text-right'>

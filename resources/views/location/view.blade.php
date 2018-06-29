@@ -44,6 +44,10 @@
                             <td><h4> {{ DateHelpers::formatStringValue($row->location_name_short,$nodata['location_name_short']) }} </h4></td>
                         </tr>
                         <tr>
+                            <td colspan="1"><h3>{{ Lang::get('core.fedex_number') }}</h3></td>
+                            <td><h4> {{ DateHelpers::formatStringValue($row->fedex_number,$nodata['fedex_number']) }} </h4></td>
+                        </tr>
+                        <tr>
                             <td colspan="1"><h3>Shipping Restrictions:</h3></td>
                             <td><h4> {{ DateHelpers::formatStringValue($row->loading_info,$nodata['loading_info'])}} </h4></td>
                         </tr>

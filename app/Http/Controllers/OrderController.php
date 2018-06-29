@@ -9,6 +9,7 @@ use App\Http\Controllers\controller;
 use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\location;
 use App\Models\Order;
 use App\Models\product;
 use App\Models\OrderSendDetails;
@@ -415,8 +416,13 @@ class OrderController extends Controller
             if ($this->access['is_edit'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-        $row = $this->model->find($id);
+        $row = $this->model->with([
+           'location' => function($query){
+               return $query->select('id', 'fedex_number');
+           }
+        ])->find($id);
         if ($row) {
+            $row->fedex_number =  $row->location ? $row->location->fedex_number ? $row->location->fedex_number : 'No Data' : 'No Data';
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
@@ -443,8 +449,17 @@ class OrderController extends Controller
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+//------  Removed this query and Added the following lines used in these eloquent
+//        $row = $this->model->getRow($id);
 
-        $row = $this->model->getRow($id);
+        $row = $this->model->with([
+            'location' => function($query){
+                return $query->select('id', 'fedex_number');
+            }
+        ])->find($id);
+
+        $row->fedex_number = $row->location ? $row->location->fedex_number ? $row->location->fedex_number : 'No Data' : 'No Data';
+
         if ($row) {
             $this->data['row'] = $row;
         } else {
@@ -1427,6 +1442,13 @@ class OrderController extends Controller
             $mode = $_GET['mode'];
         }
         $data = $this->model->getOrderData($order_id, $this->data['pass']);
+        $row = $this->model->with([
+            'location' => function($query){
+                return $query->select('id', 'fedex_number');
+            }
+        ])->find($order_id);
+
+        $data[0]['fedex_number'] = $row->location ? $row->location->fedex_number : null;
         if (empty($data)) {
 
         } else {
@@ -1685,8 +1707,11 @@ class OrderController extends Controller
         $location_id = $request->get('location_id');
         $po = $request->get('po');
         $po_full = $po_1 . '-' . $po_2 . '-' . $po_3;
-        return $this->validatePO($po, $po_full, $location_id);
-
+        $location =  location::find($location_id);
+        return [
+            'po_3'          =>  $this->validatePO($po, $po_full, $location_id),
+            'fedex_number'  =>  $location ? $location->fedex_number ? $location->fedex_number : 'No Data' : 'No Data'
+        ];
     }
 
     function validatePO($po, $po_full, $location_id)

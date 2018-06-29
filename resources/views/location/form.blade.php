@@ -248,6 +248,17 @@
                         </div>
                     </div>
                     <div class="form-group  ">
+                        <label for="FedEx No." class=" control-label col-md-4 text-left">
+                            {!! Lang::get('core.fedex_number')  !!}
+                        </label>
+                        <div class="col-md-6">
+                            {!! Form::text('fedex_number', $row['fedex_number'], array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group  ">
                         <label for="ATTN" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Attention', (isset($fields['attn']['language'])? $fields['attn']['language'] : array())) !!}
                         </label>
