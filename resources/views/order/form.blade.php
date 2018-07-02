@@ -325,6 +325,7 @@
                         <th width="90">Quantity</th>
                         <th class="game" style="display:none" width="200">Game</th>
                         <th width="90">Total ( $ )</th>
+                        <th width="90">Broken Case</th>
                         <th width="60" align="center"><span id="remove-col">Remove </span></th>
 
 
@@ -383,6 +384,11 @@
 
                         <td><br/><input type="text" name="total" value="" placeholder="0.00" readonly
                                         class="form-control fixDecimal"/></td>
+                        <td class="icheck">
+                            <br />
+                            <input type="checkbox" class="broken-case" name="broken_case[]" value='1'>
+                            <input type="hidden" name="broken_case_value[]" value='0'>
+                        </td>
                         <td align="center" class="remove-container"><br/>
 
                             <p id="hide-button" data-id=""
@@ -499,8 +505,8 @@
         var show_freehand = <?php echo $show_freehand  ; ?>;
         var mode = "{{ $data['prefill_type'] }}";
         var forceRemoveOrderContentIds = [];
-        console.log(type_permissions);
-        console.log('Createing order '+show_freehand);
+        //console.log(type_permissions);
+        //console.log('Createing order '+show_freehand);
         $(document).ready(function () {
 
             if(mode == 'SID'){
@@ -559,32 +565,30 @@
                 $("#ship_address").hide();
         }
         function calculateSum() {
-            //console.log('Calculating Sum');
+            ////console.log('Calculating Sum');
             var Subtotal = 0.00;
             var Price = 0.00;
+
             $('table tr.clone ').each(function (i) {
+
                 Qty = $(this).find("input[name*='qty']").val();
                 unitPrice = $(this).find("input[name*='price']").val();
                 casePrice = $(this).find("input[name*='case_price']").val();
                 orderType=$("#order_type_id").val();
+                isBrokenCase = parseInt($(this).find("input[name*='broken_case_value']").val());
 
                 // if order type is Instant Win prizes=8, redemption prizes=7,Office Supplies=6
-                if($.inArray(parseInt(orderType),case_price_categories) != -1)
-                {
+                if(isBrokenCase) {
+                    Price = unitPrice;
+                } else if($.inArray(parseInt(orderType),case_price_categories) != -1) {
                      Price = casePrice;
-                }
-                else if($.inArray(parseInt(orderType),case_price_if_no_unit_categories) != -1)
-                {
-
-                     Price=(unitPrice == 0)?casePrice:unitPrice;
-
-                }
-                else
-                {
+                } else if($.inArray(parseInt(orderType),case_price_if_no_unit_categories) != -1) {
+                     Price = (unitPrice == 0) ? casePrice : unitPrice;
+                } else {
                     Price = unitPrice;
                 }
                 sum = (Qty * Price).toFixed(6);
-                console.log("sum calculated "+sum);
+                //console.log("sum calculated "+sum);
                 Subtotal += parseFloat(sum);
                 //sum = sum.toFixed(PRECISION);
                 $(this).find("input[name*='total']").val(sum);
@@ -598,7 +602,7 @@
             $("#total_cost").blur();
         }
         var games_options_js = "{{ json_encode($games_options) }}";
-        //console.log(JSON.stringify(games_options_js));
+        ////console.log(JSON.stringify(games_options_js));
         games_options_js = games_options_js.replace(/&amp;/g, '&');
         games_options_js = games_options_js.replace(/&#039;/g, "'");
         games_options_js = games_options_js.replace(/\\/g, "\\\\");
@@ -636,7 +640,7 @@
                             }
                         });
                     }else{
-                        console.log('Current item ('+id+') not received yet removing it ');
+                        //console.log('Current item ('+id+') not received yet removing it ');
                         if (counter <= 1) {
                             beforeLastRemove(id);
                         }else{
@@ -678,10 +682,10 @@
     
             /*App.ajax.submit(siteUrl+'/managefegrequeststore/deny',
                     {data:{request_id: rid}, blockUI:true, method: 'POST'});*/
-            console.log('request id to remove = '+rid);
+            //console.log('request id to remove = '+rid);
             if(rid != '' && rid != undefined && rid != ' ')
             {
-                console.log('removing request id from blocked list = '+rid);
+                //console.log('removing request id from blocked list = '+rid);
                 removeItemURL(rid);
 
                 /*$.ajax({
@@ -692,10 +696,10 @@
                     }
                 })
                 .success(function (data) {
-                    console.log(data);
+                    //console.log(data);
                 })
                 .error(function (data) {
-                    console.log(data);
+                    //console.log(data);
                 });*/
             }
 
@@ -717,6 +721,7 @@
 
         }
         $(document).ready(function () {
+
             numberFieldValidationChecks($("input[name^=qty]"));
             var inc = 1;
             hideShowAltLocation();
@@ -777,7 +782,7 @@
 
             });
             $('.selectpicker').selectpicker();
-            $('.addC').relCopy({});
+            //$('.addC').relCopy({});
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
@@ -812,14 +817,66 @@
                     return false;
 
                 } else {
-                    console.log("parsley validation error");
+                    //console.log("parsley validation error");
                     return false;
                 }
             });
+
+            $("#add_new_item").click(function () {
+                ///window.ParsleyUI.removeError($("input").pars‌​ley(), 'required');
+                // $('input[name^=price],input[name^=case_price],input[name^=qty]').parsley().reset();
+
+                addProductRow();
+                handleItemCount('add');
+                setTimeout(function () {
+                    var item = $(".item_name").last();
+                    if (Number(item.attr("freehand")) == 0) {
+                        $(".item_name").last().attr("onfocus", "init(this.id,this);");
+                        $('.item_name').last().removeAttr('readonly');
+                    }
+                }, 500);
+                var gameDropDown = $('.game_dropdown').last().find('.select2-container').first();
+                $(gameDropDown).css('display','none');
+                $(".calculate").keyup(function () {
+                    calculateSum();
+                }).blur(function () {
+                    calculateSum();
+                });
+                var location_id = $("#location_id").val();
+                if (location_id != 0) {
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ url() }}/order/games-dropdown",
+                        data: {'location': location_id},
+                        success: function (data) {
+                            games_options_js = data;
+                            renderDropdown($("[id^=game_]"), {
+                                dataType: 'json',
+                                data: {results: data},
+                                placeholder: "For Various Games", width: "100%"
+                            });
+                        }
+                    });
+
+                }
+                else {
+                    renderDropdown($("[id^=game_]"), {
+                        dataType: 'json',
+                        data: {results: games_options_js},
+                        placeholder: "For Various Games", width: "100%"
+                    });
+                }
+                $("[name^=qty]").keypress(isNumeric);
+                reInitParcley();
+
+            });
+
+
             var requests_item_count = <?php echo json_encode($data['requests_item_count']) ?>;
             var order_description_array = <?php echo json_encode($data['orderDescriptionArray']) ?>;
             var order_price_array = <?php echo json_encode($data['orderPriceArray']) ?>;
             var order_qty_array = <?php echo json_encode($data['orderQtyArray']) ?>;
+            var order_is_broken_case_array = <?php echo json_encode($data['brokenCaseArray']) ?>;
             var order_content_id_array = <?php echo json_encode($data['order_content_id']) ?>;
             var order_qty_received_array = <?php echo json_encode($data['receivedItemsArray']) ?>;
             var order_product_id_array = <?php echo json_encode($data['orderProductIdArray']) ?>;
@@ -831,6 +888,8 @@
             var item_case_price =<?php echo json_encode($data['itemCasePrice']) ?>;
             var item_retail_price =<?php echo json_encode($data['itemRetailPrice'])?>;
             var item_total = 0;
+
+
             for (var i = 0; i < requests_item_count; i++) {
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
@@ -858,6 +917,16 @@
                     $('input[name^=game]').eq(i).val(game_ids_array[i]);
 
                 }
+
+                let isBrokenCase = order_is_broken_case_array[i] ? true : false;
+                let isBrokenCaseValue = order_is_broken_case_array[i] ? 1 : 0;
+
+                //console.log('!!!!!!!!!!!!!!!!!!!!!!!!!');
+                //console.log(isBrokenCase);
+                //console.log($('input[name^=broken_case]').eq(i).length);
+
+                $('.broken-case').eq(i).prop('checked', isBrokenCase);
+                $('input[name^=broken_case_value]').eq(i).val(isBrokenCaseValue);
 
                 if (order_qty_array[i] == "" || order_qty_array[i] == null) {
                     $('input[name^=qty]').eq(i).val(00);
@@ -901,10 +970,10 @@
                     $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
 
                 }
+
                 if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
                 {
-
-                    $("#add_new_item").trigger("click");
+                    $("#add_new_item").click();
                 }
 
             }
@@ -912,6 +981,29 @@
             {
                 counter=requests_item_count;
             }
+
+
+            $(document).on('icheck', function(){
+                $('input[type=checkbox], input[type=radio]').iCheck({
+                    checkboxClass: 'icheckbox_square-blue',
+                    radioClass: 'iradio_square-blue'
+                });
+            }).trigger('icheck');
+
+
+            $(document).on("ifChanged", ".broken-case", function(event) {
+                //$(event.target).trigger('change');
+                let checked = $(event.target).prop('checked');
+                let isChecked = checked ? 1 : 0;
+                $(event.target).prop('checked', checked);
+                $(event.target).closest('td').find('input[type=hidden]').val(isChecked);
+                calculateSum();
+            });
+
+            $(document).on("change", ".broken-case", function(event) {
+
+            });
+
 
             $(".calculate").keyup(function () {
                 calculateSum();
@@ -970,7 +1062,7 @@
             $('.ajaxLoading').hide();
             clearTimeout(hidePopup);
             clearTimeout(showFirstPopup);
-            console.log('timeoutcleared');
+            //console.log('timeoutcleared');
             if (data.status == 'success') {
                 notyMessage(data.message);
                 ajaxViewChange("#order", data.saveOrSendContent);
@@ -1027,7 +1119,7 @@
             vendor = $(this);
             if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
             {
-                console.log('vendorChangeCount > 1');
+                //console.log('vendorChangeCount > 1');
                 if($('#item_name').val()) {
                     $('#submit_btn').attr('disabled','disabled');
                     App.notyConfirm({
@@ -1060,7 +1152,7 @@
 
                             if(vendor.attr('lastSelected'))
                             {
-                                console.log('selecting lastSelected');
+                                //console.log('selecting lastSelected');
 
                                 $('#vendor_id option[value = '+vendor.attr('lastSelected')+']').attr('selected', true);
                                 vendorChangeCount = 1;
@@ -1069,7 +1161,7 @@
                             }
                             else
                             {
-                                console.log('no previous vendor selected');
+                                //console.log('no previous vendor selected');
                                 $('#vendor_id option').removeAttr('selected');
                                 vendorChangeCount = 1;
                                 vendor.trigger("change");
@@ -1081,7 +1173,7 @@
                 }
                 else
                 {
-                    console.log('in else vendorChangeCount');
+                    //console.log('in else vendorChangeCount');
                     $.ajax({
                         type: "GET",
                         url: "{{ url() }}/order/bill-account",
@@ -1108,7 +1200,7 @@
                 });
             }
             }else{
-                console.log('free hand order');
+                //console.log('free hand order');
                 $.ajax({
                     type: "GET",
                     url: "{{ url() }}/order/bill-account",
@@ -1215,7 +1307,7 @@
             if($.inArray(parseInt(selected_type),type_permissions) != -1 && show_freehand)
             {
                 $('#can-freehand').show();
-                console.log('I have permission for order type ' + selected_type);
+                //console.log('I have permission for order type ' + selected_type);
             }
             else if($(this).val() && show_freehand)
             {
@@ -1243,7 +1335,7 @@
 
                                 if(orderType.attr('lastSelected'))
                                 {
-                                    console.log('selecting lastSelected order type');
+                                    //console.log('selecting lastSelected order type');
 
                                     $('#order_type_id option[value = '+orderType.attr('lastSelected')+']').attr('selected', true);
                                     orderType.trigger("change");
@@ -1260,7 +1352,7 @@
             else
             {
                 $('#can-freehand').hide();
-                console.log("I don't have any permission");
+                //console.log("I don't have any permission");
             }
             gameShowHide();
             calculateSum();
@@ -1282,53 +1374,32 @@
             //}
         }
 
-        $("#add_new_item").click(function () {
-            ///window.ParsleyUI.removeError($("input").pars‌​ley(), 'required');
-            // $('input[name^=price],input[name^=case_price],input[name^=qty]').parsley().reset();
 
-            handleItemCount('add');
-            setTimeout(function () {
-                var item = $(".item_name").last();
-                if (Number(item.attr("freehand")) == 0) {
-                    $(".item_name").last().attr("onfocus", "init(this.id,this);");
-                    $('.item_name').last().removeAttr('readonly');
-                }
-            }, 500);
-            var gameDropDown = $('.game_dropdown').last().find('.select2-container').first();
-            $(gameDropDown).css('display','none');
-            $(".calculate").keyup(function () {
-                calculateSum();
-            }).blur(function () {
-                calculateSum();
+        var productRows = $('.itemstable tbody tr').length;
+        function addProductRow() {
+            let clone = $('.itemstable tbody tr:first').clone();
+            let newtrID = clone.prop('id') + productRows;
+            clone.prop('id', newtrID)
+            $(clone).find('input:text, input[type=number], textarea').each(function(){
+                $(this).val("");
             });
-            var location_id = $("#location_id").val();
-            if (location_id != 0) {
-                $.ajax({
-                    type: "GET",
-                    url: "{{ url() }}/order/games-dropdown",
-                    data: {'location': location_id},
-                    success: function (data) {
-                        games_options_js = data;
-                        renderDropdown($("[id^=game_]"), {
-                            dataType: 'json',
-                            data: {results: data},
-                            placeholder: "For Various Games", width: "100%"
-                        });
-                    }
-                });
+            $(clone).find('.hide-button').prop('id', 'hide-button' + productRows);
 
-            }
-            else {
-                renderDropdown($("[id^=game_]"), {
-                    dataType: 'json',
-                    data: {results: games_options_js},
-                    placeholder: "For Various Games", width: "100%"
-                });
-            }
-            $("[name^=qty]").keypress(isNumeric);
-            reInitParcley();
+            $(clone).find('input:checkbox').prop('checked', false);
+            let checkboxClone = $(clone).find('.icheck input:checkbox').clone();
+            $(clone).find('.icheck').html('<br /><input type="hidden" name="broken_case_value[]" value="0">');
+            $(clone).find('.icheck').append(checkboxClone);
 
-        });
+            $('.itemstable tbody').append(clone);
+
+            productRows = productRows + 1;
+
+            $('.itemstable tbody tr:last').find('.icheck input[type=checkbox]').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue'
+            });
+        }
+
         function isNumeric(ev) {
             var keyCode = window.event ? ev.keyCode : ev.which;
             //codes for 0-9
@@ -1345,6 +1416,7 @@
             //   $("input.parsley-error").css('border-color','#e5e6e7!important');
             $('#ordersubmitFormAjax').parsley().destroy();
             $('#ordersubmitFormAjax').parsley();
+
         }
 
         function decreaseCounter() {
@@ -1364,7 +1436,7 @@
              }
              $('input[name^=item_num]').each(function () {
              if(mode == "add") {
-             console.log(counter);
+             //console.log(counter);
              counter = counter + 1;
              $('input[name^=item_num]').eq(counter-1).val(counter);
 
@@ -1375,7 +1447,7 @@
              counter = counter-1;
              $('input[name^=item_num]').eq(counter-1).val(counter);
 
-             console.log(counter);
+             //console.log(counter);
              }
 
              });*/
@@ -1385,7 +1457,7 @@
         }
         function showPopups()
         {
-            console.log('settingtimeout');
+            //console.log('settingtimeout');
             showFirstPopup = setTimeout(function () {
                 App.notyConfirm({
                     message: "You have not saved your order yet , Do you want to cancel this order!",
@@ -1401,14 +1473,14 @@
                             url:"{{route('add_more_blocked_time')}}",
                             data:{requestIds:requestIds}
                         }).success(function (data) {
-                            console.log(data);
+                            //console.log(data);
                             clearTimeout(hidePopup);
-                            console.log('timeoutcleared');
+                            //console.log('timeoutcleared');
                             var settimeout =  showPopups();
-                            console.log(settimeout);
+                            //console.log(settimeout);
                         })
                             .error(function (data) {
-                                console.log(data);
+                                //console.log(data);
                             })
                     }
                 });
@@ -1426,7 +1498,7 @@
         ?>
 
                    var settimeout =  showPopups();
-                   console.log(settimeout);
+                   //console.log(settimeout);
 
         <?php
             }
@@ -1451,15 +1523,20 @@
     </style>
     <script>
         function init(id, obj) {
+
             var cache = {}, lastXhr;
             var trid = $(obj).closest('tr').attr('id');
-            var skuid = $("#" + trid + "  input[id^='sku_num']").attr('id');
-            var priceid = $("#" + trid + "  input[id^='price']").attr('id');
-            var casepriceid = $("#" + trid + "  input[id^='case_price']").attr('id');
-            var qtyid = $("#" + trid + "  input[id^='qty']").attr('id');
-            var itemid = $("#" + trid + "  textarea[name^=item]").attr('id');
-            var retailpriceid = $('#' + trid + "  input[name^=retail]").attr('id');
-            var selectorProductId = $('#' + trid + "  input[name^=product_id]").attr('id');
+
+
+            //console.log(trid, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+
+            var skuid = $("#" + trid + "  input[id^='sku_num']");
+            var priceid = $("#" + trid + "  input[id^='price']");
+            var casepriceid = $("#" + trid + "  input[id^='case_price']");
+            var qtyid = $("#" + trid + "  input[id^='qty']");
+            var itemid = $("#" + trid + "  textarea[name^=item]");
+            var retailpriceid = $('#' + trid + "  input[name^=retail]");
+            var selectorProductId = $('#' + trid + "  input[name^=product_id]");
             var casePerQuantityId = $('#' + trid + " input[id^=case_per_quantity]").attr('id');
             if(($('#is_freehand').val() == 0))
             {
@@ -1505,6 +1582,7 @@
                                 // $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
 
                             }
+
                             if (xhr === lastXhr) {
                                 response(data);
                             }
@@ -1520,8 +1598,6 @@
                             dataType: 'json',
                             data: {'product_id': ui.item.id},
                             success: function (result) {
-                                console.log("loading order contents.....");
-                                console.log(result);
                                 if (result.unit_price == 0 && result.case_price == 0) {
                                     notyMessageError("Retail Price and Case Price Unavailable...");
                                     exit;
@@ -1531,33 +1607,33 @@
                                     $("#"+casePerQuantityId).val(result.qty_per_case);
                                 }
                                 if (result.sku) {
-                                    $("#" + skuid).val(result.sku);
+                                    $(skuid).val(result.sku);
                                 }
                                 else {
-                                    $("#" + skuid).val('N/A');
+                                    $(skuid).val('N/A');
                                 }
 
                                 if (result.unit_price) {
-                                    $("#" + priceid).val(result.unit_price);
+                                    $(priceid).val(result.unit_price);
                                 }
                                 else {
-                                    $("#" + priceid).val(0.00);
+                                    $(priceid).val(0.00);
                                 }
                                 if (result.case_price) {
-                                    $("#" + casepriceid).val(result.case_price);
+                                    $(casepriceid).val(result.case_price);
                                 }
                                 else {
-                                    $("#" + casepriceid).val(0.00);
+                                    $(casepriceid).val(0.00);
                                 }
                                 if (result.retail_price) {
-                                    $("#" + retailpriceid).val(result.retail_price);
+                                    $(retailpriceid).val(result.retail_price);
                                 }
                                 else {
-                                    $("#" + casepriceid).val(0.00);
+                                    $(casepriceid).val(0.00);
                                 }
-                                $("#" + itemid).val(result.item_description);
-                                $("#" + selectorProductId).val(result.id);
-                                $("#" + qtyid).val(0.00);
+                                $(itemid).val(result.item_description);
+                                $(selectorProductId).val(result.id);
+                                $(qtyid).val(0.00);
                                 calculateSum();
                             }
                         });
@@ -1613,7 +1689,7 @@
         });
         function reloadOrder(redirectToClickedItem) {
             redirectToClickedItem = redirectToClickedItem || 0;
-            console.log('redirectToClickedItem = ' + redirectToClickedItem);
+            //console.log('redirectToClickedItem = ' + redirectToClickedItem);
             var requestIds = $('#where_in_expression').val();
             if(requestIds)
             {
@@ -1625,7 +1701,7 @@
                     }
                 })
                     .success(function (data) {
-                        console.log(data);
+                        //console.log(data);
                         var moduleUrl = '{{ $pageUrl }}',
                             redirect = "{{ \Session::get('redirect') }}",
                             redirectLink = "{{ url() }}/" + redirect;
@@ -1643,7 +1719,7 @@
                         }
                     })
                     .error(function (data) {
-                        console.log(data);
+                        //console.log(data);
                     })
             }
             else
@@ -1782,7 +1858,6 @@
 
     <script>
     $(document).ready(function () {
-        
         $(".exposeAPI").on('click', function() {
             return false; //Functionality removed!
 
@@ -1826,7 +1901,7 @@
         }
         $("#denied_SIDs").val($("#denied_SIDs").val()+','+id);
         getNotesOfSIDProducts();
-        console.log(sid_uri);
+        //console.log(sid_uri);
     }
 
     function reAssignSubmit() {
@@ -1841,10 +1916,10 @@
                 }
             })
             .success(function (data) {
-                console.log(data);
+                //console.log(data);
             })
             .error(function (data) {
-                console.log(data);
+                //console.log(data);
             })
         }
     }
@@ -1911,7 +1986,7 @@
             $('#notes').val(notes);
         })
         .error(function (data) {
-            console.log(data);
+            //console.log(data);
         })
     }
 
@@ -1923,7 +1998,7 @@
     });
 
     $(document).on("blur", ".fixDecimal", function () {
-        console.log("blur of .fixDecimal value :"+ $(this).val());
+        //console.log("blur of .fixDecimal value :"+ $(this).val());
         $(this).val($(this).fixDecimal());
     });
 

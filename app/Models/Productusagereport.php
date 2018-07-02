@@ -158,7 +158,8 @@ class productusagereport extends Sximo  {
             }
             $excludedOrders = self::excludeOrderFromProductUsageAndMerchandiseExpense();
                 $mainQuery = "SELECT UUID() as unique_column, max(OCID) as OCID,
-            max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
+            max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ') as orderId,max(orderId) as maxOrderId, max(sku) as sku, 
+            max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ') AS Order_Type,
             prod_type_id,prod_sub_type_id,
             GROUP_CONCAT(DISTINCT product_type ORDER BY product_type SEPARATOR ' , ') AS Product_Type,
@@ -166,7 +167,15 @@ class productusagereport extends Sximo  {
             vendor_id,Product,max(ticket_value) as ticket_value
             , Unit_Price,
             SUM(qty) AS Cases_Ordered,
-            Case_Price,SUM(IF(prod_type_id IN (".$casePriceCats."),(Case_Price * qty),(Unit_Price*qty))) AS Total_Spent,
+            Case_Price,SUM(IF(
+                is_broken_case, 
+                (qty/num_items*Case_Price), 
+                (IF(
+                    prod_type_id NOT IN (".$casePriceCats."),
+                    (Unit_Price*qty), 
+                    (Case_Price * qty)
+                    )
+                ))) AS Total_Spent,
             TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS OC_Total_Spent,
             location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR $separator) as location_name,
             start_date,end_date
@@ -174,6 +183,7 @@ class productusagereport extends Sximo  {
             Select O.id as orderId,
                    P.id,
                    OC.id as OCID,
+                   OC.`is_broken_case`,
                    IF(P.sku = '' OR P.sku IS NULL,OC.sku,P.sku) AS sku,
                    IF(P.vendor_id = '' OR P.vendor_id IS NULL,O.vendor_id,P.vendor_id) AS vendor_id,
                    OC.item_name AS Product,

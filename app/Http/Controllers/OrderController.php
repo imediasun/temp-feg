@@ -289,7 +289,6 @@ class OrderController extends Controller
         //\Session::put('params',$params);
         $results = $this->model->getRows($params, $order_selected);
 
-
         foreach ($results['rows'] as &$rs) {
             $result = $this->model->getProductInfo($rs->id);
             $info = '';
@@ -436,8 +435,6 @@ class OrderController extends Controller
 
     public function getShow($id = null)
     {
-
-
         $this->data['case_price_permission'] = $this->pass['calculate price according to case price'];
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
@@ -664,6 +661,7 @@ class OrderController extends Controller
             $casePriceArray = $request->get('case_price');
             $priceArray = $request->get('price');
             $qtyArray = $request->get('qty');
+            $brokenCaseArray = $request->get('broken_case_value');
             $productIdArray = $request->get('product_id');
             $requestIdArray = $request->get('request_id');
             $order_content_id = $request->get('order_content_id');
@@ -675,9 +673,15 @@ class OrderController extends Controller
             $po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
 
+
+
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
-                if (in_array($order_type, $case_price_categories)) {
+
+                $isBrokenCase = isset($brokenCaseArray[$i]) ? $brokenCaseArray[$i] : 0;
+                if($isBrokenCase) {
+                    $itemsPriceArray[] = $priceArray[$i];
+                } else if (in_array($order_type, $case_price_categories)) {
                     $itemsPriceArray[] = $casePriceArray[$i];
                 } elseif (in_array($order_type, $case_price_if_no_unit_categories)) {
                     $itemsPriceArray[] = ($priceArray[$i] == 0.00) ? $casePriceArray[$i] : $priceArray[$i];
@@ -806,6 +810,8 @@ class OrderController extends Controller
                     $game_id = '0';
                 }
 
+                $isBrokenCase = isset($brokenCaseArray[$i]) ? $brokenCaseArray[$i] : 0;
+
                 if (empty($item_received[$i])) {
                     $items_received_qty = '0';
                 } else {
@@ -843,8 +849,11 @@ class OrderController extends Controller
                     'qty_per_case' => $qty_per_case,
                     'ticket_value' => $prodTicketValue,
                     'vendor_id' => $prodVendorId,
+                    'is_broken_case' => $isBrokenCase,
                     'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
+
+
                 if(!empty($upc_barcode)){
                     $contentsData['upc_barcode'] = $upc_barcode;
                 }
