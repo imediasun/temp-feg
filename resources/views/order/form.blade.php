@@ -202,7 +202,7 @@
                             {{ Lang::get('core.fedex_number') }}
                         </label>
                         <div class="col-md-8">
-                            <input name='fedex_number' id='fedex_number' readonly="readonly" style="width: 100%;" value="{{ is_object($row) ? $row->fedex_number  : 'No Data' }}">
+                            <input name='fedex_number' id='fedex_number' class="form-control" value="{{ is_object($row) ? $row->fedex_number  : 'No Data' }}" readonly/>
                         </div>
                     </div>
                     <div class="form-group">
