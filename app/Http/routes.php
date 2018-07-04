@@ -102,7 +102,8 @@ Route::group(['middleware' => 'auth'], function()
     });
     //route to modify whitespaces vendor_description in products table
     Route::get('modify', 'ProductController@getModify');
-
+    // change to get-product-subtype
+    Route::get('product/get-product-subtype', 'ProductController@getProductSubtype');
     Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
     Route::get('ticketsetting','TicketsettingController@getSetting');
     Route::get('ordersetting', 'OrdersettingController@getSetting');

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Product;
+use App\Models\ProductType;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -1180,5 +1181,29 @@ GROUP BY mapped_expense_category");
                 GROUP BY mapped_expense_category";
         $result = \DB::select($sql);
         return $result;
+    }
+
+    /**
+     * This method accepts the comma separated string of ids of productTypes and returns
+     * all of the productSubTypes related to these types for the select box.
+     * ---------------------------------------------------------------------------------
+     * @return mixed
+     */
+    public function getProductSubtype(){
+
+        $commaSeparatedProductType =  request()->get('product_type_id');
+        $productTypes = [];
+
+        if(str_contains($commaSeparatedProductType, ',')){
+            $productTypes = explode(',', $commaSeparatedProductType);
+        }else{
+            array_push($productTypes, $commaSeparatedProductType);
+        }
+        //create model and relations
+        $productSubtypes = ProductType::select('product_type', 'id')->whereIn('request_type_id', $productTypes)->get();
+
+        return $productSubtypes;
+
+
     }
 }

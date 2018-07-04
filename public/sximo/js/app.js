@@ -1283,3 +1283,41 @@ $(document).ready(function(){
         }
     }
 });
+//need to fix notiation to camel case notation
+function getProductSubTypes(productTypeId, productSubTypeSelectorArray, selectBox){
+    $.ajax({
+        url: 'product/get-product-subtype?product_type_id='+productTypeId,
+        method: 'GET',
+        success: function(result){
+            $.each(productSubTypeSelectorArray, function (key, productSubTypeNameAttr) {
+                var productSubType = selectBox.closest('div:has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]');
+                populateProductSubTypeSelect(productSubType, result);
+            })
+        }
+    })
+}
+function populateProductSubTypeSelect(productSubType, result){
+    if(productSubType.length > 0){
+        productSubType.empty();
+        $.each(result, function (i, item) {
+            productSubType.append($('<option>', {
+                value: item.id,
+                text : item.product_type
+            }));
+        });
+    }
+}
+$(document).on('change', 'select' ,function () {
+    //package all these lines in function
+    var nameOfSelectBox = $(this).attr('name');
+    var productTypeId = $(this).val();
+    var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type']
+    if(productTypeSelectorsNames.indexOf(nameOfSelectBox) != -1){
+        var productSubTypeSelectors = [
+            "prod_sub_type_id",
+            "Product_Sub_Type",
+            "product_type"
+        ];
+        getProductSubTypes(productTypeId, productSubTypeSelectors, $(this));
+    }
+});

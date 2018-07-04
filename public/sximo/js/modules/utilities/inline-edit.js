@@ -637,16 +637,16 @@
         container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P', autoclose: true});
 
         renderDropdown(container.find('.sel-inline'),{width:"98%"});
-        container.find('.prod_type_id').change(function(){
-            var elm = $(this),
-                value = elm.val(),
-                productSubTypeComboDataUrl = url + "/product/comboselect?filter=product_type:id:type_description:request_type_id:" + value,
-                productSubTypeInput = cellsHookParams.row.find('select.prod_sub_type_id:first');
-            
-            productSubTypeInput.jCombo(productSubTypeComboDataUrl);
-            productSubTypeInput.select2('destroy');
-            renderDropdown(productSubTypeInput,{width:"98%"});
-        });
+        // container.find('.prod_type_id').change(function(){
+        //     var elm = $(this),
+        //         value = elm.val(),
+        //         productSubTypeComboDataUrl = url + "/product/comboselect?filter=product_type:id:type_description:request_type_id:" + value,
+        //         productSubTypeInput = cellsHookParams.row.find('select.prod_sub_type_id:first');
+        //
+        //     productSubTypeInput.jCombo(productSubTypeComboDataUrl);
+        //     productSubTypeInput.select2('destroy');
+        //     renderDropdown(productSubTypeInput,{width:"98%"});
+        // });
 
         App.autoCallbacks.runCallback('inline.cells.config.after', cellsHookParams);
     };   
