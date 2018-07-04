@@ -411,7 +411,7 @@
     $(document).ready(function () {
         $(".checkInputValidation").keyup(function(e) {
          var value = $(this).val();
-            var regx = new RegExp(/[-!$%^&*()_+|@#~=`{}\[\]:";'<>?,.\/]+/);
+            var regx = new RegExp(/[!$%^&*()_+|@#~=`{}\[\]:";'<>?,.\/]+/);
             var result  = regx.test(value);
             if(result === true){
                $(this).val(value.substr(0,(value.length-1)));

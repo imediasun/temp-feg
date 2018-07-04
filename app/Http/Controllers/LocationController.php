@@ -284,8 +284,8 @@ class LocationController extends Controller
                $rules['id'] = 'required';
             }
         }
-        $rules['location_name'] = 'required|regex:/^[a-zA-Z0-9\s]+$/';
-        $rules['location_name_short'] = 'required|regex:/^[a-zA-Z0-9\s]+$/';
+        $rules['location_name'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
+        $rules['location_name_short'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('location');
