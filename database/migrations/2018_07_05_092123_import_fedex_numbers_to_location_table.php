@@ -12,9 +12,15 @@ class ImportFedexNumbersToLocationTable extends Migration
      */
     public function up()
     {
-        Schema::table('location', function (Blueprint $table) {
-            $table->timestamps();
-        });
+        if (!Schema::hasColumn('location', 'created_at') && !Schema::hasColumn('location', 'updated_at')) {
+
+            Schema::table('location', function (Blueprint $table) {
+                $table->timestamps();
+            });
+
+        }
+
+
 
         $fedex_number = [
             ['fedex_number'=>882641163,'id'=>6000],
