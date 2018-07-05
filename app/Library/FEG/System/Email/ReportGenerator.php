@@ -612,6 +612,7 @@ class ReportGenerator
         $debitTypeStyle = array(
             "1" => " <b style='color:pink'> (sacoa)</b>",
             "2" => " <b style='color:blue'> (embed)</b>",
+            "0" => " <b style='color:red;'> (Debit type not specified)</b>",
         );
         $q = ReportHelpers::getLocationNotReportingQuery($date, $date, null, null, 'L.debit_type_id');
         $data = DB::select($q);
