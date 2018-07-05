@@ -216,7 +216,6 @@ class MerchandisebudgetController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
         $budget_vals = array();
         $location_id = $request->get('location_id');
         if(empty($location_id))
@@ -226,18 +225,18 @@ class MerchandisebudgetController extends Controller
             $location_id = rtrim($id[0]);
         }
         $budget_year = $request->get('budget_year');
-        $budget_vals['jan'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-01-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('jan')));
-        $budget_vals['feb'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-02-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('feb')));
-        $budget_vals['march'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-03-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('march')));
-        $budget_vals['april'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-04-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('april')));
-        $budget_vals['may'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-05-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('may')));
-        $budget_vals['jun'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-06-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('june')));
-        $budget_vals['jul'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-07-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('july')));
-        $budget_vals['aug'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-08-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('august')));
-        $budget_vals['sep'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-09-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('september')));
-        $budget_vals['oct'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-10-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('october')));
-        $budget_vals['nov'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-11-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('november')));
-        $budget_vals['dec'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-12-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue($request->get('december')));
+        $budget_vals['jan'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-01-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('Jan'))));
+        $budget_vals['feb'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-02-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('Feb'))));
+        $budget_vals['march'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-03-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('March'))));
+        $budget_vals['april'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-04-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('April'))));
+        $budget_vals['may'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-05-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('May'))));
+        $budget_vals['jun'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-06-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('June'))));
+        $budget_vals['jul'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-07-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('July'))));
+        $budget_vals['aug'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-08-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('August'))));
+        $budget_vals['sep'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-09-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('September'))));
+        $budget_vals['oct'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-10-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('October'))));
+        $budget_vals['nov'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-11-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('November'))));
+        $budget_vals['dec'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-12-01', 'budget_value' => \CurrencyHelpers::truncateDecimalValue(str_replace(',', '', $request->get('December'))));
         if ($id == 0) {
             $id = $this->model->insertRow($budget_vals, $request->input('id'), $location_id, $budget_year);
         } else {
