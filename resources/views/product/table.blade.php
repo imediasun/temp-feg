@@ -206,8 +206,6 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                             {!! AjaxHelpers::GamestitleButtonAction('product',$access,$id ,$setting) !!}
                             <a href="{{ URL::to('product/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"
                                title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
-
-
                         </td>
                     </tr>
 

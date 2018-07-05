@@ -531,7 +531,7 @@ class ProductController extends Controller
 
 
 
-
+        $rules['upc_barcode'] = 'min:12|max:12|regex:/^[a-zA-Z0-9\s]+$/';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             if ($id != 0) {
@@ -1188,5 +1188,28 @@ GROUP BY mapped_expense_category");
                 GROUP BY mapped_expense_category";
         $result = \DB::select($sql);
         return $result;
+    }
+    public function postUpdateBarcode(Request $request){
+        $productId = $request->input('id');
+        $product = product::find($productId);
+        $barCode = '';
+        if($product){
+            $barCode = $product->generateBarCode($product->id);
+            $product->updateProduct(['upc_barcode'=>$barCode]);
+        }
+        return response()->json(array(
+            'status' => 'success',
+            'barcode'=>$barCode,
+        ));
+    }
+    public function postGenerateUniqueBarcode(Request $request){
+        $productId = $request->input('id');
+        $product = new Product();
+        $rendomCount = !empty($productId) ? $productId:$product->totalProductRendomIncreament();
+        $barCode = $product->generateBarCode($rendomCount);
+        return response()->json(array(
+            'status' => 'success',
+            'barcode'=>$barCode,
+        ));
     }
 }

@@ -89,11 +89,13 @@
                             $fields['upc_barcode']['language'] : array())) !!}
                         </label>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <input type="text" name="upc_barcode" id="upc_barcode" value="{{$row['upc_barcode']}}" class="form-control">
                         </div>
+                        <div class="col-md-2" >
+                            <span onclick="uniqueBarcode('{{ $row['id'] }}');" class="btn btn-primary" >Generate UPC/Barcode</span>
+                        </div>
                         <div class="col-md-2">
-
                         </div>
                     </div>
                     <div class="form-group  ">
@@ -770,7 +772,19 @@
         $(this).prop("checked", true);
         //}
     });
-
+    function uniqueBarcode(productId){
+        $('.ajaxLoading').show();
+        $.ajax({
+            type:"POST",
+            url:"product/generate-unique-barcode",
+            data:{id:productId},
+            success:function(response){
+                $("#upc_barcode").val(response.barcode);
+                $('.ajaxLoading').hide();
+            }
+        });
+        return false;
+    }
 </script>
 <style>
 

@@ -559,4 +559,17 @@ WHERE orders.is_api_visible = 1
             $price = $product->unit_price <= 0 ? $product->case_price : $product->unit_price;
             $product->lineTotal = $product->qty * $price;
         }
+        /*
+         * generateBarCode() method will generate a unique Alpha numaric string
+         */
+        public function generateBarCode($id=0){
+            $id = $id > 0 ? $id : mt_rand(10000,500000);
+            $uniqueCode = str_shuffle(\SiteHelpers::encryptID($id,false,false,mt_rand(10000,5009999)));
+            $uniqueCode = strlen($uniqueCode) > 12 ? substr($uniqueCode,0,12):$uniqueCode;
+            return $uniqueCode;
+        }
+        public function totalProductRendomIncreament(){
+            $productcount = self::all()->count();
+           return $productcount + mt_rand(10000,999999);
+        }
 }

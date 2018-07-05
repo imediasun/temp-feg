@@ -351,7 +351,7 @@ class OrderController extends Controller
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
 
             $order  = Order::find($data->id);
-            $rows[$index]->isFullyReceived = !is_null($order) ? $order->isOrderReceived():false;
+            $rows[$index]->isFullyReceived = !is_null($order) ? $order->isOrderReceived() && in_array($order->location->debit_type_id,[1,2]):false;
         }
 
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
@@ -1718,7 +1718,7 @@ class OrderController extends Controller
         $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name, O.id as id  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
         //move function in model of order. without passing paramter of order
         $showdblbutton = $order->isOrderReceived();
-        $this->data['showdblbutton']=$showdblbutton;
+        $this->data['showdblbutton'] = $showdblbutton && in_array($order->location->debit_type_id,[1,2]);
         return view('order.order-receipt', $this->data);
     }
 
