@@ -1285,12 +1285,18 @@ $(document).ready(function(){
 });
 //need to fix notiation to camel case notation
 function getProductSubTypes(productTypeId, productSubTypeSelectorArray, selectBox){
+
+    $.each(productSubTypeSelectorArray, function (key, productSubTypeNameAttr) {
+        selectBox.closest('div:has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]').attr('disabled', 'disabled');
+    });
+
     $.ajax({
         url: 'product/get-product-subtype?product_type_id='+productTypeId,
         method: 'GET',
         success: function(result){
             $.each(productSubTypeSelectorArray, function (key, productSubTypeNameAttr) {
                 var productSubType = selectBox.closest('div:has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]');
+                productSubType.attr('disabled', null);
                 populateProductSubTypeSelect(productSubType, result);
             })
         }

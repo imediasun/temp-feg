@@ -1194,16 +1194,21 @@ GROUP BY mapped_expense_category");
         $commaSeparatedProductType =  request()->get('product_type_id');
         $productTypes = [];
 
-        if(str_contains($commaSeparatedProductType, ',')){
-            $productTypes = explode(',', $commaSeparatedProductType);
-        }else{
-            array_push($productTypes, $commaSeparatedProductType);
+        if($commaSeparatedProductType != '')
+        {
+            if(str_contains($commaSeparatedProductType, ','))
+                $productTypes = explode(',', $commaSeparatedProductType);
+            else
+                array_push($productTypes, $commaSeparatedProductType);
+
+            $productSubtypes = ProductType::select('product_type', 'id')->whereIn('request_type_id', $productTypes)->get();
         }
-        //create model and relations
-        $productSubtypes = ProductType::select('product_type', 'id')->whereIn('request_type_id', $productTypes)->get();
+        else
+        {
+            $productSubtypes = ProductType::select('product_type', 'id')->get();
+        }
+
 
         return $productSubtypes;
-
-
     }
 }
