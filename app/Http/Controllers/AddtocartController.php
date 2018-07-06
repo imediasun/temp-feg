@@ -8,6 +8,8 @@ use Mockery\CountValidator\Exception;
 use Validator, Input, Redirect;
 use App\Models\Core\Groups;
 use App\Http\Controllers\OrderController;
+use \App\Models\Sximo\Module;
+use App\Models\product;
 
 class AddtocartController extends Controller
 {
@@ -16,6 +18,8 @@ class AddtocartController extends Controller
     protected $data = array();
     protected $sortMapping = [];
     protected $sortUnMapping = [];
+    public $module_id;
+    public $pass = [];
     public $module = 'addtocart';
     static $per_page = '10';
 
@@ -24,7 +28,9 @@ class AddtocartController extends Controller
         parent::__construct();
         $this->model = new Addtocart();
         $this->info = $this->model->makeInfo($this->module);
+        $this->module_id = Module::name2id($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->pass = \FEGSPass::getPasses($this->module_id, 'module.addtocart.special.allowusers/usergroupstosubmitthepurchaserequestinspiteoftheerrormessage', false);;
 
         $this->data = array(
             'pageTitle' => $this->info['title'],
@@ -122,6 +128,7 @@ class AddtocartController extends Controller
         $this->data['access'] = $this->access;
         // Detail from master if any
         $this->data['setting'] = $this->info['setting'];
+        $this->data['specialPermissions'] = $this->pass;
 
         // Master detail link if any
         $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
@@ -305,16 +312,21 @@ class AddtocartController extends Controller
                 \DB::table('requests')->insert($insert);
             }
         }*/
+        $userId = \Session::get('uid');
+        $groupId = \Session::get('gid');
 
-        $check = \DB::select("SELECT * FROM requests INNER JOIN products ON (requests.product_id = products.id) WHERE location_id = $location_id AND status_id = 1 AND product_id IN (".implode(',',$products).")");
-        if(!empty($check)){
-            $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px;'>";
-            $count = count($check);
-            foreach ($check as $key => $request){
-                $productsNames .= "<li>".addslashes($request->vendor_description)."</li>";
+        $addToCart = new addtocart();
+        if(!$addToCart->hasPermission()) {
+            $check = \DB::select("SELECT * FROM requests INNER JOIN products ON (requests.product_id = products.id) WHERE location_id = $location_id AND status_id = 1 AND product_id IN (" . implode(',', $products) . ")");
+            if (!empty($check)) {
+                $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px;'>";
+                $count = count($check);
+                foreach ($check as $key => $request) {
+                    $productsNames .= "<li>" . addslashes($request->vendor_description) . "</li>";
+                }
+                $productsNames .= "</ul>";
+                return redirect('/addtocart')->with('messagetext', "Another employee at your location has already ordered the following product(s): $productsNames Please remove the duplicate product(s) from your cart to submit your order and contact the head of the department relevant to Order Type to make any further quantity adjustments for this product.")->with('msgstatus', 'error');
             }
-            $productsNames .= "</ul>";
-            return redirect('/addtocart')->with('messagetext', "Another employee at your location has already ordered the following product(s): $productsNames Please remove the duplicate product(s) from your cart to submit your order and contact the head of the department relevant to Order Type to make any further quantity adjustments for this product.")->with('msgstatus', 'error');
         }
 
         $update = array('status_id' => 1,
@@ -363,6 +375,15 @@ class AddtocartController extends Controller
         }else{
             return $cart_data;
         }
+    }
+    public function postCheckUserPermissions(Request $request){
+        $addToCart = new Addtocart();
+        $inputs = $request->all();
+        // if user/user group has ability to request a product that already been requested by another user from same location
+            return response()->json([
+                'hasPermission'=>$addToCart->hasPermission(),
+                'exceptionMessage' =>$addToCart->getsubmittedRequests($inputs['products']),
+            ]);
     }
 
 }
