@@ -54,6 +54,7 @@ class inventoryreport extends Sximo  {
 
     public static function getRows( $args,$cond=null )
     {
+
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         $forExcel = 0;
@@ -94,18 +95,22 @@ class inventoryreport extends Sximo  {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }
 
+        $excludedOrders = productusagereport::excludeOrderFromProductUsageAndMerchandiseExpense();
         $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'created_at');
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         if (empty($date_start) || empty($date_end)) {
             $message = "To view the contents of this report, please select a date range and other search filter.";
         }
         else {
-
-            $whereLocation = "";
             $whereVendor = "";
+            $whereLocation = "";
             $whereOrderType ="";
             $whereProdType = "";
             $whereProdSubType = "";
+            $whereNotInPoNumber = "";
+            if (!empty($excludedOrders)){
+                $whereNotInPoNumber = "AND O.po_number NOT IN($excludedOrders) ";
+            }
             if (!empty($location_id)) {
                 $whereLocation = "AND O.location_id IN ($location_id) AND O.location_id not in(6000,6030)";
             }
@@ -206,7 +211,7 @@ class inventoryreport extends Sximo  {
             }
             $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
                             AND O.created_at <= '$date_end' 
-                             $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
+                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
 
             // both group by quires are same
             $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type";
