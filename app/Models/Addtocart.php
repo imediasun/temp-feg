@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Core\Groups;
 use Illuminate\Support\Facades\Session;
 use Log;
+use App\Http\Controllers\AddtocartController;
 //use App\Http\Controllers\OrderController;
 
 class addtocart extends Sximo
@@ -13,6 +14,7 @@ class addtocart extends Sximo
 
     protected $table = 'requests';
     protected $primaryKey = 'id';
+    public $passes = '';
 
     public function __construct()
     {
@@ -297,5 +299,34 @@ FROM requests
             ->where('requests.request_user_id', $userID)
             ->where('requests.status_id',4)->join("products",'requests.product_id','=','products.id')->get()->all();
             return $cartData;
+    }
+    public function hasPermission(){
+        $module = new AddtocartController();
+        $this->passes = \FEGSPass::getPasses($module->module_id, 'module.addtocart.special.allowusers/usergroupstosubmitthepurchaserequestinspiteoftheerrormessage', false);
+        $userId = \Session::get('uid');
+        $groupId = \Session::get('gid');
+        $addToCartPermission = $this->passes['Allow users/user groups  to submit the purchase request in spite of the error message'];
+        $userAllowed = explode(",",$addToCartPermission->user_ids);
+        $groupAllowed = explode(",",$addToCartPermission->group_ids);
+        $excludeUserIds = explode(",",$addToCartPermission->exclude_user_ids);
+        return (in_array($userId,$userAllowed) || in_array($groupId,$groupAllowed)) && !in_array($userId,$excludeUserIds);
+    }
+    public function getsubmittedRequests($productIds){
+        $locationId = \Session::get('selected_location');
+        $products = self::join("products",'products.id','=','requests.product_id')
+                    ->where("requests.location_id",$locationId)
+                    ->whereIn('requests.product_id',explode(",",$productIds))->where("requests.status_id",'=','1')->get();
+
+        if($products->count()){
+            $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
+            $count = $products->count();
+            foreach ($products as $key => $request){
+                $productsNames .= "<li>".addslashes($request->vendor_description)."</li>";
+            }
+            $productsNames .= "</ul>";
+            return "Another employee at your location has already ordered the following product(s):<br><br> $productsNames <br>Would you like to submit this order request anyway?";
+        }else{
+            return '';
+        }
     }
 }
