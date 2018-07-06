@@ -258,12 +258,7 @@ class ProductController extends Controller
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
-        $activeInactive = '';
-        if($inactive != ''){
-            $activeInactive = " AND products.inactive = $inactive";
-        }
-
-        return $filter.$activeInactive;
+        return $filter;
     }
     
     public function getIndex()
@@ -309,10 +304,17 @@ class ProductController extends Controller
 
         $simpleSearchParems = $request->input('search');
         if(!empty($simpleSearchParems)){
-            if(strpos($simpleSearchParems,'in_development:equal:') !=false){
-                $inDevelopmentStatus = substr($simpleSearchParems,strpos($simpleSearchParems,"in_development:equal:")+strlen("in_development:equal:"),strpos($simpleSearchParems,"in_development:equal:"));
-                $inDevelopmentStatus = rtrim($inDevelopmentStatus,"|");
-                $filter .= " AND products.in_development = '".$inDevelopmentStatus."' ";
+            $preparedSearchParemsData = $this->model->prepareSearchParemsArray($simpleSearchParems);
+            if (!empty($preparedSearchParemsData)) {
+                $columnsWithTableNames = [
+                    'in_development' => 'products.in_development',
+                    'prod_type_id' => 'products.prod_type_id',
+                    'prod_sub_type_id' => 'products.prod_sub_type_id',
+                    'upc_barcode' => 'products.upc_barcode',
+                    'vendor_id' => 'products.vendor_id',
+                    'inactive' => 'products.inactive',
+                ];
+                $filter .= $this->model->prepareSearchFilterQuery($preparedSearchParemsData, $columnsWithTableNames);
             }
         }
         if(strpos($filter,"products.in_development") == false){
