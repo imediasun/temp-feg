@@ -22,14 +22,14 @@
                                                                       href="#merchindisetheminggallary"
                                                                       data-toggle="tab" id="merchindisetheminggallary">Merchandise
                         Theme Gallery</a></li>
-                <li style="width: 50%;"><a class="moduleTab" href="#redemptioncountergallery" data-toggle="tab"
-                                           id="redemptioncountergallery">Redemption Counter Gallery</a></li>
+                <li style="width: 50%;"><a class="moduleTab" href="#redemptioncountergallary" data-toggle="tab"
+                                           id="redemptioncountergallary">Redemption Counter Gallery</a></li>
             </ul>
             <div id="merchindisetheminggallaryView"></div>
-            <div id="redemptioncountergalleryView"></div>
+            <div id="redemptioncountergallaryView"></div>
             <div class="tab-content loadContent" id="merchindisetheminggallaryGrid"
                  style="background: #FFFFff; min-height:500px;"></div>
-            <div class="tab-content loadContent" id="redemptioncountergalleryGrid"
+            <div class="tab-content loadContent" id="redemptioncountergallaryGrid"
                  style="background: #FFFFff; min-height:500px; display: none;"></div>
         </div>
         <div class="clear"></div>
@@ -51,11 +51,11 @@
                 type: "POST",
                 success: function (response) {
                     if (contentPath == "merchindisetheminggallary") {
-                        $("#redemptioncountergalleryGrid").css("display", "none");
+                        $("#redemptioncountergallaryGrid").css("display", "none");
                         $("#merchindisetheminggallaryGrid").css("display", "block");
                     } else {
                         $("#merchindisetheminggallaryGrid").css("display", "none");
-                        $("#redemptioncountergalleryGrid").css("display", "block");
+                        $("#redemptioncountergallaryGrid").css("display", "block");
                     }
                     $("#" + contentPath + "Grid").html(response);
                     $('.ajaxLoading').hide();
