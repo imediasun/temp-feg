@@ -536,7 +536,7 @@ class ProductController extends Controller
             'unique'=> 'UPC/Barcode needs to be unique for each item.',
 
         ];
-        $rules['upc_barcode'] = 'min:12|max:12|unique:products,upc_barcode|regex:/^[a-zA-Z0-9\s]+$/';
+        $rules['upc_barcode'] = 'min:12|max:12|unique:products,upc_barcode,'.$id.'|regex:/^[a-zA-Z0-9\s]+$/';
         $validator = Validator::make($request->all(), $rules,$customMessages);
         if ($validator->passes()) {
             if ($id != 0) {
