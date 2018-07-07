@@ -531,7 +531,7 @@ class ProductController extends Controller
 
         $customMessages = [
             'min'=> 'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.',
-            'min'=> 'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.',
+            'max'=> 'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.',
             'regex'=> 'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.',
             'unique'=> 'UPC/Barcode needs to be unique for each item.',
 
