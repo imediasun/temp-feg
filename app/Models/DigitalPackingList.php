@@ -36,7 +36,7 @@ class DigitalPackingList extends Sximo
     }
     public function getDPLFileData(){
         $newLine = "\r\n";
-        $fileContent = $this->order->location_id . ", " . $this->order->po_number . $newLine;
+        $fileContent = $this->order->location_id . ", " . $this->order->id . $newLine;
         foreach ($this->order->contents as $product) {
             Log::info("DPL Product Name:".$product->item_name);
             $itemId = $product->upc_barcode;
