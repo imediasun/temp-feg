@@ -44,7 +44,6 @@ class RedemptioncountergallaryController extends Controller
 
     public function postData(Request $request)
     {
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'redemptioncountergallary')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
