@@ -123,6 +123,19 @@
                                     </tr>
                                 @endforeach
                             @endif
+                            <tr>
+                                <td>{!! $settingItem['option_title'] !!}</td>
+                                <td>{!! $settingItem['option_description'] !!}</td>
+                                <td>
+                                    <select id="excluded_orders" name="excluded_orders[]" class="select2" multiple="multiple"  >
+                                        @foreach($Orders as $key => $order)
+                                            <option value="{{$key}}" {{in_array($order, $ExcludedOrders) ? 'selected': ''}}>{{$order}}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td id="last_td">
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -181,5 +194,44 @@
             }
             return false;
         }
+
+        var intervalCount   = 0;
+        var interval        = 0;
+
+        $(document).on('keyup','.select2-choices .select2-search-field #s2id_autogen3', function(){
+
+                // intervalCount++;
+                //
+                // if(intervalCount == 3){
+                    var poNumber = $(this).val();
+                    $.ajax({
+                        url: '/order-setting/search-the-order-by-po-number?po_number='+poNumber,
+                        method: 'GET',
+                        success: function(result){
+
+                            var selectbox = $('#excluded_orders');
+                            selectbox.empty();
+                            $.each(result.searchedPONumbers, function(key, val){
+                                selectbox.append('<option  val="'+val+'">'+val+'</option>');
+                            });
+                            $(this).trigger("click");
+                            setTimeout(function () {
+                            //     $('#s2id_excluded_orders').removeClass('select2-container-active')
+                            //     $('#s2id_excluded_orders').addClass('select2-container-active')
+                                $('#last_td').trigger('click');
+                                selectbox.trigger('click');
+                                // $('.select2-choices .select2-search-field #s2id_autogen3').trigger('focusin');
+                            }, 200);
+                        }
+                    });
+
+                //     intervalCount=0;
+                // }
+        });
+
+
+        // $('#excluded_orders').on('select', function(){
+        //     $('.select2-choices .select2-search-field #s2id_autogen3').val('');
+        // })
     </script>
 @stop
