@@ -529,10 +529,15 @@ class ProductController extends Controller
 
         }
 
+        $customMessages = [
+            'min'=> 'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.',
+            'min'=> 'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.',
+            'regex'=> 'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.',
+            'unique'=> 'UPC/Barcode needs to be unique for each item.',
 
-
-        $rules['upc_barcode'] = 'min:12|max:12|regex:/^[a-zA-Z0-9\s]+$/';
-        $validator = Validator::make($request->all(), $rules);
+        ];
+        $rules['upc_barcode'] = 'min:12|max:12|unique:products,upc_barcode|regex:/^[a-zA-Z0-9\s]+$/';
+        $validator = Validator::make($request->all(), $rules,$customMessages);
         if ($validator->passes()) {
             if ($id != 0) {
                 $Product = product::find($id);
