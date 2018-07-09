@@ -906,7 +906,7 @@ class ReportHelpers
         return $Q;        
     }
     public static function _getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", $debit = ""){
-        $excludedOrders = productusagereport::excludeOrderFromProductUsageAndMerchandiseExpense();
+        $excludedOrders = productusagereport::excludeOrderFromProductUsageAndMerchandiseExpenseAndInventoryReports();
         $whereNotInPoNumber = '';
         if (!empty($excludedOrders)){
             $whereNotInPoNumber = "AND O.po_number NOT IN($excludedOrders) ";

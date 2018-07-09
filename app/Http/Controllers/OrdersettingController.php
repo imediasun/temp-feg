@@ -78,8 +78,14 @@ class OrdersettingController extends Controller
         $option = Options::where('option_name', 'excluded_orders')->first();
         if($option){
             $excludedOrders = explode(',', $option->option_value);
-            array_merge($orders, $excludedOrders);
+            $orders = array_merge($orders, $excludedOrders);
         }
+
+        $newOrdersArray = [];
+        foreach ($orders as $order){
+            $newOrdersArray[$order] = $order;
+        }
+        $orders = $newOrdersArray;
 
         $this->data['MerchandisePO']        = $MerchandiseSetting;
         $this->data['NonMerchandisePO']     = $NonMerchandiseSetting;
@@ -109,7 +115,7 @@ class OrdersettingController extends Controller
         $NonMerchandiseOrderTypes = $request->input('Nonmerchandiseordertypes');
         $GraphicsRequestSenderContent = $request->input('newgraphicsrequestsendercontent');
         $GraphicsRequestReceiverContent = $request->input('newgraphicsrequestreceivercontent');
-        $excludedOrders = implode(',', $request->input('excluded_orders'));
+        $excludedOrders = !empty($request->input('excluded_orders')) ? implode(',', $request->input('excluded_orders')) : '';
         if (is_array($merchandiseOrderTypes) && is_array($NonMerchandiseOrderTypes)) {
             if (count(array_intersect($merchandiseOrderTypes, $NonMerchandiseOrderTypes)) > 0) {
                 return response()->json(array(
@@ -205,21 +211,25 @@ class OrdersettingController extends Controller
 
     public function searchTheOrderByPONumber(Request $request){
 
+        $selected_po_numbers = $request->get('selected_po_numbers');
+
+        if(!$selected_po_numbers)
+            $selected_po_numbers = [];
+
         $poNumber = $request->get('po_number');
 
+        $searchedPONumbers = order::select('po_number as id','po_number as text');
+
         if($poNumber)
-            $searchedPONumbers = order::where('po_number', 'LIKE', '%'.$poNumber.'%')->distinct()->take(10)->lists('po_number');
-        else
-            $searchedPONumbers = order::distinct()->take(10)->lists('po_number');
+            $searchedPONumbers = $searchedPONumbers->where('po_number', 'LIKE', '%'.$poNumber.'%');
 
-//        if(count($searchedPONumbers) == 0)
-//            $searchedPONumbers = order::distinct()->take(10)->lists('po_number');
+        $searchedPONumbers = $searchedPONumbers
+            ->whereNotIn('po_number', $selected_po_numbers)
+            ->distinct()
+            ->take(10)
+            ->get();
 
-
-        return response()->json([
-            'searchedPONumbers'=>$searchedPONumbers
-        ]);
-
+        return $searchedPONumbers;
     }
 
 }

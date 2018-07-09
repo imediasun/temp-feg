@@ -95,7 +95,7 @@ class inventoryreport extends Sximo  {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }
 
-        $excludedOrders = productusagereport::excludeOrderFromProductUsageAndMerchandiseExpense();
+        $excludedOrders = productusagereport::excludeOrderFromProductUsageAndMerchandiseExpenseAndInventoryReports();
         $defaultEndDate = DBHelpers::getHighestRecorded('orders', 'created_at');
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         if (empty($date_start) || empty($date_end)) {
