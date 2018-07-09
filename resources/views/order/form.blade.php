@@ -1358,6 +1358,9 @@
             $(clone).find('.hide-button').prop('id', 'hide-button' + productRows);
 
             $(clone).find('input:checkbox').prop('checked', false);
+            $(clone).find('input[name="item_received[]"]').val(0);
+            $(clone).find('input[name="order_content_id[]"]').val(0);
+            $(clone).find('input[name="product_id[]"]').val(0);
             let checkboxClone = $(clone).find('.icheck input:checkbox').clone();
             $(clone).find('.icheck').html('<br /><input type="hidden" name="broken_case_value[]" value="0">');
             $(clone).find('.icheck').append(checkboxClone);
