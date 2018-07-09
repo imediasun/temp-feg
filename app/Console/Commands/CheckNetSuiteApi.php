@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\employee;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Console\Command;
@@ -116,18 +117,20 @@ class CheckNetSuiteApi extends Command
 
     public function validateOrders()
     {
-        $orders = json_decode($this->data['order']['data']);
-        $orderTotal = $orders->total;
-        if ($orderTotal > 0) {
-            $rows = $orders->rows;
-            foreach ($rows as $row) {
-                $this->orderId = $row->id;
-                $items = $row->items;
-                foreach ($items as $item) {
-                    $this->getOrderedContents($this->orderId,$item);
-                    $this->checkProduct($item);
+        if(!empty($this->data['order']['data'])) {
+            $orders = json_decode($this->data['order']['data']);
+            $orderTotal = $orders->total;
+            if ($orderTotal > 0) {
+                $rows = $orders->rows;
+                foreach ($rows as $row) {
+                    $this->orderId = $row->id;
+                    $items = $row->items;
+                    foreach ($items as $item) {
+                        $this->getOrderedContents($this->orderId, $item);
+                        $this->checkProduct($item);
+                    }
+                    $this->checkReceipts($item, $row);
                 }
-                $this->checkReceipts($item,$row);
             }
         }
     }
@@ -172,19 +175,23 @@ class CheckNetSuiteApi extends Command
 
     public function getProductIds()
     {
-        $products = json_decode($this->data['product']['data']);
-        $rows = $products->rows;
-        foreach ($rows as $row) {
-            array_push($this->products,$row->id);
+        if(!empty($this->data['product']['data'])) {
+            $products = json_decode($this->data['product']['data']);
+            $rows = $products->rows;
+            foreach ($rows as $row) {
+                array_push($this->products, $row->id);
+            }
         }
     }
     public function getReceiptLineItemId(){
-        $receipts = json_decode($this->data['itemreceipt']['data']);
-        $rows = $receipts->rows;
-        foreach ($rows as $row) {
-            if(!empty($row->receipts)) {
-                foreach ($row->receipts as $receipts) {
-                    $this->orderReceipts[] = $receipts->order_line_item_id;
+        if(!empty($this->data['itemreceipt']['data'])) {
+            $receipts = json_decode($this->data['itemreceipt']['data']);
+            $rows = $receipts->rows;
+            foreach ($rows as $row) {
+                if (!empty($row->receipts)) {
+                    foreach ($row->receipts as $receipts) {
+                        $this->orderReceipts[] = $receipts->order_line_item_id;
+                    }
                 }
             }
         }
@@ -192,10 +199,12 @@ class CheckNetSuiteApi extends Command
 
     public function getorderIdsFromReceipts()
     {
-        $products = json_decode($this->data['itemreceipt']['data']);
-        $rows = $products->rows;
-        foreach ($rows as $row) {
-            array_push($this->orderIds,$row->order_id);
+        if(!empty($this->data['itemreceipt']['data'])) {
+            $products = json_decode($this->data['itemreceipt']['data']);
+            $rows = $products->rows;
+            foreach ($rows as $row) {
+                array_push($this->orderIds, $row->order_id);
+            }
         }
     }
 
