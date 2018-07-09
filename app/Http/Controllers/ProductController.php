@@ -226,7 +226,15 @@ class ProductController extends Controller
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'inactive' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters([
+            'search_all_fields' => '',
+            'upc_barcode' => '',
+            'vendor_id' => '',
+            'prod_type_id'=>'',
+            'prod_sub_type_id'=>'',
+            'in_development'=>'',
+            'inactive' => '',
+        ]);
         $skipFilters = ['search_all_fields'];
         $mergeFilters = [];
         extract($globalSearchFilter); //search_all_fields
@@ -257,7 +265,7 @@ class ProductController extends Controller
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
-
+        $filter .= is_null($trimmedSearchQuery) ? '' : $this->buildSearch($trimmedSearchQuery);
         return $filter;
     }
     
@@ -300,23 +308,6 @@ class ProductController extends Controller
         // Filter Search for query
         $filter = $this->getSearchFilterQuery();
         //(!is_null($request->input('search')) ? $this->buildSearch() : '');
-
-
-        $simpleSearchParems = $request->input('search');
-        if(!empty($simpleSearchParems)){
-            $preparedSearchParemsData = $this->model->prepareSearchParemsArray($simpleSearchParems);
-            if (!empty($preparedSearchParemsData)) {
-                $columnsWithTableNames = [
-                    'in_development' => 'products.in_development',
-                    'prod_type_id' => 'products.prod_type_id',
-                    'prod_sub_type_id' => 'products.prod_sub_type_id',
-                    'upc_barcode' => 'products.upc_barcode',
-                    'vendor_id' => 'products.vendor_id',
-                    'inactive' => 'products.inactive',
-                ];
-                $filter .= $this->model->prepareSearchFilterQuery($preparedSearchParemsData, $columnsWithTableNames);
-            }
-        }
         if(strpos($filter,"products.in_development") == false){
         $filter .= ' AND products.in_development = 0 ';
         }

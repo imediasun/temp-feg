@@ -559,21 +559,4 @@ WHERE orders.is_api_visible = 1
             $price = $product->unit_price <= 0 ? $product->case_price : $product->unit_price;
             $product->lineTotal = $product->qty * $price;
         }
-        public function prepareSearchParemsArray($simpleSearchParems){
-            $prepareSearchFilters = explode("|",$simpleSearchParems);
-            $prepareSearchFilters = array_map(function($data){
-                $dataArray = explode(":",$data);
-                return  $dataArray;
-            },$prepareSearchFilters);
-            return $prepareSearchFilters;
-        }
-        public function prepareSearchFilterQuery($data = array(),$useColumns=array(),$operater = " AND "){
-	    $query = '';
-	    foreach($data as $parems){
-	        if(isset($useColumns[$parems[0]])) {
-                $query .= " " . $operater . " " . $useColumns[$parems[0]] . "='" . $parems[2] ."' ";
-            }
-        }
-        return $query;
-        }
 }
