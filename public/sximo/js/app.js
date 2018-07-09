@@ -1297,6 +1297,7 @@ function getProductSubTypes(productTypeId, productSubTypeSelectorArray, selectBo
             $.each(productSubTypeSelectorArray, function (key, productSubTypeNameAttr) {
                 var productSubType = selectBox.closest('div:has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]');
                 productSubType.attr('disabled', null);
+                productSubType.val(null).trigger("change");
                 populateProductSubTypeSelect(productSubType, result);
             })
         }
@@ -1305,6 +1306,7 @@ function getProductSubTypes(productTypeId, productSubTypeSelectorArray, selectBo
 function populateProductSubTypeSelect(productSubType, result){
     if(productSubType.length > 0){
         productSubType.empty();
+        productSubType.append('<option value="" selected style="display: none">-- Select --</option>');
         $.each(result, function (i, item) {
             productSubType.append($('<option>', {
                 value: item.id,
