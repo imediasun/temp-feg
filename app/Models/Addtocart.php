@@ -305,7 +305,7 @@ FROM requests
         $this->passes = \FEGSPass::getPasses($module->module_id, 'module.addtocart.special.allowusers/usergroupstosubmitthepurchaserequestinspiteoftheerrormessage', false);
         $userId = \Session::get('uid');
         $groupId = \Session::get('gid');
-        $addToCartPermission = $this->passes['Allow users/user groups  to submit the purchase request in spite of the error message'];
+        $addToCartPermission = $this->passes['Allow users/user groups to submit the purchase request in spite of the error message'];
         $userAllowed = explode(",",$addToCartPermission->user_ids);
         $groupAllowed = explode(",",$addToCartPermission->group_ids);
         $excludeUserIds = explode(",",$addToCartPermission->exclude_user_ids);
