@@ -8,6 +8,7 @@ use Request, Log,Redirect,Session;
 use App\Library\SximoEloquentBuilder;
 use App\Library\SximoQueryBuilder;
 use App\Models\Core\Groups;
+use Validator;
 class Sximo extends Model {
 
     public static $getRowsQuery = null;
@@ -1530,6 +1531,40 @@ class Sximo extends Model {
         }
         else{
             return mb_substr($string,0,$length);
+        }
+    }
+    /*
+     * ValidateRequest() method is used to Custom validation where we want to ignore multiple values from same table
+     *
+     */
+    public function ValidateRequest($request, $rules,$customMessages, $primaryKeys = [],$unique = [],$uniqueMessage = ''){
+        if(count($primaryKeys) > 0){
+            $append = false;
+            if(empty($uniqueMessage)){
+            $uniqueMessage = ' needs to be unique for each record.';
+                $append = true;
+            }
+            $key = array_keys($primaryKeys);
+            $values = array_values($primaryKeys);
+            if(!is_array($values)){
+                $values = [$values];
+            }
+            $model = $this->whereNotIn($key[0],$values[0]);
+            $message = $uniqueMessage;
+            foreach($unique as $key => $value){
+                if(!empty($uniqueMessage) && $append == true){
+                    $message .= ucfirst(str_replace("_"," ",$key))." ".$uniqueMessage;
+                }
+                $model->where($key,"=",$value);
+            }
+            $response = $model->get();
+            if($response->count() > 0){
+                return ['error'=>true,'customMessage'=>$message];
+            }else{
+                return ['error'=>false,'customMessage'=>$message];
+            }
+        }else {
+           return Validator::make($request, $rules,$customMessages);
         }
     }
 }

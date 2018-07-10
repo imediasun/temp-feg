@@ -521,7 +521,7 @@ class ProductController extends Controller
     function postSave(Request $request, $id = 0)
     {
 
-
+        $product=null;
         $rules = $this->validateForm();
         if(!empty($request->product_id) || $id){
             $productID = !empty($request->product_id) ?  $request->product_id:$id;
@@ -536,9 +536,14 @@ class ProductController extends Controller
             'unique'=> 'UPC/Barcode needs to be unique for each item.',
 
         ];
-        $rules['upc_barcode'] = 'min:12|max:12|unique:products,upc_barcode,'.$id.'|regex:/^[a-zA-Z0-9\s]+$/';
+        $varients =  ($product) ? $product->getProductVariations()->pluck("id")->toArray() :[0];
+        $rules['upc_barcode'] = 'min:12|max:12|regex:/^[a-zA-Z0-9\s]+$/';
         $validator = Validator::make($request->all(), $rules,$customMessages);
-        if ($validator->passes()) {
+        $customValidate =  $this->model->ValidateRequest($request->all(), $rules,$customMessages,['id'=>$varients],['upc_barcode' => $request->input('upc_barcode')],'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.');
+
+
+        if ($validator->passes() && !$customValidate['error']) {
+
             if ($id != 0) {
                 $Product = product::find($id);
                 $NewReservedQty = $request->input('reserved_qty');
@@ -571,7 +576,7 @@ class ProductController extends Controller
         }else{
             $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
-                'message' => $message,
+                'message' => ($customValidate['error']) ? $customValidate['customMessage']:$message,
                 'status' => 'error'
             ));
         }
