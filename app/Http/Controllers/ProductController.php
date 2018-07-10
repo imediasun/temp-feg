@@ -539,8 +539,7 @@ class ProductController extends Controller
         $varients =  ($product) ? $product->getProductVariations()->pluck("id")->toArray() :[0];
         $rules['upc_barcode'] = 'min:12|max:12|regex:/^[a-zA-Z0-9\s]+$/';
         $validator = Validator::make($request->all(), $rules,$customMessages);
-        $customValidate =  $this->model->ValidateRequest($request->all(), $rules,$customMessages,['id'=>$varients],['upc_barcode' => $request->input('upc_barcode')],'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.');
-
+        $customValidate =  (strlen(trim($request->input('upc_barcode'))) > 0 ) ? $this->model->ValidateRequest($request->all(), $rules,$customMessages,['id'=>$varients],['upc_barcode' => $request->input('upc_barcode')],'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.'):$customValidate['error'] = false;
 
         if ($validator->passes() && !$customValidate['error']) {
 
