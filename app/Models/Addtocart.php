@@ -317,11 +317,14 @@ FROM requests
         return (in_array($userId,$userAllowed) || in_array($groupId,$groupAllowed)) && !in_array($userId,$excludeUserIds);
     }
     public function getsubmittedRequests($productIds){
+        if(!is_array($productIds)){
+            $productIds = [$productIds];
+        }
         $locationId = \Session::get('selected_location');
         $products = self::join("products",'products.id','=','requests.product_id')
                     ->where("requests.location_id",$locationId)
-                    ->whereIn('requests.product_id',explode(",",$productIds))->where("requests.status_id",'=','1')->get();
-
+                    ->whereIn('requests.product_id',$productIds)->where("requests.status_id",'=','1')
+                    ->groupBy('requests.product_id')->get();
         if($products->count()){
             $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
             $count = $products->count();

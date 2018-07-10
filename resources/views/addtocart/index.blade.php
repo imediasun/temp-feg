@@ -114,27 +114,31 @@
                         }).join( '&products[]=' );
 
                         var redirectString = '{{ $pageModule }}/submit-requests?products[]='+products;
-
                         $.ajax({
                             url:"{{ $pageModule }}/check-user-permissions",
-                            data:{products:products},
+                            data:'products[]='+products,
                             type:"POST",
                             success:function(response){
-                                if(!response.hasPermission){
-                                    App.notyConfirm({
-                                        confirmButtonText: 'Yes',
-                                        cancelButtonText: 'No',
-                                        container: '.custom-container',
-                                        message: response.exceptionMessage,
-                                        confirm: function () {
-                                            $('.custom_overlay').slideUp(500);
-                                            window.location.href = redirectString;
-                                        },
-                                        cancel:function(){
-                                            $('.custom_overlay').slideUp(500);
-                                        }
-                                    });
-                                }else{
+                                if(response.hasPermission) {
+                                    if (($.trim(response.exceptionMessage)).length > 0) {
+                                        App.notyConfirm({
+                                            confirmButtonText: 'Yes',
+                                            cancelButtonText: 'No',
+                                            container: '.custom-container',
+                                            message: response.exceptionMessage,
+                                            confirm: function () {
+                                                $('.custom_overlay').slideUp(500);
+                                                window.location.href = redirectString;
+                                            },
+                                            cancel: function () {
+                                                $('.custom_overlay').slideUp(500);
+                                            }
+                                        });
+                                    } else {
+                                        window.location.href = redirectString;
+                                        $("#update_text_to_add_cart").text('0');
+                                    }
+                                }  else {
                                     window.location.href = redirectString;
                                     $("#update_text_to_add_cart").text('0');
                                 }

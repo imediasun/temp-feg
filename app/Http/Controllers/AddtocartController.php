@@ -317,7 +317,7 @@ class AddtocartController extends Controller
 
         $addToCart = new addtocart();
         if(!$addToCart->hasPermission()) {
-            $check = \DB::select("SELECT * FROM requests INNER JOIN products ON (requests.product_id = products.id) WHERE location_id = $location_id AND status_id = 1 AND product_id IN (" . implode(',', $products) . ")");
+            $check = \DB::select("SELECT * FROM requests INNER JOIN products ON (requests.product_id = products.id) WHERE location_id = $location_id AND status_id = 1 AND product_id IN (" . implode(',', $products) . ") group by requests.product_id");
             if (!empty($check)) {
                 $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px;'>";
                 $count = count($check);
