@@ -120,7 +120,7 @@
                             data:{products:products},
                             type:"POST",
                             success:function(response){
-                                if(response.hasPermission){
+                                if(!response.hasPermission){
                                     App.notyConfirm({
                                         confirmButtonText: 'Yes',
                                         cancelButtonText: 'No',
