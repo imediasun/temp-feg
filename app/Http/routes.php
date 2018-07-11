@@ -275,7 +275,9 @@ Route::group(['middleware' => 'auth' , 'middleware'=>'sximoauth'], function()
 
 
 });
+Route::get('/pagecmsfile/file/{file}', 'PageCMSFileController@downloadFile');
 Route::get('download/expense-report/{file}', 'Core\PagesController@downloadExpanseReports');
+
 Route::get("terms-of-service",function(){
     return view("pages.terms");
 })->name('termsofservice');

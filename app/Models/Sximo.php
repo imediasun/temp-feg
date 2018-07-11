@@ -1523,4 +1523,7 @@ class Sximo extends Model {
 
         return $query;
     }
+    public function getInsertRecordObject($id){
+        return self::find($id);
+    }
 }
