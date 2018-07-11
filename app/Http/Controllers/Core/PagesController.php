@@ -121,19 +121,12 @@ class PagesController extends Controller
             $this->data['content'] = '';
         } else {
             if (!is_null($row) && $row->pageID == 1) {
-                $filename = base_path() . "/resources/views/pages/home.blade.php";
-                $this->data['content'] = file_get_contents($filename);
+                $this->data['content'] = $row->page_content;
 
             }
             else if(!is_null($row))
             {
-
-                $filename = base_path() . "/resources/views/pages/" . $row->filename . ".blade.php";
-                if (file_exists($filename)) {
-                    $this->data['content'] = file_get_contents($filename);
-                } else {
-                    $this->data['content'] = '<div class="page-content-wrapper m-t">' . $this->data['content'] . '</div>';
-                }
+                $this->data['content'] = $row->page_content;
             }
             else
             {
@@ -154,16 +147,6 @@ class PagesController extends Controller
 
         $redirect = $request->has('return') ? $request->input('return') : '';
         $this->data['return'] = $redirect;
-
-
-        $patternExtend = '/@extends.*?\(.*?\)/im';
-        $patternSection = '/@section.*?\(.*?\)/im';
-        $patternTitle = '/<div class="sbox-title">.*?<\/div>/im';
-        $patternPageTitle = '/{{.*?\$pageTitle.*?}}/im';
-        $patternEditLink = '/{!!.*?\$editLink.*?!!}/im';
-        $patternStop = '/@stop/im';
-
-        $this->data['content'] = preg_replace(array($patternExtend, $patternSection, $patternTitle, $patternStop), '', $this->data['content']);
 
         return view('core.pages.form', $this->data);
     }
@@ -199,37 +182,11 @@ class PagesController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $content = $request->input('content');
-
-            $patternAddTitleSection = '/<div.*?class=["\']sbox.*?animated.*?["\']>/im';
-
-            $content = "@extends ('layouts.app') @section('content')" . $content;
-            $content = preg_replace($patternAddTitleSection, '<div class="page-content-wrapper m-t"><div class="sbox animated fadeInRight"><div class="sbox-title"> {{ $pageTitle }}{!! $editLink !!}</div>', $content);
-            $content = $content . "@stop";
-            $pattern = '~<div class="embed-responsive embed-responsive-16by9 video-container">|<div class="embed-responsive embed-responsive-16by9 video-container ">~';
-            $content = preg_replace($pattern, "<div>", $content);
-
-            $pattern = '~<iframe.*</iframe>|<embed.*</embed>~';
-            preg_match_all($pattern, $content, $matches);
-            foreach ($matches[0] as $match) {
-                // wrap matched iframe with div
-                $wrappedframe = '<div class="embed-responsive embed-responsive-16by9 video-container">' . $match . '</div>';
-                //replace original iframe with new in content
-                    $content = str_replace($match, $wrappedframe, $content);
-            }
             $content = str_replace(array("http://www.","https://www.","http://","https://"),"//",$content);
 
-            $content = $this->addEditLinkTemplate($content);
             
             $data = $this->validatePost('tb_pages');
-
-            if ($request->input('pageID') == 1) {
-                $filename = base_path() . "/resources/views/pages/home.blade.php";
-            } else {
-                $filename = base_path() . "/resources/views/pages/" . $request->input('filename') . ".blade.php";
-            }
-            $fp = fopen($filename, "w+");
-            fwrite($fp, $content);
-            fclose($fp);
+            $data['page_content'] = ($content);
 
             $groups = Groups::all();
             $access = array();
@@ -265,7 +222,6 @@ class PagesController extends Controller
 
             Menu::where('module', $pageName)
                 ->update(['access_data' => $mapPermissions]);
-
             $this->model->insertRow($data, $request->input('pageID'));
             self::createRouters();
 
