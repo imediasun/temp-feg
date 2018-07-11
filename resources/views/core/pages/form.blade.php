@@ -377,10 +377,11 @@
         var row = <?php echo json_encode($row) ; ?>;
 
 	  $(function(){
-		  $(document).on("focus",".note-editor p a",function(){
+		  $(document).on("mouseup",".note-editor p a",function(){
 			  var element = $(this).offset();
-			  $(".note-link-popover").css("top",(element.top/2.8)+"px");
-			  console.log(element);
+
+			// $(".note-link-popover").css("top",(Number($(this).position().top)+20)+"px");
+
 		  });
 	  });
     </script>
