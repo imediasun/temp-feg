@@ -1287,32 +1287,56 @@ $(document).ready(function(){
 function getProductSubTypes(productTypeId, productSubTypeSelectorArray, selectBox){
 
     $.each(productSubTypeSelectorArray, function (key, productSubTypeNameAttr) {
-        selectBox.closest('div:has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]').attr('disabled', 'disabled');
+
+        var subTypeSelectBox = selectBox.closest('div:has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]');
+
+        if(subTypeSelectBox.length > 0){
+
+            subTypeSelectBox.attr('disabled', 'disabled')
+
+            var selectedSubtypes = subTypeSelectBox.val() == null ? [] : subTypeSelectBox.val();
+            //
+            // alert(selectedSubtypes);
+
+
+            $.ajax({
+                url: 'product/get-product-subtype?product_type_id='+productTypeId,
+                type: 'get',
+                success: function(result){
+                    subTypeSelectBox.attr('disabled', null);
+                    if(typeof selectBox.val() == 'string')
+                        subTypeSelectBox.val(null).trigger("change");
+
+                    populateProductSubTypeSelect(subTypeSelectBox, result, selectBox, selectedSubtypes);
+                }
+            })
+
+        }
+
     });
 
-    $.ajax({
-        url: 'product/get-product-subtype?product_type_id='+productTypeId,
-        method: 'GET',
-        success: function(result){
-            $.each(productSubTypeSelectorArray, function (key, productSubTypeNameAttr) {
-                var productSubType = selectBox.closest('div:has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]');
-                productSubType.attr('disabled', null);
-                productSubType.val(null).trigger("change");
-                populateProductSubTypeSelect(productSubType, result);
-            })
-        }
-    })
+
 }
-function populateProductSubTypeSelect(productSubType, result){
-    if(productSubType.length > 0){
-        productSubType.empty();
-        productSubType.append('<option value="" selected style="display: none">-- Select --</option>');
+function populateProductSubTypeSelect(subTypeSelectBox, result, selectBox, selectedSubtypes){
+    if(subTypeSelectBox.length > 0){
+
+        subTypeSelectBox.empty();
+
+        if(typeof selectBox.val() == 'string'){
+            subTypeSelectBox.append('<option value="" selected style="display: none">-- Select --</option>');
+        }
+
         $.each(result, function (i, item) {
-            productSubType.append($('<option>', {
+
+            var selectedOrNot = (selectedSubtypes.length > 0 && selectedSubtypes.indexOf(item.id) != -1) ? 'selected' : '';
+
+            subTypeSelectBox.append($('<option '+selectedOrNot+'>', {
                 value: item.id,
                 text : item.product_type
             }));
         });
+
+        subTypeSelectBox.val(selectedSubtypes).trigger('change.select2');
     }
 }
 $(document).on('change', 'select' ,function () {

@@ -113,14 +113,14 @@
     $("#col-config").on('change', function () {
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&'+ getFooterFilters()+'&active_inactive=' + $("#active_inactive").val() + '&config_id=' + $("#col-config").val());
     });
-    $("#active_inactive,#order_type,#product_type").on('click', function () {
-        var type, order_type, product_type = "";
-        type = $("#active_inactive").val();
-        order_type = $("#order_type").val();
-        product_type = $("#product_type").val();
-        console.log(getFooterFilters({'page': true}));
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?&type=store'+ getFooterFilters({'page': true})+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
-    });
+    {{--$("#active_inactive,#order_type,#product_type").on('click', function () {--}}
+        {{--var type, order_type, product_type = "";--}}
+        {{--type = $("#active_inactive").val();--}}
+        {{--order_type = $("#order_type").val();--}}
+        {{--product_type = $("#product_type").val();--}}
+        {{--console.log(getFooterFilters({'page': true}));--}}
+        {{--reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?&type=store'+ getFooterFilters({'page': true})+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());--}}
+    {{--});--}}
 
     /* todo refactor code
     $('#locations').on('click', function () {
