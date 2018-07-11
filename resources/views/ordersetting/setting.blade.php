@@ -124,8 +124,8 @@
                                 @endforeach
                             @endif
                             <tr>
-                                <td>{!! $settingItem['option_title'] !!}</td>
-                                <td>{!! $settingItem['option_description'] !!}</td>
+                                <td>PO Numbers of Excluded Orders </td>
+                                <td>The Orders which are related to these PO Numbers will be excluded from Merchandise Expenses Reports, Product Usage Reports and Inventory Reports</td>
                                 <td>
                                     <select id="excluded_orders" name="excluded_orders[]" class="select2" multiple="multiple"  >
                                         @foreach($Orders as $key => $order)
