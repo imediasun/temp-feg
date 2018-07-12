@@ -1,5 +1,13 @@
 @extends('layouts.app')
 @section('content')
+    <style>
+        .nav-tabs > li > a {
+            margin-right: 0px !important;
+        }
+        .sbox {
+            border-top: 0px solid transparent !important;
+        }
+    </style>
     <div class="page-content row">
         <!-- Page header -->
         <div class="page-header">
@@ -43,6 +51,15 @@
                 var loadContent = $("#loadContent");
                 loadModuleContent(moduleTab.attr('id'));
             });
+            $(document).on("keypress",".input-sm",function(e){
+                if(e.which == 13 || e.keyCode == 13){
+                    e.preventDefault();
+                    console.log("Enter button prevented");
+                    var container = $(this).parent(".sscol").parent('.simpleSearchContainer');
+                    var buttonContainer = container.children(".sscol-submit");
+                    buttonContainer.children('.doSimpleSearch').trigger("click");
+                }
+            })
         });
         function loadModuleContent(contentPath) {
             $('.ajaxLoading').show();
