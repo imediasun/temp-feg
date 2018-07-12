@@ -70,8 +70,9 @@ class RedemptioncountergallaryController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         //rebuildSearchQuery
-       // $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-        $filter = (!is_null($request->input('search')) ? $this->model->rebuildSearchQuery(['loc_id'],['theme_name']) : '');
+        $excludedFilters = (!is_null($request->input('search')) ? $this->model->rebuildSearchQuery(null,['theme_name']) : '');
+        $filter = (!is_null($request->input('search')) ? $this->buildSearch($excludedFilters) : '');
+
 
         $page = $request->input('page', 1);
         $params = array(
