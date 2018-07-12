@@ -68,7 +68,7 @@ class MerchindisetheminggallaryController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
       //  $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-        $filter = (!is_null($request->input('search')) ? $this->model->rebuildSearchQuery([],['loc_id']) : '');
+        $filter = (!is_null($request->input('search')) ? $this->model->rebuildSearchQuery(['theme_name'],['loc_id']) : '');
 
 
         $page = $request->input('page', 1);
