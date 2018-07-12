@@ -26,11 +26,11 @@
 
         <div class="page-content-wrapper m-t">
             <ul class="nav nav-tabs">
-                <li style="width: 50%;" class="active" tab-data=""><a class="moduleTab"
+                <li style="width: 50%;" class="active" tab-data="" onclick="refreshTabContent();"><a class="moduleTab"
                                                                       href="#merchindisetheminggallary"
                                                                       data-toggle="tab" id="merchindisetheminggallary">Merchandise
                         Theme Gallery</a></li>
-                <li style="width: 50%;"><a class="moduleTab" href="#redemptioncountergallary" data-toggle="tab"
+                <li style="width: 50%;" onclick="refreshTabContent();"><a class="moduleTab" href="#redemptioncountergallary" data-toggle="tab"
                                            id="redemptioncountergallary">Redemption Counter Gallery</a></li>
             </ul>
             <div id="merchindisetheminggallaryView"></div>
@@ -79,7 +79,10 @@
                 }
             });
         }
-
+function refreshTabContent(){
+    ajaxViewClose('#merchindisetheminggallary');
+    ajaxViewClose('#redemptioncountergallary');
+}
     </script>
 
 @stop
