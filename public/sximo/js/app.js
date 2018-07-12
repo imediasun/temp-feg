@@ -1286,18 +1286,27 @@ $(document).ready(function(){
 //need to fix notiation to camel case notation
 function getProductSubTypes(productTypeId, productSubTypeSelectorArray, selectBox){
 
+    console.log(productSubTypeSelectorArray);
+
     $.each(productSubTypeSelectorArray, function (key, productSubTypeNameAttr) {
 
-        var subTypeSelectBox = selectBox.closest('div:has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]');
+        var tag = '';
 
-        if(subTypeSelectBox.length > 0){
+        if(selectBox.parent().is('td'))
+            tag = 'tr';
+        else
+            tag = 'div';
+
+
+        var subTypeSelectBox = selectBox.closest(tag+':has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]');
+
+        if( subTypeSelectBox.length > 0 ){
+
+            console.log(subTypeSelectBox);
 
             subTypeSelectBox.attr('disabled', 'disabled')
 
             var selectedSubtypes = subTypeSelectBox.val() == null ? [] : subTypeSelectBox.val();
-            //
-            // alert(selectedSubtypes);
-
 
             $.ajax({
                 url: 'product/get-product-subtype?product_type_id='+productTypeId,
@@ -1353,3 +1362,23 @@ $(document).on('change', 'select' ,function () {
         getProductSubTypes(productTypeId, productSubTypeSelectors, $(this));
     }
 });
+
+if(window.location.pathname == '/product')
+{
+    $(document).on('dblclick', '.editable', function () {
+
+        var productTypeId = $(this).children('td').children('select[name="prod_type_id"]').val();
+
+        var productTypeSelectField      =   $(this).children('td').children('select[name="prod_type_id"]');
+        getProductSubTypes(productTypeId, ['prod_sub_type_id'], productTypeSelectField)
+
+    });
+}
+
+
+// $(document).bind('DOMNodeInserted', function(event) {
+//     console.log(event.target);
+//
+//     // console.log('inserted ' + event.target.nodeName + // new node
+//     //     ' in ' + event.relatedNode.nodeName); // parent
+// });
