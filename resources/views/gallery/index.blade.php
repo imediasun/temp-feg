@@ -49,6 +49,10 @@
             $(document).on('click', '.moduleTab', function () {
                 var moduleTab = $(this);
                 var loadContent = $("#loadContent");
+                $("#merchindisetheminggallaryView").empty();
+                $("#redemptioncountergallaryView").empty();
+                $("#merchindisetheminggallaryGrid").empty();
+                $("#redemptioncountergallaryGrid").empty();
                 loadModuleContent(moduleTab.attr('id'));
             });
             $(document).on("keypress",".input-sm",function(e){
@@ -61,6 +65,12 @@
                 }
             })
         });
+        $(document).on("click",".doSimpleSearch",function(){
+            $("#merchindisetheminggallaryView").empty();
+            $("#redemptioncountergallaryView").empty();
+            $("#merchindisetheminggallaryGrid").empty();
+            $("#redemptioncountergallaryGrid").empty();
+        });
         function loadModuleContent(contentPath) {
             $('.ajaxLoading').show();
             $.ajax({
@@ -69,9 +79,11 @@
                 success: function (response) {
                     if (contentPath == "merchindisetheminggallary") {
                         $("#redemptioncountergallaryGrid").css("display", "none");
+                        $("#redemptioncountergallaryGrid").empty();
                         $("#merchindisetheminggallaryGrid").css("display", "block");
                     } else {
                         $("#merchindisetheminggallaryGrid").css("display", "none");
+                        $("#merchindisetheminggallaryGrid").empty();
                         $("#redemptioncountergallaryGrid").css("display", "block");
                     }
                     $("#" + contentPath + "Grid").html(response);
