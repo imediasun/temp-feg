@@ -361,7 +361,7 @@
                                          style="width: 85px"
                                          required></td>
                         <td>
-                            <br/> <input type='number' name='case_price[]' onkeyup="calculateUnitPrice(this);" id="case_price"
+                            <br/> <input type='number' name='case_price[]' @if(is_object($row) && $row->is_freehand != 1){ onkeyup="calculateUnitPrice(this);" @endif id="case_price"
                                          class='calculate form-control fixDecimal' min="0.00" step=".001" placeholder="0.00"
                                          style="width: 85px"
                                          required></td>
@@ -1763,8 +1763,11 @@
                             $('.itemstable .clonedInput:first-child textarea').val('');
                             $('#total_cost').val(0.00);
                             $('input[name="Subtotal"]').val(0.00);
+                            console.log("non freehand order");
+                            $("input[name='case_price[]']").attr("onkeyup","calculateUnitPrice(this);");
                         }
                         else{
+                            console.log("freehand order");
                             currentElm.data('status','enabled');
                             $("#can-freehand i").toggleClass("fa-check-circle-o");
                             $("#can-freehand span").text('Disable Freehand');
@@ -1780,6 +1783,7 @@
                             $('.itemstable .clonedInput:first-child textarea').val('');
                             $('#total_cost').val(0.00);
                             $('input[name="Subtotal"]').val(0.00);
+                            $("input[name='case_price[]']").removeAttr("onkeyup");
                             reInitParcley();
                         }
                     }
@@ -1799,6 +1803,8 @@
                     $('.itemstable .clonedInput:first-child textarea').val('');
                     $('.itemstable .clonedInput input.sku').attr('readonly','readonly');
                     $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
+                    console.log("non freehand order");
+                    $("input[name='case_price[]']").attr("onkeyup","calculateUnitPrice(this);");
                 }
                 else{
                     currentElm.data('status','enabled');
@@ -1813,6 +1819,8 @@
                     $('.itemstable .clonedInput textarea.item').removeAttr('readonly');
                     $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                     $('.itemstable .clonedInput:first-child textarea').val('');
+                    $("input[name='case_price[]']").removeAttr("onkeyup");
+                    console.log("freehand order");
                 }
             }
             if (currentElm.data('status') == 'enabled') {
@@ -1821,6 +1829,7 @@
 
                     $(".item_name").last().removeAttr("onfocus", "init(this.id,this);");
                     $('.item_name').last().removeAttr('readonly');
+                    $("input[name='case_price[]']").removeAttr("onkeyup");
 
                 }, 500);
             } else {
@@ -1829,6 +1838,7 @@
 
                     $(".item_name").last().attr("onfocus", "init(this.id,this);");
                     $('.item_name').last().removeAttr('readonly');
+                    $("input[name='case_price[]']").attr("onkeyup","calculateUnitPrice(this);");
 
                 }, 500);
             }
