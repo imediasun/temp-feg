@@ -918,7 +918,7 @@ class ReportHelpers
                         FROM orders 
                         $whereNotInPoNumber    
                             AND date_ordered >= '$dateStart' 
-                            and date_ordered <= '$dateEnd' 
+                            AND date_ordered <= '$dateEnd' 
                             AND order_type_id IN(7,8) 
                             AND status_id IN(".implode(',',order::ORDER_CLOSED_STATUS).") 
                             
@@ -928,7 +928,7 @@ class ReportHelpers
                         SELECT sum(budget_value) as budget_value, location_id 
                             FROM location_budget 
                             WHERE budget_date >= '$dateStart' 
-                                and budget_date <= '$dateEnd' 
+                                AND budget_date <= '$dateEnd' 
                             GROUP BY location_id) LB 
                     ON LB.location_id = L.id
                 LEFT JOIN debit_type D ON D.id = L.debit_type_id
