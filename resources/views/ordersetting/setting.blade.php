@@ -124,7 +124,7 @@
                                 @endforeach
                             @endif
                             <tr>
-                                <td>PO Numbers of Excluded Orders </td>
+                                <td>Exclude Orders From Reports</td>
                                 <td>The Orders which are related to these PO Numbers will be excluded from Merchandise Expenses Reports, Product Usage Reports and Inventory Reports</td>
                                 <td>
                                     <select id="excluded_orders" name="excluded_orders[]" class="select2" multiple="multiple"  >
