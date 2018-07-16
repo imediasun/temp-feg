@@ -1201,11 +1201,11 @@ GROUP BY mapped_expense_category");
             else
                 array_push($productTypes, $commaSeparatedProductType);
 
-            $productSubtypes = ProductType::select('product_type', 'id')->whereIn('request_type_id', $productTypes)->orderBy('product_type', 'asc')->get();
+            $productSubtypes = ProductType::select('type_description', 'id')->whereIn('request_type_id', $productTypes)->orderBy('type_description', 'asc')->get();
         }
         else
         {
-            $productSubtypes = ProductType::select('product_type', 'id')->orderBy('product_type', 'asc')->get();
+            $productSubtypes = ProductType::select('type_description', 'id')->orderBy('type_description', 'asc')->get();
         }
 
 

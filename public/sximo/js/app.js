@@ -1346,8 +1346,8 @@ function populateProductSubTypeSelect(subTypeSelectBox, result, selectBox, selec
 
             var selectedOrNot = (selectedSubtypes.length > 0 && selectedSubtypes.indexOf(item.id) != -1) ? 'selected' : '';
 
-            console.log(item.id, item.product_type);
-            subTypeSelectBox.append('<option '+selectedOrNot+' value="'+item.id+'">'+item.product_type+'</option>');
+            console.log(item.id, item.type_description);
+            subTypeSelectBox.append('<option '+selectedOrNot+' value="'+item.id+'">'+item.type_description+'</option>');
         });
 
         subTypeSelectBox.val(selectedSubtypes).trigger('change.select2');
