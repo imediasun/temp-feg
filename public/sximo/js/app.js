@@ -1286,7 +1286,6 @@ $(document).ready(function(){
 //need to fix notiation to camel case notation
 function getProductSubTypes(productTypeId, productSubTypeSelectorArray, selectBox){
 
-    console.log(productSubTypeSelectorArray);
 
     $.each(productSubTypeSelectorArray, function (key, productSubTypeNameAttr) {
 
@@ -1298,7 +1297,15 @@ function getProductSubTypes(productTypeId, productSubTypeSelectorArray, selectBo
             tag = 'div';
 
 
-        var subTypeSelectBox = selectBox.closest(tag+':has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]');
+        var subTypeSelectBox = '';
+
+        if(selectBox.parent().parent().parent().parent().is('#advance-search'))
+            subTypeSelectBox = selectBox.closest(tag).parent().parent().find('select[name="'+productSubTypeNameAttr+'"]');
+        else if(selectBox.parent().parent().is('tr'))
+            subTypeSelectBox = selectBox.closest(tag+':has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]');
+        else
+            subTypeSelectBox = selectBox.closest(tag).parent().find('select[name="'+productSubTypeNameAttr+'"]');
+
 
         if( subTypeSelectBox.length > 0 ){
 
@@ -1339,10 +1346,8 @@ function populateProductSubTypeSelect(subTypeSelectBox, result, selectBox, selec
 
             var selectedOrNot = (selectedSubtypes.length > 0 && selectedSubtypes.indexOf(item.id) != -1) ? 'selected' : '';
 
-            subTypeSelectBox.append($('<option '+selectedOrNot+'>', {
-                value: item.id,
-                text : item.product_type
-            }));
+            console.log(item.id, item.product_type);
+            subTypeSelectBox.append('<option '+selectedOrNot+' value="'+item.id+'">'+item.product_type+'</option>');
         });
 
         subTypeSelectBox.val(selectedSubtypes).trigger('change.select2');
@@ -1352,12 +1357,13 @@ $(document).on('change', 'select' ,function () {
     //package all these lines in function
     var nameOfSelectBox = $(this).attr('name');
     var productTypeId = $(this).val();
-    var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type']
+    var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type', 'prod_type_id[]']
     if(productTypeSelectorsNames.indexOf(nameOfSelectBox) != -1){
         var productSubTypeSelectors = [
             "prod_sub_type_id",
             "Product_Sub_Type",
-            "product_type"
+            "product_type",
+            "prod_sub_type_id[1]"
         ];
         getProductSubTypes(productTypeId, productSubTypeSelectors, $(this));
     }
