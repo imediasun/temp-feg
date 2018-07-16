@@ -1369,17 +1369,17 @@ $(document).on('change', 'select' ,function () {
     }
 });
 
-if(window.location.pathname == '/product')
-{
-    $(document).on('dblclick', '.editable', function () {
-
-        var productTypeId = $(this).children('td').children('select[name="prod_type_id"]').val();
-
-        var productTypeSelectField      =   $(this).children('td').children('select[name="prod_type_id"]');
-        getProductSubTypes(productTypeId, ['prod_sub_type_id'], productTypeSelectField)
-
-    });
-}
+// if(window.location.pathname == '/product')
+// {
+//     $(document).on('dblclick', '.editable', function () {
+//
+//         var productTypeId = $(this).children('td').children('select[name="prod_type_id"]').val();
+//
+//         var productTypeSelectField      =   $(this).children('td').children('select[name="prod_type_id"]');
+//         getProductSubTypes(productTypeId, ['prod_sub_type_id'], productTypeSelectField)
+//
+//     });
+// }
 
 
 // $(document).bind('DOMNodeInserted', function(event) {
