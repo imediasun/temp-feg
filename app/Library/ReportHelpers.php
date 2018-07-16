@@ -909,15 +909,15 @@ class ReportHelpers
         $excludedOrders = productusagereport::excludeOrderFromProductUsageAndMerchandiseExpenseAndInventoryReports();
         $whereNotInPoNumber = '';
         if (!empty($excludedOrders)){
-            $whereNotInPoNumber = "WHERE po_number NOT IN($excludedOrders) ";
+            $whereNotInPoNumber = " po_number NOT IN($excludedOrders) AND ";
         }
         $Q = "
                 FROM location L
 				LEFT JOIN (
                     SELECT sum(order_total) as order_total, location_id,po_number 
-                        FROM orders 
+                        FROM orders WHERE
                         $whereNotInPoNumber    
-                            AND date_ordered >= '$dateStart' 
+                            date_ordered >= '$dateStart' 
                             AND date_ordered <= '$dateEnd' 
                             AND order_type_id IN(7,8) 
                             AND status_id IN(".implode(',',order::ORDER_CLOSED_STATUS).") 
