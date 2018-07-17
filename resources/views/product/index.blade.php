@@ -54,5 +54,18 @@ function showAction() {
     $('#{{$pageModule}}View').show();
     $('#{{$pageModule}}Grid').hide();
 }
+
+/**
+ * this function calls when all simple search operation has been completed.
+ * override this function in products module so it populate correct product subtype after simple search has been performed
+ */
+App.simpleSearch.populateFields = function()  {
+    var container = $('.simpleSearchContainer');
+    if (container.length) {
+        App.populateFieldsFromCache(container, App.simpleSearch);
+        $('select[name="prod_type_id"]').trigger('change');
+    }
+};
+
 </script>	
 @endsection
