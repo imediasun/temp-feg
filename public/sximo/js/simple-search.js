@@ -35,9 +35,7 @@ function performSimpleSearch(params) {
         if (value === null || value === UNDEFINED ) {
             value = '';
         }
-        console.log("Here B");
         if (typeof value == 'string') {
-            console.log("Here A");
             //Trim and remove any character other than ASCII
             value = $.trim(value);
             /*value = $.trim(value).replace(/[^\x00-\x7F]/g, "");*/
@@ -103,7 +101,7 @@ function performSimpleSearch(params) {
 
     // fetch data
     if (ajaxSearch) {
-        reloadData(moduleID, url+ '/data' + attr);    
+        reloadData(moduleID, url+ '/data' + attr);
     }
     else {
         window.location.href = url+attr;
