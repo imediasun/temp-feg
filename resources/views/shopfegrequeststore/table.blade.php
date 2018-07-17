@@ -467,6 +467,13 @@
         $('#myImageModal').modal('show');
         $(".ajaxLoading").hide();
     }
+    $(function () {
+        $(document).on("change","select#product_type,select#order_type",function(e){
+            e.preventDefault();
+            console.log("Event Prevented");
+
+        })
+    })
 </script>
 <style>
     .table th.right {

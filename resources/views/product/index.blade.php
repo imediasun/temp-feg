@@ -26,8 +26,21 @@
 </div>	
 <script>
 $(document).ready(function(){
-	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
-});	
+	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
+    $(document).on('dblclick', '.editable', onInlineEditingSelectProperProductTypeAndSubType);
+});
+
+function onInlineEditingSelectProperProductTypeAndSubType(){
+    var productTypeId = $(this).children('td').children('select[name="prod_type_id"]').val();
+    var productSubType = $(this).children('td').children('select[name="prod_sub_type_id"]');
+    var productSubTypeId = productSubType.val();
+    var productTypeSelectField      =   $(this).children('td').children('select[name="prod_type_id"]');
+    getProductSubTypes(productTypeId, ['prod_sub_type_id'], productTypeSelectField)
+
+    setTimeout(function () {
+        productSubType.val(productSubTypeId).trigger('change');
+    }, 1000)
+}
     
 function cancelAction() {
     $('#{{$pageModule}}View').hide();

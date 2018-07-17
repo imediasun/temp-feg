@@ -1353,8 +1353,17 @@ function populateProductSubTypeSelect(subTypeSelectBox, result, selectBox, selec
         subTypeSelectBox.val(selectedSubtypes).trigger('change.select2');
     }
 }
+
+/**
+ * global level code which populates product subtype when a product type is selected
+ * Covered Areas:
+ *  1. Simple Search with support of multiselect
+ *  2. Advanced Search
+ *  3. Inline editing
+ *  4. Product create and edit
+ */
 $(document).on('change', 'select' ,function () {
-    //package all these lines in function
+
     var nameOfSelectBox = $(this).attr('name');
     var productTypeId = $(this).val();
     var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type', 'prod_type_id[]']
@@ -1368,30 +1377,3 @@ $(document).on('change', 'select' ,function () {
         getProductSubTypes(productTypeId, productSubTypeSelectors, $(this));
     }
 });
-
-if(window.location.pathname == '/product')
-{
-    $(document).on('dblclick', '.editable', function () {
-
-        var productTypeId = $(this).children('td').children('select[name="prod_type_id"]').val();
-        var productSubType = $(this).children('td').children('select[name="prod_sub_type_id"]');
-        var productSubTypeId = productSubType.val();
-
-
-        var productTypeSelectField      =   $(this).children('td').children('select[name="prod_type_id"]');
-        getProductSubTypes(productTypeId, ['prod_sub_type_id'], productTypeSelectField)
-
-        setTimeout(function () {
-            productSubType.val(productSubTypeId).trigger('change');
-        }, 1000)
-
-    });
-}
-
-
-// $(document).bind('DOMNodeInserted', function(event) {
-//     console.log(event.target);
-//
-//     // console.log('inserted ' + event.target.nodeName + // new node
-//     //     ' in ' + event.relatedNode.nodeName); // parent
-// });

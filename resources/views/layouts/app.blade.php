@@ -84,6 +84,8 @@
 	<script>
 		//define global level js variables here
 		var PREVENT_CONSOLE_LOGS = '{{env('PREVENT_CONSOLE_LOGS')}}';
+		var pageModule = '{{$pageModule or ''}}';
+		console.log("My page module is "+pageModule);
 	</script>
 	<script type="text/javascript" src="{{ asset('sximo/js/plugins/ajax/noty/packaged/jquery.noty.packaged.min.js') }}"></script>
 
