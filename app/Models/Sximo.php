@@ -1559,7 +1559,7 @@ class Sximo extends Model {
             }
             $response = $model->get();
             if($response->count() > 0){
-                return ['error'=>true,'customMessage'=>$message];
+                return ['error'=>true,'customMessage'=>'Barcode needs to be unique for each product'];
             }else{
                 return ['error'=>false,'customMessage'=>$message];
             }
