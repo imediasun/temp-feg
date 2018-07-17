@@ -196,7 +196,15 @@
                         </div>
 
                     </div>
-
+                    <div class="form-group">
+                        <br/><br/>
+                        <label for="fedex_number" class=" control-label col-md-4 text-left">
+                            {{ Lang::get('core.fedex_number') }}
+                        </label>
+                        <div class="col-md-8">
+                            <input name='fedex_number' id='fedex_number' class="form-control" value="{{ is_object($row) ? $row->fedex_number  : 'No Data' }}" readonly/>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <br/><br/>
                         <label for="bil_ac_num" class=" control-label col-md-4 text-left" style="margin-top: 7px;">
@@ -1161,15 +1169,15 @@
                         $("#submit_btn").removeAttr('disabled');
                         // $('.ajaxLoading').hide();
                         poajax = null;
-                        if (msg != 'available') {
-                            $("#po_3").val(msg);
-
+                        if (msg.po_3 != 'available') {
+                            $("#po_3").val(msg.po_3);
                         }
                         else {
                             $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is Available.</b>');
                             $("#po_message").show(200);
                         }
 
+                        $("#fedex_number").val(msg.fedex_number);
                     }
                 });
             }

@@ -31,6 +31,7 @@ class location extends Sximo  {
   location.city,
   location.state,
   location.zip,
+  location.fedex_number,
   location.attn,
   location.company_id,
   location.self_owned,
