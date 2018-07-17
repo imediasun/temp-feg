@@ -140,16 +140,16 @@
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('expensecategories',$access,$id ,$setting) !!}
 
-					{{-- <a href="javascript:void(0)"
-						data-id="{{$row->id}}"
-						data-ordertype = "{{$row->order_type}}"
-						data-producttype = "{{$row->product_type}}"
-						data-expense_category = "{{$row->mapped_expense_category}}"
-						data-action="removal"
-						class="tips btn btn-xs btn-white expenseCategoryDeleteRequest"
-						title="Delete Expense Category">
-						 <i class="fa fa-trash-o " aria-hidden="true"></i>
-					 </a>--}}
+					{{--<a href="javascript:void(0)"--}}
+						{{--data-id="{{$row->id}}"--}}
+						{{--data-ordertype = "{{$row->order_type}}"--}}
+						{{--data-producttype = "{{$row->product_type}}"--}}
+						{{--data-expense_category = "{{$row->mapped_expense_category}}"--}}
+						{{--data-action="removal"--}}
+						{{--class="tips btn btn-xs btn-white expenseCategoryDeleteRequest"--}}
+						{{--title="Delete Expense Category">--}}
+						 {{--<i class="fa fa-trash-o " aria-hidden="true"></i>--}}
+					 {{--</a>--}}
                  </td>
                 @endif
                 </tr>
