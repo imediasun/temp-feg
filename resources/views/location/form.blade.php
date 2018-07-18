@@ -421,11 +421,12 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $(".checkInputValidation").keyup(function(e) {
-         var value = $(this).val();
-            var regx = new RegExp(/[!$%^&*()_+|@#~=`{}\[\]:";'<>?,.\/]+/);
+            var value = $(this).val();
+            var regex = /[!$%^&*_+|@#~=`{}\[\]:";'<>?,.\/]+/;
+            var regx = new RegExp(regex);
             var result  = regx.test(value);
             if(result === true){
-               $(this).val(value.substr(0,(value.length-1)));
+               $(this).val(value.replace(regex, ""));
             }
         });
         $('#location_available').hide();
