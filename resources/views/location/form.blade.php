@@ -426,7 +426,7 @@
             var regx = new RegExp(regex);
             var result  = regx.test(value);
             if(result === true){
-               $(this).val(value.replace(regex, ""));
+                $(this).val(value.replace(regex, ""));
             }
         });
         $('#location_available').hide();
