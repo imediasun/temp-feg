@@ -156,7 +156,7 @@ class productusagereport extends Sximo  {
             {
                 $separator = "' , '";
             }
-            $excludedOrders = self::excludeOrderFromProductUsageAndMerchandiseExpense();
+            $excludedOrders = self::excludeOrderFromProductUsageAndMerchandiseExpenseAndInventoryReports();
                 $mainQuery = "SELECT UUID() as unique_column, max(OCID) as OCID,
             max(id) as id,GROUP_CONCAT(DISTINCT orderId ORDER BY orderId DESC SEPARATOR ' - ') as orderId,max(orderId) as maxOrderId, max(sku) as sku, max(num_items) as num_items,
             GROUP_CONCAT(DISTINCT order_type ORDER BY order_type SEPARATOR ' , ') AS Order_Type,
@@ -312,10 +312,13 @@ class productusagereport extends Sximo  {
         }
         return $newRows;
     }
-    public static function excludeOrderFromProductUsageAndMerchandiseExpense(){
-        $module = new OrderController();
-        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
-        $po_numbers = !empty($pass['exclude order from product usage and merchandise expense report']) ? $pass['exclude order from product usage and merchandise expense report']->data_type:'';
+    public static function excludeOrderFromProductUsageAndMerchandiseExpenseAndInventoryReports(){
+
+        $po_numbers = FEGSystemHelper::getOption('excluded_orders');
+
+//        $module = new OrderController();
+//        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+//        $po_numbers = !empty($pass['exclude order from product usage and merchandise expense report']) ? $pass['exclude order from product usage and merchandise expense report']->data_type:'';
         $array = FEGSystemHelper::split_trim($po_numbers);
         $string_po = [];
         foreach ($array as $arr){

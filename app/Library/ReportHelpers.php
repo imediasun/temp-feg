@@ -906,20 +906,22 @@ class ReportHelpers
         return $Q;        
     }
     public static function _getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", $debit = ""){
-        $excludedOrders = productusagereport::excludeOrderFromProductUsageAndMerchandiseExpense();
+        $excludedOrders = productusagereport::excludeOrderFromProductUsageAndMerchandiseExpenseAndInventoryReports();
         $whereNotInPoNumber = '';
         if (!empty($excludedOrders)){
-            $whereNotInPoNumber = "AND O.po_number NOT IN($excludedOrders) ";
+            $whereNotInPoNumber = " po_number NOT IN($excludedOrders) AND ";
         }
         $Q = "
                 FROM location L
 				LEFT JOIN (
                     SELECT sum(order_total) as order_total, location_id,po_number 
-                        FROM orders 
-                        WHERE date_ordered >= '$dateStart' 
+                        FROM orders WHERE
+                        $whereNotInPoNumber    
+                            date_ordered >= '$dateStart' 
                             and date_ordered <= '$dateEnd' 
                             AND order_type_id IN(7,8) 
                             AND status_id IN(".implode(',',order::ORDER_CLOSED_STATUS).") 
+                            
                         GROUP BY location_id) O 
                     ON L.id = O.location_id
                 INNER  JOIN (
@@ -931,7 +933,7 @@ class ReportHelpers
                     ON LB.location_id = L.id
                 LEFT JOIN debit_type D ON D.id = L.debit_type_id
 
-                WHERE L.active = 1 $whereNotInPoNumber AND L.id not in (6000,6030)";
+                WHERE L.active = 1 AND L.id not in (6000,6030)";
 
         if (!empty($location)) {
             $Q .= " AND L.id IN ($location)";

@@ -20,7 +20,11 @@
 		<link href="{{ asset('sximo/js/plugins/bootstrap.summernote/summernote.css')}}" rel="stylesheet"/>
 		<link href="{{ asset('sximo/js/plugins/datepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet"/>
 		<link href="{{ asset('sximo/js/plugins/bootstrap.datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet"/>
-		<link href="{{ asset('sximo/js/plugins/select2/select2.css')}}" rel="stylesheet"/>
+ 		@if($_SERVER['REQUEST_URI']  !== '/ordersetting')
+			<link href="{{ asset('sximo/js/plugins/select2/select2.css')}}" rel="stylesheet"/>
+		@else
+			<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+		@endif
 		<link href="{{ asset('sximo/js/plugins/iCheck/skins/square/blue.css')}}" rel="stylesheet"/>
 		<link href="{{ asset('sximo/js/plugins/fancybox/jquery.fancybox.css') }}" rel="stylesheet"/>
         <link href="{{ asset('sximo/css/multi-select.css') }}" rel="stylesheet"/>
@@ -42,7 +46,11 @@
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery-ui.min.js') }}"></script>
 
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/iCheck/icheck.min.js') }}"></script>
-		<script type="text/javascript" src="{{ asset('sximo/js/plugins/select2/select2.js') }}"></script>
+		@if($_SERVER['REQUEST_URI']  !== '/ordersetting')
+			<script type="text/javascript" src="{{ asset('sximo/js/plugins/select2/select2.js') }}"></script>
+		@else
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+		@endif
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/fancybox/jquery.fancybox.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/prettify.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/parsley.js') }}"></script>
