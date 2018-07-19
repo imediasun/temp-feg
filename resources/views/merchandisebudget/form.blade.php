@@ -258,6 +258,14 @@
         if (data.status == 'success') {
             ajaxViewClose('#{{ $pageModule }}');
             ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+
+            var result = data.budget_summary;
+            if(result.length !== 0){
+                var ids = ['monthly_merch_order_total', 'monthly_else_order_total', 'monthly_merch_remaining', 'last_month_merch_remaining'];
+                $.each(ids, function(key, val){
+                    $('#'+val).html(result[val]);
+                });
+            }
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');
         } else {
