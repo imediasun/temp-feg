@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Observers\Observerable;
 use App\Models\ticketsetting;
 use App\Library\FEG\System\Formatter;
+use Log;
 
 class Servicerequests extends Observerable  {
 
@@ -147,5 +148,138 @@ class Servicerequests extends Observerable  {
             $comment = $data;
         }
         return $comment;
+    }
+    public static function getRows($args, $cond = null) {
+        $table = with(new static)->table;
+        $key = with(new static)->primaryKey;
+        extract(array_merge(array(
+            'page' => '0',
+            'limit' => '0',
+            'sort' => '',
+            'extraSorts' => [],
+            'order' => '',
+            'params' => '',
+            'global' => 1
+        ), $args));
+
+
+        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$sort} {$order} " : '';
+        if (!empty($extraSorts)) {
+            if (empty($orderConditional)) {
+                $orderConditional = " ORDER BY ";
+            }
+            else {
+                $orderConditional .= ", ";
+            }
+            $extraOrderConditionals = [];
+            foreach($extraSorts as $extraSortItem) {
+                $extraSortItem[0] = '`'.$extraSortItem[0].'`';
+                $extraOrderConditionals[] = implode(' ', $extraSortItem);
+            }
+            $orderConditional .= implode(', ', $extraOrderConditionals);
+        }
+
+        // Update permission global / own access new ver 1.1
+        $table = with(new static)->table;
+        if ($global == 0)
+            $params .= " AND {$table}.entry_by ='" . \Session::get('uid') . "'";
+        // End Update permission global / own access new ver 1.1
+
+        $rows = array();
+        $select = self::querySelect();
+
+        /*
+
+        */
+        $createdFlag = false;
+
+        if ($cond != null) {
+            $select .= self::queryWhere($cond);
+        }
+        else {
+            $select .= self::queryWhere();
+        }
+
+        if(!empty($createdFrom)){
+            if($cond != 'only_api_visible')
+            {
+                $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            }
+            else
+            {
+                $select .= " AND api_created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            }
+            $createdFlag = true;
+        }
+
+        if(!empty($updatedFrom)){
+
+            if($createdFlag){
+                if($cond != 'only_api_visible')
+                {
+                    $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+                else
+                {
+                    $select .= " OR api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+            }
+            else{
+                if($cond != 'only_api_visible')
+                {
+                    $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+                else
+                {
+                    $select .= " AND api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+            }
+
+        }
+
+        if(!empty($order_type_id)){
+            $select .= " AND order_type_id in($order_type_id)";
+        }
+        if(!empty($status_id)){
+            $select .= " AND status_id='$status_id'";
+        }
+        if(!empty($active)){//added for location
+            $select .= " AND location.active='$active'";
+        }
+
+        Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
+        $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
+        $total= count($counter_select);
+        if($table=="img_uploads")
+        {
+            $total="";
+        }
+
+        $offset = ($page - 1) * $limit;
+        if ($offset >= $total && $total != 0 && $limit != 0) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }
+
+        $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
+        // echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
+        Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
+        self::$getRowsQuery = $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
+        global $result;
+        $result = "";
+        \DB::transaction(function ()use($select,$params,$orderConditional,$limitConditional) {
+            global $result;
+            $sql = $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ;";
+            \DB::statement(\DB::raw("SET SESSION group_concat_max_len = 10000000; "));
+            $result = \DB::select(\DB::raw($sql));
+
+            // $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
+        }, 5);
+        if ($key == '') {
+            $key = '*';
+        } else {
+            $key = $table . "." . $key;
+        }
+        return $results = array('rows' => $result, 'total' => $total);
     }
 }
