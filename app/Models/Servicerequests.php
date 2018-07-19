@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Observers\Observerable;
 use App\Models\ticketsetting;
 use App\Library\FEG\System\Formatter;
+use Log;
 
 class Servicerequests extends Observerable  {
 
