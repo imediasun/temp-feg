@@ -154,6 +154,7 @@ class servicerequestsController extends Controller
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
+        $dbIncreaseGroup = \DB::raw("SET SESSION group_concat_max_len = 10000000");
         $results = $this->model->getRows($params);
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
