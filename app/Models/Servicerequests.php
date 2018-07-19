@@ -24,12 +24,20 @@ class Servicerequests extends Observerable  {
                     IF(ISNULL(sbc.Posted),
                         DATEDIFF('$date', sb_tickets.Created),
                         DATEDIFF('$date', sbc.Posted)) AS last_updated_elapsed_days,
-                    sb_tickets.*, D.company as debit_type
-
+                    sb_tickets.*, D.company as debit_type,
+                      CONCAT(L.id,' ',L.location_name) AS location_full_name,
+                      L.location_name AS locationname,
+                      UC.first_name   AS firstname,
+                      UC.last_name    AS lastname,
+                      sbc.USERNAME    AS sbcusername,
+                      (SELECT
+                     GROUP_CONCAT(sb_ticketcomments.Comments)
+                    FROM sb_ticketcomments
+                  WHERE sb_ticketcomments.TicketID = sb_tickets.TicketID) AS sbcComments
                 FROM sb_tickets
 
         LEFT JOIN (
-            SELECT sb_ticketcomments.TicketID, Posted, UserID, USERNAME
+            SELECT sb_ticketcomments.TicketID, Posted, UserID, USERNAME,sb_ticketcomments.Comments
 				FROM sb_ticketcomments
 				LEFT JOIN (SELECT tc.TicketID, max(tc.Posted) as max_posted from sb_ticketcomments tc group by TicketID) tcm
 					ON tcm.TicketID = sb_ticketcomments.TicketID
@@ -37,6 +45,7 @@ class Servicerequests extends Observerable  {
     ) sbc ON sbc.TicketID = sb_tickets.TicketID
 
 	LEFT JOIN users U ON U.id = sbc.UserID
+	LEFT JOIN users UC ON UC.id = sb_tickets.entry_by
 	INNER JOIN location L ON ( sb_tickets.location_id = L.id )
     LEFT JOIN debit_type D ON (L.debit_type_id = D.id)
 	";

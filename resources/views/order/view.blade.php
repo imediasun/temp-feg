@@ -63,9 +63,16 @@
                         </label>
 
                         <div class="col-md-8">
-                          {!!
-                            SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name',$nodata['location_id'])
-                            !!}
+                          {!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name',$nodata['location_id'])!!}
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div>
+                        <label class=" label-control col-md-4 text-left">
+                            {{ Lang::get('core.fedex_number') }}
+                        </label>
+                        <div class="col-md-8">
+                            {!! $row->fedex_number !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>

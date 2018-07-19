@@ -1,6 +1,8 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\Feg\System\Options;
+use App\Models\order;
 use App\Models\Ordersetting;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -46,6 +48,7 @@ class OrdersettingController extends Controller
         $NonMerchandiseSetting = "";
         $MerchandiseOrderTypes = [];
         $NonMerchandiseOrderTypes = [];
+        $excludedOrders = [];
 
         $MerchandiseOrderSetting = $this->model->where("is_merchandiseorder", 1)->first();
         if ($MerchandiseOrderSetting) {
@@ -70,12 +73,28 @@ class OrdersettingController extends Controller
             $GraphicsReceiver = $GraphicsRequestSetting->graphics_recever_content;
         }
 
-        $this->data['MerchandisePO'] = $MerchandiseSetting;
-        $this->data['NonMerchandisePO'] = $NonMerchandiseSetting;
-        $this->data['MerchandiseOrder'] = implode(",", $MerchandiseOrderTypes);
-        $this->data['NonMerchandiseOrder'] = implode(",", $NonMerchandiseOrderTypes);
-        $this->data['GraphicsSender'] = $GraphicsSender;
-        $this->data['GraphicsReceiver'] = $GraphicsReceiver;
+
+        $orders = order::take(10)->distinct()->lists('po_number', 'po_number')->toArray();
+        $option = Options::where('option_name', 'excluded_orders')->first();
+        if($option){
+            $excludedOrders = explode(',', $option->option_value);
+            $orders = array_merge($orders, $excludedOrders);
+        }
+
+        $newOrdersArray = [];
+        foreach ($orders as $order){
+            $newOrdersArray[$order] = $order;
+        }
+        $orders = $newOrdersArray;
+
+        $this->data['MerchandisePO']        = $MerchandiseSetting;
+        $this->data['NonMerchandisePO']     = $NonMerchandiseSetting;
+        $this->data['MerchandiseOrder']     = implode(",", $MerchandiseOrderTypes);
+        $this->data['NonMerchandiseOrder']  = implode(",", $NonMerchandiseOrderTypes);
+        $this->data['GraphicsSender']       = $GraphicsSender;
+        $this->data['GraphicsReceiver']     = $GraphicsReceiver;
+        $this->data['ExcludedOrders']       = $excludedOrders;
+        $this->data['Orders']               = $orders;
 
         $this->data['access'] = $this->access;
 
@@ -90,13 +109,13 @@ class OrdersettingController extends Controller
 
     public function postSave(Request $request)
     {
-
         $merchandisePONote = $request->input('merchandisePONote');
         $NonmerchandisePONote = $request->input('NonmerchandisePONote');
         $merchandiseOrderTypes = $request->input('merchandiseordertypes');
         $NonMerchandiseOrderTypes = $request->input('Nonmerchandiseordertypes');
         $GraphicsRequestSenderContent = $request->input('newgraphicsrequestsendercontent');
         $GraphicsRequestReceiverContent = $request->input('newgraphicsrequestreceivercontent');
+        $excludedOrders = !empty($request->input('excluded_orders')) ? implode(',', $request->input('excluded_orders')) : '';
         if (is_array($merchandiseOrderTypes) && is_array($NonMerchandiseOrderTypes)) {
             if (count(array_intersect($merchandiseOrderTypes, $NonMerchandiseOrderTypes)) > 0) {
                 return response()->json(array(
@@ -153,6 +172,28 @@ class OrdersettingController extends Controller
         $GraphicsRequestSetting->is_graphics_setting = 1;
         $GraphicsRequestSetting->save();
 
+        $option = Options::where('option_name', 'excluded_orders')->first();
+        if(!$option){
+            Options::addOption('excluded_orders', $excludedOrders, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'Exclude Orders',
+                'option_description' => 'Exclude Orders from the Product Usage, Merchandise Expense and Inventory Report',
+                'option_form_element_details' => null
+            ]);
+        }else{
+            Options::updateOption('excluded_orders', $excludedOrders, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'Exclude Orders',
+                'option_description' => 'Exclude Orders from the Product Usage, Merchandise Expense and Inventory Report',
+                'option_form_element_details' => null
+            ]);
+        }
+
+
+
+
 
         $requestData = $request->all();
         foreach(self::FEG_SETTINGS as $fegSetting) {
@@ -164,10 +205,31 @@ class OrdersettingController extends Controller
         return response()->json(array(
             'message' => 'Order Setting has been saved successfully.',
             'status' => 'success',
-
         ));
 
+    }
 
+    public function searchTheOrderByPONumber(Request $request){
+
+        $selected_po_numbers = $request->get('selected_po_numbers');
+
+        if(!$selected_po_numbers)
+            $selected_po_numbers = [];
+
+        $poNumber = $request->get('po_number');
+
+        $searchedPONumbers = order::select('po_number as id','po_number as text');
+
+        if($poNumber)
+            $searchedPONumbers = $searchedPONumbers->where('po_number', 'LIKE', '%'.$poNumber.'%');
+
+        $searchedPONumbers = $searchedPONumbers
+            ->whereNotIn('po_number', $selected_po_numbers)
+            ->distinct()
+            ->take(10)
+            ->get();
+
+        return $searchedPONumbers;
     }
 
 }

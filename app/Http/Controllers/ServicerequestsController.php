@@ -67,10 +67,10 @@ class servicerequestsController extends Controller
 
         
         // Get custom Ticket Type filter value 
-        $customTicketTypeFilter = $this->model->getSearchFilters(['ticket_custom_type' => '', 'Status' => 'status','showAll'=>0]);
+        $customTicketTypeFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'ticket_custom_type' => '', 'Status' => 'status','showAll'=>0]);
         $showAll = $customTicketTypeFilter['showAll'];
         unset($customTicketTypeFilter['showAll']);
-        $skipFilters = ['ticket_custom_type'];
+        $skipFilters = ['search_all_fields','ticket_custom_type','getSearchFilterQuerye'];
         $mergeFilters = [];
         extract($customTicketTypeFilter); //$ticket_custom_type, $status
         
@@ -110,6 +110,28 @@ class servicerequestsController extends Controller
         {
             \Session::put('showAllChecked',true);
         }
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                'sb_tickets.TicketID',
+                'sb_tickets.Description',
+                'sb_tickets.location_id',
+                'locationname',
+                'sb_tickets.Subject',
+                'sb_tickets.entry_by',
+                'firstname',
+                'lastname',
+                'sbcusername',
+                'sbcComments',
+                'location_full_name'
+            ];
+            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+            $filter .= is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
+
+            if(!empty($filter)){
+                $filter  = str_replace("AND ( sb_tickets.TicketID LIKE"," HAVING ( sb_tickets.TicketID LIKE",$filter);
+            }
+        }
+
 
         $filter = str_replace("AND last_updated_elapsed_days", "HAVING last_updated_elapsed_days", $filter);
         $filter = str_replace("AND (last_updated_elapsed_days BETWEEN", "HAVING (last_updated_elapsed_days BETWEEN", $filter);

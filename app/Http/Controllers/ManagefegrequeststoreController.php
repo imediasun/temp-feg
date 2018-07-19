@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\location;
 use App\Models\Managefegrequeststore;
 use App\Models\Sximo;
 use Illuminate\Http\Request;
@@ -371,6 +372,12 @@ class ManagefegrequeststoreController extends Controller
 
         $row = $this->model->getRow($id);
         if ($row) {
+            $fedex_number = "No Data";
+            $location = location::find($row->location_id);
+            if($location)
+                $fedex_number = $location->fedex_number ? $location->fedex_number : "No Data";
+
+            $row->fedex_number = $fedex_number;
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('requests');

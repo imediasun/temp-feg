@@ -155,7 +155,7 @@
                                             </select>                                            
                                         </div>
                                         
-                                        <div class="col-md-4 col-sm-12">
+                                        <div class=@if($canChangeStatus == true) "col-md-4 col-sm-12"> @else "col-md-8 col-sm-12">@endif
                                             <button type="submit" class="btn btn-primary btn-sm pull-right submitButton">
                                                 <i class="fa  fa-save "></i> Update
                                             </button>

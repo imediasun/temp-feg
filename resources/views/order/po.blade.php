@@ -5,7 +5,8 @@
         <div style="widtd:50%">
             <p>- BILL TO - <br/>
                 {{ $data[0]['company_name_long'] }} <br/>
-                1265 Hamilton Parkway<br/>Itasca, Illinois 60143
+                1265 Hamilton Parkway<br/>Itasca, Illinois 60143 <br/>
+                {{ $data[0]['fedex_number'] ?  Lang::get('core.fedex_number') .': '.$data[0]['fedex_number'] : ''}}
             </p>
         </div>
         <div style="width:50%; position:absolute; left:50%;top:8px">

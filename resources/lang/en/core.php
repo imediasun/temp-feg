@@ -30,6 +30,7 @@ return array(
 	"changepassword"	=> "Change Password",
 	"registernew" => "Register New Account ",
 	"backtosite" => " Back To Site ",
+    "fedex_number"=> "FedEx No",
 	
 /* grid , pagination */
 	"grid_displaying" 	=> "Displaying",

@@ -226,7 +226,15 @@ class ProductController extends Controller
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'inactive' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters([
+            'search_all_fields' => '',
+            'upc_barcode' => '',
+            'vendor_id' => '',
+            'prod_type_id'=>'',
+            'prod_sub_type_id'=>'',
+            'in_development'=>'',
+            'inactive' => '',
+        ]);
         $skipFilters = ['search_all_fields'];
         $mergeFilters = [];
         extract($globalSearchFilter); //search_all_fields
@@ -257,13 +265,8 @@ class ProductController extends Controller
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
-
-        $activeInactive = '';
-        if($inactive != ''){
-            $activeInactive = " AND products.inactive = $inactive";
-        }
-
-        return $filter.$activeInactive;
+        $filter .= is_null($trimmedSearchQuery) ? '' : $this->buildSearch($trimmedSearchQuery);
+        return $filter;
     }
     
     public function getIndex()
@@ -305,16 +308,6 @@ class ProductController extends Controller
         // Filter Search for query
         $filter = $this->getSearchFilterQuery();
         //(!is_null($request->input('search')) ? $this->buildSearch() : '');
-
-
-        $simpleSearchParems = $request->input('search');
-        if(!empty($simpleSearchParems)){
-            if(strpos($simpleSearchParems,'in_development:equal:') !=false){
-                $inDevelopmentStatus = substr($simpleSearchParems,strpos($simpleSearchParems,"in_development:equal:")+strlen("in_development:equal:"),strpos($simpleSearchParems,"in_development:equal:"));
-                $inDevelopmentStatus = rtrim($inDevelopmentStatus,"|");
-                $filter .= " AND products.in_development = '".$inDevelopmentStatus."' ";
-            }
-        }
         if(strpos($filter,"products.in_development") == false){
         $filter .= ' AND products.in_development = 0 ';
         }

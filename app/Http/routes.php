@@ -112,6 +112,7 @@ Route::group(['middleware' => 'auth'], function()
     Route::post('order/init-export/{ID?}', 'OrderController@postInitExport');
     Route::post('order/probe-export/{ID?}', 'OrderController@postProbeExport');
     Route::get('/read/csv', 'UserController@readCsv');
+    Route::get('order-setting/search-the-order-by-po-number', 'OrdersettingController@searchTheOrderByPONumber');
     Route::controller('home', 'HomeController');
     Route::get('/user/user-details/{id?}','Core\UsersController@getIndex');
     Route::controller('urlauth', 'URLAuthController');
