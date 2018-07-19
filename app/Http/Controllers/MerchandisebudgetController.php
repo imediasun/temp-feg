@@ -242,9 +242,17 @@ class MerchandisebudgetController extends Controller
         } else {
             $id = $this->model->insertRow($budget_vals, $id, $location_id, $budget_year);
         }
+
+        $budgetSummary = [];
+
+        if($location_id == \Session::get('selected_location')){
+            $budgetSummary = \SiteHelpers::getOrderHistory();
+        }
+
         return response()->json(array(
-            'status' => 'success',
-            'message' => \Lang::get('core.note_success')
+            'status'            =>  'success',
+            'message'           =>  \Lang::get('core.note_success'),
+            'budget_summary'    =>  $budgetSummary
         ));
 
 

@@ -279,6 +279,15 @@ $(document).ajaxComplete(function(){
     $(".select3[name='location_id'] option[value='6030'],.select3[name='location_id'] option[value='6000']").remove();
     $(".select3[name='location_id']").change();
 });
+App.autoCallbacks.registerCallback('inline.row.save.after', function (params) {
+    var result = params.data.budget_summary;
+    if(result.length !== 0){
+        var ids = ['monthly_merch_order_total', 'monthly_else_order_total', 'monthly_merch_remaining', 'last_month_merch_remaining'];
+        $.each(ids, function(key, val){
+            $('#'+val).html(result[val]);
+        });
+    }
+});
 </script>
 <style>
 .table th.right { text-align:right !important;}
