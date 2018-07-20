@@ -12,9 +12,11 @@ class TbPages extends Migration
      */
     public function up()
     {
-        Schema::table('tb_pages',function(Blueprint $table){
-            $table->text('page_content')->nullable();
-        });
+        if (!Schema::hasColumn('page_content')) {
+            Schema::table('tb_pages', function (Blueprint $table) {
+                $table->text('page_content')->nullable();
+            });
+        }
     }
 
     /**
