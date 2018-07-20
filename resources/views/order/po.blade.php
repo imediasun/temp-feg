@@ -6,7 +6,6 @@
             <p>- BILL TO - <br/>
                 {{ $data[0]['company_name_long'] }} <br/>
                 1265 Hamilton Parkway<br/>Itasca, Illinois 60143 <br/>
-                {{ $data[0]['fedex_number'] ?  Lang::get('core.fedex_number') .': '.$data[0]['fedex_number'] : ''}}
             </p>
         </div>
         <div style="width:50%; position:absolute; left:50%;top:8px">
@@ -23,7 +22,7 @@
             <table width="100%" style="border-collapse: collapse;">
                 <tr><th width="50%" style="text-align: left">Vendor</th><th style="text-align: left;color:red" width="50%">Ship To</th></tr>
                 <tr>
-                    <td style="border:1px solid #000;border-right:none; border-bottom: none; padding: 10px; padding-top: 0px;margin-top:0px; ">
+                    <td style="border:1px solid #000; border-right:none; border-bottom: none; padding: 10px; padding-top: 0px; margin-top:0px;">
                         {{ $data[0]['vendor_name'] }} <br/>
                         {{ $data[0]['vend_street1'] }}<br/>
                         {{ $data[0]['vend_city'] }}
@@ -45,6 +44,9 @@
                         {{ isset($data[0]['po_state_ship'])?$data[0]['po_state_ship']:"" }}
                         {{ isset($data[0]['po_city_zip'])?$data[0]['po_city_zip']:"" }}
                         {{ isset($data[0]['po_zip_ship'])?$data[0]['po_zip_ship']:"" }} <br/>
+                        <br/>
+                        <br/>
+                        {{ $data[0]['fedex_number'] ?  'Please Ship parcels using '.Lang::get('core.fedex_number') .': '.$data[0]['fedex_number'] : ''}}
                     </td>
                 </tr>
                 <tr >
