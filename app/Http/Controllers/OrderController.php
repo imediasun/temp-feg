@@ -1710,7 +1710,8 @@ class OrderController extends Controller
         $location =  location::find($location_id);
         return [
             'po_3'          =>  $this->validatePO($po, $po_full, $location_id),
-            'fedex_number'  =>  $location ? $location->fedex_number ? $location->fedex_number : 'No Data' : 'No Data'
+            'fedex_number'  =>  $location ? $location->fedex_number ? $location->fedex_number : 'No Data' : 'No Data',
+            'freight_id'    => $location ? $location->freight_id ? $location->freight_id : '' : '',
         ];
     }
 

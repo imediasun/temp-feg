@@ -303,6 +303,17 @@
                         </div>
                     </div>
                     <div class="form-group  ">
+                        <label for="Ordering Group" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Default Freight Type', (isset($fields['freight_id']['language'])? $fields['freight_id']['language'] : array())) !!}
+                        </label>
+                        <div class="col-md-6">
+                            <select name='freight_id' rows='5' id='freight_id' class='select2 '></select>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group  ">
                         <label for="Can Ship" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Can Ship', (isset($fields['can_ship']['language'])? $fields['can_ship']['language'] : array())) !!}
                         </label>
@@ -446,6 +457,9 @@
 
         $("#loc_group_id").jCombo("{{ URL::to('location/comboselect?filter=loc_group:id:loc_group_name') }}",
                 {selected_value: '{{ $row["loc_group_id"] }}'});
+        $("#freight_id").jCombo("{{ URL::to('location/comboselect?filter=freight:id:freight_type') }}",
+                {selected_value: '{{ $row["freight_id"] }}'});
+        //freight_id
 
         $("#debit_type_id").jCombo("{{ URL::to('location/comboselect?filter=debit_type:id:company') }}",
                 {selected_value: '{{ $row["debit_type_id"] }}'});

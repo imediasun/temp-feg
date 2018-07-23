@@ -1178,6 +1178,11 @@
                         }
 
                         $("#fedex_number").val(msg.fedex_number);
+
+                            var freightId = $("#freight_type_id");
+                            freightId.val(msg.freight_id);
+                            freightId.change();
+
                     }
                 });
             }
