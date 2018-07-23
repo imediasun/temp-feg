@@ -23,34 +23,22 @@
             </ul>
 
         </div>
+
         <div class="page-content-wrapper m-t">
+            <ul class="nav nav-tabs">
+                <li style="width: 50%;" class="active" tab-data="" onclick="refreshTabContent();"><a class="moduleTab"
+                                                                      href="#merchindisetheminggallary"
+                                                                      data-toggle="tab" id="merchindisetheminggallary">Merchandise
+                        Theme Gallery</a></li>
+                <li style="width: 50%;" onclick="refreshTabContent();"><a class="moduleTab" href="#redemptioncountergallary" data-toggle="tab"
+                                           id="redemptioncountergallary">Redemption Counter Gallery</a></li>
+            </ul>
             <div id="merchindisetheminggallaryView"></div>
             <div id="redemptioncountergallaryView"></div>
-            <div class="sbox">
-                <div class="sbox-title">
-                    <h5> <i class="fa fa-table"></i> </h5>
-                    <div class="sbox-tools" >
-                        <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-                        <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-                        @if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
-                            <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
-                               title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
-                        @endif
-                    </div>
-                </div>
-                <ul class="nav nav-tabs">
-                    <li style="width: 50%;" class="active" tab-data="" onclick="refreshTabContent();"><a class="moduleTab"
-                                                                                                         href="#merchindisetheminggallary"
-                                                                                                         data-toggle="tab" id="merchindisetheminggallary">Merchandise
-                            Theme Gallery</a></li>
-                    <li style="width: 50%;" onclick="refreshTabContent();"><a class="moduleTab" href="#redemptioncountergallary" data-toggle="tab"
-                                                                              id="redemptioncountergallary">Redemption Counter Gallery</a></li>
-                </ul>
             <div class="tab-content loadContent" id="merchindisetheminggallaryGrid"
                  style="background: #FFFFff; min-height:500px;"></div>
             <div class="tab-content loadContent" id="redemptioncountergallaryGrid"
                  style="background: #FFFFff; min-height:500px; display: none;"></div>
-                </div>
         </div>
         <div class="clear"></div>
     </div>
