@@ -217,12 +217,14 @@ class PagesController extends Controller
 
             $mapPermissions  = $data['access'];
 
-            $pageName = Pages::where('pageID',$request->input('pageID'))
-                ->select('alias')->first()->alias;
+            $pageID = $this->model->insertRow($data, $request->input('pageID'));
+            if($pageID > 0) {
+                $pageName = Pages::where('pageID', $pageID)
+                    ->select('alias')->first()->alias;
 
-            Menu::where('module', $pageName)
-                ->update(['access_data' => $mapPermissions]);
-            $this->model->insertRow($data, $request->input('pageID'));
+                Menu::where('module', $pageName)
+                    ->update(['access_data' => $mapPermissions]);
+            }
             self::createRouters();
 
             $redirect = $request->has('return') ? $request->input('return') : '';
