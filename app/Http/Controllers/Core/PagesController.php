@@ -265,7 +265,7 @@ class PagesController extends Controller
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
 
-            foreach ($request->input('ids') as $id){
+         /*   foreach ($request->input('ids') as $id){
                 try{
                     $this->removePageFile($this->model->find($id));
                 }
@@ -273,7 +273,7 @@ class PagesController extends Controller
                     Log::error("Page CMS file not deleted ".$e->getMessage());
                 }
 
-            }
+            }*/
             $this->model->destroy($request->input('ids'));
 
 
