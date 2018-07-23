@@ -53,7 +53,7 @@ class PageCMSFile extends Sximo
 
         }
         if($urlType == 'download'){
-            return Url('/pagecmsfile/download/'.$fileData['downloadKey']);
+            return Url('/pagecmsfile/file/'.$fileData['downloadKey']);
         }
     }
     public function isFileExists($filename){
