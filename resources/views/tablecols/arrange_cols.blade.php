@@ -126,7 +126,7 @@
 
         function showResponse(data) {
             if (data.status == 'success') {
-                ajaxViewClose('#{{ $pageModule }}}');
+                ajaxViewClose('#{{ $pageModule }}');
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
                 $('.ajaxLoading').hide();
