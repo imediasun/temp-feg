@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ShopfegrequeststoreController;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Core\Groups;
@@ -306,8 +307,8 @@ FROM requests
             return $cartData;
     }
     public function hasPermission(){
-        $module = new AddtocartController();
-        $this->passes = \FEGSPass::getPasses($module->module_id, 'module.addtocart.special.allowusers/usergroupstosubmitthepurchaserequestinspiteoftheerrormessage', false);
+        $module = new ShopfegrequeststoreController();
+        $this->passes = \FEGSPass::getPasses($module->module_id, 'module.shopfegrequeststore.special.allowusers/usergroupstosubmitthepurchaserequestinspiteoftheerrormessage', false);
         $userId = \Session::get('uid');
         $groupId = \Session::get('gid');
         $addToCartPermission = $this->passes['Allow users/user groups to submit the purchase request in spite of the error message'];
