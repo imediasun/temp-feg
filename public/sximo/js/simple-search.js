@@ -117,5 +117,8 @@ App.simpleSearch.populateFields = function()  {
     var container = $('.simpleSearchContainer');                
     if (container.length) {
         App.populateFieldsFromCache(container, App.simpleSearch);
+        setTimeout(function(){
+            $(".select3[name='prod_type_id'],.select3[name='Product_Type'],.select3[name='order_type'],.select3[name='prod_type_id[]']").change();
+        },1000);
     }
 };

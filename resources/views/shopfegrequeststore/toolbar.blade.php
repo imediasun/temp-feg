@@ -114,8 +114,16 @@
         var type, order_type, product_type = "";
         type = $("#active_inactive").val();
         order_type = $("#order_type").val();
-        product_type = $("#product_type").val();
+        if($(this).attr('id') == 'order_type')
+        {
+            product_type = '';
+        }
+        else
+        {
+            product_type = $("#product_type").val() == null ? '' : $("#product_type").val();
+        }
         console.log(getFooterFilters({'page': true}));
+{{--        console.log('{{ $pageModule }}/data?&type=store'+ getFooterFilters({'page': true})+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());--}}
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?&type=store'+ getFooterFilters({'page': true})+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
     });
 
