@@ -10,6 +10,7 @@ use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\location;
+use App\Models\managefegrequeststore;
 use App\Models\Order;
 use App\Models\product;
 use App\Models\OrderSendDetails;
@@ -396,6 +397,7 @@ class OrderController extends Controller
         \Session::put('redirect', 'order');
         $this->data['setting'] = $this->info['setting'];
         $isRequestApproveProcess = false;
+        $requestId = [$id];
         if ($id != 0 && $mode == '') {
             $mode = 'edit';
         } elseif ($id == 0 && $mode == '') {
@@ -404,6 +406,8 @@ class OrderController extends Controller
             \Session::put('redirect', 'managefegrequeststore');
             $isRequestApproveProcess = true;
             $mode = $mode;
+            $requestId = explode("-",rtrim(str_replace("SID-",'',$mode),"-"));
+            $requestId = empty($requestId[0])  ? [0]: $requestId;
             $fromStore = 1;
         } elseif ($mode == "clone") {
             $mode = 'clone';
@@ -416,17 +420,29 @@ class OrderController extends Controller
             if ($this->access['is_edit'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-        $row = $this->model->with([
-           'location' => function($query){
-               return $query->select('id', 'fedex_number');
-           }
-        ])->find($id);
+        $row = null;
+        if(substr($mode, 0, 3) == 'SID'){
+            $manageFegRequestStore = new managefegrequeststore();
+            $row = $manageFegRequestStore->with([
+                'location' => function($query){
+                    return $query->select('id', 'fedex_number','freight_id as location_freight_id');
+                }
+            ])->whereIn("id",$requestId)->first();
+        }else{
+            $row = $this->model->with([
+                'location' => function($query){
+                    return $query->select('id', 'fedex_number','freight_id as location_freight_id');
+                }
+            ])->find($id);
+        }
         if ($row) {
             $row->fedex_number =  $row->location ? $row->location->fedex_number ? $row->location->fedex_number : 'No Data' : 'No Data';
+            $row->order_freight_id = !empty($row->freight_id) ? $row->freight_id : $row->location ? $row->location->location_freight_id ? $row->location->location_freight_id : '' : '';
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
+
 
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -2611,8 +2627,10 @@ public static function array_move($which, $where, $array)
         $is_merchandiseorder = 0;
         if ($orderId > 0) {
             $order = $this->model->find($orderId);
-            if ($order->order_type_id == $orderTypeId) {
-                $PONote = $order->po_notes_additionaltext;
+            if($order) {
+                if ($order->order_type_id == $orderTypeId) {
+                    $PONote = $order->po_notes_additionaltext;
+                }
             }
         }
         if (empty($PONote)) {
