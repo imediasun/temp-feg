@@ -258,7 +258,7 @@ $(document).ready(function() {
     });
 
 
-    $(document).on("keypress", "input[name='Jan'],input[name='Feb']", function (evt) {
+    $(document).on("keypress", "input[name='Jan'],input[name='Feb'],input[name='March'],input[name='April'],input[name='May'],input[name='June'],input[name='July'],input[name='August'],input[name='September'],input[name='October'],input[name='November'],input[name='December']", function (evt) {
         if ((evt.which >= 48 && evt.which <= 57) || evt.which == 45 || evt.which == 46 ){}
         else
             evt.preventDefault();
