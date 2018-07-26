@@ -280,7 +280,10 @@ class order extends Sximo
 
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
-        $order_types = @$pass['calculate price according to case price']->data_options;
+        $order_types = "";
+        if(!empty($pass['calculate price according to case price'])) {
+            $order_types = $pass['calculate price according to case price']->data_options;
+        }
         $condition = '';
       /*  if($order_types != ''){
             $condition = "IF(ORD.order_type_id IN($order_types), O.case_price/O.qty, O.price/O.qty) AS price,";

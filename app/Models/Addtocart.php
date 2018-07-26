@@ -162,8 +162,13 @@ FROM requests
             $module = new OrderController();
             $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
             global $casePriceOrders,$unitPriceOrders;
-            $casePriceOrders = explode(",",@$pass['calculate price according to case price']->data_options);
-            $unitPriceOrders = explode(",",@$pass['use case price if unit price is 0.00']->data_options);
+            $casePriceOrders = $unitPriceOrders = "";
+            if(!empty($pass['calculate price according to case price'])) {
+                $casePriceOrders = explode(",", $pass['calculate price according to case price']->data_options);
+            }
+            if(!empty($pass['use case price if unit price is 0.00'])) {
+                $unitPriceOrders = explode(",", $pass['use case price if unit price is 0.00']->data_options);
+            }
 
                                        $select='SELECT V.vendor_name,  V.id AS vendor_id, V.min_order_amt, SUM(R.qty*P.case_price) AS total, COUNT(V.id) AS cart_items,
                                        V.min_order_amt - SUM(R.qty*P.case_price) AS amt_short,P.prod_type_id,P.case_price,P.unit_price,R.qty FROM requests R
