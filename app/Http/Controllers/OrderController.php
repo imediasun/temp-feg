@@ -215,6 +215,7 @@ class OrderController extends Controller
 
     public function postData(Request $request)
     {
+
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'order')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if(Session::get('redirect') != "managefegrequeststore") {
@@ -269,7 +270,19 @@ class OrderController extends Controller
             $filter .= $locationFilter;
         }
 
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
 
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+        if($this->model->isTypeRestricted()){
+            $filter .= " AND orders.order_type_id IN(".$this->model->getAllowedTypes().") ";
+        }
         $page = $request->input('page', 1);
 
         $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;

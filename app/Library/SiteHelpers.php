@@ -762,7 +762,7 @@ class SiteHelpers
         return $f;
     }
 
-    public static function transForm($field, $forms = array(), $bulk = false, $value = '')
+    public static function transForm($field, $forms = array(), $bulk = false, $value = '', $typeRestricted = [])
     {
         $value = !empty($value) ? urldecode($value) : "";
         $type = '';
@@ -991,6 +991,11 @@ class SiteHelpers
                             $query->where($option['lookup_value'], '!=', '')
                                 ->orderby($option['lookup_value'])
                                 ->groupby($option['lookup_value']);
+                        }
+                        if(!empty($typeRestricted['isTypeRestricted'])) {
+                            if ($typeRestricted['isTypeRestricted'] == true && $option['lookup_table'] == "order_type") {
+                                $query->where($option['lookup_key'], "=", $typeRestricted['displayTypeOnly']);
+                            }
                         }
 
                         $data = $query->get();

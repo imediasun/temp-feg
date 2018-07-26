@@ -13,6 +13,13 @@ class Sximo extends Model {
 
     public static $getRowsQuery = null;
     public $TypeSpecialPermission = "";
+    const TYPE_ALLOWED = "7";
+    const MODULES_WITH_RESTRICTED_TYPES = [
+        'shopfegrequeststore',
+        'order',
+        'productusagereport',
+        'merchandiseexpensesreport'
+    ];
 
     public function newEloquentBuilder($query)
     {
@@ -1541,6 +1548,9 @@ class Sximo extends Model {
         return ((in_array($userId,$userAllowed) || in_array($groupId,$groupAllowed)) && !in_array($userId,$excludeUserIds));
     }
     public function getAllowedTypes(){
-        return $this->isTypeRestricted() ? $this->TypeSpecialPermission->data_options : '';
+        return $this->isTypeRestricted() ? self::TYPE_ALLOWED : '';
+    }
+    public function isTypeRestrictedModule($moduleName){
+        return in_array($moduleName,self::MODULES_WITH_RESTRICTED_TYPES);
     }
 }

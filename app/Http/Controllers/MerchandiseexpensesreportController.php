@@ -65,6 +65,7 @@ class MerchandiseexpensesreportController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
+
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 

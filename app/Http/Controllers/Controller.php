@@ -606,6 +606,17 @@ abstract class Controller extends BaseController
         $this->data['tableForm'] = $this->info['config']['forms'];
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['searchMode'] = $mode;
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+            $this->data['typeRestricted'] = [
+                'isTypeRestricted' => $this->model->isTypeRestricted(),
+                'displayTypeOnly' => $this->model->getAllowedTypes(),
+            ];
+            }
+        }
+
         if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
             return view('feg_common.search', $this->data);
         } else {
