@@ -473,7 +473,7 @@
     $case_price_if_no_unit_categories = '';
     if(isset($pass['use case price if unit price is 0.00']))
     {
-        $case_price_if_no_unit_categories = @$pass['use case price if unit price is 0.00']->data_options;
+        $case_price_if_no_unit_categories = $pass['use case price if unit price is 0.00']->data_options;
     }
     ?>
     </div>
