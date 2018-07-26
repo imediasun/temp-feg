@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\FEG\System\FEGSystemHelper;
 use Request, Log,Redirect,Session;
@@ -11,6 +12,7 @@ use App\Models\Core\Groups;
 class Sximo extends Model {
 
     public static $getRowsQuery = null;
+    public $TypeSpecialPermission = "";
 
     public function newEloquentBuilder($query)
     {
@@ -1522,5 +1524,23 @@ class Sximo extends Model {
         $query = "SELECT " . $sqlColumns . " FROM orders O " . $sqlJoins . " WHERE O.id=" . $order_id;
 
         return $query;
+    }
+    public function isTypeRestricted(){
+        $module = new OrderController();
+        $typePermissions = \FEGSPass::getPasses($module->module_id, 'module.order.special.assignusersand/orusergroupstoviewtheselectedorder/producttypes', false);
+        $userId = \Session::get('uid');
+        $groupId = \Session::get('gid');
+
+        $userAllowed = $groupAllowed = $excludeUserIds = [];
+        if(!empty($typePermissions['Assign users and/or user groups to view the selected order/product types'])) {
+            $this->TypeSpecialPermission = $typePermissions['Assign users and/or user groups to view the selected order/product types'];
+            $userAllowed = !empty($this->TypeSpecialPermission->user_ids) ? explode(",", $this->TypeSpecialPermission->user_ids) : [];
+            $groupAllowed = !empty($this->TypeSpecialPermission->group_ids) ? explode(",", $this->TypeSpecialPermission->group_ids) : [];
+            $excludeUserIds = !empty($this->TypeSpecialPermission->exclude_user_ids) ? explode(",", $this->TypeSpecialPermission->exclude_user_ids) : [];
+        }
+        return ((in_array($userId,$userAllowed) || in_array($groupId,$groupAllowed)) && !in_array($userId,$excludeUserIds));
+    }
+    public function getAllowedTypes(){
+        return $this->isTypeRestricted() ? $this->TypeSpecialPermission->data_options : '';
     }
 }
