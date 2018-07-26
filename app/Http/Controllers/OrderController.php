@@ -1066,7 +1066,7 @@ class OrderController extends Controller
         // marissa sexton,mandee cook,lisa price
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
-        $order_types = $pass['display email address in cc box for order types']->data_options;
+        $order_types = @$pass['display email address in cc box for order types']->data_options;
         $order_types = explode(",",$order_types);
        if(in_array($order_type_id,$order_types)){
             $cc1 = $cc;
