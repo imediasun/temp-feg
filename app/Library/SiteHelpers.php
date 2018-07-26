@@ -2565,7 +2565,7 @@ class SiteHelpers
         $data['annual_order_total'] = $query[0]->annual_order_total;
         $data['last_month_merch_budget'] = $query[0]->last_month_merch_budget;
         $data['last_month_merch_order_total'] = $query[0]->last_month_merch_order_total;
-        $data['monthly_merch_remaining'] = '$'.number_format(($data['monthly_merch_budget'] - $data['monthly_merch_order_total']), 2, '.', ',');
+        $data['monthly_merch_remaining'] = '$'.number_format(($data['monthly_merch_budget'] - $query[0]->monthly_merch_order_total), 2, '.', ',');
         $data['last_month_merch_remaining'] = '$'.number_format(($data['last_month_merch_budget'] - $data['last_month_merch_order_total']), 2, '.', ',');
         $data['curMonthFull'] = $curMonthFull;
         $data['prevMonthFull'] = $prevMonthFull;
