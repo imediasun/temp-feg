@@ -18,6 +18,7 @@ class Sximo extends Model {
         'shopfegrequeststore',
         'order',
         'productusagereport',
+        'inventoryreport',
         'merchandiseexpensesreport'
     ];
 

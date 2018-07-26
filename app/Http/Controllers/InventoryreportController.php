@@ -70,7 +70,16 @@ class InventoryreportController extends Controller {
 		// End Filter sort and order for query
 		// Filter Search for query
 		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
 
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
 
 		$page = $request->input('page', 1);
 		$params = array(

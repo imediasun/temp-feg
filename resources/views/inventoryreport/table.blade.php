@@ -18,7 +18,7 @@
 					@foreach ($simpleSearchForm as $t)
 						<div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
 							{!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
-							{!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+							{!! SiteHelpers::transForm($t['field'] , $simpleSearchForm, false, '',$typeRestricted) !!}
 						</div>
 					@endforeach
 					{!! SiteHelpers::generateSimpleSearchButton($setting) !!}

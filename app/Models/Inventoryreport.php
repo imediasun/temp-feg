@@ -126,6 +126,11 @@ class inventoryreport extends Sximo  {
             if (!empty($prod_sub_type_id) && empty($prod_type_id)) {
                 $whereProdSubType = "AND OC.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
+            $productUsageReport = new productusagereport();
+            $typeDisplayOnly = " ";
+            if($productUsageReport->isTypeRestricted()){
+                $typeDisplayOnly = " AND OC.prod_type_id IN(".$productUsageReport->getAllowedTypes().") ";
+            }
             $module_id = Module::name2id('order');
             $case_price_permission = \FEGSPass::getPasses($module_id,'module.order.special.calculatepriceaccordingtocaseprice',false);
             $casePriceCats = $case_price_permission["calculate price according to case price"]->data_options;
@@ -211,7 +216,7 @@ class inventoryreport extends Sximo  {
             }
             $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
                             AND O.created_at <= '$date_end' 
-                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
+                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType $typeDisplayOnly ";
 
             // both group by quires are same
             $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type";
