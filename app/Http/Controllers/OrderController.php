@@ -450,7 +450,8 @@ class OrderController extends Controller
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
-
+        $this->data['isTypeRestricted'] = $this->model->isTypeRestricted();
+        $this->data['displayTypesOnly'] = $this->model->getAllowedTypes();
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
