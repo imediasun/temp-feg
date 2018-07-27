@@ -69,7 +69,7 @@ class ProductusagereportController extends Controller
 
 
         if($this->model->isTypeRestricted()){
-            $filter .= " AND P.prod_type_id IN(".$this->model->getAllowedTypes().") ";
+            $filter .= " AND P.prod_type_id IN('".$this->model->getAllowedTypes()."') ";
         }
 
         $page = $request->input('page', 1);

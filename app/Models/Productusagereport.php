@@ -12,9 +12,11 @@ class productusagereport extends Sximo  {
 
     protected $table = 'orders';
     protected $primaryKey = 'id';
+    public  $isTypeRestricted;
 
     public function __construct() {
         parent::__construct();
+       $this->isTypeRestricted = $this->isTypeRestricted();
 
     }
 
@@ -59,6 +61,12 @@ class productusagereport extends Sximo  {
         $vendor_id = @$filters['vendor_id'];
         $order_type_id = @$filters['Order_Type'];
         $prod_type_id = @$filters['prod_type_id'];
+
+        $orderTypeRestrictedWhere = " ";
+        $selfObject = new self();
+        if($selfObject->isTypeRestricted()){
+            $orderTypeRestrictedWhere = "AND P.prod_type_id IN('".$selfObject->getAllowedTypes()."')";
+        }
         $prod_sub_type_id = @$filters['Product_Sub_Type'];
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
@@ -220,13 +228,14 @@ class productusagereport extends Sximo  {
 
             $whereQuery = " WHERE O.location_id not in(6000,6030) and O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
                             AND O.created_at <= '$date_end' 
-                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType ";
+                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType $orderTypeRestrictedWhere ";
 
             $groupQuery = " GROUP BY Product ,num_items ,Case_Price,Product_Type, sku";
 //            $groupQuery = " GROUP BY P.id ";
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
                 ' ORDER BY Product ';
             $finalTotalQuery = "$mainQuery $fromQuery $whereQuery $mainQueryEnd $groupQuery $orderConditional";
+
             \Log::info("Product Usage final Data query \n ".$finalTotalQuery);
             $allRows = \DB::select($finalTotalQuery);
             $totalRows = self::subTypeFilter($allRows,$prod_type_id,$prod_sub_type_id);
