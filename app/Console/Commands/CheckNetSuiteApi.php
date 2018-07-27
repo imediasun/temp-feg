@@ -45,7 +45,7 @@ class CheckNetSuiteApi extends Command
         $this->productData = array();
         $this->to = array([
             'shayansolutions@gmail.com',
-            //'gabes@inmedianetworks.com',
+            'gabes@inmedianetworks.com',
             'stanlymarian@gmail.com',
             'dev3@shayansolutions.com',
             'qa@shayansolutions.com'
@@ -58,7 +58,7 @@ class CheckNetSuiteApi extends Command
      * @return mixed
      */
 
-    protected $urlString = 'http://demo.fegllc.com/fegapi';
+    protected $urlString = 'http://admin1.fegllc.com/fegapi';
     protected $tokenString = '&token=f1a9bE1f7M208M3eIb0b048L0d0O921Vd8bEbaa6ow35l23HaxcAn2Ddaf245I';
     protected $data;
     protected $products;
