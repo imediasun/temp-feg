@@ -635,6 +635,7 @@ class UsersController extends Controller
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['searchMode'] = 'native';
         $this->data['pageUrl'] = url('core/users');
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
         return view('sximo.module.utility.search', $this->data);
 
     }

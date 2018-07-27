@@ -181,6 +181,7 @@ class GroupsController extends Controller
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['searchMode'] = 'native';
         $this->data['pageUrl'] = url('core/groups');
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
         return view('sximo.module.utility.search', $this->data);
 
     }
