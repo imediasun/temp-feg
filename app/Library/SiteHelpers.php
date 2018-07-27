@@ -992,8 +992,10 @@ class SiteHelpers
                                 ->orderby($option['lookup_value'])
                                 ->groupby($option['lookup_value']);
                         }
-                        if(!empty($typeRestricted['isTypeRestricted'])) {
-                            if ($typeRestricted['isTypeRestricted'] == true && $option['lookup_table'] == "order_type") {
+
+                        if(isset($typeRestricted['isTypeRestricted'])) {
+
+                            if ($typeRestricted['isTypeRestricted'] == true && ($option['lookup_table'] == "order_type")) {
                                 $query->where($option['lookup_key'], "=", $typeRestricted['displayTypeOnly']);
                             }
                         }
@@ -1029,7 +1031,12 @@ class SiteHelpers
                     $multipleClass = "sel-search-multiple";
                     $multiple = true;
                 }
-                $form = "<select name='$field{$bulk}'  class='form-control select3 sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
+                $disableField = "";
+                if($option['lookup_table'] == "product_type"){
+                    $disableField = 'disabled="disabled"';
+                }
+
+                $form = "<select name='$field{$bulk}' $disableField  class='form-control select3 sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
                     (empty($selectMultiple) && !$isSSSFWOBD ? "<option value=''> -- Select  -- </option>" : "") .
                     "	$opts
 						</select>";
