@@ -768,7 +768,7 @@
                     });
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
-                    {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
+                    {isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'],selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
 
             $("input[name*='total'] ").attr('readonly', '1');
             $(" input[name*='bulk_Price'] ").addClass('calculate');
