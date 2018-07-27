@@ -188,7 +188,10 @@ orders.id=order_received.order_id ";
         //all order contents place them in relevent order
         $module = new \App\Http\Controllers\OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
-        $order_types = $pass['calculate price according to case price']->data_options;
+        $order_types = "";
+        if(!empty($pass['calculate price according to case price'])) {
+            $order_types = $pass['calculate price according to case price']->data_options;
+        }
         $order_types = explode(",",$order_types);
         if(is_array($data))
         {

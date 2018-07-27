@@ -69,7 +69,7 @@
          {selected_value: '{{ \Session::get('selected_location') }}', initial_text: 'Select Location'});*/
 
         $("#order_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=order_type:id:order_type:can_request:1') }}",
-                {selected_value: '{{ $order_type }}', initial_text: 'Select Order Type'});
+                {isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'],selected_value: '{{ $order_type }}', initial_text: 'Select Order Type'});
 
 
 

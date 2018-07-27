@@ -51,7 +51,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 }
                             ?>
                             {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
-                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm,false,$fv) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm,false,$fv , $typeRestricted) !!}
                         </div>
                     @endforeach
                     {!! SiteHelpers::generateSimpleSearchButton($setting) !!}

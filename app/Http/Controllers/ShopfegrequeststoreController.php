@@ -95,8 +95,9 @@ class ShopfegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
-
-
+        if($this->model->isTypeRestricted()){
+           $request->merge(["order_type"=> $this->model->getAllowedTypes()]);
+        }
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'shopfegrequeststore')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -160,7 +161,6 @@ class ShopfegrequeststoreController extends Controller
         // Filter Search for query
         //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
-
         $page = $request->input('page', 1);
         $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
@@ -223,6 +223,8 @@ class ShopfegrequeststoreController extends Controller
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
         $this->data['cart'] = $this->model->shoppingCart();
+        $this->data['isTypeRestricted'] = $this->model->isTypeRestricted();
+        $this->data['displayTypesOnly'] = $this->model->getAllowedTypes();
 // Render into template
         return view('shopfegrequeststore.table', $this->data);
 

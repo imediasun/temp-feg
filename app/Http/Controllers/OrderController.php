@@ -215,6 +215,7 @@ class OrderController extends Controller
 
     public function postData(Request $request)
     {
+
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'order')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if(Session::get('redirect') != "managefegrequeststore") {
@@ -269,7 +270,19 @@ class OrderController extends Controller
             $filter .= $locationFilter;
         }
 
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
 
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+        if($this->model->isTypeRestricted()){
+            $filter .= " AND orders.order_type_id IN(".$this->model->getAllowedTypes().") ";
+        }
         $page = $request->input('page', 1);
 
         $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
@@ -437,7 +450,8 @@ class OrderController extends Controller
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
-
+        $this->data['isTypeRestricted'] = $this->model->isTypeRestricted();
+        $this->data['displayTypesOnly'] = $this->model->getAllowedTypes();
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
@@ -1066,7 +1080,10 @@ class OrderController extends Controller
         // marissa sexton,mandee cook,lisa price
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
-        $order_types = $pass['display email address in cc box for order types']->data_options;
+        $order_types = "";
+        if(!empty($pass['display email address in cc box for order types'])) {
+            $order_types = $pass['display email address in cc box for order types']->data_options;
+        }
         $order_types = explode(",",$order_types);
        if(in_array($order_type_id,$order_types)){
             $cc1 = $cc;
@@ -1970,11 +1987,14 @@ class OrderController extends Controller
         $whereWithVendorCondition = $whereWithExcludeProductCondition = "";
 
         $orderTypeId = Input::get('order_type_id', 0);
-        $whereOrderTypeCondition = "";
+        $whereOrderTypeCondition = $whereRestrictedTypeCondition = "";
         $restrictedOrderTypes = [Order::ORDER_TYPE_REDEMPTION,Order::ORDER_TYPE_INSTANT_WIN_PRIZE];
         // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
         if (!empty($orderTypeId) && in_array($orderTypeId,$restrictedOrderTypes)) {
             $whereOrderTypeCondition = " AND products.prod_type_id in(".implode(",",$restrictedOrderTypes).")";
+        }
+        if($this->model->isTypeRestricted()){
+            $whereRestrictedTypeCondition = " AND products.prod_type_id in(".$this->model->getAllowedTypes().")";
         }
 
         //get products related to selected vendor only
@@ -2009,7 +2029,7 @@ class OrderController extends Controller
                                 FROM products
                                 WHERE vendor_description LIKE '%$term%' 
                                 AND products.inactive=0  $whereWithVendorCondition  $whereWithExcludeProductCondition  
-                                  $whereOrderTypeCondition
+                                  $whereOrderTypeCondition $whereRestrictedTypeCondition
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
                                  Limit 0,10";

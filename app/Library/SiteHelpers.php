@@ -762,7 +762,7 @@ class SiteHelpers
         return $f;
     }
 
-    public static function transForm($field, $forms = array(), $bulk = false, $value = '')
+    public static function transForm($field, $forms = array(), $bulk = false, $value = '', $typeRestricted = [])
     {
         $value = !empty($value) ? urldecode($value) : "";
         $type = '';
@@ -993,6 +993,13 @@ class SiteHelpers
                                 ->groupby($option['lookup_value']);
                         }
 
+                        if(isset($typeRestricted['isTypeRestricted'])) {
+
+                            if ($typeRestricted['isTypeRestricted'] == true && ($option['lookup_table'] == "order_type")) {
+                                $query->where($option['lookup_key'], "=", $typeRestricted['displayTypeOnly']);
+                            }
+                        }
+
                         $data = $query->get();
                         foreach ($data as $row) {
                             $selected = '';
@@ -1024,7 +1031,12 @@ class SiteHelpers
                     $multipleClass = "sel-search-multiple";
                     $multiple = true;
                 }
-                $form = "<select name='$field{$bulk}'  class='form-control select3 sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
+                $disableField = "";
+                if($option['lookup_table'] == "product_type"){
+                    $disableField = 'disabled="disabled"';
+                }
+
+                $form = "<select name='$field{$bulk}' $disableField  class='form-control select3 sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
                     (empty($selectMultiple) && !$isSSSFWOBD ? "<option value=''> -- Select  -- </option>" : "") .
                     "	$opts
 						</select>";

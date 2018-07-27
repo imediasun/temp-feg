@@ -911,6 +911,11 @@ class ReportHelpers
         if (!empty($excludedOrders)){
             $whereNotInPoNumber = " po_number NOT IN($excludedOrders) AND ";
         }
+        $productUsageReport = new productusagereport();
+        $typeDisplayOnly = " ";
+        if($productUsageReport->isTypeRestricted()){
+            $typeDisplayOnly = " AND order_type_id IN(".$productUsageReport->getAllowedTypes().") ";
+        }
         $Q = "
                 FROM location L
 				LEFT JOIN (
@@ -919,7 +924,7 @@ class ReportHelpers
                         $whereNotInPoNumber    
                             date_ordered >= '$dateStart' 
                             AND date_ordered <= '$dateEnd' 
-                            AND order_type_id IN(7,8) 
+                            AND order_type_id IN(7,8) $typeDisplayOnly
                             AND status_id IN(".implode(',',order::ORDER_CLOSED_STATUS).") 
                             
                         GROUP BY location_id) O 

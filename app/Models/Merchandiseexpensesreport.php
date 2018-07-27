@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
 use App\Library\DBHelpers;
 use SiteHelpers;
+use Log;
 
 class merchandiseexpensesreport extends Sximo  {
 	
@@ -62,6 +63,7 @@ class merchandiseexpensesreport extends Sximo  {
         
         $mainQuery = ReportHelpers::getMerchandizeExpensesQuery($date_start, $date_end, $location_id, $debit_type_id, $sort, $order);
         $mainQuery .= $limitConditional;
+        Log::info("Main Query: ".$mainQuery);
         $rawRows = \DB::select($mainQuery);
         $rows = self::processRows($rawRows);            
         

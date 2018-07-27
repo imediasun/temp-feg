@@ -43,7 +43,7 @@
 			
 			</td>
 			
-			<td style="position: relative;" id="field_{{ $t['field']}}" width="60%">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
+			<td style="position: relative;" id="field_{{ $t['field']}}" width="60%">{!! SiteHelpers::transForm($t['field'] , $tableForm , false, '', $typeRestricted) !!}</td>
 
 		</tr>
 

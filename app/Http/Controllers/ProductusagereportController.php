@@ -68,6 +68,10 @@ class ProductusagereportController extends Controller
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 
+        if($this->model->isTypeRestricted()){
+            $filter .= " AND P.prod_type_id IN(".$this->model->getAllowedTypes().") ";
+        }
+
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -111,6 +115,17 @@ class ProductusagereportController extends Controller
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
+        $this->data['typeRestricted'] = [];
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+        $this->data['isTypeRestricted'] = $this->model->isTypeRestricted();
+        $this->data['displayTypesOnly'] = $this->model->getAllowedTypes();
 // Render into template
         return view('productusagereport.table', $this->data);
 

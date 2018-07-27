@@ -6,7 +6,7 @@
 	@if($t['search'] =='1')
 		<tr id="{{ $t['field'] }}" class="fieldsearch">
 			<td>{!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!} </td>
-			<td id="field_{{ $t['field']}}" width="70%">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+			<td id="field_{{ $t['field']}}" width="70%">{!! SiteHelpers::transForm($t['field'] , $tableForm, false,'', $typeRestricted) !!}
 			<input id="{{ $t['field']}}_operate" type="hidden" name="operate" value="equal" /></td>
 		</tr>
 	@endif
