@@ -1987,11 +1987,14 @@ class OrderController extends Controller
         $whereWithVendorCondition = $whereWithExcludeProductCondition = "";
 
         $orderTypeId = Input::get('order_type_id', 0);
-        $whereOrderTypeCondition = "";
+        $whereOrderTypeCondition = $whereRestrictedTypeCondition = "";
         $restrictedOrderTypes = [Order::ORDER_TYPE_REDEMPTION,Order::ORDER_TYPE_INSTANT_WIN_PRIZE];
         // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
         if (!empty($orderTypeId) && in_array($orderTypeId,$restrictedOrderTypes)) {
             $whereOrderTypeCondition = " AND products.prod_type_id in(".implode(",",$restrictedOrderTypes).")";
+        }
+        if($this->model->isTypeRestricted()){
+            $whereRestrictedTypeCondition = " AND products.prod_type_id in(".$this->model->getAllowedTypes().")";
         }
 
         //get products related to selected vendor only
@@ -2026,7 +2029,7 @@ class OrderController extends Controller
                                 FROM products
                                 WHERE vendor_description LIKE '%$term%' 
                                 AND products.inactive=0  $whereWithVendorCondition  $whereWithExcludeProductCondition  
-                                  $whereOrderTypeCondition
+                                  $whereOrderTypeCondition $whereRestrictedTypeCondition
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
                                  Limit 0,10";
