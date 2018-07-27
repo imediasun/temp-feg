@@ -541,7 +541,7 @@ class ReportGenerator
             $configName = 'Daily games summary for each location';
             $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $location);
             self::sendEmailReport(array_merge($emailRecipients, array(
-                'subject' => "Games Summary for location  $location - $humanDate", 
+                'subject' => "FEG Website Games Summary for location  $location - $humanDate",
                 'message' => $dailyReport, 
                 'isTest' => $isTest,
                 'configName' => $configName,
@@ -552,7 +552,7 @@ class ReportGenerator
             $configName = 'Daily games summary for each location - No Issue';
             $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $location);
             self::sendEmailReport(array_merge($emailRecipients, array(
-                'subject' => "Games Summary for location  $location - $humanDate  [NO ISSUES]", 
+                'subject' => "FEG Website Games Summary for location  $location - $humanDate  [NO ISSUES]",
                 'message' => $dailyReport, 
                 'isTest' => $isTest,
                 'configName' => $configName,
