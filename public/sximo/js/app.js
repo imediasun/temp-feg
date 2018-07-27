@@ -1283,3 +1283,99 @@ $(document).ready(function(){
         }
     }
 });
+//need to fix notiation to camel case notation
+function getProductSubTypes(productTypeId, productSubTypeSelectorArray, selectBox){
+
+
+    $.each(productSubTypeSelectorArray, function (key, productSubTypeNameAttr) {
+
+        var tag = '';
+
+        if(selectBox.parent().is('td'))
+            tag = 'tr';
+        else
+            tag = 'div';
+
+
+        var subTypeSelectBox = '';
+
+        if(selectBox.parent().parent().parent().parent().is('#advance-search'))
+            subTypeSelectBox = selectBox.closest(tag).parent().parent().find('select[name="'+productSubTypeNameAttr+'"]');
+        else if(selectBox.parent().parent().is('tr'))
+            subTypeSelectBox = selectBox.closest(tag+':has(select[name="'+productSubTypeNameAttr+'"])').find('select[name="'+productSubTypeNameAttr+'"]');
+        else
+            subTypeSelectBox = selectBox.closest(tag).parent().find('select[name="'+productSubTypeNameAttr+'"]');
+
+
+        if( subTypeSelectBox.length > 0 ){
+
+            console.log(subTypeSelectBox);
+
+            subTypeSelectBox.attr('disabled', 'disabled')
+
+            var selectedSubtypes = subTypeSelectBox.val() == null ? [] : subTypeSelectBox.val();
+
+            $.ajax({
+                url: 'product/get-product-subtype?product_type_id='+productTypeId,
+                type: 'get',
+                success: function(result){
+                    subTypeSelectBox.attr('disabled', null);
+                    if(typeof selectBox.val() == 'string')
+                        subTypeSelectBox.val(null).trigger("change");
+
+                    populateProductSubTypeSelect(subTypeSelectBox, result, selectBox, selectedSubtypes);
+                }
+            })
+
+        }
+
+    });
+
+
+}
+function populateProductSubTypeSelect(subTypeSelectBox, result, selectBox, selectedSubtypes){
+    if(subTypeSelectBox.length > 0){
+
+        subTypeSelectBox.empty();
+
+        if(typeof selectBox.val() == 'string'){
+            subTypeSelectBox.append('<option value="" selected style="display: none">-- Select --</option>');
+        }
+
+        $.each(result, function (i, item) {
+
+            var selectedOrNot = (selectedSubtypes.length > 0 && selectedSubtypes.indexOf(item.id) != -1) ? 'selected' : '';
+
+            console.log(item.id, item.type_description);
+            subTypeSelectBox.append('<option '+selectedOrNot+' value="'+item.id+'">'+item.type_description+'</option>');
+        });
+
+        subTypeSelectBox.val(selectedSubtypes).trigger('change.select2');
+    }
+}
+
+/**
+ * global level code which populates product subtype when a product type is selected
+ * Covered Areas:
+ *  1. Simple Search with support of multiselect
+ *  2. Advanced Search
+ *  3. Inline editing
+ *  4. Product create and edit
+ */
+$(document).on('change', 'select' ,function () {
+
+    if(pageModule != 'shopfegrequeststore'){
+        var nameOfSelectBox = $(this).attr('name');
+        var productTypeId = $(this).val();
+        var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type', 'prod_type_id[]']
+        if(productTypeSelectorsNames.indexOf(nameOfSelectBox) != -1){
+            var productSubTypeSelectors = [
+                "prod_sub_type_id",
+                "Product_Sub_Type",
+                "product_type",
+                "prod_sub_type_id[1]"
+            ];
+            getProductSubTypes(productTypeId, productSubTypeSelectors, $(this));
+        }
+    }
+});
