@@ -44,7 +44,6 @@ class RedemptioncountergallaryController extends Controller
 
     public function postData(Request $request)
     {
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'redemptioncountergallary')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -70,7 +69,9 @@ class RedemptioncountergallaryController extends Controller
 
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        //rebuildSearchQuery
+        $excludedFilters = (!is_null($request->input('search')) ? $this->model->rebuildSearchQuery(null,['theme_name']) : '');
+        $filter = (!is_null($request->input('search')) ? $this->buildSearch($excludedFilters) : '');
 
 
         $page = $request->input('page', 1);
