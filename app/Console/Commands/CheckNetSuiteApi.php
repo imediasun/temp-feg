@@ -219,10 +219,10 @@ class CheckNetSuiteApi extends Command
             $response = $this->client->request('GET', $url);
             $this->apiResponse = $response;
         } catch (BadResponseException $e) {
-            //this Will Catch All error response code and body
+    /*        //this Will Catch All error response code and body
             $this->apiResponse = $e;
             $this->errorMessageText = 'Internal Server Error.';
-            $this->sendErrorMail($module, $url, 500, $this->prepareErrorMessage());
+            $this->sendErrorMail($module, $url, 500, $this->prepareErrorMessage());*/
         }
         if ($response) {
             $status = $response->getStatusCode();
