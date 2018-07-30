@@ -250,6 +250,10 @@ class order extends Sximo
         {
             $return .= " AND is_api_visible = 1 And api_created_at IS NOT NULL";
         }
+        $selfObject = new self();
+        if($selfObject->isUserInExcludedOrders()){
+            $return .= " AND po_number NOT IN(".$selfObject->getExcludedOrderPoNumbers().") ";
+        }
 
         return $return;
     }
@@ -1267,6 +1271,30 @@ class order extends Sximo
             'process_date' => $this->get_local_time('date'),
             'blocked_at' => null,
         ]);
+    }
+    public function getExcludedOrderPoNumbers(){
+            $po_numbers = FEGSystemHelper::getOption('excluded_orders_from_groups');
+            $array = FEGSystemHelper::split_trim($po_numbers);
+            $string_po = [];
+            foreach ($array as $arr){
+            $string_po[] = "'".$arr."'";
+            }
+            $po_numbers= implode(",",$string_po);
+            return $po_numbers;
+        }
+    public function getExcludedOrderSpecifiedGroups(){
+        $userGroups = FEGSystemHelper::getOption('excluded_orders_groups');
+        $array = FEGSystemHelper::split_trim($userGroups);
+        $string_group = [];
+        foreach ($array as $arr){
+            $string_group[] = $arr;
+        }
+        $excludedGroup= implode(",",$string_group);
+        return $excludedGroup;
+    }
+    public function isUserInExcludedOrders(){
+    $userGroups = !empty($this->getExcludedOrderSpecifiedGroups()) ? explode(",",$this->getExcludedOrderSpecifiedGroups()):[];
+    return in_array(\Session::get('gid'),$userGroups);
     }
 
 }

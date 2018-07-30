@@ -80,6 +80,17 @@ class OrdersettingController extends Controller
             $excludedOrders = explode(',', $option->option_value);
             $orders = array_merge($orders, $excludedOrders);
         }
+        $option = Options::where('option_name', 'excluded_orders_from_groups')->first();
+        $excludedOrdersPos = [];
+        if($option){
+            $excludedOrdersPos = explode(',', $option->option_value);
+            $orders = array_merge($orders, $excludedOrdersPos);
+        }
+        $option = Options::where('option_name', 'excluded_orders_groups')->first();
+        $excludedGroups = "";
+        if($option){
+            $excludedGroups = $option->option_value; // explode(',', $option->option_value);
+        }
 
         $newOrdersArray = [];
         foreach ($orders as $order){
@@ -95,6 +106,8 @@ class OrdersettingController extends Controller
         $this->data['GraphicsReceiver']     = $GraphicsReceiver;
         $this->data['ExcludedOrders']       = $excludedOrders;
         $this->data['Orders']               = $orders;
+        $this->data['ExcludedOrdersPos']    = $excludedOrdersPos;
+        $this->data['excludedGroups']       = $excludedGroups;
 
         $this->data['access'] = $this->access;
 
@@ -116,6 +129,8 @@ class OrdersettingController extends Controller
         $GraphicsRequestSenderContent = $request->input('newgraphicsrequestsendercontent');
         $GraphicsRequestReceiverContent = $request->input('newgraphicsrequestreceivercontent');
         $excludedOrders = !empty($request->input('excluded_orders')) ? implode(',', $request->input('excluded_orders')) : '';
+        $excludedOrdersFromSpecifiedGroup = !empty($request->input('excluded_orders_from_groups')) ? implode(',', $request->input('excluded_orders_from_groups')) : '';
+        $excludedUserGroups = !empty($request->input('userGroups')) ? implode(',', $request->input('userGroups')) : '';;
         if (is_array($merchandiseOrderTypes) && is_array($NonMerchandiseOrderTypes)) {
             if (count(array_intersect($merchandiseOrderTypes, $NonMerchandiseOrderTypes)) > 0) {
                 return response()->json(array(
@@ -182,11 +197,47 @@ class OrdersettingController extends Controller
                 'option_form_element_details' => null
             ]);
         }else{
-            Options::updateOption('excluded_orders', $excludedOrders, [
+                Options::updateOption('excluded_orders', $excludedOrders, [
+                    'is_active' => 1,
+                    'notes' => null,
+                    'option_title' => 'Exclude Orders',
+                    'option_description' => 'Exclude Orders from the Product Usage, Merchandise Expense and Inventory Report',
+                    'option_form_element_details' => null
+                ]);
+        }
+        $option = Options::where('option_name', 'excluded_orders_from_groups')->first();
+        if(!$option){
+            Options::addOption('excluded_orders_from_groups', $excludedOrdersFromSpecifiedGroup, [
                 'is_active' => 1,
                 'notes' => null,
-                'option_title' => 'Exclude Orders',
-                'option_description' => 'Exclude Orders from the Product Usage, Merchandise Expense and Inventory Report',
+                'option_title' => 'Exclude Order(s) From Specified User Groups',
+                'option_description' => 'The Orders which are related to these PO Numbers will be excluded from specified user groups.',
+                'option_form_element_details' => null
+            ]);
+            Options::addOption('excluded_orders_groups', $excludedUserGroups, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'Exclude Order(s) From Specified User Groups',
+                'option_description' => 'The Orders which are related to these PO Numbers will be excluded from specified user groups.',
+                'option_form_element_details' => null
+            ]);
+        }else{
+            if(!empty($option->option_value)) {
+                Options::updateOption('excluded_orders_from_groups', $excludedOrdersFromSpecifiedGroup, [
+                    'is_active' => 1,
+                    'notes' => null,
+                    'option_title' => 'Exclude Order(s) From Specified User Groups',
+                    'option_description' => 'The Orders which are related to these PO Numbers will be excluded from specified user groups.',
+                    'option_form_element_details' => null
+                ]);
+            }else{
+                Options::destroy($option->id);
+            }
+            Options::updateOption('excluded_orders_groups', $excludedUserGroups, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'Exclude Order(s) From Specified User Groups',
+                'option_description' => 'The Orders which are related to these PO Numbers will be excluded from specified user groups.',
                 'option_form_element_details' => null
             ]);
         }
