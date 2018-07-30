@@ -1,6 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+	<style>
+		.resizing{
+			cursor: col-resize;
+		}
+		.note-editor table.table th,.note-editor table.table td{
+			word-break: break-all;
+			width:10%;
+		}
+	</style>
   <div class="page-content row">
     <!-- Page header -->
     <div class="page-header">
@@ -383,6 +392,41 @@
 			// $(".note-link-popover").css("top",(Number($(this).position().top)+20)+"px");
 
 		  });
+
+
+		  var pressed = false;
+		  var start = undefined;
+		  var startX, startWidth;
+
+		  $(document).on("mousedown",".note-editor table.table th,.note-editor table.table td",function(e) {
+			  start = $(this);
+			  pressed = true;
+			  startX = e.pageX;
+			  startWidth = $(this).width();
+			  $(start).addClass("resizing");
+		  });
+
+		  $(document).mousemove(function(e) {
+			  if(pressed) {
+				  $(start).width(startWidth+(e.pageX-startX));
+			  }
+		  });
+
+		  $(document).mouseup(function() {
+			  if(pressed) {
+				  $(start).removeClass("resizing");
+				  pressed = false;
+			  }
+		  });
+
 	  });
+	  (function($) {
+		  var origAppend = $.fn.append;
+
+		  $.fn.append = function () {
+			  return origAppend.apply(this, arguments).trigger("append");
+		  };
+	  })(jQuery);
+
     </script>
 @stop
