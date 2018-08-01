@@ -52,9 +52,9 @@ Route::controller('readersmissingassetidreport', 'ReadersmissingassetidreportCon
 Route::controller('merchandiseexpensesreport', 'MerchandiseexpensesreportController');
 Route::controller('itemreceipt', 'ItemreceiptController');
 Route::controller('ticketsetting', 'TicketsettingController');
-//Route::controller('throwreport', 'ThrowreportController');
-//Route::controller('throwreportpayout', 'ThrowreportpayoutController');
-//Route::controller('throwreportinstantwin', 'ThrowreportinstantwinController');
+Route::controller('throwreport', 'ThrowreportController');
+Route::controller('throwreportpayout', 'ThrowreportpayoutController');
+Route::controller('throwreportinstantwin', 'ThrowreportinstantwinController');
 Route::controller('servicerequests', 'ServicerequestsController');
 Route::controller('feg/system/tasks', 'Feg\System\TasksController');
 Route::controller('feg/system/systememailreportmanager', 'Feg\System\SystemEmailReportManagerController');

@@ -16,6 +16,8 @@ class ThrowreportpayoutController extends Controller
 
     public function __construct()
     {
+        abort(404);
+        exit;
         parent::__construct();
         $this->model = new Throwreportpayout();
 
