@@ -816,7 +816,7 @@ class Sximo extends Model {
             $row[0]['company_name_long'] = '';
         }
         if ($row[0]['new_format'] == 1) {
-            $contentsQuery = \DB::select("SELECT O.item_name AS description,if(O.product_id=0,O.sku,P.sku) AS sku, O.price AS price, O.qty AS qty,O.case_price
+            $contentsQuery = \DB::select("SELECT O.item_name AS description,if(O.product_id=0,O.sku,P.sku) AS sku, O.price AS price, O.qty AS qty,O.case_price,O.is_broken_case
                                             FROM order_contents O 
                                             LEFT JOIN products P ON P.id = O.product_id 
                                             WHERE O.order_id = $order_id");
@@ -828,6 +828,9 @@ class Sximo extends Model {
                 $orderDescriptionArray[] = empty($r['sku'])?$r['description']:$r['description']." (SKU - {$r['sku']})";
                 $orderPriceArray[] = $r['price'];
                 $orderQtyArray[] = $r['qty'];
+                $brokenCaseArray[] = $r['is_broken_case'];
+                $OriginalCasePrice[] = $r['case_price'];
+                $OriginalUnitPrice[] = $r['price'];
                 if(in_array($orderTypeId,$case_price_categories))
                 {
                     $orderItemsPriceArray[] = $r['case_price'];
@@ -846,6 +849,9 @@ class Sximo extends Model {
             $row[0]['orderPriceArray'] = $orderPriceArray;
             $row[0]['orderItemsPriceArray']=$orderItemsPriceArray;
             $row[0]['orderQtyArray'] = $orderQtyArray;
+            $row[0]['OriginalCasePriceArray'] = $OriginalCasePrice;
+            $row[0]['OriginalUnitPriceArray'] = $OriginalUnitPrice;
+            $row[0]['brokenCaseArray'] = $brokenCaseArray;
         }
 
         \DB::setFetchMode(\PDO::FETCH_CLASS);
