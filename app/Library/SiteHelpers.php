@@ -29,7 +29,7 @@ class SiteHelpers
                 if (count($menus2) > 0) {
                     $level2 = array();
                     foreach ($menus2 as $row2) {
-                        if($row2->module != 'throwreport'){
+                        if(!in_array($row2->module,['throwreportpayout', 'throwreport', 'throwreportinstantwin'])){
                             $p = json_decode($row2->access_data, true);
                             if ($row2->allow_guest == 1) {
                                 $is_allow = 1;
