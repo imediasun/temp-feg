@@ -1058,7 +1058,7 @@ class ReportGenerator
         
         $q = ReportHelpers::getReadersMissingAssetIdQuery($date, $date);
         $data = DB::select($q);
-        $report = array();        
+        $report = array();
         $missingAssetIdData = array();
         $missingAssetIdFlatData = array();
         foreach($data as $index => $row) {
@@ -1229,7 +1229,7 @@ class ReportGenerator
         //$q .= " AND E.location_id NOT IN (" . implode(',', $locationsNotReportingIds). ")";
         
         $data = DB::select($q);
-        $report = array();  
+        $report = array();
         $notPlayedGames = array();
         $notPlayedGamesFlat = array();
         $notPlayedMoreThanAWeek = array();
@@ -2032,6 +2032,7 @@ class ReportGenerator
     public static function sendEmailReport($options) {  
         $options['from'] = "support@fegllc.com";
         $options['fromName'] = "FEG Reports";
+        $options['message'] = "If there are any issues with this report please contact support@fegllc.com<br>".$options['message'];
         FEGSystemHelper::sendSystemEmail($options);
     }
 
