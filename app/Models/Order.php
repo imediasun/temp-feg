@@ -457,6 +457,8 @@ class order extends Sximo
         $data['orderPriceArray'] = '';
         $data['orderQtyArray'] = '';
         $data['brokenCaseArray'] = '';
+        $data['OriginalCasePriceArray'] = '';
+        $data['OriginalUnitPriceArray'] = '';
         $data['orderProductIdArray'] = '';
         $data['itemNameArray'] = "";
         $data['skuNumArray'] = "";
@@ -524,6 +526,8 @@ class order extends Sximo
                     $brokenCaseArray[] = $row->is_broken_case;
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
+                    $OriginalCasePrice[] = $row->case_price;
+                    $OriginalUnitPrice[] = $row->price;
                     $skuNumArray[] = $row->sku;
                     $orderitemcasepriceArray[] = \CurrencyHelpers::formatPrice($row->case_price, self::ORDER_PERCISION, false);
                     $orderUpcBarcodeArray[] = $row->upc_barcode;
@@ -543,6 +547,8 @@ class order extends Sximo
                     }
                 }
                 $data['orderDescriptionArray'] = $orderDescriptionArray;
+                $data['OriginalCasePriceArray'] = $OriginalCasePrice;
+                $data['OriginalUnitPriceArray'] = $OriginalUnitPrice;
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
                 $data['brokenCaseArray'] = $brokenCaseArray;

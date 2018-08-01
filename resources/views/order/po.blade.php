@@ -94,7 +94,7 @@
                         <td style="padding:8px;border:1px dotted #000; border-top:none">  {{ $data[0]['orderDescriptionArray'][$i] }} <br/></td>
                         <td style="padding:8px;border:1px dotted #000;border-top:none;text-align: right">  {{ \CurrencyHelpers::formatPrice($data[0]['orderItemsPriceArray'][$i], \App\Models\Order::ORDER_PERCISION) }} <br/></td>
                         <td style="padding:8px;border:1px dotted  #000;border-top:none;text-align: center">  {{ $data[0]['orderQtyArray'][$i] }} <br/></td>
-                        <td style="padding:2px;border:1px dotted  #000;border-top:none;border-right:1px dotted #000;text-align: right ">  {{ \CurrencyHelpers::formatPrice($data[0]['orderItemsPriceArray'][$i] * $data[0]['orderQtyArray'][$i], \App\Models\Order::ORDER_PERCISION) }}  <br/></td>
+                        <td style="padding:2px;border:1px dotted  #000;border-top:none;border-right:1px dotted #000;text-align: right ">  {{ CurrencyHelpers::formatPrice(($data[0]['brokenCaseArray'][$i]) ? $data[0]['OriginalUnitPriceArray'][$i]* $data[0]['orderQtyArray'][$i] : $data[0]['OriginalCasePriceArray'][$i]* $data[0]['orderQtyArray'][$i],\App\Models\Order::ORDER_PERCISION) }}  <br/></td>
                         <td></td>
                     </tr>
                 @endfor

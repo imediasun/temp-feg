@@ -394,7 +394,8 @@ if(!empty($order_data['orderQtyArray'])){
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
                             <td>{{  \DateHelpers::formatStringValue($order_data['gamenameArray'][$i]) }}</td>
                         @endif
-                        <td>{{ CurrencyHelpers::formatPrice($order_data['orderItemsPriceArray'][$i]* $order_data['orderQtyArray'][$i],\App\Models\Order::ORDER_PERCISION)}}</td>
+                        <td>
+                            {{  CurrencyHelpers::formatPrice(($order_data['brokenCaseArray'][$i]) ? $order_data['OriginalUnitPriceArray'][$i]* $order_data['orderQtyArray'][$i] : $order_data['OriginalCasePriceArray'][$i]* $order_data['orderQtyArray'][$i],\App\Models\Order::ORDER_PERCISION)}}</td>
                           </tr>
                     @endfor
                 <tr>
