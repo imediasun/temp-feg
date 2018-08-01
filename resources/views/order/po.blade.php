@@ -46,7 +46,10 @@
                         {{ isset($data[0]['po_zip_ship'])?$data[0]['po_zip_ship']:"" }} <br/>
                         <br/>
                         <br/>
-                        {{ $data[0]['fedex_number'] ?  'Please Ship parcels using '.Lang::get('core.fedex_number') .': '.$data[0]['fedex_number'] : ''}}
+                        @if($data[0]['ismerch'] && (in_array($data[0]['order_type_id'], ['6', '7', '8'])))
+                        @else
+                            {{ $data[0]['fedex_number'] ?  'Please Ship parcels using '.Lang::get('core.fedex_number') .': '.$data[0]['fedex_number'] : ''}}
+                        @endif
                     </td>
                 </tr>
                 <tr >

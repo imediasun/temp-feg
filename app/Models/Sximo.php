@@ -1485,6 +1485,7 @@ class Sximo extends Model {
                           V.vendor_name,
                           V.street1             AS vend_street1,
                           V.city                AS vend_city,
+                          V.ismerch             AS ismerch,
                           V.state               AS vend_state,
                           V.zip                 AS vend_zip,
                           V.contact             AS vend_contact,
