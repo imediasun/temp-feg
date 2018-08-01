@@ -29,59 +29,56 @@ class SiteHelpers
                 if (count($menus2) > 0) {
                     $level2 = array();
                     foreach ($menus2 as $row2) {
-                        if($row2->module != 'throwreport'){
-                            $p = json_decode($row2->access_data, true);
-                            if ($row2->allow_guest == 1) {
-                                $is_allow = 1;
-                            } else {
-                                $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
-                            }
-
-                            if ($is_allow == 1) {
-
-                                $menu2 = array(
-                                    'menu_id' => $row2->menu_id,
-                                    'module' => $row2->module,
-                                    'menu_type' => $row2->menu_type,
-                                    'url' => $row2->url,
-                                    'menu_name' => $row2->menu_name,
-                                    'menu_lang' => json_decode($row2->menu_lang, true),
-                                    'menu_icons' => $row2->menu_icons,
-                                    'active' => $row->active == 1 ? 'active' : 'inactive',
-                                    'childs' => array()
-                                );
-
-                                $menus3 = self::nestedMenu($row2->menu_id, $position, $active);
-                                if (count($menus3) > 0) {
-                                    $child_level_3 = array();
-                                    foreach ($menus3 as $row3) {
-                                        $p = json_decode($row3->access_data, true);
-                                        if ($row3->allow_guest == 1) {
-                                            $is_allow = 1;
-                                        } else {
-                                            $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
-                                        }
-                                        if ($is_allow == 1) {
-                                            $menu3 = array(
-                                                'menu_id' => $row3->menu_id,
-                                                'module' => $row3->module,
-                                                'menu_type' => $row3->menu_type,
-                                                'url' => $row3->url,
-                                                'menu_name' => $row3->menu_name,
-                                                'menu_lang' => json_decode($row3->menu_lang, true),
-                                                'menu_icons' => $row3->menu_icons,
-                                                'active' => $row->active == 1 ? 'active' : 'inactive',
-                                                'childs' => array()
-                                            );
-                                            $child_level_3[] = $menu3;
-                                        }
-                                    }
-                                    $menu2['childs'] = $child_level_3;
-                                }
-                                $level2[] = $menu2;
-                            }
+                        $p = json_decode($row2->access_data, true);
+                        if ($row2->allow_guest == 1) {
+                            $is_allow = 1;
+                        } else {
+                            $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
                         }
 
+                        if ($is_allow == 1) {
+
+                            $menu2 = array(
+                                'menu_id' => $row2->menu_id,
+                                'module' => $row2->module,
+                                'menu_type' => $row2->menu_type,
+                                'url' => $row2->url,
+                                'menu_name' => $row2->menu_name,
+                                'menu_lang' => json_decode($row2->menu_lang, true),
+                                'menu_icons' => $row2->menu_icons,
+                                'active' => $row->active == 1 ? 'active' : 'inactive',
+                                'childs' => array()
+                            );
+
+                            $menus3 = self::nestedMenu($row2->menu_id, $position, $active);
+                            if (count($menus3) > 0) {
+                                $child_level_3 = array();
+                                foreach ($menus3 as $row3) {
+                                    $p = json_decode($row3->access_data, true);
+                                    if ($row3->allow_guest == 1) {
+                                        $is_allow = 1;
+                                    } else {
+                                        $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
+                                    }
+                                    if ($is_allow == 1) {
+                                        $menu3 = array(
+                                            'menu_id' => $row3->menu_id,
+                                            'module' => $row3->module,
+                                            'menu_type' => $row3->menu_type,
+                                            'url' => $row3->url,
+                                            'menu_name' => $row3->menu_name,
+                                            'menu_lang' => json_decode($row3->menu_lang, true),
+                                            'menu_icons' => $row3->menu_icons,
+                                            'active' => $row->active == 1 ? 'active' : 'inactive',
+                                            'childs' => array()
+                                        );
+                                        $child_level_3[] = $menu3;
+                                    }
+                                }
+                                $menu2['childs'] = $child_level_3;
+                            }
+                            $level2[] = $menu2;
+                        }
 
                     }
                     $child_level = $level2;
