@@ -388,7 +388,7 @@ if(!empty($order_data['orderQtyArray'])){
                             <td>{{  \DateHelpers::formatStringValue($order_data['gamenameArray'][$i]) }}</td>
                         @endif
                         <td>
-                            {{  CurrencyHelpers::formatPrice(($order_data['brokenCaseArray'][$i] && !in_array($row->order_type_id,$typesUsingCasePrice)) ? $order_data['OriginalUnitPriceArray'][$i]* $order_data['orderQtyArray'][$i] : $order_data['OriginalCasePriceArray'][$i]* $order_data['orderQtyArray'][$i],\App\Models\Order::ORDER_PERCISION)}}</td>
+                            {{  CurrencyHelpers::formatPrice(($order_data['brokenCaseArray'][$i] ) ? $order_data['OriginalUnitPriceArray'][$i]* $order_data['orderQtyArray'][$i] :(!in_array($row->order_type_id,$typesUsingCasePrice)) ? $order_data['OriginalUnitPriceArray'][$i]* $order_data['orderQtyArray'][$i] : $order_data['OriginalCasePriceArray'][$i]* $order_data['orderQtyArray'][$i],\App\Models\Order::ORDER_PERCISION)}}</td>
                           </tr>
                     @endfor
                 <tr>
