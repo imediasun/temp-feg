@@ -1503,7 +1503,7 @@ class OrderController extends Controller
                 $numLenghtyDescItems = 0;
                 for ($i = 0; $i < $data[0]['requests_item_count']; $i++) {
                     $j = $i + 1;
-                    $item_total = ($data[0]['brokenCaseArray'][$i]) ? $data[0]['OriginalUnitPriceArray'][$i]* $data[0]['orderQtyArray'][$i]:$data[0]['OriginalCasePriceArray'][$i]* $data[0]['orderQtyArray'][$i];
+                    $item_total = ($data[0]['brokenCaseArray'][$i] && !in_array($data[0]['order_type_id'],$this->data['pass']['calculate price according to case price'])) ? $data[0]['OriginalUnitPriceArray'][$i]* $data[0]['orderQtyArray'][$i]:$data[0]['OriginalCasePriceArray'][$i]* $data[0]['orderQtyArray'][$i];
                     //$item_total_string = "$ " . number_format($item_total, Order::ORDER_PERCISION);
                     $item_total_string = $item_total;
                     $item_description_string = "Item #" . $j . ": " . $data[0]['orderDescriptionArray'][$i];
