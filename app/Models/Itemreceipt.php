@@ -181,7 +181,7 @@ orders.id=order_received.order_id ";
         if(empty($qry_in_string))
             $qry_in_string = "''";
 
-        $order_received_data=\DB::select("select order_received.*,order_contents.qty_per_case,orders.order_type_id from order_received inner join order_contents on order_contents.id=order_received.order_line_item_id inner join orders on orders.id=order_received.order_id where order_received.order_id in($qry_in_string) $where");
+        $order_received_data=\DB::select("select order_received.*,order_contents.qty_per_case,orders.order_type_id,order_contents.is_broken_case from order_received inner join order_contents on order_contents.id=order_received.order_line_item_id inner join orders on orders.id=order_received.order_id where order_received.order_id in($qry_in_string) $where");
         $order_received_ids=\DB::select("select order_id from order_received where order_id in($qry_in_string) $where group by order_id");
 
         // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
@@ -212,7 +212,7 @@ orders.id=order_received.order_id ";
                 foreach ($order_received_data as $record) {
                     if ($order_data->id == $record->order_id) {
                         if(in_array($record->order_type_id,$order_types)){
-                            $record->quantity = $record->quantity*$record->qty_per_case;
+                            $record->quantity = $record->is_broken_case == 1 ? $record->quantity:$record->quantity*$record->qty_per_case;
                         }
                         $result[$record->order_id]['receipts'][] = [
                             'id' => $record->id,
