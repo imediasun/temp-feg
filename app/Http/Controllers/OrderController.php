@@ -448,7 +448,7 @@ class OrderController extends Controller
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
         $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit', $this->data['pass']);
-
+        $this->data['typesUsingCasePrice'] = !empty($this->data['pass']['calculate price according to case price']->data_options) ? explode(",",$this->data['pass']['calculate price according to case price']->data_options) : [];
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
