@@ -1376,7 +1376,7 @@
             let checkboxClone = $(clone).find('.icheck input:checkbox').clone();
             $(clone).find('.icheck').html('<br /><input type="hidden" name="broken_case_value[]" value="0">');
             $(clone).find('.icheck').append(checkboxClone);
-
+            $(clone).removeClass('hiddenClone').removeAttr("style");
             $('.itemstable tbody').append(clone);
 
             productRows = productRows + 1;
