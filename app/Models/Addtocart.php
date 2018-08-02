@@ -16,6 +16,7 @@ class addtocart extends Sximo
     protected $table = 'requests';
     protected $primaryKey = 'id';
     public $passes = '';
+    public $timestamps = false;
 
     public function __construct()
     {

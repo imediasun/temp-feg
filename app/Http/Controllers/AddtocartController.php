@@ -329,6 +329,21 @@ class AddtocartController extends Controller
             }
         }
 
+        $newRequests = $this->model->whereIn("product_id",$products)->where("status_id",4)->where("location_id",$location_id)->get();
+        if($newRequests->count()>0){
+            foreach($newRequests as $newRequest){
+                $request = $this->model->where("product_id",$newRequest->product_id)->where("status_id",1)->where("location_id",$location_id)->first();
+                if($request){
+                    $request->qty = $request->qty + $newRequest->qty;
+                    $request->request_user_id = \Session::get('uid');
+                    $request->request_date = $now;
+                    unset($request->updated_at);
+                    $request->save();
+                    $this->model->where("id",$newRequest->id)->delete();
+                }
+            }
+        }
+
         $update = array('status_id' => 1,
             'request_user_id' => \Session::get('uid'),
             'request_date' => $now);
