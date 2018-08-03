@@ -286,32 +286,9 @@ class AddtocartController extends Controller
         $products = $inputs['products'];
         $location_id = \Session::get('selected_location');
         $data['user_level'] = \Session::get('gid');
-        /*if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
-            $statusId = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
-        } else {
-            $statusId = 4;
-        }*/
-        $statusId = 4;
-        /*
-          //commented on 07/07/2017 by asad because its not needed now
-         if (!empty($new_location)) {
-            $query = \DB::select('SELECT product_id,description,qty,status_id,request_type_id FROM requests
-                                  WHERE location_id = ' . $location_id . ' AND status_id = 9 AND request_user_id = '.\Session::get('uid'));
 
-            foreach ($query as $row) {
-                $insert = array(
-                    'product_id' => $row->product_id,
-                    'description' => $row->description,
-                    'qty' => $row->qty,
-                    'request_user_id' => \Session::get('uid'),
-                    'request_date' => $now,
-                    'location_id' => $new_location,
-                    'status_id' => $row->status_id,
-                    'request_type_id' => $row->request_type_id
-                );
-                \DB::table('requests')->insert($insert);
-            }
-        }*/
+        $statusId = 4;
+
         $userId = \Session::get('uid');
         $groupId = \Session::get('gid');
 
@@ -329,18 +306,10 @@ class AddtocartController extends Controller
             }
         }
 
-        $newRequests = $this->model->whereIn("product_id",$products)->where("request_user_id",\Session::get('uid'))->where("status_id",4)->where("location_id",$location_id)->get();
+        $newRequests = $this->model->getNewRequests($products)->get();
         if($newRequests->count()>0){
             foreach($newRequests as $newRequest){
-                $request = $this->model->where("product_id",$newRequest->product_id)->where("status_id",1)->where("location_id",$location_id)->first();
-                if($request){
-                    $request->qty = $request->qty + $newRequest->qty;
-                    $request->request_user_id = \Session::get('uid');
-                    $request->request_date = $now;
-                    unset($request->updated_at);
-                    $request->save();
-                    $this->model->where("id",$newRequest->id)->delete();
-                }
+                $this->model->mergeRequests($newRequest);
             }
         }
 
