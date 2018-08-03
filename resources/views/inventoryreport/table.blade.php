@@ -129,6 +129,9 @@
 							{
 								$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,$field['nodata']);
 							}
+							if($field['field'] == "Cases_Ordered"){
+								$value = trim($value,"$");
+							}
 						?>
 						<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
