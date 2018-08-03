@@ -155,7 +155,9 @@ class inventoryreport extends Sximo  {
             vendor_name,Product,max(ticket_value) as ticket_value
             ,Unit_Price,Posted,Case_Unit_Group,
            IF((prod_type_id NOT IN (".$casePriceCats.") OR is_broken_case), qty/qty_per_case,qty) AS Cases_Ordered,
-            Case_Price,SUM(IF((prod_type_id NOT IN (".$casePriceCats.") OR is_broken_case),(Unit_Price_ORIGNAL*qty), (Case_Price_ORIGNAL * qty))) AS Total_Spent,start_date,end_date
+            Case_Price,
+            SUM(IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,(Unit_Price_ORIGNAL),(Case_Price_ORIGNAL * qty)),(Unit_Price_ORIGNAL*qty))) AS Total_Spent,
+            start_date,end_date
             ,qty_per_case,prod_type_id,prod_sub_type_id
              FROM ( 
                     SELECT P.id , O.id as orderId,
@@ -171,7 +173,7 @@ class inventoryreport extends Sximo  {
                     OC.ticket_value,
                     OC.`is_broken_case`,
                     IF(OC.prod_type_id IN ($specificTypes),IF(O.is_api_visible = 0,'$UserFill',TRUNCATE(OC.case_price/OC.qty_per_case,5)),OC.price) AS Unit_Price,
-                    OC.price AS Unit_Price_ORIGNAL,
+                     SUM(OC.price*OC.qty) AS Unit_Price_ORIGNAL,
                     sum(OC.qty) as qty,
                     OC.qty_per_case,
                     O.is_api_visible,
