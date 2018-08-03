@@ -175,15 +175,8 @@ class productusagereport extends Sximo  {
             vendor_id,Product,max(ticket_value) as ticket_value
             , Unit_Price,
             SUM(IF(is_broken_case,(qty/num_items),qty)) AS Cases_Ordered,
-            Case_Price,SUM(IF(
-                is_broken_case, 
-                (qty/num_items*Case_Price), 
-                (IF(
-                    prod_type_id NOT IN (".$casePriceCats."),
-                    (Unit_Price*qty), 
-                    (Case_Price * qty)
-                    )
-                ))) AS Total_Spent,
+            Case_Price,
+            IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,SUM(Unit_Price_ORIGNAL* qty),SUM(Case_Price_ORIGNAL * qty)),SUM(Unit_Price_ORIGNAL*qty)) AS Total_Spent,
             TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS OC_Total_Spent,
             location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR $separator) as location_name,
             start_date,end_date
@@ -198,6 +191,8 @@ class productusagereport extends Sximo  {
                    IF(P.ticket_value = 0, '', P.ticket_value) AS ticket_value,
                    IF(P.num_items = '' OR P.num_items IS NULL, IF(OC.qty_per_case = '' OR OC.qty_per_case IS NULL , 0,OC.qty_per_case), P.num_items) AS num_items,
 				   IF(P.unit_price = '' OR P.unit_price IS NULL,OC.price,P.unit_price) AS Unit_Price,
+				   OC.price AS Unit_Price_ORIGNAL,
+				   OC.case_price AS Case_Price_ORIGNAL,
 				   OC.qty,
 				   O.order_type_id,
 				   IF(P.case_price = '' OR P.case_price IS NULL , OC.case_price , P.case_price) AS Case_Price,
