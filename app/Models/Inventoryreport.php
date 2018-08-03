@@ -164,7 +164,7 @@ class inventoryreport extends Sximo  {
             GROUP_CONCAT(DISTINCT type_description ORDER BY type_description SEPARATOR ' , ') AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
             ,Unit_Price,Posted,Case_Unit_Group,
-            IF(order_type_id IN ( $casePriceCats),IF(max(num_items) is null OR MAX(num_items) = 0  OR is_broken_case, SUM(qty), (max(num_items)*SUM(qty))),SUM(qty)) AS Cases_Ordered,
+            qty AS Cases_Ordered,
             Case_Price,SUM(IF((prod_type_id NOT IN (".$casePriceCats.") OR is_broken_case),(Unit_Price_ORIGNAL*qty), (Case_Price_ORIGNAL * qty))) AS Total_Spent,start_date,end_date
             ,qty_per_case,prod_type_id,prod_sub_type_id
              FROM ( 
@@ -182,7 +182,7 @@ class inventoryreport extends Sximo  {
                     OC.`is_broken_case`,
                     IF(OC.prod_type_id IN ($specificTypes),IF(O.is_api_visible = 0,'$UserFill',TRUNCATE(OC.case_price/OC.qty_per_case,5)),OC.price) AS Unit_Price,
                     OC.price AS Unit_Price_ORIGNAL,
-                    OC.qty,
+                    sum(OC.qty) as qty,
                     OC.qty_per_case,
                     O.is_api_visible,
                     IF((O.is_api_visible = 0 AND  OC.prod_type_id IN ($specificTypes)) , 0,1 ) AS Posted,
