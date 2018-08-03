@@ -204,6 +204,7 @@ App.autoCallbacks.registerCallback('reloaddata', function(params){
     initExport(this);
     //alignColumns(this);
     //initUserPopup(this);
+    $(document).scrollTop(0);
 });
 App.autoCallbacks.registerCallback('columnselector', function(params){
 
