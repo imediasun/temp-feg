@@ -163,10 +163,10 @@ class inventoryreport extends Sximo  {
             Product_Type,is_api_visible,
             GROUP_CONCAT(DISTINCT type_description ORDER BY type_description SEPARATOR ' , ') AS Product_Sub_Type,
             vendor_name,Product,max(ticket_value) as ticket_value
-            ,Unit_Price,Posted,Case_Unit_Group,
-           IF((prod_type_id NOT IN (".$casePriceCats.") OR is_broken_case), qty/qty_per_case,qty) AS Cases_Ordered,
+            ,Unit_Price,Posted,SUM(Case_Unit_Group) as Case_Unit_Group,
+           SUM(IF((prod_type_id NOT IN (".$casePriceCats.") OR is_broken_case), qty/qty_per_case,qty)) AS Cases_Ordered,
             Case_Price,
-            SUM(IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,(Unit_Price_ORIGNAL),(Case_Price_ORIGNAL * qty)),(Unit_Price_ORIGNAL*qty))) AS Total_Spent,
+            SUM(IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,SUM(Unit_Price_ORIGNAL* qty),SUM(Case_Price_ORIGNAL * qty)),SUM(Unit_Price_ORIGNAL*qty)) AS Total_Spent,
             start_date,end_date
             ,qty_per_case,prod_type_id,prod_sub_type_id
              FROM ( 
@@ -183,8 +183,8 @@ class inventoryreport extends Sximo  {
                     OC.ticket_value,
                     OC.`is_broken_case`,
                     IF(OC.prod_type_id IN ($specificTypes),IF(O.is_api_visible = 0,'$UserFill',TRUNCATE(OC.case_price/OC.qty_per_case,5)),OC.price) AS Unit_Price,
-                     SUM(OC.price*OC.qty) AS Unit_Price_ORIGNAL,
-                    sum(OC.qty) as qty,
+                    OC.price AS Unit_Price_ORIGNAL,
+                    OC.qty as qty,
                     OC.qty_per_case,
                     O.is_api_visible,
                     IF((O.is_api_visible = 0 AND  OC.prod_type_id IN ($specificTypes)) , 0,1 ) AS Posted,
@@ -223,7 +223,7 @@ class inventoryreport extends Sximo  {
 
             // both group by quires are same
             $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type";
-            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,Posted,Case_Unit_Group ";
+            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,Posted ";
 
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
                 ' ORDER BY Unit_Price ';
