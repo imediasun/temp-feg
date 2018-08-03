@@ -329,7 +329,7 @@ class AddtocartController extends Controller
             }
         }
 
-        $newRequests = $this->model->whereIn("product_id",$products)->where("status_id",4)->where("location_id",$location_id)->get();
+        $newRequests = $this->model->whereIn("product_id",$products)->where("request_user_id",\Session::get('uid'))->where("status_id",4)->where("location_id",$location_id)->get();
         if($newRequests->count()>0){
             foreach($newRequests as $newRequest){
                 $request = $this->model->where("product_id",$newRequest->product_id)->where("status_id",1)->where("location_id",$location_id)->first();
