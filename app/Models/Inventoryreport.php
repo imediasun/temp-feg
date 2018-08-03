@@ -188,7 +188,7 @@ class inventoryreport extends Sximo  {
                     IF((O.is_api_visible = 0 AND  OC.prod_type_id IN ($specificTypes)) , 0,1 ) AS Posted,
                     IF((O.is_api_visible = 0 AND  OC.prod_type_id IN ($specificTypes)),'$UserFill', OC.case_price) AS Case_Price,
                     OC.case_price AS Case_Price_ORIGNAL,
-                    CASE WHEN OC.prod_type_id IN ($groupByTypes) THEN OC.case_price ELSE OC.price END AS Case_Unit_Group,
+                    SUM(CASE WHEN OC.prod_type_id IN ($groupByTypes) THEN OC.case_price ELSE OC.price END) AS Case_Unit_Group,
                     OC.total,
                     O.location_id,
                     L.location_name,
