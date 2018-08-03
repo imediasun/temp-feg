@@ -339,4 +339,28 @@ FROM requests
             return '';
         }
     }
+    /*
+     * mergeRequests() method accepts addtocart object
+     * this method is used to merge requested item if it already has been ordered by some other user on the same location
+     * replacing requested user id with current user id and requested date with current date
+     */
+    public function mergeRequests($newRequest){
+        $now = date('Y-m-d');
+        $request = $this->where("product_id",$newRequest->product_id)->where("status_id",1)->where("location_id",\Session::get('selected_location'))->first();
+        if($request){
+            $request->qty = $request->qty + $newRequest->qty;
+            $request->request_user_id = \Session::get('uid');
+            $request->request_date = $now;
+            unset($request->updated_at);
+            $request->save();
+            self::where("id",$newRequest->id)->delete();
+        }
+    }
+
+    public function getNewRequests($productIds = []){
+       return $this->whereIn("product_id",$productIds)
+            ->where("request_user_id",\Session::get('uid'))
+            ->where("status_id",4)
+            ->where("location_id",\Session::get('selected_location'));
+    }
 }
