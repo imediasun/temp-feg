@@ -102,7 +102,7 @@
                                 <label class="control-label col-md-4" for="bcc">BCC</label>
 
                                 <div class="col-md-8">
-                                    <input name="bcc" id="bcc" multiple data-value="" class="form-control orderEmailAutoComplete" />
+                                    <input name="bcc" id="bcc" value="{{ $bcc }}" multiple data-value="" class="form-control orderEmailAutoComplete" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -169,7 +169,7 @@
                                 <label class="control-label col-md-4" for="bcc">BCC</label>
 
                                 <div class="col-md-8">
-                                    <input name="bcc1" id="bcc1" data-value=""  class="form-control orderEmailAutoComplete" />
+                                    <input name="bcc1" id="bcc1" data-value="" value="{{ $bcc }}"  class="form-control orderEmailAutoComplete" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -208,7 +208,10 @@
         $(document).ready(function () {
             $(document).scrollTop(0);
             App.initAutoComplete($('.orderEmailAutoComplete'),
-                {url: siteUrl+'/order/email-history'});
+                {
+                    url: siteUrl+'/order/email-history',
+                    data: {'search': $('.orderEmailAutoComplete').val()}
+                });
 
             $(".exposeAPIFromSaveOrSend").click(function(e){
                 return false; //Functionality removed!
