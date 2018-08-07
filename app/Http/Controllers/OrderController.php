@@ -2903,4 +2903,122 @@ ORDER BY aa_id");
         }
         dd('records saved');
     }
+    public function getDplFile($orderId){
+
+        //check if dpl file is already generated
+        $downloadId = 0;
+        $isFileNeedToBeRegenerated = true;
+        $dpl = DigitalPackingList::where("order_id","=",$orderId)->first();
+
+        $order = Order::where("id", '=', $orderId)->first();
+        $location = $order->location;
+
+        if(!is_null($dpl)){
+            $downloadId = $dpl->id;
+            $isFileNeedToBeRegenerated = $dpl->isFileNeedToBeRegenerated($order);
+        }
+
+        if($isFileNeedToBeRegenerated){
+            Log::info("DPL FILE Order ID:".$orderId);
+            if($order->isFullyReceived()){
+
+                $dpl = new DigitalPackingList();
+                $insertData = [
+                    'order_id' => $order->id,
+                    'name' => $order->po_number,
+                    'location_id' => $order->location_id,
+                    'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                    'type_id' => $location->debit_type_id
+                ];
+                $dpl = $dpl->saveOrUpdateDPL($insertData, $downloadId);
+
+                $dpl->saveOrUpdateDPL(['name' => $dpl->name],$dpl->id);
+                $dplFileContent = $dpl->getDPLFileData();
+                $dpl->saveFile($dplFileContent);
+            }
+        }
+        $headers = array(
+            'Content-type: '.mime_content_type(public_path()."/uploads/dpl-files/".$dpl->name),
+        );
+        $updData = [
+            'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            'downloaded_at' => Carbon::now()->format('Y-m-d H:i:s'),
+        ];
+        $dpl->saveOrUpdateDPL($updData,$dpl->id);
+        Log::info("DPL File Downloaded:".public_path(DigitalPackingList::DPL_FILE_PATH).$dpl->name);
+        return Response::download(public_path(DigitalPackingList::DPL_FILE_PATH).$dpl->name,$dpl->name,$headers);
+    }
+    public function getReceivefreehandandcloseorder($poNumbers){
+        //Enter Comma separated po numbers in url request
+        //die("Script blocked. To run this script please contact your development team. Thanks!");
+        if(!empty($poNumbers)){
+            $records = \DB::table('orders')->whereIn("po_number",explode(",",$poNumbers))->get();
+            foreach ($records as $record) {
+                $order = Order::find($record->id);
+                $order_contents = \DB::table('order_contents')->where('order_id', $order->id)->get();
+                $notes = '';
+                foreach ($order_contents as $order_content) {
+                    $order_received = \DB::table('order_received')
+                        ->where('order_id', $order->id)
+                        ->where('order_line_item_id', $order_content->id)
+                        ->whereNull('deleted_at')
+                        ->get();
+
+                    if (empty($order_received)) {
+                        \DB::table('order_received')->insert([
+                            'order_id' => $order->id,
+                            'order_line_item_id' => $order_content->id,
+                            'quantity' => $order_content->qty,
+                            'received_by' => '238',
+                            'date_received' => Carbon::now(),
+                            'api_created_at' => Carbon::now(),
+                            'notes' => '(System generated) All Items Received',
+                            'status' => 1
+                        ]);
+
+                        $notes .= '(System generated) All Items Received <br>----------------------<br>';
+
+                    } else {
+
+                        $qty_received = collect($order_received)->sum('quantity');
+
+                        if ($qty_received < $order_content->qty) {
+                            $qty_left = $order_content->qty - $qty_received;
+                        } else {
+                            $qty_left = $order_content->qty;
+                        }
+
+                        \DB::table('order_received')->insert([
+                            'order_id' => $order->id,
+                            'order_line_item_id' => $order_content->id,
+                            'quantity' => $qty_left,
+                            'received_by' => '238',
+                            'date_received' => Carbon::now(),
+                            'api_created_at' => Carbon::now(),
+                            'notes' => '(System generated) Some Items Received',
+                            'status' => 1
+                        ]);
+
+                        $notes .= '(System generated) Some Items Received <br>----------------------<br>';
+                    }
+
+                    \DB::table('order_contents')->where('id', $order_content->id)->update(['item_received' => $order_content->qty]);
+                }
+
+                $order->status_id = 2;
+                $order->invoice_verified = 1;
+                $order->invoice_verified_date = Carbon::now();
+                $order->is_api_visible = 1;
+                $order->api_created_at = null;
+                $order->date_received = Carbon::now();
+                $order->updated_at = Carbon::now();
+                $order->received_by = '238';
+                $order->notes = $notes;
+                $order->save();
+            }
+            die("Script Completed!");
+        }else{
+            die("Invalid Request");
+        }
+    }
 }
