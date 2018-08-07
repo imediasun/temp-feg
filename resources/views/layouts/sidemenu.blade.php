@@ -58,31 +58,30 @@ $selected_loc=\Session::get('selected_location');?>
                     <table class="budget-summery">
                         <tr>
                             <td>Merchandise</td>
-                            <td>${{ number_format($orderData['monthly_merch_order_total'], 2, '.', ',') }}</td>
+                            <td id="monthly_merch_order_total">{{ $orderData['monthly_merch_order_total'] }}</td>
                         </tr>
                         <tr class="border-bottom">
-
                             <td>Parts & other </td>
-                            <td>${{ number_format($orderData['monthly_else_order_total'], 2, '.', ',') }}</td>
+                            <td id="monthly_else_order_total">{{ $orderData['monthly_else_order_total'] }}</td>
                         </tr>
                         <tr class="border-bottom">
                             <td>{{ $orderData['curMonthFull'] }} Remaining Merch Budget:</td>
-                            <td>
-                            @if($orderData['monthly_merch_remaining'] < 0)
-                                ${{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
-                            @else
-                                ${{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
-                            @endif
+                            <td id="monthly_merch_remaining">
+                                @if($orderData['monthly_merch_remaining'] < 0)
+                                    {{ $orderData['monthly_merch_remaining'] }}
+                                @else
+                                    {{ $orderData['monthly_merch_remaining'] }}
+                                @endif
+                            </td>
                         </tr>
                         <tr>
                             <td> {{$orderData['prevMonthFull'] }} Over/Under Merch Budget:</td>
-                            <td>
-
+                            <td id="last_month_merch_remaining">
                                 @if($orderData['last_month_merch_remaining'] < 0)
-                                ${{ number_format($orderData['last_month_merch_remaining'], 2, '.', ',')}}
+                                    {{ $orderData['last_month_merch_remaining']}}
                                 @else
-                                 ${{ number_format($orderData['last_month_merch_remaining'], 2, '.', ',')}}
-                                    @endif
+                                    {{ $orderData['last_month_merch_remaining']}}
+                                @endif
                             </td>
                         </tr>
 

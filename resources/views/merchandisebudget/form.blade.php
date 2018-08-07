@@ -51,7 +51,7 @@
                                 <label for="jan" class=" control-label col-md-4 text-left">January</label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="jan" id="jan" value="{{ \CurrencyHelpers::formatPrice($row['Jan'],5,false) }}"
+                                    <input type="number" name="Jan" id="jan" value="{{ \CurrencyHelpers::formatPrice($row['Jan'],5,false) }}"
                                            class="form-control"/>
                                 </div>
                                 <div class="col-md-4">
@@ -61,7 +61,7 @@
                                 <label for="feb" class=" control-label col-md-4 text-left"> February</label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="feb" id="feb" value="{{ \CurrencyHelpers::formatPrice($row['Feb'],5,false)}}"
+                                    <input type="number" name="Feb" id="feb" value="{{ \CurrencyHelpers::formatPrice($row['Feb'],5,false)}}"
                                            class="form-control"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -72,7 +72,7 @@
                                 </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="march" id="march" value="{{\CurrencyHelpers::formatPrice($row['March'],5,false)}}"
+                                    <input type="number" name="March" id="march" value="{{\CurrencyHelpers::formatPrice($row['March'],5,false)}}"
                                            class="form-control"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -82,7 +82,7 @@
                                     April </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="april" id="april" class="form-control"
+                                    <input type="number" name="April" id="april" class="form-control"
                                            value="{{\CurrencyHelpers::formatPrice($row['April'],5,false)}}"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -92,7 +92,7 @@
                                     May </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="may" id="may" class="form-control"
+                                    <input type="number" name="May" id="may" class="form-control"
                                            value="{{\CurrencyHelpers::formatPrice($row['May'],5,false)}}"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -102,7 +102,7 @@
                                     June</label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="june" id="jun" class="form-control"
+                                    <input type="number" name="June" id="jun" class="form-control"
                                            value="{{\CurrencyHelpers::formatPrice($row['June'],5,false)}}"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -112,7 +112,7 @@
                                     July </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="july" id="jul" class="form-control"
+                                    <input type="number" name="July" id="jul" class="form-control"
                                            value="{{\CurrencyHelpers::formatPrice($row['July'],5,false)}}"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -122,7 +122,7 @@
                                     August </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="august" id="aug" class="form-control"
+                                    <input type="number" name="August" id="aug" class="form-control"
                                            value="{{\CurrencyHelpers::formatPrice($row['August'],5,false)}}"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -132,7 +132,7 @@
                                     September </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="september" id="sep" class="form-control"
+                                    <input type="number" name="September" id="sep" class="form-control"
                                            value="{{\CurrencyHelpers::formatPrice($row['September'],5,false)}}"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -142,7 +142,7 @@
                                     October </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="october" id="oct" class="form-control"
+                                    <input type="number" name="October" id="oct" class="form-control"
                                            value="{{\CurrencyHelpers::formatPrice($row['October'],5,false)}}"/>
                                 </div>
                                 <div class="col-md-4">
@@ -153,7 +153,7 @@
                                     November </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="november" id="nov" class="form-control"
+                                    <input type="number" name="November" id="nov" class="form-control"
                                            value="{{\CurrencyHelpers::formatPrice($row['November'],5,false)}}"/>
                                 </div>
                                 <div class="col-md-4">
@@ -164,7 +164,7 @@
                                     December </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="december" id="dec" class="form-control"
+                                    <input type="number" name="December" id="dec" class="form-control"
                                            value="{{\CurrencyHelpers::formatPrice($row['December'],5,false)}}"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -258,6 +258,14 @@
         if (data.status == 'success') {
             ajaxViewClose('#{{ $pageModule }}');
             ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+
+            var result = data.budget_summary;
+            if(result.length !== 0){
+                var ids = ['monthly_merch_order_total', 'monthly_else_order_total', 'monthly_merch_remaining', 'last_month_merch_remaining'];
+                $.each(ids, function(key, val){
+                    $('#'+val).html(result[val]);
+                });
+            }
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');
         } else {

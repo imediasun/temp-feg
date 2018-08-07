@@ -90,7 +90,8 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
                 ?>
-            <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
+            <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )
+                    class="editable"
                 @endif id="form-{{ $row->id }}"
                 @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}"
                 @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this)" @endif @endif>
@@ -102,20 +103,27 @@
 					@endif
 
 
-                    <td data-values="{{$row->location_name_short}}" data-field="location" data-format="{{$row->location_name_short}}">{{ $row->location_name_short }}</td>
+                    <td
+                        {{--data-values="{{$row->location_id}}"--}}
+                        {{--data-field="location_id"--}}
+                        {{--data-format="{{$row->location_name}}"--}}
+                    >
+                        <input type="hidden" name="location_id" value="{{$row->location_id}}">
+                        {{ $row->location_name }}
+                    </td>
                     <td style="display: none" data-values="{{\Session::get('budget_year')}}" data-field="budget_year" data-format="{{\Session::get('budget_year')}}">{{\Session::get('budget_year')}}</td>
-                    <td data-values="{{$row->Jan}}" data-field="jan" data-format="{{$row->Jan}}">{{ $row->Jan }}</td>
-                    <td data-values="{{$row->Feb}}" data-field="feb" data-format="{{$row->Feb}}">{{ $row->Feb }}</td>
-                    <td data-values="{{$row->March}}" data-field="march" data-format="{{$row->March}}">{{ $row->March }}</td>
-                    <td data-values="{{$row->April}}" data-field="april" data-format="{{$row->April}}">{{ $row->April }}</td>
-                    <td data-values="{{$row->May}}" data-field="may" data-format="{{$row->May}}">{{ $row->May }}</td>
-                    <td data-values="{{$row->June}}" data-field="june" data-format="{{$row->June}}">{{ $row->June }}</td>
-                    <td data-values="{{$row->July}}" data-field="july" data-format="{{$row->July}}">{{ $row->July }}</td>
-                    <td data-values="{{$row->August}}" data-field="august" data-format="{{$row->August}}">{{ $row->August }}</td>
-                    <td data-values="{{$row->September}}" data-field="september" data-format="{{$row->September}}">{{ $row->September }}</td>
-                    <td data-values="{{$row->October}}" data-field="october" data-format="{{$row->October}}">{{ $row->October }}</td>
-                    <td data-values="{{$row->November}}" data-field="november" data-format="{{$row->November}}">{{ $row->November }}</td>
-                    <td data-values="{{$row->December}}" data-field="december" data-format="{{$row->December}}">{{ $row->December }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->Jan)}}" data-field="Jan" data-format="{{ltrim('$ ', $row->Jan)}}">{{ $row->Jan }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->Feb)}}" data-field="Feb" data-format="{{ltrim('$ ', $row->Feb)}}">{{ $row->Feb }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->March)}}" data-field="March" data-format="{{ltrim('$ ', $row->March)}}">{{ $row->March }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->April)}}" data-field="April" data-format="{{ltrim('$ ', $row->April)}}">{{ $row->April }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->May)}}" data-field="May" data-format="{{ltrim('$ ', $row->May)}}">{{ $row->May }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->June)}}" data-field="June" data-format="{{ltrim('$ ', $row->June)}}">{{ $row->June }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->July)}}" data-field="July" data-format="{{ltrim('$ ', $row->July)}}">{{ $row->July }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->August)}}" data-field="August" data-format="{{ltrim('$ ', $row->August)}}">{{ $row->August }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->September)}}" data-field="September" data-format="{{ltrim('$ ', $row->September)}}">{{ $row->September }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->October)}}" data-field="October" data-format="{{ltrim('$ ', $row->October)}}">{{ $row->October }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->November)}}" data-field="November" data-format="{{ltrim('$ ', $row->November)}}">{{ $row->November }}</td>
+                    <td data-values="{{str_replace(['$ ', ','], '', $row->December)}}" data-field="December" data-format="{{ltrim('$ ', $row->December)}}">{{ $row->December }}</td>
 
 
 
@@ -210,10 +218,75 @@ $(document).ready(function() {
     $(".select3[name='location_id'] option[value='6030'],.select3[name='location_id'] option[value='6000']").remove();
     $(".select3[name='location_id']").change();
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+
+
+    $(document).on("blur", "input[name='Jan']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+    $(document).on("blur", "input[name='Feb']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+    $(document).on("blur", "input[name='March']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+    $(document).on("blur", "input[name='April']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+    $(document).on("blur", "input[name='May']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+    $(document).on("blur", "input[name='June']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+    $(document).on("blur", "input[name='July']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+    $(document).on("blur", "input[name='August']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+    $(document).on("blur", "input[name='September']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+    $(document).on("blur", "input[name='October']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+    $(document).on("blur", "input[name='November']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+    $(document).on("blur", "input[name='December']", function () {
+        $(this).val($(this).fixDecimal());
+    });
+
+
+    $(document).on("keypress", "input[name='Jan'],input[name='Feb'],input[name='March'],input[name='April'],input[name='May'],input[name='June'],input[name='July'],input[name='August'],input[name='September'],input[name='October'],input[name='November'],input[name='December']", function (evt) {
+        if ((evt.which >= 48 && evt.which <= 57) || evt.which == 45 || evt.which == 46 ){}
+        else
+            evt.preventDefault();
+    });
+
+    $(".editable").on('dblclick', function(){
+        var handler = function () {
+            reloadData('#merchandisebudget','merchandisebudget/data?return=');
+        }
+        // assign your code to event handler for example
+        $('.actionpen > a').bind('click', handler);
+        var recordId = $(this).attr('id').split('-')[1];
+        $('#divOverlay_'+recordId).children('.btn-primary').bind('click', handler);
+    });
+    
 });
 $(document).ajaxComplete(function(){
     $(".select3[name='location_id'] option[value='6030'],.select3[name='location_id'] option[value='6000']").remove();
     $(".select3[name='location_id']").change();
+});
+App.autoCallbacks.registerCallback('inline.row.save.after', function (params) {
+    var result = params.data.budget_summary;
+    if(result.length !== 0){
+        var ids = ['monthly_merch_order_total', 'monthly_else_order_total', 'monthly_merch_remaining', 'last_month_merch_remaining'];
+        $.each(ids, function(key, val){
+            $('#'+val).html(result[val]);
+        });
+    }
 });
 </script>
 <style>
