@@ -1108,8 +1108,6 @@ class OrderController extends Controller
             //-------------------- Getting Emails for CC ----------------------------
             $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $ccFromSystemEmailManager, $excludedAndIncludedEmails['excluded'], $excludedAndIncludedEmails['included']);
 
-//            dd($finalStringOfEmailsForCC);
-
             \Session::put('send_to', $vendorEmail);
 
             $cc1 = $finalStringOfEmailsForCC;
