@@ -1156,11 +1156,12 @@ class OrderController extends Controller
 
 
         $usersEmailsForCC = User::select('email')
-            ->whereIn('group_id', $groupIdsArraySP)
+//            ->whereIn('group_id', $groupIdsArraySP)
 //            ->orWhereIn('id', $userIdsSP)
-//            ->whereNotIn('id', $excludeUserIdsSP)
-//            ->orWhereIn('email', $emailsFromSystemEmailManager)
-//            ->orWhereIn('email', $includedEmails)
+            ->whereIn('id', $userIdsSP)
+            ->whereNotIn('id', $excludeUserIdsSP)
+            ->orWhereIn('email', $emailsFromSystemEmailManager)
+            ->orWhereIn('email', $includedEmails)
             ->whereNotIn('email', $excludedEmails)
             ->get();
 
