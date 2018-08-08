@@ -361,7 +361,7 @@
                                          style="width: 85px"
                                          required></td>
                         <td>
-                            <br/> <input type='number' name='case_price[]' @if(is_object($row) && $row->is_freehand != 1){ onkeyup="calculateUnitPrice(this);" @endif id="case_price"
+                            <br/> <input type='number' name='case_price[]' @if(is_object($row)) @if($row->is_freehand != 1) onkeyup="calculateUnitPrice(this);" @endif @else onkeyup="calculateUnitPrice(this);" @endif id="case_price"
                                          class='calculate form-control fixDecimal' min="0.00" step=".001" placeholder="0.00"
                                          style="width: 85px"
                                          required></td>
