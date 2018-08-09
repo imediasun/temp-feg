@@ -206,7 +206,7 @@
 
 
         $(document).ready(function () {
-            
+            $(document).scrollTop(0);
             App.initAutoComplete($('.orderEmailAutoComplete'),
                 {url: siteUrl+'/order/email-history'});
 
