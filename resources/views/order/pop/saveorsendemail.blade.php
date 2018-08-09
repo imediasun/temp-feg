@@ -206,11 +206,13 @@
 
 
         $(document).ready(function () {
-            
-            App.initAutoComplete($('.orderEmailAutoComplete'),
+
+            var orderEmailAutoComplete = $('.orderEmailAutoComplete')
+
+            App.initAutoComplete(orderEmailAutoComplete,
                 {
                     url: siteUrl+'/order/email-history',
-                    data: {'search': $('.orderEmailAutoComplete').val()}
+                    params: {'search': orderEmailAutoComplete}
                 });
 
             $(".exposeAPIFromSaveOrSend").click(function(e){
