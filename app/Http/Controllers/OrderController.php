@@ -1119,6 +1119,11 @@ class OrderController extends Controller
 
             $emailsToArray = array_unique($emailsToArray);
 
+
+            $emailsToArray = array_filter($emailsToArray, function($val){
+                return ($val != '');
+            });
+
             $emailsTo = implode(',', $emailsToArray);
 
             \Session::put('send_to', $emailsTo);
