@@ -1198,11 +1198,16 @@ class OrderController extends Controller
             ->whereIn('id', $userIdsSP)
             ->whereNotIn('id', $excludeUserIdsSP)
             ->orWhereIn('email', $emailsFromSystemEmailManager)
-            ->orWhereIn('email', $includedEmails)
-            ->whereNotIn('email', $excludedEmails)
+//            ->orWhereIn('email', $includedEmails)
+//            ->whereNotIn('email', $excludedEmails)
             ->get();
 
         $emailsForCC = \Illuminate\Support\Arr::pluck($usersEmailsForCC, 'email');
+
+
+        $emailsForCC = array_merge($emailsForCC, $includedEmails);
+        $emailsForCC = array_diff($emailsForCC, $excludedEmails);
+
 
         return $finalStringOfEmailsForCC = implode(',', $emailsForCC);
     }
