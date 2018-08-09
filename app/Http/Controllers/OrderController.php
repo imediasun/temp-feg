@@ -1093,43 +1093,47 @@ class OrderController extends Controller
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
         $order_types = "";
+
         if(!empty($pass['display email address in cc box for order types'])) {
             $order_types = $pass['display email address in cc box for order types']->data_options;
         }
 
         $order_types = explode(",",$order_types);
 
+        $excludedAndIncludedEmails = self::getIncludedAndExcludedEmailCC("send PO copy", $is_test, true);
+
         if(in_array($order_type_id,$order_types)){
 
             $ccFromSystemEmailManager   = explode(',', $cc);
 
-            $excludedAndIncludedEmails = self::getIncludedAndExcludedEmailCC("send PO copy", $is_test, true);
-
             //-------------------- Getting Emails for CC ----------------------------
             $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $ccFromSystemEmailManager, $excludedAndIncludedEmails['excluded'], $excludedAndIncludedEmails['included']);
 
-            $emailsTo = implode(',', [$vendorEmail,$receipts['to']]);
-
-            $emailsToArray  = explode(',', $emailsTo);
-
-            $emailsToArray = array_unique($emailsToArray);
-
-
-            $emailsToArray = array_filter($emailsToArray, function($val){
-                return ($val != '');
-            });
-
-            $emailsTo = implode(',', $emailsToArray);
-
-            \Session::put('send_to', $emailsTo);
-
-            $cc1 = $finalStringOfEmailsForCC;
-
         } else {
-            $cc1 = "";
+
+            $emailsForCC = [];
+            $includedEmails = $excludedAndIncludedEmails['included'];
+            $excludedEmails = $excludedAndIncludedEmails['excluded'];
+
+            $emailsForCC = array_merge($emailsForCC, $includedEmails);
+            $emailsForCC = array_diff($emailsForCC, $excludedEmails);
+
+            $finalStringOfEmailsForCC = implode(',', $emailsForCC);
         }
+
+
+
+        $emailsTo = implode(',', [$vendorEmail,$receipts['to']]);
+        $emailsToArray  = explode(',', $emailsTo);
+        $emailsToArray = array_unique($emailsToArray);
+        $emailsToArray = array_filter($emailsToArray, function($val){
+            return ($val != '');
+        });
+        $emailsTo = implode(',', $emailsToArray);
+        \Session::put('send_to', $emailsTo);
+
         $viewName = empty($isPop) ? 'order.saveorsendemail' : 'order.pop.saveorsendemail';
-        return view($viewName, array('cc' => $cc1, 'bcc'=>$bcc, "pageUrl" => $this->data['pageUrl']));
+        return view($viewName, array('cc' => $finalStringOfEmailsForCC, 'bcc'=>$bcc, "pageUrl" => $this->data['pageUrl']));
     }
 
 
