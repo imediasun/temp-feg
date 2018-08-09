@@ -1149,19 +1149,14 @@ class OrderController extends Controller
     private function getEmailsAccordingToSpecialPermission($pass, $emailsFromSystemEmailManager, $excludedEmails, $includedEmails){
 
         //------ Special Permissions variables --------
-        $groupIdsArraySP  = explode(',', $pass['display email address in cc box for order types']->group_ids);
         $userIdsSP        = explode(',', $pass['display email address in cc box for order types']->user_ids);
         $excludeUserIdsSP = explode(',', $pass['display email address in cc box for order types']->exclude_user_ids);
 
 
         $usersEmailsForCC = User::select('email')
-//            ->whereIn('group_id', $groupIdsArraySP)
-//            ->orWhereIn('id', $userIdsSP)
             ->whereIn('id', $userIdsSP)
             ->whereNotIn('id', $excludeUserIdsSP)
             ->orWhereIn('email', $emailsFromSystemEmailManager)
-//            ->orWhereIn('email', $includedEmails)
-//            ->whereNotIn('email', $excludedEmails)
             ->get();
 
         $emailsForCC = \Illuminate\Support\Arr::pluck($usersEmailsForCC, 'email');
