@@ -1103,7 +1103,7 @@ class OrderController extends Controller
 
             $ccFromSystemEmailManager   = explode(',', $cc);
 
-            $excludedAndIncludedEmails = self::getIncludedAndExcludedEmailRecipients("send PO copy", $is_test, true);
+            $excludedAndIncludedEmails = self::getIncludedAndExcludedEmailCC("send PO copy", $is_test, true);
 
             //-------------------- Getting Emails for CC ----------------------------
             $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $ccFromSystemEmailManager, $excludedAndIncludedEmails['excluded'], $excludedAndIncludedEmails['included']);
@@ -1133,7 +1133,7 @@ class OrderController extends Controller
     }
 
 
-    public static function getIncludedAndExcludedEmailRecipients($configName, $isTest = false, $sanitizeEmails = true)
+    public static function getIncludedAndExcludedEmailCC($configName, $isTest = false, $sanitizeEmails = true)
     {
         $emails = array('configName' => $configName, 'to' => '', 'cc' => '', 'bcc' => '');
         $q = "SELECT * from system_email_report_manager WHERE report_name='$configName' AND is_active=1 order by id desc";
@@ -1146,36 +1146,23 @@ class OrderController extends Controller
             $data = $data[0];
 
             if ($isTest) {
+                dd('hello');
                 $includes['to'] = $data->test_to_emails;
                 $includes['cc'] = $data->test_cc_emails;
                 $includes['bcc'] = $data->test_bcc_emails;
             } else {
 
-//                $excludes['to'] = array_merge(FEGSystemHelper::split_trim(
-//                    $data->to_exclude_emails), array(null, ''));
                 $excludes['cc'] = array_merge(FEGSystemHelper::split_trim(
                     $data->cc_exclude_emails), array(null, ''));
-//                $excludes['bcc'] = array_merge(FEGSystemHelper::split_trim(
-//                    $data->bcc_exclude_emails), array(null, ''));
 
                 if ($sanitizeEmails) {
-//                    $excludes['to']     = FEGSystemHelper::sanitiseEmails($excludes['to']);
-//                    $excludes['cc']     = FEGSystemHelper::sanitiseEmails($excludes['cc']);
-//                    $excludes['bcc']    = FEGSystemHelper::sanitiseEmails($excludes['bcc']);
                     $excludes     = FEGSystemHelper::sanitiseEmails($excludes['cc']);
                 }
 
-//                $includes['to'] = array_merge(FEGSystemHelper::split_trim(
-//                    $data->to_include_emails), array(null, ''));
                 $includes['cc'] = array_merge(FEGSystemHelper::split_trim(
                     $data->cc_include_emails), array(null, ''));
-//                $includes['bcc'] = array_merge(FEGSystemHelper::split_trim(
-//                    $data->bcc_include_emails), array(null, ''));
 
                 if ($sanitizeEmails) {
-//                    $includes['to']     = FEGSystemHelper::sanitiseEmails($includes['to']);
-//                    $includes['cc']     = FEGSystemHelper::sanitiseEmails($includes['cc']);
-//                    $includes['bcc']    = FEGSystemHelper::sanitiseEmails($includes['bcc']);
                     $includes    = FEGSystemHelper::sanitiseEmails($includes['cc']);
                 }
 
