@@ -332,7 +332,7 @@
                         <th width="90">Quantity</th>
                         <th class="game" style="display:none" width="200">Game</th>
                         <th width="90">Total ( $ )</th>
-                        @if(is_object($row))  @if($fromStore != 1)  <th width="90">Broken Case</th> @endif @endif
+                        @if(is_object($row))  @if($fromStore != 1 && $mode == "edit")  <th width="90">Broken Case</th> @endif @endif
                         <th width="60" align="center"><span id="remove-col">Remove </span></th>
                     </tr>
 
@@ -389,7 +389,7 @@
                         <td><br/><input type="text" name="total" value="" placeholder="0.00" readonly
                                         class="form-control fixDecimal"/></td>
                       @if(is_object($row))
-                          @if($fromStore != 1)
+                          @if($fromStore != 1 && $mode == "edit")
                         <td class="icheck">
                             <br />
                             <input type="checkbox" class="broken-case" name="broken_case[]" value='1'>
