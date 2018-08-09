@@ -662,7 +662,7 @@ class OrderController extends Controller
             $casePriceArray = $request->get('case_price');
             $priceArray = $request->get('price');
             $qtyArray = $request->get('qty');
-            $brokenCaseArray = $request->get('broken_case_value');
+            $brokenCaseArray = $request->has('broken_case_value') ? $request->get('broken_case_value'):array_fill(0,count($itemNamesArray),0);
             $productIdArray = $request->get('product_id');
             $requestIdArray = $request->get('request_id');
             $order_content_id = $request->get('order_content_id');

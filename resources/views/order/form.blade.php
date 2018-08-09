@@ -302,7 +302,6 @@
                 </fieldset>
                 </div>
             </div>
-            
             </div>
             <hr/>
             <div class="clr clear"></div>
@@ -325,10 +324,8 @@
                         <th width="90">Quantity</th>
                         <th class="game" style="display:none" width="200">Game</th>
                         <th width="90">Total ( $ )</th>
-                        <th width="90">Broken Case</th>
+                        @if(is_object($row))  @if($fromStore != 1)  <th width="90">Broken Case</th> @endif @endif
                         <th width="60" align="center"><span id="remove-col">Remove </span></th>
-
-
                     </tr>
 
                     </thead>
@@ -383,11 +380,15 @@
 
                         <td><br/><input type="text" name="total" value="" placeholder="0.00" readonly
                                         class="form-control fixDecimal"/></td>
+                      @if(is_object($row))
+                          @if($fromStore != 1)
                         <td class="icheck">
                             <br />
                             <input type="checkbox" class="broken-case" name="broken_case[]" value='1'>
                             <input type="hidden" name="broken_case_value[]" value='0'>
                         </td>
+                              @endif
+                        @endif
                         <td align="center" class="remove-container"><br/>
 
                             <p id="hide-button" data-id=""
