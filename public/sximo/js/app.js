@@ -1380,3 +1380,8 @@ $(document).on('change', 'select' ,function () {
         }
     }
 });
+$(function(){
+    $(document).on("click",".collapse-close,.cancelButton",function(){
+        $(document).scrollTop(0);
+    });
+});
