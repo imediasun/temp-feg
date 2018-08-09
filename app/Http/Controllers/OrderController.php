@@ -1155,9 +1155,7 @@ class OrderController extends Controller
             $data = $data[0];
 
             if ($isTest) {
-                $includes['to'] = $data->test_to_emails;
                 $includes['cc'] = $data->test_cc_emails;
-                $includes['bcc'] = $data->test_bcc_emails;
             } else {
 
                 $excludes['cc'] = array_merge(FEGSystemHelper::split_trim(
