@@ -581,3 +581,8 @@ function SximoModalLarge( url , title)
 	});
 	$('#sximo-modal-lg').modal('show');	
 }
+$(function(){
+    $(".collapse-close, .cancelButton").click(function(){
+        $(document).scrollTop(0);
+    });
+});
