@@ -1105,20 +1105,21 @@ class OrderController extends Controller
 
         $order_types = explode(",",$order_types);
 
-
         $ccFromSystemEmailManager   = explode(',', $cc);
+        $emailsToBeShown   = array_merge($ccFromSystemEmailManager, ['marissa.sexton@fegllc.com', 'lisa.price@fegllc.com']);
         $excludedAndIncludedEmails = self::getIncludedAndExcludedEmailCC("send PO copy", $is_test, true);
-
+//        dd($receipts);
         if(in_array($order_type_id,$order_types)){
+//            dd($emailsToBeShown);
             //-------------------- Getting Emails for CC ----------------------------
-            $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $ccFromSystemEmailManager, $excludedAndIncludedEmails['excluded'], $excludedAndIncludedEmails['included']);
+            $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $is_test, $emailsToBeShown, $excludedAndIncludedEmails['excluded'], $excludedAndIncludedEmails['included']);
 
         } else {
             $emailsForCC = [];
             $includedEmails = $excludedAndIncludedEmails['included'];
             $excludedEmails = $excludedAndIncludedEmails['excluded'];
 
-            $emailsForCC = array_merge($emailsForCC, $ccFromSystemEmailManager);
+
             $emailsForCC = array_merge($emailsForCC, $includedEmails);
             $emailsForCC = array_diff($emailsForCC, $excludedEmails);
 
@@ -1181,8 +1182,8 @@ class OrderController extends Controller
     }
 
 
-    private function getEmailsAccordingToSpecialPermission($pass, $emailsFromSystemEmailManager, $excludedEmails, $includedEmails){
-
+    private function getEmailsAccordingToSpecialPermission($pass, $is_test, $emailsToBeShown, $excludedEmails, $includedEmails){
+//dd($pass['display email address in cc box for order types']);
         //------ Special Permissions variables --------
         $userIdsSP        = explode(',', $pass['display email address in cc box for order types']->user_ids);
         $excludeUserIdsSP = explode(',', $pass['display email address in cc box for order types']->exclude_user_ids);
@@ -1190,17 +1191,24 @@ class OrderController extends Controller
 
         $usersEmailsForCC = User::select('email')
             ->whereIn('id', $userIdsSP)
-            ->whereNotIn('id', $excludeUserIdsSP)
-            ->orWhereIn('email', $emailsFromSystemEmailManager)
+            ->orWhereIn('email', $emailsToBeShown)
+            ->get();
+
+        $EmailsToBeExcluded = User::select('email')
+            ->whereIn('id', $excludeUserIdsSP)
             ->get();
 
         $emailsForCC = \Illuminate\Support\Arr::pluck($usersEmailsForCC, 'email');
+        $UserEmailsToBeExcluded = \Illuminate\Support\Arr::pluck($EmailsToBeExcluded, 'email');
 
+        $emailsForCC = array_diff($emailsForCC, $UserEmailsToBeExcluded);
 
-        $emailsForCC = array_merge($emailsForCC, $includedEmails);
-        $emailsForCC = array_diff($emailsForCC, $excludedEmails);
+        if(!$is_test){
+            $emailsForCC = array_merge($emailsForCC, $includedEmails);
+            $emailsForCC = array_diff($emailsForCC, $excludedEmails);
+        }
 
-
+//        dd($emailsForCC);
         return $finalStringOfEmailsForCC = implode(',', $emailsForCC);
     }
 
