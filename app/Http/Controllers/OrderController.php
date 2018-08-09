@@ -1151,7 +1151,6 @@ class OrderController extends Controller
             $data = $data[0];
 
             if ($isTest) {
-                dd('hello');
                 $includes['to'] = $data->test_to_emails;
                 $includes['cc'] = $data->test_cc_emails;
                 $includes['bcc'] = $data->test_bcc_emails;
