@@ -1167,7 +1167,7 @@
                     },
                     success: function (msg) {
                         $("#submit_btn").removeAttr('disabled');
-                        // $('.ajaxLoading').hide();
+
                         poajax = null;
                         if (msg.po_3 != 'available') {
                             $("#po_3").val(msg.po_3);
@@ -1178,6 +1178,11 @@
                         }
 
                         $("#fedex_number").val(msg.fedex_number);
+                      setTimeout(function(){
+                        var freightId = $("#freight_type_id");
+                        freightId.val(msg.freight_id);
+                        freightId.change();
+                      },3000);
                     }
                 });
             }
