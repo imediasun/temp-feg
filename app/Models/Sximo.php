@@ -1533,6 +1533,52 @@ class Sximo extends Model {
 
         return $query;
     }
+
+    public function truncateString($string, $length){
+        if (mb_strlen($string) < $length || mb_strlen($string) == $length ) {
+            return $string;
+        }
+        else{
+            return mb_substr($string,0,$length);
+        }
+    }
+    /*
+     * ValidateRequest() method is used to Custom validation where we want to ignore multiple values from same table
+     *
+     */
+    public function ValidateRequest($request, $rules,$customMessages, $primaryKeys = [],$unique = [],$uniqueMessage = ''){
+        if(count($primaryKeys) > 0){
+            $append = false;
+            if(empty($uniqueMessage)){
+            $uniqueMessage = ' needs to be unique for each record.';
+                $append = true;
+            }
+            $key = array_keys($primaryKeys);
+            $values = array_values($primaryKeys);
+            if(!is_array($values)){
+                $values = [$values];
+            }
+            $model = $this->whereNotIn($key[0],$values[0]);
+            $message = $uniqueMessage;
+            foreach($unique as $key => $value){
+                if(!empty($uniqueMessage) && $append == true){
+                    $message .= ucfirst(str_replace("_"," ",$key))." ".$uniqueMessage;
+                }
+                $model->where($key,"=",$value);
+            }
+            $response = $model->get();
+            if($response->count() > 0){
+                return ['error'=>true,'customMessage'=>'Barcode needs to be unique for each product'];
+            }else{
+                return ['error'=>false,'customMessage'=>$message];
+            }
+        }else {
+           return Validator::make($request, $rules,$customMessages);
+        }
+    }
+    public function getInsertRecordObject($id){
+        return self::find($id);
+    }
     public function isTypeRestricted(){
         $module = new OrderController();
         $typePermissions = \FEGSPass::getPasses($module->module_id, 'module.order.special.assignusersand/orusergroupstoviewtheselectedorder/producttypes', false);
