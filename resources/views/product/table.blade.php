@@ -127,7 +127,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                     }
                     ?>
                     {{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
-                    <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
+                    <tr variation-id="{{ $row->variation_id }}" @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
                         @endif product-id="{!! $product_id !!}"
                         onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
                         data-id="{{ $row->id }}"
@@ -203,6 +203,8 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         endforeach;
                         ?>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
+                            <a href="#{{ $row->id }}" onclick="return updateBarcode('{{ $row->id }}');"  class="tips btn btn-xs btn-white"
+                               title="Generate UPC/Barcode"><i class="fa fa-barcode" aria-hidden="true"></i></a>
                             {!! AjaxHelpers::GamestitleButtonAction('product',$access,$id ,$setting) !!}
                             <a href="{{ URL::to('product/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"
                                title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
@@ -680,6 +682,21 @@ $(document).ajaxComplete(function(a,b,d){
             }
         });
     });
+    function updateBarcode(productId){
+        $.ajax({
+            type:"POST",
+            url:"product/update-barcode",
+            data:{id:productId},
+            success:function(response){
+                console.log("barcode status");
+                console.log(response);
+                if(response.status == 'success') {
+                    $('a[data-original-title="Reload Data"]').trigger("click");
+                }
+            }
+        });
+        return false;
+    }
 
 </script>
 

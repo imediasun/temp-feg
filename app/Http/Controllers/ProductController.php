@@ -1204,4 +1204,27 @@ GROUP BY mapped_expense_category");
 
         return $productSubtypes;
     }
+    public function postUpdateBarcode(Request $request){
+        $productId = $request->input('id');
+        $product = product::find($productId);
+        $barCode = '';
+        if($product){
+            $barCode = $product->generateBarCode($product->id);
+            $product->updateProduct(['upc_barcode'=>$barCode]);
+        }
+        return response()->json(array(
+            'status' => 'success',
+            'barcode'=>$barCode,
+        ));
+    }
+    public function postGenerateUniqueBarcode(Request $request){
+        $productId = $request->input('id');
+        $product = new Product();
+        $rendomCount = !empty($productId) ? $productId:$product->totalProductRendomIncreament();
+        $barCode = $product->generateBarCode($rendomCount);
+        return response()->json(array(
+            'status' => 'success',
+            'barcode'=>$barCode,
+        ));
+    }
 }
