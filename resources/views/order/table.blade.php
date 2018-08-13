@@ -234,6 +234,14 @@ usort($tableGrid, "SiteHelpers::_sort");
                            title="Clone Order">
                             <i class=" fa fa-random" aria-hidden="true"></i>
                         </a>
+                        <a href="{{ $pageModule }}/inquire/{{$row->id}}/order"
+                            {{--onclick="ajaxViewDetail('#order',this.href); return false; "--}}
+                            data-id="{{$eid}}"
+                            data-action="clone"
+                            class="tips btn btn-xs btn-white inquireOrderAction"
+                            title="Inquire about this order">
+                            <i class="fa fa-question" aria-hidden="true"></i>
+                        </a>
                         <?php
                         $canPostToNetSuit = Order::canPostToNetSuit($row->id, $row);
                         $isApified = Order::isApified($id, $row);
