@@ -3076,7 +3076,7 @@ ORDER BY aa_id");
             'subject' => 'Inquire your order',
             'message' => $message,
             'preferGoogleOAuthMail' => true,
-            'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+            'isTest' => true,
             'from' => $fromEmail
         )));
 
