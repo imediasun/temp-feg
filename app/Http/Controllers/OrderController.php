@@ -3097,7 +3097,7 @@ ORDER BY aa_id");
             $options['to'] = $to;
             $options['cc'] = $systemEmailRecipients['cc'];
             $options['bcc'] = $systemEmailRecipients['bcc'];
-            $options['usePHPMail'] = 'true';
+            $options['preferGoogleOAuthMail'] = 'true';
             FEGSystemHelper::sendEmail($to, 'Inquire Order', $message, $fromEmail, $options);
         }
 
