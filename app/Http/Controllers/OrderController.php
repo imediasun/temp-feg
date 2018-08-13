@@ -3075,7 +3075,7 @@ ORDER BY aa_id");
 
         $fromEmail = 'info@fegllc.com';
 
-        $message = View::make('emails.inquireOrder', compact('order'))->render();
+        $message = View::make('emails.inquireOrder', compact('order'));
         $subject = 'Inquire orders';
 
 
