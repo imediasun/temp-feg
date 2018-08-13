@@ -214,15 +214,20 @@ table.budget-summery td:nth-child(2){
 }
 .gallery-tabs-style span.active,.gallery-tabs-style span.active a{
     z-index: 1001;
-    background: #ececec;
+    background: white;
+    opacity: 1;
 }
 .gallery-tabs-style span, .gallery-tabs-style span a{
     border-top-right-radius: 60px;
     display: inline-block;
     padding: 2px 13px;
-    background: white;
     color: #195a97;
+    background: #ececec;
     cursor: pointer;
+    opacity: 0.7;
+}
+.gallery-first-tab{
+    margin-left:15px;
 }
 .gallery-tabs-style span.not-first{
     margin-left: -5px;

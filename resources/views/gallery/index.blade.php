@@ -36,7 +36,7 @@
                     </div>
                 </div>
             <div class="gallery-tabs-style">
-                <span  class="active merchindisetheminggallarytab moduleTab"  id="merchindisetheminggallary" onclick="refreshTabContent(); $('.redemptioncountergallarytab').removeClass('active'); $(this).addClass('active')"><a class="moduleTab"
+                <span  class="gallery-first-tab active merchindisetheminggallarytab moduleTab"  id="merchindisetheminggallary" onclick="refreshTabContent(); $('.redemptioncountergallarytab').removeClass('active'); $(this).addClass('active')"><a class="moduleTab"
                                                                       href="#merchindisetheminggallary"
                                                                        id="merchindisetheminggallary">Merchandise
                         Theme Gallery</a></span>
