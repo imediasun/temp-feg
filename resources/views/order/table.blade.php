@@ -291,16 +291,16 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-refresh " aria-hidden="true"></i>
                             </a>
                         @endif
-                            <a href="{{ $pageModule }}/inquire/{{$row->id}}/order"
-                               data-id="{{$eid}}"
-                               class="tips btn btn-xs btn-white inquireOrderAction"
-                               title="{{ Lang::get('core.order_inquiry_button_title') }}">
-                                <i class="fa fa-question" aria-hidden="true"></i>
-                            </a>
+                        <a href="{{ $pageModule }}/inquire/{{$row->id}}/order"
+                           data-id="{{$eid}}"
+                           class="tips btn btn-xs btn-white inquireOrderAction"
+                           title="{{ Lang::get('core.order_inquiry_button_title') }}">
+                            <i class="fa fa-question" aria-hidden="true"></i>
+                        </a>
 
-                            @if($row->isFullyReceived)
-                                <a href="/order/dpl-file/{{ $row->id }}" class="tips btn btn-xs btn-white" title="Download Full DPL"><i class="fa fa-download"></i></a>
-                            @endif
+                        @if($row->isFullyReceived)
+                            <a href="/order/dpl-file/{{ $row->id }}" class="tips btn btn-xs btn-white" title="Download Full DPL"><i class="fa fa-download"></i></a>
+                        @endif
                     </td>
                 </tr>
 
