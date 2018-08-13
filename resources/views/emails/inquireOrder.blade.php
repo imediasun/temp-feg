@@ -13,6 +13,6 @@ Item name: {{$content->item_name}},
 Item Sku: {{$content->sku}},<br/>
 Case price: {{$content->case_price}},
 Unit Price: {{$content->unit_price}},
-Quantity: {{$content->qty}}
+Quantity: {{$content->qty}}<br/>
 ---------------------------------------------<br/>
 @endforeach
