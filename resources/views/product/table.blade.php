@@ -688,10 +688,16 @@ $(document).ajaxComplete(function(a,b,d){
             url:"product/update-barcode",
             data:{id:productId},
             success:function(response){
-                console.log("barcode status");
-                console.log(response);
                 if(response.status == 'success') {
-                    $('a[data-original-title="Reload Data"]').trigger("click");
+                    var columns = response.variation_id ? $('tr[variation-id="' + response.variation_id + '"] td[data-field="upc_barcode"]') :  $('tr[data-id="' + productId + '"] td[data-field="upc_barcode"]');
+                    columns.each(function(){
+                        if($(this).children("input[name='upc_barcode']").length) {
+                            $(this).attr("data-format",$.trim(response.barcode)).attr("data-values",$.trim(response.barcode));
+                            $(this).children("input[name='upc_barcode']").val($.trim(response.barcode));
+                        }else{
+                            $(this).text($.trim(response.barcode)).attr("data-format",$.trim(response.barcode)).attr("data-values",$.trim(response.barcode));
+                        }
+                    });
                 }
             }
         });

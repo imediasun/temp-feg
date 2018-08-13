@@ -1224,6 +1224,7 @@ GROUP BY mapped_expense_category");
         return response()->json(array(
             'status' => 'success',
             'barcode'=>$barCode,
+            'variation_id'=>$product ? $product->variation_id:'',
         ));
     }
     public function postGenerateUniqueBarcode(Request $request){
