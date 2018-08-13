@@ -222,6 +222,7 @@ table.budget-summery td:nth-child(2){
     padding: 2px 13px;
     background: white;
     color: #195a97;
+    cursor: pointer;
 }
 .gallery-tabs-style span.not-first{
     margin-left: -5px;

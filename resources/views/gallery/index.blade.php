@@ -36,12 +36,12 @@
                     </div>
                 </div>
             <div class="gallery-tabs-style">
-                <span  class="active merchindisetheminggallarytab"  onclick="refreshTabContent(); $('.redemptioncountergallarytab').removeClass('active'); $(this).addClass('active')"><a class="moduleTab"
+                <span  class="active merchindisetheminggallarytab moduleTab"  id="merchindisetheminggallary" onclick="refreshTabContent(); $('.redemptioncountergallarytab').removeClass('active'); $(this).addClass('active')"><a class="moduleTab"
                                                                       href="#merchindisetheminggallary"
                                                                        id="merchindisetheminggallary">Merchandise
                         Theme Gallery</a></span>
                 <span  onclick="refreshTabContent(); $('.merchindisetheminggallarytab').removeClass('active'); $(this).addClass('active')"
-                     class="redemptioncountergallarytab not-first">
+                     class="redemptioncountergallarytab not-first moduleTab" id="redemptioncountergallary">
                     <a class="moduleTab" href="#redemptioncountergallary"
                                            id="redemptioncountergallary">Redemption Counter Gallery</a></span>
             </div>
