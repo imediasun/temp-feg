@@ -201,7 +201,31 @@ table.budget-summery td:nth-child(2){
     color: #FFF;
     cursor: pointer !important;
 }
-
+.gallery-tabs-style:after{
+    content: '';
+    clear:both;
+}
+.gallery-tabs-style span{
+    display: inline-block;
+    border:1px solid #dfdfdf;
+    border-bottom: none;
+    position: relative;
+    z-index: 100;
+}
+.gallery-tabs-style span.active,.gallery-tabs-style span.active a{
+    z-index: 1001;
+    background: #ececec;
+}
+.gallery-tabs-style span, .gallery-tabs-style span a{
+    border-top-right-radius: 60px;
+    display: inline-block;
+    padding: 2px 13px;
+    background: white;
+    color: #195a97;
+}
+.gallery-tabs-style span.not-first{
+    margin-left: -5px;
+}
 @media (min-width: 1281px) and (max-width: 1440px) {
     .downloadGameForSale{
         margin-left: 66px !important;
