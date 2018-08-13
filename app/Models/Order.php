@@ -92,6 +92,11 @@ class order extends Sximo
     public function location(){
         return $this->belongsTo(location::class);
     }
+
+    public function vendor(){
+        return $this->belongsTo(vendor::class);
+    }
+
     public function restoreReservedProductQuantities(){
         if($this->is_freehand === 1){
             return ;

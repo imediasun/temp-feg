@@ -3044,7 +3044,7 @@ ORDER BY aa_id");
 
     public function getInquireOrder($orderId){
 
-        $order = Order::find($orderId);
+        $order = Order::with(['contents','vendor', 'location'])->find($orderId);
 
         if(!$order)
         {
@@ -3080,6 +3080,7 @@ ORDER BY aa_id");
             $options['to'] = $to;
             $options['cc'] = $systemEmailRecipients['cc'];
             $options['bcc'] = $systemEmailRecipients['bcc'];
+            $options['replyTo'] = '';
             $options['preferGoogleOAuthMail'] = 'true';
             FEGSystemHelper::sendEmail($to, 'Inquire Order', $message, $fromEmail, $options);
         }
