@@ -3073,19 +3073,7 @@ ORDER BY aa_id");
 
         $toAddresses    = explode(',',  $systemEmailRecipients['to']);
 
-        array_push($toAddresses,'merchandise.office@fegllc.com');
-
-        $ccAddresses    = explode(',',  $systemEmailRecipients['cc']);
-        $bccAddresses   = explode(',',  $systemEmailRecipients['bcc']);
-
-        $user = auth()->user();
-
-        $fromEmail = 'gmailAuth@fegllc.com';
-
-        if(!is_null($user->oauth_token))
-        {
-            $fromEmail = 'gmailAuth@fegllc.com';
-        }
+        $fromEmail = 'info@fegllc.com';
 
         $message = View::make('emails.inquireOrder', compact('order'))->render();
         $subject = 'Inquire orders';
@@ -3102,26 +3090,8 @@ ORDER BY aa_id");
             FEGSystemHelper::sendEmail($to, 'Inquire Order', $message, $fromEmail, $options);
         }
 
-
-//        FEGSystemHelper::sendSystemEmail(array_merge($systemEmailRecipients, array(
-//            'subject' => 'Inquire your order',
-//            'message' => $message,
-//            'preferGoogleOAuthMail' => true,
-//            'isTest' => true,
-//            'from' => $fromEmail
-//        )));
-
-
-
-//
-//        \Mail::send('emails.inquireOrder', ['order' => $order], function ($m) use ($user, $fromEmail, $toAddresses, $ccAddresses, $bccAddresses) {
-//            $m->from(null, $fromEmail);
-//            $m->cc($ccAddresses);
-//            $m->bcc($bccAddresses);
-//            $m->to($toAddresses, 'User')->subject('Your Reminder!');
-//        });
-
-        return redirect()->back();
+        return \Redirect::to('order')
+            ->with('messagetext', 'Inquire order email sent successfully!')->with('msgstatus', 'success');
 
     }
 }
