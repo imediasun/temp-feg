@@ -91,6 +91,7 @@
                 url: '/' + contentPath + '/data',
                 type: "POST",
                 success: function (response) {
+                    $(document).scrollTop(0);
                     if (contentPath == "merchindisetheminggallary") {
                         $("#redemptioncountergallaryGrid").css("display", "none");
                         $("#redemptioncountergallaryGrid").empty();
