@@ -3113,14 +3113,26 @@ ORDER BY aa_id");
         }
 
         $message = View::make('emails.inquireOrder', compact('order'))->render();
+        $subject = 'Inquire orders';
 
-        FEGSystemHelper::sendSystemEmail(array_merge($systemEmailRecipients, array(
-            'subject' => 'Inquire your order',
-            'message' => $message,
-            'preferGoogleOAuthMail' => true,
-            'isTest' => true,
-            'from' => $fromEmail
-        )));
+
+        foreach ($toAddresses as $to){
+            $options['message'] = $message;
+            $options['subject'] = $subject;
+            $options['to'] = $to;
+            $options['cc'] = $systemEmailRecipients['cc'];
+            $options['bcc'] = $systemEmailRecipients['bcc'];
+            FEGSystemHelper::sendEmail($to, 'Inquire Order', $message, $fromEmail, $options);
+        }
+
+
+//        FEGSystemHelper::sendSystemEmail(array_merge($systemEmailRecipients, array(
+//            'subject' => 'Inquire your order',
+//            'message' => $message,
+//            'preferGoogleOAuthMail' => true,
+//            'isTest' => true,
+//            'from' => $fromEmail
+//        )));
 
 
 
