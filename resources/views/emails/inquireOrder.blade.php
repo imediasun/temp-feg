@@ -12,7 +12,7 @@ Item# {{$key++}}
 Item name: {{$content->item_name}},
 Item Sku: {{$content->sku}},<br/>
 Case price: {{$content->case_price}},
-Unit Price: {{$content->unit_price}},
+Unit Price: {{$content->price}},
 Quantity: {{$content->qty}}<br/>
 ---------------------------------------------<br/>
 @endforeach
