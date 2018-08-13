@@ -203,9 +203,10 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         endforeach;
                         ?>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
+
+                            {!! AjaxHelpers::GamestitleButtonAction('product',$access,$id ,$setting) !!}
                             <a href="#{{ $row->id }}" onclick="return updateBarcode('{{ $row->id }}');"  class="tips btn btn-xs btn-white"
                                title="Generate UPC/Barcode"><i class="fa fa-barcode" aria-hidden="true"></i></a>
-                            {!! AjaxHelpers::GamestitleButtonAction('product',$access,$id ,$setting) !!}
                             <a href="{{ URL::to('product/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"
                                title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
 
