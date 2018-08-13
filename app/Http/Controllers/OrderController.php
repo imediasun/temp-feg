@@ -3082,4 +3082,57 @@ ORDER BY aa_id");
             die("Invalid Request");
         }
     }
+
+
+    public function getInquireOrder($orderId){
+
+        $order = Order::find($orderId);
+
+        if(!$order)
+        {
+            return \Redirect::to('order')
+                ->with('messagetext', \Lang::get('core.note_order_not_found'))->with('msgstatus', 'error');
+        }
+
+        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients('Inquire about this order');
+
+        $toAddresses    = explode(',',  $systemEmailRecipients['to']);
+
+        array_push($toAddresses,'merchandise.office@fegllc.com');
+
+        $ccAddresses    = explode(',',  $systemEmailRecipients['cc']);
+        $bccAddresses   = explode(',',  $systemEmailRecipients['bcc']);
+
+        $user = auth()->user();
+
+        $fromEmail = 'gmailAuth@fegllc.com';
+
+        if(!is_null($user->oauth_token))
+        {
+            $fromEmail = 'gmailAuth@fegllc.com';
+        }
+
+        $message = View::make('emails.inquireOrder', compact('order'))->render();
+
+        FEGSystemHelper::sendSystemEmail(array_merge($systemEmailRecipients, array(
+            'subject' => 'Inquire your order',
+            'message' => $message,
+            'preferGoogleOAuthMail' => true,
+            'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+            'from' => $fromEmail
+        )));
+
+
+
+//
+//        \Mail::send('emails.inquireOrder', ['order' => $order], function ($m) use ($user, $fromEmail, $toAddresses, $ccAddresses, $bccAddresses) {
+//            $m->from(null, $fromEmail);
+//            $m->cc($ccAddresses);
+//            $m->bcc($bccAddresses);
+//            $m->to($toAddresses, 'User')->subject('Your Reminder!');
+//        });
+
+        return redirect()->back();
+
+    }
 }

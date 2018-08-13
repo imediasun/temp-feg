@@ -118,6 +118,7 @@ Route::group(['middleware' => 'auth'], function()
     Route::get('/user/user-details/{id?}','Core\UsersController@getIndex');
     Route::controller('urlauth', 'URLAuthController');
     Route::controller('demo', 'DemoController');
+    Route::get('order/inquire/{orderId}/order', 'OrderController@getInquireOrder');
     include('pageroutes.php');
     include('moduleroutes.php');
 });
