@@ -3093,30 +3093,46 @@ ORDER BY aa_id");
             return \Redirect::to('order')
                 ->with('messagetext', \Lang::get('core.note_order_not_found'))->with('msgstatus', 'error');
         }
-        $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
-        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients('Inquire about this order', null, $isTest);
+
+        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients('Inquire about this order');
 
         $toAddresses    = explode(',',  $systemEmailRecipients['to']);
 
-        $fromEmail = 'info@fegllc.com';
+        array_push($toAddresses,'merchandise.office@fegllc.com');
 
-        $message = $this->getShow($orderId, 'emails.inquireOrder');
-        $subject = 'Inquire orders';
+        $ccAddresses    = explode(',',  $systemEmailRecipients['cc']);
+        $bccAddresses   = explode(',',  $systemEmailRecipients['bcc']);
 
+        $user = auth()->user();
 
-        foreach ($toAddresses as $to){
-            $options['message'] = $message;
-            $options['subject'] = $subject;
-            $options['to'] = $to;
-            $options['cc'] = $systemEmailRecipients['cc'];
-            $options['bcc'] = $systemEmailRecipients['bcc'];
-            $options['replyTo'] = '';
-            $options['preferGoogleOAuthMail'] = 'true';
-            FEGSystemHelper::sendEmail($to, 'Inquire Order', $message, $fromEmail, $options);
+        $fromEmail = 'gmailAuth@fegllc.com';
+
+        if(!is_null($user->oauth_token))
+        {
+            $fromEmail = 'gmailAuth@fegllc.com';
         }
 
-        return \Redirect::to('order')
-            ->with('messagetext', 'Inquire order email sent successfully!')->with('msgstatus', 'success');
+        $message = View::make('emails.inquireOrder', compact('order'))->render();
+
+        FEGSystemHelper::sendSystemEmail(array_merge($systemEmailRecipients, array(
+            'subject' => 'Inquire your order',
+            'message' => $message,
+            'preferGoogleOAuthMail' => true,
+            'isTest' => true,
+            'from' => $fromEmail
+        )));
+
+
+
+//
+//        \Mail::send('emails.inquireOrder', ['order' => $order], function ($m) use ($user, $fromEmail, $toAddresses, $ccAddresses, $bccAddresses) {
+//            $m->from(null, $fromEmail);
+//            $m->cc($ccAddresses);
+//            $m->bcc($bccAddresses);
+//            $m->to($toAddresses, 'User')->subject('Your Reminder!');
+//        });
+
+        return redirect()->back();
 
     }
 }
