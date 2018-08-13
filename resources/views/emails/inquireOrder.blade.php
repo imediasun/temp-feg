@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="/sximo/css/sximo-light-blue.css">
@@ -107,3 +108,23 @@
     </div>
 </div>
 
+=======
+Location Name/ID: {{$order->location ? $order->location->location_name : ''}},<br/>
+PO number: {{$order->po_number}},<br/>
+Vendor Name: {{$order->vendor ? $order->vendor->vendor_name : ''}},<br/>
+Order Total: {{$order->order_total}}<br/>
+
+The details of Items Ordered are<br/>
+---------------------------------------------<br/>
+---------------------------------------------<br/>
+
+@foreach($order->contents as $key=>$content)
+Item# {{$key++}}
+Item name: {{$content->item_name}},
+Item Sku: {{$content->sku}},<br/>
+Case price: {{$content->case_price}},
+Unit Price: {{$content->price}},
+Quantity: {{$content->qty}}<br/>
+---------------------------------------------<br/>
+@endforeach
+>>>>>>> FEG-832-extended correcting variable name
