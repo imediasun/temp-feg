@@ -9,10 +9,10 @@ The details of Items Ordered are<br/>
 
 @foreach($order->contents as $key=>$content)
 Item# {{$key++}}<br/>
-Item name: {{$content->item_name}},
+Item name: {{$content->item_name}},<br/>
 Item Sku: {{$content->sku}},<br/>
-Case price: $ {{$content->case_price}},
-Unit Price: $ {{$content->price}},
+Case price: $ {{$content->case_price}},<br/>
+Unit Price: $ {{$content->price}},<br/>
 Quantity: {{$content->qty}}<br/>
 ---------------------------------------------<br/>
 @endforeach
