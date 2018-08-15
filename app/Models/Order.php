@@ -497,7 +497,7 @@ class order extends Sximo
             $data['prefill_type'] = 'clone';
             $content_query = \DB::select('SELECT  O.id as order_content_id,O.upc_barcode,
             if((g.game_name is null or g.game_name = ""),gt.game_title,g.game_name) as game_name, O.product_description AS description,O.price AS price,O.qty AS qty, 
-            O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku,O.item_received as item_received,O.game_id, O.is_broken_case,O.qty_per_case  
+            O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku,O.item_received as item_received,O.game_id,O.qty_per_case, O.is_broken_case  
 												FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
 												  LEFT JOIN game g ON g.id = O.game_id
 												  left join game_title gt on gt.id = g.game_title_id
