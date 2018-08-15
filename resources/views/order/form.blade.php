@@ -770,7 +770,7 @@
 
             $("#freight_type_id").jCombo("{{ URL::to('order/comboselect?filter=freight:id:freight_type') }}",
                     {
-                        selected_value: '{{ $data['order_freight_id'] }}',
+                        selected_value: '{{ is_object($row) ? $row->order_freight_id:'' }}',
                         initial_text: '-------- Select Freight Type --------'
                     });
 
@@ -1299,11 +1299,9 @@
                         }
 
                         $("#fedex_number").val(msg.fedex_number);
-                      setTimeout(function(){
                         var freightId = $("#freight_type_id");
                         freightId.val(msg.freight_id);
                         freightId.change();
-                      },3000);
                     }
                 });
             }
