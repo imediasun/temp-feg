@@ -366,7 +366,7 @@
                                          style="width: 85px"
                                          required></td>
                         <td>
-                            <br/> <input type='number' name='case_price[]' id="case_price"
+                            <br/> <input type='number' name='case_price[]' onkeyup="calculateUnitPrice(this);" id="case_price"
                                          class='calculate form-control fixDecimal' min="0.00" step=".001" placeholder="0.00"
                                          style="width: 85px"
                                          required></td>
@@ -377,6 +377,7 @@
                                          placeholder="00"
                                          required>
                             <input type="hidden" name="prev_qty[]" value="0"/>
+                            <input type="hidden" class="case_per_quantity" id="case_per_quantity" value="0"/>
                         </td>
                         <td class="game game_dropdown" style="display:none">
                             <br/> <input type='hidden' name='game[]' id='game_0'>
@@ -891,6 +892,7 @@
             var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
             var item_name_array =<?php echo json_encode($data['itemNameArray']) ?>;
             var sku_num_array =<?php echo json_encode($data['skuNumArray']) ?>;
+            var qtyPerCase =<?php echo json_encode($data['qtyPerCase']); ?>;
             var game_ids_array =<?php echo json_encode($data['gameIdsArray']) ?>;
             var item_case_price =<?php echo json_encode($data['itemCasePrice']) ?>;
             var item_retail_price =<?php echo json_encode($data['itemRetailPrice'])?>;
@@ -901,6 +903,7 @@
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
+                $('input[id^=case_per_quantity]').eq(i).val(qtyPerCase[i]);
                 if (sku_num_array[i] == "" || order_price_array[i] == null) {
                     $('input[name^=sku]').eq(i).val("N/A");
                 }
@@ -1033,7 +1036,32 @@
 
             }
         });
+        function calculateUnitPrice(obj){
+            var casePrice = $(obj).val();
+            var parentId = $(obj).parent('td').parent('tr').attr('id');
+            var qtyPerCase = $("#" + parentId + " input[id^=case_per_quantity]").val();
+            $("#" + parentId + " input[name^=price]").val(fixdeci(casePrice/qtyPerCase));
+        }
+        function fixdeci(value) {
+            places = 2;
+            var val = getFlooredFixed($.trim(value), 5);
 
+            if (val.indexOf('.') == -1) {
+                val = val + '.00000';
+            }
+            val = val + '00';
+            val = val.slice(0, (val.indexOf(".")) + 6);
+            val = val.split('.');
+            var number = 0;
+            if (val[1]) {
+                var fixed = val[1].substring(0, places);
+                var decimalSection = (val[1].substring(places)).rtrim();
+                number = val[0] + '.' + fixed + '' + decimalSection;
+            } else {
+                number = val[0];
+            }
+            return number;
+        }
 
         function showRequest() {
             $('.ajaxLoading').show();
@@ -1514,17 +1542,14 @@
 
             var cache = {}, lastXhr;
             var trid = $(obj).closest('tr').attr('id');
-
-
-            //console.log(trid, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-
             var skuid = $("#" + trid + "  input[id^='sku_num']");
             var priceid = $("#" + trid + "  input[id^='price']");
             var casepriceid = $("#" + trid + "  input[id^='case_price']");
-            var qtyid = $("#" + trid + "  input[id^='qty']");
+            var qtyid = $("#" + trid + "  input[id^='qty']").attr('id');
             var itemid = $("#" + trid + "  textarea[name^=item]");
             var retailpriceid = $('#' + trid + "  input[name^=retail]");
             var selectorProductId = $('#' + trid + "  input[name^=product_id]");
+            var casePerQuantityId = $('#' + trid + " input[id^=case_per_quantity]").attr('id');
             if(($('#is_freehand').val() == 0))
             {
                 $(obj).autocomplete({
@@ -1585,9 +1610,15 @@
                             dataType: 'json',
                             data: {'product_id': ui.item.id},
                             success: function (result) {
+                                console.log("loading order contents.....");
+                                console.log(result);
                                 if (result.unit_price == 0 && result.case_price == 0) {
                                     notyMessageError("Retail Price and Case Price Unavailable...");
                                     exit;
+                                }
+
+                                if(result.qty_per_case){
+                                    $("#"+casePerQuantityId).val(result.qty_per_case);
                                 }
                                 if (result.sku) {
                                     $(skuid).val(result.sku);
