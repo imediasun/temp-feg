@@ -447,14 +447,19 @@ class OrderController extends Controller
                 }
             ])->find($id);
         }
+
         if ($row) {
             $row->fedex_number =  $row->location ? $row->location->fedex_number ? $row->location->fedex_number : 'No Data' : 'No Data';
-            $row->order_freight_id = !empty($row->freight_id) ? $row->freight_id : $row->location ? $row->location->location_freight_id ? $row->location->location_freight_id : '' : '';
+           if($row->freight_id) {
+               $row->order_freight_id = $row->freight_id ? $row->freight_id : '';
+           }else{
+               $row->order_freight_id = $row->location->location_freight_id ? $row->location->location_freight_id : '';
+           }
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
-
+        dd($row->order_freight_id);
 
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
