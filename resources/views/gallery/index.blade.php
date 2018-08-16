@@ -7,7 +7,7 @@
         .sbox {
             border-top: 0px solid transparent !important;
         }
-        .sbox-content{ border-color: #f9f9f9; }
+        .sbox-content{ border-color: #f9f9f9; padding-top: 0px; }
     </style>
     <div class="page-content row">
         <!-- Page header -->
