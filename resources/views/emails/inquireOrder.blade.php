@@ -5,7 +5,7 @@
 <div class="sbox">
     <div class="sbox-content">
         <div class="col-md-12">
-            <div class="col-md-12" style="background: #FFF;box-shadow: 1px 1px 10px gray">
+            <div class="col-md-12" style="background: #FFF;border: 1px solid black;">
                 <fieldset>
                     <legend>Order Info</legend>
                     <div>
@@ -25,7 +25,7 @@
         <div class="clr clear"></div>
         <br/>
 
-        <div class="col-md-12" style="box-shadow: 1px 1px 10px gray;background: #fff;padding:10px 10px 0px">
+        <div class="col-md-12" style="border: 1px solid black;;background: #fff;padding:10px 10px 0px">
             <fieldset>
                 <legend> Order Items</legend>
                 <?php
@@ -35,24 +35,24 @@
                 <table class="table table-wi table-responsive table-striped table-bordered table-condensed">
                     <thead>
                     <tr>
-                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">NO #</th>
-                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">SKU #</th>
-                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">Item Name</th>
-                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">Case Price
+                        <th style="border: 1px solid black;">NO #</th>
+                        <th style="border: 1px solid black;">SKU #</th>
+                        <th style="border: 1px solid black;">Item Name</th>
+                        <th style="border: 1px solid black;">Case Price
                             @if($case == 1)
                                 *
                             @endif
                         </th>
-                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">Unit Price
+                        <th style="border: 1px solid black;">Unit Price
                             @if($case == 0)
                                 *
                             @endif
                         </th>
-                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">Item Quantity </th>
+                        <th style="border: 1px solid black;">Item Quantity </th>
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
                             <th>Game</th>
                         @endif
-                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">Total ($)</th>
+                        <th style="border: 1px solid black;">Total ($)</th>
 
                     </tr>
                     </thead>
@@ -61,20 +61,20 @@
                     @if( $order_data['requests_item_count'] > 0 )
                         @for($i = 0 ; $i < $order_data['requests_item_count']; $i++)
                             <tr>
-                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">{{ $i+1 }} </td>
-                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">{{  \DateHelpers::formatStringValue($order_data['skuNumArray'][$i])}}</td>
-                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
-                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">
+                                <td style="border: 1px solid black;">{{ $i+1 }} </td>
+                                <td style="border: 1px solid black;">{{  \DateHelpers::formatStringValue($order_data['skuNumArray'][$i])}}</td>
+                                <td style="border: 1px solid black;">{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
+                                <td style="border: 1px solid black;">
                                     {{CurrencyHelpers::formatPrice($order_data['itemCasePrice'][$i]) }}
                                 </td>
-                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">
+                                <td style="border: 1px solid black;">
                                     {{CurrencyHelpers::formatPrice($order_data['orderPriceArray'][$i]) }}
                                 </td>
-                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
+                                <td style="border: 1px solid black;">{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
                                 @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
                                     <td>{{  \DateHelpers::formatStringValue($order_data['gamenameArray'][$i]) }}</td>
                                 @endif
-                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">{{ CurrencyHelpers::formatPrice($order_data['orderItemsPriceArray'][$i]* $order_data['orderQtyArray'][$i],\App\Models\Order::ORDER_PERCISION)}}</td>
+                                <td style="border: 1px solid black;">{{ CurrencyHelpers::formatPrice($order_data['orderItemsPriceArray'][$i]* $order_data['orderQtyArray'][$i],\App\Models\Order::ORDER_PERCISION)}}</td>
                             </tr>
                         @endfor
                         <tr>
@@ -83,8 +83,8 @@
                             @else
                                 <td colspan="6">&nbsp;</td>
                             @endif
-                            <td  colspan="2" style="background: #FFF;box-shadow: 1px 1px 10px gray"><b>Sub Total ($)</b></td>
-                            <td colspan="1" style="background: #FFF;box-shadow: 1px 1px 10px gray">
+                            <td  colspan="2" style="border: 1px solid black;"><b>Sub Total ($)</b></td>
+                            <td colspan="1" style="border: 1px solid black;">
                                 <b>{{CurrencyHelpers::formatPrice($order_data['order_total'],\App\Models\Order::ORDER_PERCISION) }}</b>
                             </td>
 
