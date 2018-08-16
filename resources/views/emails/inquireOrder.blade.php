@@ -8,11 +8,11 @@
                 <fieldset>
                     <legend>Order Info</legend>
                     <div>
-                        {{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}: @for($i=0; $i<10; $i++)&nbsp; @endfor{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name',$nodata['location_id'])!!}
+                        {{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}: {!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name',$nodata['location_id'])!!}
                     </div>
                     <div class="clearfix"></div>
                     <div class="form-group">
-                        {{ SiteHelpers::activeLang('PO Number', (isset($fields['po_number']['language'])? $fields['po_number']['language'] : array())) }}: @for($i=0; $i<7; $i++)&nbsp; @endfor{{ \DateHelpers::formatStringValue($row->po_number) }}
+                        {{ SiteHelpers::activeLang('PO Number', (isset($fields['po_number']['language'])? $fields['po_number']['language'] : array())) }}: {{ \DateHelpers::formatStringValue($row->po_number) }}
                     </div>
                     <div class="clearfix"></div>
 
