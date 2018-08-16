@@ -776,6 +776,7 @@ $(document).ajaxComplete(function(a,b,d){
 
                 cancelInlineEdit('form-'+$("#ImageUploadItemId").val(), event, this,0);
                 $('#imageUploadModal').modal("hide");
+                rowDataId = 0;
             }else{
                 notyMessageError(response.message);
             }
@@ -807,6 +808,7 @@ $(document).ajaxComplete(function(a,b,d){
             }else{
                 cell.children("img").css("display", "");
             }
+            rowDataId = 0;
         });
         $(document).on("click",'#imageUploadModal button.close[data-dismiss="modal"],' +
                 '#imageUploadModal .closeModal',function(){
@@ -818,6 +820,7 @@ $(document).ajaxComplete(function(a,b,d){
             }else{
                 cell.children("img").css("display", "");
             }
+            rowDataId = 0;
         });
     }
 
