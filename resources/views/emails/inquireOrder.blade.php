@@ -1,3 +1,6 @@
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
 <div class="sbox">
     <div class="sbox-content">
         <div class="col-md-12">
@@ -56,7 +59,7 @@
                 $dataOptions = explode(',',$case_price_permission->data_options);
                 $case = in_array($order_data['order_type'],$dataOptions );
                 ?>
-                <table class="table">
+                <table class="table table-responsive table-striped table-bordered table-condensed">
                     <thead>
                     <tr>
                         <th>NO #</th>
