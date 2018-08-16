@@ -35,24 +35,24 @@
                 <table class="table table-wi table-responsive table-striped table-bordered table-condensed">
                     <thead>
                     <tr>
-                        <th>NO #</th>
-                        <th>SKU #</th>
-                        <th>Item Name</th>
-                        <th>Case Price
+                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">NO #</th>
+                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">SKU #</th>
+                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">Item Name</th>
+                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">Case Price
                             @if($case == 1)
                                 *
                             @endif
                         </th>
-                        <th>Unit Price
+                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">Unit Price
                             @if($case == 0)
                                 *
                             @endif
                         </th>
-                        <th>Item Quantity </th>
+                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">Item Quantity </th>
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
                             <th>Game</th>
                         @endif
-                        <th>Total ($)</th>
+                        <th style="background: #FFF;box-shadow: 1px 1px 10px gray">Total ($)</th>
 
                     </tr>
                     </thead>
@@ -61,20 +61,20 @@
                     @if( $order_data['requests_item_count'] > 0 )
                         @for($i = 0 ; $i < $order_data['requests_item_count']; $i++)
                             <tr>
-                                <td>{{ $i+1 }} </td>
-                                <td>{{  \DateHelpers::formatStringValue($order_data['skuNumArray'][$i])}}</td>
-                                <td>{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
-                                <td>
+                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">{{ $i+1 }} </td>
+                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">{{  \DateHelpers::formatStringValue($order_data['skuNumArray'][$i])}}</td>
+                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
+                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">
                                     {{CurrencyHelpers::formatPrice($order_data['itemCasePrice'][$i]) }}
                                 </td>
-                                <td>
+                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">
                                     {{CurrencyHelpers::formatPrice($order_data['orderPriceArray'][$i]) }}
                                 </td>
-                                <td>{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
+                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
                                 @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
                                     <td>{{  \DateHelpers::formatStringValue($order_data['gamenameArray'][$i]) }}</td>
                                 @endif
-                                <td>{{ CurrencyHelpers::formatPrice($order_data['orderItemsPriceArray'][$i]* $order_data['orderQtyArray'][$i],\App\Models\Order::ORDER_PERCISION)}}</td>
+                                <td style="background: #FFF;box-shadow: 1px 1px 10px gray">{{ CurrencyHelpers::formatPrice($order_data['orderItemsPriceArray'][$i]* $order_data['orderQtyArray'][$i],\App\Models\Order::ORDER_PERCISION)}}</td>
                             </tr>
                         @endfor
                         <tr>
@@ -83,8 +83,8 @@
                             @else
                                 <td colspan="6">&nbsp;</td>
                             @endif
-                            <td  colspan="2"><b>Sub Total ($)</b></td>
-                            <td colspan="1">
+                            <td  colspan="2" style="background: #FFF;box-shadow: 1px 1px 10px gray"><b>Sub Total ($)</b></td>
+                            <td colspan="1" style="background: #FFF;box-shadow: 1px 1px 10px gray">
                                 <b>{{CurrencyHelpers::formatPrice($order_data['order_total'],\App\Models\Order::ORDER_PERCISION) }}</b>
                             </td>
 
