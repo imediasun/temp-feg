@@ -5,7 +5,7 @@
 <div class="sbox">
     <div class="sbox-content">
         <div class="col-md-12">
-            <div class="col-md-12" style="background: #FFF;border: 1px solid black;">
+            <div class="col-md-12">
                 <fieldset>
                     <legend>Order Info</legend>
                     <div>
@@ -25,7 +25,7 @@
         <div class="clr clear"></div>
         <br/>
 
-        <div class="col-md-12" style="border: 1px solid black;;background: #fff;padding:10px 10px 0px">
+        <div class="col-md-12">
             <fieldset>
                 <legend> Order Items</legend>
                 <?php
