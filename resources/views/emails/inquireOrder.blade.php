@@ -8,43 +8,18 @@
                 <fieldset>
                     <legend>Order Info</legend>
                     <div>
-                        <label class=" label-control col-md-4 text-left">
-                            {{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
-                        </label>
-
-                        <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name',$nodata['location_id'])!!}
-                        </div>
+                        {{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}: {!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name',$nodata['location_id'])!!}
                     </div>
                     <div class="clearfix"></div>
                     <div class="form-group">
-                        <label class=" label-control col-md-4 text-left">
-                            {{ SiteHelpers::activeLang('PO Number', (isset($fields['po_number']['language'])? $fields['po_number']['language'] : array())) }}
-                        </label>
-
-                        <div class="col-md-8">
-                            {{ \DateHelpers::formatStringValue($row->po_number) }}
-                        </div>
+                        {{ SiteHelpers::activeLang('PO Number', (isset($fields['po_number']['language'])? $fields['po_number']['language'] : array())) }}: {{ \DateHelpers::formatStringValue($row->po_number) }}
                     </div>
                     <div class="clearfix"></div>
-
                     <div class="form-group  ">
-                        <label class=" label-control col-md-4 text-left">
-                            {{ SiteHelpers::activeLang('Vendor', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) }}
-                        </label>
-
-                        <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name',$nodata['vendor_id']) !!}
-                        </div>
+                        {{ SiteHelpers::activeLang('Vendor', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) }} : {!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name',$nodata['vendor_id']) !!}
                     </div>
                     <div class="form-group">
-                        <label class="label-control col-md-4">
-                            {{ SiteHelpers::activeLang('Total Cost', (isset($fields['order_total']['language'])? $fields['order_total']['language'] : array())) }}
-                        </label>
-
-                        <div class="col-md-8">
-                            {{ CurrencyHelpers::formatPrice($row->order_total,\App\Models\Order::ORDER_PERCISION) }}
-                        </div>
+                        {{ SiteHelpers::activeLang('Total Cost', (isset($fields['order_total']['language'])? $fields['order_total']['language'] : array())) }}: {{ CurrencyHelpers::formatPrice($row->order_total,\App\Models\Order::ORDER_PERCISION) }}
                     </div>
                 </fieldset>
             </div>
