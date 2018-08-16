@@ -4,7 +4,7 @@
 <div class="sbox">
     <div class="sbox-content">
         <div class="col-md-12">
-            <div class="col-md-12">
+            <div class="col-md-12" style="background: #FFF;box-shadow: 1px 1px 10px gray">
                 <fieldset>
                     <legend>Order Info</legend>
                     <div>
