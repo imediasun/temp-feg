@@ -270,6 +270,30 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
         </div>
     </div>
 </div>
+<div class="modal fade" id="imageUploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Upload Image</h4>
+            </div>
+            <form method="POST" id="ImageUploadForm" enctype="multipart/form-data" action="{{ url('product/upload-ajax') }}">
+            <div class="modal-body imageModalBody">
+                    <div class="form-group">
+                        <label>Select Image</label>
+                        <input type="file" name="img" class="form-control" accept="image/*" required>
+                        <input type="hidden" style="display: none;" name="id" value="0">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" >Submit</button>
+                <button type="button" class="btn btn-default closeModal" data-dismiss="modal">Cancel</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
     var jsonExpenseCategory = [];
@@ -703,6 +727,98 @@ $(document).ajaxComplete(function(a,b,d){
             }
         });
         return false;
+    }
+    var preValue = [];
+    var editRow = "";
+    var rowDataId = 0;
+    $(document).on("dblclick","tr.editable",function(){
+        if(rowDataId == $(this).data('id')){
+            return false;
+        }else{
+            rowDataId = $(this).data('id')
+        }
+        var row = editRow = $(this);
+
+       var cell = row.children('td[data-field="img"]');
+        if(cell.children("p").length > 0 ) {
+            cell.children("p").css("display", "none");
+        }else{
+            cell.children("img").css("display", "none");
+        }
+        var button = '<input type="button" data-id="'+row.data('id')+'"  value="Upload" class="btn btn-primary btn-sm uploadImagebtn">';
+        cell.append(button);
+        var divElement = '<div class="form-group">';
+        divElement += '<label>Select Image</label>';
+        divElement += '<input type="file" name="img" class="form-control" accept="image/*" required>';
+        divElement += '<input type="hidden" style="display: none;" name="id" id="ImageUploadItemId" value="'+row.data('id')+'">';
+        divElement += '</div>';
+        $(".imageModalBody").html(divElement);
+        registerEventProcess();
+    });
+    $(document).on("click",".uploadImagebtn",function(){
+        $('#imageUploadModal').modal("show");
+    });
+    $(document).off('submit').on("submit","#ImageUploadForm",function(e){
+        e.preventDefault();
+        var action = $(this).attr("action");
+        var form = this;
+        var formData = new FormData(this);
+        $.ajax({
+            type:"POST",
+            data:formData,
+            contentType: false,
+            processData: false,
+            url:action,
+            success:function(response){
+            if(response.status = "success"){
+                    notyMessage(response.message);
+                    displayImage(response.imagePath,$("#ImageUploadItemId").val())
+
+                cancelInlineEdit('form-'+$("#ImageUploadItemId").val(), event, this,0);
+                $('#imageUploadModal').modal("hide");
+            }else{
+                notyMessageError(response.message);
+            }
+            }
+        });
+    });
+    function displayImage(imagePath,rowId){
+        var imageElement = '<p><a image-description="" class="previewImage fancybox" href="'+imagePath+'" target="_blank" data-fancybox-group="gallery'+rowId+'" rel="gallery'+rowId+'">';
+        imageElement += ' <img style="box-shadow:1px 1px 5px gray" src="'+imagePath+'" border="0" width="50" class="img"></a></p>';
+    var row = $("tr[id='form-"+rowId+"']")
+    var variationId = $.trim(row.attr("variation-id"));
+        console.log("Display Image Debug");
+        if(variationId){
+            var updatingRows = $("tr[variation-id='"+variationId+"']")
+            updatingRows.children('td[data-field="img"]').html(imageElement);
+        }else{
+            row.children('td[data-field="img"]').html(imageElement);
+        }
+    }
+
+    function registerEventProcess(){
+        $(document).on("click",'a[data-original-title="Cancel"], ' +
+                'a[data-original-title="Save"]',function(){
+           var rowId = ($(this).parent("div").attr("id")).split("_");
+            var cell = $("#form-"+rowId[1]).children('td[data-field="img"]');
+                cell.children(".uploadImagebtn").remove();
+            if(cell.children("p").length > 0) {
+                cell.children("p").css("display", "");
+            }else{
+                cell.children("img").css("display", "");
+            }
+        });
+        $(document).on("click",'#imageUploadModal button.close[data-dismiss="modal"],' +
+                '#imageUploadModal .closeModal',function(){
+            var rowId = $("#ImageUploadItemId").val();
+            var cell = $("#form-"+rowId).children('td[data-field="img"]');
+            cell.children(".uploadImagebtn").remove();
+            if(cell.children("p").length > 0) {
+                cell.children("p").css("display", "");
+            }else{
+                cell.children("img").css("display", "");
+            }
+        });
     }
 
 </script>
