@@ -36,8 +36,8 @@ class ProductController extends Controller
             'pageUrl' => url('product'),
             'return' => self::returnUrl()
         );
-        $this->sortMapping = ['vendor_id' => 'vendor.vendor_name', 'prod_type_id' => 'O.order_type', 'prod_sub_type_id' => 'T.type_description'];
-        $this->sortUnMapping = ['vendor.vendor_name' => 'vendor_id', 'O.order_type' => 'prod_type_id', 'T.type_description' => 'prod_sub_type_id'];
+        $this->sortMapping = ['vendor_id' => 'vendor.vendor_name', 'prod_type_id' => 'O.order_type', 'prod_sub_type_id' => 'T.type_description',"img"=>"img"];
+        $this->sortUnMapping = ['vendor.vendor_name' => 'vendor_id', 'O.order_type' => 'prod_type_id', 'T.type_description' => 'prod_sub_type_id',"img"=>"img"];
 
 
     }
@@ -969,6 +969,12 @@ class ProductController extends Controller
         $data['return'] = "";
         return view('product.upload', $data);
     }
+    function getUploadPopup($id = NULL)
+    {
+        $data['img'] = \DB::table('products')->where('id', $id)->pluck('img');
+        $data['return'] = "";
+        return view('product.upload-image-popup', $data);
+    }
 
     function postListcsv(Request $request)
     {
@@ -1030,7 +1036,42 @@ class ProductController extends Controller
 
 
     }
+    function postUploadAjax(Request $request)
+    {
+        $files = array('img' => Input::file('img'));
+        // setting up rules
+        $rules = array('img' => 'required|mimes:jpeg,gif,png'); //mimes:jpeg,bmp,png and for max size max:10000
+        // doing the validation, passing post data, rules and the messages
+        $validator = Validator::make($files, $rules);
+        $id = Input::get('id');
 
+        if ($validator->fails()) {
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));
+        } else {
+            $updates = array();
+            $file = $request->file('img');
+            $destinationPath = './uploads/products/';
+            $filename = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+            $newfilename = $id . mt_rand() . '.' . $extension;
+            $uploadSuccess = $request->file('img')->move($destinationPath, $newfilename);
+            if ($uploadSuccess) {
+                $relatedProducts = $this->model->checkProducts($id);
+                $ids = array_map(function($row){return $row->id;}, $relatedProducts);
+                \DB::update('update products set img = "' . $newfilename . '" where id IN(' . implode(",", $ids) .')');
+            }
+            return response()->json(array(
+                'message' => "Image has been updated",
+                'status' => 'success',
+                'imagePath' =>url("/uploads/products/".$newfilename),
+                'id' => $id,
+            ));
+        }
+    }
     function getTest()
     {
         $row = \DB::select("select id,img from products where id > 2820");
