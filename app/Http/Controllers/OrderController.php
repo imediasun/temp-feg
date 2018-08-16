@@ -3068,8 +3068,8 @@ ORDER BY aa_id");
             return \Redirect::to('order')
                 ->with('messagetext', \Lang::get('core.note_order_not_found'))->with('msgstatus', 'error');
         }
-
-        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients('Inquire about this order');
+        $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
+        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients('Inquire about this order', null, $isTest);
 
         $toAddresses    = explode(',',  $systemEmailRecipients['to']);
 
