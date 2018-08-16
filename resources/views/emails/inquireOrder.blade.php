@@ -83,7 +83,7 @@
                             @else
                                 <td colspan="5">&nbsp;</td>
                             @endif
-                            <td  colspan="2" style="border: 1px solid grey;"><b>Sub Total ($)</b></td>
+                            <td  colspan="1" style="border: 1px solid grey;"><b>Sub Total ($)</b></td>
                             <td colspan="1" style="border: 1px solid grey;">
                                 <b>{{CurrencyHelpers::formatPrice($order_data['order_total'],\App\Models\Order::ORDER_PERCISION) }}</b>
                             </td>
