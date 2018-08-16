@@ -459,7 +459,6 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
-        dd($row->order_freight_id);
 
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
