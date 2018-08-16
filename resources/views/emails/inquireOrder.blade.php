@@ -16,6 +16,7 @@
                         {{ SiteHelpers::activeLang('PO Number', (isset($fields['po_number']['language'])? $fields['po_number']['language'] : array())) }}: @for($i=0; $i<7; $i++)&nbsp; @endfor{{ \DateHelpers::formatStringValue($row->po_number) }}
                     </div>
                     <div class="clearfix"></div>
+
                     <div class="form-group  ">
                         {{ SiteHelpers::activeLang('Vendor', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) }}: @for($i=0; $i<11; $i++)&nbsp; @endfor{!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name',$nodata['vendor_id']) !!}
                     </div>
