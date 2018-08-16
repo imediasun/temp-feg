@@ -3086,7 +3086,7 @@ ORDER BY aa_id");
 
     public function getInquireOrder($orderId){
 
-        $order = Order::with(['contents','vendor', 'location'])->find($orderId);
+        $order = Order::find($orderId);
 
         if(!$order)
         {
@@ -3100,7 +3100,7 @@ ORDER BY aa_id");
 
         $fromEmail = 'info@fegllc.com';
 
-        $message = View::make('emails.inquireOrder', compact('order'));
+        $message = $this->getShow($orderId, 'emails.inquireOrder');
         $subject = 'Inquire orders';
 
 
