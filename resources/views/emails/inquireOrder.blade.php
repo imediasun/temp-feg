@@ -37,7 +37,7 @@
                     <tr>
                         <th style="border: 1px solid grey;">NO #</th>
                         <th style="border: 1px solid grey;">SKU #</th>
-                        <th style="border: 1px solid grey; max-width: 50% !important;">Item Name</th>
+                        <th style="border: 1px solid grey; width: 45% !important;">Item Name</th>
                         <th style="border: 1px solid grey;">Case Price
                             @if($case == 1)
                                 *
