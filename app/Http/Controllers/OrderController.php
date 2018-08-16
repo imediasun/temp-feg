@@ -474,7 +474,7 @@ class OrderController extends Controller
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
-    public function getShow($id = null)
+    public function getShow($id = null, $view = 'order.view')
     {
         $this->data['case_price_permission'] = $this->pass['calculate price according to case price'];
         if ($this->access['is_detail'] == 0)
@@ -504,7 +504,7 @@ class OrderController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         $this->data['nodata'] = \SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
-        return view('order.view', $this->data);
+        return view($view, $this->data);
     }
     // Uncomment if Copy functionality is needed for orders
 // it need testing afer commenting.
@@ -3061,7 +3061,7 @@ ORDER BY aa_id");
 
     public function getInquireOrder($orderId){
 
-        $order = Order::with(['contents','vendor', 'location'])->find($orderId);
+        $order = Order::find($orderId);
 
         if(!$order)
         {
@@ -3075,7 +3075,7 @@ ORDER BY aa_id");
 
         $fromEmail = 'info@fegllc.com';
 
-        $message = View::make('emails.inquireOrder', compact('order'));
+        $message = $this->getShow($orderId, 'emails.inquireOrder');
         $subject = 'Inquire orders';
 
 
