@@ -774,7 +774,7 @@ $(document).ajaxComplete(function(a,b,d){
                     notyMessage(response.message);
                     displayImage(response.imagePath,$("#ImageUploadItemId").val())
 
-                cancelInlineEdit('form-'+$("#ImageUploadItemId").val(), event, this,0);
+                cancelInlineEdit('form-'+$("#ImageUploadItemId").val(), e.events, form,0);
                 $('#imageUploadModal').modal("hide");
                 $("#imageUploadModal .closeModal").trigger("click");
                 rowDataId = 0;
