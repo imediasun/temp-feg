@@ -749,7 +749,7 @@ $(document).ajaxComplete(function(a,b,d){
         cell.append(button);
         var divElement = '<div class="form-group">';
         divElement += '<label>Select Image</label>';
-        divElement += '<input type="file" name="img" class="form-control" accept="image/*" required>';
+        divElement += '<input type="file" name="img"  accept="image/*" required>';
         divElement += '<input type="hidden" style="display: none;" name="id" id="ImageUploadItemId" value="'+row.data('id')+'">';
         divElement += '</div>';
         $(".imageModalBody").html(divElement);
@@ -776,6 +776,7 @@ $(document).ajaxComplete(function(a,b,d){
 
                 cancelInlineEdit('form-'+$("#ImageUploadItemId").val(), event, this,0);
                 $('#imageUploadModal').modal("hide");
+                $("#imageUploadModal .closeModal").trigger("click");
                 rowDataId = 0;
             }else{
                 notyMessageError(response.message);
