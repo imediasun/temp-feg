@@ -420,7 +420,6 @@
                 $('#iGroups').trigger('change');
             })*/
         });
-        var row = '<?php echo json_encode($row) ; ?>';
 
 	/*  $(function(){
 		  $(document).on("mouseup",".note-editor p a",function(){
