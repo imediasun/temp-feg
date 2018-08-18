@@ -1,5 +1,37 @@
 @extends('layouts.app')
 
+@section("beforeheadend")
+	<!-- include summernote css/js -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+	<link href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
+	<link href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-bs4.css" rel="stylesheet">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-bs4.js"></script>
+	<style>
+		.note-popover .popover-content .dropdown-menu, .card-header.note-toolbar .dropdown-menu {
+			min-width: 140px;
+		}
+		.note-popover .popover-content .dropdown-menu.note-check a i, .card-header.note-toolbar .dropdown-menu.note-check a{
+			color:black;
+			display: block;
+		}
+		.note-popover .popover-content .dropdown-menu.note-check a i, .card-header.note-toolbar .dropdown-menu.note-check a i {
+			color: black;
+		}
+		.note-toolbar .btn-sm, .note-toolbar .btn-group-sm > .btn {
+			font-size: 14px !important;
+		}
+
+	</style>
+	<script>
+		$(function(){
+			$(".note-recent-color").css({"background-color":"#dddddd"});
+			$('.note-btn.btn.btn-light.btn-sm.dropdown-toggle[data-original-title="More Color"]').html('<i class="fa fa-arrow-down"></i>');
+			var button = '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+			$(".modal button.close").remove();
+			$(".modal .modal-header").prepend(button);
+		});
+	</script>
+	@endsection
 @section('content')
 	<style>
 		.resizing{
@@ -303,14 +335,16 @@
 			  success: function (data) {
 				  console.log(data);
 				  $('#pdf_modal').modal('toggle');
-				  $('.icon-link').trigger('click');
+				  $('.note-insert .note-btn.btn.btn-light.btn-sm[data-original-title="Link (CTRL+K)"]').trigger('click');
+				  //note-link-text
 				  if(data.file_behaviour == 'open'){
 					  $('.note-link-url').val(data.FileOpenUrl);
 				  }
 				  if(data.file_behaviour == "download"){
 					  $('.note-link-url').val(data.FileDownloadUrl);
 				  }
-				  $('.note-link-btn').trigger('click');
+				  $(".note-link-text").val(data.filename);
+				  $('.note-insert .note-btn.btn.btn-light.btn-sm[data-original-title="Link (CTRL+K)"]').trigger('click');
 				  if(data.file_behaviour == 'open'){
 				  	$("a[href='"+data.FileOpenUrl+"']").attr("target","_blank");
 				  }
@@ -358,6 +392,9 @@
 			//$('.upload_progress_container').toggle();
         	$(document).on("click",".note-toolbar.btn-toolbar div button.btn",function(){
 				$('.note-editor .note-editable').css('height', $('#cms_bar_id').height()-208);
+			});
+			$(document).on("click","button.btn-codeview",function(){
+				$('.note-editor .note-editable').css('height', $(document).height()-324);
 			});
 
 
