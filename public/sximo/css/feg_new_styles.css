@@ -201,6 +201,9 @@ table.budget-summery td:nth-child(2){
     color: #FFF;
     cursor: pointer !important;
 }
+.gallery-tabs-style{
+    margin-top: 15px;
+}
 .gallery-tabs-style:after{
     content: '';
     clear:both;
