@@ -830,20 +830,22 @@
                     return false;
                 }
             });
-
+            var add_new_item_button_click = 1;
             $("#add_new_item").click(function () {
                 ///window.ParsleyUI.removeError($("input").pars‌​ley(), 'required');
                 // $('input[name^=price],input[name^=case_price],input[name^=qty]').parsley().reset();
 
                 addProductRow();
                 handleItemCount('add');
-                setTimeout(function () {
-                    var item = $(".item_name").last();
-                    if (Number(item.attr("freehand")) == 0) {
-                        $(".item_name").last().attr("onfocus", "init(this.id,this);");
-                        $('.item_name').last().removeAttr('readonly');
-                    }
-                }, 500);
+                if(add_new_item_button_click == 1){
+                    setTimeout(function () {
+                        var item = $(".item_name").last();
+                        if (Number(item.attr("freehand")) == 0) {
+                            $(".item_name").last().attr("onfocus", "init(this.id,this);");
+                            $('.item_name').last().removeAttr('readonly');
+                        }
+                    }, 500);
+                }
                 var gameDropDown = $('.game_dropdown').last().find('.select2-container').first();
                 $(gameDropDown).css('display','none');
                 $(".calculate").keyup(function () {
@@ -982,7 +984,9 @@
 
                 if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
                 {
+                    add_new_item_button_click = 0;
                     $("#add_new_item").click();
+                    add_new_item_button_click = 1;
                 }
 
             }
