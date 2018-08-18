@@ -234,14 +234,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                            title="Clone Order">
                             <i class=" fa fa-random" aria-hidden="true"></i>
                         </a>
-                        <a href="{{ $pageModule }}/inquire/{{$row->id}}/order"
-                            {{--onclick="ajaxViewDetail('#order',this.href); return false; "--}}
-                            data-id="{{$eid}}"
-                            data-action="clone"
-                            class="tips btn btn-xs btn-white inquireOrderAction"
-                            title="Inquire about this order">
-                            <i class="fa fa-question" aria-hidden="true"></i>
-                        </a>
+
                         <?php
                         $canPostToNetSuit = Order::canPostToNetSuit($row->id, $row);
                         $isApified = Order::isApified($id, $row);
@@ -298,10 +291,16 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-refresh " aria-hidden="true"></i>
                             </a>
                         @endif
+                            <a href="{{ $pageModule }}/inquire/{{$row->id}}/order"
+                               data-id="{{$eid}}"
+                               class="tips btn btn-xs btn-white inquireOrderAction"
+                               title="{{ Lang::get('core.order_inquiry_button_title') }}">
+                                <i class="fa fa-question" aria-hidden="true"></i>
+                            </a>
 
                             @if($row->isFullyReceived)
-                            <a href="/order/dpl-file/{{ $row->id }}" class="tips btn btn-xs btn-white" title="Download Full DPL"><i class="fa fa-download"></i></a>
-					@endif
+                                <a href="/order/dpl-file/{{ $row->id }}" class="tips btn btn-xs btn-white" title="Download Full DPL"><i class="fa fa-download"></i></a>
+                            @endif
                     </td>
                 </tr>
 
