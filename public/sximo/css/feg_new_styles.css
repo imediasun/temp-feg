@@ -225,6 +225,7 @@ table.budget-summery td:nth-child(2){
     background: #ececec;
     cursor: pointer;
     opacity: 0.7;
+    margin-bottom: -1px;
 }
 .gallery-first-tab{
     margin-left:15px;
@@ -250,12 +251,14 @@ span.moduleTab:after{
 }
 span.moduleTab.active:after{
     content: '';
-    width: 100%;
+    width: 100.90%;
     background: white;
     display: block;
-    height: 5px;
+    height: 3px;
     position: absolute;
-    left: 0px;
+    left: -1px;
+    border-left: 1px solid #dfdfdf;
+    border-right: 1px solid #dfdfdf;
 }
 @media (min-width: 1281px) and (max-width: 1440px) {
     .downloadGameForSale{
