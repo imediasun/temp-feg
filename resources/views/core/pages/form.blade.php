@@ -386,7 +386,7 @@
 		superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
         $(document).ready(function(){
 			var model_obj = "{backdrop:'static',keyboard:false}";
-			$('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach File" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal('+model_obj+');$(".upload_progress_container").hide();><i class="fa fa-file-o"></i></button></div>');
+			$('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-sm btn-small" data-toggle="tooltip" title="Attach File" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal('+model_obj+');$(".upload_progress_container").hide();>&nbsp;&nbsp;<i class="fa fa-paperclip"></i>&nbsp;&nbsp;</button></div>');
 			$('[data-toggle="tooltip"]').tooltip();
 
 			$('.note-editor .note-editable').css('height', $('#cms_bar_id').height()-208);
