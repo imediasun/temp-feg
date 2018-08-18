@@ -344,8 +344,9 @@
 					  $('.note-link-url').val(data.FileDownloadUrl);
 				  }
 				  $(".note-link-text").val(data.filename);
-				  $('.note-insert .note-btn.btn.btn-light.btn-sm[data-original-title="Link (CTRL+K)"]').trigger('click');
-				  if(data.file_behaviour == 'open'){
+				 // $('.note-insert .note-btn.btn.btn-light.btn-sm[data-original-title="Link (CTRL+K)"]').trigger('click');
+				  $(".note-link-btn").trigger("click");
+                  if(data.file_behaviour == 'open'){
 				  	$("a[href='"+data.FileOpenUrl+"']").attr("target","_blank");
 				  }
 				  $('#pdf_file').val('');
@@ -409,7 +410,6 @@
             @if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN)
 				$('#group_id'+superAdmin).css('display','none');
 				$( document ).ajaxStop(function() {
-					console.log( "Triggered ajaxStop handler." );
 					/*$('#iGroups option[value="'+superAdmin+'"]').attr('disabled','disabled');*/
 					$('#iGroups option[value="'+superAdmin+'"]').remove();
 					$('#iGroups').trigger('change');
@@ -420,9 +420,9 @@
                 $('#iGroups').trigger('change');
             })*/
         });
-        var row = <?php echo json_encode($row) ; ?>;
+        var row = '<?php echo json_encode($row) ; ?>';
 
-	  $(function(){
+	/*  $(function(){
 		  $(document).on("mouseup",".note-editor p a",function(){
 			  var element = $(this).offset();
 
@@ -456,7 +456,7 @@
 			  }
 		  });
 
-	  });
+	  });*/
 	  (function($) {
 		  var origAppend = $.fn.append;
 
