@@ -1411,6 +1411,18 @@
                 checkboxClass: 'icheckbox_square-blue',
                 radioClass: 'iradio_square-blue'
             });
+            //reindex row id
+            reindexRows($('.itemstable tbody tr'));
+        }
+
+        function reindexRows(rowsCollection){
+            rowsCollection.each(function(index,tableRow){
+                var counter = index + 1;
+                var row = $(tableRow);
+                if(row.attr('id') != 'rowid'){
+                    row.attr('id','rowid'+counter);
+                }
+            });
         }
 
         function isNumeric(ev) {
