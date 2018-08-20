@@ -1386,9 +1386,8 @@
             //}
         }
 
-
-        var productRows = $('.itemstable tbody tr').length;
         function addProductRow() {
+            var productRows = $('.itemstable tbody tr').length;
             let clone = $('.itemstable tbody tr:first').clone();
             let newtrID = clone.prop('id') + productRows;
             clone.prop('id', newtrID)
