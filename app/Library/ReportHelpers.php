@@ -1442,7 +1442,7 @@ class ReportHelpers
     // '%h Hours                                                    =>  11 Hours
     // '%a Days                                                        =>  468 Days
     */
-    private static function dateDifference($date_1 , $date_2 , $differenceFormat = '%a' ) {
+    public static function dateDifference($date_1 , $date_2 , $differenceFormat = '%a' ) {
         $datetime1 = date_create($date_1);
         $datetime2 = date_create($date_2);
 
@@ -1451,7 +1451,7 @@ class ReportHelpers
         return $interval->format($differenceFormat);
 
     }
-    private static function getLastSyncDate() {
+    public static function getLastSyncDate() {
         $lastDate = "";//date("Y-m-d", strtotime("-1 day"));
         $selectQuery = "SELECT date_start from game_earnings 
             ORDER BY date_start DESC LIMIT 1";

@@ -2,6 +2,7 @@
 
 namespace App\Library\FEG\System\Email;
 
+use App\Http\Controllers\OrderController;
 use App\Models\Feg\System\Options;
 use PDO;
 use DB;
@@ -2141,6 +2142,7 @@ class ReportGenerator
                 $_logger = $__logger;
             }
         }
+        $params['_logger'] = $_logger;
 
         //dd($_logger);
 
@@ -2158,23 +2160,44 @@ class ReportGenerator
         $humanDate = \DateHelpers::formatDate($today);
 
         $locationParams = array_merge($params, ['location' => $reportingLocations, 'date' => $date]);
-        $locationwiseReport = self::getLocationWiseDailyPendingOrdersToReceiveReport($locationParams);
-
+        $locationwiseMerchandiseReport = self::getLocationWiseDailyPendingOrdersToReceiveMerchandiseReport($locationParams);
+        $locationwiseNonMerchandiseReport = self::getLocationWiseDailyPendingOrdersToReceiveNonMerchandiseReport($locationParams);
         $_logger->log("PARAMS", $locationParams);
-        $_logger->log("REPORT", $locationwiseReport);
+        $_logger->log("Merchandise REPORT", $locationwiseMerchandiseReport);
+        $_logger->log("Non-Merchandise REPORT", $locationwiseNonMerchandiseReport);
 
         $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = !empty($isTest) ?  $isTest : $task->is_test_mode;
 
         // each location report
         $_logger->log("Start Location wise Report for $humanDate");
-        foreach ($locationwiseReport as $locationId => $report) {
+        foreach ($locationwiseMerchandiseReport as $locationId => $report) {
 
             $locationName = \SiteHelpers::getLocationInfoById($locationId, "location_name");
 
             $_logger->log("    Start Report for Location $locationId for $humanDate");
 
-            $configName = 'Daily Pending Order Receipt Report';
+            $configName = 'Daily Pending Merchandise Order Receipt Report';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $locationId);
+            self::sendEmailReport(array_merge($emailRecipients, [
+                'subject' => "Orders which need to be Received - $locationName ($locationId)- $humanDate",
+                'message' => $report,
+                'isTest' => $isTest,
+                'configName' => $configName,
+                'configNameSuffix' => "$locationId-$humanDate",
+            ]));
+
+            $_logger->log("    End sending email Report for Location $locationId for $humanDate");
+            //sleep($sleepFor);
+        }
+
+        foreach ($locationwiseNonMerchandiseReport as $locationId => $report) {
+
+            $locationName = \SiteHelpers::getLocationInfoById($locationId, "location_name");
+
+            $_logger->log("    Start Report for Location $locationId for $humanDate");
+
+            $configName = 'Daily Pending Non Merchandise Order Receipt Report';
             $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $locationId);
             self::sendEmailReport(array_merge($emailRecipients, [
                 'subject' => "Orders which need to be Received - $locationName ($locationId)- $humanDate",
@@ -2192,7 +2215,7 @@ class ReportGenerator
 
     }
 
-    public static function getLocationWiseDailyPendingOrdersToReceiveReport($params)
+    public static function getLocationWiseDailyPendingOrdersToReceiveMerchandiseReport($params)
     {
 
         $daysThreshold = Options::getOption('order_receipt_reminder_days_threshold', 10);
@@ -2220,14 +2243,87 @@ class ReportGenerator
         $query = order::where('date_ordered', '<=', $date)->where('invoice_verified', true);
         $query->whereIn('status_id', [order::OPENID1, order::OPENID2, order::OPENID3]);
         if (!empty($location) && is_array($location)) {
+
             $query->whereIn('location_id', $location);
+        }
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        if(!empty($pass['calculate price according to case price'])) {
+            $order_types = explode(",",$pass['calculate price according to case price']->data_options);
+
+            $query->whereIn('order_type_id', $order_types);
         }
         $query->orderBy('location_id', 'asc');
 
         $data = $query->get();
 
-        $_logger->log("DATA", $data);
+        $_logger->log("DATA". $data);
 
+        foreach($data as $item) {
+            if(empty($reportData[$item->location_id])) {
+                $reportData[$item->location_id] = [];
+            }
+            $reportData[$item->location_id][] = $item->po_number;
+        }
+        $_logger->log("REPORT DATA", $reportData);
+
+        foreach($reportData as $locationId => $poItems) {
+            if (!empty($poItems)) {
+                $reportText = \Lang::get('core.reports.daily_pending_order_receipt_report.head') ;//"";
+                $reportText .= implode("<br/>", $poItems);
+                $reportText .= \Lang::get('core.reports.daily_pending_order_receipt_report.foot');
+                $report[$locationId] = $reportText;
+            }
+        }
+
+        //        FEGSystemHelper::logit("Games Not Played for Location $location", $lf, $lp);
+        $_logger->log("REPORT MAIN", $report);
+
+        return $report;
+    }
+    public static function getLocationWiseDailyPendingOrdersToReceiveNonMerchandiseReport($params)
+    {
+
+        $daysThreshold = Options::getOption('order_receipt_reminder_days_threshold', 10);
+        $defaultSeekDate = strtotime('now');
+        if (!empty($daysThreshold)) {
+            $defaultSeekDate = strtotime("now -{$daysThreshold} days");
+        }
+        /** @var $date */
+        /** @var $location */
+        /** @var $_task */
+        /** @var $_logger */
+        extract(array_merge([
+            'date' => date('Y-m-d H:i:s', $defaultSeekDate),
+            'location' => null,
+            '_task' => [],
+            '_logger' => null,
+        ], $params));
+
+        $lf = "daily-order-to-receive-data.log";
+        $lp = "FEGCronTasks/daily-reports/orders-to-receive";
+        $report = [];
+        $reportData = [];
+
+        //$query = order::where('invoice_verified_date', '<=', $date)->where('invoice_verified', true);
+        $query = order::where('date_ordered', '<=', $date)->where('invoice_verified', true);
+        $query->whereIn('status_id', [order::OPENID1, order::OPENID2, order::OPENID3]);
+        if (!empty($location) && is_array($location)) {
+
+            $query->whereIn('location_id', $location);
+        }
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        if(!empty($pass['calculate price according to case price'])) {
+            $order_types = explode(",",$pass['calculate price according to case price']->data_options);
+
+            $query->whereNotIn('order_type_id', $order_types);
+        }
+        $query->orderBy('location_id', 'asc');
+
+        $data = $query->get();
+
+        $_logger->log("DATA". $data);
         foreach($data as $item) {
             if(empty($reportData[$item->location_id])) {
                 $reportData[$item->location_id] = [];
