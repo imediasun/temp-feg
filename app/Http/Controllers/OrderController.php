@@ -3079,16 +3079,18 @@ ORDER BY aa_id");
         $subject = 'Inquire orders';
 
 
-        foreach ($toAddresses as $to){
+//        foreach ($toAddresses as $to){
             $options['message'] = $message;
             $options['subject'] = $subject;
-            $options['to'] = $to;
+//            $options['to'] = $toAddresses;//$to;
             $options['cc'] = $systemEmailRecipients['cc'];
             $options['bcc'] = $systemEmailRecipients['bcc'];
             $options['replyTo'] = '';
             $options['preferGoogleOAuthMail'] = 'true';
-            FEGSystemHelper::sendEmail($to, 'Inquire Order', $message, $fromEmail, $options);
-        }
+            FEGSystemHelper::sendEmail(
+                $systemEmailRecipients['to'],//$to,
+                'Inquire Order', $message, $fromEmail, $options);
+//        }
 
         return \Redirect::to('order')
             ->with('messagetext', 'Inquire order email sent successfully!')->with('msgstatus', 'success');
