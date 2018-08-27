@@ -7,6 +7,7 @@ use App\Events\Event;
 use App\Events\PostSaveOrderEvent;
 use App\Http\Controllers\controller;
 use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
+use App\Library\FEG\System\Email\Report;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\location;
@@ -198,7 +199,6 @@ class OrderController extends Controller
 
     public function getIndex()
     {
-
 
         /*\App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
