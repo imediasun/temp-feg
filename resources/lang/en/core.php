@@ -250,7 +250,7 @@ return array(
 
     "reports" => [
         "daily_pending_order_receipt_report" => [
-            "head" => "<b>If any of the Purchase Order numbers mentioned in this email have not yet been received, please disregard that Purchase Order number.</b> <br/>
+            "head" => " <br/><b>If any of the Purchase Order numbers mentioned in this email have not yet been received, please disregard that Purchase Order number.</b> <br/>
                         <p>The following Purchase Orders need to be received in the FEG Admin.</p> <br/>",
             "foot" => "<br/> <p>To Receive an Order:</p>
                 <ol>
