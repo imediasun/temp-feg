@@ -24,6 +24,7 @@ function reloadData( id,url,callback, options)
         App.autoCallbacks.runCallback.call($( id +'Grid' ), 'reloaddata', 
             {id:id, url:url, data:data, isClear: isClearSearch});
         if (!isBackground) {
+            $(document).scrollTop(0);
             $( id +'Grid' ).show();
             $('.ajaxLoading').hide();
         }
@@ -580,3 +581,8 @@ function SximoModalLarge( url , title)
 	});
 	$('#sximo-modal-lg').modal('show');	
 }
+$(function(){
+    $(".collapse-close, .cancelButton").click(function(){
+        $(document).scrollTop(0);
+    });
+});

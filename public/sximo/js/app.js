@@ -204,6 +204,7 @@ App.autoCallbacks.registerCallback('reloaddata', function(params){
     initExport(this);
     //alignColumns(this);
     //initUserPopup(this);
+    $(document).scrollTop(0);
 });
 App.autoCallbacks.registerCallback('columnselector', function(params){
 
@@ -1378,4 +1379,9 @@ $(document).on('change', 'select' ,function () {
             getProductSubTypes(productTypeId, productSubTypeSelectors, $(this));
         }
     }
+});
+$(function(){
+    $(document).on("click",".collapse-close,.cancelButton",function(){
+        $(document).scrollTop(0);
+    });
 });

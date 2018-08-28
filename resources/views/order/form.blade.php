@@ -1067,7 +1067,7 @@
             $('.ajaxLoading').show();
         }
         function showResponse(data) {
-
+            $(document).scrollTop(0);
             $('.ajaxLoading').hide();
             clearTimeout(hidePopup);
             clearTimeout(showFirstPopup);
@@ -1075,6 +1075,7 @@
             if (data.status == 'success') {
                 notyMessage(data.message);
                 ajaxViewChange("#order", data.saveOrSendContent);
+                $(document).scrollTop(0);
             }
             /* else if(data.status == "po-error")
              {

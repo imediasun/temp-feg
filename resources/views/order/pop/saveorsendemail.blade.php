@@ -206,7 +206,7 @@
 
 
         $(document).ready(function () {
-            
+            $(document).scrollTop(0);
             App.initAutoComplete($('.orderEmailAutoComplete'),
                 {url: siteUrl+'/order/email-history'});
 
@@ -234,10 +234,12 @@
             });
         });
         $("#po-close, a.#closeSaveOrSend").click(function(e){
+            $(document).scrollTop(0);
             reloadOrder();
         });
         $("#po-link").click(function () {
             $(this).hide();
+            $(document).scrollTop(0);
             $('#po-close').show();
         });
         $("#to1").click(function () {
@@ -264,7 +266,7 @@
             var moduleUrl = '{{ $pageUrl }}',
                 redirect = "{{ \Session::get('redirect') }}",
                 redirectLink = "{{ url() }}/" + redirect;
-
+            $(document).scrollTop(0);
             if (/order/i.test(redirect)) {
                 $('.ajaxLoading').hide();
                 SximoModalHide($('.modal'));
@@ -278,6 +280,7 @@
         }
         $("#send-only").click(function (e) {
             $('.ajaxLoading').show();
+            $(document).scrollTop(0);
             var send_to = "{{ $send_to }}" != " " && "{{ $send_to }}";
             var mode = $(this).data('mode');
             emailSending(send_to, mode);
@@ -287,6 +290,7 @@
         });
         $("#save_send_modal").click(function () {
             $('.ajaxLoading').show();
+            $(document).scrollTop(0);
             var send_to = "{{ $send_to }}" != " " && "{{ $send_to }}";
             var mode = $(this).data('mode');
             emailSending(send_to, mode);
@@ -352,7 +356,7 @@
             $('.ajaxLoading').show();
         }
         function showResponse(data) {
-            
+            $(document).scrollTop(0);
             if (data.status == 'success') {
                 notyMessage(data.message);
                 $('.ajaxLoading').hide();
