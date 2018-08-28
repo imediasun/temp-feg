@@ -110,7 +110,7 @@
 
                                 <div class="col-md-8">
                                     <textarea class="form-control" cols="5" rows="6" name="message"
-                                              id="message"/>Purchase Order</textarea>
+                                              id="message"/></textarea>
                                 </div>
                             </div>
                             <input type="hidden" name="type" value="send"/>
@@ -177,7 +177,7 @@
 
                                 <div class="col-md-8">
                                     <textarea class="form-control" cols="5" rows="6" name="message"
-                                              id="message1"/>Purchase Order</textarea>
+                                              id="message1"/></textarea>
                                 </div>
                                 <input type="hidden" name="type" value="sendorsave"/>
                             </div>
