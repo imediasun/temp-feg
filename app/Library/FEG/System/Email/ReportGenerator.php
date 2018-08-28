@@ -2269,7 +2269,6 @@ class ReportGenerator
 
         $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
         $isTest = !empty($isTest) ?  $isTest : $task->is_test_mode;
-        $isTest = 1;
         $_logger->log("Start Location wise Report for $humanDate");
         if(!empty($locationwiseMerchandiseReport[0])) {
             $configName = 'Daily Pending Merchandise Order Receipt Report';
