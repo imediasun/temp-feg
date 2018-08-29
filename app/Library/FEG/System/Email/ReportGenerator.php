@@ -2033,7 +2033,7 @@ class ReportGenerator
     public static function sendEmailReport($options) {  
         $options['from'] = "support@fegllc.com";
         $options['fromName'] = "FEG Reports";
-        $options['message'] = "If there are any issues with this report please contact support@fegllc.com<br>".$options['message'];
+        $options['message'] = "If there are any issues with this report, please forward this report, along with an explanation of the problem, to support@fegllc.com.<br /><br />".$options['message'];
         FEGSystemHelper::sendSystemEmail($options);
     }
 
