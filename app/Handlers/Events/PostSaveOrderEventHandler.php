@@ -36,7 +36,6 @@ class PostSaveOrderEventHandler
     {
         $item = (object)$event->order_item;
         $product = product::find($item->product_id);
-        $productObj = $product;
         //fix added by arslan on 4/3/2018 for Error Report # 134
         if(is_null($product)){
             return ;
@@ -108,7 +107,7 @@ class PostSaveOrderEventHandler
                 $message .='Product Name: '.$product->vendor_description.'<br>';
                 $message .='Product SKU: '.$product->sku.'<br>';
                 $message .='Reserved Quantity: '.$adjustmentAmount.'<br>';
-                self::sendProductReservedQtyEmail($message,$sendEmail, $productObj);
+                self::sendProductReservedQtyEmail($message,$sendEmail, $product);
             }
             if ($adjustmentAmount <= $product->reserved_qty_limit && $inactive == 0) {
                 /* When reserved quantity par amount is met or exceeded (reserve quantity reduced to par amount or less):
@@ -132,7 +131,7 @@ class PostSaveOrderEventHandler
                 $message .='Product SKU: '.$product->sku.'<br>';
                 $message .='Reserved Qty Par Amount: '.$product->reserved_qty_limit.'<br>';
                 $message .='Remaining Reserved Quantity: '.$adjustmentAmount."<br>";
-                self::sendProductReservedQtyEmail($message,$sendEmail, $productObj);
+                self::sendProductReservedQtyEmail($message,$sendEmail, $product);
 
             }
         }
