@@ -98,17 +98,19 @@ class PostEditOrderEventHandler
             $ProductObj = product::find($products->id);
             if ($products->reserved_qty_limit >= $adjustmentAmount) {
                 $message = "<span style='color:red;'> Product reserved quantity limit is " . $products->reserved_qty_limit . " and quantity " . $ProductObj->reserved_qty . " is available for product <strong>(" . $products->item_name . ")</strong></span>";
-                self::sendProductReservedQtyEmail($message);
+                self::sendProductReservedQtyEmail($message, $ProductObj);
                 /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
             }
         }
 
     }
 
-    public static function sendProductReservedQtyEmail($message)
+    public static function sendProductReservedQtyEmail($message, $product)
     {
         /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
-        $receipts = FEGSystemHelper::getSystemEmailRecipients("Product Reserved Quantity Email");
+//        $receipts = FEGSystemHelper::getSystemEmailRecipients("Product Reserved Quantity Email For Non Merchandise");
+        $receipts = PostSaveOrderEventHandler::getReceiversEmailsArray($product);
+
         FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
             'subject' => "Product Reserved Quantity Email Alert",
             'message' => $message,
