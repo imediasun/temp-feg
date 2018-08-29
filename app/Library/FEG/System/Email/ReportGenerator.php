@@ -2259,6 +2259,15 @@ class ReportGenerator
         }
 
         $humanDate = \DateHelpers::formatDate($today);
+        $dateEnd = date('Y-m-d', strtotime('-1 day'));
+        $dateStart = date('Y-m-d', strtotime('-7 day'));
+        $dStart = new \DateTime($dateStart);
+        $dEnd  = new \DateTime($dateEnd);
+        $dDiff = $dStart->diff($dEnd);
+        $days = $dDiff->days + 1;
+        $humanDateStart = FEGSystemHelper::getHumanDate($dateStart);
+        $humanDateEnd = FEGSystemHelper::getHumanDate($dateEnd);
+        $humanDateRange = "$humanDateStart - $humanDateEnd ($days days)";
 
         $locationParams = array_merge($params, ['location' => $reportingLocations, 'date' => $date]);
         $locationwiseMerchandiseReport = self::getLocationWiseDailyPendingOrdersToReceiveMerchandiseReport($locationParams,'weekly');
@@ -2274,7 +2283,7 @@ class ReportGenerator
             $configName = 'Daily Pending Merchandise Order Receipt Report';
             $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
             self::sendEmailReport(array_merge($emailRecipients, [
-                'subject' => "Orders which need to be Received - Weekly Report - $humanDate",
+                'subject' => "Orders which need to be Received Weekly Summary | $humanDateRange",
                 'message' => $locationwiseMerchandiseReport[0],
                 'isTest' => $isTest,
                 'configName' => $configName,
@@ -2289,7 +2298,7 @@ class ReportGenerator
             $configName = 'Daily Pending Non Merchandise Order Receipt Report';
             $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
             self::sendEmailReport(array_merge($emailRecipients, [
-                'subject' => "Orders which need to be Received - Weekly Report - $humanDate",
+                'subject' => "Orders which need to be Received Weekly Summary | $humanDateRange",
                 'message' => $locationwiseNonMerchandiseReport[0],
                 'isTest' => $isTest,
                 'configName' => $configName,
