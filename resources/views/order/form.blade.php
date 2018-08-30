@@ -539,7 +539,7 @@
         var hidePopup;
         var showFirstPopup;
         var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
-        $('#alt_ship_to').on('change', function () {
+        $(document).on('ifChanged','#alt_ship_to', function () {
                     hideShowAltLocation();
                 }
         );
