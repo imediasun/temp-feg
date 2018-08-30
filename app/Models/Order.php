@@ -604,6 +604,15 @@ class order extends Sximo
 
                 $data['prefill_type'] = 'edit';
             }
+            if (isset($data['alt_address'])) {
+                $altAddr = explode('|', $data['alt_address']);
+                $data['alt_name'] = isset($altAddr[0]) ? $altAddr[0] : "";
+                $data['alt_street'] = isset($altAddr[1]) ? $altAddr[1] : "";
+                $data['alt_city'] = isset($altAddr[2]) ? $altAddr[2] : "";
+                $data['alt_state'] = isset($altAddr[3]) ? $altAddr[3] : "";
+                $data['alt_zip'] = isset($altAddr[4]) ? $altAddr[4] : "";
+                $data['shipping_notes'] = isset($altAddr[5]) ? $altAddr[5] : "";
+            }
             $data['today'] = ($mode) && $mode != 'clone' ? $order_query[0]->date_ordered : $this->get_local_time('date');
         } elseif (substr($mode, 0, 3) == 'SID') {
             $item_count = substr_count($mode, '-');
