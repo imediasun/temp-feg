@@ -307,6 +307,7 @@ class ReadComment extends Command
 
                     case 1:
                         // multi-part headers, can ignore
+                       $this->getIMapAttachment($connection, $messageNumber,'20000115');
 
                         break;
                     case 2:
@@ -381,7 +382,7 @@ class ReadComment extends Command
     private function emailgetEmailAttachmentFilenameFromPart($part) {
 
         $filename = '';
-
+print_r($part->parameters[0]->attribute);
         if($part->ifdparameters) {
             foreach($part->dparameters as $object) {
                 if(strtolower($object->attribute) == 'filename') {
@@ -400,6 +401,69 @@ class ReadComment extends Command
 
         return $filename;
 
-    }    
+    }
+    function getIMapAttachment($inbox,$email_number,$ticketId){
+        $structure = imap_fetchstructure($inbox,$email_number);
+        $attachments = array();
+        if(isset($structure->parts) && count($structure->parts)) {
+            for($i = 0; $i < count($structure->parts); $i++) {
+                $attachments[$i] = array(
+                    'is_attachment' => false,
+                    'filename' => '',
+                    'name' => '',
+                    'attachment' => '');
+
+                if($structure->parts[$i]->ifdparameters) {
+                    foreach($structure->parts[$i]->dparameters as $object) {
+                        if(strtolower($object->attribute) == 'filename') {
+                            $attachments[$i]['is_attachment'] = true;
+                            $attachments[$i]['filename'] = $object->value;
+                        }
+                    }
+                }
+
+                if($structure->parts[$i]->ifparameters) {
+                    foreach($structure->parts[$i]->parameters as $object) {
+                        if(strtolower($object->attribute) == 'name') {
+                            $attachments[$i]['is_attachment'] = true;
+                            $attachments[$i]['name'] = $object->value;
+                        }
+                    }
+                }
+
+                if($attachments[$i]['is_attachment']) {
+                    $attachments[$i]['attachment'] = imap_fetchbody($inbox, $email_number, $i+1);
+                    if($structure->parts[$i]->encoding == 3) { // 3 = BASE64
+                        $attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
+                    }
+                    elseif($structure->parts[$i]->encoding == 4) { // 4 = QUOTED-PRINTABLE
+                        $attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
+                    }
+                }
+            } // for($i = 0; $i < count($structure->parts); $i++)
+        } // if(isset($structure->parts) && count($structure->parts))
+
+
+        if(count($attachments)!=0){
+            foreach($attachments as $at){
+                if($at['is_attachment']==1){
+                    $folder = "public/uploads/tickets/comments-attachments";
+                    $filePath = $folder;
+                    if(!file_exists($folder."/ticket-".$ticketId)){
+                        mkdir($folder."/ticket-".$ticketId);
+                        $filePath = $folder."/ticket-".$ticketId."/";
+                    }
+                    if(!file_exists($folder."/ticket-".$ticketId."/".date("Y-m-d"))){
+                        mkdir($folder."/ticket-".$ticketId."/".date("Y-m-d"));
+                        $filePath = $folder."/ticket-".$ticketId."/".date("Y-m-d")."/";
+                    }
+                    $filename = str_replace(".","--".$ticketId.".",$at['filename']);
+                    file_put_contents($filePath.$filename, $at['attachment']);
+                }
+            }
+        }
+
+    }
+
     
 }
