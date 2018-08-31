@@ -450,8 +450,9 @@ print_r($part->parameters[0]->attribute);
                 if($at['is_attachment']==1){
                     $folder = "uploads/tickets/comments-attachments";
                     $filePath = $folder;
-
-                    File::makeDirectory($folder."/ticket-".$ticketId."/".date("Y-m-d"),0777,true,true);
+                    if(!File::exists($folder."/ticket-".$ticketId."/".date("Y-m-d"))) {
+                        File::makeDirectory($folder . "/ticket-" . $ticketId . "/" . date("Y-m-d"), 0777, true, true);
+                    }
                     $filePath = $folder."/ticket-".$ticketId."/".date("Y-m-d")."/";
 
                     $filename = str_replace(".","--".$ticketId.".",$at['filename']);
