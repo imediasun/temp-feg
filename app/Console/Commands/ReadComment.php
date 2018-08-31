@@ -8,6 +8,7 @@ use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Servicerequests;
 use App\Models\Ticketcomment;
 use App\Models\Core\TicketMailer;
+use File;
 
 class ReadComment extends Command
 {
@@ -447,17 +448,14 @@ print_r($part->parameters[0]->attribute);
         if(count($attachments)!=0){
             foreach($attachments as $at){
                 if($at['is_attachment']==1){
-                    $folder = "public/uploads/tickets/comments-attachments";
+                    $folder = "uploads/tickets/comments-attachments";
                     $filePath = $folder;
-                    if(!file_exists($folder."/ticket-".$ticketId)){
-                        mkdir($folder."/ticket-".$ticketId);
-                        $filePath = $folder."/ticket-".$ticketId."/";
-                    }
-                    if(!file_exists($folder."/ticket-".$ticketId."/".date("Y-m-d"))){
-                        mkdir($folder."/ticket-".$ticketId."/".date("Y-m-d"));
-                        $filePath = $folder."/ticket-".$ticketId."/".date("Y-m-d")."/";
-                    }
+
+                    File::makeDirectory($folder."/ticket-".$ticketId."/".date("Y-m-d"),0777,true,true);
+                    $filePath = $folder."/ticket-".$ticketId."/".date("Y-m-d")."/";
+
                     $filename = str_replace(".","--".$ticketId.".",$at['filename']);
+                    echo "\r\n".$filePath.$filename."\r\n";
                     file_put_contents($filePath.$filename, $at['attachment']);
                 }
             }
