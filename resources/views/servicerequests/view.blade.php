@@ -195,6 +195,7 @@
                                 'commentIndex' => $commentsCountIndex, 
                                 'commentIndexText' => 'REPLY #'.$commentsCountIndex, 
                                 'userProfile' => FEGSystemHelper::getTicketCommentUserProfile($comment),
+                                'commentClass' => $comment,
                             ])
                             {{--*/ $commentsCountIndex-- /*--}}
                         @endforeach
@@ -205,6 +206,7 @@
                                 'commentIndex' => 0, 
                                 'commentIndexText' => 'INITIAL REQUEST', 
                                 'userProfile' => $creatorProfile,
+                                'commentClass' => $comment,
                             ])
                     </div>
                     

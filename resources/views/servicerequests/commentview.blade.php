@@ -28,6 +28,10 @@
         </div>
         <div class="commentText">
             {!! $comment !!}
+
+            @foreach($commentClass->attachments as $attachment)
+            <a href="{{ url($attachment->path) }}" class="attachmentLink" target="_blank">{{ $attachment->name }}</a>
+                @endforeach
         </div>            
     </div>
 </div>
