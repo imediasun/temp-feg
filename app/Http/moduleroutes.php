@@ -66,4 +66,5 @@ Route::controller('expensecategories', 'ExpensecategoriesController');
 Route::controller('ordersetting', 'OrdersettingController');
 Route::controller('productlog', 'ProductlogController');
 Route::controller('gallery', 'GalleryController');
+Route::controller('qatestordersdelete', 'QatestordersdeleteController');
 ?>
