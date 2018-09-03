@@ -15,7 +15,7 @@ class QatestordersdeleteController extends Controller {
 	
 	public function __construct() 
 	{
-        if (\Session::get('uid') == '15021') {
+        if (\Session::get('eid') == 'stanlymarian@gmail.com') {
             parent::__construct();
             $this->model = new Qatestordersdelete();
 
