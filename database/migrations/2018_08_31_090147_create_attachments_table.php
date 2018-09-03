@@ -18,7 +18,7 @@ class CreateAttachmentsTable extends Migration
             $table->string("extension");
             $table->string("path");
             $table->integer("attachable_id");
-            $table->integer("attachable_type");
+            $table->string("attachable_type");
             $table->timestamps();
         });
     }
