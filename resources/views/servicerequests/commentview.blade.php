@@ -30,7 +30,7 @@
             {!! $comment !!}
 <br /><br />
             @foreach($commentClass->attachments as $attachment)
-            <a href="{{ url($attachment->path) }}" class="attachmentLink" style="display: inline-block;" target="_blank">{{ $attachment->name }}</a>
+            <a href="{{ url($attachment->path) }}" class="attachmentLink" style="display: inline-block;" target="_blank">{{ \App\Library\FEG\System\FEGSystemHelper::senitizeAttachmentName($attachment->name,['/--.*$/']) }}</a>
                 @endforeach
         </div>            
     </div>
