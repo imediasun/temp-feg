@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Qatestordersdelete;
+use App\Models\vendor;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
@@ -93,8 +95,16 @@ class QatestordersdeleteController extends Controller {
         $this->data['topMessage']	= @$results['topMessage'];
 		$this->data['message']          = @$results['message'];
 		$this->data['bottomMessage']	= @$results['bottomMessage'];
-        
+
 		$this->data['rowData']		= $results['rows'];
+		$rows = $results['rows'];
+		foreach ($rows as $index => $data){
+		    $user = User::find($data->user_id);
+            $rows[$index]->user_id = isset($user->username) ? $user->username : '';
+
+		    $vendor = vendor::find($data->vendor_id);
+            $rows[$index]->vendor_id = isset($vendor->vendor_name) ? $vendor->vendor_name: '';
+        }
 		// Build Pagination
 		$this->data['pagination']	= $pagination;
 		// Build pager number and append current param GET
