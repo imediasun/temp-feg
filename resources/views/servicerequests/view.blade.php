@@ -206,7 +206,7 @@
                                 'commentIndex' => 0, 
                                 'commentIndexText' => 'INITIAL REQUEST', 
                                 'userProfile' => $creatorProfile,
-                                'commentClass' => $comment,
+                                'commentClass' => $comments,
                             ])
                     </div>
                     
