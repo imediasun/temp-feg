@@ -1956,4 +1956,43 @@ $message" .
         }
     }
 
+    /**
+     * @param $name
+     * @param array $filterREGXs
+     * @param bool $addExtension
+     * @return mixed|string
+     */
+
+    public static function senitizeAttachmentName($name, $filterREGXs=[], $addExtension = true)
+    {
+        $extension = substr($name,strpos($name,".")+1,strlen($name));
+        $prefix = substr($name,0,strpos($name,"."));
+        foreach ($filterREGXs as $filterRegx){
+            $prefix = preg_replace($filterRegx, '', $prefix);
+        }
+        return ($addExtension == true) ? $prefix.".".$extension: $prefix;
+    }
+
+    /**
+     * @param $commentData
+     * @return array
+     */
+
+    public static function getCommentAttachmentDetails($commentData)
+    {
+        $attachmentsDetail = [];
+        if($commentData->attachments) {
+          $userData = self::getTicketCommentUserProfile($commentData);
+            foreach ($commentData->attachments as $attachment) {
+                $attachmentsDetail[] = [
+                    'fullName' => $userData['fullName'],
+                    'date' => \DateHelpers::formatDate($attachment->created_at),
+                    'url' => $attachment->path,
+                    'fileName' => self::senitizeAttachmentName($attachment->name, ['/--.*$/']),
+                ];
+            }
+        }
+        return $attachmentsDetail;
+    }
+
 }
