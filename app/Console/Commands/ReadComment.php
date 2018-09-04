@@ -466,10 +466,13 @@ class ReadComment extends Command
                     $filePath = $folder."/ticket-".$ticketId."/".date("Y-m-d")."/";
 
                     $filename = str_replace(".","--".$ticketId.".",$at['filename']);
+                    if(!File::exists($filePath.$filename)){
+                        $filename = str_replace(".","_1.",$filename);
+                    }
                     $ticketAttachments[] = [
                         "name" => $filename,
                         "path" => $filePath . $filename,
-                        "extension" => "jpg",
+                        "extension" => substr($filename,strpos($filename,".")+1,strlen($filename)),
                     ];
                     file_put_contents("public".$filePath.$filename, $at['attachment']);
                 }
