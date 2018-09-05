@@ -201,7 +201,68 @@ table.budget-summery td:nth-child(2){
     color: #FFF;
     cursor: pointer !important;
 }
-
+.gallery-tabs-style{
+    margin-top: 15px;
+}
+.gallery-tabs-style:after{
+    content: '';
+    clear:both;
+}
+.gallery-tabs-style span{
+    display: inline-block;
+    border:1px solid #dfdfdf;
+    border-bottom: none;
+    position: relative;
+    z-index: 100;
+}
+.gallery-tabs-style span.active,.gallery-tabs-style span.active a{
+    z-index: 1001;
+    background: white;
+    opacity: 1;
+}
+.gallery-tabs-style span, .gallery-tabs-style span a{
+    border-top-right-radius: 60px;
+    display: inline-block;
+    padding: 2px 13px;
+    color: #195a97;
+    background: #ececec;
+    cursor: pointer;
+    opacity: 0.7;
+    margin-bottom: -1px;
+}
+.gallery-first-tab{
+    margin-left:15px;
+}
+a.moduleTab, a.moduleTab:visited, a.moduleTab:focus, a.moduleTab:active, a.moduleTab:hover{
+    outline:0 none !important;
+    border:0px;
+}
+.gallery-tabs-style span.not-first{
+    margin-left: -5px;
+}
+span.moduleTab{
+    position: relative;
+}
+span.moduleTab:after{
+    content: '';
+    width: 100%;
+    background: white;
+    display: none;
+    height: 5px;
+    position: absolute;
+    left: 0px;
+}
+span.moduleTab.active:after{
+    content: '';
+    width: 100.90%;
+    background: white;
+    display: block;
+    height: 3px;
+    position: absolute;
+    left: -1px;
+    border-left: 1px solid #dfdfdf;
+    border-right: 1px solid #dfdfdf;
+}
 @media (min-width: 1281px) and (max-width: 1440px) {
     .downloadGameForSale{
         margin-left: 66px !important;

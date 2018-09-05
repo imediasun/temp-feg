@@ -7,6 +7,7 @@
         .sbox {
             border-top: 0px solid transparent !important;
         }
+        .sbox-content{ border-color: #f9f9f9; padding-top: 0px; }
     </style>
     <div class="page-content row">
         <!-- Page header -->
@@ -25,20 +26,32 @@
         </div>
 
         <div class="page-content-wrapper m-t">
-            <ul class="nav nav-tabs">
-                <li style="width: 50%;" class="active" tab-data="" onclick="refreshTabContent();"><a class="moduleTab"
+            <div class="sbox">
+                <div class="sbox-title">
+                    <h5> <i class="fa fa-table"></i> </h5>
+                    <div class="sbox-tools">
+                        <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="" id="clearSearchbtn" data-original-title="Clear Search"><i class="fa fa-trash-o"></i> Clear Search </a>
+                        <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="" id="reloadBtb"  data-original-title="Reload Data"><i class="fa fa-refresh"></i></a>
+                        <a href="#" class="btn btn-xs btn-white tips" id="settingbtn" title="" data-original-title=" Configuration"><i class="fa fa-cog"></i></a>
+                    </div>
+                </div>
+            <div class="gallery-tabs-style">
+                <span  class="gallery-first-tab active merchindisetheminggallarytab moduleTab"  id="merchindisetheminggallary" onclick="refreshTabContent(); $('.redemptioncountergallarytab').removeClass('active'); $(this).addClass('active')"><a class="moduleTab"
                                                                       href="#merchindisetheminggallary"
-                                                                      data-toggle="tab" id="merchindisetheminggallary">Merchandise
-                        Theme Gallery</a></li>
-                <li style="width: 50%;" onclick="refreshTabContent();"><a class="moduleTab" href="#redemptioncountergallary" data-toggle="tab"
-                                           id="redemptioncountergallary">Redemption Counter Gallery</a></li>
-            </ul>
+                                                                       id="merchindisetheminggallary">Merchandise
+                        Theme Gallery</a></span>
+                <span  onclick="refreshTabContent(); $('.merchindisetheminggallarytab').removeClass('active'); $(this).addClass('active')"
+                     class="redemptioncountergallarytab not-first moduleTab" id="redemptioncountergallary">
+                    <a class="moduleTab" href="#redemptioncountergallary"
+                                           id="redemptioncountergallary">Redemption Counter Gallery</a></span>
+            </div>
             <div id="merchindisetheminggallaryView"></div>
             <div id="redemptioncountergallaryView"></div>
             <div class="tab-content loadContent" id="merchindisetheminggallaryGrid"
                  style="background: #FFFFff; min-height:500px;"></div>
             <div class="tab-content loadContent" id="redemptioncountergallaryGrid"
                  style="background: #FFFFff; min-height:500px; display: none;"></div>
+        </div>
         </div>
         <div class="clear"></div>
     </div>
@@ -54,6 +67,7 @@
                 $("#merchindisetheminggallaryGrid").empty();
                 $("#redemptioncountergallaryGrid").empty();
                 loadModuleContent(moduleTab.attr('id'));
+                return false;
             });
             $(document).on("keypress",".input-sm",function(e){
                 if(e.which == 13 || e.keyCode == 13){
@@ -77,6 +91,7 @@
                 url: '/' + contentPath + '/data',
                 type: "POST",
                 success: function (response) {
+                    $(document).scrollTop(0);
                     if (contentPath == "merchindisetheminggallary") {
                         $("#redemptioncountergallaryGrid").css("display", "none");
                         $("#redemptioncountergallaryGrid").empty();
