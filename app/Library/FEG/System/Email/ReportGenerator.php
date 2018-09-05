@@ -2214,8 +2214,103 @@ class ReportGenerator
         $_logger->log("End Location wise Report for $humanDate");
 
     }
+    public static function sendLocationWiseDailyPendingOrdersToReceiveEmailWeekly($params = [])
+    {
+        global $__logger;
+        $today = empty($options['date']) ? date('Y-m-d H:i:s') : $options['date'];
 
-    public static function getLocationWiseDailyPendingOrdersToReceiveMerchandiseReport($params)
+        $daysThreshold = Options::getOption('order_receipt_reminder_days_threshold', 10);
+        $defaultSeekDate = strtotime('now');
+        if (!empty($daysThreshold)) {
+            $defaultSeekDate = strtotime("now -{$daysThreshold} days");
+        }
+        /** @var $_task */
+        /** @var $date */
+        /** @var $location */
+        /** @var $_logger */
+        /** @var $sleepFor */
+        extract(array_merge([
+            'date' => date('Y-m-d H:i:s', $defaultSeekDate),
+            'location' => null,
+            'sleepFor' => 0,
+            '_task' => [],
+            '_logger' => null,
+            'isTest' => null,
+        ], $params));
+
+        if (empty($_logger)) {
+            if (empty($__logger)) {
+                $_logger = new MyLog('pending-orders-to-receive.log', 'FEGCronTasks/daily-reports/orders-to-receive', 'Reports');
+                $__logger = $_logger;
+            } else {
+                $_logger = $__logger;
+            }
+        }
+        $params['_logger'] = $_logger;
+
+        if (empty($location)) {
+            $reportingLocations = [];//\App\Models\location::all()->pluck('id');
+        } else {
+            $reportingLocations = explode(',', $location);
+        }
+
+        if (empty($date) || empty(strtotime($date))) {
+            $date = date('Y-m-d H:i:s', $defaultSeekDate);
+        }
+
+        $humanDate = \DateHelpers::formatDate($today);
+        $dateEnd = date('Y-m-d', strtotime('-1 day'));
+        $dateStart = date('Y-m-d', strtotime('-7 day'));
+        $dStart = new \DateTime($dateStart);
+        $dEnd  = new \DateTime($dateEnd);
+        $dDiff = $dStart->diff($dEnd);
+        $days = $dDiff->days + 1;
+        $humanDateStart = FEGSystemHelper::getHumanDate($dateStart);
+        $humanDateEnd = FEGSystemHelper::getHumanDate($dateEnd);
+        $humanDateRange = "$humanDateStart - $humanDateEnd ($days days)";
+
+        $locationParams = array_merge($params, ['location' => $reportingLocations, 'date' => $date]);
+        $locationwiseMerchandiseReport = self::getLocationWiseDailyPendingOrdersToReceiveMerchandiseReport($locationParams,'weekly');
+        $locationwiseNonMerchandiseReport = self::getLocationWiseDailyPendingOrdersToReceiveNonMerchandiseReport($locationParams,'weekly');
+        $_logger->log("PARAMS", $locationParams);
+        $_logger->log("Merchandise REPORT", $locationwiseMerchandiseReport);
+        $_logger->log("Non-Merchandise REPORT", $locationwiseNonMerchandiseReport);
+
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
+        $isTest = !empty($isTest) ?  $isTest : $task->is_test_mode;
+        $_logger->log("Start Location wise Report for $humanDate");
+        if(!empty($locationwiseMerchandiseReport[0])) {
+            $configName = 'Daily Pending Merchandise Order Receipt Report';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
+            self::sendEmailReport(array_merge($emailRecipients, [
+                'subject' => "Orders which need to be Received Weekly Summary | $humanDateRange",
+                'message' => $locationwiseMerchandiseReport[0],
+                'isTest' => $isTest,
+                'configName' => $configName,
+                'configNameSuffix' => "Weekly-$humanDate",
+            ]));
+        }
+
+        if(!empty($locationwiseNonMerchandiseReport[0])) {
+
+            $_logger->log("    Start Weekly Report  for $humanDate");
+
+            $configName = 'Daily Pending Non Merchandise Order Receipt Report';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
+            self::sendEmailReport(array_merge($emailRecipients, [
+                'subject' => "Orders which need to be Received Weekly Summary | $humanDateRange",
+                'message' => $locationwiseNonMerchandiseReport[0],
+                'isTest' => $isTest,
+                'configName' => $configName,
+                'configNameSuffix' => "Weekly-$humanDate",
+            ]));
+        }
+
+
+        $_logger->log("End Location wise Report for $humanDate");
+
+    }
+    public static function getLocationWiseDailyPendingOrdersToReceiveMerchandiseReport($params,$reportType = null)
     {
 
         $daysThreshold = Options::getOption('order_receipt_reminder_days_threshold', 10);
@@ -2239,10 +2334,9 @@ class ReportGenerator
         $report = [];
         $reportData = [];
 
-        //$query = order::where('invoice_verified_date', '<=', $date)->where('invoice_verified', true);
         $query = order::where('date_ordered', '<=', $date)->where('invoice_verified', true);
         $query->whereIn('status_id', [order::OPENID1, order::OPENID2, order::OPENID3]);
-        if (!empty($location) && is_array($location)) {
+        if ($reportType == null && !empty($location) && is_array($location)) {
 
             $query->whereIn('location_id', $location);
         }
@@ -2266,22 +2360,34 @@ class ReportGenerator
             $reportData[$item->location_id][] = $item->po_number;
         }
         $_logger->log("REPORT DATA", $reportData);
-
-        foreach($reportData as $locationId => $poItems) {
-            if (!empty($poItems)) {
-                $reportText = \Lang::get('core.reports.daily_pending_order_receipt_report.head') ;//"";
-                $reportText .= implode("<br/>", $poItems);
-                $reportText .= \Lang::get('core.reports.daily_pending_order_receipt_report.foot');
-                $report[$locationId] = $reportText;
+        if($reportType !=null){
+            $reportText = \Lang::get('core.reports.daily_pending_order_receipt_report.head');
+            $poNumbers = '';
+            foreach ($reportData as $locationId => $poItems) {
+                if (!empty($poItems)) {
+                    $poNumbers .= "<br />".implode("<br/>", $poItems);
+                }
+            }
+            $reportText = !empty($poNumbers) ? $reportText.$poNumbers.\Lang::get('core.reports.daily_pending_order_receipt_report.foot'):'';
+            $report[0] =  $reportText;
+        }else {
+            foreach ($reportData as $locationId => $poItems) {
+                if (!empty($poItems)) {
+                    $reportText = \Lang::get('core.reports.daily_pending_order_receipt_report.head');//"";
+                    $reportText .= implode("<br/>", $poItems);
+                    $reportText .= \Lang::get('core.reports.daily_pending_order_receipt_report.foot');
+                    $report[$locationId] = $reportText;
+                }
             }
         }
+
 
         //        FEGSystemHelper::logit("Games Not Played for Location $location", $lf, $lp);
         $_logger->log("REPORT MAIN", $report);
 
         return $report;
     }
-    public static function getLocationWiseDailyPendingOrdersToReceiveNonMerchandiseReport($params)
+    public static function getLocationWiseDailyPendingOrdersToReceiveNonMerchandiseReport($params,$reportType = null)
     {
 
         $daysThreshold = Options::getOption('order_receipt_reminder_days_threshold', 10);
@@ -2308,7 +2414,7 @@ class ReportGenerator
         //$query = order::where('invoice_verified_date', '<=', $date)->where('invoice_verified', true);
         $query = order::where('date_ordered', '<=', $date)->where('invoice_verified', true);
         $query->whereIn('status_id', [order::OPENID1, order::OPENID2, order::OPENID3]);
-        if (!empty($location) && is_array($location)) {
+        if ($reportType == null && !empty($location) && is_array($location)) {
 
             $query->whereIn('location_id', $location);
         }
@@ -2322,7 +2428,6 @@ class ReportGenerator
         $query->orderBy('location_id', 'asc');
 
         $data = $query->get();
-
         $_logger->log("DATA". $data);
         foreach($data as $item) {
             if(empty($reportData[$item->location_id])) {
@@ -2332,12 +2437,24 @@ class ReportGenerator
         }
         $_logger->log("REPORT DATA", $reportData);
 
-        foreach($reportData as $locationId => $poItems) {
-            if (!empty($poItems)) {
-                $reportText = \Lang::get('core.reports.daily_pending_order_receipt_report.head') ;//"";
-                $reportText .= implode("<br/>", $poItems);
-                $reportText .= \Lang::get('core.reports.daily_pending_order_receipt_report.foot');
-                $report[$locationId] = $reportText;
+        if($reportType !=null){
+            $reportText = \Lang::get('core.reports.daily_pending_order_receipt_report.head');
+            $poNumbers = '';
+            foreach ($reportData as $locationId => $poItems) {
+                if (!empty($poItems)) {
+                    $poNumbers .= "<br />".implode("<br/>", $poItems);
+                }
+            }
+            $reportText = !empty($poNumbers) ? $reportText.$poNumbers.\Lang::get('core.reports.daily_pending_order_receipt_report.foot'):'';
+            $report[0] =  $reportText;
+        }else {
+            foreach ($reportData as $locationId => $poItems) {
+                if (!empty($poItems)) {
+                    $reportText = \Lang::get('core.reports.daily_pending_order_receipt_report.head');//"";
+                    $reportText .= implode("<br/>", $poItems);
+                    $reportText .= \Lang::get('core.reports.daily_pending_order_receipt_report.foot');
+                    $report[$locationId] = $reportText;
+                }
             }
         }
 
