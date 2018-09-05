@@ -1044,7 +1044,11 @@
             var casePrice = $(obj).val();
             var parentId = $(obj).parent('td').parent('tr').attr('id');
             var qtyPerCase = $("#" + parentId + " input[id^=case_per_quantity]").val();
-            $("#" + parentId + " input[name^=price]").val(fixdeci(casePrice/qtyPerCase));
+            if((casePrice/qtyPerCase) > 0) {
+                $("#" + parentId + " input[name^=price]").val(fixdeci(casePrice / qtyPerCase));
+            }else{
+                $("#" + parentId + " input[name^=price]").val('');
+            }
         }
         function fixdeci(value) {
             places = 2;
@@ -2037,7 +2041,11 @@
 
     $(document).on("blur", ".fixDecimal", function () {
         //console.log("blur of .fixDecimal value :"+ $(this).val());
-        $(this).val($(this).fixDecimal());
+        if($(this).val() > 0 ) {
+            $(this).val($(this).fixDecimal());
+        }else{
+            $(this).val('');
+        }
     });
 
 </script>
@@ -2063,5 +2071,6 @@
                     }
                 }
             });
+            reInitParcley();
         });
     </script>
