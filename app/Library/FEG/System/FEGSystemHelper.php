@@ -648,6 +648,13 @@ class FEGSystemHelper
                         $config = array(
                             'username' => env('MAIL_MERCH_USERNAME'),
                             'password' => env('MAIL_MERCH_PASSWORD'),
+                            'driver' => env('MAIL_DRIVER'),
+                            'host' => env('MAIL_HOST'),
+                            'port' => env('MAIL_PORT'),
+                            'from' => array('address' => env('MAIL_USERNAME'), 'name' => env('MAIL_NAME')),
+                            'encryption' => env('MAIL_ENCRYPTION'),
+                            'sendmail' => '/usr/sbin/sendmail -bs',
+                            'pretend' => false,
                         );
                         \Config::set('mail', $config);
                         $from = env('MAIL_MERCH_USERNAME');
