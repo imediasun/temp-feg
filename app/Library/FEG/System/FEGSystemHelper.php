@@ -617,7 +617,7 @@ class FEGSystemHelper
      * @param string $from
      * @param type $options
      */
-    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array())
+    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array(), $mailSendFromMerchandise = false)
     {
         //support@fegllc.com
         if (empty($from)) {
@@ -643,6 +643,16 @@ class FEGSystemHelper
                     }
                     return self::googleOAuthMail($to, $subject, $message, $user, $options);
                 } else {
+
+                    if($mailSendFromMerchandise){
+                        $config = array(
+                            'username' => env('MAIL_MERCH_USERNAME'),
+                            'password' => env('MAIL_MERCH_PASSWORD'),
+                        );
+                        \Config::set('mail', $config);
+                        $from = env('MAIL_MERCH_USERNAME');
+                    }
+
                     return self::laravelMail($to, $subject, $message, $from, $options);
                 }
             }
