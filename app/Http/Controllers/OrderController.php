@@ -3096,26 +3096,26 @@ ORDER BY aa_id");
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
         $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients('Inquire about this order', null, $isTest);
 
-        $toAddresses    = explode(',',  $systemEmailRecipients['to']);
-
         $fromEmail = 'info@fegllc.com';
 
         $message = $this->getShow($orderId, 'emails.inquireOrder');
         $subject = 'Inquire orders';
 
 
-//        foreach ($toAddresses as $to){
-            $options['message'] = $message;
-            $options['subject'] = $subject;
-//            $options['to'] = $toAddresses;//$to;
-            $options['cc'] = $systemEmailRecipients['cc'];
-            $options['bcc'] = $systemEmailRecipients['bcc'];
-            $options['replyTo'] = '';
-            $options['preferGoogleOAuthMail'] = 'true';
-            FEGSystemHelper::sendEmail(
-                $systemEmailRecipients['to'],//$to,
-                'Inquire Order', $message, $fromEmail, $options);
-//        }
+        $options['message'] = $message;
+        $options['subject'] = $subject;
+        $options['cc'] = $systemEmailRecipients['cc'];
+        $options['bcc'] = $systemEmailRecipients['bcc'];
+        $options['replyTo'] = '';
+        $options['preferGoogleOAuthMail'] = 'false';
+        FEGSystemHelper::sendEmail(
+            $systemEmailRecipients['to'],
+            'Inquire Order',
+            $message,
+            $fromEmail,
+            $options,
+            true
+        );
 
         return \Redirect::to('order')
             ->with('messagetext', 'Inquire order email sent successfully!')->with('msgstatus', 'success');
