@@ -9,9 +9,13 @@ use App\Models\ReservedQtyLog;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Log;
+use \App\Models\Sximo\Module;
 
 class PostSaveOrderEventHandler
 {
+
+    private static $module = 'order';
+
     /**
      * Create the event listener.
      *
@@ -103,7 +107,7 @@ class PostSaveOrderEventHandler
                 $message .='Product Name: '.$product->vendor_description.'<br>';
                 $message .='Product SKU: '.$product->sku.'<br>';
                 $message .='Reserved Quantity: '.$adjustmentAmount.'<br>';
-                self::sendProductReservedQtyEmail($message,$sendEmail);
+                self::sendProductReservedQtyEmail($message,$sendEmail, $product);
             }
             if ($adjustmentAmount <= $product->reserved_qty_limit && $inactive == 0) {
                 /* When reserved quantity par amount is met or exceeded (reserve quantity reduced to par amount or less):
@@ -127,7 +131,7 @@ class PostSaveOrderEventHandler
                 $message .='Product SKU: '.$product->sku.'<br>';
                 $message .='Reserved Qty Par Amount: '.$product->reserved_qty_limit.'<br>';
                 $message .='Remaining Reserved Quantity: '.$adjustmentAmount."<br>";
-                self::sendProductReservedQtyEmail($message,$sendEmail);
+                self::sendProductReservedQtyEmail($message,$sendEmail, $product);
 
             }
         }
@@ -146,11 +150,11 @@ class PostSaveOrderEventHandler
         $reservedQtyLog->insert($reservedLogData);
     }
 
-    public static function sendProductReservedQtyEmail($message,$sendEmail)
+    public static function sendProductReservedQtyEmail($message,$sendEmail, $product)
     {
+        $receipts = self::getReceiversEmailsArray($product);
         /*An email alert will be sent when the Reserved Quantity reaches an amount defined per-product. */
         if($sendEmail == 0) {
-            $receipts = FEGSystemHelper::getSystemEmailRecipients("Product Reserved Quantity Email");
             FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
                 'subject' => "Product Reserved Quantity Email Alert",
                 'message' => $message,
@@ -158,4 +162,25 @@ class PostSaveOrderEventHandler
             )));
         }
     }
+
+
+    public static function getReceiversEmailsArray($product)
+    {
+        $productTypeId = $product->prod_type_id;
+
+        $module_id = Module::name2id(self::$module);
+        $pass = \FEGSPass::getMyPass($module_id);
+
+        $dataOptionsString = $pass['calculate price according to case price']->data_options;
+        $dataOptionsArray = explode(',', $dataOptionsString);
+        $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
+
+        if(!in_array($productTypeId, $dataOptionsArray))
+            $receiversEmailAddresses = FEGSystemHelper::getSystemEmailRecipients("Product Reserved Quantity Email For Non Merchandise", null, $isTest);
+        else
+            $receiversEmailAddresses = FEGSystemHelper::getSystemEmailRecipients("Product Reserved Quantity Email For Merchandise", null, $isTest);
+
+        return $receiversEmailAddresses;
+    }
+
 }
