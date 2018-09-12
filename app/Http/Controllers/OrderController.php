@@ -1629,6 +1629,7 @@ class OrderController extends Controller
                         'preferGoogleOAuthMail' => false
                     ];
                     $configName = 'Send Email';
+                    dd($to);
                     $sent = FEGSystemHelper::sendSystemEmail(array(
                         'to' => implode(',', $to),
                         'cc' => $cc,
