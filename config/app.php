@@ -158,8 +158,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
-        Barryvdh\DomPDF\ServiceProvider::class,
-        \App\Providers\MailConfigServiceProvider::class
+        Barryvdh\DomPDF\ServiceProvider::class
 
 
     ],
