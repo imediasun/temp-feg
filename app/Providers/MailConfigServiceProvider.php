@@ -29,13 +29,13 @@ class MailConfigServiceProvider extends ServiceProvider
          */
         if ($this->app->request->getRequestUri() !== "/order/save") {
             $config = array(
-                'driver' => env('MAIL_MERCH_DRIVER'),
-                'host' => env('MAIL_MERCH_HOST'),
+                'driver' => env('MAIL_DRIVER'),
+                'host' => env('MAIL_HOST'),
                 'port' => env('MAIL_PORT'),
                 'from' => array('address' => env('MAIL_USERNAME'), 'name' => env('MAIL_NAME')),
                 'encryption' => env('MAIL_ENCRYPTION'),
-                'username' => env('MAIL_USERNAME'),
-                'password' => env('MAIL_PASSWORD'),
+                'username' => env('MAIL_MERCH_USERNAME'),
+                'password' => env('MAIL_MERCH_PASSWORD'),
                 'sendmail' => '/usr/sbin/sendmail -bs',
                 'pretend' => false,
             );
