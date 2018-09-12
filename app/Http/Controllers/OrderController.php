@@ -1628,7 +1628,7 @@ class OrderController extends Controller
                         'type' => 'application/pdf',
                         'preferGoogleOAuthMail' => false
                     ];
-                    $configName = 'Send Email';
+                    $configName = 'send PO copy';
                     $sent = FEGSystemHelper::sendSystemEmail(array(
                         'to' => implode(',', $to),
                         'cc' => $cc,
