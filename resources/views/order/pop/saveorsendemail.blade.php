@@ -207,7 +207,7 @@
 
         $(document).ready(function () {
             $(document).scrollTop(0);
-            App.initAutoComplete($('.orderEmailAutoComplete'),
+            // App.initAutoComplete($('.orderEmailAutoComplete'),
 
             var orderEmailAutoComplete = $('.orderEmailAutoComplete')
 
