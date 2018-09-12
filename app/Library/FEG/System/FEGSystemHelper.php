@@ -651,7 +651,7 @@ class FEGSystemHelper
                             'driver' => env('MAIL_DRIVER'),
                             'host' => env('MAIL_HOST'),
                             'port' => env('MAIL_PORT'),
-                            'from' => array('address' => env('MAIL_MERCH_USERNAME'), 'name' => env('MAIL_NAME')),
+                            'from' => array('address' => env('MAIL_MERCH_FROM_EMAIL'), 'name' => env('MAIL_NAME')),
                             'encryption' => env('MAIL_ENCRYPTION'),
                             'sendmail' => '/usr/sbin/sendmail -bs',
                             'pretend' => false,
