@@ -1650,7 +1650,7 @@ class OrderController extends Controller
                         'filename' => $filename,
                         'encoding' => 'base64',
                         'type' => 'application/pdf',
-                    ));
+                    ), true);
                     if (!$sent) {
                         return 3;
                     } else {

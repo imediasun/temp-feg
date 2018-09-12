@@ -617,7 +617,7 @@ class FEGSystemHelper
      * @param string $from
      * @param type $options
      */
-    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array())
+    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array(), $mailSendFromMerchandise = false)
     {
         //support@fegllc.com
         if (empty($from)) {
@@ -643,6 +643,23 @@ class FEGSystemHelper
                     }
                     return self::googleOAuthMail($to, $subject, $message, $user, $options);
                 } else {
+
+                    if($mailSendFromMerchandise){
+                        $config = array(
+                            'username' => env('MAIL_MERCH_USERNAME'),
+                            'password' => env('MAIL_MERCH_PASSWORD'),
+                            'driver' => env('MAIL_DRIVER'),
+                            'host' => env('MAIL_HOST'),
+                            'port' => env('MAIL_PORT'),
+                            'from' => array('address' => env('MAIL_USERNAME'), 'name' => env('MAIL_NAME')),
+                            'encryption' => env('MAIL_ENCRYPTION'),
+                            'sendmail' => '/usr/sbin/sendmail -bs',
+                            'pretend' => false,
+                        );
+                        \Config::set('mail', $config);
+                        $from = env('MAIL_MERCH_USERNAME');
+                    }
+
                     return self::laravelMail($to, $subject, $message, $from, $options);
                 }
             }
@@ -1179,7 +1196,7 @@ class FEGSystemHelper
      *
      *
      */
-    public static function sendSystemEmail($options)
+    public static function sendSystemEmail($options, $sendEmailFromMerch = false)
     {
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
@@ -1260,7 +1277,7 @@ $message" .
 
         self::logit("Sending Email", $lf, $lp);
         self::logit($options, $lf, $lp);
-        $status = self::sendEmail($to, $subject, $message, $from, $options);
+        $status = self::sendEmail($to, $subject, $message, $from, $options, $sendEmailFromMerch);
         self::logit("Email sent Status = " . $status, $lf, $lp);
         self::logit("Email sent", $lf, $lp);
         return $status;
