@@ -1212,7 +1212,6 @@ class FEGSystemHelper
         ), $options);
 
         extract($options);
-        dd($to);
         $configNameSanitized = preg_replace('/[\W]/', '-', strtolower($configName));
 
         $lf = "email-"
@@ -1256,6 +1255,7 @@ $message" .
             $options['to'] = $to = $emailRecipients['to'];
             $options['cc'] = $cc = $emailRecipients['cc'];
             $options['bcc'] = $bcc = $emailRecipients['bcc'];
+            dd($to);
             if (empty($to)) {
                 $to = "e5devmail@gmail.com";
             }
