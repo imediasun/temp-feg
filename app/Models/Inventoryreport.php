@@ -87,6 +87,7 @@ class inventoryreport extends Sximo  {
         $order_type_id = @$filters['Order_Type'];
         $prod_type_id = @$filters['Product_Type'];
         $prod_sub_type_id = @$filters['Product_Sub_Type'];
+        $isBrokenCase = @$filters['is_broken_case'];
         if (empty($location_id)) {
             $forAllLocations = true;
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
@@ -131,6 +132,11 @@ class inventoryreport extends Sximo  {
             if($productUsageReport->isTypeRestricted()){
                 $typeDisplayOnly = " AND OC.prod_type_id IN(".$productUsageReport->getAllowedTypes().") ";
             }
+            $whereIsBrokenCase = "";
+            if($isBrokenCase === '0' || $isBrokenCase === '1'){
+                $whereIsBrokenCase = " AND OC.is_broken_case = '".$isBrokenCase."'";
+            }
+
             $module_id = Module::name2id('order');
             $case_price_permission = \FEGSPass::getPasses($module_id,'module.order.special.calculatepriceaccordingtocaseprice',false);
             $casePriceCats = $case_price_permission["calculate price according to case price"]->data_options;
@@ -168,7 +174,8 @@ class inventoryreport extends Sximo  {
             Case_Price,
             IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,SUM(Unit_Price_ORIGNAL* qty),SUM(Case_Price_ORIGNAL * qty)),SUM(Unit_Price_ORIGNAL*qty)) AS Total_Spent,
             start_date,end_date
-            ,qty_per_case,prod_type_id,prod_sub_type_id
+            ,qty_per_case,prod_type_id,prod_sub_type_id,
+            IF(is_broken_case=0 OR is_broken_case IS NULL,'NO','YES') AS is_broken_case
              FROM ( 
                     SELECT P.id , O.id as orderId,
                     IF(OC.sku = '' OR OC.sku IS NULL,P.sku,OC.sku) AS sku,
@@ -219,11 +226,11 @@ class inventoryreport extends Sximo  {
             }
             $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
                             AND O.created_at <= '$date_end' 
-                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType $typeDisplayOnly ";
+                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType $typeDisplayOnly $whereIsBrokenCase";
 
             // both group by quires are same
             $groupQuery = " GROUP BY OC.item_name,OC.qty_per_case,order_type";
-            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,Posted ";
+            $groupQuery2 = " GROUP BY Product,qty_per_case,Product_Type,sku,Posted,is_broken_case ";
 
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
                 ' ORDER BY Unit_Price ';
