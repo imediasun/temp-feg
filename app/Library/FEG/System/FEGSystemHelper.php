@@ -1255,7 +1255,6 @@ $message" .
             $options['to'] = $to = $emailRecipients['to'];
             $options['cc'] = $cc = $emailRecipients['cc'];
             $options['bcc'] = $bcc = $emailRecipients['bcc'];
-            dd($to);
             if (empty($to)) {
                 $to = "e5devmail@gmail.com";
             }
