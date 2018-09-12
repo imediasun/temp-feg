@@ -1,5 +1,6 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="/sximo/css/sximo-light-blue.css">
 
 <div class="sbox">
     <div class="sbox-content">
@@ -8,14 +9,13 @@
                 <fieldset>
                     <legend>Order Info</legend>
                     <div>
-                        {{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}: {!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name',$nodata['location_id'])!!}
+                        {{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}: @for($i=0; $i<10; $i++)&nbsp; @endfor{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name',$nodata['location_id'])!!}
                     </div>
                     <div class="clearfix"></div>
                     <div class="form-group">
                         {{ SiteHelpers::activeLang('PO Number', (isset($fields['po_number']['language'])? $fields['po_number']['language'] : array())) }}: @for($i=0; $i<7; $i++)&nbsp; @endfor{{ \DateHelpers::formatStringValue($row->po_number) }}
                     </div>
                     <div class="clearfix"></div>
-
                     <div class="form-group  ">
                         {{ SiteHelpers::activeLang('Vendor', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) }}: @for($i=0; $i<11; $i++)&nbsp; @endfor{!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name',$nodata['vendor_id']) !!}
                     </div>
@@ -25,14 +25,14 @@
         <div class="clr clear"></div>
         <br/>
 
-        <div class="col-md-12" style="border: 1px solid black;;background: #fff;padding:10px 10px 0px">
+        <div class="col-md-12">
             <fieldset>
                 <legend> Order Items</legend>
                 <?php
                 $dataOptions = explode(',',$case_price_permission->data_options);
                 $case = in_array($order_data['order_type'],$dataOptions );
                 ?>
-                <table class="table table-wi table-responsive table-striped table-bordered table-condensed">
+                <table class="table table-wi table-responsive table-striped table-bordered table-condensed" style="width: 100% !important;">
                     <thead>
                     <tr>
                         <th style="border: 1px solid grey;">NO #</th>
@@ -43,16 +43,16 @@
                                 *
                             @endif
                         </th>
-                        <th style="border: 1px solid black;">Unit Price
+                        <th style="border: 1px solid grey;">Unit Price
                             @if($case == 0)
                                 *
                             @endif
                         </th>
-                        <th style="border: 1px solid black;">Item Quantity </th>
+                        <th style="border: 1px solid grey;">Item Quantity </th>
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
                             <th>Game</th>
                         @endif
-                        <th style="border: 1px solid black;">Total ($)</th>
+                        <th style="border: 1px solid grey;">Total ($)</th>
 
                     </tr>
                     </thead>
@@ -61,27 +61,27 @@
                     @if( $order_data['requests_item_count'] > 0 )
                         @for($i = 0 ; $i < $order_data['requests_item_count']; $i++)
                             <tr>
-                                <td style="border: 1px solid black;">{{ $i+1 }} </td>
-                                <td style="border: 1px solid black;">{{  \DateHelpers::formatStringValue($order_data['skuNumArray'][$i])}}</td>
-                                <td style="border: 1px solid black;">{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
-                                <td style="border: 1px solid black;">
+                                <td style="border: 1px solid grey;">{{ $i+1 }} </td>
+                                <td style="border: 1px solid grey;">{{  \DateHelpers::formatStringValue($order_data['skuNumArray'][$i])}}</td>
+                                <td style="border: 1px solid grey;">{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
+                                <td style="border: 1px solid grey;">
                                     {{CurrencyHelpers::formatPrice($order_data['itemCasePrice'][$i]) }}
                                 </td>
-                                <td style="border: 1px solid black;">
+                                <td style="border: 1px solid grey;">
                                     {{CurrencyHelpers::formatPrice($order_data['orderPriceArray'][$i]) }}
                                 </td>
-                                <td style="border: 1px solid black;">{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
+                                <td style="border: 1px solid grey;">{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
                                 @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
                                     <td>{{  \DateHelpers::formatStringValue($order_data['gamenameArray'][$i]) }}</td>
                                 @endif
-                                <td style="border: 1px solid black;">{{ CurrencyHelpers::formatPrice($order_data['orderItemsPriceArray'][$i]* $order_data['orderQtyArray'][$i],\App\Models\Order::ORDER_PERCISION)}}</td>
+                                <td style="border: 1px solid grey;"> {{  CurrencyHelpers::formatPrice(($order_data['brokenCaseArray'][$i] ) ? $order_data['OriginalUnitPriceArray'][$i]* $order_data['orderQtyArray'][$i] :(!in_array($row->order_type_id,$typesUsingCasePrice)) ? $order_data['OriginalUnitPriceArray'][$i]* $order_data['orderQtyArray'][$i] : $order_data['OriginalCasePriceArray'][$i]* $order_data['orderQtyArray'][$i],\App\Models\Order::ORDER_PERCISION)}}</td>
                             </tr>
                         @endfor
                         <tr>
                             @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
-                                <td colspan="7">&nbsp;</td>
-                            @else
                                 <td colspan="6">&nbsp;</td>
+                            @else
+                                <td colspan="5">&nbsp;</td>
                             @endif
                             <td  colspan="1" style="border: 1px solid grey;"><b>Sub Total ($)</b></td>
                             <td colspan="1" style="border: 1px solid grey;">
