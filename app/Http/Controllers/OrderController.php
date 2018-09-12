@@ -1128,7 +1128,6 @@ class OrderController extends Controller
 
     function postSaveorsendemail(Request $request)
     {
-        dd(\Config::get('mail'));
         $type = $request->get('type');
         $from = $request->get('from');
         $from = !empty($from) ? $from : env('MAIL_USERNAME');
