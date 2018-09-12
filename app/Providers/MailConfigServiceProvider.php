@@ -40,7 +40,6 @@ class MailConfigServiceProvider extends ServiceProvider
                 'pretend' => false,
             );
             \Config::set('mail', $config);
-            dd($this->app->request->getRequestUri());
         }
     }
 }
