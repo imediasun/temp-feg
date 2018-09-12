@@ -27,7 +27,7 @@ class MailConfigServiceProvider extends ServiceProvider
         /**
          * Using the merchandise mail configuration from config file if present
          */
-        if ($this->app->request->getRequestUri() !== "/order/save") {
+        if ($this->app->request->getRequestUri() == "/order/saveorsendemail") {
             $config = array(
                 'driver' => env('MAIL_DRIVER'),
                 'host' => env('MAIL_HOST'),
@@ -40,6 +40,7 @@ class MailConfigServiceProvider extends ServiceProvider
                 'pretend' => false,
             );
             \Config::set('mail', $config);
+            dd($this->app->request->getRequestUri());
         }
     }
 }
