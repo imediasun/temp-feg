@@ -1135,7 +1135,7 @@ class OrderController extends Controller
     {
         $type = $request->get('type');
         $from = $request->get('from');
-        $from = !empty($from) ? $from : env('MAIL_USERNAME');
+        $from = !empty($from) ? $from : env('MAIL_MERCH_USERNAME');
         $order_id = $request->get('order_id');
         if ($type == "send") {
             $to = $request->get('to');
