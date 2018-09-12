@@ -658,7 +658,7 @@ class FEGSystemHelper
                         );
                         \Config::set('mail', $config);
                         $from = env('MAIL_MERCH_USERNAME');
-                        dd($from);
+                        dd(\Config::get('mail'));
                     }
 
                     return self::laravelMail($to, $subject, $message, $from, $options);
