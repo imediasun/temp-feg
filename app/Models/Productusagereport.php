@@ -61,6 +61,7 @@ class productusagereport extends Sximo  {
         $vendor_id = @$filters['vendor_id'];
         $order_type_id = @$filters['Order_Type'];
         $prod_type_id = @$filters['prod_type_id'];
+        $isBrokenCase = @$filters['is_broken_case'];
 
         $orderTypeRestrictedWhere = " ";
         $selfObject = new self();
@@ -179,7 +180,8 @@ class productusagereport extends Sximo  {
             IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,SUM(Unit_Price_ORIGNAL* qty),SUM(Case_Price_ORIGNAL * qty)),SUM(Unit_Price_ORIGNAL*qty)) AS Total_Spent,
             TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS OC_Total_Spent,
             location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR $separator) as location_name,
-            start_date,end_date
+            start_date,end_date,
+            IF(is_broken_case=0 OR is_broken_case IS NULL,'NO','YES') AS is_broken_case
              FROM (
             Select O.id as orderId,
                    P.id,
@@ -230,12 +232,16 @@ class productusagereport extends Sximo  {
             if (!empty($excludedOrders)){
                 $whereNotInPoNumber = "  AND O.po_number NOT IN($excludedOrders) ";
             }
+            $whereIsBrokenCase = "";
+            if($isBrokenCase === '0' || $isBrokenCase === '1'){
+                $whereIsBrokenCase = " AND OC.is_broken_case = '".$isBrokenCase."'";
+            }
 
             $whereQuery = " WHERE O.location_id not in(6000,6030) and O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
                             AND O.created_at <= '$date_end' 
-                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType $orderTypeRestrictedWhere ";
+                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType $orderTypeRestrictedWhere $whereIsBrokenCase";
 
-            $groupQuery = " GROUP BY Product ,num_items ,Case_Price,Product_Type, sku";
+            $groupQuery = " GROUP BY Product ,num_items ,Case_Price,Product_Type, sku,is_broken_case";
 //            $groupQuery = " GROUP BY P.id ";
             $orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
                 ' ORDER BY Product ';
