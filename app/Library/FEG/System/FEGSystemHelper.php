@@ -1212,7 +1212,7 @@ class FEGSystemHelper
         ), $options);
 
         extract($options);
-
+        dd($to);
         $configNameSanitized = preg_replace('/[\W]/', '-', strtolower($configName));
 
         $lf = "email-"
