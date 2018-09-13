@@ -83,7 +83,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                             endif;
                         endforeach; ?>
                         @if($setting['disablerowactions']=='false')
-                            <th width="125"><?php echo Lang::get('core.btn_action');?></th>
+                            <th width="145"><?php echo Lang::get('core.btn_action');?></th>
                         @endif
                     </tr>
                     </thead>
