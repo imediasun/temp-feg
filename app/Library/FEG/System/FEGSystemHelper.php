@@ -617,7 +617,7 @@ class FEGSystemHelper
      * @param string $from
      * @param type $options
      */
-    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array(), $mailSendFromMerchandise = false)
+    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array(), $sendEmailFromMerchandise = false)
     {
         //support@fegllc.com
         if (empty($from)) {
@@ -644,7 +644,7 @@ class FEGSystemHelper
                     return self::googleOAuthMail($to, $subject, $message, $user, $options);
                 } else {
 
-                    if($mailSendFromMerchandise){
+                    if($sendEmailFromMerchandise){
                         $config = array(
                             'username' => env('MAIL_MERCH_USERNAME'),
                             'password' => env('MAIL_MERCH_PASSWORD'),
