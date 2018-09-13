@@ -3082,7 +3082,7 @@ ORDER BY aa_id");
         $options['cc'] = $systemEmailRecipients['cc'];
         $options['bcc'] = $systemEmailRecipients['bcc'];
         $options['replyTo'] = '';
-        $options['preferGoogleOAuthMail'] = 'false';
+        $options['preferGoogleOAuthMail'] = false;
         FEGSystemHelper::sendEmail(
             $systemEmailRecipients['to'],
             'Inquire Order',
