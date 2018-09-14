@@ -2334,7 +2334,7 @@ class ReportGenerator
         $report = [];
         $reportData = [];
 
-        $query = order::where('date_ordered', '<=', $date)->where('invoice_verified', true);
+        $query = order::where('date_ordered', '<=', $date);
         $query->whereIn('status_id', [order::OPENID1, order::OPENID2, order::OPENID3]);
         if ($reportType == null && !empty($location) && is_array($location)) {
 
@@ -2411,8 +2411,8 @@ class ReportGenerator
         $report = [];
         $reportData = [];
 
-        //$query = order::where('invoice_verified_date', '<=', $date)->where('invoice_verified', true);
-        $query = order::where('date_ordered', '<=', $date)->where('invoice_verified', true);
+        //$query = order::where('invoice_verified_date', '<=', $date);
+        $query = order::where('date_ordered', '<=', $date);
         $query->whereIn('status_id', [order::OPENID1, order::OPENID2, order::OPENID3]);
         if ($reportType == null && !empty($location) && is_array($location)) {
 
