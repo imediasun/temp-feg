@@ -1152,6 +1152,9 @@ class OrderController extends Controller
 
         $from = !empty($from) ? $from : ( $sendEmailFromMerchandise ? env('MAIL_MERCH_FROM_EMAIL') : env('MAIL_USERNAME'));
 
+
+        dd([$type, $request->get('to')]);
+
         if ($type == "send") {
             $to = $request->get('to');
             $to = $this->getMultipleEmails($to);
