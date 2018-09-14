@@ -2178,7 +2178,7 @@ class ReportGenerator
             $_logger->log("    Start Report for Location $locationId for $humanDate");
 
             $configName = 'Daily Pending Merchandise Order Receipt Report';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $locationId);
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
             self::sendEmailReport(array_merge($emailRecipients, [
                 'subject' => "Orders which need to be Received - $locationName ($locationId)- $humanDate",
                 'message' => $report,
@@ -2198,7 +2198,7 @@ class ReportGenerator
             $_logger->log("    Start Report for Location $locationId for $humanDate");
 
             $configName = 'Daily Pending Non Merchandise Order Receipt Report';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $locationId);
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
             self::sendEmailReport(array_merge($emailRecipients, [
                 'subject' => "Orders which need to be Received - $locationName ($locationId)- $humanDate",
                 'message' => $report,
