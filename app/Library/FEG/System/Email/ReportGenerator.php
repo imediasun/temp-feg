@@ -2335,11 +2335,14 @@ class ReportGenerator
         $reportData = [];
 
         $query = order::where('date_ordered', '<=', $date);
+        $query->join("location",'orders.location_id',"=",'location.id');
+        $query->where("location.active",'1');
         $query->whereIn('status_id', [order::OPENID1, order::OPENID2, order::OPENID3]);
         if ($reportType == null && !empty($location) && is_array($location)) {
 
             $query->whereIn('location_id', $location);
         }
+
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
         if(!empty($pass['calculate price according to case price'])) {
@@ -2413,6 +2416,8 @@ class ReportGenerator
 
         //$query = order::where('invoice_verified_date', '<=', $date);
         $query = order::where('date_ordered', '<=', $date);
+        $query->join("location",'orders.location_id',"=",'location.id');
+        $query->where("location.active",'1');
         $query->whereIn('status_id', [order::OPENID1, order::OPENID2, order::OPENID3]);
         if ($reportType == null && !empty($location) && is_array($location)) {
 
