@@ -62,7 +62,7 @@ class SyncHelpers
         foreach($gameEarningReaders as $gameEarningReader){
             $reader->updateReaders($gameEarningReader);
         }
-    }  
+    }
     
     public static function retryTransferEarnings($params = array()) {
         global $__logger;
