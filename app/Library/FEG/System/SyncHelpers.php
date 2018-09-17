@@ -2,6 +2,7 @@
 
 namespace App\Library\FEG\System;
 
+use App\Models\Reader;
 use Event;
 use PDO;
 use DB;
@@ -9,6 +10,7 @@ use Carbon\Carbon;
 use App\Library\MyLog;
 use App\Library\DBHelpers;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\Game;
 
 class SyncHelpers
 {    
@@ -54,6 +56,23 @@ class SyncHelpers
             
         $__logger->log("End Earnings Transfer $logData");
 
+        $gameEarningReaders = game::reportingLocationGameReaders();
+        $gameReaders = Reader::getAllReaders();
+        $gameReadersOnly = $gameReaders->pluck('reader_id')->toArray();
+
+        $reader = new Reader();
+        foreach($gameEarningReaders as $gameEarningReader){
+
+            if(!in_array($gameEarningReader->reader_id,$gameReadersOnly)){
+                $readerData= [
+                    'game_id'=>$gameEarningReader->game_id,
+                    'location_id'=>$gameEarningReader->location_id,
+                    'reader_id'=>$gameEarningReader->reader_id,
+                    'reporting_reader_log'=>1
+                ];
+                $reader->insertRow($readerData,0);
+            }
+        }
     }  
     
     public static function retryTransferEarnings($params = array()) {
@@ -851,7 +870,9 @@ class SyncHelpers
         $__logger->log("END Generate Daily GAME Summary $date - $location");
         if ($cleanup == 1) {
             self::cleanDailyReport($params);
-        }        
+        }
+
+        $games =
     }       
      public static function generateDailySummaryDateRange($params = array()) {
         global $__logger;
