@@ -1,6 +1,9 @@
 <?php namespace App\Models;
 
+use App\Library\MyLog;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Logging\Log;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use SiteHelpers;
 
@@ -121,6 +124,20 @@ FROM location
         $sql = self::querySelect();
         $rows = \DB::select($sql." WHERE location.id='$id'");
         return $rows;
+    }
+    public static function reportingLocations(){
+        $sql = "SELECT DISTINCT RL.location_id FROM report_locations RL INNER JOIN location L ON L.id = RL.location_id WHERE L.active = 1";
+        \Log::info("Reporing Location Query: ".$sql);
+        $logger = new MyLog('reporting-locations.log', 'FEGCronTasks/reporting-locations', 'ReportingLocations');
+        $rows = \DB::select($sql);
+        $reportinglocations = null;
+        if(count($rows)>0){
+            foreach($rows as $row){
+            ($reportinglocations == null) ? $reportinglocations = $row->location_id:$reportinglocations .= ','.$row->location_id;
+            }
+        }
+        $logger->log("Reporing Locations: ",$reportinglocations);
+        return $reportinglocations;
     }
 
 }
