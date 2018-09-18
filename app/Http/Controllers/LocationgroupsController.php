@@ -140,6 +140,12 @@ class LocationgroupsController extends Controller {
 		} else {
 			$this->data['row'] 		= $this->model->getColumnTable('l_groups');
 		}
+
+		$this->data['locations'] 	= [
+            '1'=>'location 1',
+		    '2'=>'location 2',
+            '3'=>'location 3'
+        ];
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
