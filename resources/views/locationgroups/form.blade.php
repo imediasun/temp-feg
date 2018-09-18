@@ -1,11 +1,13 @@
 
+<script type="text/javascript" src="{{ asset('sximo/js/plugins/select2/select2.min.js') }}"></script>
+<link href="{{ asset('sximo/js/plugins/select2/select2.css')}}" rel="stylesheet">
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">
 			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
-	</div>
+		</div>
 
 	<div class="sbox-content">
 @endif
@@ -100,7 +102,7 @@ $(document).ready(function() {
 
 	});
 
-});
+        });
 
 function showRequest()
 {
