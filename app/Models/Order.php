@@ -57,10 +57,6 @@ class order extends Sximo
         return $this->hasMany("App\Models\OrderReceived"); //OrderReceived Model Has Many Relation with Order
     }
 
-    public function location(){
-        return $this->belongsTo("App\Models\Location");
-    }
-
     public static function boot()
     {
         parent::boot();
