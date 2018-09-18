@@ -44,8 +44,8 @@
 						{{--<td>{{ $row->updated_at }} </td>--}}
 						{{----}}
 					{{--</tr>--}}
-				
-			</tbody>	
+
+			</tbody>
 		</table>
 
 		<br>

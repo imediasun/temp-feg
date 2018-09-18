@@ -1,69 +1,41 @@
 
-<script type="text/javascript" src="{{ asset('sximo/js/plugins/select2/select2.min.js') }}"></script>
-<link href="{{ asset('sximo/js/plugins/select2/select2.css')}}" rel="stylesheet">
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">
 			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
-		</div>
+	</div>
 
-		<div class="sbox-content">
-			@endif
-			{!! Form::open(array('url'=>'locationgroups/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationgroupsFormAjax')) !!}
+	<div class="sbox-content">
+@endif
+			{!! Form::open(array('url'=>'locationgroups/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationgroupsFormAjax')) !!}
 			<div class="col-md-12">
-				<fieldset><legend> Location Groups</legend>
+						<fieldset><legend> Location Groups</legend>
 
-					<div class="form-group  " >
-						<label for="Name" class=" control-label col-md-4 text-left">
-							{!! SiteHelpers::activeLang('Name', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
-						</label>
-						<div class="col-md-6">
-							{!! Form::text('name', $row['name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-						</div>
-						<div class="col-md-2">
+				  {{--<div class="form-group  " >--}}
+					{{--<label for="Id" class=" control-label col-md-4 text-left">--}}
+					{{--{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}--}}
+					{{--</label>--}}
+					{{--<div class="col-md-6">--}}
+					  {{--{!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}--}}
+					 {{--</div> --}}
+					 {{--<div class="col-md-2">--}}
+					 	{{----}}
+					 {{--</div>--}}
+				  {{--</div> --}}
+				  <div class="form-group  " >
+					<label for="Name" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Name', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('name', $row['name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					 </div>
+					 <div class="col-md-2">
 
-						</div>
-					</div>
-
-					<div class="form-group  " >
-						<label for="Name" class=" control-label col-md-4 text-left">
-							{!! SiteHelpers::activeLang('Location', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
-						</label>
-						<div class="col-md-6">
-							{!! Form::select('location_ids[]', $locations, isset($savedLocations) ? $savedLocations : null, array('class'=>'select3', 'id'=>'location_ids' ,'multiple'=>"multiple" )) !!}
-						</div>
-						<div class="col-md-2">
-
-						</div>
-					</div>
-
-                    <div class="form-group  " >
-                        <label for="Name" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Excluded Product Types', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
-                        </label>
-                        <div class="col-md-6">
-                            {!! Form::select('product_type_ids[]', $productTypes, isset($alreadyExcludedProductTypes) ? $alreadyExcludedProductTypes : null, array('class'=>'select3', 'id'=>'already_excluded_product_type_ids' ,'multiple'=>"multiple" )) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-
-                    <div class="form-group  " >
-                        <label for="Name" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Excluded Products', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
-                        </label>
-                        <div class="col-md-6">
-                            {!! Form::select('product_ids[]', $products, isset($alreadyExcludedProducts) ? $alreadyExcludedProducts : null, array('class'=>'select3', 'id'=>'already_excluded_product_ids' ,'multiple'=>"multiple" )) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-
-				</fieldset>
+					 </div>
+				  </div>
+						</fieldset>
 			</div>
 
 
@@ -81,70 +53,72 @@
 			{!! Form::close() !!}
 
 
-			@if($setting['form-method'] =='native')
-		</div>
+@if($setting['form-method'] =='native')
 	</div>
-	@endif
+</div>
+@endif
 
 
-	</div>
+</div>
 
-	<script type="text/javascript">
-        $(document).ready(function() {
+<script type="text/javascript">
+$(document).ready(function() {
 
-            $('.editor').summernote();
-            $('.previewImage').fancybox();
-            $('.tips').tooltip();
-            renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
-            $('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
-            $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-            $('input[type="checkbox"],input[type="radio"]').iCheck({
-                checkboxClass: 'icheckbox_square-blue',
-                radioClass: 'iradio_square-blue'
-            });
-            $('.removeCurrentFiles').on('click',function(){
-                var removeUrl = $(this).attr('href');
-                $.get(removeUrl,function(response){});
-                $(this).parent('div').empty();
-                return false;
-            });
-            var form = $('#locationgroupsFormAjax');
-            form.parsley();
-            form.submit(function(){
 
-                if(form.parsley('isValid') == true){
-                    var options = {
-                        dataType:      'json',
-                        beforeSubmit :  showRequest,
-                        success:       showResponse
-                    }
-                    $(this).ajaxSubmit(options);
-                    return false;
+	$('.editor').summernote();
+	$('.previewImage').fancybox();
+	$('.tips').tooltip();
+	renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
+	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+	$('input[type="checkbox"],input[type="radio"]').iCheck({
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue'
+	});
+	$('.removeCurrentFiles').on('click',function(){
+		var removeUrl = $(this).attr('href');
+		$.get(removeUrl,function(response){});
+		$(this).parent('div').empty();
+		return false;
+	});
+	var form = $('#locationgroupsFormAjax');
+	form.parsley();
+	form.submit(function(){
 
-                } else {
-                    return false;
-                }
+		if(form.parsley('isValid') == true){
+			var options = {
+				dataType:      'json',
+				beforeSubmit :  showRequest,
+				success:       showResponse
+			}
+			$(this).ajaxSubmit(options);
+			return false;
 
-            });
+		} else {
+			return false;
+		}
 
-        });
+	});
 
-        function showRequest()
-        {
-            $('.ajaxLoading').show();
-        }
-        function showResponse(data)  {
+});
 
-            if(data.status == 'success')
-            {
-                ajaxViewClose('#{{ $pageModule }}');
-                ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
-                notyMessage(data.message);
-                $('#sximo-modal').modal('hide');
-            } else {
-                notyMessageError(data.message);
-                $('.ajaxLoading').hide();
-                return false;
-            }
-        }
-	</script>
+function showRequest()
+{
+	$('.ajaxLoading').show();
+}
+function showResponse(data)  {
+
+	if(data.status == 'success')
+	{
+		ajaxViewClose('#{{ $pageModule }}');
+		ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
+		notyMessage(data.message);
+		$('#sximo-modal').modal('hide');
+	} else {
+		notyMessageError(data.message);
+		$('.ajaxLoading').hide();
+		return false;
+	}
+}
+
+</script>

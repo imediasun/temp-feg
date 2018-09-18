@@ -141,8 +141,7 @@ class LocationgroupsController extends Controller {
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 		}
 
-		$row            =   $this->model->find($id);
-
+		$row = $this->model->find($id);
 		if($row)
 		{
 			$this->data['row'] 	                        =   $row;
