@@ -334,6 +334,8 @@ class order extends Sximo
     public static function getExportRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
+        $global = $limit = $order = $sort = $page = $createdTo = $updatedTo = "";
+        $params = [];
 
         extract(array_merge(array(
             'page' => '0',
@@ -1063,19 +1065,6 @@ class order extends Sximo
         }
         $updateData['updated_at'] = $now;
         return self::where('id', $id)->update($updateData);
-    }
-
-    /**
-     *
-     * @return bool
-     */
-    public function isFullyReceived(){
-        $orderedQty = $this->contents->sum('qty');
-        $receivedQty = $this->orderReceived->sum('quantity');
-        if ($orderedQty == $receivedQty) {
-            return true;
-        }
-        return false;
     }
 
     /**
