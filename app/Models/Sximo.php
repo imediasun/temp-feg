@@ -9,6 +9,7 @@ use Request, Log,Redirect,Session;
 use App\Library\SximoEloquentBuilder;
 use App\Library\SximoQueryBuilder;
 use App\Models\Core\Groups;
+use Validator;
 class Sximo extends Model {
 
     public static $getRowsQuery = null;
