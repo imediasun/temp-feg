@@ -9,6 +9,7 @@ class game extends Sximo  {
 	
 	protected $table = 'game';
 	protected $primaryKey = 'id';
+    public $timestamps = false;
 
 	public function __construct() {
 		parent::__construct();
