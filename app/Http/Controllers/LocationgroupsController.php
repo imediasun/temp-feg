@@ -1,10 +1,13 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEGDBRelationHelpers;
+use App\Models\location;
 use App\Models\Locationgroups;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Illuminate\Support\Facades\DB;
+use Validator, Input, Redirect ;
 
 class LocationgroupsController extends Controller {
 
@@ -12,12 +15,15 @@ class LocationgroupsController extends Controller {
 	protected $data = array();	
 	public $module = 'locationgroups';
 	static $per_page	= '10';
-	
-	public function __construct() 
+
+	private $location;
+
+	public function __construct(location $location)
 	{
 		parent::__construct();
 		$this->model = new Locationgroups();
-		
+		$this->location = $location;
+
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
 
@@ -136,18 +142,18 @@ class LocationgroupsController extends Controller {
 		$row = $this->model->find($id);
 		if($row)
 		{
-			$this->data['row'] 		=  $row;
+			$this->data['row'] 	=   $row;
+            $savedLocations     =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, location::class, 0, true)->lists('location_id')->toArray();
+            $this->data['savedLocations'] 	= $savedLocations;
 		} else {
 			$this->data['row'] 		= $this->model->getColumnTable('l_groups');
 		}
 
-		$this->data['locations'] 	= [
-            '1'=>'location 1',
-		    '2'=>'location 2',
-            '3'=>'location 3'
-        ];
-		$this->data['setting'] 		= $this->info['setting'];
-		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
+		$locations = $this->location->select(DB::raw("CONCAT(id,' ', location_name) AS location_name, id"))->lists('location_name', 'id');
+
+		$this->data['locations'] 	    = $locations;
+		$this->data['setting'] 		    = $this->info['setting'];
+		$this->data['fields'] 		    =  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
 		$this->data['id'] = $id;
 
@@ -201,18 +207,31 @@ class LocationgroupsController extends Controller {
 
 	function postSave( Request $request, $id =0)
 	{
-
-		$rules = $this->validateForm();
-		$validator = Validator::make($request->all(), $rules);
+	    $rules = [
+            'name'          => 'required|string|max:100',
+            'location_ids'  => 'required|array'
+        ];
+	    $custom_messages = [
+	        'location_ids.required' =>  'Locations field is required',
+            'location_ids.array'    =>  'Location field input must be an array'
+        ];
+		$validator = Validator::make($request->all(), $rules, $custom_messages);
 		if ($validator->passes()) {
 			$data = $this->validatePost('l_groups');
 
-			$id = $this->model->insertRow($data , $request->input('id'));
-			
+			$id = $this->model->insertRow($data , $id);
+
+			if($id){
+			    $location_ids = $request->get('location_ids');
+			    foreach ($location_ids as $location_id){
+                    FEGDBRelationHelpers::insertCustomRelation($location_id, $id, location::class, Locationgroups::class, 0);
+                }
+            }
+
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
-				));
+            ));
 
 		} else {
 
@@ -225,10 +244,17 @@ class LocationgroupsController extends Controller {
 
 	}
 
+
+	public function getDelete($id){
+        return $id;
+    }
+
+
 	public function postDelete( Request $request)
 	{
 
-		if($this->access['is_remove'] ==0) {
+	    dd($request->all());
+		if($this->access['is_remove'] == 0) {
 			return response()->json(array(
 				'status'=>'error',
 				'message'=> \Lang::get('core.note_restric')

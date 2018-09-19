@@ -54,11 +54,11 @@ class FEGDBRelationHelpers
 
             $customRelation = new CustemRelation();
             $relationData = [
-                'related_id' => $relatedId,
-                'related_to' => $relatedTo,
-                'related_type' => $relatedType,
+                'related_id'      => $relatedId,
+                'related_to'      => $relatedTo,
+                'related_type'    => $relatedType,
                 'related_type_to' => $relatedTypeTo,
-                'is_excluded' => $isExcluded,
+                'is_excluded'     => $isExcluded,
             ];
             $result = $customRelation->create($relationData) ? true : false;
             return $result;
@@ -116,8 +116,8 @@ class FEGDBRelationHelpers
         foreach ($collection as $item) {
             $relatedType = explode("\\", $item->related_type);
             $relatedTypeTo = explode("\\", $item->related_type_to);
-            $relatedTypeToAttr = $relatedTypeTo[count($relatedTypeTo) - 1] . "_id";
-            $relatedTypeAttr = $relatedType[count($relatedType) - 1] . "_id";
+            $relatedTypeToAttr = strtolower($relatedTypeTo[count($relatedTypeTo) - 1]) . "_id";
+            $relatedTypeAttr = strtolower($relatedType[count($relatedType) - 1]) . "_id";
             $item->$relatedTypeToAttr = $item->related_to;
             $item->$relatedTypeAttr = $item->related_id;
             unset($item->related_to);
