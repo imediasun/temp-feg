@@ -1307,7 +1307,7 @@ class ReportGenerator
         }
         return $reportString."<br />";
     }
-    
+
     public static function getOverreportingReport($params = array()) {
         global $__logger;
          extract(array_merge(array(
