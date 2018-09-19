@@ -1614,51 +1614,51 @@ class Sximo extends Model {
         return in_array($moduleName,self::MODULES_WITH_RESTRICTED_TYPES);
     }
     /**
-     * @param Integer | array $related_id
-     * @param string $related_type
-     * @param string $related_type_to
-     * @param int $is_excluded 1 | 0
+     * @param Integer | array $relatedId
+     * @param string $relatedType
+     * @param string $relatedTypeTo
+     * @param int $isExcluded 1 | 0
      * @return collection
      */
-    public function getCustomRelationRecords($related_id , $related_type , $related_type_to , $is_excluded = 0)
+    public function getCustomRelationRecords($relatedId , $relatedType , $relatedTypeTo , $isExcluded = 0)
     {
 
-        $related_id = is_array($related_id) ? $related_id : [$related_id];
+        $relatedId = is_array($relatedId) ? $relatedId : [$relatedId];
 
-        $relatedType = explode("\\", $related_type);
-        $relatedIdAs = "related_id as " . strtolower($relatedType[count($relatedType) - 1]) . "_id";
-        $relatedTypeTo = explode("\\", $related_type_to);
-        $relatedToAs = "related_to as " . strtolower($relatedTypeTo[count($relatedTypeTo) - 1] ). "_id";
+        $splitRelatedType = explode("\\", $relatedType);
+        $relatedIdAs = "related_id as " . strtolower($splitRelatedType[count($splitRelatedType) - 1]) . "_id";
+        $splitRelatedTypeTo = explode("\\", $relatedTypeTo);
+        $relatedToAs = "related_to as " . strtolower($splitRelatedTypeTo[count($splitRelatedTypeTo) - 1] ). "_id";
         $customRelation = CustemRelation::select('id', $relatedIdAs, $relatedToAs, 'is_excluded', 'created_at', 'updated_at')
-            ->whereIn('related_id', $related_id)->orWhereIn('related_to', $related_id);
+            ->whereIn('related_id', $relatedId)->orWhereIn('related_to', $relatedId);
 
-        $result = $customRelation->whereIn('related_type', [$related_type, $related_type_to])
-            ->whereIn('related_type_to', [$related_type, $related_type_to])
-            ->where('is_excluded',$is_excluded)->get();
+        $result = $customRelation->whereIn('related_type', [$relatedType, $relatedTypeTo])
+            ->whereIn('related_type_to', [$relatedType, $relatedTypeTo])
+            ->where('is_excluded',$isExcluded)->get();
         return $result;
     }
 
     /**
-     * @param $related_id
-     * @param $related_to
-     * @param $related_type
-     * @param $related_type_to
-     * @param int $is_excluded
+     * @param $relatedId
+     * @param $relatedTo
+     * @param $relatedType
+     * @param $relatedTypeTo
+     * @param int $isExcluded
      * @return bool
      */
-    public function insertCustomRelation($related_id ,$related_to, $related_type , $related_type_to , $is_excluded = 0)
+    public function insertCustomRelation($relatedId , $relatedTo, $relatedType , $relatedTypeTo , $isExcluded = 0)
     {
 
-        if (!empty($related_id) && !empty($related_to)  && !empty($related_type) &&
-            !empty($related_type_to) && ($is_excluded == 1 || $is_excluded == 0)){
+        if (!empty($relatedId) && !empty($relatedTo)  && !empty($relatedType) &&
+            !empty($relatedTypeTo) && ($isExcluded == 1 || $isExcluded == 0)){
 
             $customRelation = new CustemRelation();
             $relationData = [
-                'related_id'=>$related_id,
-                'related_to' => $related_to,
-                'related_type'=>$related_type,
-                'related_type_to'=>$related_type_to,
-                'is_excluded' => $is_excluded,
+                'related_id'=>$relatedId,
+                'related_to' => $relatedTo,
+                'related_type'=>$relatedType,
+                'related_type_to'=>$relatedTypeTo,
+                'is_excluded' => $isExcluded,
             ];
             $result  = $customRelation->create($relationData) ? true:false;
             return $result;
@@ -1667,23 +1667,23 @@ class Sximo extends Model {
     }
 
     /**
-     * @param $related_type
-     * @param $related_type_to
-     * @param int $is_excluded
-     * @param int $related_id
-     * @param int $related_to
+     * @param $relatedType
+     * @param $relatedTypeTo
+     * @param int $isExcluded
+     * @param int $relatedId
+     * @param int $relatedTo
      * @return bool
      */
-    public function destroyCustomRelation($related_type , $related_type_to , $is_excluded = 0, $related_id = 0,$related_to = 0){
-        $customRelation = CustemRelation::where('related_type', $related_type)
-            ->where('related_type_to',  $related_type_to)
-            ->where('is_excluded',$is_excluded);
+    public function destroyCustomRelation($relatedType , $relatedTypeTo , $isExcluded = 0, $relatedId = 0, $relatedTo = 0){
+        $customRelation = CustemRelation::where('related_type', $relatedType)
+            ->where('related_type_to',  $relatedTypeTo)
+            ->where('is_excluded',$isExcluded);
 
-        if($related_id > 0){
-            $customRelation->where('related_id',$related_id)->orWhere('related_to',$related_id);
+        if($relatedId > 0){
+            $customRelation->where('related_id',$relatedId)->orWhere('related_to',$relatedId);
         }
-        if($related_to > 0){
-            $customRelation->where('related_id',$related_to)->orWhere('related_to',$related_to);
+        if($relatedTo > 0){
+            $customRelation->where('related_id',$relatedTo)->orWhere('related_to',$relatedTo);
         }
         $result =  $customRelation->delete() ? true:false;
         return $result;
