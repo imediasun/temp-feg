@@ -56,22 +56,11 @@ class SyncHelpers
             
         $__logger->log("End Earnings Transfer $logData");
 
-        $gameEarningReaders = game::reportingLocationGameReaders();
-        $gameReaders = Reader::getAllReaders();
-        $gameReadersOnly = $gameReaders->pluck('reader_id')->toArray();
+        $gameEarningReaders = game::reportingLocationGameReaders(['date_start'=>date('Y-m-d',strtotime($date))]);
 
         $reader = new Reader();
         foreach($gameEarningReaders as $gameEarningReader){
-
-            if(!in_array($gameEarningReader->reader_id,$gameReadersOnly)){
-                $readerData= [
-                    'game_id'=>$gameEarningReader->game_id,
-                    'location_id'=>$gameEarningReader->location_id,
-                    'reader_id'=>$gameEarningReader->reader_id,
-                    'reporting_reader_log'=>1
-                ];
-                $reader->insertRow($readerData,0);
-            }
+            $reader->updateReaders($gameEarningReader);
         }
     }  
     
@@ -871,8 +860,6 @@ class SyncHelpers
         if ($cleanup == 1) {
             self::cleanDailyReport($params);
         }
-
-        $games =
     }       
      public static function generateDailySummaryDateRange($params = array()) {
         global $__logger;

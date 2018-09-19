@@ -4,6 +4,7 @@ namespace App\Library\FEG\System\Email;
 
 use App\Http\Controllers\OrderController;
 use App\Models\Feg\System\Options;
+use App\Models\Reader;
 use PDO;
 use DB;
 use App\Library\MyLog;
@@ -1279,6 +1280,31 @@ class ReportGenerator
             $reportString = implode("", $report);
         }
         return $reportString;        
+    }
+    public static function getReaderNotPlayedReport($params = array()){
+        //Readers Not Played
+        extract(array_merge(array(
+            'date' => date('Y-m-d', strtotime('-1 day')),
+            'location' => null,
+            'locationsNotReportingIds' => null,
+            '_task' => array(),
+            '_logger' => null,
+        ), $params));
+        $readerNotPlayed = Reader::getReaderNotPlayed($params);
+        $report = [];
+        $rowIndex = 0;
+        foreach($readerNotPlayed as $item){
+            $rowIndex++;
+            //30005710 | Toy Soldier - 40in (R1,R2 Not reported)
+            $report[] = "<b>$item->game_id | $item->gameTitle</b>" .
+                " <span style='color:red'>( $item->reader_id Not Reported )</span><br>";
+        }
+        $reportString = "";
+        if(count($report)>0) {
+            $reportString = "<h3>Games Not Played/Reader not reported Yesterda</h3>";
+            $reportString .= implode("<br />", $report);
+        }
+        return $reportString;
     }
     
     public static function getOverreportingReport($params = array()) {
