@@ -133,7 +133,18 @@
 					  ?>
                   @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('locationgroups',$access,$id ,$setting) !!}
+					 {!! AjaxHelpers::buttonAction('locationgroups',$access,$id ,$setting) !!}
+{{--					 @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')--}}
+
+						 <a href="{{ URL::to('locationgroups/delete/'.$row->id)}}"
+							data-id="{{$row->id}}"
+							data-action="removal"
+							class="tips btn btn-xs btn-white locationGroupDeleteAction"
+							title="{{Lang::get('core.locationGroup.deleteButtonTitle')}}">
+							 <i class="fa fa-trash-o " aria-hidden="true"></i>
+						 </a>
+
+					 {{--@endif--}}
                  </td>
                 @endif
                 </tr>

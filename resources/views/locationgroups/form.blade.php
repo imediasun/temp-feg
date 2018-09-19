@@ -11,7 +11,7 @@
 
 		<div class="sbox-content">
 			@endif
-			{!! Form::open(array('url'=>'locationgroups/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationgroupsFormAjax')) !!}
+			{!! Form::open(array('url'=>'locationgroups/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationgroupsFormAjax')) !!}
 			<div class="col-md-12">
 				<fieldset><legend> Location Groups</legend>
 
@@ -32,7 +32,7 @@
 							{!! SiteHelpers::activeLang('Location', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
 						</label>
 						<div class="col-md-6">
-							{!! Form::select('location_ids[]', $locations, null, array('class'=>'select3', 'id'=>'location_ids' ,'multiple'=>"multiple" )) !!}
+							{!! Form::select('location_ids[]', $locations, $savedLocations, array('class'=>'select3', 'id'=>'location_ids' ,'multiple'=>"multiple" )) !!}
 						</div>
 						<div class="col-md-2">
 
@@ -67,7 +67,6 @@
 
 	<script type="text/javascript">
         $(document).ready(function() {
-
 
             $('.editor').summernote();
             $('.previewImage').fancybox();
