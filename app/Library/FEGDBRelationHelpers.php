@@ -26,13 +26,8 @@ class FEGDBRelationHelpers
      */
     public static function getCustomRelationRecords($relatedId, $relatedType, $relatedTypeTo, $isExcluded = 0, $aliasOverride = true)
     {
-
         $relatedId = is_array($relatedId) ? $relatedId : [$relatedId];
 
-        $splitRelatedType = explode("\\", $relatedType);
-        $relatedIdAs = "related_id /* as " . strtolower($splitRelatedType[count($splitRelatedType) - 1]) . "_id */";
-        $splitRelatedTypeTo = explode("\\", $relatedTypeTo);
-        $relatedToAs = "related_to /* as " . strtolower($splitRelatedTypeTo[count($splitRelatedTypeTo) - 1]) . "_id /*";
         $customRelation = CustemRelation::select('id', 'related_id', 'related_to', 'related_type', 'related_type_to', 'is_excluded', 'created_at', 'updated_at')
             ->whereIn('related_id', $relatedId)->orWhereIn('related_to', $relatedId);
 
