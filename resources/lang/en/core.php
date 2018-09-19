@@ -272,6 +272,13 @@ return array(
                 </ol>",
 
         ]
+    ],
+
+
+
+    //locationGroups module
+    'locationGroup'=>[
+        'deleteButtonTitle'=>'Delete Location Group'
     ]
 
 );
