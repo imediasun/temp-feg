@@ -100,7 +100,7 @@ class DigitalPackingList extends Sximo
                 $receivedQty = $order->orderReceived->sum('quantity');
             }
         }
-            if ($orderedQty == $receivedQty && $order->is_freehand == 0) {
+            if ($orderedQty == $receivedQty && $order->is_freehand == 0 && in_array($order->location->debit_type_id,location::DEBIT_TYPES)) {
                 return $flagCheck = true;
             } else {
                 return $flagCheck = false;
