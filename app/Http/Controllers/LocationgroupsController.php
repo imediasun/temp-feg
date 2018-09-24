@@ -4,6 +4,7 @@ use App\Http\Controllers\controller;
 use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
 use App\Models\Locationgroups;
+use App\Models\ProductType;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\DB;
@@ -139,15 +140,22 @@ class LocationgroupsController extends Controller {
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 		}
 
-		$row = $this->model->find($id);
+		$row            =   $this->model->find($id);
+
 		if($row)
 		{
-			$this->data['row'] 	=   $row;
-            $savedLocations     =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, location::class, 0, true)->lists('location_id')->toArray();
-            $this->data['savedLocations'] 	= $savedLocations;
+			$this->data['row'] 	                        =   $row;
+            $savedLocations                             =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, location::class, 0, true)->lists('location_id')->toArray();
+            $this->data['savedLocations'] 	            =   $savedLocations;
+            $this->data['alreadyExcludedProductTypes']  =   $row->excludedProductTypes()->get();
 		} else {
 			$this->data['row'] 		= $this->model->getColumnTable('l_groups');
 		}
+
+
+        $this->data['productTypes'] = ProductType::lists('type_description', 'id');
+
+
 
 		$locations = $this->location->select(DB::raw("CONCAT(id,' ', location_name) AS location_name, id"))->lists('location_name', 'id');
 
@@ -168,22 +176,26 @@ class LocationgroupsController extends Controller {
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
 
 		$row = $this->model->getRow($id);
-		if($row)
-		{
-			$this->data['row'] =  $row;
+
+        $this->data['locations'] = [];
+        $this->data['excluded_product_types'] = [];
+
+		if($row) {
+			$this->data['row']                      =   $row;
+            $locationGroup                          =   $this->model->find($id);
+            $this->data['locations']                =   $locationGroup->locations()->get();
+            $this->data['excluded_product_types']   =   $locationGroup->excludedProductTypes()->get();
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('l_groups');
 		}
-
-
-        $this->data['locations'] = $this->model->find($id)->locations()->get();
 		
-        $this->data['tableGrid'] = $this->info['config']['grid'];
-		$this->data['id'] = $id;
-		$this->data['access']		= $this->access;
-		$this->data['setting'] 		= $this->info['setting'];
-        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
-		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $this->data['tableGrid']    =   $this->info['config']['grid'];
+		$this->data['id']           =   $id;
+		$this->data['access']		=   $this->access;
+		$this->data['setting'] 		=   $this->info['setting'];
+        $this->data['nodata']       =   \SiteHelpers::isNoData($this->info['config']['grid']);
+		$this->data['fields'] 		=   \AjaxHelpers::fieldLang($this->info['config']['forms']);
+
 		return view('locationgroups.view',$this->data);
 	}
 

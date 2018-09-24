@@ -32,4 +32,9 @@ class locationgroups extends Sximo  {
 	    $locationIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
 	    return location::whereIn('id', $locationIds);
     }
+
+	public function excludedProductTypes(){
+	    $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, locationgroups::class, ProductType::class, 0, true)->pluck('product_type_id')->toArray();
+	    return ProductType::whereIn('id', $excludedProductTypeIds);
+    }
 }
