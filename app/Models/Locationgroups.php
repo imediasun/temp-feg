@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Library\FEGDBRelationHelpers;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,4 +28,8 @@ class locationgroups extends Sximo  {
 		return "  ";
 	}
 
+	public function locations(){
+	    $locationIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
+	    return location::whereIn('id', $locationIds);
+    }
 }

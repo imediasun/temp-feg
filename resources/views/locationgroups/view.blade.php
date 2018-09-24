@@ -18,7 +18,7 @@
 							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}
 						</td>
 						<td>{{ $row->id }} </td>
-						
+
 					</tr>
 				
 					<tr>
@@ -29,24 +29,48 @@
 						
 					</tr>
 				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Created At', (isset($fields['created_at']['language'])? $fields['created_at']['language'] : array())) }}
-						</td>
-						<td>{{ $row->created_at }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Updated At', (isset($fields['updated_at']['language'])? $fields['updated_at']['language'] : array())) }}
-						</td>
-						<td>{{ $row->updated_at }} </td>
-						
-					</tr>
+					{{--<tr>--}}
+						{{--<td width='30%' class='label-view text-right'>--}}
+							{{--{{ SiteHelpers::activeLang('Created At', (isset($fields['created_at']['language'])? $fields['created_at']['language'] : array())) }}--}}
+						{{--</td>--}}
+						{{--<td>{{ $row->created_at }} </td>--}}
+						{{----}}
+					{{--</tr>--}}
+				{{----}}
+					{{--<tr>--}}
+						{{--<td width='30%' class='label-view text-right'>--}}
+							{{--{{ SiteHelpers::activeLang('Updated At', (isset($fields['updated_at']['language'])? $fields['updated_at']['language'] : array())) }}--}}
+						{{--</td>--}}
+						{{--<td>{{ $row->updated_at }} </td>--}}
+						{{----}}
+					{{--</tr>--}}
 				
 			</tbody>	
-		</table>  
+		</table>
+
+		<br>
+		<br>
+		<h3>Associated Locations</h3>
+		<table class="table table-striped table-bordered" >
+			@if(count($locations) == 0)
+				<p style="vertical-align: middle; text-align: center !important; font-size: larger">No locations associated</p>
+			@else
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Location Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach($locations as $location)
+					<tr>
+						<td>{{$location->id}}</td>
+						<td>{{$location->location_name}}</td>
+					</tr>
+				@endforeach
+			</tbody>
+			@endif
+		</table>
 			
 		 	
 

@@ -174,6 +174,9 @@ class LocationgroupsController extends Controller {
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('l_groups');
 		}
+
+
+        $this->data['locations'] = $this->model->find($id)->locations()->get();
 		
         $this->data['tableGrid'] = $this->info['config']['grid'];
 		$this->data['id'] = $id;
@@ -208,7 +211,7 @@ class LocationgroupsController extends Controller {
 	function postSave( Request $request, $id =0)
 	{
 	    $rules = [
-            'name'          => 'required|string|max:100',
+            'name'          => 'required|string|max:100|unique:l_groups,name,'.$id,
             'location_ids'  => 'required|array'
         ];
 	    $custom_messages = [
@@ -244,16 +247,8 @@ class LocationgroupsController extends Controller {
 
 	}
 
-
-	public function getDelete($id){
-        return $id;
-    }
-
-
 	public function postDelete( Request $request)
 	{
-
-	    dd($request->all());
 		if($this->access['is_remove'] == 0) {
 			return response()->json(array(
 				'status'=>'error',
@@ -265,6 +260,13 @@ class LocationgroupsController extends Controller {
 		// delete multipe rows
 		if(count($request->input('ids')) >=1)
 		{
+
+		    $locationGroupsIds = $request->input('ids');
+
+		    foreach ($locationGroupsIds as $locationGroupsId){
+                FEGDBRelationHelpers::destroyCustomRelation(locationgroups::class, location::class, 0, 0, $locationGroupsId);
+            }
+
 			$this->model->destroy($request->input('ids'));
 			
 			return response()->json(array(

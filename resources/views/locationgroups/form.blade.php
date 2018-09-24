@@ -32,7 +32,7 @@
 							{!! SiteHelpers::activeLang('Location', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
 						</label>
 						<div class="col-md-6">
-							{!! Form::select('location_ids[]', $locations, $savedLocations, array('class'=>'select3', 'id'=>'location_ids' ,'multiple'=>"multiple" )) !!}
+							{!! Form::select('location_ids[]', $locations, isset($savedLocations) ? $savedLocations : null, array('class'=>'select3', 'id'=>'location_ids' ,'multiple'=>"multiple" )) !!}
 						</div>
 						<div class="col-md-2">
 
