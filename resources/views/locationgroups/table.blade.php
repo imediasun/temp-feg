@@ -136,7 +136,8 @@
 					 {!! AjaxHelpers::buttonAction('locationgroups',$access,$id ,$setting) !!}
 {{--					 @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')--}}
 
-						 <a href="{{ URL::to('locationgroups/delete/'.$row->id)}}"
+						 <a onclick='deleteLocationGroups("{{$row->id}}")'
+							{{--href="{{ URL::to('locationgroups/delete/'.$row->id)}}"--}}
 							data-id="{{$row->id}}"
 							data-action="removal"
 							class="tips btn btn-xs btn-white locationGroupDeleteAction"
@@ -228,10 +229,59 @@ $(document).ready(function() {
             });
         });        
     }
-    
+
     // Configure data grid columns for sorting 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
+
+function deleteLocationGroups(locationGroupId){
+    $.ajax({
+        headers: {
+            'X-CSRF-Token': '{{csrf_token()}}'
+        },
+        'type' : 'post',
+        'url': '/locationgroups/delete/'+locationGroupId,
+		'data': {
+            'ids': [locationGroupId]
+		},
+		'error': function (error) {
+			console.log(error);
+        },
+        'success': function(response){
+            notyMessage(response.message);
+            if(response.status == 'success'){
+                $('#form-'+locationGroupId).remove();
+				if($(".editable").length == 0){
+					$('.table-responsive').html('\n' +
+						'            \t<div style="margin:100px 0; text-align:center;">\n' +
+						'                    <p class="centralMessage"> No Record Found </p>\n' +
+						'                </div>');
+				}
+			}
+		}
+
+    });
+}
+
+function notyMessage(message)
+{
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "positionClass": "toast-bottom-right",
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+
+    }
+    toastr.success("", message);
+}
 </script>
 <style>
 .table th.right { text-align:right !important;}
