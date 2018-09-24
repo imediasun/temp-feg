@@ -116,13 +116,14 @@ class ReportGenerator
             $readersMissingAssetIds = self::getReadersMissingAssetIdsReport($params);
         }
         $__logger->log("        End processing Game Earnings DB Transfer Report for $date");
-
+        $readersNotPlayed = self::getReaderNotPlayedReport($params);
         if ($noTransferSummary != 1) {
             $message = $dailyTransferStatusReport .
                     "<br><br><b><u>Locations Not Reporting:</u></b><em>(Either Closed or Error in Data Transfer)</em><br>" .
                     @$locationsNotReportingReport .
                     "<br><b><u>Readers Missing Asset Ids:</u></b><br>" .
                     @$readersMissingAssetIds .
+                    @$readersNotPlayed .
                     "<br><b><u>Games Not Played:</u></b><br>" .
                     @$gamesNotPlayed .
                     "<br><b><u style='color:red;'>Unknown Asset IDs:</u></b><br>" .
@@ -345,7 +346,7 @@ class ReportGenerator
             'configName' => $configName,
             'configNameSuffix' => $date,           
         )));       
-        
+
     }
 
     public static function getLocationWiseDailyReport($params) {
@@ -1296,15 +1297,15 @@ class ReportGenerator
         foreach($readerNotPlayed as $item){
             $rowIndex++;
             //30005710 | Toy Soldier - 40in (R1,R2 Not reported)
-            $report[] = "<b>$item->game_id | $item->gameTitle</b>" .
-                " <span style='color:red'>( $item->reader_id Not Reported )</span><br>";
+            $report[] = $rowIndex.") <b>$item->game_id | $item->gameTitle</b>" .
+                " <span style='color:red'>( $item->reader_id Not Reported )</span>";
         }
         $reportString = "";
         if(count($report)>0) {
-            $reportString = "<h3>Games Not Played/Reader not reported Yesterda</h3>";
+            $reportString = "<br /><b></b><u>Games Not Played/Reader not reported Yesterday</u></b><br />";
             $reportString .= implode("<br />", $report);
         }
-        return $reportString;
+        return $reportString."<br />";
     }
     
     public static function getOverreportingReport($params = array()) {
