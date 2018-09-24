@@ -226,7 +226,7 @@ class LocationgroupsController extends Controller {
 	function postSave( Request $request, $id =0)
 	{
 	    $rules = [
-            'name'          => 'required|string|max:100',
+            'name'          => 'required|string|max:100|unique:l_groups,name,'.$id,
             'location_ids'  => 'required|array'
         ];
 	    $custom_messages = [
@@ -277,12 +277,6 @@ class LocationgroupsController extends Controller {
 		}
 
 	}
-
-
-	public function getDelete($id){
-        return $id;
-    }
-
 
 	public function postDelete( Request $request)
 	{
