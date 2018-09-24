@@ -6,6 +6,7 @@ use App\Models\location;
 use App\Models\Locationgroups;
 use App\Models\product;
 use App\Models\Ordertyperestrictions;
+use App\Models\ProductType;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\DB;
