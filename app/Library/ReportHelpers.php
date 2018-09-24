@@ -4,6 +4,8 @@ namespace App\Library;
 use App\Library\MyLog;
 use App\Models\order;
 use App\Models\productusagereport;
+use Illuminate\Contracts\Logging\Log;
+
 class ReportHelpers
 {
     public static function getLocationRanksQuery($dateStart, $dateEnd, $location = "",
@@ -781,7 +783,9 @@ class ReportHelpers
                 E.date_played as date_start,
                 E.date_played as date_end,
                 E.date_last_played,
-                DATEDIFF(E.date_played, E.date_last_played) as days_not_played
+                DATEDIFF(E.date_played, E.date_last_played) as days_not_played,
+                (select count(reader_id) from readers where date(last_report_date) < '".date('Y-m-d',strtotime($dateStart))."' AND readers.game_id = G.id) as total_readers_reported,
+                G.total_readers
                 ";
 
         $Q .= self::_getGamesNotPlayedQuery($dateStart, $dateEnd, $location, $debit,
@@ -860,6 +864,8 @@ class ReportHelpers
         // GROUP BY
         $Q .= " ";
 
+        // Having Query
+        $Q .=' having (total_readers_reported = G.total_readers)';
         return $Q;
     }
     public static function getGamesNotPlayedCount($dateStart, $dateEnd, $location = "",
