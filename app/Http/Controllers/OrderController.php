@@ -10,6 +10,7 @@ use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\Report;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
 use App\Models\managefegrequeststore;
 use App\Models\DigitalPackingList;
@@ -202,6 +203,7 @@ class OrderController extends Controller
 
     public function getIndex()
     {
+        return FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(1);
 
         /*\App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();

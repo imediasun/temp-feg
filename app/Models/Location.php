@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Library\FEGDBRelationHelpers;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use SiteHelpers;
@@ -125,4 +126,14 @@ FROM location
         return $rows;
     }
 
+
+    public function excludedProductTypes(){
+        $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, Ordertyperestrictions::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
+        return Ordertyperestrictions::whereIn('id', $excludedProductTypeIds);
+    }
+
+    public function excludedProducts(){
+        $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, product::class, 1, true)->pluck('product_id')->toArray();
+        return Product::whereIn('id', $excludedProductIds);
+    }
 }
