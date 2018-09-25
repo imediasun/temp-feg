@@ -1,8 +1,11 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEGDBRelationHelpers;
 use App\Models\Core\Users;
 use App\Models\Location;
+use App\Models\Ordertyperestrictions;
+use App\Models\product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -197,9 +200,17 @@ class LocationController extends Controller
 
         if ($row) {
             $row = $row[0];
+
+            $location            =   $this->model->find($id);
+            $this->data['alreadyExcludedProductTypes']  =   $location->excludedProductTypes()->lists('id')->toArray();
+            $this->data['alreadyExcludedProducts']      =   $location->excludedProducts()->lists('id')->toArray();
+
         } else {
             $row = $this->model->getColumnTable('location');
         }
+
+        $this->data['productTypes'] = Ordertyperestrictions::lists('order_type', 'id');
+        $this->data['products']     = product::lists('vendor_description', 'id');
         $this->data['row'] = $row;
         
         $this->data['setting'] = $this->info['setting'];
@@ -219,6 +230,10 @@ class LocationController extends Controller
         $row = $this->model->getRow($id);
         if ($row) {
             $row = $this->data['row'] = $row[0];
+
+            $location                           =   $this->model->find($id);
+            $this->data['excludedProductTypes'] =   $location->excludedProductTypes()->get();
+            $this->data['excludedProducts']     =   $location->excludedProducts()->get();
         } else {
             $row = $this->data['row'] = $this->model->getColumnTable('location');
         }
@@ -286,7 +301,16 @@ class LocationController extends Controller
         }
         $rules['location_name'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
         $rules['location_name_short'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
-        $validator = Validator::make($request->all(), $rules);
+        $rules['product_type_ids'] = 'required|array';
+        $rules['product_ids'] = 'required|array';
+        $custom_error_mesages = [
+            'product_type_ids.required' =>  'Product type field is required',
+            'product_type_ids.array'    =>  'Product type field input must be an array',
+
+            'product_ids.required'      =>  'Product field is required',
+            'product_ids.array'         =>  'Product field input must be an array'
+        ];
+        $validator = Validator::make($request->all(), $rules, $custom_error_mesages);
         if ($validator->passes()) {
             $data = $this->validatePost('location');
             // old id in case the existing location's id has been modified
@@ -297,6 +321,23 @@ class LocationController extends Controller
             }
 
             $id = $this->model->insertRow($data, $id);
+
+            if($id){
+
+                $product_type_ids   = $request->get('product_type_ids');
+                $product_ids        = $request->get('product_ids');
+
+                FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, locationgroups::class, 1, 0, $id);
+                FEGDBRelationHelpers::destroyCustomRelation(product::class, locationgroups::class, 1, 0, $id);
+
+                foreach ($product_type_ids as $product_type_id){
+                    FEGDBRelationHelpers::insertCustomRelation($product_type_id, $id, Ordertyperestrictions::class, location::class, 1);
+                }
+
+                foreach ($product_ids as $product_id){
+                    FEGDBRelationHelpers::insertCustomRelation($product_id, $id, product::class, location::class, 1);
+                }
+            }
 
             // clean orphan user location assignmens
             \SiteHelpers::addLocationToAllLocationUsers();
@@ -332,6 +373,14 @@ class LocationController extends Controller
         }
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
+
+//            $locationIds = $request->input('ids');
+//
+//            foreach ($locationIds as $locationId){
+//                FEGDBRelationHelpers::destroyCustomRelation(location::class, product::class, 1, 0, $locationId);
+//                FEGDBRelationHelpers::destroyCustomRelation(location::class, Ordertyperestrictions::class, 1, 0, $locationId);
+//            }
+
             $this->model->destroy($request->input('ids'));
             
             // clean orphan user location assignmens

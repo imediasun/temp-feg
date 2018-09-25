@@ -34,12 +34,12 @@ class locationgroups extends Sximo  {
     }
 
 	public function excludedProductTypes(){
-	    $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, locationgroups::class, Ordertyperestrictions::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
+	    $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, Ordertyperestrictions::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
 	    return Ordertyperestrictions::whereIn('id', $excludedProductTypeIds);
     }
 
 	public function excludedProducts(){
-	    $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, locationgroups::class, Product::class, 1, true)->pluck('product_id')->toArray();
+	    $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, Product::class, 1, true)->pluck('product_id')->toArray();
 	    return Product::whereIn('id', $excludedProductIds);
     }
 }

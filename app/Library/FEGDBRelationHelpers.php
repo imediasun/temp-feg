@@ -9,6 +9,10 @@
 namespace App\Library;
 
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\location;
+use App\Models\locationgroups;
+use App\Models\Ordertyperestrictions;
+use App\Models\product;
 use \App\Models\Sximo;
 use App\Models\Core\Groups;
 use App\Models\CustemRelation;
@@ -28,12 +32,24 @@ class FEGDBRelationHelpers
     {
         $relatedId = is_array($relatedId) ? $relatedId : [$relatedId];
 
-        $customRelation = CustemRelation::select('id', 'related_id', 'related_to', 'related_type', 'related_type_to', 'is_excluded', 'created_at', 'updated_at')
-            ->whereIn('related_id', $relatedId)->orWhereIn('related_to', $relatedId);
+        $customRelation = CustemRelation::select('id', 'related_id', 'related_to', 'related_type', 'related_type_to', 'is_excluded', 'created_at', 'updated_at');
 
-        $result = $customRelation->whereIn('related_type', [$relatedType, $relatedTypeTo])
-            ->whereIn('related_type_to', [$relatedType, $relatedTypeTo])
-            ->where('is_excluded', $isExcluded)->get();
+        $result = $customRelation
+            ->where(function ($query) use ($relatedId){
+                $query->whereIn('related_id', $relatedId)
+                    ->orWhereIn('related_to', $relatedId);
+            })
+            ->where(function ($query) use ($relatedTypeTo, $relatedType){
+                $query->where('related_type', $relatedTypeTo)
+                    ->orWhere('related_type', $relatedType);
+            })
+            ->where(function ($query) use ($relatedTypeTo, $relatedType){
+                $query->where('related_type_to', $relatedType)
+                    ->orWhere('related_type_to', $relatedTypeTo);
+            })
+            ->where('is_excluded', $isExcluded)
+            ->get();
+
         return $aliasOverride ? self::updateRelationBasedAlias($result) : $result;
     }
 
@@ -125,4 +141,32 @@ class FEGDBRelationHelpers
         }
         return $collection;
     }
+
+    /**
+     * @param $locationId
+     * @return mixed
+     */
+    public static function getExcludedProductTypeAndExcludedProductIds($locationId){
+        $locationGroupIds   = self::getCustomRelationRecords($locationId, locationgroups::class, location::class, 0, true)->pluck('locationgroups_id')->toArray();
+        $locationIds        = self::getCustomRelationRecords($locationGroupIds, locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
+
+        $idsOfExcludedProductTypesFromLocationGroup     = self::getCustomRelationRecords($locationGroupIds, Ordertyperestrictions::class, locationgroups::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
+        $idsOfExcludedProductTypesFromLocation          = self::getCustomRelationRecords($locationIds, Ordertyperestrictions::class, location::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
+        $excludedProductTypeIds = array_merge($idsOfExcludedProductTypesFromLocationGroup, $idsOfExcludedProductTypesFromLocation);
+
+
+        $idsOfExcludedProductsFromLocationGroup     = self::getCustomRelationRecords($locationGroupIds, product::class, locationgroups::class, 1, true)->pluck('product_id')->toArray();
+        $idsOfExcludedProductsFromLocation          = self::getCustomRelationRecords($locationIds, product::class, location::class, 1, true)->pluck('product_id')->toArray();
+        $excludedProductIds = array_merge($idsOfExcludedProductsFromLocationGroup, $idsOfExcludedProductsFromLocation);
+
+
+        //get products related to the Ordertyperestrictions::class (Product Type and merge into the resultant excludedProductIds)
+
+
+        return [
+            'excludedProductTypeIds'    =>  array_unique($excludedProductTypeIds),
+            'excludedProductIds'        =>  array_unique($excludedProductIds)
+        ];
+    }
+
 }
