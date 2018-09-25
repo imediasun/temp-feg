@@ -172,7 +172,7 @@ class inventoryreport extends Sximo  {
             ,Unit_Price,Posted,SUM(Case_Unit_Group) as Case_Unit_Group,
            SUM(IF((prod_type_id NOT IN (".$casePriceCats.") OR is_broken_case), qty/qty_per_case,qty)) AS Cases_Ordered,
             Case_Price,
-            IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,SUM(Unit_Price_ORIGNAL* qty),SUM(Case_Price_ORIGNAL * qty)),SUM(Unit_Price_ORIGNAL*qty)) AS Total_Spent,
+            IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,SUM(FORMAT(Unit_Price_ORIGNAL* qty,10)),SUM(Case_Price_ORIGNAL * qty)),SUM(Unit_Price_ORIGNAL*qty)) AS Total_Spent,
             start_date,end_date
             ,qty_per_case,prod_type_id,prod_sub_type_id,
             IF(is_broken_case=0 OR is_broken_case IS NULL,'NO','YES') AS is_broken_case
