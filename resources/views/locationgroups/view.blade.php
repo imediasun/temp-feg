@@ -57,21 +57,70 @@
 			@else
 			<thead>
 				<tr>
-					<th>ID</th>
-					<th>Location Name</th>
+					<th colspan="1">ID</th>
+					<th colspan="11">Location Name</th>
 				</tr>
 			</thead>
 			<tbody>
 				@foreach($locations as $location)
 					<tr>
-						<td>{{$location->id}}</td>
-						<td>{{$location->location_name}}</td>
+						<td colspan="1">{{$location->id}}</td>
+						<td colspan="11">{{$location->location_name}}</td>
 					</tr>
 				@endforeach
 			</tbody>
 			@endif
 		</table>
-			
+
+
+		<br>
+		<br>
+		<h3>Excluded Product Types</h3>
+		<table class="table table-striped table-bordered" >
+			@if(count($excludedProductTypes) == 0)
+				<p style="vertical-align: middle; text-align: center !important; font-size: larger">No Product Type excluded</p>
+			@else
+			<thead>
+				<tr>
+					<th colspan="1">ID</th>
+					<th colspan="11">Excluded Product Type</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach($excludedProductTypes as $excludedProductType)
+					<tr>
+						<td colspan="1">{{$excludedProductType->id}}</td>
+						<td colspan="11">{{$excludedProductType->order_type}}</td>
+					</tr>
+				@endforeach
+			</tbody>
+			@endif
+		</table>
+
+		<br>
+		<br>
+		<h3>Excluded Products</h3>
+		<table class="table table-striped table-bordered" >
+			@if(count($excludedProducts) == 0)
+				<p style="vertical-align: middle; text-align: center !important; font-size: larger">No Products excluded</p>
+			@else
+			<thead>
+				<tr>
+					<th colspan="1">ID</th>
+					<th colspan="11">Excluded Product</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach($excludedProducts as $excludedProduct)
+					<tr>
+						<td colspan="1">{{$excludedProduct->id}}</td>
+						<td colspan="11">{{$excludedProduct->vendor_description}}</td>
+					</tr>
+				@endforeach
+			</tbody>
+			@endif
+		</table>
+
 		 	
 
 @if($setting['form-method'] =='native')
