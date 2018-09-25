@@ -177,7 +177,7 @@ class productusagereport extends Sximo  {
             , Unit_Price,
             SUM(IF(is_broken_case,(qty/num_items),qty)) AS Cases_Ordered,
             Case_Price,
-            IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,SUM(Unit_Price_ORIGNAL* qty),SUM(Case_Price_ORIGNAL * qty)),SUM(Unit_Price_ORIGNAL*qty)) AS Total_Spent,
+            IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,SUM(FORMAT(Unit_Price_ORIGNAL* qty,7)),SUM(Case_Price_ORIGNAL * qty)),SUM(Unit_Price_ORIGNAL*qty)) AS Total_Spent,
             TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS OC_Total_Spent,
             location_id,GROUP_CONCAT(DISTINCT location_name ORDER BY location_name SEPARATOR $separator) as location_name,
             start_date,end_date,
