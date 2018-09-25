@@ -1302,7 +1302,7 @@ class ReportGenerator
         }
         $reportString = "";
         if(count($report)>0) {
-            $reportString = "<br /><b></b><u>Games Not Played/Reader not reported Yesterday</u></b><br />";
+            $reportString = "<br /><b><u>Games Not Played/Reader not reported Yesterday</u></b><br />";
             $reportString .= implode("<br />", $report);
         }
         return $reportString."<br />";
