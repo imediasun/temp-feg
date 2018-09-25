@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel
     {
         //giving error
         $schedule->command('refresh:token')->cron('*/50 * * * * *')->withoutOverlapping();;
-      //  $schedule->command('comments:read')->everyMinute();
+        $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->everyMinute();
         //turning off to allow client to test and avoid from varying counts
