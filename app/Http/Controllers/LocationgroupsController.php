@@ -4,7 +4,8 @@ use App\Http\Controllers\controller;
 use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
 use App\Models\Locationgroups;
-use App\Models\ProductType;
+use App\Models\product;
+use App\Models\Ordertyperestrictions;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\DB;
@@ -147,13 +148,15 @@ class LocationgroupsController extends Controller {
 			$this->data['row'] 	                        =   $row;
             $savedLocations                             =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, location::class, 0, true)->lists('location_id')->toArray();
             $this->data['savedLocations'] 	            =   $savedLocations;
-            $this->data['alreadyExcludedProductTypes']  =   $row->excludedProductTypes()->get();
+            $this->data['alreadyExcludedProductTypes']  =   $row->excludedProductTypes()->lists('id')->toArray();
+            $this->data['alreadyExcludedProducts']      =   $row->excludedProducts()->lists('id')->toArray();
 		} else {
 			$this->data['row'] 		= $this->model->getColumnTable('l_groups');
 		}
 
 
-        $this->data['productTypes'] = ProductType::lists('type_description', 'id');
+        $this->data['productTypes'] = Ordertyperestrictions::lists('order_type', 'id');
+        $this->data['products']     = product::lists('vendor_description', 'id');
 
 
 
@@ -184,7 +187,8 @@ class LocationgroupsController extends Controller {
 			$this->data['row']                      =   $row;
             $locationGroup                          =   $this->model->find($id);
             $this->data['locations']                =   $locationGroup->locations()->get();
-            $this->data['excluded_product_types']   =   $locationGroup->excludedProductTypes()->get();
+            $this->data['excludedProductTypes']   =   $locationGroup->excludedProductTypes()->get();
+            $this->data['excludedProducts']        =   $locationGroup->excludedProducts()->get();
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('l_groups');
 		}
@@ -223,12 +227,20 @@ class LocationgroupsController extends Controller {
 	function postSave( Request $request, $id =0)
 	{
 	    $rules = [
-            'name'          => 'required|string|max:100|unique:l_groups,name,'.$id,
-            'location_ids'  => 'required|array'
+            'name'              => 'required|string|max:100|unique:l_groups,name,'.$id,
+            'location_ids'      => 'required|array',
+            'product_type_ids'  => 'required|array',
+            'product_ids'       => 'required|array',
         ];
 	    $custom_messages = [
-	        'location_ids.required' =>  'Locations field is required',
-            'location_ids.array'    =>  'Location field input must be an array'
+	        'location_ids.required'     =>  'Locations field is required',
+            'location_ids.array'        =>  'Location field input must be an array',
+
+            'product_type_ids.required' =>  'Product type field is required',
+            'product_type_ids.array'    =>  'Product type field input must be an array',
+
+            'product_ids.required'      =>  'Product field is required',
+            'product_ids.array'         =>  'Product field input must be an array'
         ];
 		$validator = Validator::make($request->all(), $rules, $custom_messages);
 		if ($validator->passes()) {
@@ -237,9 +249,25 @@ class LocationgroupsController extends Controller {
 			$id = $this->model->insertRow($data , $id);
 
 			if($id){
-			    $location_ids = $request->get('location_ids');
-			    foreach ($location_ids as $location_id){
-                    FEGDBRelationHelpers::insertCustomRelation($location_id, $id, location::class, Locationgroups::class, 0);
+
+			    $location_ids       = $request->get('location_ids');
+			    $product_type_ids   = $request->get('product_type_ids');
+			    $product_ids        = $request->get('product_ids');
+
+                FEGDBRelationHelpers::destroyCustomRelation(location::class, locationgroups::class, 0, 0, $id);
+                FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, locationgroups::class, 1, 0, $id);
+                FEGDBRelationHelpers::destroyCustomRelation(product::class, locationgroups::class, 1, 0, $id);
+
+                foreach ($location_ids as $location_id){
+                    FEGDBRelationHelpers::insertCustomRelation($location_id, $id, location::class, locationgroups::class, 0);
+                }
+
+                foreach ($product_type_ids as $product_type_id){
+                    FEGDBRelationHelpers::insertCustomRelation($product_type_id, $id, Ordertyperestrictions::class, locationgroups::class, 1);
+                }
+
+                foreach ($product_ids as $product_id){
+                    FEGDBRelationHelpers::insertCustomRelation($product_id, $id, product::class, locationgroups::class, 1);
                 }
             }
 
@@ -277,6 +305,8 @@ class LocationgroupsController extends Controller {
 
 		    foreach ($locationGroupsIds as $locationGroupsId){
                 FEGDBRelationHelpers::destroyCustomRelation(locationgroups::class, location::class, 0, 0, $locationGroupsId);
+                FEGDBRelationHelpers::destroyCustomRelation(locationgroups::class, product::class, 0, 0, $locationGroupsId);
+                FEGDBRelationHelpers::destroyCustomRelation(locationgroups::class, Ordertyperestrictions::class, 0, 0, $locationGroupsId);
             }
 
 			$this->model->destroy($request->input('ids'));

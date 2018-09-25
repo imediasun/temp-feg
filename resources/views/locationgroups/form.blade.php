@@ -44,7 +44,19 @@
                             {!! SiteHelpers::activeLang('Excluded Product Types', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::select('product_type_ids[]', $productTypes, isset($alreadyExcludedProductTypeIds) ? $alreadyExcludedProductTypeIds : null, array('class'=>'select3', 'id'=>'already_excluded_product_type_ids' ,'multiple'=>"multiple" )) !!}
+                            {!! Form::select('product_type_ids[]', $productTypes, isset($alreadyExcludedProductTypes) ? $alreadyExcludedProductTypes : null, array('class'=>'select3', 'id'=>'already_excluded_product_type_ids' ,'multiple'=>"multiple" )) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group  " >
+                        <label for="Name" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Excluded Products', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
+                        </label>
+                        <div class="col-md-6">
+                            {!! Form::select('product_ids[]', $products, isset($alreadyExcludedProducts) ? $alreadyExcludedProducts : null, array('class'=>'select3', 'id'=>'already_excluded_product_ids' ,'multiple'=>"multiple" )) !!}
                         </div>
                         <div class="col-md-2">
 
