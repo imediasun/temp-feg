@@ -205,6 +205,7 @@ class OrderController extends Controller
 
     public function getIndex()
     {
+        return FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(1);
 
         /*\App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
