@@ -2989,7 +2989,7 @@ ORDER BY aa_id");
     }
     public function getReceivefreehandandcloseorder($poNumbers){
         //Enter Comma separated po numbers in url request
-       // die("Script blocked. To run this script please contact your development team. Thanks!");
+        die("Script blocked. To run this script please contact your development team. Thanks!");
         if(!empty($poNumbers)){
             $records = \DB::table('orders')->whereIn("po_number",explode(",",$poNumbers))->get();
             foreach ($records as $record) {
