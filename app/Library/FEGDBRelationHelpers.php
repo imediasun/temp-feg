@@ -147,25 +147,39 @@ class FEGDBRelationHelpers
      * @return mixed
      */
     public static function getExcludedProductTypeAndExcludedProductIds($locationId){
+
         $locationGroupIds   = self::getCustomRelationRecords($locationId, locationgroups::class, location::class, 0, true)->pluck('locationgroups_id')->toArray();
         $locationIds        = self::getCustomRelationRecords($locationGroupIds, locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
 
-        $idsOfExcludedProductTypesFromLocationGroup     = self::getCustomRelationRecords($locationGroupIds, Ordertyperestrictions::class, locationgroups::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
-        $idsOfExcludedProductTypesFromLocation          = self::getCustomRelationRecords($locationIds, Ordertyperestrictions::class, location::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
+        /*
+         * Getting the Ids of Product Types that are related to
+         * the current Location and related Location Groups
+         * */
+        $idsOfExcludedProductTypesFromLocationGroup = self::getCustomRelationRecords($locationGroupIds, Ordertyperestrictions::class, locationgroups::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
+        $idsOfExcludedProductTypesFromLocation      = self::getCustomRelationRecords($locationIds, Ordertyperestrictions::class, location::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
         $excludedProductTypeIds = array_merge($idsOfExcludedProductTypesFromLocationGroup, $idsOfExcludedProductTypesFromLocation);
 
 
+        /*
+         * Getting the Ids of Products that are related to the
+         * current Location and related Location Groups
+         * */
         $idsOfExcludedProductsFromLocationGroup     = self::getCustomRelationRecords($locationGroupIds, product::class, locationgroups::class, 1, true)->pluck('product_id')->toArray();
         $idsOfExcludedProductsFromLocation          = self::getCustomRelationRecords($locationIds, product::class, location::class, 1, true)->pluck('product_id')->toArray();
         $excludedProductIds = array_merge($idsOfExcludedProductsFromLocationGroup, $idsOfExcludedProductsFromLocation);
 
 
-        //get products related to the Ordertyperestrictions::class (Product Type and merge into the resultant excludedProductIds)
+        /*
+         * getting the ids of products that are related
+         * to the excluded product types.
+         * */
+        $idsOfExcludedProductsFromResultantProductTypes = product::whereIn('prod_type_id', $excludedProductTypeIds)->lists('id')->toArray();
 
+        $finalArrayOfIdsOfExcludedProducts = array_merge($excludedProductIds, $idsOfExcludedProductsFromResultantProductTypes);
 
         return [
-            'excludedProductTypeIds'    =>  array_unique($excludedProductTypeIds),
-            'excludedProductIds'        =>  array_unique($excludedProductIds)
+            'excluded_product_type_ids' =>  array_unique($excludedProductTypeIds),
+            'excluded_product_ids'      =>  array_unique($finalArrayOfIdsOfExcludedProducts)
         ];
     }
 

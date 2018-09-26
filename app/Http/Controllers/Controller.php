@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\location;
 use App\Models\UserLocations;
+use App\Library\FEGDBRelationHelpers;
 use Carbon\Carbon;
 use App\Models\Addtocart;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -99,6 +100,21 @@ abstract class Controller extends BaseController
         $this->data = [
             'UQID' =>  uniqid('', true)
         ];
+
+        /*
+         * This approach of using session to get excluded products and excluded product types needs to be optimised
+         *
+            $currentLocation            = \Session::get('selected_location');
+            $recentlySelectedLocation   = \Session::get('recently_selected_location');
+
+            if($currentLocation != $recentlySelectedLocation)
+            {
+                $excludedProductTypesAndProducts = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($currentLocation);
+                \Session::set('excluded_product_types_and_products', $excludedProductTypesAndProducts);
+
+                \Session::set('recently_selected_location', $currentLocation);
+            }
+        */
     }
 
     static function compareArrays($a,$b)
