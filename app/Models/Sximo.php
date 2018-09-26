@@ -552,6 +552,9 @@ class Sximo extends Model {
             case 'between':
                 $val = 'between';
                 break;
+            case 'not_in':
+                $val = 'not_in';
+                break;
 
             default:
                 $val = '=';
