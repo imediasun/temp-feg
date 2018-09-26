@@ -291,7 +291,7 @@ class MerchandisebudgetController extends Controller
 
     }
 
-    function buildSearch($customSearchString = null)
+    function buildSearch($customSearchString = null,$customOperation = null)
     {
         $months = [
             'Jan'=>'Jan',

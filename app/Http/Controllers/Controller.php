@@ -717,7 +717,7 @@ abstract class Controller extends BaseController
         return (date('Y-m-d', strtotime($x)) == $x);
     }
 
-    function buildSearch($customSearchString = null)
+    function buildSearch($customSearchString = null,$customOperator = null)
     {
         $keywords = '';
         $fields = '';
@@ -811,7 +811,10 @@ abstract class Controller extends BaseController
                                     $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[2];
                                     $param .= " AND $field IN(" . $keys[2] . ") ";
                                 }
-                            } else {
+                            } elseif(!is_null($customOperator) &&  $customOperator == 'not_in') {
+                                $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
+                                $param .= " AND $field NOT IN(" . $keys[2] . ") ";
+                            }else {
                                 $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
                                 $param .= " AND $field " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                             }
@@ -854,6 +857,8 @@ abstract class Controller extends BaseController
                                     $keys[3] = $keys[3].' 23:59:59';
                                 }
                                 $param .= " AND (" . $col . " BETWEEN '" . addslashes($keys[2]) . "' AND '" . ($keys[3]) . "' ) ";
+                            }elseif($operate == 'not_in'){
+                                $param .= " AND ($col NOT IN(". addslashes($keys[2]) .") ";
                             }
                             else
                             {
@@ -908,6 +913,9 @@ abstract class Controller extends BaseController
 
             case 'between':
                 $val = 'between';
+                break;
+            case 'not_in':
+                $val = 'not_in';
                 break;
 
             default:

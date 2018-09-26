@@ -247,6 +247,10 @@ class ProductController extends Controller
         ]);
         $skipFilters = ['search_all_fields'];
         $mergeFilters = [];
+       /* Example: $mergeFilters = [
+            ["field"=>'prod_type_id',"operater"=>'not_in','value'=>'comma seprated values here'],
+            ["field"=>'product_id',"operater"=>'not_in','value'=>'comma seprated values here'],
+        ];*/
         extract($globalSearchFilter); //search_all_fields
 
         // rebuild search query skipping 'ticket_custom_type' filter
@@ -274,8 +278,9 @@ class ProductController extends Controller
 
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
-        $filter .= is_null($trimmedSearchQuery) ? '' : $this->buildSearch($trimmedSearchQuery);
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput,'not_in');
+        $filter .= is_null($trimmedSearchQuery) ? '' : $this->buildSearch($trimmedSearchQuery,'not_in');
+
         return $filter;
     }
     
