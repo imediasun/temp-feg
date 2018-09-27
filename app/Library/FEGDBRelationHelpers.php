@@ -146,7 +146,9 @@ class FEGDBRelationHelpers
      * @param $locationId
      * @return mixed
      */
-    public static function getExcludedProductTypeAndExcludedProductIds($locationId){
+    public static function getExcludedProductTypeAndExcludedProductIds($locationId = null){
+
+        $locationId = !is_null($locationId) ? $locationId : \Session::get('selected_location');
 
         $locationGroupIds   = self::getCustomRelationRecords($locationId, locationgroups::class, location::class, 0, true)->pluck('locationgroups_id')->toArray();
         $locationIds        = self::getCustomRelationRecords($locationGroupIds, locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
