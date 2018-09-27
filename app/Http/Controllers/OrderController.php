@@ -3062,4 +3062,8 @@ ORDER BY aa_id");
             die("Invalid Request");
         }
     }
+    public function getTestGoogle(){
+        dd(config('services.google'));
+        exit;
+    }
 }
