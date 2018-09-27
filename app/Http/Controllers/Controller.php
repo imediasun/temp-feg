@@ -858,7 +858,7 @@ abstract class Controller extends BaseController
                                 }
                                 $param .= " AND (" . $col . " BETWEEN '" . addslashes($keys[2]) . "' AND '" . ($keys[3]) . "' ) ";
                             }elseif($operate == 'not_in'){
-                                $param .= " AND ($col NOT IN(". addslashes($keys[2]) .") ";
+                                $param .= " AND ($col NOT IN(". addslashes($keys[2]) .")) ";
                             }
                             else
                             {

@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEGDBRelationHelpers;
 use App\Models\Product;
 use App\Models\ProductType;
 use Illuminate\Database\Eloquent\Collection;
@@ -246,7 +247,24 @@ class ProductController extends Controller
             'inactive' => '',
         ]);
         $skipFilters = ['search_all_fields'];
-        $mergeFilters = [];
+
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+//dd($excludedProductsAndTypes);
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
+        $mergeFilters = [
+            [
+                "field"     =>  'prod_type_id',
+                "operater"  =>  'not_in',
+                'value'     =>  $excludedProductTypeIdsString
+            ],
+            [
+                "field"     =>  'id',
+                "operater"  =>  'not_in',
+                'value'     =>  $excludedProductIdsString
+            ]
+        ];
        /* Example: $mergeFilters = [
             ["field"=>'prod_type_id',"operater"=>'not_in','value'=>'comma seprated values here'],
             ["field"=>'product_id',"operater"=>'not_in','value'=>'comma seprated values here'],
@@ -255,6 +273,7 @@ class ProductController extends Controller
 
         // rebuild search query skipping 'ticket_custom_type' filter
         $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+//        dd($trimmedSearchQuery);
         $searchInput = $trimmedSearchQuery;
         if (!empty($search_all_fields)) {
             $searchFields = [
