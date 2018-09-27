@@ -3062,10 +3062,4 @@ ORDER BY aa_id");
             die("Invalid Request");
         }
     }
-    public function getTestGoogle(){
-echo "<pre>";
-      //  var_dump($_SERVER['HTTPS']);
-        dd((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://').getenv('HTTP_HOST').env('G_REDIRECT'));
-        exit;
-    }
 }
