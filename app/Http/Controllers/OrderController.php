@@ -3064,7 +3064,7 @@ ORDER BY aa_id");
     }
     public function getTestGoogle(){
 echo "<pre>";
-        var_dump($_SERVER);
+        var_dump($_SERVER['HTTPS']);
        // dd((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'https://').getenv('HTTP_HOST').env('G_REDIRECT'));
         exit;
     }
