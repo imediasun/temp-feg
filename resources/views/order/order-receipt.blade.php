@@ -39,7 +39,7 @@
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
             <div class="col-sm-12 ">
-               
+
                     <h3>Order Receipt</h3>
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
 
@@ -155,8 +155,16 @@
                             </table>
                             <br><hr><br>
                         </div>
-
-
+                        @if($showdblbutton)
+                        <a href="/order/dpl-file/{{ $data['order_id'] }}" class="btn btn-primary pull-right removetarget" >Download Full DPL</a>
+                       <script>
+                           $(function(){
+                              setTimeout(function(){
+                                  $(".removetarget").removeAttr('target');
+                              },700);
+                           });
+                       </script>
+                        @endif
                         <div class="collapse in" id="receiveItemsPan">
                             <b><h3>Receive Items:</h3></b>
                             <table id="itemTable" class="display table" cellspacing="0" width="100%">

@@ -28,6 +28,7 @@ class order extends Sximo
     const ORDER_TYPE_INSTANT_WIN_PRIZE = 8;
     const ORDER_TYPE_OFFICE_SUPPLIES = 6;
     const ORDER_TYPE_PARTY_SUPPLIES = 17;
+    const ORDER_TYPE_UNIFORM = 24;
     const ORDER_TYPE_REPAIR_LABOUR = 3;
     const ORDER_TYPE_ADVANCED_REPLACEMENT = 2;
     const ORDER_TYPE_PRODUCT_IN_DEVELOPMENT = 18;
@@ -53,7 +54,7 @@ class order extends Sximo
 
     public function orderReceived()
     {
-        return $this->hasMany("App\Models\OrderReceived");
+        return $this->hasMany("App\Models\OrderReceived"); //OrderReceived Model Has Many Relation with Order
     }
 
     public static function boot()
@@ -333,6 +334,8 @@ class order extends Sximo
     public static function getExportRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
+        $global = $limit = $order = $sort = $page = $createdTo = $updatedTo = "";
+        $params = [];
 
         extract(array_merge(array(
             'page' => '0',
@@ -1065,6 +1068,19 @@ class order extends Sximo
     }
 
     /**
+     *
+     * @return bool
+     */
+    public function isFullyReceived(){
+        $orderedQty = $this->contents->sum('qty');
+        $receivedQty = $this->orderReceived->sum('quantity');
+        if ($orderedQty == $receivedQty) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Conditions for Post to NetSuite Button being visible:
     1) order fully received;
     2) order status = Closed;
@@ -1323,6 +1339,24 @@ class order extends Sximo
     public function isUserInExcludedOrders(){
     $userGroups = !empty($this->getExcludedOrderSpecifiedGroups()) ? explode(",",$this->getExcludedOrderSpecifiedGroups()):[];
     return in_array(\Session::get('gid'),$userGroups);
+    }
+    public function isOrderReceived(){
+        if ($this->contents->sum('qty') == $this->orderReceived->sum('quantity') && $this->is_freehand == 0 && in_array($this->location->debit_type_id,location::DEBIT_TYPES)) {
+            return  true;
+        } else {
+            return false;
+        }
+    }
+    public function getUnitOfMeasurementForOrderType(){
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $order_types = $pass['calculate price according to case price']->data_options;
+        $order_types = explode(",", $order_types);
+        if (in_array($this->order_type_id, $order_types)) {
+            return 'Case';
+        }
+            return "Each";
+
     }
 
 }

@@ -9,6 +9,8 @@ class location extends Sximo  {
 	
 	protected $table = 'location';
 	protected $primaryKey = 'id';
+    const LOCATION_TYPE_SACOA=1;
+    const DEBIT_TYPES = [1,2];
 
 	public function __construct() {
 		parent::__construct();

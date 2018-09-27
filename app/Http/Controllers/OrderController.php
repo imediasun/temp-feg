@@ -13,6 +13,7 @@ use App\Library\FEG\System\FEGSystemHelper;
 use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
 use App\Models\managefegrequeststore;
+use App\Models\DigitalPackingList;
 use App\Models\Order;
 use App\Models\product;
 use App\Models\OrderSendDetails;
@@ -22,6 +23,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\SximoDB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
@@ -30,6 +32,7 @@ use App\Models\OrdersettingContent;
 use App\Models\ReservedQtyLog;
 use Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 
 class OrderController extends Controller
 {
@@ -362,11 +365,11 @@ class OrderController extends Controller
             $rows[$index]->status_value = $rows[$index]->status_id;
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
 
-
+            $order  = Order::find($data->id);
+            $rows[$index]->isFullyReceived = !is_null($order) ? $order->isOrderReceived():false;
         }
 
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
-
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
@@ -1784,10 +1787,11 @@ class OrderController extends Controller
 
     function getOrderreceipt($order_id = null)
     {
-
+        $dpl = new DigitalPackingList();
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
         $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name, O.id as id  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
-
+        $showdblbutton = $dpl->isOrderReceived($order_id);
+        $this->data['showdblbutton']=$showdblbutton;
         return view('order.order-receipt', $this->data);
     }
 
@@ -2964,7 +2968,6 @@ ORDER BY aa_id");
                     'order_id' => $order->id,
                     'name' => $order->po_number,
                     'location_id' => $order->location_id,
-                    'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                     'type_id' => $location->debit_type_id
                 ];
                 $dpl = $dpl->saveOrUpdateDPL($insertData, $downloadId);
@@ -2973,7 +2976,7 @@ ORDER BY aa_id");
                 $dplFileContent = $dpl->getDPLFileData();
                 $dpl->saveFile($dplFileContent);
             }
-        }
+    }
         $headers = array(
             'Content-type: '.mime_content_type(public_path()."/uploads/dpl-files/".$dpl->name),
         );

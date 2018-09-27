@@ -209,8 +209,6 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                title="Generate UPC/Barcode"><i class="fa fa-barcode" aria-hidden="true"></i></a>
                             <a href="{{ URL::to('product/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"
                                title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
-
-
                         </td>
                     </tr>
 

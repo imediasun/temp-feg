@@ -9,7 +9,7 @@ use Request, Log,Redirect,Session;
 use App\Library\SximoEloquentBuilder;
 use App\Library\SximoQueryBuilder;
 use App\Models\Core\Groups;
-use App\Models\CustemRelation;
+use Validator;
 class Sximo extends Model {
 
     public static $getRowsQuery = null;
@@ -551,6 +551,9 @@ class Sximo extends Model {
 
             case 'between':
                 $val = 'between';
+                break;
+            case 'not_in':
+                $val = 'not_in';
                 break;
 
             default:
