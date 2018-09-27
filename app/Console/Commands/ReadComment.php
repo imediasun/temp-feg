@@ -160,7 +160,7 @@ class ReadComment extends Command
                 }
 
 
-                if(env('APP_ENV', 'development') == 'production')
+                if(!env('DONT_DELETE_IMAP_TICKET_COMMENTS', true))
                 {
                     //commented for testing on dev
                     $L->log('Delete email');
