@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
 use App\Models\Managefegrequeststore;
 use App\Models\Sximo;
@@ -317,10 +318,34 @@ class ManagefegrequeststoreController extends Controller
 
     public function getSearchFilterQuery($customQueryString = null)
     {
+
+
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
+        $mergeFilters = [
+            [
+                "field"     =>  'prod_type_id',
+                "operater"  =>  'not_in',
+                'value'     =>  $excludedProductTypeIdsString
+            ],
+            [
+                "field"     =>  'id',
+                "operater"  =>  'not_in',
+                'value'     =>  $excludedProductIdsString
+            ]
+        ];
+
+        $skipFilters = ['search_all_fields'];
+
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
-            $this->buildSearch($customQueryString);
+        $filter = is_null($trimmedSearchQuery) ? (is_null(Input::get('search')) ? '' : $this->buildSearch(Input::get('search'), 'not_in')) :
+            $this->buildSearch($trimmedSearchQuery, 'not_in');
 
         // Get assigned locations list as sql query (part)
         //$locationFilter = \SiteHelpers::getQueryStringForLocation('new_graphics_request', 'location_id', [], ' OR new_graphics_request.location_id=0 ');
