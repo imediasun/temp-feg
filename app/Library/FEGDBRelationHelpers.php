@@ -144,9 +144,11 @@ class FEGDBRelationHelpers
 
     /**
      * @param $locationId
+     * @param $isGetExcludedProductTypes
+     * @param $isGetExcludedProducts
      * @return mixed
      */
-    public static function getExcludedProductTypeAndExcludedProductIds($locationId = null){
+    public static function getExcludedProductTypeAndExcludedProductIds($locationId = null, $isGetExcludedProductTypes = false,  $isGetExcludedProducts = false){
 
         $locationId = !is_null($locationId) ? $locationId : \Session::get('selected_location');
 
@@ -179,10 +181,22 @@ class FEGDBRelationHelpers
 
         $finalArrayOfIdsOfExcludedProducts = array_merge($excludedProductIds, $idsOfExcludedProductsFromResultantProductTypes);
 
-        return [
-            'excluded_product_type_ids' =>  array_unique($excludedProductTypeIds),
-            'excluded_product_ids'      =>  array_unique($finalArrayOfIdsOfExcludedProducts)
-        ];
+        if ($isGetExcludedProductTypes && !$isGetExcludedProducts) {
+            $result = [
+                'excluded_product_type_ids' =>  array_unique($excludedProductTypeIds),
+            ];
+        } elseif (!$isGetExcludedProductTypes && $isGetExcludedProducts) {
+            $result = [
+                'excluded_product_ids' =>  array_unique($excludedProductIds),
+            ];
+        } else {
+            $result = [
+                'excluded_product_type_ids' =>  array_unique($excludedProductTypeIds),
+                'excluded_product_ids'      =>  array_unique($finalArrayOfIdsOfExcludedProducts)
+            ];
+        }
+
+        return $result;
     }
 
 }
