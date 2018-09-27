@@ -1353,9 +1353,9 @@ class order extends Sximo
         $order_types = $pass['calculate price according to case price']->data_options;
         $order_types = explode(",", $order_types);
         if (in_array($this->order_type_id, $order_types)) {
-            return 'Case';
+            return 'CASE';
         }
-            return "Each";
+            return "EACH";
 
     }
 

@@ -28,7 +28,7 @@ class DigitalPackingList extends Sximo
     }
 
     public function getNameAttribute(){
-       return $this->order->po_number."_".$this->id.".dpl";
+       return str_replace("-","",$this->order->po_number).".dpl";
     }
 
     public function order(){
@@ -43,7 +43,7 @@ class DigitalPackingList extends Sximo
             $itemName = $this->cleanAndTruncateString($product->item_name);
 
             $unitTypeUOM = $this->order->getUnitOfMeasurementForOrderType();
-            $price =($unitTypeUOM == "Case") ? $price = $product->case_price : $product->price;
+            $price =($unitTypeUOM == "CASE") ? $price = $product->case_price : $product->price;
 
             $tickets = $product->ticket_value;
             $qtyPerCase = $product->qty_per_case;
