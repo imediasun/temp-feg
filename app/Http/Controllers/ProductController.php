@@ -240,7 +240,6 @@ class ProductController extends Controller
         $skipFilters = ['search_all_fields'];
 
         $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
-//dd($excludedProductsAndTypes);
         $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
         $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
 
@@ -264,7 +263,6 @@ class ProductController extends Controller
 
         // rebuild search query skipping 'ticket_custom_type' filter
         $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
-//        dd($trimmedSearchQuery);
         $searchInput = $trimmedSearchQuery;
         if (!empty($search_all_fields)) {
             $searchFields = [

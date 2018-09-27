@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEGDBRelationHelpers;
 use App\Models\Shopfegrequeststore;
 use App\Models\Addtocart;
 use \App\Models\Sximo\Module;
@@ -49,9 +50,30 @@ class ShopfegrequeststoreController extends Controller
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters([
+            'search_all_fields' => '',
+            'prod_type_id'=>'',
+            'prod_sub_type_id'=>'',
+        ]);
         $skipFilters = ['search_all_fields'];
-        $mergeFilters = [];
+
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
+        $mergeFilters = [
+            [
+                "field"     =>  'prod_type_id',
+                "operater"  =>  'not_in',
+                'value'     =>  $excludedProductTypeIdsString
+            ],
+            [
+                "field"     =>  'id',
+                "operater"  =>  'not_in',
+                'value'     =>  $excludedProductIdsString
+            ]
+        ];
+
         extract($globalSearchFilter); //search_all_fields
 
         // rebuild search query skipping 'ticket_custom_type' filter
@@ -79,8 +101,8 @@ class ShopfegrequeststoreController extends Controller
 
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
-
+        $filter  = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput, 'not_in');
+        $filter .= is_null($trimmedSearchQuery)  ? '' : $this->buildSearch($searchInput, 'not_in');
 
         return $filter;
     }
@@ -130,6 +152,7 @@ class ShopfegrequeststoreController extends Controller
       //Commented below line to implement single Search field in simple search
       //$filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
         $filter = $this->getSearchFilterQuery();
+
         // add special price range query
         if (!empty($price_range)) {
             $pr1 = '';
@@ -172,6 +195,7 @@ class ShopfegrequeststoreController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
+
         // Get Query
         $type = $request->get('type');
         $this->data['type'] = $type;
@@ -183,7 +207,8 @@ class ShopfegrequeststoreController extends Controller
         $product_type = $request->get('product_type');
         $this->data['product_type'] = $product_type;
         $cond = array('type' => $type, 'active_inactive' => $active_inactive, 'order_type' => $order_type, 'product_type' => $product_type,);
-        $results = $this->model->getRows($params, $cond);
+        $params; $results = $this->model->getRows($params);
+//        dd($results);
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         // Build pagination setting
