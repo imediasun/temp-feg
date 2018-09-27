@@ -3063,7 +3063,9 @@ ORDER BY aa_id");
         }
     }
     public function getTestGoogle(){
-        dd(config('services.google'));
+
+        dd($_SERVER);
+       // dd((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'https://').getenv('HTTP_HOST').env('G_REDIRECT'));
         exit;
     }
 }
