@@ -475,6 +475,9 @@ class OrderController extends Controller
         $this->data['games_options'] = $this->model->populateGamesDropdown();
         $this->data['isTypeRestricted'] = $this->model->isTypeRestricted();
         $this->data['displayTypesOnly'] = $this->model->getAllowedTypes();
+//        $locationId = $id ? $id : null;
+        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
+        $this->data['excludedOrderTypes'] = implode(',', $excludedOrderTypesArray);
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
