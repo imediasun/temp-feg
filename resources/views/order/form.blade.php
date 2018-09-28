@@ -1568,6 +1568,16 @@ $(function(){
                             request.order_type_id = orderTypeId;
                         }
 
+                        locationId = '{{ $data["order_loc_id"]}}';
+
+                        @if($data['prefill_type'] != "edit" && $data['prefill_type']!= "SID")
+                            locationId = $('#location_id').val() || '';
+                        @endif
+
+                        if (locationId != "") {
+                            request.location_id = locationId;
+                        }
+
                         var already_added_products = [], exclude_products = '';
                         $('.clonedInput').each(function (i, ele) {
                             var product_id = $(ele).find("[name='product_id[]']").first().val();
