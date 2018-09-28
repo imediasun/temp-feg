@@ -2020,6 +2020,7 @@ class OrderController extends Controller
     {
         $term = Input::get('term');
         $vendorId = Input::get('vendor_id',0);
+        $locationId = Input::get('location_id',0);
         $excludeProducts = Input::get('exclude_products', null);
         $whereWithVendorCondition = $whereWithExcludeProductCondition = "";
 
@@ -2038,6 +2039,17 @@ class OrderController extends Controller
         if (!empty($vendorId)) {
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
         }
+
+
+
+        $excludedProductTypeAndProductIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, false, true);
+        $excludedProductTypeAndProductIdsString = implode(',', $excludedProductTypeAndProductIds['excluded_product_ids']);
+
+        $whereNotInProductIdsCondition = '';
+        if($excludedProductTypeAndProductIdsString != '' ){
+            $whereNotInProductIdsCondition = " AND products.id NOT IN ($excludedProductTypeAndProductIdsString) ";
+        }
+
 
         if ($excludeProducts) {
             $excludeProductsArray = explode(',', $excludeProducts);
@@ -2066,7 +2078,7 @@ class OrderController extends Controller
                                 FROM products
                                 WHERE vendor_description LIKE '%$term%' 
                                 AND products.inactive=0  $whereWithVendorCondition  $whereWithExcludeProductCondition  
-                                  $whereOrderTypeCondition $whereRestrictedTypeCondition
+                                  $whereOrderTypeCondition $whereRestrictedTypeCondition $whereNotInProductIdsCondition
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
                                  Limit 0,10";
