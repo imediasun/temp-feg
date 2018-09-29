@@ -252,18 +252,24 @@ class ProductController extends Controller
         $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
         $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
 
-        $mergeFilters = [
-            [
+        $mergeFilters = [];
+
+        if($excludedProductTypeIdsString != '' ){
+            array_push($mergeFilters, [
                 "field"     =>  'prod_type_id',
                 "operater"  =>  'not_in',
                 'value'     =>  $excludedProductTypeIdsString
-            ],
-            [
+            ]);
+        }
+
+        if($excludedProductIdsString != '' ){
+            array_push($mergeFilters, [
                 "field"     =>  'id',
                 "operater"  =>  'not_in',
                 'value'     =>  $excludedProductIdsString
-            ]
-        ];
+            ]);
+        }
+
        /* Example: $mergeFilters = [
             ["field"=>'prod_type_id',"operater"=>'not_in','value'=>'comma seprated values here'],
             ["field"=>'product_id',"operater"=>'not_in','value'=>'comma seprated values here'],
