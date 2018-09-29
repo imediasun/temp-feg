@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Library\FEGDBRelationHelpers;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
@@ -50,6 +51,20 @@ class productsindevelopmentreport extends Sximo  {
         }
         if (!empty($description)) {
             $where .= " AND products.vendor_description LIKE '%$description%' ";
+        }
+
+
+
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
+        if($excludedProductTypeIdsString != ''){
+            $where .= ' AND products.prod_type_id NOT IN ('.$excludedProductTypeIdsString.') ';
+        }
+
+        if($excludedProductIdsString != ''){
+            $where .= ' AND products.id NOT IN ('.$excludedProductIdsString.') ';
         }
 
         $sql .= $where;
