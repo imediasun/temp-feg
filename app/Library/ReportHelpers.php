@@ -916,6 +916,20 @@ class ReportHelpers
         if($productUsageReport->isTypeRestricted()){
             $typeDisplayOnly = " AND order_type_id IN(".$productUsageReport->getAllowedTypes().") ";
         }
+
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(explode(',', $location));
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+//        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
+        $whereNotInProductTypeAndProductIds = '';
+
+        if($excludedProductTypeIdsString != '')
+            $whereNotInProductTypeAndProductIds .= " AND order_type_id NOT IN($excludedProductTypeIdsString) ";
+
+//        if($excludedProductIdsString != '')
+//            $whereNotInProductTypeAndProductIds .= " AND (id NOT IN($excludedProductIdsString)) ";
+
+
         $Q = "
                 FROM location L
 				LEFT JOIN (
@@ -925,6 +939,7 @@ class ReportHelpers
                             date_ordered >= '$dateStart' 
                             AND date_ordered <= '$dateEnd' 
                             AND order_type_id IN(7,8) $typeDisplayOnly
+                            $whereNotInProductTypeAndProductIds
                             AND status_id IN(".implode(',',order::ORDER_CLOSED_STATUS).") 
                             
                         GROUP BY location_id) O 
