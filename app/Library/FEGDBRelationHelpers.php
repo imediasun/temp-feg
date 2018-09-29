@@ -180,9 +180,13 @@ class FEGDBRelationHelpers
          * getting the ids of products that are related
          * to the excluded product types.
          * */
-        $idsOfExcludedProductsFromResultantProductTypes = product::whereIn('prod_type_id', $excludedProductTypeIds)->lists('id')->toArray();
+//        $idsOfExcludedProductsFromResultantProductTypes = product::whereIn('prod_type_id', $excludedProductTypeIds)->lists('id')->toArray();
 
-        $finalArrayOfIdsOfExcludedProducts = array_merge($excludedProductIds, $idsOfExcludedProductsFromResultantProductTypes, $excludedProductVariationIds);
+        $finalArrayOfIdsOfExcludedProducts = array_merge(
+            $excludedProductIds,
+//            $idsOfExcludedProductsFromResultantProductTypes,
+            $excludedProductVariationIds
+        );
 
         if ($isGetExcludedProductTypes && !$isGetExcludedProducts) {
             $result = [

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\OrderController;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Library\FEGDBRelationHelpers;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use SiteHelpers;
@@ -231,9 +232,23 @@ class productusagereport extends Sximo  {
                 $whereNotInPoNumber = "  AND O.po_number NOT IN($excludedOrders) ";
             }
 
+            $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+            $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+            $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
+            $whereNotInProductTypeAndProductIds = '';
+
+            if($excludedProductTypeIdsString != ''){
+                $whereNotInProductTypeAndProductIds .= 'AND OC.prod_type_id NOT IN ('.$excludedProductTypeIdsString.')';
+            }
+
+            if($excludedProductIdsString != ''){
+                $whereNotInProductTypeAndProductIds .= 'AND OC.product_id NOT IN ('.$excludedProductIdsString.')';
+            }
+
             $whereQuery = " WHERE O.location_id not in(6000,6030) and O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
                             AND O.created_at <= '$date_end' 
-                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereProdSubType $orderTypeRestrictedWhere ";
+                             $whereNotInPoNumber $whereLocation $whereVendor $whereOrderType $whereProdType $whereNotInProductTypeAndProductIds  $whereProdSubType $orderTypeRestrictedWhere ";
 
             $groupQuery = " GROUP BY Product ,num_items ,Case_Price,Product_Type, sku";
 //            $groupQuery = " GROUP BY P.id ";
