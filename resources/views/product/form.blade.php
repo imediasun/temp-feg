@@ -362,6 +362,19 @@
 
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="Reserved Qty Limit" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Excluded Locations and Groups', (isset($fields['excluded_locations_and_groups']['language'])?
+                            $fields['excluded_locations_and_groups']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <select name='excluded_locations_and_groups[]' data-seprate='true' id='excluded_locations_and_groups' class='select2' multiple></select>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
 
                      <div class="form-group  " >
                         <label for="Img" class=" control-label col-md-4 text-left">
@@ -485,6 +498,24 @@
 
 //
 <script type="text/javascript">
+    $(function(){
+        $('select[name="excluded_locations_and_groups[]"]').attr('multiple','multiple');
+        $('select[name="excluded_locations_and_groups[]"]').change();
+        $.ajax({
+            url: '/product/location-and-groups/{{ $row['id'] }}',
+            type: 'GET',
+            success: function (response) {
+                var optionHTML = response.groups;
+                optionHTML +=response.locations;
+                var selectedValues = response.selectedValues;
+
+                $('select[name="excluded_locations_and_groups[]"]').attr('multiple','multiple');
+               $('select[name="excluded_locations_and_groups[]"]').html(optionHTML);
+                $('select[name="excluded_locations_and_groups[]"]').change();
+                $('select[name="excluded_locations_and_groups[]"]').val(selectedValues).change();
+                            }
+        });
+    });
     var types_counter = 1;
     $(document).ready(function () {
 
@@ -509,8 +540,8 @@
         $("#expense_category_1").jCombo("{{ URL::to('product/expense-category-groups') }}",
                 {selected_value: '{{ $row["expense_category"] }}'});
         /*$("#prod_type_id_1").click(function () {
-            $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id_1').val()+"",
-                    {selected_value: '{{ $row["prod_sub_type_id"] }}'});
+            $("#prod_sub_type_id_1").jCombo("&parent=request_type_id:"+$('#prod_type_id_1').val()+"",
+                    {selected_value: ''});
             if($(this).val()) {
                 //need to uncomment after discussion
                 getExpenseCategory($(this).val(),null,1);
