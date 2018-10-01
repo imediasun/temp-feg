@@ -218,6 +218,11 @@ App.autoCallbacks.registerCallback('ajaxViewOpened', function(params){
         excludeProductsAndProductTypes();
     }, 1000);
 });
+App.autoCallbacks.registerCallback('inline.row.config.after', function(params){
+    setTimeout(function () {
+        excludeProductsAndProductTypes();
+    }, 1000);
+});
 function getExcludedProductTypesAndProductIds(){
     $.ajax({
         url: '/location/get-excluded-products-and-product-types',
