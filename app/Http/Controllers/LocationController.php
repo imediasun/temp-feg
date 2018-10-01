@@ -484,4 +484,7 @@ class LocationController extends Controller
         return response()->json(['location_id'=>$locationId,'all_location'=>$allLocations]);
     }
 
+    public function getExcludedProductsAndProductTypes($locationId = null){
+       return FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true,  true);
+    }
 }

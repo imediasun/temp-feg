@@ -119,6 +119,7 @@ Route::group(['middleware' => 'auth'], function()
     Route::controller('urlauth', 'URLAuthController');
     Route::controller('demo', 'DemoController');
     Route::get('order/inquire/{orderId}/order', 'OrderController@getInquireOrder');
+    Route::get('/location/get-excluded-products-and-product-types/{id?}', 'LocationController@getExcludedProductsAndProductTypes');
     include('pageroutes.php');
     include('moduleroutes.php');
 });
