@@ -1429,4 +1429,62 @@ $(function(){
     $(document).on("click",".collapse-close,.cancelButton",function(){
         $(document).scrollTop(0);
     });
+
+        $.ajax({
+            url: '/product/location-and-groups',
+            type: 'GET',
+            success: function (response) {
+                var optionHTML = response.groups;
+                optionHTML +=response.locations;
+                setTimeout(setExcludeLocationDropdown,2000,optionHTML);
+            }
+        });
+
+    $(document).on('dblclick', '#productTable tr', function (e) {
+        $('.ajaxLoading').show();
+
+       // setTimeout(reinitfield, 1000, $(this).attr('data-id'));
+        reinitfield($(this).attr('data-id'));
+        var row = $(this);
+        $.ajax({
+            url: '/product/location-and-groups/' + $(this).attr('data-id'),
+            type: 'GET',
+            success: function (response) {
+                var optionHTML = response.groups;
+                optionHTML += response.locations;
+                var selectedValues = response.selectedValues;
+                setExcludeLocationDropdown(optionHTML, row.attr('data-id'),selectedValues);
+                $('.ajaxLoading').hide();
+            }
+        });
+    });
+
+
 });
+
+function reinitfield(id){
+    $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'})
+    $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').change();
+    $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'})
+    $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').change();
+}
+function setExcludeLocationDropdown(responseHTML,id,selectedValues){
+
+    if(id){
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'}).addClass("select2");
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').html(responseHTML);
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').change();
+        if(selectedValues.length > 0) {
+            $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').val(selectedValues);
+        }
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').change();
+        return ;
+    }
+    if($('tr#form-0 td[data-form="excluded_locations_and_groups"] select').length > 0){
+        $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').html(responseHTML);
+        $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'})
+        $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').change();
+    }else{
+        setExcludeLocationDropdown(responseHTML)
+    }
+}

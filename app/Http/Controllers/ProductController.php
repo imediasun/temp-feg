@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Library\FEGDBRelationHelpers;
+use App\Models\location;
 use App\Models\Product;
 use App\Models\ProductType;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use phpDocumentor\Reflection\Types\Null_;
 use Validator, Input, Redirect,Image;
 use App\Models\ReservedQtyLog;
+use App\Models\locationgroups;
 class ProductController extends Controller
 {
 
@@ -690,6 +692,7 @@ class ProductController extends Controller
             }
         }
 
+        unset($request->excluded_locations_and_groups);
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
@@ -706,7 +709,8 @@ class ProductController extends Controller
         $rules['case_price'] = 'required';
         $rules['unit_price'] = 'required';
         $rules['vendor_id'] = 'required';
-
+        $excludedLocationsAndGroups = $request->excluded_locations_and_groups;
+unset($request->excluded_locations_and_groups);
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
@@ -888,7 +892,18 @@ class ProductController extends Controller
                     $this->model->insertRow($netsuite_description, $pc->id);
                 }
             }
-
+            if(is_array($excludedLocationsAndGroups) && count($excludedLocationsAndGroups)>0) {
+                FEGDBRelationHelpers::destroyCustomRelation(product::class, locationgroups::class, 1, 0, $id);
+                FEGDBRelationHelpers::destroyCustomRelation(product::class, location::class, 1, 0, $id);
+                foreach ($excludedLocationsAndGroups as $excludedLocationsAndGroup) {
+                    $splitValue = explode('_', $excludedLocationsAndGroup);
+                    if ($splitValue[0] == 'group') {
+                        FEGDBRelationHelpers::insertCustomRelation($id, $splitValue[1], product::class, locationgroups::class, 1);
+                    } else {
+                        FEGDBRelationHelpers::insertCustomRelation($id, $splitValue[1], product::class, location::class, 1);
+                    }
+                }
+            }
 
             return response()->json(array(
                 'status' => 'success',
@@ -1322,5 +1337,56 @@ GROUP BY mapped_expense_category");
             'status' => 'success',
             'barcode'=>$barCode,
         ));
+    }
+    public function getLocationAndGroups($id = 0){
+
+        if($id == 0 ){
+            $locationGroups = locationgroups::where(function($query){
+                1 == 1;
+            })->orderBy('name','asc')->get();
+
+            $groupsData = '<optgroup label="Location Groups">';
+            foreach($locationGroups as $locationGroup){
+                $groupsData .= '<option value="group_'.$locationGroup->id.'">'.$locationGroup->name.'</option>';
+            }
+            $groupsData .='</optgroup>';
+            $locations = location::where('active','=',1)->orderBy('id','asc')->get();
+            $locationsData = '<optgroup label="Location">';
+            foreach($locations as $location){
+                $locationsData .= '<option value="location_'.$location->id.'">'.$location->id.' '.$location->location_name.'</option>';
+            }
+            $locationsData .='</optgroup>';
+            return response()->json(['groups'=>$groupsData,"locations"=>$locationsData]);
+        }else{
+            $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,locationgroups::class,1,true);
+            $selectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,location::class,1,true);
+
+            $locationGroups = locationgroups::where(function($query){
+                1 == 1;
+            })->orderBy('name','asc')->get();
+            $selectValues = [];
+            $groupsData = '<optgroup label="Location Groups">';
+            foreach($locationGroups as $locationGroup){
+
+                if($selectedGroups->where('locationgroups_id',$locationGroup->id)->count()){
+                    $selectValues[] = 'group_'.$locationGroup->id;
+                }
+                $groupsData .= '<option  value="group_'.$locationGroup->id.'">'.$locationGroup->name.'</option>';
+            }
+            $groupsData .='</optgroup>';
+            $locations = location::where('active','=',1)->orderBy('id','asc')->get();
+            $locationsData = '<optgroup label="Location">';
+            foreach($locations as $location){
+
+                if($selectedLocations->where('location_id',$location->id)->count()){
+                    $selectValues[] = 'location_'.$location->id;
+                }
+                $locationsData .= '<option  value="location_'.$location->id.'">'.$location->id.' '.$location->location_name.'</option>';
+            }
+            $locationsData .='</optgroup>';
+
+            return response()->json(['groups'=>$groupsData,"locations"=>$locationsData,'selectedValues'=>$selectValues]);
+
+        }
     }
 }
