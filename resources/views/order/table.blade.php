@@ -170,7 +170,7 @@ usort($tableGrid, "SiteHelpers::_sort");
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                 @if($field['field']=='notes' && !empty($row->notes))
-							                <?php echo ltrim($value,'<br>'); ?>
+							                <?php echo preg_replace('/^(<br\s*\/?>)*|(<br\s*\/?>)*$/i', '',$value); ?>
                                     @else
 
                                     @if($field['field']=='is_api_visible')
