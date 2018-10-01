@@ -200,17 +200,57 @@ App.autoCallbacks.runCallback = function (eventName, params, options) {
 
 };
 
+var getExcludedProductTypesAndProducts = [];
 App.autoCallbacks.registerCallback('reloaddata', function(params){
     initExport(this);
     //alignColumns(this);
     //initUserPopup(this);
     $(document).scrollTop(0);
+    getExcludedProductTypesAndProductIds();
 });
+
+App.autoCallbacks.registerCallback('advancedsearch', function(params){
+    excludeProductsAndProductTypes();
+});
+
+App.autoCallbacks.registerCallback('ajaxViewOpened', function(params){
+    setTimeout(function () {
+        excludeProductsAndProductTypes();
+    }, 1000);
+});
+function getExcludedProductTypesAndProductIds(){
+    $.ajax({
+        url: '/location/get-excluded-products-and-product-types',
+        method: 'GET',
+        success: function (result) {
+            getExcludedProductTypesAndProducts = result;
+            excludeProductsAndProductTypes();
+        }
+    })
+}
+
+function excludeProductsAndProductTypes(){
+    setTimeout(function(){
+        // if(pageModule != 'shopfegrequeststore'){
+            var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type', 'prod_type_id[]'];
+            $.each(productTypeSelectorsNames, function (key, val) {
+
+
+                var selectBox = $('select[name="'+val+'"]');
+                if(selectBox.length != 0){
+
+                    $.each(getExcludedProductTypesAndProducts.excluded_product_type_ids, function(key, val){
+                        selectBox.find('[value="'+val+'"]').remove();
+                    });
+                }
+            })
+        // }
+    }, 1000);
+}
 App.autoCallbacks.registerCallback('columnselector', function(params){
 
 });
 App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
-
 });
 
 App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
