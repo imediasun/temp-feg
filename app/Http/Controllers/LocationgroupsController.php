@@ -256,16 +256,22 @@ class LocationgroupsController extends Controller {
                 FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, Locationgroups::class, 1, 0, $id);
                 FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
 
-                foreach ($location_ids as $location_id){
-                    FEGDBRelationHelpers::insertCustomRelation($location_id, $id, location::class, Locationgroups::class, 0);
+                if(count($location_ids) != 0){
+                    foreach ($location_ids as $location_id){
+                        FEGDBRelationHelpers::insertCustomRelation($location_id, $id, location::class, Locationgroups::class, 0);
+                    }
                 }
 
-                foreach ($product_type_ids as $product_type_id){
-                    FEGDBRelationHelpers::insertCustomRelation($product_type_id, $id, Ordertyperestrictions::class, Locationgroups::class, 1);
+                if(count($product_type_ids) != 0) {
+                    foreach ($product_type_ids as $product_type_id) {
+                        FEGDBRelationHelpers::insertCustomRelation($product_type_id, $id, Ordertyperestrictions::class, Locationgroups::class, 1);
+                    }
                 }
 
-                foreach ($product_ids as $product_id){
-                    FEGDBRelationHelpers::insertCustomRelation($product_id, $id, product::class, Locationgroups::class, 1);
+                if(count($product_ids) != 0) {
+                    foreach ($product_ids as $product_id){
+                        FEGDBRelationHelpers::insertCustomRelation($product_id, $id, product::class, Locationgroups::class, 1);
+                    }
                 }
             }
 
@@ -303,8 +309,8 @@ class LocationgroupsController extends Controller {
 
 		    foreach ($locationGroupsIds as $locationGroupsId){
                 FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class, location::class, 0, 0, $locationGroupsId);
-                FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class, product::class, 0, 0, $locationGroupsId);
-                FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class, Ordertyperestrictions::class, 0, 0, $locationGroupsId);
+                FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class, product::class, 1, 0, $locationGroupsId);
+                FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class, Ordertyperestrictions::class, 1, 0, $locationGroupsId);
             }
 
 			$this->model->destroy($request->input('ids'));
