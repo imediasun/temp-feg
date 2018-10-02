@@ -1429,21 +1429,21 @@ $(function(){
     $(document).on("click",".collapse-close,.cancelButton",function(){
         $(document).scrollTop(0);
     });
-
-        $.ajax({
-            url: '/product/location-and-groups',
-            type: 'GET',
-            success: function (response) {
-                var optionHTML = response.groups;
-                optionHTML +=response.locations;
-                setTimeout(setExcludeLocationDropdown,2000,optionHTML);
-            }
-        });
+if (window.location.href.indexOf('/product') > -1) {
+    $.ajax({
+        url: '/product/location-and-groups',
+        type: 'GET',
+        success: function (response) {
+            var optionHTML = response.groups;
+            optionHTML += response.locations;
+            setTimeout(setExcludeLocationDropdown, 2000, optionHTML);
+        }
+    });
 
     $(document).on('dblclick', '#productTable tr', function (e) {
         $('.ajaxLoading').show();
 
-       // setTimeout(reinitfield, 1000, $(this).attr('data-id'));
+        // setTimeout(reinitfield, 1000, $(this).attr('data-id'));
         reinitfield($(this).attr('data-id'));
         var row = $(this);
         $.ajax({
@@ -1453,12 +1453,12 @@ $(function(){
                 var optionHTML = response.groups;
                 optionHTML += response.locations;
                 var selectedValues = response.selectedValues;
-                setExcludeLocationDropdown(optionHTML, row.attr('data-id'),selectedValues);
+                setExcludeLocationDropdown(optionHTML, row.attr('data-id'), selectedValues);
                 $('.ajaxLoading').hide();
             }
         });
     });
-
+}
 
 });
 
