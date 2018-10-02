@@ -781,7 +781,10 @@
         //console.log(more_types_html);
         $("#more_types_container").append(more_types_html);
 
-        $("#prod_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}");
+        excludedProductTypes = '{!! $excludedProductTypes !!}';
+        excludedProductTypes = $.parseJSON('[' + excludedProductTypes + ']');
+
+        $("#prod_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}", {excludeItems: excludedProductTypes});
         $("#expense_category_"+types_counter).jCombo("{{ URL::to('product/expense-category-groups') }}");
         renderDropdown($(".select2"), {width: "100%"});
         <?php $NETSUITE_PRODUCT_MAX_LENGTH = config('app.NETSUITE_PRODUCT_MAX_LENGTH'); ?>
@@ -790,7 +793,6 @@
             $(this).hide();
         }
         <?php } ?>
-
         console.log('debug');
         console.log(types_counter);
     });

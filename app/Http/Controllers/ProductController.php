@@ -461,6 +461,8 @@ class ProductController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
+        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
+        $this->data['excludedProductTypes'] = implode(',', $excludedOrderTypesArray);
 
         return view('product.form', $this->data);
     }
