@@ -379,6 +379,8 @@ class ProductController extends Controller
 
         $rows = $results['rows'];
         $ExpenseCategories = $this->model->allExpenseCategories();
+        $rows = $this->model->setGroupsAndLocations($rows);
+//die;
         $this->data['ExpenseCategories'] = $ExpenseCategories;
 
         foreach ($rows as $index => $data) {
@@ -808,6 +810,7 @@ unset($request->excluded_locations_and_groups);
 
                 $ids = [];
                 $count = 1;
+                unset($data['excluded_locations_and_groups']);
                 $prodData = $data;
                 foreach ($product_categories as $category) {
                     $prodData['retail_price'] = (isset($retail_price[$count]) && !empty($retail_price[$count])) ? $retail_price[$count] : 0;
@@ -872,6 +875,7 @@ unset($request->excluded_locations_and_groups);
 
 
                 $products_combined = $this->model->checkProducts($id);
+                unset($data['excluded_locations_and_groups']);
                 $data_attached_products= $data;
                 foreach($products_combined as $pc){
                     if($pc->id == $id){
