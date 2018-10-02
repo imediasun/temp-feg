@@ -755,10 +755,13 @@ unset($request->excluded_locations_and_groups);
                 }
             }
 
+
             if(is_array($product_categories) && $id > 0){
+
 
                 $products_combined = $this->model->checkProducts($id);
                 unset($data['is_default_expense_category']);
+                unset($data['excluded_locations_and_groups']);
                 $data_attached_products= $data;
 
                 foreach($products_combined as $pc){
