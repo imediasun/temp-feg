@@ -91,7 +91,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
 
                     <tbody>
                     @if(($access['is_add'] =='1' || $access['is_edit']=='1' ) && $setting['inline']=='true' )
-                        <tr id="form-0" style="display: none">
+                        <tr id="form-0" style="display: none;">
                             <td> #</td>
                             @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                                 <td></td>
@@ -102,10 +102,18 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                 @if(isset($t['inline']) && $t['inline'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
+                                        @if($t['field'] == 'excluded_locations_and_groups')
+                                                <td data-form="excluded_locations_and_groups" data-form-type="select">
+                                                    <select name="excluded_locations_and_groups[]" class="sel-inline excluded_locations_and_groups" multiple="multiple">
+
+                                                    </select>
+                                                </td>
+                                            @else
                                         <td data-form="{{ $t['field'] }}"
                                             data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
                                             {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
                                         </td>
+                                            @endif
                                     @endif
                                 @endif
                             @endforeach
