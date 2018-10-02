@@ -1489,6 +1489,24 @@ class OrderController extends Controller
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
+
+
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
+        $customString = '';
+        if(!empty($excludedProductIdsString)){
+            $customString .= ' AND orders.id not in('.$excludedProductIdsString.') ';
+        }
+        if(!empty($excludedProductTypeIdsString)){
+            $customString .= ' AND orders.order_type_id not in(' . $excludedProductTypeIdsString . ') ';
+        }
+
+        if(!empty($customString)){
+            $filter .= $customString;
+        }
+
         return $filter;
     }
 
