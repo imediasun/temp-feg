@@ -10,7 +10,7 @@ namespace App\Library;
 
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\location;
-use App\Models\locationgroups;
+use App\Models\Locationgroups;
 use App\Models\Ordertyperestrictions;
 use App\Models\product;
 use \App\Models\Sximo;
@@ -152,14 +152,14 @@ class FEGDBRelationHelpers
 
         $locationId = !is_null($locationId) ? $locationId : \Session::get('selected_location');
 
-        $locationGroupIds   = self::getCustomRelationRecords($locationId, locationgroups::class, location::class, 0, true)->pluck('locationgroups_id')->toArray();
-        $locationIds        = self::getCustomRelationRecords($locationGroupIds, locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
+        $locationGroupIds   = self::getCustomRelationRecords($locationId, Locationgroups::class, location::class, 0, true)->pluck('locationgroups_id')->toArray();
+        $locationIds        = self::getCustomRelationRecords($locationGroupIds, Locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
 
         /*
          * Getting the Ids of Product Types that are related to
          * the current Location and related Location Groups
          * */
-        $idsOfExcludedProductTypesFromLocationGroup = self::getCustomRelationRecords($locationGroupIds, Ordertyperestrictions::class, locationgroups::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
+        $idsOfExcludedProductTypesFromLocationGroup = self::getCustomRelationRecords($locationGroupIds, Ordertyperestrictions::class, Locationgroups::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
         $idsOfExcludedProductTypesFromLocation      = self::getCustomRelationRecords($locationIds, Ordertyperestrictions::class, location::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
         $excludedProductTypeIds = array_merge($idsOfExcludedProductTypesFromLocationGroup, $idsOfExcludedProductTypesFromLocation);
 
@@ -168,7 +168,7 @@ class FEGDBRelationHelpers
          * Getting the Ids of Products that are related to the
          * current Location and related Location Groups
          * */
-        $idsOfExcludedProductsFromLocationGroup     = self::getCustomRelationRecords($locationGroupIds, product::class, locationgroups::class, 1, true)->pluck('product_id')->toArray();
+        $idsOfExcludedProductsFromLocationGroup     = self::getCustomRelationRecords($locationGroupIds, product::class, Locationgroups::class, 1, true)->pluck('product_id')->toArray();
         $idsOfExcludedProductsFromLocation          = self::getCustomRelationRecords($locationIds, product::class, location::class, 1, true)->pluck('product_id')->toArray();
         $excludedProductIds = array_merge($idsOfExcludedProductsFromLocationGroup, $idsOfExcludedProductsFromLocation);
 

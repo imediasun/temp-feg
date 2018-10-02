@@ -604,10 +604,10 @@ WHERE orders.is_api_visible = 1
         $dataArray = [];
         foreach ($rows as $row) {
             $locationGroup = $locations = '';
-            $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($row->id, self::class, locationgroups::class, 1, true)->pluck('locationgroups_id');
+            $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($row->id, self::class, Locationgroups::class, 1, true)->pluck('locationgroups_id');
             $selectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($row->id, self::class, location::class, 1, true)->pluck('location_id');
             if ($selectedGroups->count() > 0) {
-                $locationGroup = locationgroups::select(\DB::raw('group_concat(name) as names'))->whereIn('id', $selectedGroups->toArray())->get();
+                $locationGroup = Locationgroups::select(\DB::raw('group_concat(name) as names'))->whereIn('id', $selectedGroups->toArray())->get();
             }
             if ($selectedLocations->count() > 0) {
                 $locations = location::select(\DB::raw('group_concat(location_name) as location_name'))->whereIn('id', $selectedLocations->toArray())->get();

@@ -327,8 +327,8 @@ class LocationController extends Controller
                 $product_type_ids   = $request->get('product_type_ids');
                 $product_ids        = $request->get('product_ids');
 
-                FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, locationgroups::class, 1, 0, $id);
-                FEGDBRelationHelpers::destroyCustomRelation(product::class, locationgroups::class, 1, 0, $id);
+                FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, Locationgroups::class, 1, 0, $id);
+                FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
 
                 foreach ($product_type_ids as $product_type_id){
                     FEGDBRelationHelpers::insertCustomRelation($product_type_id, $id, Ordertyperestrictions::class, location::class, 1);

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use phpDocumentor\Reflection\Types\Null_;
 use Validator, Input, Redirect,Image;
 use App\Models\ReservedQtyLog;
-use App\Models\locationgroups;
+use App\Models\Locationgroups;
 class ProductController extends Controller
 {
 
@@ -891,12 +891,12 @@ unset($request->excluded_locations_and_groups);
                 }
             }
             if(is_array($excludedLocationsAndGroups) && count($excludedLocationsAndGroups)>0) {
-                FEGDBRelationHelpers::destroyCustomRelation(product::class, locationgroups::class, 1, 0, $id);
+                FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
                 FEGDBRelationHelpers::destroyCustomRelation(product::class, location::class, 1, 0, $id);
                 foreach ($excludedLocationsAndGroups as $excludedLocationsAndGroup) {
                     $splitValue = explode('_', $excludedLocationsAndGroup);
                     if ($splitValue[0] == 'group') {
-                        FEGDBRelationHelpers::insertCustomRelation($id, $splitValue[1], product::class, locationgroups::class, 1);
+                        FEGDBRelationHelpers::insertCustomRelation($id, $splitValue[1], product::class, Locationgroups::class, 1);
                     } else {
                         FEGDBRelationHelpers::insertCustomRelation($id, $splitValue[1], product::class, location::class, 1);
                     }
@@ -1339,7 +1339,7 @@ GROUP BY mapped_expense_category");
     public function getLocationAndGroups($id = 0){
 
         if($id == 0 ){
-            $locationGroups = locationgroups::where(function($query){
+            $locationGroups = Locationgroups::where(function($query){
                 1 == 1;
             })->orderBy('name','asc')->get();
 
@@ -1356,10 +1356,10 @@ GROUP BY mapped_expense_category");
             $locationsData .='</optgroup>';
             return response()->json(['groups'=>$groupsData,"locations"=>$locationsData]);
         }else{
-            $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,locationgroups::class,1,true);
+            $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,Locationgroups::class,1,true);
             $selectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,location::class,1,true);
 
-            $locationGroups = locationgroups::where(function($query){
+            $locationGroups = Locationgroups::where(function($query){
                 1 == 1;
             })->orderBy('name','asc')->get();
             $selectValues = [];
