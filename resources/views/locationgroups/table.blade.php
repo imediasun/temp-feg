@@ -89,9 +89,17 @@
 					@if($t['view'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
+							@if($t['field'] == 'location_ids' || $t['field'] == 'excluded_product_ids' || $t['field'] == 'excluded_product_type_ids')
+								<td data-form="{{ $t['field'] }}" data-form-type="select">
+									<select name="{{$t['field']}}[]" class="sel-inline {{ $t['field'] }}" multiple="multiple">
+
+									</select>
+								</td>
+							@else
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
 							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
 						</td>
+								@endif
 						@endif
 					@endif
 				@endforeach
@@ -191,8 +199,40 @@
 @endif
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
+	/**
+	 *
+	 * @param rowId
+	 * @param field
+	 * @param responseData
+	 * @param selected
+	 */
+	function perseReponse(rowId,field,responseData,selected){
+		$('tr#'+rowId+' td[data-field="'+field+'"] select').html(responseData);
+		$('tr#'+rowId+' td[data-field="'+field+'"] select').change();
+		if($.isArray(selected) && selected.length >0 ) {
+			$('tr#' + rowId + ' td[data-field="' + field + '"] select').val(selected);
+			$('tr#' + rowId + ' td[data-field="' + field + '"] select').change();
+		}
+
+	}
 $(document).ready(function() {
 	$('.tips').tooltip();
+
+	$(document).on('dblclick','tr.editable',function(){
+		$('.ajaxLoading').show();
+		var row = $(this);
+		$.ajax({
+			url:"locationgroups/excluded-data-inline/"+row.attr('data-id'),
+			type:"GET",
+			success:function(response){
+				perseReponse(row.attr('id'),'location_ids',response.locations,response.selectedData.locations);
+				perseReponse(row.attr('id'),'excluded_product_ids',response.products,response.selectedData.products);
+				perseReponse(row.attr('id'),'excluded_product_type_ids',response.productTypes,response.selectedData.productTypes);
+				$('.ajaxLoading').hide();
+			}
+		});
+	});
+
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue'

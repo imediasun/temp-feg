@@ -245,7 +245,6 @@ if (!$colconfigs) {
                 url:"location/excluded-products-and-types-inline/"+row.attr('data-id'),
                 type:"GET",
                 success:function(response){
-                console.log(response);
                     perseReponse(row.attr('id'),'product_type_ids',response.productTypes,response.ExcludedData.excluded_product_type_ids);
                     perseReponse(row.attr('id'),'product_ids',response.products,response.ExcludedData.excluded_product_ids);
                     $('.ajaxLoading').hide();

@@ -98,7 +98,8 @@ class LocationgroupsController extends Controller {
         $this->data['topMessage']	= @$results['topMessage'];
 		$this->data['message']          = @$results['message'];
 		$this->data['bottomMessage']	= @$results['bottomMessage'];
-        
+        $results['rows'] = $this->model->setExcludedData($results['rows']);
+
 		$this->data['rowData']		= $results['rows'];
 		// Build Pagination
 		$this->data['pagination']	= $pagination;
@@ -328,5 +329,32 @@ class LocationgroupsController extends Controller {
 		}
 
 	}
+    public function getExcludedDataInline($groupId = 0){
+        $group = Locationgroups::find($groupId);
+
+        $savedLocations = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, location::class, 0, true)->lists('location_id')->toArray();
+        $alreadyExcludedProductTypes = $group->excludedProductTypes()->lists('id')->toArray();
+        $alreadyExcludedProducts = $group->excludedProducts()->lists('id')->toArray();
+
+        $products = product::select('id','vendor_description')->orderBy('vendor_description')->get();
+        $productType = Ordertyperestrictions::select('id','order_type as product_type')->orderBy('order_type','asc')->get();
+        $locations = location::select('id','location_name')->orderBy('id','asc')->get();
+
+        $productData = view('locationgroups.dropdown',['products'=>$products,'type'=>'products'])->render();
+        $productTypeData = view('locationgroups.dropdown',['producttypes'=>$productType,'type'=>'producttypes'])->render();
+        $locationData = view('locationgroups.dropdown',['locations'=>$locations,'type'=>'locations'])->render();
+
+        $data = [
+            'locations'=>$locationData,
+            'productTypes'=>$productTypeData,
+            'products'=>$productData,
+        'selectedData' =>[
+            'locations'=>$savedLocations,
+            'productTypes'=>$alreadyExcludedProductTypes,
+            'products'=>$alreadyExcludedProducts,
+        ]
+            ];
+        return response()->json($data);
+    }
 
 }

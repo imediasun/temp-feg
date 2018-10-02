@@ -42,4 +42,30 @@ class Locationgroups extends Sximo  {
 	    $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, Product::class, 1, true)->pluck('product_id')->toArray();
 	    return Product::whereIn('id', $excludedProductIds);
     }
+    public function setExcludedData($rows){
+        $returnData = [];
+        foreach ($rows as $row){
+            $locationData = FEGDBRelationHelpers::getCustomRelationRecords($row->id,location::class,self::class,0)->pluck('location_id')->toArray();
+            $productData = FEGDBRelationHelpers::getCustomRelationRecords($row->id,product::class,self::class,1)->pluck('product_id')->toArray();
+            $productType = FEGDBRelationHelpers::getCustomRelationRecords($row->id,Ordertyperestrictions::class,self::class,1)->pluck('ordertyperestrictions_id')->toArray();
+
+            $locations = location::select(\DB::raw("GROUP_CONCAT(DISTINCT CONCAT(location.id,' ',location.location_name) ORDER BY location.id SEPARATOR '<br>') AS location_names"))->whereIn('id',$locationData)->get()->pluck('location_names')->toArray();
+            $productTypeData = Ordertyperestrictions::select(\DB::raw('group_concat(order_type) as product_types'))->whereIn('id', $productType)->get()->pluck('product_types')->toArray();
+            $productsData = product::select(\DB::raw('group_concat(vendor_description) as product_name'))->whereIn('id', $productData)->get()->pluck('product_name')->toArray();
+            if(!empty($productTypeData[0])){
+                $productTypes = str_replace(",","<br>",$productTypeData[0]);
+                $row->excluded_product_type_ids = $productTypes;
+            }
+            if(!empty($productsData[0])){
+                $productName= str_replace(",","<br>",$productsData[0]);
+                $row->excluded_product_ids = $productName;
+            }
+            if(!empty($locations[0])){
+                $locationName= str_replace(",","<br>",$locations[0]);
+                $row->location_ids = $locationName;
+            }
+            $returnData[] = $row;
+        }
+        return $returnData;
+    }
 }
