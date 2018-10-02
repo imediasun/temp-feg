@@ -161,7 +161,7 @@ class LocationgroupsController extends Controller {
 
 
 
-		$locations = $this->location->select(DB::raw("CONCAT(id,' ', location_name) AS location_name, id"))->lists('location_name', 'id');
+		$locations = $this->location->select(DB::raw("CONCAT(id,' ', location_name) AS location_name, id"))->where('active', 1)->orderBy('id', 'asc')->lists('location_name', 'id');
 
 		$this->data['locations'] 	    = $locations;
 		$this->data['setting'] 		    = $this->info['setting'];
