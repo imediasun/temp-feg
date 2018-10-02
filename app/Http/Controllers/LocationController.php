@@ -211,7 +211,7 @@ class LocationController extends Controller
             $row = $this->model->getColumnTable('location');
         }
 
-        $this->data['productTypes'] = Ordertyperestrictions::lists('order_type', 'id');
+        $this->data['productTypes'] = Ordertyperestrictions::orderBy('order_type', 'asc')->lists('order_type', 'id');
         $this->data['products']     = product::lists('vendor_description', 'id');
         $this->data['row'] = $row;
         
