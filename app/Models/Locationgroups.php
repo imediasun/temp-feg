@@ -16,7 +16,7 @@ class Locationgroups extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT l_groups.* FROM l_groups  ";
+		return "  SELECT l_groups.*, '' as location_ids, '' as excluded_product_ids, '' as excluded_product_type_ids FROM l_groups  ";
 	}	
 
 	public static function queryWhere(  ){
