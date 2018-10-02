@@ -326,22 +326,6 @@ class ManagefegrequeststoreController extends Controller
 
         $mergeFilters = [];
 
-        if($excludedProductTypeIdsString != '' ){
-            array_push($mergeFilters, [
-                "field"     =>  'prod_type_id',
-                "operater"  =>  'not_in',
-                'value'     =>  $excludedProductTypeIdsString
-            ]);
-        }
-
-        if($excludedProductIdsString != '' ){
-            array_push($mergeFilters, [
-                "field"     =>  'id',
-                "operater"  =>  'not_in',
-                'value'     =>  $excludedProductIdsString
-            ]);
-        }
-
         $skipFilters = ['search_all_fields'];
 
         // rebuild search query skipping 'ticket_custom_type' filter
@@ -361,6 +345,18 @@ class ManagefegrequeststoreController extends Controller
         $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));
         if (empty($frontendSearchFilters['location_id'])) {
             $filter .= $locationFilter;
+        }
+
+        $customString = '';
+        if(!empty($excludedProductIdsString)){
+            $customString .= ' AND requests.id not in('.$excludedProductIdsString.') ';
+        }
+        if(!empty($excludedProductTypeIdsString)){
+            $customString .= ' AND order_type.id not in(' . $excludedProductTypeIdsString . ') ';
+        }
+
+        if(!empty($customString)){
+            $filter .= $customString;
         }
 
         return $filter;
