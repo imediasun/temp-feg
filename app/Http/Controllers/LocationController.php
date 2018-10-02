@@ -142,6 +142,8 @@ class LocationController extends Controller
             $results['rows'] = $this->model->getRow($id);
             $results['total'] = 1;
         }
+        $results['rows'] = $this->model->setExcludedData($results['rows']);
+
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         // Build pagination setting
@@ -301,13 +303,7 @@ class LocationController extends Controller
         }
         $rules['location_name'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
         $rules['location_name_short'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
-        $rules['product_type_ids'] = 'array';
-        $rules['product_ids'] = 'array';
-        $custom_error_mesages = [
-            'product_type_ids.array'    =>  'Product type field input must be an array',
-            'product_ids.array'         =>  'Product field input must be an array'
-        ];
-        $validator = Validator::make($request->all(), $rules, $custom_error_mesages);
+        $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('location');
             // old id in case the existing location's id has been modified
@@ -316,13 +312,14 @@ class LocationController extends Controller
             if (empty($newId) || empty($oldId) || $oldId == $newId) {
                 $oldId = null;
             }
-
+            unset($data['product_type_ids']);
+            unset($data['product_ids']);
             $id = $this->model->insertRow($data, $id);
 
             if($id){
 
-                $product_type_ids   = $request->get('product_type_ids');
-                $product_ids        = $request->get('product_ids');
+                $product_type_ids   = is_array($request->get('product_type_ids')) ? $request->get('product_type_ids'):[];
+                $product_ids        = is_array($request->get('product_ids')) ? $request->get('product_ids'):[];
 
                 FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, Locationgroups::class, 1, 0, $id);
                 FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
@@ -492,5 +489,21 @@ class LocationController extends Controller
 
     public function getExcludedProductsAndProductTypes($locationId = null){
        return FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true,  true);
+    }
+    public function getExcludedProductsAndTypesInline($locationId = 0){
+
+        $products = product::select('id','vendor_description')->orderBy('vendor_description','asc')->get()->toArray();
+        $productTypes = Ordertyperestrictions::select('id','order_type as product_type')->orderBy('order_type','asc')->get()->toArray();
+        $excludedData = $this->getExcludedProductsAndProductTypes($locationId);
+
+        $products = view('location.dropdown',['products' => $products,'optionType'=>'products'])->render();
+        $productTypes = view('location.dropdown',['productTypes' => $productTypes,'optionType'=>'productTypes'])->render();
+        $data = [
+            'products' => $products,
+            'productTypes' => $productTypes,
+            'ExcludedData' => $excludedData
+        ];
+        return response()->json($data);
+
     }
 }

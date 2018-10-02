@@ -97,9 +97,17 @@ if (!$colconfigs) {
                                 @if(isset($t['inline']) && $t['inline'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
+                                        @if($t['field'] == 'product_type_ids' || $t['field'] == 'product_ids')
+                                                <td data-form="{{ $t['field'] }}" data-form-type="select">
+                                                    <select name="{{$t['field']}}[]" class="sel-inline {{ $t['field'] }}" multiple="multiple">
+
+                                                    </select>
+                                                </td>
+                                            @else
                                         <td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
                                             {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
                                         </td>
+                                            @endif
                                     @endif
                                 @endif
                             @endforeach
@@ -212,7 +220,39 @@ if (!$colconfigs) {
 
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
+    /**
+     *
+     * @param rowId
+     * @param field
+     * @param responseData
+     * @param selected
+     */
+    function perseReponse(rowId,field,responseData,selected){
+        $('tr#'+rowId+' td[data-field="'+field+'"] select').html(responseData);
+        $('tr#'+rowId+' td[data-field="'+field+'"] select').change();
+        if($.isArray(selected) && selected.length >0 ) {
+            $('tr#' + rowId + ' td[data-field="' + field + '"] select').val(selected);
+            $('tr#' + rowId + ' td[data-field="' + field + '"] select').change();
+        }
+
+    }
     $(document).ready(function () {
+
+        $(document).on('dblclick','tr.editable',function(){
+            $('.ajaxLoading').show();
+        var row = $(this);
+            $.ajax({
+                url:"location/excluded-products-and-types-inline/"+row.attr('data-id'),
+                type:"GET",
+                success:function(response){
+                console.log(response);
+                    perseReponse(row.attr('id'),'product_type_ids',response.productTypes,response.ExcludedData.excluded_product_type_ids);
+                    perseReponse(row.attr('id'),'product_ids',response.products,response.ExcludedData.excluded_product_ids);
+                    $('.ajaxLoading').hide();
+                }
+            });
+        });
+
         $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
             var locationId=$(this).data('id');
             var message = '';

@@ -79,7 +79,9 @@ class location extends Sximo  {
   location.ipaddress,
   location.reporting,
   location.active,
-  location.freight_id
+  location.freight_id,
+  '' as product_type_ids,
+  '' as product_ids
 FROM location
   LEFT JOIN debit_type debittype_c
     ON debittype_c.id = location.debit_type_id
@@ -135,5 +137,27 @@ FROM location
     public function excludedProducts(){
         $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, product::class, 1, true)->pluck('product_id')->toArray();
         return Product::whereIn('id', $excludedProductIds);
+    }
+    public function setExcludedData($rows){
+        $returnData = [];
+        foreach ($rows as $row){
+           $excludedData = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($row->id, true,  true);
+            $productTypeData = $productsData = $productTypes = '';
+            if(!empty($excludedData['excluded_product_type_ids'])) {
+                $productTypeData = Ordertyperestrictions::select(\DB::raw('group_concat(order_type) as product_types'))->whereIn('id', $excludedData['excluded_product_type_ids'])->get()->pluck('product_types')->toArray();
+                $productsData = product::select(\DB::raw('group_concat(vendor_description) as product_name'))->whereIn('id', $excludedData['excluded_product_ids'])->get()->pluck('product_name')->toArray();
+                if(!empty($productTypeData[0])){
+                    $productTypes = str_replace(",","<br>",$productTypeData[0]);
+                    $row->product_type_ids = $productTypes;
+                }
+                if(!empty($productsData[0])){
+                    $productName= str_replace(",","<br>",$productsData[0]);
+                    $row->product_ids = $productName;
+                }
+            }
+            $returnData[]=$row;
+        }
+
+        return $returnData;
     }
 }
