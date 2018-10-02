@@ -79,7 +79,9 @@ class location extends Sximo  {
   location.ipaddress,
   location.reporting,
   location.active,
-  location.freight_id
+  location.freight_id,
+  '' as product_type_ids,
+  '' as product_ids
 FROM location
   LEFT JOIN debit_type debittype_c
     ON debittype_c.id = location.debit_type_id
