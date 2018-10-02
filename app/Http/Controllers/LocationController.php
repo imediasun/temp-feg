@@ -487,4 +487,20 @@ class LocationController extends Controller
     public function getExcludedProductsAndProductTypes($locationId = null){
        return FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true,  true);
     }
+    public function getExcludedProductsAndTypesInline($locationId = 0){
+
+        $products = product::select('id','vendor_description')->orderBy('vendor_description','asc')->get()->toArray();
+        $productTypes = Ordertyperestrictions::select('id','order_type as product_type')->orderBy('order_type','asc')->get()->toArray();
+        $excludedData = $this->getExcludedProductsAndProductTypes($locationId);
+
+        $products = view('location.dropdown',['products' => $products,'optionType'=>'products'])->render();
+        $productTypes = view('location.dropdown',['productTypes' => $productTypes,'optionType'=>'productTypes'])->render();
+        $data = [
+            'products' => $products,
+            'productTypes' => $productTypes,
+            'ExcludedData' => $excludedData
+        ];
+        return response()->json($data);
+
+    }
 }
