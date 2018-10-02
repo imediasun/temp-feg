@@ -301,13 +301,10 @@ class LocationController extends Controller
         }
         $rules['location_name'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
         $rules['location_name_short'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
-        $rules['product_type_ids'] = 'required|array';
-        $rules['product_ids'] = 'required|array';
+        $rules['product_type_ids'] = 'array';
+        $rules['product_ids'] = 'array';
         $custom_error_mesages = [
-            'product_type_ids.required' =>  'Product type field is required',
             'product_type_ids.array'    =>  'Product type field input must be an array',
-
-            'product_ids.required'      =>  'Product field is required',
             'product_ids.array'         =>  'Product field input must be an array'
         ];
         $validator = Validator::make($request->all(), $rules, $custom_error_mesages);

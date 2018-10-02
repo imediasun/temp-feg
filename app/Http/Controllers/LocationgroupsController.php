@@ -228,18 +228,13 @@ class LocationgroupsController extends Controller {
 	{
 	    $rules = [
             'name'              => 'required|string|max:100|unique:l_groups,name,'.$id,
-            'location_ids'      => 'required|array',
-            'product_type_ids'  => 'required|array',
-            'product_ids'       => 'required|array',
+            'location_ids'      => 'array',
+            'product_type_ids'  => 'array',
+            'product_ids'       => 'array',
         ];
 	    $custom_messages = [
-	        'location_ids.required'     =>  'Locations field is required',
-            'location_ids.array'        =>  'Location field input must be an array',
-
-            'product_type_ids.required' =>  'Product type field is required',
+	        'location_ids.array'        =>  'Location field input must be an array',
             'product_type_ids.array'    =>  'Product type field input must be an array',
-
-            'product_ids.required'      =>  'Product field is required',
             'product_ids.array'         =>  'Product field input must be an array'
         ];
 		$validator = Validator::make($request->all(), $rules, $custom_messages);
