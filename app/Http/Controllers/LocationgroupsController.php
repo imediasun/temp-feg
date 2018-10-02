@@ -241,6 +241,9 @@ class LocationgroupsController extends Controller {
 		if ($validator->passes()) {
 			$data = $this->validatePost('l_groups');
 
+			unset($data['location_ids']);
+			unset($data['excluded_product_ids']);
+			unset($data['excluded_product_type_ids']);
 			$id = $this->model->insertRow($data , $id);
 
 			if($id){
