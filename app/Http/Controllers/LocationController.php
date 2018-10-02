@@ -142,6 +142,8 @@ class LocationController extends Controller
             $results['rows'] = $this->model->getRow($id);
             $results['total'] = 1;
         }
+        $results['rows'] = $this->model->setExcludedData($results['rows']);
+
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         // Build pagination setting
