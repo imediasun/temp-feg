@@ -349,12 +349,11 @@ class ManagefegrequeststoreController extends Controller
 
         $customString = '';
         if(!empty($excludedProductIdsString)){
-            $customString .= ' AND requests.id not in('.$excludedProductIdsString.') ';
+            $customString .= ' AND requests.id not in ('.$excludedProductIdsString.') ';
         }
         if(!empty($excludedProductTypeIdsString)){
-            $customString .= ' AND order_type.id not in(' . $excludedProductTypeIdsString . ') ';
+            $customString .= ' AND products.prod_type_id not in (' . $excludedProductTypeIdsString . ') ';
         }
-
         if(!empty($customString)){
             $filter .= $customString;
         }
