@@ -190,16 +190,16 @@ class FEGDBRelationHelpers
 
         if ($isGetExcludedProductTypes && !$isGetExcludedProducts) {
             $result = [
-                'excluded_product_type_ids' =>  array_unique($excludedProductTypeIds),
+                'excluded_product_type_ids' =>  (array) array_unique($excludedProductTypeIds),
             ];
         } elseif (!$isGetExcludedProductTypes && $isGetExcludedProducts) {
             $result = [
-                'excluded_product_ids' =>  array_unique($excludedProductIds),
+                'excluded_product_ids' =>  (array) array_unique($excludedProductIds),
             ];
         } else {
             $result = [
-                'excluded_product_type_ids' =>  array_unique($excludedProductTypeIds),
-                'excluded_product_ids'      =>  array_unique($finalArrayOfIdsOfExcludedProducts)
+                'excluded_product_type_ids' => (array) array_unique($excludedProductTypeIds),
+                'excluded_product_ids'      => (array) array_unique($finalArrayOfIdsOfExcludedProducts)
             ];
         }
 
