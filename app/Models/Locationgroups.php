@@ -4,7 +4,7 @@ use App\Library\FEGDBRelationHelpers;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class locationgroups extends Sximo  {
+class Locationgroups extends Sximo  {
 	
 	protected $table = 'l_groups';
 	protected $primaryKey = 'id';
@@ -29,7 +29,7 @@ class locationgroups extends Sximo  {
 	}
 
 	public function locations(){
-	    $locationIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
+	    $locationIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, Locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
 	    return location::whereIn('id', $locationIds);
     }
 
