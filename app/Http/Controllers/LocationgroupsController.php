@@ -229,16 +229,8 @@ class LocationgroupsController extends Controller {
 	{
 	    $rules = [
             'name'              => 'required|string|max:100|unique:l_groups,name,'.$id,
-            'location_ids'      => 'array',
-            'product_type_ids'  => 'array',
-            'product_ids'       => 'array',
         ];
-	    $custom_messages = [
-	        'location_ids.array'        =>  'Location field input must be an array',
-            'product_type_ids.array'    =>  'Product type field input must be an array',
-            'product_ids.array'         =>  'Product field input must be an array'
-        ];
-		$validator = Validator::make($request->all(), $rules, $custom_messages);
+		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {
 			$data = $this->validatePost('l_groups');
 
@@ -250,8 +242,8 @@ class LocationgroupsController extends Controller {
 			if($id){
 
 			    $location_ids       = $request->get('location_ids');
-			    $product_type_ids   = $request->get('product_type_ids');
-			    $product_ids        = $request->get('product_ids');
+			    $product_type_ids   = $request->get('excluded_product_type_ids');
+			    $product_ids        = $request->get('excluded_product_ids');
 
                 FEGDBRelationHelpers::destroyCustomRelation(location::class, Locationgroups::class, 0, 0, $id);
                 FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, Locationgroups::class, 1, 0, $id);
