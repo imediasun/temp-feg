@@ -37,7 +37,10 @@ class DigitalPackingList extends Sximo
     public function getDPLFileData(){
         $newLine = "\r\n";
         $fileContent = $this->order->location_id . ", " . $this->order->id . $newLine;
+        $totalItems = $this->order->contents()->count();
+        $countIndex = 0;
         foreach ($this->order->contents as $product) {
+            $countIndex++;
             Log::info("DPL Product Name:".$product->item_name);
             $itemId = $product->upc_barcode;
             $itemName = $this->cleanAndTruncateString($product->item_name);
@@ -58,10 +61,11 @@ class DigitalPackingList extends Sximo
 
             $productType = isset($orderTypes[$product->prod_type_id]) ? $orderTypes[$product->prod_type_id]:$product->prod_type_id;
 
+            $newLine = ($countIndex == $totalItems) ? '':$newLine;
             if ($this->order->location->debit_type_id == Location::LOCATION_TYPE_SACOA) {
                 $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOM, $product->item_received, $price, $tickets, $qtyPerCase, $product->price]) . $newLine;
             } else {
-                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOM . "," . $product->item_received . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
+                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOM . "," . ($product->item_received * $qtyPerCase) . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
             }
         }
         return $fileContent;
