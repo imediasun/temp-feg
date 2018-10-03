@@ -598,7 +598,7 @@ WHERE orders.is_api_visible = 1
         return $rules;
     }
 
-    public function setGroupsAndLocations($rows)
+    public function setGroupsAndLocations($rows,$exportData = 0)
     {
 
         $dataArray = [];
@@ -624,7 +624,11 @@ WHERE orders.is_api_visible = 1
                 }
             }
             if (!empty($data)) {
-                $data = str_replace(',', '<br>', $data);
+                if($exportData == 0) {
+                    $data = str_replace(',', '<br>', $data);
+                }else{
+                    $data = str_replace(',', ', ', $data);
+                }
                 $row->excluded_locations_and_groups = $data;
             }
             $dataArray[] = $row;

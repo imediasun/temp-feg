@@ -112,6 +112,7 @@ class ProductController extends Controller
 
         $fields = $info['config']['grid'];
         $rows = $results['rows'];
+        $rows = $this->model->setGroupsAndLocations($rows,true);
         if($t == 'excel') {
             $results['rows'] = array_map(function ($row) {
                 // changing status only for excel correction
