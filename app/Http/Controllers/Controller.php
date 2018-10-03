@@ -799,6 +799,9 @@ abstract class Controller extends BaseController
                                     $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[2];
                                     $param .= " AND $field IN(" . $keys[2] . ") ";
                                 }
+                            }elseif($keys[0] == 'in_development') {
+                                $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
+                                $param .= " AND $field = '" . $keys[2] . "' ";
                             } elseif(!is_null($customOperator) &&  $customOperator == 'not_in') {
                                 $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
                                 $param .= " AND $field NOT IN(" . $keys[2] . ") ";
@@ -845,7 +848,10 @@ abstract class Controller extends BaseController
                                     $keys[3] = $keys[3].' 23:59:59';
                                 }
                                 $param .= " AND (" . $col . " BETWEEN '" . addslashes($keys[2]) . "' AND '" . ($keys[3]) . "' ) ";
-                            }elseif($operate == 'not_in'){
+                            }elseif($col == 'in_development') {
+                                $param .= " AND ($col  IN(". addslashes($keys[2]) .")) ";
+                            }
+                            elseif($operate == 'not_in'){
                                 $param .= " AND ($col NOT IN(". addslashes($keys[2]) .")) ";
                             }
                             else

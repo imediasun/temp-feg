@@ -112,6 +112,7 @@ class ProductController extends Controller
 
         $fields = $info['config']['grid'];
         $rows = $results['rows'];
+        $rows = $this->model->setGroupsAndLocations($rows,true);
         if($t == 'excel') {
             $results['rows'] = array_map(function ($row) {
                 // changing status only for excel correction
@@ -339,8 +340,12 @@ class ProductController extends Controller
         // Filter Search for query
         $filter = $this->getSearchFilterQuery();
         //(!is_null($request->input('search')) ? $this->buildSearch() : '');
+
         if(strpos($filter,"products.in_development") == false){
         $filter .= ' AND products.in_development = 0 ';
+        }
+        if(strpos($request->input('search'),'in_development:equal:1') > -1){
+        $filter = str_replace("products.in_development = '0'","products.in_development = 1",$filter);
         }
         $filter = str_replace("AND products.in_development = '2'"," ",$filter);
 
