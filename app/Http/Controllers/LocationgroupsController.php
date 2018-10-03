@@ -149,8 +149,8 @@ class LocationgroupsController extends Controller {
 			$this->data['row'] 	                        =   $row;
             $savedLocations                             =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, location::class, 0, true)->lists('location_id')->toArray();
             $this->data['savedLocations'] 	            =   $savedLocations;
-            $this->data['alreadyExcludedProductTypes']  =   $row->excludedProductTypes()->lists('id')->toArray();
-            $this->data['alreadyExcludedProducts']      =   $row->excludedProducts()->lists('id')->toArray();
+            $this->data['alreadyExcludedProductTypes']  =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, Ordertyperestrictions::class, 1, true)->lists('ordertyperestrictions_id')->toArray();
+            $this->data['alreadyExcludedProducts']      =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, product::class, 1, true)->lists('product_id')->toArray();
 		} else {
 			$this->data['row'] 		= $this->model->getColumnTable('l_groups');
 		}
@@ -322,11 +322,10 @@ class LocationgroupsController extends Controller {
 
 	}
     public function getExcludedDataInline($groupId = 0){
-        $group = Locationgroups::find($groupId);
 
         $savedLocations = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, location::class, 0, true)->lists('location_id')->toArray();
-        $alreadyExcludedProductTypes = $group->excludedProductTypes()->lists('id')->toArray();
-        $alreadyExcludedProducts = $group->excludedProducts()->lists('id')->toArray();
+        $alreadyExcludedProductTypes = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, Ordertyperestrictions::class, 1, true)->lists('ordertyperestrictions_id')->toArray();
+        $alreadyExcludedProducts = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, product::class, 1, true)->lists('product_id')->toArray();
 
         $products = product::select('id','vendor_description')->orderBy('vendor_description')->get();
         $productType = Ordertyperestrictions::select('id','order_type as product_type')->orderBy('order_type','asc')->get();

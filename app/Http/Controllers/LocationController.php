@@ -494,8 +494,12 @@ class LocationController extends Controller
 
         $products = product::select('id','vendor_description')->orderBy('vendor_description','asc')->get()->toArray();
         $productTypes = Ordertyperestrictions::select('id','order_type as product_type')->orderBy('order_type','asc')->get()->toArray();
-        $excludedData = $this->getExcludedProductsAndProductTypes($locationId);
-
+        $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,product::class,1)->pluck('product_id')->toArray();
+        $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,Ordertyperestrictions::class,1)->pluck('ordertyperestrictions_id')->toArray();
+        $excludedData = [
+            'excluded_product_ids' =>$excludedProductIds,
+            'excluded_product_type_ids' => $excludedProductTypeIds
+];
         $products = view('location.dropdown',['products' => $products,'optionType'=>'products'])->render();
         $productTypes = view('location.dropdown',['productTypes' => $productTypes,'optionType'=>'productTypes'])->render();
         $data = [
