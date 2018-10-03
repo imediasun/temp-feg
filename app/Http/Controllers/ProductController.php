@@ -929,6 +929,9 @@ unset($request->excluded_locations_and_groups);
             foreach($ids as $id) {
                 FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
                 FEGDBRelationHelpers::destroyCustomRelation(product::class, location::class, 1, 0, $id);
+
+                FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class,product::class,  1, $id,0 );
+                FEGDBRelationHelpers::destroyCustomRelation(location::class,product::class, 1, $id, 0);
             }
             foreach ($excludedLocationsAndGroups as $excludedLocationsAndGroup) {
                 $splitValue = explode('_', $excludedLocationsAndGroup);
