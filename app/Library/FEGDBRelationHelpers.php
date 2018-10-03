@@ -155,6 +155,9 @@ class FEGDBRelationHelpers
         $locationGroupIds   = self::getCustomRelationRecords($locationId, Locationgroups::class, location::class, 0, true)->pluck('locationgroups_id')->toArray();
         $locationIds        = self::getCustomRelationRecords($locationGroupIds, Locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
 
+        if(empty($locationGroupIds))
+            array_push($locationIds, $locationId);
+
         /*
          * Getting the Ids of Product Types that are related to
          * the current Location and related Location Groups
