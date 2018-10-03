@@ -2225,7 +2225,7 @@ class OrderController extends Controller
 
 
 
-        $excludedProductTypeAndProductIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, false, true);
+        $excludedProductTypeAndProductIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, false, true);
         $excludedProductTypeAndProductIdsString = implode(',', $excludedProductTypeAndProductIds['excluded_product_ids']);
 
         $whereNotInProductIdsCondition = '';
