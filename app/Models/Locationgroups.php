@@ -49,7 +49,7 @@ class Locationgroups extends Sximo  {
             $productData = FEGDBRelationHelpers::getCustomRelationRecords($row->id,product::class,self::class,1)->pluck('product_id')->toArray();
             $productType = FEGDBRelationHelpers::getCustomRelationRecords($row->id,Ordertyperestrictions::class,self::class,1)->pluck('ordertyperestrictions_id')->toArray();
 
-            $locations = location::select(\DB::raw("GROUP_CONCAT(DISTINCT CONCAT(location.id,' ',location.location_name) ORDER BY location.id SEPARATOR '<br>') AS location_names"))->whereIn('id',$locationData)->get()->pluck('location_names')->toArray();
+            $locations = location::select(\DB::raw("GROUP_CONCAT(DISTINCT CONCAT(location.id,' ',location.location_name) ORDER BY location.id SEPARATOR '<br>') AS location_names"))->whereIn('id',$locationData)->where('active',1)->get()->pluck('location_names')->toArray();
             $productTypeData = Ordertyperestrictions::select(\DB::raw('group_concat(order_type) as product_types'))->whereIn('id', $productType)->get()->pluck('product_types')->toArray();
             $productsData = product::select(\DB::raw('group_concat(vendor_description) as product_name'))->whereIn('id', $productData)->get()->pluck('product_name')->toArray();
             if(!empty($productTypeData[0])){

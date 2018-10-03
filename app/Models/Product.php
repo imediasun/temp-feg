@@ -610,7 +610,7 @@ WHERE orders.is_api_visible = 1
                 $locationGroup = Locationgroups::select(\DB::raw('group_concat(name) as names'))->whereIn('id', $selectedGroups->toArray())->get();
             }
             if ($selectedLocations->count() > 0) {
-                $locations = location::select(\DB::raw('group_concat(location_name) as location_name'))->whereIn('id', $selectedLocations->toArray())->get();
+                $locations = location::select(\DB::raw('group_concat(location_name) as location_name'))->where('active',1)->whereIn('id', $selectedLocations->toArray())->get();
             }
             $data = '';
             if (!empty($locationGroup[0]->names)) {

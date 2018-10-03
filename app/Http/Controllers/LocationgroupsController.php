@@ -329,7 +329,7 @@ class LocationgroupsController extends Controller {
 
         $products = product::select('id','vendor_description')->orderBy('vendor_description')->get();
         $productType = Ordertyperestrictions::select('id','order_type as product_type')->orderBy('order_type','asc')->get();
-        $locations = location::select('id','location_name')->orderBy('id','asc')->get();
+        $locations = location::select('id','location_name')->where('active',1)->orderBy('id','asc')->get();
 
         $productData = view('locationgroups.dropdown',['products'=>$products,'type'=>'products'])->render();
         $productTypeData = view('locationgroups.dropdown',['producttypes'=>$productType,'type'=>'producttypes'])->render();
