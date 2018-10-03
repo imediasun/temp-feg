@@ -792,7 +792,9 @@ unset($request->excluded_locations_and_groups);
                     }
                     $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     $this->model->insertRow($netsuite_description, $pc->id);
-                    $this->insertRelations($excludedLocationsAndGroups,$pc->id);
+
+                    if(!is_null($excludedLocationsAndGroups))
+                        $this->insertRelations($excludedLocationsAndGroups,$pc->id);
                 }
                 $isDefaultExpenseCategory = $request->input("is_default_expense_category");
                 if ($id > 0 && $isDefaultExpenseCategory > 0) {
@@ -861,7 +863,8 @@ unset($request->excluded_locations_and_groups);
                     }
                     $this->model->insertRow($updates, $id);
                     $this->model->setFirstDefaultExpenseCategory($id);
-                    $this->insertRelations($excludedLocationsAndGroups,$id);
+                    if(!is_null($excludedLocationsAndGroups))
+                        $this->insertRelations($excludedLocationsAndGroups,$id);
                 }
 
             }
@@ -892,7 +895,9 @@ unset($request->excluded_locations_and_groups);
                     }
                     $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     $this->model->insertRow($netsuite_description, $pc->id);
-                    $this->insertRelations($excludedLocationsAndGroups,$pc->id);
+
+                    if(!is_null($excludedLocationsAndGroups))
+                        $this->insertRelations($excludedLocationsAndGroups,$pc->id);
                 }
             }
 
