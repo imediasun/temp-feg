@@ -203,7 +203,6 @@ class FEGDBRelationHelpers
             ];
         }
 
-        dd($result);
         return $result;
     }
 
