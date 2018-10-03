@@ -922,10 +922,14 @@ unset($request->excluded_locations_and_groups);
 
     }
     public function insertRelations($excludedLocationsAndGroups,$id){
+        $variationId = product::find($id)->variation_id;
+        $ids = product::where('variation_id',$variationId)->get()->pluck('id')->toArray();
         $excludedLocationsAndGroups = is_array($excludedLocationsAndGroups) ? $excludedLocationsAndGroups:[$excludedLocationsAndGroups];
         if(is_array($excludedLocationsAndGroups) && count($excludedLocationsAndGroups)>0) {
-            FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
-            FEGDBRelationHelpers::destroyCustomRelation(product::class, location::class, 1, 0, $id);
+            foreach($ids as $id) {
+                FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
+                FEGDBRelationHelpers::destroyCustomRelation(product::class, location::class, 1, 0, $id);
+            }
             foreach ($excludedLocationsAndGroups as $excludedLocationsAndGroup) {
                 $splitValue = explode('_', $excludedLocationsAndGroup);
                 if ($splitValue[0] == 'group') {
