@@ -65,7 +65,7 @@ class ShopfegrequeststoreController extends Controller
 
         if($excludedProductTypeIdsString != '' ){
             array_push($mergeFilters, [
-                "field"     =>  'prod_type_id',
+                "field"     =>  'products.prod_type_id',
                 "operater"  =>  'not_in',
                 'value'     =>  $excludedProductTypeIdsString
             ]);
@@ -73,7 +73,7 @@ class ShopfegrequeststoreController extends Controller
 
         if($excludedProductIdsString != '' ){
             array_push($mergeFilters, [
-                "field"     =>  'id',
+                "field"     =>  'products.id',
                 "operater"  =>  'not_in',
                 'value'     =>  $excludedProductIdsString
             ]);
