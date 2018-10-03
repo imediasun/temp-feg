@@ -798,7 +798,6 @@ unset($request->excluded_locations_and_groups);
                     $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     $this->model->insertRow($netsuite_description, $pc->id);
 
-                    if(!is_null($excludedLocationsAndGroups))
                         $this->insertRelations($excludedLocationsAndGroups,$pc->id);
                 }
                 $isDefaultExpenseCategory = $request->input("is_default_expense_category");
@@ -868,7 +867,7 @@ unset($request->excluded_locations_and_groups);
                     }
                     $this->model->insertRow($updates, $id);
                     $this->model->setFirstDefaultExpenseCategory($id);
-                    if(!is_null($excludedLocationsAndGroups))
+
                         $this->insertRelations($excludedLocationsAndGroups,$id);
                 }
 
@@ -901,7 +900,7 @@ unset($request->excluded_locations_and_groups);
                     $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     $this->model->insertRow($netsuite_description, $pc->id);
 
-                    if(!is_null($excludedLocationsAndGroups))
+
                         $this->insertRelations($excludedLocationsAndGroups,$pc->id);
                 }
             }
@@ -922,27 +921,28 @@ unset($request->excluded_locations_and_groups);
 
     }
     public function insertRelations($excludedLocationsAndGroups,$id){
-        $variationId = product::find($id)->variation_id;
-        $ids = product::where('variation_id',$variationId)->get()->pluck('id')->toArray();
-        $excludedLocationsAndGroups = is_array($excludedLocationsAndGroups) ? $excludedLocationsAndGroups:[$excludedLocationsAndGroups];
-        if(is_array($excludedLocationsAndGroups) && count($excludedLocationsAndGroups)>0) {
-            foreach($ids as $id) {
-                FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
-                FEGDBRelationHelpers::destroyCustomRelation(product::class, location::class, 1, 0, $id);
 
-                FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class,product::class,  1, $id,0 );
-                FEGDBRelationHelpers::destroyCustomRelation(location::class,product::class, 1, $id, 0);
-            }
-            foreach ($excludedLocationsAndGroups as $excludedLocationsAndGroup) {
-                $splitValue = explode('_', $excludedLocationsAndGroup);
-                if ($splitValue[0] == 'group') {
-                    FEGDBRelationHelpers::insertCustomRelation($id, $splitValue[1], product::class, Locationgroups::class, 1);
-                } else {
-                    FEGDBRelationHelpers::insertCustomRelation($id, $splitValue[1], product::class, location::class, 1);
+        $excludedLocationsAndGroups = is_array($excludedLocationsAndGroups) ? $excludedLocationsAndGroups:[$excludedLocationsAndGroups];
+        FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
+        FEGDBRelationHelpers::destroyCustomRelation(product::class, location::class, 1, 0, $id);
+
+        FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class,product::class,  1, $id,0 );
+        FEGDBRelationHelpers::destroyCustomRelation(location::class,product::class, 1, $id, 0);
+
+
+            if (is_array($excludedLocationsAndGroups) && count($excludedLocationsAndGroups) > 0 && $excludedLocationsAndGroups[0] !=null) {
+
+                foreach ($excludedLocationsAndGroups as $excludedLocationsAndGroup) {
+                    $splitValue = explode('_', $excludedLocationsAndGroup);
+                    if ($splitValue[0] == 'group') {
+                        FEGDBRelationHelpers::insertCustomRelation($id, $splitValue[1], product::class, Locationgroups::class, 1);
+                    } else {
+                        FEGDBRelationHelpers::insertCustomRelation($id, $splitValue[1], product::class, location::class, 1);
+                    }
                 }
             }
         }
-    }
+
 
     public function postDelete(Request $request)
     {
