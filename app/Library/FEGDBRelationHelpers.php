@@ -40,12 +40,12 @@ class FEGDBRelationHelpers
                     ->orWhereIn('related_to', $relatedId);
             })
             ->where(function ($query) use ($relatedTypeTo, $relatedType){
-                $query->where(\DB::raw('LOWER(related_type_to)'),'=',strtolower($relatedTypeTo))
-                    ->where(\DB::raw('LOWER(related_type)'),'=',strtolower($relatedType));
+                $query->where(\DB::raw('LOWER(related_type)'),'=',strtolower($relatedTypeTo))
+                    ->orWhere(\DB::raw('LOWER(related_type)'),'=',strtolower($relatedType));
             })
-            ->orWhere(function ($query) use ($relatedTypeTo, $relatedType){
+            ->where(function ($query) use ($relatedTypeTo, $relatedType){
                 $query->where(\DB::raw('LOWER(related_type_to)'),'=',strtolower($relatedType))
-                    ->where(\DB::raw('LOWER(related_type)'),'=',strtolower($relatedTypeTo));
+                    ->orWhere(\DB::raw('LOWER(related_type_to)'),'=',strtolower($relatedTypeTo));
             })
             ->where('is_excluded', $isExcluded)
             ->get();
