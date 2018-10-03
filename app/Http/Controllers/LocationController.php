@@ -202,11 +202,8 @@ class LocationController extends Controller
 
         if ($row) {
             $row = $row[0];
-
-            $location            =   $this->model->find($id);
-            $this->data['alreadyExcludedProductTypes']  =   $location->excludedProductTypes()->lists('id')->toArray();
-            $this->data['alreadyExcludedProducts']      =   $location->excludedProducts()->lists('id')->toArray();
-
+            $this->data['alreadyExcludedProductTypes']  =   FEGDBRelationHelpers::getCustomRelationRecords($id, location::class, Ordertyperestrictions::class, 1, true)->lists('ordertyperestrictions_id')->toArray();
+            $this->data['alreadyExcludedProducts']      =   FEGDBRelationHelpers::getCustomRelationRecords($id, location::class, product::class, 1, true)->lists('product_id')->toArray();
         } else {
             $row = $this->model->getColumnTable('location');
         }
