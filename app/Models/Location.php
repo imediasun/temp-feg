@@ -141,7 +141,13 @@ FROM location
     public function setExcludedData($rows){
         $returnData = [];
         foreach ($rows as $row){
-           $excludedData = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($row->id, true,  true);
+          // $excludedData = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($row->id, true,  true);
+            $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($row->id,location::class,product::class,1)->pluck('product_id')->toArray();
+            $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($row->id,location::class,Ordertyperestrictions::class,1)->pluck('ordertyperestrictions_id')->toArray();
+            $excludedData = [
+                'excluded_product_ids' =>$excludedProductIds,
+                'excluded_product_type_ids' => $excludedProductTypeIds
+            ];
             $productTypeData = $productsData = $productTypes = '';
             if(!empty($excludedData['excluded_product_type_ids'])) {
                 $productTypeData = Ordertyperestrictions::select(\DB::raw('group_concat(order_type) as product_types'))->whereIn('id', $excludedData['excluded_product_type_ids'])->get()->pluck('product_types')->toArray();
