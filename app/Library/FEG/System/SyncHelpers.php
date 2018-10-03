@@ -543,6 +543,8 @@ class SyncHelpers
                                     if (empty($foundDatestamp) || $foundDatestamp < 0) {
                                         FEGSystemHelper::logit("   %% %% Not found in move history - fallback to either location's first date or game's intial date", $lf, $lp);
                                         $minGameDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
+                                        $minGameDateGamePlays = DB::table('report_game_plays')->where('game_id', $game_id)->orderBy('date_last_played','desc')->limit(1)->value('date_last_played');
+                                        $minGameDate = max($minGameDate,$minGameDateGamePlays);
                                         FEGSystemHelper::logit("           -- Game's first date ($minGameDate)", $lf, $lp);
                                         $minGameDatestamp = strtotime($minGameDate);
                                         $isMinGameDate = !empty($minGameDatestamp) && $minGameDatestamp > 0 && $minGameDatestamp <= $dateValue;
@@ -1363,6 +1365,8 @@ class SyncHelpers
             if (empty($gameMoveStartDatestamp) || $gameMoveStartDatestamp < 0) {
 
                 $minGameDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
+                $minGameDateGamePlays = DB::table('report_game_plays')->where('game_id', $game_id)->orderBy('date_last_played','desc')->limit(1)->value('date_last_played');
+                $minGameDate = max($minGameDate,$minGameDateGamePlays);
                 $minGameDatestamp = strtotime($minGameDate);
                 $isMinGameDate = !empty($minGameDatestamp) && $minGameDatestamp > 0 && $minGameDatestamp <= $dateValue;
 
