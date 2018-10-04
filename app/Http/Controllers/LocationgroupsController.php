@@ -327,7 +327,7 @@ class LocationgroupsController extends Controller {
         $alreadyExcludedProductTypes = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, Ordertyperestrictions::class, 1, true)->lists('ordertyperestrictions_id')->toArray();
         $alreadyExcludedProducts = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, product::class, 1, true)->lists('product_id')->toArray();
 
-        $products = product::select('id','vendor_description')->orderBy('vendor_description')->get();
+        $products = product::select('id','vendor_description')->where('inactive', 0)->orderBy('vendor_description')->get();
         $productType = Ordertyperestrictions::select('id','order_type as product_type')->orderBy('order_type','asc')->get();
         $locations = location::select('id','location_name')->where('active',1)->orderBy('id','asc')->get();
 
