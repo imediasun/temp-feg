@@ -578,13 +578,13 @@ class ProductController extends Controller
         $request->vendor_description = trim(preg_replace('/\s+/',' ', $request->vendor_description));
 
         $vendorDescriptin = $request->vendor_description;
-        if(strpos($vendorDescriptin,"&") !=false || strpos($vendorDescriptin,",") !=false || strpos($vendorDescriptin,'"'))
+ /*       if(strpos($vendorDescriptin,"&") !=false || strpos($vendorDescriptin,",") !=false || strpos($vendorDescriptin,'"'))
         {
             return response()->json(array(
                 'message' => "Item name cannot have & , or \" (ampersand, comma or quotation marks)",
                 'status' => 'error'
             ));
-        }
+        }*/
         if(is_array($request->prod_sub_type_id) && $id == 0)
         {
             if(count(array_unique($request->prod_sub_type_id))<count($request->prod_sub_type_id))

@@ -58,7 +58,7 @@ class DigitalPackingList extends Sximo
                 Order::ORDER_TYPE_PARTY_SUPPLIES => 'PartySup',
                 Order::ORDER_TYPE_UNIFORM => 'Uniforms'
             ];
-
+            $itemName = \SiteHelpers::removeSpecialCharacters($itemName);
             $productType = isset($orderTypes[$product->prod_type_id]) ? $orderTypes[$product->prod_type_id]:$product->prod_type_id;
 
             $newLine = ($countIndex == $totalItems) ? '':$newLine;
