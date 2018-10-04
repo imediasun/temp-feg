@@ -107,6 +107,57 @@
   	</head>
   	<body class="sxim-init" >
     @yield('afterbodystart', '')
+	@if(env('APP_ENV')=='development' || env('APP_ENV')=='staging' || env('APP_ENV')=='demo')
+	<div class="debugbarbtn" onmouseover="$(this).css({'left':'0px'},1000);" onmouseout="$(this).css({'left':'-121px'});" onclick="$('.locationDebugBar').toggle('slow');" style="position: fixed; cursor: pointer; top:0px; z-index: 99999999;  font-weight: 700;     background: #ffffff;
+    color: #2b2929;
+    padding:5px 10px; left: -121px; border-right: 5px solid red;" title="Location DebugBar">Location DebugBar</div>
+	<div class="locationDebugBar container" style="min-height:100px; max-height: 450px; overflow-y: auto; font-size: 11px; color: black; background: white; top:20px; position: fixed; display: none; width: 100%; z-index: 99999;">
+		<?php
+		$debuggerData = \App\Library\FEGDBRelationHelpers::getAllExcludedDataDebugger();
+		?>
+		<div class="row">
+			<div class="col-md-4">
+		<h4>Location Groups</h4>
+				<div>
+					<?php $i=0 ?>
+					@foreach($debuggerData['locationGroups'] as $locationGroup)
+							<div  style="@if($i%2==0) background:#dfdfdf; @endif padding: 2px; border-bottom: 1px dotted black;" >
+						{{ $locationGroup }}
+					</div>
+						<?php $i++ ?>
+						@endforeach
+
+				</div>
+			</div>
+			<div class="col-md-4">
+				<h4>Excluded Product Types for Current Location</h4>
+				<div>
+					<?php $i=0 ?>
+					@foreach($debuggerData['productTypes'] as $productType)
+							<div  style="@if($i%2==0) background:#dfdfdf; @endif padding: 2px; border-bottom: 1px dotted black;" >
+							{{ $productType }}
+						</div>
+						<?php $i++ ?>
+					@endforeach
+
+				</div>
+			</div>
+			<div class="col-md-4">
+				<h4>Excluded Product for Current Location</h4>
+				<div>
+					<?php $i=0 ?>
+					@foreach($debuggerData['products'] as $product)
+						<div  style="@if($i%2==0) background:#dfdfdf; @endif padding: 2px; border-bottom: 1px dotted black;" >
+							{{ $product }}
+						</div>
+						<?php $i++ ?>
+					@endforeach
+
+				</div>
+			</div>
+		</div>
+	</div>
+	@endif
 	<div id="wrapper" {!! (isset($sid) && $sid!='') ? 'style="pointer-events:none"' : '' !!}>
 		@include('layouts/sidemenu')
 		<div class="gray-bg " id="page-wrapper">
