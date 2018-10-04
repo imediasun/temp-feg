@@ -6,6 +6,7 @@ use App\Models\location;
 use App\Models\Locationgroups;
 use App\Models\product;
 use App\Models\Ordertyperestrictions;
+use App\Models\UserLocations;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\DB;
@@ -161,8 +162,8 @@ class LocationgroupsController extends Controller {
 
 
 
-		$locations = $this->location->select(DB::raw("CONCAT(id,' ', location_name) AS location_name, id"))->where('active', 1)->orderBy('id', 'asc')->lists('location_name', 'id');
-
+		//$locations = $this->location->select(DB::raw("CONCAT(id,' ', location_name) AS location_name, id"))->where('active', 1)->orderBy('id', 'asc')->lists('location_name', 'id');
+        $locations = UserLocations::getUserAssignedLocation("CONCAT(id,' ', location_name) AS location_name");
 		$this->data['locations'] 	    = $locations;
 		$this->data['setting'] 		    = $this->info['setting'];
 		$this->data['fields'] 		    =  \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -329,7 +330,8 @@ class LocationgroupsController extends Controller {
 
         $products = product::select('id','vendor_description')->where('inactive', 0)->orderBy('vendor_description')->get();
         $productType = Ordertyperestrictions::select('id','order_type as product_type')->orderBy('order_type','asc')->get();
-        $locations = location::select('id','location_name')->where('active',1)->orderBy('id','asc')->get();
+       // $locations = location::select('id','location_name')->where('active',1)->orderBy('id','asc')->get();
+        $locations = UserLocations::getUserAssignedLocation();
 
         $productData = view('locationgroups.dropdown',['products'=>$products,'type'=>'products'])->render();
         $productTypeData = view('locationgroups.dropdown',['producttypes'=>$productType,'type'=>'producttypes'])->render();
