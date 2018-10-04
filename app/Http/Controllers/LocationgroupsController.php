@@ -162,9 +162,10 @@ class LocationgroupsController extends Controller {
 
 
 
-		//$locations = $this->location->select(DB::raw("CONCAT(id,' ', location_name) AS location_name, id"))->where('active', 1)->orderBy('id', 'asc')->lists('location_name', 'id');
-        $locations = UserLocations::getUserAssignedLocation("CONCAT(id,' ', location_name) AS location_name");
-		$this->data['locations'] 	    = $locations;
+		//$locations1 = $this->location->select(DB::raw("CONCAT(id,' ', location_name) AS location_name, id"))->where('active', 1)->orderBy('id', 'asc')->lists('location_name', 'id');
+        $locations = UserLocations::getUserAssignedLocations(\DB::raw("CONCAT(location.id,' ', location.location_name) AS location_name"))->lists('location_name', 'id');
+
+        $this->data['locations'] 	    = $locations;
 		$this->data['setting'] 		    = $this->info['setting'];
 		$this->data['fields'] 		    =  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
@@ -331,7 +332,7 @@ class LocationgroupsController extends Controller {
         $products = product::select('id','vendor_description')->where('inactive', 0)->orderBy('vendor_description')->get();
         $productType = Ordertyperestrictions::select('id','order_type as product_type')->orderBy('order_type','asc')->get();
        // $locations = location::select('id','location_name')->where('active',1)->orderBy('id','asc')->get();
-        $locations = UserLocations::getUserAssignedLocation();
+        $locations = UserLocations::getUserAssignedLocations()->get();
 
         $productData = view('locationgroups.dropdown',['products'=>$products,'type'=>'products'])->render();
         $productTypeData = view('locationgroups.dropdown',['producttypes'=>$productType,'type'=>'producttypes'])->render();
