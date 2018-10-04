@@ -2944,4 +2944,19 @@ class SiteHelpers
         }
         return $noDataArray;
     }
+
+    /**
+     * @param $string
+     * @param string $replacer
+     * @return string
+     */
+    public static function removeSpecialCharacters($string,$replacer = ''){
+        $convertedString = $string;
+        if(!empty($string)) {
+            $stringToArray = explode(' ', $string);
+            $resultentArray = (array) preg_replace('/[^a-zA-Z0-9-_\.]/', $replacer, $stringToArray);
+            $convertedString = trim(implode(' ', $resultentArray));
+        }
+        return (string) $convertedString;
+    }
 }
