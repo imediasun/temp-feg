@@ -209,4 +209,25 @@ class FEGDBRelationHelpers
         return $result;
     }
 
+    /**
+     * @return array
+     */
+    public static function getAllExcludedDataDebugger(){
+        $selectedLocation = \Session::get('selected_location');
+
+        $locationGroups = FEGDBRelationHelpers::getCustomRelationRecords($selectedLocation,location::class,Locationgroups::class,0)->pluck('locationgroups_id')->toArray();
+        $locationGroup = Locationgroups::select('name')->whereIn('id',$locationGroups)->orderBy('name','asc')->get()->pluck('name');
+
+        $productData = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null,true,true);
+
+        $products = product::select('vendor_description')->whereIn('id',$productData['excluded_product_ids'])->get()->pluck('vendor_description')->toArray();
+        $productTypes = Ordertyperestrictions::select('order_type as product_type')->whereIn('id',$productData['excluded_product_type_ids'])->get()->pluck('product_type')->toArray();
+   $data =[
+       'locationGroups' => $locationGroup,
+       'productTypes' => $productTypes,
+       'products' => $products
+   ];
+        return $data;
+    }
+
 }
