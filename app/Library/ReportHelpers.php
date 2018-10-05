@@ -865,7 +865,7 @@ class ReportHelpers
         $Q .= " ";
 
         // Having Query
-        $Q .=' having (total_readers_reported = G.total_readers)';
+        $Q .=' having (total_readers_reported = G.total_readers OR (total_readers_reported = 0 AND G.total_readers >= 1 ) )';
         return $Q;
     }
     public static function getGamesNotPlayedCount($dateStart, $dateEnd, $location = "",
