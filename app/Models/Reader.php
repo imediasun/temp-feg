@@ -75,7 +75,7 @@ class Reader extends Sximo
 
         $readerData = $readers->where(\DB::raw('Year(readers.date_added)'), ">=", '2018')
             ->whereNotNull('game.total_readers')
-            ->where('game.total_readers','>',0)
+            ->where('game.total_readers','>',1)
             ->having('total_reader_reported','>',0)
             ->having('game.total_readers','>','total_reader_reported')
             ->groupby('readers.game_id')->groupby('readers.location_id')->whereNotNull('game_title.game_title')->get();
