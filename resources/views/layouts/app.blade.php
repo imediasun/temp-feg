@@ -111,11 +111,11 @@
 	<div class="debugbarbtn" onmouseover="$(this).css({'left':'0px'},1000);" onmouseout="$(this).css({'left':'-121px'});" onclick="$('.locationDebugBar').toggle('slow');" style="position: fixed; cursor: pointer; top:0px; z-index: 99999999;  font-weight: 700;     background: #ffffff;
     color: #2b2929;
     padding:5px 10px; left: -121px; border-right: 5px solid red;" title="Location DebugBar">Location DebugBar</div>
-	<div class="locationDebugBar container" style="min-height:100px; max-height: 450px; overflow-y: auto; font-size: 11px; color: black; background: white; top:20px; position: fixed; display: none; width: 100%; z-index: 99999;">
+	<div class="locationDebugBar container" style="min-height:100px;  box-shadow: black 0px 0px 1px inset; max-height: 450px; overflow-y: auto; font-size: 11px; color: black; background: white; top:20px; position: fixed; display: none; width: 100%; z-index: 99999;">
 		<?php
 		$debuggerData = \App\Library\FEGDBRelationHelpers::getAllExcludedDataDebugger();
 		?>
-		<div class="row">
+		<div class="row" style="max-height:450px; overflow-y: auto;">
 			<div class="col-md-4">
 		<h4>Location Groups</h4>
 				<div>
