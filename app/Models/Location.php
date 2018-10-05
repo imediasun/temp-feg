@@ -151,7 +151,10 @@ FROM location
             $productTypeData = $productsData = $productTypes = '';
             if(!empty($excludedData['excluded_product_type_ids'])) {
                 $productTypeData = Ordertyperestrictions::select(\DB::raw('group_concat(order_type ORDER BY order_type ASC) as product_types'))->whereIn('id', $excludedData['excluded_product_type_ids'])->get()->pluck('product_types')->toArray();
+            }
+            if(!empty($excludedData['excluded_product_ids'])) {
                 $productsData = product::select(\DB::raw('group_concat(vendor_description ORDER BY vendor_description ASC) as product_name'))->whereIn('id', $excludedData['excluded_product_ids'])->get()->pluck('product_name')->toArray();
+            }
                 if(!empty($productTypeData[0])){
                     $productTypes = str_replace(",",",<br>",$productTypeData[0]);
                     $row->product_type_ids = $productTypes;
@@ -160,7 +163,7 @@ FROM location
                     $productName= str_replace(",",",<br>",$productsData[0]);
                     $row->product_ids = $productName;
                 }
-            }
+
             $returnData[]=$row;
         }
 
