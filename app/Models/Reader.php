@@ -61,8 +61,10 @@ class Reader extends Sximo
      */
     public static function getReaderNotPlayed($params = [])
     {
+        $location = null;
         extract(array_merge(array(
             'date' => date('Y-m-d', strtotime('-1 day')),
+            'location'=> location::reportingLocations(),
         ), $params));
         $selectColumns = ' group_concat(readers.reader_id) as reader_id,count(readers.reader_id) as total_reader_reported,game.total_readers,
          count(readers.reader_id) as total_reader_not_reporing,readers.game_id,readers.location_id,location.location_name,
@@ -72,8 +74,11 @@ class Reader extends Sximo
         $readers->leftJoin('game', 'game.id', '=', 'readers.game_id');
         $readers->leftJoin('game_title', 'game_title.id', '=', 'game.game_title_id');
         $readers->leftJoin('location', 'location.id', '=', 'readers.location_id');
-
+        if(!is_null($location)) {
+            $readers->whereIn('readers.location_id', $location);
+        }
         $readerData = $readers->where(\DB::raw('Year(readers.date_added)'), ">=", '2018')
+
             ->whereNotNull('game.total_readers')
             ->where('game.total_readers','>',1)
             ->having('total_reader_reported','>',0)

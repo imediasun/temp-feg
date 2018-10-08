@@ -784,7 +784,7 @@ class ReportHelpers
                 E.date_played as date_end,
                 E.date_last_played,
                 DATEDIFF(E.date_played, E.date_last_played) as days_not_played,
-                (select count(reader_id) from readers where date(last_report_date) < '".date('Y-m-d',strtotime($dateStart))."' AND readers.game_id = G.id) as total_readers_reported,
+                (select count(reader_id) from readers where date(last_report_date) < '".date('Y-m-d',strtotime($dateStart))."' and YEAR(readers.date_added) >= 2018 AND readers.game_id = G.id) as total_readers_reported,
                 G.total_readers
                 ";
 
