@@ -71,7 +71,11 @@ class Reader extends Sximo
          game.game_name,game_title.game_title, if( game.game_title_id > 0,game_title.game_title,game.game_name) as gameTitle';
         $readers = self::select(\DB::raw($selectColumns))->where('last_report_date', '<', $date);
 
-        $readers->leftJoin('game', 'game.id', '=', 'readers.game_id');
+        $readers->leftJoin('game',function ($join){
+            // 'game.id', '=', 'readers.game_id'
+            $join->on('game.id', '=', 'readers.game_id');
+            $join->on('game.location_id', '=', 'readers.location_id');
+        });
         $readers->leftJoin('game_title', 'game_title.id', '=', 'game.game_title_id');
         $readers->leftJoin('location', 'location.id', '=', 'readers.location_id');
         if(!is_null($location)) {
