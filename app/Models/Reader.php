@@ -75,7 +75,7 @@ class Reader extends Sximo
         $readers->leftJoin('game_title', 'game_title.id', '=', 'game.game_title_id');
         $readers->leftJoin('location', 'location.id', '=', 'readers.location_id');
         if(!is_null($location)) {
-            $readers->whereIn('readers.location_id', $location);
+            $readers->whereIn('readers.location_id', explode(",",$location));
         }
         $readerData = $readers->where(\DB::raw('Year(readers.date_added)'), ">=", '2018')
 
