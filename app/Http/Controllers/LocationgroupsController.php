@@ -158,7 +158,7 @@ class LocationgroupsController extends Controller {
 
 
         $this->data['productTypes'] = Ordertyperestrictions::lists('order_type', 'id');
-        $this->data['products']     = product::orderBy('vendor_description', 'asc')->lists('vendor_description', 'id');
+        $this->data['products']     = product::where('inactive', 0)->orderBy('vendor_description', 'asc')->lists('vendor_description', 'id');
 
 
 
