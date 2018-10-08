@@ -2954,8 +2954,12 @@ class SiteHelpers
         $convertedString = $string;
         if(!empty($string)) {
             $stringToArray = explode(' ', $string);
-            $resultentArray = (array) preg_replace('/[^a-zA-Z0-9\.]/', $replacer, $stringToArray);
-            $convertedString = trim(implode(' ', $resultentArray));
+           // $resultentArray = (array) preg_replace('/[^a-zA-Z0-9\.]/', $replacer, $stringToArray);
+            $cleanedArray = [];
+            foreach ($stringToArray as $item){
+                $cleanedArray[] = str_replace(['&','\'','"',','],$replacer,$item);
+            }
+            $convertedString = trim(implode(' ', $cleanedArray));
             $convertedString = trim(preg_replace('/\s+/',' ', $convertedString));
         }
         return (string) $convertedString;
