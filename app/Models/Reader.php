@@ -66,8 +66,21 @@ class Reader extends Sximo
             'date' => date('Y-m-d', strtotime('-1 day')),
             'location'=> location::reportingLocations(),
         ), $params));
-        $selectColumns = ' group_concat(readers.reader_id) as reader_id,count(readers.reader_id) as total_reader_reported,game.total_readers,
-         count(readers.reader_id) as total_reader_not_reporing,readers.game_id,readers.location_id,location.location_name,
+        $sqlExtendedColumn1 = "(SELECT
+     COUNT(tr.reader_id)
+   FROM readers tr
+   WHERE tr.game_id = readers.game_id
+       AND tr.location_id = readers.location_id
+       AND tr.last_report_date = '$date') AS total_reader_reported ";
+        $sqlExtendedColumn2 = "(game.total_readers - (SELECT
+     COUNT(tr.reader_id)
+   FROM readers tr
+   WHERE tr.game_id = readers.game_id
+       AND tr.location_id = readers.location_id
+       AND tr.last_report_date = '$date')) AS total_reader_not_reporing ";
+
+        $selectColumns = ' group_concat(readers.reader_id) as reader_id,'.$sqlExtendedColumn1.',game.total_readers,
+         '.$sqlExtendedColumn2.',readers.game_id,readers.location_id,location.location_name,
          game.game_name,game_title.game_title, if( game.game_title_id > 0,game_title.game_title,game.game_name) as gameTitle';
         $readers = self::select(\DB::raw($selectColumns))->where('last_report_date', '<', $date);
 
