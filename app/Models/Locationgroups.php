@@ -51,18 +51,19 @@ class Locationgroups extends Sximo  {
 
             $locations = location::select(\DB::raw("GROUP_CONCAT(DISTINCT CONCAT(location.id,' ',location.location_name) ORDER BY location.id SEPARATOR '<br>') AS location_names"))->whereIn('id',$locationData)->where('active',1)->get()->pluck('location_names')->toArray();
             $productTypeData = Ordertyperestrictions::select(\DB::raw('group_concat(order_type ORDER BY order_type ASC) as product_types'))->whereIn('id', $productType)->get()->pluck('product_types')->toArray();
-            $productsData = product::select(\DB::raw('group_concat(vendor_description ORDER BY vendor_description ASC) as product_name'))->whereIn('id', $productData)->get()->pluck('product_name')->toArray();
+            $productsData = product::whereIn('id', $productData)->orderBy('vendor_description', 'asc')->get()->lists('vendor_description')->toArray();
             if(!empty($productTypeData[0])){
-                $productTypes = str_replace(",",",<br>",$productTypeData[0]);
-                $row->excluded_product_type_ids = $productTypes;
+                $productTypes = str_replace(",",".<br>",$productTypeData[0]);
+                $row->excluded_product_type_ids = $productTypes.'.';
             }
-            if(!empty($productsData[0])){
-                $productName= str_replace(",",",<br>",$productsData[0]);
-                $row->excluded_product_ids = $productName;
+            $row->excluded_product_ids = '';
+            if(count($productsData) != 0){
+                $productName= implode(".<br>", $productsData);
+                $row->excluded_product_ids = $productName.'.';
             }
             if(!empty($locations[0])){
-                $locationName= str_replace(",",",<br>",$locations[0]);
-                $row->location_ids = $locationName;
+                $locationName= str_replace(",",".<br>",$locations[0]);
+                $row->location_ids = $locationName.'.';
             }
             $returnData[] = $row;
         }
