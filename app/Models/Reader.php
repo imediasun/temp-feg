@@ -78,9 +78,9 @@ class Reader extends Sximo
         });
         $readers->leftJoin('game_title', 'game_title.id', '=', 'game.game_title_id');
         $readers->leftJoin('location', 'location.id', '=', 'readers.location_id');
-        if(!is_null($location)) {
+       /* if(!is_null($location)) {
             $readers->whereIn('readers.location_id', explode(",",$location));
-        }
+        }*/
         $readerData = $readers->where(\DB::raw('Year(readers.date_added)'), ">=", '2018')
 
             ->whereNotNull('game.total_readers')
@@ -88,6 +88,7 @@ class Reader extends Sximo
             ->having('total_reader_reported','>',0)
             ->having('game.total_readers','>','total_reader_reported')
             ->groupby('readers.game_id')->groupby('readers.location_id')->whereNotNull('game_title.game_title')->get();
+
         return $readerData;
     }
 
