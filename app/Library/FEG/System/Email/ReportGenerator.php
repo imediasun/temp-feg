@@ -1227,7 +1227,7 @@ class ReportGenerator
         }
         
         $q = ReportHelpers::getGamesNotPlayedQuery($date, $date, 
-                null, null, null, "all", "", "", "", "days_not_played", "DESC");
+                null, null, null, "all", "", "", "", "days_not_played", "DESC",true);
         
         //$q .= " AND E.location_id NOT IN (" . implode(',', $locationsNotReportingIds). ")";
         
