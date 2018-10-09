@@ -127,14 +127,14 @@
                                         container: '.custom-container',
                                         message: response.qtyErrorMessage.messagetext,
                                         afterShow: function(){
-                                            $('#button-0').remove();
+                                            $('#button-0').hide();
                                         },
                                         cancel: function () {
                                             $('.custom_overlay').slideUp(500);
                                         }
                                     });
                                     setTimeout(function () {
-                                        $('#button-0').remove();
+                                        $('#button-0').hide();
                                     },200);
                                 }else {
                                     if (response.hasPermission) {
