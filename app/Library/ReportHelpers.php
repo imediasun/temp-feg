@@ -763,7 +763,7 @@ class ReportHelpers
 
     public static function getGamesNotPlayedQuery($dateStart, $dateEnd, $location = "",
                                                   $debit = "", $gameType = "", $gameCat = "all", $onTest = "",
-                                                  $gameId = "", $gameTitleId= "", $sortby = "date_start", $order = ""){
+                                                  $gameId = "", $gameTitleId= "", $sortby = "date_start", $order = "",$queryHaving = false){
         extract(self::getGameCategoryDetails($gameCat));
         $Q = "SELECT E.id,
                 E.location_id,
@@ -806,7 +806,7 @@ class ReportHelpers
     }
     public static function _getGamesNotPlayedQuery($dateStart, $dateEnd, $location = "",
                                                    $debit = "", $gameType = "", $gameCat = "all", $onTest = "",
-                                                   $gameId = "", $gameTitleId= ""){
+                                                   $gameId = "", $gameTitleId= "",$queryHaving=false){
         extract(self::getGameCategoryDetails($gameCat));
         $gameTypeIds = self::mergeGameTypeAndCategories($gameType, $game_category_type);
         if (!empty($dateStart)) {
@@ -865,8 +865,10 @@ class ReportHelpers
         $Q .= " ";
 
         // Having Query
-        $Q .=' having (total_readers_reported = G.total_readers OR (total_readers_reported = 0 AND G.total_readers >= 1 ) )';
-        return $Q;
+        if($queryHaving) {
+            $Q .= ' having (total_readers_reported = G.total_readers OR (total_readers_reported = 0 AND G.total_readers >= 1 ) )';
+        }
+            return $Q;
     }
     public static function getGamesNotPlayedCount($dateStart, $dateEnd, $location = "",
                                                   $debit = "", $gameType = "", $gameCat = "all", $onTest = "",
