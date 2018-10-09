@@ -791,7 +791,7 @@ class SyncHelpers
                                 }
                             }
 
-                            $row['location_id'] = (is_null($gameLocationID) || empty($gameLocationID) || $gameLocationID == 0) ? $location_id:$gameLocationID;
+                            $row['location_id'] = $gameLocationID;
                             
                             unset($row['glocation_id']);
                             unset($row['prev_location_id']);
