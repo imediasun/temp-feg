@@ -63,9 +63,9 @@ class DigitalPackingList extends Sximo
 
             $newLine = ($countIndex == $totalItems) ? '':$newLine;
             if ($this->order->location->debit_type_id == Location::LOCATION_TYPE_SACOA) {
-                $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOM, $product->item_received, $price, $tickets, $qtyPerCase, $product->price]) . $newLine;
+                $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOM, ((strtolower($unitTypeUOM) == 'case') ? ($product->is_broken_case == 0) ? ($product->item_received * $qtyPerCase):$product->item_received:$product->item_received), $price, $tickets, $qtyPerCase, $product->price]) . $newLine;
             } else {
-                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOM . "," .((strtolower($unitTypeUOM) == 'case') ? ($product->item_received * $qtyPerCase):$product->item_received) . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
+                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOM . "," .((strtolower($unitTypeUOM) == 'case') ? ($product->is_broken_case == 0) ? ($product->item_received * $qtyPerCase):$product->item_received:$product->item_received) . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
             }
         }
         return $fileContent;
