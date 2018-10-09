@@ -714,9 +714,9 @@ class SyncHelpers
                     ->leftJoin('game_title', 'game_title.id', '=', 'game.game_title_id')
                     ->whereRaw(empty($location) ? "location.reporting = 1 OR E.date_played IS NOT NULL" : "location.id IN ($location)");
                 
-//        $sql = $query->toSql();
-//        $qL->log("Date for query: $date");
-//        $qL->log($sql);
+       // $sql = $query->toSql();
+       // $qL->log("Date for query: $date");
+       // $qL->log($sql);
         
         $rowcount = 0;
         $chunkCount = 0;
