@@ -789,7 +789,7 @@ class ReportHelpers
                 ";
 
         $Q .= self::_getGamesNotPlayedQuery($dateStart, $dateEnd, $location, $debit,
-            $gameType, $gameCat, $onTest, $gameId, $gameTitleId);
+            $gameType, $gameCat, $onTest, $gameId, $gameTitleId,$queryHaving);
         // ORDER BY
         $sortbys = array(
         );
