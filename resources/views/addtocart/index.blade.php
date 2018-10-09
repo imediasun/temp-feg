@@ -119,28 +119,47 @@
                             data:'products[]='+products,
                             type:"POST",
                             success:function(response){
-                                if(response.hasPermission) {
-                                    if (($.trim(response.exceptionMessage)).length > 0) {
-                                        App.notyConfirm({
-                                            confirmButtonText: 'Yes',
-                                            cancelButtonText: 'No',
-                                            container: '.custom-container',
-                                            message: response.exceptionMessage,
-                                            confirm: function () {
-                                                $('.custom_overlay').slideUp(500);
-                                                window.location.href = redirectString;
-                                            },
-                                            cancel: function () {
-                                                $('.custom_overlay').slideUp(500);
-                                            }
-                                        });
+                                if(response.qtyErrorMessage.showError === true){
+                                    App.notyConfirm({
+                                        cancelButtonText: 'OK',
+                                        type:'alert',
+                                        buttons:false,
+                                        container: '.custom-container',
+                                        message: response.qtyErrorMessage.messagetext,
+                                        afterShow: function(){
+                                            $('#button-0').hide();
+                                        },
+                                        cancel: function () {
+                                            $('.custom_overlay').slideUp(500);
+                                        }
+                                    });
+                                    setTimeout(function () {
+                                        $('#button-0').hide();
+                                    },200);
+                                }else {
+                                    if (response.hasPermission) {
+                                        if (($.trim(response.exceptionMessage)).length > 0) {
+                                            App.notyConfirm({
+                                                confirmButtonText: 'Yes',
+                                                cancelButtonText: 'No',
+                                                container: '.custom-container',
+                                                message: response.exceptionMessage,
+                                                confirm: function () {
+                                                    $('.custom_overlay').slideUp(500);
+                                                    window.location.href = redirectString;
+                                                },
+                                                cancel: function () {
+                                                    $('.custom_overlay').slideUp(500);
+                                                }
+                                            });
+                                        } else {
+                                            window.location.href = redirectString;
+                                            $("#update_text_to_add_cart").text('0');
+                                        }
                                     } else {
                                         window.location.href = redirectString;
                                         $("#update_text_to_add_cart").text('0');
                                     }
-                                }  else {
-                                    window.location.href = redirectString;
-                                    $("#update_text_to_add_cart").text('0');
                                 }
                             }
                         });

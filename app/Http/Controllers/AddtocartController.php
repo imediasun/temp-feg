@@ -306,6 +306,7 @@ class AddtocartController extends Controller
             }
         }
 
+
         $newRequests = $this->model->getNewRequests($products)->get();
         if($newRequests->count()>0){
             foreach($newRequests as $newRequest){
@@ -364,9 +365,30 @@ class AddtocartController extends Controller
         $addToCart = new Addtocart();
         $inputs = $request->all();
         // if user/user group has ability to request a product that already been requested by another user from same location
+
+        $qtyCheckMessage = [
+            'messagetext' => "",
+            'showError' => false,
+        ];
+
+        $requestQtyCheck = $this->model->requestQtyFilterCheck($inputs['products']);
+        if ($requestQtyCheck->count() > 0) {
+            $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
+            foreach ($requestQtyCheck as $request) {
+                $productsNames .= "<li>" . addslashes($request->vendor_description) . " | Product QTY = ".$request->productQty." | Requested QTY = ".$request->requestedQTY."</li>";
+            }
+            $productsNames .= "</ul>";
+            //return redirect('/addtocart')->with('messagetext', "You are unable to submit request as following product(s) doesn't allow the negative reserved quantity: $productsNames Please remove product(s) or adjust quantity before submitting the request.")->with('msgstatus', 'error');
+       $qtyCheckMessage = [
+           'messagetext' => "You are unable to submit request as following product(s) doesn't allow the negative reserved quantity:<br /> $productsNames <br />Please remove product(s) or adjust quantity before submitting the request.",
+            'showError' => $requestQtyCheck->count() > 0,
+       ];
+        }
+
             return response()->json([
                 'hasPermission'=>$addToCart->hasPermission(),
                 'exceptionMessage' =>$addToCart->getsubmittedRequests($inputs['products']),
+                'qtyErrorMessage' =>$qtyCheckMessage
             ]);
     }
 
