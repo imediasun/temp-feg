@@ -209,7 +209,7 @@ class LocationController extends Controller
         }
 
         $this->data['productTypes'] = Ordertyperestrictions::where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type', 'id');
-        $this->data['products']     = product::where('inactive', 0)->orderBy('vendor_description', 'asc')->lists('vendor_description', 'id');
+        $this->data['products']     = product::orderBy('vendor_description', 'asc')->lists('vendor_description', 'id');
         $this->data['row'] = $row;
         
         $this->data['setting'] = $this->info['setting'];
