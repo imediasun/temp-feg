@@ -62,10 +62,12 @@ class DigitalPackingList extends Sximo
             $productType = isset($orderTypes[$product->prod_type_id]) ? $orderTypes[$product->prod_type_id]:$product->prod_type_id;
 
             $newLine = ($countIndex == $totalItems) ? '':$newLine;
+            $unitTypeUOMUpdated = ((strtolower($unitTypeUOM) == 'case') ? ($product->is_broken_case == 0) ? 'EACH':'EACH':'EACH');
+            $quantityReceived = ((strtolower($unitTypeUOM) == 'case') ? ($product->is_broken_case == 0) ? ($product->item_received * $qtyPerCase): $product->item_received : $product->item_received);
             if ($this->order->location->debit_type_id == Location::LOCATION_TYPE_SACOA) {
-                $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOM, ((strtolower($unitTypeUOM) == 'case') ? ($product->is_broken_case == 0) ? ($product->item_received * $qtyPerCase):$product->item_received:$product->item_received), $price, $tickets, $qtyPerCase, $product->price]) . $newLine;
+                $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOMUpdated, $quantityReceived, $price, $tickets, $qtyPerCase, $product->price]) . $newLine;
             } else {
-                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOM . "," .((strtolower($unitTypeUOM) == 'case') ? ($product->is_broken_case == 0) ? ($product->item_received * $qtyPerCase):$product->item_received:$product->item_received) . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
+                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOMUpdated . "," .$quantityReceived . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
             }
         }
         return $fileContent;
