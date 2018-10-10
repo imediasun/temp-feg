@@ -1425,15 +1425,29 @@
                     success: function (msg) {
 
                         if(rePopulateOrderTypes == true){
-                            $('#order_type_id').empty();
-                            $('#order_type_id').append($("<option></option>")
-                                .attr("value",null)
-                                .text('-------- Select Order Type --------'));
-                            $.each(msg.order_types, function (key, value) {
-                                $('#order_type_id').append($("<option></option>")
-                                    .attr("value",value.id)
-                                    .text(value.order_type));
-                            });
+
+                            // var displayOnlyTheseProductTypes = [];
+                            // $.each(msg.order_types, function (key, val) {
+                            //     displayOnlyTheseProductTypes.push(key);
+                            // });
+
+                            alert(msg.exclude_the_order_types);
+                            $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
+                                {excludeItems: msg.exclude_the_order_types, isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'], selected_value: '', initial_text: '-------- Select Order Type --------'});
+
+                            // $('#order_type_id').empty();
+                            // $('#order_type_id').append($("<option></option>")
+                            //     .attr("value",null)
+                            //     .attr("selected", "selected")
+                            //     .text('-------- Select Order Type --------'));
+                            // $.each(msg.order_types, function (key, value) {
+                            //     $('#order_type_id').append($("<option></option>")
+                            //         .attr("value",value.id)
+                            //         .text(value.order_type));
+                            // });
+                            // alert($("#order_type_id option:selected").text());
+                            // $('#select2-chosen-13').html($("#order_type_id option:selected").text())
+                            // $('#select2-chosen-8').html($("#order_type_id option:selected").text())
                         }
 
                         $("#submit_btn").removeAttr('disabled');

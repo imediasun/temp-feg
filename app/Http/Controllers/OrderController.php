@@ -1787,10 +1787,11 @@ class OrderController extends Controller
         $excludedProductTypeIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($location_id, true, false)['excluded_product_type_ids'];
         $orderTypes = Ordertyperestrictions::select('order_type', 'id')->where('can_request', 1)->whereNotIn('id', $excludedProductTypeIds)->orderBy('order_type', 'asc')->get();
         return [
-            'po_3'              =>  $this->validatePO($po, $po_full, $location_id),
-            'fedex_number'      =>  $location ? $location->fedex_number ? $location->fedex_number : 'No Data' : 'No Data',
-            'freight_id'        =>  $location ? $location->freight_id ? $location->freight_id : '' : '',
-            'order_types'       =>  $orderTypes
+            'po_3'                  =>  $this->validatePO($po, $po_full, $location_id),
+            'fedex_number'          =>  $location ? $location->fedex_number ? $location->fedex_number : 'No Data' : 'No Data',
+            'freight_id'            =>  $location ? $location->freight_id ? $location->freight_id : '' : '',
+            'order_types'           =>  $orderTypes,
+            'exclude_the_order_types'  =>  $excludedProductTypeIds
         ];
     }
 
