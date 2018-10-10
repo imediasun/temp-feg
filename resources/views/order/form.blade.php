@@ -1090,6 +1090,8 @@
             }
         }
         var games_dropdown = [];
+        oldLocationId   = null;
+        oldAltShipToVal = null;
         $("#location_id").click(function () {
             changeLocation();
         });
@@ -1103,6 +1105,7 @@
                     $('#ship_address').css('display', 'none');
                 }
             }else{
+
                 if($('#alt_ship_to').is(':checked')){
                     var selectedLocationId          = $("#user_locations").val();
                     var isCheckedAltShippingAddress = true;
@@ -1120,6 +1123,7 @@
         });
 
         function onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId){
+            $('.ajaxLoading').css('display', 'block');
             $.ajax({
                 url: '/order/update',
                 method: 'GET',
@@ -1155,6 +1159,8 @@
                         }
                     });
 
+                    if(oldLocationId != selectedLocationId)
+                        oldLocationId = selectedLocationId;
                 }
             });
         }
@@ -1190,10 +1196,17 @@
                     {{--});--}}
                     //-------------Code to be copied ends here--------------
 
-
                 },
                 cancel:function(){
-                    $('#location_id option[value = '+selectedLocationId+']').attr('selected', true);
+                    $('#location_id option[value = '+oldLocationId+']').attr('selected', 'selected');
+                    $('#select2-chosen-7').html($("#location_id option:selected").text());
+                    if(oldAltShipToVal){
+                        $('#alt_ship_to').attr('checked', true);
+                        $('#alt_ship_to').parent().addClass('checked');
+                    }else{
+                        $('#alt_ship_to').attr('checked', false);
+                        $('#alt_ship_to').parent().removeClass('checked');
+                    }
                 }
             });
         }
@@ -1203,15 +1216,19 @@
             var selectedLocationId  = isCheckedAltShippingAddress ? $("#user_locations").val() : $("#location_id").val();
 
             if($("#alt_ship_to").is(':checked')){
+                $('.ajaxLoading').css('display', 'block');
                 $("#po_1").val(selectedLocationId);
                 validatePONumber(selectedLocationId, 0, false);
             }
-            else  if(!$("#alt_ship_to").is(':checked') && $('#vendor_id').val() != '')
+            else  if(!$("#alt_ship_to").is(':checked') && $('#vendor_id').val() != ''){
                 confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId);
+            }
             else{
+                $('.ajaxLoading').css('display', 'block');
                 $("#po_1").val(selectedLocationId);
                 validatePONumber(selectedLocationId, 0);
             }
+
 
         }
 
@@ -1226,6 +1243,9 @@
             $(this).attr('lastSelected', $(this).val());
         });
         $("#vendor_id").on('change', function() {
+            oldLocationId = $('#location_id').val();
+            oldAltShipToVal = $('#alt_ship_to').is(':checked');
+            // alert(oldLocationId);
             if ($('#is_freehand').val() == 0){
 
 
@@ -1391,6 +1411,9 @@
 
                         if(rePopulateOrderTypes == true){
                             $('#order_type_id').empty();
+                            $('#order_type_id').append($("<option></option>")
+                                .attr("value",null)
+                                .text('-------- Select Order Type --------'));
                             $.each(msg.order_types, function (key, value) {
                                 $('#order_type_id').append($("<option></option>")
                                     .attr("value",value.id)
@@ -1413,6 +1436,11 @@
                         var freightId = $("#freight_type_id");
                         freightId.val(msg.freight_id);
                         freightId.change();
+
+                        if(!isCheckedAltShippingAddress)
+                            $("#po_1").val(location_id);
+
+                        $('.ajaxLoading').css('display', 'none');
                     }
                 });
             }
