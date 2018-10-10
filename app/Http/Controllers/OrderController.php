@@ -15,6 +15,7 @@ use App\Models\location;
 use App\Models\managefegrequeststore;
 use App\Models\DigitalPackingList;
 use App\Models\Order;
+use App\Models\Ordertyperestrictions;
 use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
@@ -1783,10 +1784,13 @@ class OrderController extends Controller
         $po = $request->get('po');
         $po_full = $po_1 . '-' . $po_2 . '-' . $po_3;
         $location =  location::find($location_id);
+        $excludedProductTypeIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($location_id, true, false)['excluded_product_type_ids'];
+        $orderTypes = Ordertyperestrictions::select('order_type', 'id')->where('can_request', 1)->whereNotIn('id', $excludedProductTypeIds)->orderBy('order_type', 'asc')->get();
         return [
-            'po_3'          =>  $this->validatePO($po, $po_full, $location_id),
-            'fedex_number'  =>  $location ? $location->fedex_number ? $location->fedex_number : 'No Data' : 'No Data',
-            'freight_id'    => $location ? $location->freight_id ? $location->freight_id : '' : '',
+            'po_3'              =>  $this->validatePO($po, $po_full, $location_id),
+            'fedex_number'      =>  $location ? $location->fedex_number ? $location->fedex_number : 'No Data' : 'No Data',
+            'freight_id'        =>  $location ? $location->freight_id ? $location->freight_id : '' : '',
+            'order_types'       =>  $orderTypes
         ];
     }
 
@@ -2043,8 +2047,13 @@ class OrderController extends Controller
     {
         $term = Input::get('term');
         $vendorId = Input::get('vendor_id',0);
-        $locationId = Input::get('location_id',0);
+        $locationId = Input::get('location_id');
         $excludeProducts = Input::get('exclude_products', null);
+        $isAltShippingAddress = Input::get('is_alt_shipping_address');
+
+        $locationId = ($isAltShippingAddress != '') ? null : $locationId;
+
+
         $whereWithVendorCondition = $whereWithExcludeProductCondition = "";
 
         $orderTypeId = Input::get('order_type_id', 0);
@@ -2065,7 +2074,7 @@ class OrderController extends Controller
 
 
 
-        $excludedProductTypeAndProductIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, false, true);
+        $excludedProductTypeAndProductIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, false, true);
         $excludedProductTypeAndProductIdsString = implode(',', $excludedProductTypeAndProductIds['excluded_product_ids']);
 
         $whereNotInProductIdsCondition = '';

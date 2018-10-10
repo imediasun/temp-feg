@@ -158,13 +158,13 @@ FROM location
             }
 
             if(!empty($productTypeData[0])){
-                $productTypes = str_replace(",",".<br>",$productTypeData[0]);
+                $productTypes = str_replace(",","<br>",$productTypeData[0]);
                 $row->product_type_ids = $productTypes.'.';
             }
 
             $row->product_ids = '';
             if(count($productsData) != 0){
-                $productName= implode(".<br>", $productsData);
+                $productName= implode("<br>", $productsData);
                 $row->product_ids = $productName.'.';
             }
 
