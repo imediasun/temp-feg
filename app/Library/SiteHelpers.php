@@ -2457,6 +2457,7 @@ class SiteHelpers
 
     static function getOrderHistory()
     {
+        \DB::enableQueryLog();
         $loc1 = \Session::get('selected_location');
         $reg_id = \Session::get('reg_id');
         $curMonth = date('M');
@@ -2497,14 +2498,14 @@ class SiteHelpers
 										 	   AS last_month_merch_order_total,
 									      (SELECT SUM(order_total)
 									 	     FROM orders
-									 	    WHERE order_type_id NOT IN(7,8,18)
+									 	    WHERE order_type_id NOT IN(7,8,18,27,28)
 									 	      AND MONTH(date_ordered)=' . $curMonthNumber . '
 											  AND YEAR(date_ordered)=' . $curYear . '
 									 	      AND location_id=' . $loc1 . ')
 									 		   AS monthly_else_order_total,
 									      (SELECT SUM(order_total)
 										     FROM orders
-										    WHERE YEAR(date_ordered)=' . $curYear . '
+										    WHERE order_type_id not in(27,28) and YEAR(date_ordered)=' . $curYear . '
 										      AND location_id=' . $loc1 . ')
 											   AS annual_order_total');
             $data['user_group'] = "regusers";
@@ -2531,13 +2532,13 @@ class SiteHelpers
 											AS last_month_merch_order_total,
 									   (SELECT SUM(O.order_total) FROM orders O, location L
 									   	 WHERE O.location_id = ' . $loc1 . '
-									 	   AND order_type_id NOT IN(7,8,18)
+									 	   AND order_type_id NOT IN(7,8,18,27,28)
 										   AND MONTH(O.date_ordered)=' . $curMonthNumber . '
 										   AND YEAR(O.date_ordered)=' . $curYear . '
 										   AND L.region_id=' . $reg_id . ')
 											AS monthly_else_order_total,
 									   (SELECT SUM(O.order_total) FROM orders O, location L
-										 WHERE YEAR(O.date_ordered)=' . $curYear . '
+										 WHERE O.order_type_id not in(27,28) and YEAR(O.date_ordered)=' . $curYear . '
 									   	   AND O.location_id = ' . $loc1 . '
 										   AND L.region_id=' . $reg_id . ')
 										    AS annual_order_total');
@@ -2563,10 +2564,10 @@ class SiteHelpers
 										WHERE MONTH(date_ordered)=' . $curMonthNumber . '
 										  AND YEAR(date_ordered)=' . $curYear . '
 										  AND location_id=' . $loc1 . '
-										  AND order_type_id NOT IN(7,8))
+										  AND order_type_id NOT IN(7,8,27,28))
 										   AS monthly_else_order_total,
 									  (SELECT SUM(order_total) FROM orders
-										WHERE YEAR(date_ordered)=' . $curYear . '
+										WHERE order_type_id not in(27,28) and YEAR(date_ordered)=' . $curYear . '
 										AND location_id=' . $loc1 . ')
 										   AS annual_order_total');
             $data['user_group'] = "";
@@ -2585,6 +2586,7 @@ class SiteHelpers
         $data['curYear'] = $curYear;
         $data['selected_location'] = $loc1;
         $data['reg_id'] = $reg_id;
+        $queries = \DB::getQueryLog();
 
         return $data;
     }
