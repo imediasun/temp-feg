@@ -237,19 +237,24 @@ if (!$colconfigs) {
 
     }
     $(document).ready(function () {
+        var singleRequest = true;
 
         $(document).on('dblclick','tr.editable',function(){
-            $('.ajaxLoading').show();
-        var row = $(this);
-            $.ajax({
-                url:"location/excluded-products-and-types-inline/"+row.attr('data-id'),
-                type:"GET",
-                success:function(response){
-                    perseReponse(row.attr('id'),'product_type_ids',response.productTypes,response.ExcludedData.excluded_product_type_ids);
-                    perseReponse(row.attr('id'),'product_ids',response.products,response.ExcludedData.excluded_product_ids);
-                    $('.ajaxLoading').hide();
-                }
-            });
+            if(singleRequest) {
+                singleRequest = false;
+                $('.ajaxLoading').show();
+                var row = $(this);
+                $.ajax({
+                    url: "location/excluded-products-and-types-inline/" + row.attr('data-id'),
+                    type: "GET",
+                    success: function (response) {
+                        perseReponse(row.attr('id'), 'product_type_ids', response.productTypes, response.ExcludedData.excluded_product_type_ids);
+                        perseReponse(row.attr('id'), 'product_ids', response.products, response.ExcludedData.excluded_product_ids);
+                        $('.ajaxLoading').hide();
+                        singleRequest = true;
+                    }
+                });
+            }
         });
 
         $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
