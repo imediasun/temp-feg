@@ -380,7 +380,7 @@ class AddtocartController extends Controller
             $productsNames .= "</ul>";
             //return redirect('/addtocart')->with('messagetext', "You are unable to submit request as following product(s) doesn't allow the negative reserved quantity: $productsNames Please remove product(s) or adjust quantity before submitting the request.")->with('msgstatus', 'error');
        $qtyCheckMessage = [
-           'messagetext' => "Your request cannot be submitted because there is not enough reserve qty to allow the purchase.<br /> $productsNames <br />Please reduce the amount requested for purchase below or contact the Merchandise Team.",
+           'messagetext' => "Your request cannot be submitted because there is not enough reserve qty to allow the purchase.<br /><br /> $productsNames <br />Please reduce the amount requested for purchase below or contact the Merchandise Team.",
             'showError' => $requestQtyCheck->count() > 0,
        ];
         }
