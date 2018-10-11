@@ -1257,7 +1257,7 @@
         $("#vendor_id").on('change', function() {
             oldLocationId = $('#location_id').val();
             oldAltShipToVal = $('#alt_ship_to').is(':checked');
-            // alert(oldLocationId);
+
             if ($('#is_freehand').val() == 0){
 
 
@@ -1431,7 +1431,7 @@
                             //     displayOnlyTheseProductTypes.push(key);
                             // });
 
-                            alert(msg.exclude_the_order_types);
+
                             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
                                 {excludeItems: msg.exclude_the_order_types, isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'], selected_value: '', initial_text: '-------- Select Order Type --------'});
 
@@ -1445,7 +1445,7 @@
                             //         .attr("value",value.id)
                             //         .text(value.order_type));
                             // });
-                            // alert($("#order_type_id option:selected").text());
+
                             // $('#select2-chosen-13').html($("#order_type_id option:selected").text())
                             // $('#select2-chosen-8').html($("#order_type_id option:selected").text())
                         }
