@@ -226,23 +226,25 @@ $(document).ready(function() {
 	});
 
 	$('.tips').tooltip();
+	var singleAjaxCall = true;
 
 	$(document).on('dblclick','tr.editable',function(){
 		$('.ajaxLoading').show();
 		var row = $(this);
-		$.ajax({
-			url:"locationgroups/excluded-data-inline/"+row.attr('data-id'),
-			type:"GET",
-			success:function(response){
-				perseReponse(row.attr('id'),'location_ids',response.locations,response.selectedData.locations);
-				perseReponse(row.attr('id'),'excluded_product_ids',response.products,response.selectedData.products);
-				perseReponse(row.attr('id'),'excluded_product_type_ids',response.productTypes,response.selectedData.productTypes);
-				$('.ajaxLoading').hide();
-                // setTimeout(function(){
-                 //    $('.location_ids').val(2008).trigger('change');
-				// }, 2000);
-			}
-		});
+		if(singleAjaxCall) {
+			singleAjaxCall = false;
+			$.ajax({
+				url: "locationgroups/excluded-data-inline/" + row.attr('data-id'),
+				type: "GET",
+				success: function (response) {
+					perseReponse(row.attr('id'), 'location_ids', response.locations, response.selectedData.locations);
+					perseReponse(row.attr('id'), 'excluded_product_ids', response.products, response.selectedData.products);
+					perseReponse(row.attr('id'), 'excluded_product_type_ids', response.productTypes, response.selectedData.productTypes);
+					$('.ajaxLoading').hide();
+					singleAjaxCall = true;
+				}
+			});
+		}
 	});
 
     updateDropdowns('location_ids[]');
@@ -338,26 +340,6 @@ function notyMessage(message)
     }
     toastr.success("", message);
 }
-
-
-    // $(document).on("keypress",".select2-input",function(event){
-    //     if (event.ctrlKey || event.metaKey) {
-    //         var id =$(this).parents("div[class*='select2-container']").attr("id");
-    //         var element =$("#"+id);
-    //         if (event.which == 1){
-    //             var selected = [];
-    //             element.parent().find('.select2-offscreen').find("option").each(function(i,e){
-    //                 selected[selected.length]=$(e).attr("value");
-    //             });
-    //             element.select2("val", selected);
-    //         } else if (event.which == 100){
-    //             element.select2("val", "");
-    //         }
-    //     }
-    // });
-
-
-
 </script>
 <style>
 .table th.right { text-align:right !important;}
