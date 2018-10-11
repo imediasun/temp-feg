@@ -125,7 +125,7 @@ if (!$colconfigs) {
                     <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
                         @endif id="form-{{ $row->id }}"
                         @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}"
-                        @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this)" @endif @endif>
+                        @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this); excludeProductDropDownData(this);" @endif @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
@@ -237,25 +237,6 @@ if (!$colconfigs) {
 
     }
     $(document).ready(function () {
-        var singleRequest = true;
-
-        $(document).on('dblclick','tr.editable',function(){
-            if(singleRequest) {
-                singleRequest = false;
-                $('.ajaxLoading').show();
-                var row = $(this);
-                $.ajax({
-                    url: "location/excluded-products-and-types-inline/" + row.attr('data-id'),
-                    type: "GET",
-                    success: function (response) {
-                        perseReponse(row.attr('id'), 'product_type_ids', response.productTypes, response.ExcludedData.excluded_product_type_ids);
-                        perseReponse(row.attr('id'), 'product_ids', response.products, response.ExcludedData.excluded_product_ids);
-                        $('.ajaxLoading').hide();
-                        singleRequest = true;
-                    }
-                });
-            }
-        });
 
         $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
             var locationId=$(this).data('id');
@@ -375,6 +356,25 @@ if (!$colconfigs) {
             $select.append('<option value=' + item.id + '>' + item.id + ' || ' +item.location_name+'</option>');
         });
         $('#user_locations option[value="'+selected_location+'"]').prop('selected', true);
+    }
+    var singleRequest = true;
+
+    function excludeProductDropDownData(object){
+        if(singleRequest) {
+            singleRequest = false;
+            $('.ajaxLoading').show();
+            var row = $(object);
+            $.ajax({
+                url: "location/excluded-products-and-types-inline/" + row.attr('data-id'),
+                type: "GET",
+                success: function (response) {
+                    perseReponse(row.attr('id'), 'product_type_ids', response.productTypes, response.ExcludedData.excluded_product_type_ids);
+                    perseReponse(row.attr('id'), 'product_ids', response.products, response.ExcludedData.excluded_product_ids);
+                    $('.ajaxLoading').hide();
+                    singleRequest = true;
+                }
+            });
+        }
     }
 
 </script>
