@@ -449,6 +449,9 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
+        updateDropdowns('product_ids[]');
+        updateDropdowns('product_type_ids[]');
+
         renderDropdown($(".select2, .select3, .select4, .select5"), {
             width:"100%"
         });

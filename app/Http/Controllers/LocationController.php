@@ -208,8 +208,8 @@ class LocationController extends Controller
             $row = $this->model->getColumnTable('location');
         }
 
-        $this->data['productTypes'] = Ordertyperestrictions::where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type', 'id');
-        $this->data['products']     = product::orderBy('vendor_description', 'asc')->lists('vendor_description', 'id');
+        $this->data['productTypes'] = collect(['select_all' => 'Select all'] + Ordertyperestrictions::where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type', 'id')->toArray());
+        $this->data['products']     = collect(['select_all' => 'Select all'] + product::orderBy('vendor_description', 'asc')->lists('vendor_description', 'id')->toArray());
         $this->data['row'] = $row;
         
         $this->data['setting'] = $this->info['setting'];

@@ -237,7 +237,8 @@ if (!$colconfigs) {
 
     }
     $(document).ready(function () {
-
+        updateDropdowns('product_ids[]');
+        updateDropdowns('product_type_ids[]');
         $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
             var locationId=$(this).data('id');
             var message = '';

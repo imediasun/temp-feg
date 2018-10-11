@@ -371,6 +371,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
     }
 
 $(document).ready(function() {
+    updateDropdowns('excluded_locations_and_groups[]');
 	//$(".sel-search").select2({ width:"100%"});
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
         productId=$(this).data('id');

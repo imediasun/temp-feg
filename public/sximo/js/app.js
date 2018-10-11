@@ -1454,7 +1454,7 @@ var signleAjaxCall = true;
             url: '/product/location-and-groups/' + row.attr('data-id'),
             type: 'GET',
             success: function (response) {
-                var optionHTML = response.groups;
+                var optionHTML = '<option value="select_all">Select All</option>'+response.groups;
                 optionHTML += response.locations;
                 var selectedValues = response.selectedValues;
                 setExcludeLocationDropdown(optionHTML, row.attr('data-id'), selectedValues);
