@@ -226,20 +226,25 @@ $(document).ready(function() {
 	});
 
 	$('.tips').tooltip();
+	var singleAjaxCall = true;
 
 	$(document).on('dblclick','tr.editable',function(){
 		$('.ajaxLoading').show();
 		var row = $(this);
-		$.ajax({
-			url:"locationgroups/excluded-data-inline/"+row.attr('data-id'),
-			type:"GET",
-			success:function(response){
-				perseReponse(row.attr('id'),'location_ids',response.locations,response.selectedData.locations);
-				perseReponse(row.attr('id'),'excluded_product_ids',response.products,response.selectedData.products);
-				perseReponse(row.attr('id'),'excluded_product_type_ids',response.productTypes,response.selectedData.productTypes);
-				$('.ajaxLoading').hide();
-			}
-		});
+		if(singleAjaxCall) {
+			singleAjaxCall = false;
+			$.ajax({
+				url: "locationgroups/excluded-data-inline/" + row.attr('data-id'),
+				type: "GET",
+				success: function (response) {
+					perseReponse(row.attr('id'), 'location_ids', response.locations, response.selectedData.locations);
+					perseReponse(row.attr('id'), 'excluded_product_ids', response.products, response.selectedData.products);
+					perseReponse(row.attr('id'), 'excluded_product_type_ids', response.productTypes, response.selectedData.productTypes);
+					$('.ajaxLoading').hide();
+					singleAjaxCall = true;
+				}
+			});
+		}
 	});
 
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
