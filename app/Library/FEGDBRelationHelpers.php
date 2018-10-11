@@ -153,9 +153,10 @@ class FEGDBRelationHelpers
         $locationId = !is_null($locationId) ? $locationId : \Session::get('selected_location');
 
         $locationGroupIds   = self::getCustomRelationRecords($locationId, Locationgroups::class, location::class, 0, true)->pluck('locationgroups_id')->toArray();
-        $locationIds        = self::getCustomRelationRecords($locationGroupIds, Locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
+//        $locationIds        = self::getCustomRelationRecords($locationGroupIds, Locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
 
-        if(empty($locationGroupIds))
+        $locationIds = []; //new written line
+//        if(empty($locationGroupIds))
             array_push($locationIds, $locationId);
 
         /*
