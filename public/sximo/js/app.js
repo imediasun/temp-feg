@@ -1488,3 +1488,37 @@ function setExcludeLocationDropdown(responseHTML,id,selectedValues){
         setExcludeLocationDropdown(responseHTML)
     }
 }
+
+function updateDropdowns(dropdownName){
+    $(document).on("change",'select[name="'+dropdownName+'"]',function(){
+
+        var locationDropdownElm = $(this);
+        var options  = locationDropdownElm.children('option');
+        if(this.value == 'select_all'){
+
+
+            var dropdownValues = [];
+            options.each(function () {
+                if (this.value != 'select_all'){
+                    dropdownValues.push(Number(this.value));
+                }else {
+                    this.value = 'clear_all';
+                    this.innerText = 'Clear All';
+                }
+            });
+            console.log(dropdownValues);
+            locationDropdownElm.select2('val',dropdownValues);
+        }
+        if(this.value == 'clear_all'){
+            var dropdownValues = [];
+            options.each(function () {
+                if (this.value == 'clear_all'){
+                    this.value = 'select_all';
+                    this.innerText = 'Select All';
+                }
+            });
+
+            locationDropdownElm.select2('val',[]);
+        }
+    });
+}

@@ -1,3 +1,4 @@
+<option value="select_all">Select all</option>
 @if($type == 'locations')
     @foreach($locations as $location)
         <option value="{{ $location['id'] }}">{{ $location->id." ".$location->location_name }}</option>
