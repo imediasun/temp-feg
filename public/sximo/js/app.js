@@ -1439,24 +1439,28 @@ if (window.location.href.indexOf('/product') > -1) {
             setTimeout(setExcludeLocationDropdown, 2000, optionHTML);
         }
     });
-
+var signleAjaxCall = true;
     $(document).on('dblclick', '#productTable tr', function (e) {
         $('.ajaxLoading').show();
+if(signleAjaxCall) {
+    signleAjaxCall
 
-        // setTimeout(reinitfield, 1000, $(this).attr('data-id'));
-        reinitfield($(this).attr('data-id'));
-        var row = $(this);
-        $.ajax({
-            url: '/product/location-and-groups/' + $(this).attr('data-id'),
-            type: 'GET',
-            success: function (response) {
-                var optionHTML = response.groups;
-                optionHTML += response.locations;
-                var selectedValues = response.selectedValues;
-                setExcludeLocationDropdown(optionHTML, row.attr('data-id'), selectedValues);
-                $('.ajaxLoading').hide();
-            }
-        });
+    // setTimeout(reinitfield, 1000, $(this).attr('data-id'));
+    reinitfield($(this).attr('data-id'));
+    var row = $(this);
+    $.ajax({
+        url: '/product/location-and-groups/' + $(this).attr('data-id'),
+        type: 'GET',
+        success: function (response) {
+            var optionHTML = response.groups;
+            optionHTML += response.locations;
+            var selectedValues = response.selectedValues;
+            setExcludeLocationDropdown(optionHTML, row.attr('data-id'), selectedValues);
+            $('.ajaxLoading').hide();
+            signleAjaxCall = true;
+        }
+    });
+}
     });
 }
 
