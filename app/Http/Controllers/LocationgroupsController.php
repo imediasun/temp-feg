@@ -157,13 +157,13 @@ class LocationgroupsController extends Controller {
 		}
 
 
-        $this->data['productTypes'] = Ordertyperestrictions::where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type', 'id');
-        $this->data['products']     = product::orderBy('vendor_description', 'asc')->lists('vendor_description', 'id');
+        $this->data['productTypes'] = collect(['select_all' => 'Select all'] + Ordertyperestrictions::where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type', 'id')->toArray());
+		$this->data['products']     = collect(['select_all' => 'Select all'] + product::orderBy('vendor_description', 'asc')->lists('vendor_description', 'id')->toArray());
 
 
 
 		//$locations1 = $this->location->select(DB::raw("CONCAT(id,' ', location_name) AS location_name, id"))->where('active', 1)->orderBy('id', 'asc')->lists('location_name', 'id');
-        $locations = UserLocations::getUserAssignedLocations(\DB::raw("CONCAT(location.id,' ', location.location_name) AS location_name"))->lists('location_name', 'id');
+        $locations = collect(['select_all' => 'Select all'] + UserLocations::getUserAssignedLocations(\DB::raw("CONCAT(location.id,' ', location.location_name) AS location_name"))->lists('location_name', 'id')->toArray());
 
         $this->data['locations'] 	    = $locations;
 		$this->data['setting'] 		    = $this->info['setting'];

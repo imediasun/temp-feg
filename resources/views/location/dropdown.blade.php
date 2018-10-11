@@ -1,3 +1,4 @@
+<option value="select_all">Select all</option>
 @if($optionType == 'products')
     @foreach($products as $product)
         <option value="{{ $product['id'] }}">{{ $product['vendor_description'] }}</option>

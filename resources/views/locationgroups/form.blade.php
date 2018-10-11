@@ -127,6 +127,10 @@ $(document).ready(function() {
 
 	});
 
+            updateDropdowns('location_ids[]');
+            updateDropdowns('excluded_product_ids[]');
+            updateDropdowns('excluded_product_type_ids[]');
+
         });
 
 function showRequest()
