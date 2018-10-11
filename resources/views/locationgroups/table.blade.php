@@ -112,7 +112,7 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
+                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this); loadExcludedDropDownData(this);" @endif>
                     @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td class="number"> <?php echo ++$i;?>  </td>
                     @endif
@@ -226,26 +226,8 @@ $(document).ready(function() {
 	});
 
 	$('.tips').tooltip();
-	var singleAjaxCall = true;
 
-	$(document).on('dblclick','tr.editable',function(){
-		$('.ajaxLoading').show();
-		var row = $(this);
-		if(singleAjaxCall) {
-			singleAjaxCall = false;
-			$.ajax({
-				url: "locationgroups/excluded-data-inline/" + row.attr('data-id'),
-				type: "GET",
-				success: function (response) {
-					perseReponse(row.attr('id'), 'location_ids', response.locations, response.selectedData.locations);
-					perseReponse(row.attr('id'), 'excluded_product_ids', response.products, response.selectedData.products);
-					perseReponse(row.attr('id'), 'excluded_product_type_ids', response.productTypes, response.selectedData.productTypes);
-					$('.ajaxLoading').hide();
-					singleAjaxCall = true;
-				}
-			});
-		}
-	});
+
 
     updateDropdowns('location_ids[]');
     updateDropdowns('excluded_product_ids[]');
@@ -291,7 +273,26 @@ $(document).ready(function() {
     // Configure data grid columns for sorting 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
+	var singleAjaxCall = true;
 
+	function loadExcludedDropDownData(object) {
+		$('.ajaxLoading').show();
+		var row = $(object);
+		if (singleAjaxCall) {
+			singleAjaxCall = false;
+			$.ajax({
+				url: "locationgroups/excluded-data-inline/" + row.attr('data-id'),
+				type: "GET",
+				success: function (response) {
+					perseReponse(row.attr('id'), 'location_ids', response.locations, response.selectedData.locations);
+					perseReponse(row.attr('id'), 'excluded_product_ids', response.products, response.selectedData.products);
+					perseReponse(row.attr('id'), 'excluded_product_type_ids', response.productTypes, response.selectedData.productTypes);
+					$('.ajaxLoading').hide();
+					singleAjaxCall = true;
+				}
+			});
+		}
+	}
 function deleteLocationGroups(locationGroupId){
     $.ajax({
         headers: {
