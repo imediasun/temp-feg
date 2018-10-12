@@ -1104,6 +1104,7 @@
         var games_dropdown = [];
         oldLocationId   = null;
         oldAltShipToVal = null;
+
         $("#location_id").click(function () {
             changeLocation();
         });
@@ -1210,8 +1211,12 @@
 
                 },
                 cancel:function(){
-                    $('#location_id option[value = '+oldLocationId+']').attr('selected', 'selected');
-                    $('#select2-chosen-7').html($("#location_id option:selected").text());
+                    @if($mode == 'clone')
+                    oldLocationId = {{ $data['order_loc_id'] }}
+                    @endif
+
+                    $('select#location_id').select2('val', [oldLocationId]);
+
                     if(oldAltShipToVal){
                         $('#alt_ship_to').attr('checked', true);
                         $('#alt_ship_to').parent().addClass('checked');
