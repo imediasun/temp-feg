@@ -218,7 +218,7 @@
 $(document).ready(function() {
 	$(document).ajaxComplete(function (event, xhr, settings) {
 		var $urlArray = settings.url.split('/');
-		if (typeof($urlArray[2]) != "undefined" && $urlArray[2] !== null) {
+		if (typeof($urlArray[2]) !== undefined && $urlArray[2] != null) {
 			if (settings.url === "locationgroups/save/" + $urlArray[2]) {
 				$('.btn-search[data-original-title="Reload Data"]').trigger('click');
 			}
