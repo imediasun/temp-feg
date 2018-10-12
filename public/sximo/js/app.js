@@ -236,7 +236,7 @@ function getExcludedProductTypesAndProductIds(){
 
 function excludeProductsAndProductTypes(){
     setTimeout(function(){
-        // if(pageModule != 'shopfegrequeststore'){
+         if(pageModule == 'shopfegrequeststore' || pageModule == 'order' || pageModule == 'product' || pageModule == 'location' || pageModule == 'locationgroups' || pageModule == 'managefegrequeststore'){
             var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type', 'prod_type_id[]'];
             $.each(productTypeSelectorsNames, function (key, val) {
 
@@ -249,7 +249,7 @@ function excludeProductsAndProductTypes(){
                     });
                 }
             })
-        // }
+         }
     }, 1000);
 }
 App.autoCallbacks.registerCallback('columnselector', function(params){
