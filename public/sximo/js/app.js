@@ -224,9 +224,11 @@ App.autoCallbacks.registerCallback('inline.row.config.after', function(params){
     }, 1000);
 });
 App.autoCallbacks.registerCallback('inline.row.config.after', function(params){
-    setTimeout(function () {
-        excludeProductsAndProductTypes();
-    }, 1000);
+    if(pageModule == 'shopfegrequeststore' || pageModule == 'order' || pageModule == 'product' || pageModule == 'location' || pageModule == 'locationgroups' || pageModule == 'managefegrequeststore') {
+        setTimeout(function () {
+            excludeProductsAndProductTypes();
+        }, 1000);
+    }
 });
 function getExcludedProductTypesAndProductIds(){
     $.ajax({
