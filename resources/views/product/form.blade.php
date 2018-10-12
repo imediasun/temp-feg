@@ -475,7 +475,6 @@
                 </fieldset>
             </div>
 
-
             <div style="clear:both"></div>
 
             <div class="form-group">
@@ -505,7 +504,7 @@
             url: '/product/location-and-groups/{{ $row['id'] }}',
             type: 'GET',
             success: function (response) {
-                var optionHTML = response.groups;
+                var optionHTML = '<option value="select_all">Select All</option>'+response.groups;
                 optionHTML +=response.locations;
                 var selectedValues = response.selectedValues;
 
@@ -513,9 +512,12 @@
                $('select[name="excluded_locations_and_groups[]"]').html(optionHTML);
                 $('select[name="excluded_locations_and_groups[]"]').change();
                 $('select[name="excluded_locations_and_groups[]"]').val(selectedValues).change();
+                updateDropdownsGroups("excluded_locations_and_groups[]");
                             }
         });
+
     });
+
     var types_counter = 1;
     $(document).ready(function () {
 

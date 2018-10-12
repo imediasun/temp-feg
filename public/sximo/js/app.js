@@ -1470,8 +1470,9 @@ function reinitfield(id){
     $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'})
     $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').change();
 }
+var totalAttempts = 0;
 function setExcludeLocationDropdown(responseHTML,id,selectedValues){
-
+    totalAttempts = totalAttempts +1;
     if(id){
         $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'}).addClass("select2");
         $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').html(responseHTML);
@@ -1487,7 +1488,11 @@ function setExcludeLocationDropdown(responseHTML,id,selectedValues){
         $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'})
         $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').change();
     }else{
-        setExcludeLocationDropdown(responseHTML)
+        if(totalAttempts > 15){
+            return false;
+        }
+        setTimeout(setExcludeLocationDropdown, 2000, responseHTML);
+        //setExcludeLocationDropdown(responseHTML);
     }
 }
 
@@ -1497,8 +1502,6 @@ function updateDropdowns(dropdownName){
         var locationDropdownElm = $(this);
         var options  = locationDropdownElm.children('option');
         if(this.value == 'select_all'){
-
-
             var dropdownValues = [];
             options.each(function () {
                 if (this.value != 'select_all'){
@@ -1508,7 +1511,6 @@ function updateDropdowns(dropdownName){
                     this.innerText = 'Clear All';
                 }
             });
-            console.log(dropdownValues);
             locationDropdownElm.select2('val',dropdownValues);
         }
         if(this.value == 'clear_all'){
@@ -1519,8 +1521,37 @@ function updateDropdowns(dropdownName){
                     this.innerText = 'Select All';
                 }
             });
+            locationDropdownElm.select2('val',dropdownValues);
+        }
+    });
+}
+function updateDropdownsGroups(dropdownName){
 
-            locationDropdownElm.select2('val',[]);
+    $(document).on("change",'select[name="'+dropdownName+'"]',function(){
+        var prevValue = '';
+        var locationDropdownElm = $(this);
+        var options  = locationDropdownElm.children('optgroup').children('option');
+        var clear = this.value;
+        if(this.value == 'select_all'){
+            var dropdownValues = [];
+            options.each(function () {
+                if (this.value != 'select_all'){
+                    dropdownValues.push(this.value);
+                    locationDropdownElm.children('option').val('clear_all');
+                    locationDropdownElm.children('option').text('Clear All');
+                }else {
+                    prevValue = this.value;
+                    this.value = 'clear_all';
+                    this.innerText = 'Clear All';
+                }
+            });
+            locationDropdownElm.select2('val',dropdownValues);
+        }
+        if(clear == 'clear_all'){
+            var dropdownValues = [];
+                    locationDropdownElm.children('option').val('select_all');
+                    locationDropdownElm.children('option').text('Select All');
+            locationDropdownElm.select2('val',dropdownValues);
         }
     });
 }
