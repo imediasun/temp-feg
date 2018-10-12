@@ -1430,10 +1430,14 @@
                             // $.each(msg.order_types, function (key, val) {
                             //     displayOnlyTheseProductTypes.push(key);
                             // });
+                            var selectedType = '';
+                             @if($fromStore == 1 or $mode == "edit")
+                                     selectedType = $("#order_type_id").val();
+                             @endif
 
 
                             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
-                                {excludeItems: msg.exclude_the_order_types, isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'], selected_value: '', initial_text: '-------- Select Order Type --------'});
+                                {excludeItems: msg.exclude_the_order_types, isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'], selected_value: selectedType, initial_text: '-------- Select Order Type --------'});
 
                             // $('#order_type_id').empty();
                             // $('#order_type_id').append($("<option></option>")
