@@ -1,7 +1,9 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\location;
 use App\Models\Merchandisebudget;
+use App\Models\UserLocations;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
@@ -169,6 +171,7 @@ class MerchandisebudgetController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
 
         return view('merchandisebudget.form', $this->data);
     }
