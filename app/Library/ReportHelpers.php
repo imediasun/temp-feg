@@ -820,7 +820,7 @@ class ReportHelpers
             LEFT JOIN game_type Y ON Y.id = E.game_type_id
                 WHERE E.game_id <> 0  AND E.game_not_debit = 0 
                 AND G.sold != 1
-                AND E.report_status = 0 AND E.record_status = 1 ";
+                AND E.report_status = 0 AND E.record_status = 1 AND L.active = 1";
 
         if (!empty($gameTitleId)) {
             $Q .= " AND E.game_title_id IN ($gameTitleId) ";
@@ -1050,7 +1050,7 @@ class ReportHelpers
                 LEFT JOIN location ON location.id = game.location_id
                 LEFT JOIN debit_type ON debit_type.id = location.debit_type_id
                 WHERE game.not_debit = 1 AND game.sold = 0 
-                AND location.reporting = 1 
+                AND location.reporting = 1 AND location.active = 1 
                 $locationQuery";
 
         return $sql;
@@ -1085,7 +1085,7 @@ class ReportHelpers
             FROM game_earnings_transfer_adjustments GA 
             LEFT JOIN location L ON L.id=GA.loc_id
             WHERE 
-            GA.status = 1 ";
+            GA.status = 1 AND L.active = 1 ";
         if (!empty($location)) {
             $q .= " AND GA.loc_id IN ($location) ";
         }
