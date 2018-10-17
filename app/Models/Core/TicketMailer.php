@@ -41,14 +41,16 @@ class TicketMailer
         // $assigneesTo = $assigneesTo = \DB::select("select users.email FROM users WHERE users.id IN (" . $assignTo . ")");
         $title = @$data['Subject'];
         $location = @$data['location_id'];
-        $priority = \FEGFormat::getTicketPriority(@$data['Priority']);
+        /*$priority = \FEGFormat::getTicketPriority(@$data['Priority']);*/
         $locationName = $location . '-' .\SiteHelpers::getLocationInfoById($location, "location_name");
         $createdOn = \DateHelpers::formatDate($data['Created']);
         $users['bcc'][] = "element5@fegllc.com"; 
         $to         = implode(',', $users['to']);
         $bcc         = implode(',', $users['bcc']);
         $reply_to   ='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
-        $subject    = "$locationName, $title, [".(strtolower($priority)=="urgent" ? strtoupper($priority):$priority)."][Service Request #{$ticketId}] $createdOn" ;
+        /* FEG-2003 Comment out Priority field from Service Requests */
+       /* $subject    = "$locationName, $title, [".(strtolower($priority)=="urgent" ? strtoupper($priority):$priority)."][Service Request #{$ticketId}] $createdOn" ;*/
+        $subject    = "$locationName, $title, [Service Request #{$ticketId}] $createdOn" ;
 //        $headers    = 'MIME-Version: 1.0' . "\r\n";
 //        $headers   .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 //        $headers   .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
