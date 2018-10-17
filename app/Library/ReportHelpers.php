@@ -108,7 +108,7 @@ class ReportHelpers
                 E.record_status = 1 AND
                 E.report_status = 0 AND
                 E.date_played >= L.date_opened AND 
-                E.date_played >= '$dateStart' and E.date_played <= '$dateEnd' ";
+                E.date_played >= '$dateStart' and E.date_played <= '$dateEnd' AND L.active=1 ";
 
         if (!empty($location)) {
             $Q .= " AND E.location_id IN ($location)";
