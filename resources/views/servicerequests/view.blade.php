@@ -54,7 +54,7 @@
                     {!! Form::hidden('TicketID', $row['TicketID']) !!}
                     {!! Form::hidden('Status', $row['Status']) !!}
                     {!! Form::hidden('oldStatus', $row['Status']) !!}
-                    {!! Form::hidden('Priority', $row['Priority']) !!}
+                    {{--{!! Form::hidden('Priority', $row['Priority']) !!}--}}
                 {!! Form::close() !!}
                 {!! Form::open(array('url'=>'servicerequests/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'servicerequestsFormAjax')) !!}
                
@@ -145,15 +145,15 @@
                                         </div>
                                         @endif
                                         
-                                        <div class="selectPriorityDropdownContainer col-md-4 col-sm-6">
+                                     <!--   <div class="selectPriorityDropdownContainer col-md-4 col-sm-6">
                                             <select name='Priority' required class='Priority '>
-                                                @foreach($priorityOptions as $key => $val)
+                                               {{-- @foreach($priorityOptions as $key => $val)
                                                     <option  value ='{{ $key }}' 
                                                         @if($row['Priority'] == $key) selected='selected' @endif
                                                     >{{ $val }}</option>";
-                                                @endforeach
+                                                @endforeach--}}
                                             </select>                                            
-                                        </div>
+                                        </div>-->
                                         
                                         <div class=@if($canChangeStatus == true) "col-md-4 col-sm-12"> @else "col-md-8 col-sm-12">@endif
                                             <button type="submit" class="btn btn-primary btn-sm pull-right submitButton">
