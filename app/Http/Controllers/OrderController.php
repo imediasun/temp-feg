@@ -1108,21 +1108,19 @@ class OrderController extends Controller
         $ccFromSystemEmailManager   = explode(',', $cc);
         $emailsToBeShown   = array_merge($ccFromSystemEmailManager, ['marissa.sexton@fegllc.com', 'lisa.price@fegllc.com']);
         $excludedAndIncludedEmails = self::getIncludedAndExcludedEmailCC("send PO copy", $is_test, true);
-//        dd($receipts);
         if(in_array($order_type_id,$order_types)){
 //            dd($emailsToBeShown);
             //-------------------- Getting Emails for CC ----------------------------
             $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $is_test, $emailsToBeShown, $excludedAndIncludedEmails['excluded'], $excludedAndIncludedEmails['included']);
 
         } else {
-            $emailsForCC = [];
             $includedEmails = $excludedAndIncludedEmails['included'];
             $excludedEmails = $excludedAndIncludedEmails['excluded'];
 
 
-            $emailsForCC = array_merge($emailsForCC, $includedEmails);
-            $emailsForCC = array_diff($emailsForCC, $excludedEmails);
 
+            $emailsForCC = array_merge($emailsToBeShown, $includedEmails);
+            $emailsForCC = array_diff($emailsForCC, $excludedEmails);
             $finalStringOfEmailsForCC = implode(',', $emailsForCC);
         }
 
