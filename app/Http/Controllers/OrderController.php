@@ -18,6 +18,7 @@ use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -969,27 +970,9 @@ class OrderController extends Controller
             }
             // $mailto = $vendor_email;
             $from = \Session::get('eid');
-            //send product order as email to vendor only if sendor and reciever email is available
-            // if(!empty($mailto) && !empty($from))
-            // {
-            // $this->getPo($order_id, true,$mailto,$from);
-            //}
-            //$result = Mail::send('submitservicerequest.test', $message, function ($message) use ($to, $from, $full_upload_path, $subject) {
-//
-//        if (isset($full_upload_path) && !empty($full_upload_path)) {
-//            $message->attach($full_upload_path);
-//        }
-//        $message->subject($subject);
-//        $message->to($to);
-//        $message->from($from);
-//
-//    });
 
             //Deny Denied SID's
             if ($editmode == 'SID' && !empty($denied_SIDs)) {
-                //$denied_SIDs = explode('-', $denied_SIDs);
-                //array_pop($denied_SIDs);
-                //array_shift($denied_SIDs)
                 $denied_SIDs = ltrim($denied_SIDs, ',');
                 \DB::update('UPDATE requests
                          SET status_id = 3
@@ -1002,15 +985,13 @@ class OrderController extends Controller
             }
 
 
-
-            \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
             if(!empty($denied_SIDs) && empty($where_in)){
                 $redirect_link = "managefegrequeststore";
             }
             \Session::put('redirect', $redirect_link);
 
-            $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
+            $saveOrSendView = $this->getSaveOrSendEmail("pop", $vendor_email)->render();
 
             if (!empty($where_in)) {
                 \DB::update('DELETE FROM requests WHERE id IN(' . $where_in . ')');
@@ -1099,7 +1080,7 @@ class OrderController extends Controller
         return event(new ordersEvent($productInformationCombined, $request->order_id))[0];
     }
 
-    public function getSaveOrSendEmail($isPop = null)
+    public function getSaveOrSendEmail($isPop = null, $vendorEmail = null)
     {
         $order_id = \Session::get('order_id');
         $order_type = \DB::select('SELECT order_type_id FROM orders WHERE id=' . $order_id);
@@ -1117,18 +1098,118 @@ class OrderController extends Controller
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
         $order_types = "";
+
         if(!empty($pass['display email address in cc box for order types'])) {
             $order_types = $pass['display email address in cc box for order types']->data_options;
         }
+
         $order_types = explode(",",$order_types);
-       if(in_array($order_type_id,$order_types)){
-            $cc1 = $cc;
+
+        $ccFromSystemEmailManager   = explode(',', $cc);
+        $emailsToBeShown   = array_merge($ccFromSystemEmailManager, ['marissa.sexton@fegllc.com', 'lisa.price@fegllc.com']);
+        $excludedAndIncludedEmails = self::getIncludedAndExcludedEmailCC("send PO copy", $is_test, true);
+//        dd($receipts);
+        if(in_array($order_type_id,$order_types)){
+//            dd($emailsToBeShown);
+            //-------------------- Getting Emails for CC ----------------------------
+            $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $is_test, $emailsToBeShown, $excludedAndIncludedEmails['excluded'], $excludedAndIncludedEmails['included']);
 
         } else {
-            $cc1 = "";
+            $emailsForCC = [];
+            $includedEmails = $excludedAndIncludedEmails['included'];
+            $excludedEmails = $excludedAndIncludedEmails['excluded'];
+
+
+            $emailsForCC = array_merge($emailsForCC, $includedEmails);
+            $emailsForCC = array_diff($emailsForCC, $excludedEmails);
+
+            $finalStringOfEmailsForCC = implode(',', $emailsForCC);
         }
+
+
+
+        $emailsTo = implode(',', [$vendorEmail,$receipts['to']]);
+        $emailsToArray  = explode(',', $emailsTo);
+        $emailsToArray = array_unique($emailsToArray);
+        $emailsToArray = array_filter($emailsToArray, function($val){
+            return ($val != '');
+        });
+        $emailsTo = implode(',', $emailsToArray);
+        \Session::put('send_to', $emailsTo);
+
         $viewName = empty($isPop) ? 'order.saveorsendemail' : 'order.pop.saveorsendemail';
-        return view($viewName, array('cc' => $cc1, "pageUrl" => $this->data['pageUrl']));
+        return view($viewName, array('cc' => $finalStringOfEmailsForCC, 'bcc'=>$bcc, "pageUrl" => $this->data['pageUrl']));
+    }
+
+
+    public static function getIncludedAndExcludedEmailCC($configName, $isTest = false, $sanitizeEmails = true)
+    {
+        $emails = array('configName' => $configName, 'to' => '', 'cc' => '', 'bcc' => '');
+        $q = "SELECT * from system_email_report_manager WHERE report_name='$configName' AND is_active=1 order by id desc";
+        $data = DB::select($q);
+        $includedExcludedEmail = [];
+
+        $excludes = array('to' => '', 'cc' => '', 'bcc' => '');
+        $includes = array('to' => '', 'cc' => '', 'bcc' => '');
+        if (!empty($data)) {
+            $data = $data[0];
+
+            if ($isTest) {
+                $includes['cc'] = $data->test_cc_emails;
+            } else {
+
+                $excludes['cc'] = array_merge(FEGSystemHelper::split_trim(
+                    $data->cc_exclude_emails), array(null, ''));
+
+                if ($sanitizeEmails) {
+                    $excludes     = FEGSystemHelper::sanitiseEmails($excludes['cc']);
+                }
+
+                $includes['cc'] = array_merge(FEGSystemHelper::split_trim(
+                    $data->cc_include_emails), array(null, ''));
+
+                if ($sanitizeEmails) {
+                    $includes    = FEGSystemHelper::sanitiseEmails($includes['cc']);
+                }
+
+            }
+        }
+
+        $includedExcludedEmail['excluded'] = $excludes;
+        $includedExcludedEmail['included'] = $includes;
+
+        return $includedExcludedEmail;
+    }
+
+
+    private function getEmailsAccordingToSpecialPermission($pass, $is_test, $emailsToBeShown, $excludedEmails, $includedEmails){
+//dd($pass['display email address in cc box for order types']);
+        //------ Special Permissions variables --------
+        $userIdsSP        = explode(',', $pass['display email address in cc box for order types']->user_ids);
+        $excludeUserIdsSP = explode(',', $pass['display email address in cc box for order types']->exclude_user_ids);
+
+
+        $usersEmailsForCC = User::select('email')
+            ->whereIn('id', $userIdsSP)
+            ->orWhereIn('email', $emailsToBeShown)
+            ->get();
+
+        $EmailsToBeExcluded = User::select('email')
+            ->whereIn('id', $excludeUserIdsSP)
+            ->get();
+
+        $emailsForCC = \Illuminate\Support\Arr::pluck($usersEmailsForCC, 'email');
+        $UserEmailsToBeExcluded = \Illuminate\Support\Arr::pluck($EmailsToBeExcluded, 'email');
+
+        $emailsForCC = array_diff($emailsForCC, $UserEmailsToBeExcluded);
+
+        if(!$is_test){
+            $emailsForCC = array_merge($emailsForCC, $includedEmails);
+            $emailsForCC = array_diff($emailsForCC, $excludedEmails);
+        }
+
+//        dd($emailsForCC);
+        return $finalStringOfEmailsForCC = implode(',', $emailsForCC);
     }
 
     private function sendEmailFromMerchandise($order)
