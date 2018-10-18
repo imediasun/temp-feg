@@ -1723,6 +1723,12 @@ $(function(){
                         @if($data['prefill_type'] != "edit" && $data['prefill_type']!= "SID")
                             locationId = $('#location_id').val() || '';
                         @endif
+                                console.log("Debug Autocomplete");
+                        if ($('#location_id').length > 0) {
+                            if ($.trim($('#location_id').val()) != '') {
+                                locationId = $('#location_id').val();
+                            }
+                        }
 
                         if (locationId != "") {
                             request.location_id = locationId;
@@ -1737,6 +1743,17 @@ $(function(){
                         if (isAltShippingAddress != "") {
                             request.is_alt_shipping_address = isAltShippingAddress;
                             request.location_id = $('#user_locations').val();
+                        }
+                        if ($('#alt_ship_to').length > 0) {
+                            if ($('#alt_ship_to').is(":checked")) {
+                                request.location_id = $('#user_locations').val();
+                            }else{
+                                if ($('#location_id').length > 0) {
+                                    if ($.trim($('#location_id').val()) != '') {
+                                        request.location_id = $('#location_id').val();
+                                    }
+                                }
+                            }
                         }
 
                         var already_added_products = [], exclude_products = '';
