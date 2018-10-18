@@ -67,6 +67,7 @@ class DigitalPackingList extends Sximo
             if ($this->order->location->debit_type_id == Location::LOCATION_TYPE_SACOA) {
                 $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOMUpdated, $quantityReceived, $price, $tickets, $qtyPerCase, $product->price]) . $newLine;
             } else {
+                $unitTypeUOMUpdated = "EA";
                 $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOMUpdated . "," .$quantityReceived . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
             }
         }
