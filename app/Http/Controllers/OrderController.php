@@ -1106,21 +1106,22 @@ class OrderController extends Controller
         $order_types = explode(",",$order_types);
 
         $ccFromSystemEmailManager   = explode(',', $cc);
-        $emailsToBeShown   = array_merge($ccFromSystemEmailManager, ['marissa.sexton@fegllc.com', 'lisa.price@fegllc.com']);
         $excludedAndIncludedEmails = self::getIncludedAndExcludedEmailCC("send PO copy", $is_test, true);
         if(in_array($order_type_id,$order_types)){
 //            dd($emailsToBeShown);
+            $emailsToBeShown   = $ccFromSystemEmailManager;
             //-------------------- Getting Emails for CC ----------------------------
-            $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $is_test, $emailsToBeShown, $excludedAndIncludedEmails['excluded'], $excludedAndIncludedEmails['included']);
+            $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $is_test, $emailsToBeShown, explode(',', $excludedAndIncludedEmails['excluded']), explode(',', $excludedAndIncludedEmails['included']));
 
         } else {
             $includedEmails = $excludedAndIncludedEmails['included'];
             $excludedEmails = $excludedAndIncludedEmails['excluded'];
 
+            $includedEmailsArray = explode(',', $includedEmails);
+            $excludedEmailsArray = explode(',', $excludedEmails);
 
-
-            $emailsForCC = array_merge($emailsToBeShown, $includedEmails);
-            $emailsForCC = array_diff($emailsForCC, $excludedEmails);
+            $emailsForCC = array_merge($ccFromSystemEmailManager, $includedEmailsArray);
+            $emailsForCC = array_unique(array_diff($emailsForCC, $excludedEmailsArray));
             $finalStringOfEmailsForCC = implode(',', $emailsForCC);
         }
 
@@ -1146,29 +1147,56 @@ class OrderController extends Controller
         $q = "SELECT * from system_email_report_manager WHERE report_name='$configName' AND is_active=1 order by id desc";
         $data = DB::select($q);
         $includedExcludedEmail = [];
+        $excludes = '';
+        $includes = '';
 
-        $excludes = array('to' => '', 'cc' => '', 'bcc' => '');
-        $includes = array('to' => '', 'cc' => '', 'bcc' => '');
         if (!empty($data)) {
             $data = $data[0];
 
             if ($isTest) {
-                $includes['cc'] = $data->test_cc_emails;
+                $includes = $data->test_cc_emails;
             } else {
 
-                $excludes['cc'] = array_merge(FEGSystemHelper::split_trim(
+                $excludes = array_merge(FEGSystemHelper::split_trim(
                     $data->cc_exclude_emails), array(null, ''));
 
                 if ($sanitizeEmails) {
-                    $excludes     = FEGSystemHelper::sanitiseEmails($excludes['cc']);
+                    $excludes     = FEGSystemHelper::sanitiseEmails($excludes);
                 }
 
-                $includes['cc'] = array_merge(FEGSystemHelper::split_trim(
-                    $data->cc_include_emails), array(null, ''));
+                $excludes = implode(',', $excludes);
+
+                if ($data->has_locationwise_filter) {
+                    $location = empty($location) ? null : $location;
+                } else {
+                    //overwriting location with null if location wise filter in system email manager is off
+                    $location = null;
+                }
+
+                $lucc = $data->cc_email_location_contacts;
+                $locationUsers['cc'] = FEGSystemHelper::getLocationContactsEmails($lucc, $location, true);
+
+
+                $gcc = $data->cc_email_groups;
+                $groups['cc'] = FEGSystemHelper::getGroupsUserEmails($gcc, $location, true);
+
+                $ucc = $data->cc_email_individuals;
+                $users['cc'] = FEGSystemHelper::getUserEmails($ucc, $location, true);
+
+                $inclues['cc'] = FEGSystemHelper::split_trim($data->cc_include_emails);
+
+
+
+
+                $includes = array_unique(array_merge($groups['cc'],
+                        $locationUsers['cc'], $users['cc'], $inclues['cc']));
+
 
                 if ($sanitizeEmails) {
-                    $includes    = FEGSystemHelper::sanitiseEmails($includes['cc']);
+                    $includes    = FEGSystemHelper::sanitiseEmails($includes);
                 }
+
+                $includes = implode(',', $includes);
 
             }
         }
@@ -1201,13 +1229,20 @@ class OrderController extends Controller
 
         $emailsForCC = array_diff($emailsForCC, $UserEmailsToBeExcluded);
 
-        if(!$is_test){
-            $emailsForCC = array_merge($emailsForCC, $includedEmails);
-            $emailsForCC = array_diff($emailsForCC, $excludedEmails);
+
+        $newArrayOfEmailsForCC = [];
+
+        if(in_array(auth()->user()->email, $emailsForCC)){
+            $newArrayOfEmailsForCC = array_merge($includedEmails, ['marissa.sexton@fegllc.com', 'lisa.price@fegllc.com']);
         }
 
-//        dd($emailsForCC);
-        return $finalStringOfEmailsForCC = implode(',', $emailsForCC);
+        if(!$is_test){
+            $newArrayOfEmailsForCC = array_diff($newArrayOfEmailsForCC, $excludedEmails);
+        }
+
+        $newArrayOfEmailsForCC = array_unique($newArrayOfEmailsForCC);
+
+        return $finalStringOfEmailsForCC = implode(',', $newArrayOfEmailsForCC);
     }
 
     private function sendEmailFromMerchandise($order)
