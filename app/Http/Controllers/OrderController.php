@@ -1115,17 +1115,15 @@ class OrderController extends Controller
             $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $is_test, $emailsToBeShown, $excludedAndIncludedEmails['excluded'], $excludedAndIncludedEmails['included']);
 
         } else {
-            $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $is_test, $emailsToBeShown, $excludedAndIncludedEmails['excluded'], $excludedAndIncludedEmails['included']);
+            $emailsForCC = [];
+            $includedEmails = $excludedAndIncludedEmails['included'];
+            $excludedEmails = $excludedAndIncludedEmails['excluded'];
 
-//            $emailsForCC = [];
-//            $includedEmails = $excludedAndIncludedEmails['included'];
-//            $excludedEmails = $excludedAndIncludedEmails['excluded'];
-//
-//
-//            $emailsForCC = array_merge($emailsForCC, $includedEmails);
-//            $emailsForCC = array_diff($emailsForCC, $excludedEmails);
-//
-//            $finalStringOfEmailsForCC = implode(',', $emailsForCC);
+
+            $emailsForCC = array_merge($emailsForCC, $includedEmails);
+            $emailsForCC = array_diff($emailsForCC, $excludedEmails);
+
+            $finalStringOfEmailsForCC = implode(',', $emailsForCC);
         }
 
 
@@ -1138,7 +1136,7 @@ class OrderController extends Controller
         });
         $emailsTo = implode(',', $emailsToArray);
         \Session::put('send_to', $emailsTo);
-        $finalStringOfEmailsForCC = implode(',', array_unique(explode(',', $finalStringOfEmailsForCC)));
+
         $viewName = empty($isPop) ? 'order.saveorsendemail' : 'order.pop.saveorsendemail';
         return view($viewName, array('cc' => $finalStringOfEmailsForCC, 'bcc'=>$bcc, "pageUrl" => $this->data['pageUrl']));
     }
