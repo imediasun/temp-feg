@@ -1125,8 +1125,6 @@ class OrderController extends Controller
             $finalStringOfEmailsForCC = implode(',', $emailsForCC);
         }
 
-
-
         $emailsTo = implode(',', [$vendorEmail,$receipts['to']]);
         $emailsToArray  = explode(',', $emailsTo);
         $emailsToArray = array_unique($emailsToArray);
@@ -1217,7 +1215,7 @@ class OrderController extends Controller
 
         $usersEmailsForCC = User::select('email')
             ->whereIn('id', $userIdsSP)
-            ->orWhereIn('email', $emailsToBeShown)
+//            ->orWhereIn('email', $emailsToBeShown)
             ->get();
 
         $EmailsToBeExcluded = User::select('email')
@@ -1229,6 +1227,7 @@ class OrderController extends Controller
 
         $emailsForCC = array_diff($emailsForCC, $UserEmailsToBeExcluded);
 
+//        dd($UserEmailsToBeExcluded);
 
         $newArrayOfEmailsForCC = [];
 
