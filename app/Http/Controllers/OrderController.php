@@ -1124,6 +1124,7 @@ class OrderController extends Controller
             $emailsForCC = array_unique(array_diff($emailsForCC, $excludedEmailsArray));
             $finalStringOfEmailsForCC = implode(',', $emailsForCC);
         }
+//        dd($finalStringOfEmailsForCC);
 
         $emailsTo = implode(',', [$vendorEmail,$receipts['to']]);
         $emailsToArray  = explode(',', $emailsTo);
@@ -1211,11 +1212,13 @@ class OrderController extends Controller
         //------ Special Permissions variables --------
         $userIdsSP        = explode(',', $pass['display email address in cc box for order types']->user_ids);
         $excludeUserIdsSP = explode(',', $pass['display email address in cc box for order types']->exclude_user_ids);
+        $groupIdsSP = explode(',', $pass['display email address in cc box for order types']->group_ids);
 
 
         $usersEmailsForCC = User::select('email')
             ->whereIn('id', $userIdsSP)
-//            ->orWhereIn('email', $emailsToBeShown)
+            ->orWhereIn('group_id', $groupIdsSP)
+            ->orWhereIn('email', $emailsToBeShown)
             ->get();
 
         $EmailsToBeExcluded = User::select('email')
@@ -1224,7 +1227,6 @@ class OrderController extends Controller
 
         $emailsForCC = \Illuminate\Support\Arr::pluck($usersEmailsForCC, 'email');
         $UserEmailsToBeExcluded = \Illuminate\Support\Arr::pluck($EmailsToBeExcluded, 'email');
-
         $emailsForCC = array_diff($emailsForCC, $UserEmailsToBeExcluded);
 
 //        dd($UserEmailsToBeExcluded);
