@@ -51,6 +51,7 @@
                         @endif
                         <th width="100">Already on Order</th>
                        <!-- <th width="70"><?php echo Lang::get('core.btn_action');?></th> -->
+                        <th width="80"></th>
                         <th width="100">Image</th>
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
@@ -65,6 +66,7 @@
                                     $colIsSorted = $colIsSortable && $colField == $sortBy;
                                     $colClass = $colIsSortable ? ' dgcsortable' : '';
                                     $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+
                                     $th = '<th'.
                                         ' class="'.$colClass.'"'.
                                         ' data-field="'.$colField.'"'.
@@ -135,6 +137,13 @@
                         <!--td data-values="action" data-key="<?php echo $row->id;?>">
                             <div class=" action dropup"><a href="#" onclick="if(confirm('Are you sure you want to remove this item from cart?')){ return removeItemFromCart('{{ $row->id }}'); } return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Remove"><i class="fa fa-trash-o"></i></a></div>
                         </td-->
+
+                            <td align="center">
+                        <span class="tips"  style="color:#d5e20a; font-size: 22px; cursor: pointer;" title="Add to Favorite">
+                            <i id="{{ $row->id }}"  @if($row->is_favorite == 0) isfavorite="0" @else isfavorite="1" @endif  class="fa @if($row->is_favorite == 0) fa-star-o @else fa-star @endif"></i>
+                        </span>
+                            </td>
+
                         <td>
                             <?php
                             echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false, 0,false,'',false);
@@ -156,7 +165,13 @@
 
                                 @if($field['field']=='qty')
                                     <input type="number" value="{{ $value }}" min="1" step="1" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="inputqty qtyfield qtyfield_{{ $row->id }}"/>
-                                    @else
+                                    @elseif($field['field'] == 'vendor_description')
+                                    @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes') <span class="label label-danger">Hot</span> @endif
+                                    @if($row->is_new > 0)  <span class="label label-primary">New</span> @endif
+                                    @if($row->is_backinstock > 0)  <span class="label label-default">Back in Stock</span> @endif
+                                    @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes' || $row->is_new > 0 || $row->is_backinstock > 0)   <br /> @endif
+                                        {!! $value !!}
+                                @else
 
                                     {!! $value !!}
 
