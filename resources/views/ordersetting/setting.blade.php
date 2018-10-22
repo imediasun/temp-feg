@@ -164,6 +164,31 @@
                                     <select class="select2" multiple id="userGroups" name="userGroups[]"></select>
                                 </td>
                             </tr>
+
+                            <tr>
+                                <td>Tag <span class="label label-primary">New</span> will be removed after days(x)</td>
+                                <td>Tag <span class="label label-primary">New</span> will be added automatically to any product which is newly added to the Product List module. The label/banner will exist for a # of days determined by the relevant entry in the Settings module, after which it will automatically remove itself.</td>
+                                <td>
+
+                                    <input type="number" value="{!! $product_label_new or 0 !!}" class="form-control" min="0" step="1" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');" name="product_label_new" placeholder="Enter number of days" />
+                                </td>
+                                <td id="last_td">
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>The tag <span class="label label-default">Back in Stock</span> will be removed after days(x)</td>
+                                <td>The tag will be present for a # of days configured in the Orders/Requests > Settings module. The default configuration will be 14 days from the date found in the product's Updated_On field in the Product List module.</td>
+                                <td>
+                                    <input type="number" value="{!! $product_label_backinstock or 14 !!}" class="form-control" min="0" step="1" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');" name="product_label_backinstock" placeholder="Enter number of days" />
+                                </td>
+                                <td id="last_td">
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>

@@ -108,7 +108,11 @@ class OrdersettingController extends Controller
         $this->data['Orders']               = $orders;
         $this->data['ExcludedOrdersPos']    = $excludedOrdersPos;
         $this->data['excludedGroups']       = $excludedGroups;
+        $productOptions =   Options::whereIn('option_name', ['product_label_new','product_label_backinstock'])->get();
 
+        foreach ($productOptions as $productOption){
+            $this->data[$productOption->option_name] = $productOption->option_value;
+        }
         $this->data['access'] = $this->access;
 
         $settingsData = [];
@@ -131,6 +135,8 @@ class OrdersettingController extends Controller
         $excludedOrders = !empty($request->input('excluded_orders')) ? implode(',', $request->input('excluded_orders')) : '';
         $excludedOrdersFromSpecifiedGroup = !empty($request->input('excluded_orders_from_groups')) ? implode(',', $request->input('excluded_orders_from_groups')) : '';
         $excludedUserGroups = !empty($request->input('userGroups')) ? implode(',', $request->input('userGroups')) : '';;
+        $productLabelNew = !empty($request->product_label_new) ? $request->product_label_new : 0;
+        $productLabelBackinstock = !empty($request->product_label_backinstock) ? $request->product_label_backinstock:14;
         if (is_array($merchandiseOrderTypes) && is_array($NonMerchandiseOrderTypes)) {
             if (count(array_intersect($merchandiseOrderTypes, $NonMerchandiseOrderTypes)) > 0) {
                 return response()->json(array(
@@ -186,6 +192,44 @@ class OrdersettingController extends Controller
         $GraphicsRequestSetting->graphics_recever_content = $GraphicsRequestReceiverContent;
         $GraphicsRequestSetting->is_graphics_setting = 1;
         $GraphicsRequestSetting->save();
+
+        $option = Options::where('option_name', 'product_label_new')->first();
+        if(!$option){
+            Options::addOption('product_label_new', $productLabelNew, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'Tag New will be removed after days(x)',
+                'option_description' => 'Tag New will be added automatically to any product which is newly added to the Product List module. The label/banner will exist for a # of days determined by the relevant entry in the Settings module, after which it will automatically remove itself.',
+                'option_form_element_details' => null
+            ]);
+        }else{
+            Options::updateOption('product_label_new', $productLabelNew, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'Tag New will be removed after days(x)',
+                'option_description' => 'Tag New will be added automatically to any product which is newly added to the Product List module. The label/banner will exist for a # of days determined by the relevant entry in the Settings module, after which it will automatically remove itself.',
+                'option_form_element_details' => null
+            ]);
+        }
+
+        $option = Options::where('option_name', 'product_label_new')->first();
+        if(!$option){
+            Options::addOption('product_label_backinstock', $productLabelBackinstock, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'The tag Back in Stock will be removed after days(x)',
+                'option_description' => 'The tag will be present for a # of days configured in the Orders/Requests > Settings module. The default configuration will be 14 days from the date found in the product\'s Updated_On field in the Product List module.',
+                'option_form_element_details' => null
+            ]);
+        }else{
+            Options::updateOption('product_label_backinstock', $productLabelBackinstock, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'The tag Back in Stock will be removed after days(x)',
+                'option_description' => 'The tag will be present for a # of days configured in the Orders/Requests > Settings module. The default configuration will be 14 days from the date found in the product\'s Updated_On field in the Product List module.',
+                'option_form_element_details' => null
+            ]);
+        }
 
         $option = Options::where('option_name', 'excluded_orders')->first();
         if(!$option){

@@ -1097,9 +1097,9 @@ class ProductController extends Controller
         $isActive = $request->get('isActive');
         $productId = $request->get('productId');
         if ($isActive == "true") {
-            $update = \DB::update('update products set inactive = 1, inactive_by = ' . Auth::user()->id . ' where id=' . $productId);
+            $update = \DB::update('update products set activated_at = null, inactive = 1, inactive_by = ' . Auth::user()->id . ' where id=' . $productId);
         } else {
-            $update = \DB::update('update products set inactive = 0, in_development = 0, inactive_by = NULL where id=' . $productId);
+            $update = \DB::update('update products set activated_at = NOW(), inactive = 0, in_development = 0, inactive_by = NULL where id=' . $productId);
         }
         if ($update) {
             return response()->json(array(

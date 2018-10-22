@@ -159,6 +159,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                 @if($field['field']=='img')
+                                    <span style="color:#d5e20a; font-size: 22px;"><i class="fa fa-star-o"></i></span>
                                     <?php
                                     echo SiteHelpers::showUploadedFile($value, '/uploads/products/', 50, false, $row->id)
                                     ?>
@@ -179,7 +180,14 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
 										 	echo $value;
 										 }
 										 ?>
-									 @elseif($field['field']=='is_default_expense_category')
+                                @elseif($field['field']=='vendor_description')
+                                   @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes') <span class="label label-danger">Hot</span> @endif
+                                  @if($row->is_new > 0)  <span class="label label-primary">New</span> @endif
+                                  @if($row->is_backinstock > 0)  <span class="label label-default">Back in Stock</span> @endif
+                                <br />
+                                    {!! $value !!}
+
+                                @elseif($field['field']=='is_default_expense_category')
 
 										 <input type='checkbox' name="mycheckbox" @if($value == 'Yes') checked
 												@endif data-field="is_default_expense_category" data-size="mini"
