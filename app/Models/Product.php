@@ -49,6 +49,8 @@ class product extends Sximo  {
 
 	public static function querySelect(  ){
 
+	    $supQuries = self::subQueriesSelect();
+
         return " SELECT
   products.*,
   O.order_type       AS `prod_type`,
@@ -62,7 +64,8 @@ class product extends Sximo  {
   IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price) AS `retail_price`,
   O.order_type       AS prod_type_id,
   T.type_description AS prod_sub_type_id,
-  '' as excluded_locations_and_groups
+  '' as excluded_locations_and_groups,
+  $supQuries
 FROM `products`
   LEFT JOIN vendor
     ON (products.vendor_id = vendor.id)
@@ -664,5 +667,13 @@ WHERE orders.is_api_visible = 1
             $dataArray[] = $row;
         }
         return $dataArray;
+    }
+    public static function subQueriesSelect(){
+       $productLabelNewDays = (object) \FEGHelp::getOption('product_label_new', '0', false, true, true);
+        $productLabelBackinstockDays = (object) \FEGHelp::getOption('product_label_backinstock', '0', false, true, true);
+
+        $productSubQuery = ' (SELECT COUNT(*) FROM products NP WHERE DATE(NP.created_at) >= (CURRENT_DATE - INTERVAL '.$productLabelNewDays->option_value.' DAY) AND NP.id = products.id) as is_new, ';
+        $productSubQuery .= ' (SELECT COUNT(*) FROM products NP1 WHERE DATE(NP1.activated_at) >= (CURRENT_DATE - INTERVAL '.$productLabelBackinstockDays->option_value.' DAY) AND NP1.id = products.id) as is_backinstock ';
+        return $productSubQuery;
     }
 }
