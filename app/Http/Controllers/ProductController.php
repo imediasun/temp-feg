@@ -3,11 +3,13 @@
 use App\Http\Controllers\controller;
 use App\Models\Product;
 use App\Models\ProductType;
+use App\Models\UserFavoriteProduct;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use phpDocumentor\Reflection\Types\Null_;
 use Validator, Input, Redirect,Image;
 use App\Models\ReservedQtyLog;
@@ -1284,6 +1286,30 @@ GROUP BY mapped_expense_category");
         return response()->json(array(
             'status' => 'success',
             'barcode'=>$barCode,
+        ));
+    }
+
+    public function postFavorite(Request $request){
+        $message = '';
+        $productId = $request->product_id;
+        if($request->isfavorite == 1){
+            $data = [
+                'user_id' => Session::get('uid'),
+                'location_id' => Session::get('selected_location'),
+                'product_id' => $productId,
+            ];
+            $userFavoriteProduct = new UserFavoriteProduct();
+            $userFavoriteProduct->insertRow($data,0);
+            $message = \Lang::get('core.note_success');
+        }
+        if ($request->isfavorite == 0){
+        UserFavoriteProduct::where('user_id' , Session::get('uid'))->where('product_id', $productId)->delete();
+            $message = \Lang::get('core.note_success_delete');
+
+        }
+        return response()->json(array(
+            'status' => 'success',
+            'message' => $message
         ));
     }
 }

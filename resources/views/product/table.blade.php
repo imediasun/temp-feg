@@ -67,7 +67,8 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                     $colIsSorted = $colIsSortable && $colField == $sortBy;
                                     $colClass = $colIsSortable ? ' dgcsortable' : '';
                                     $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
-                                    $th = '<th' .
+                                    $extaColumn = ($colField == 'img') ? '<th width="80"></th>':'';
+                                    $th = $extaColumn.'<th' .
                                             ' class="' . $colClass . '"' .
                                             ' data-field="' . $colField . '"' .
                                             ' data-sortable="' . $colIsSortable . '"' .
@@ -155,13 +156,19 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
+                            @if($field['field']=='img')
+                    <td align="center">
+                        <span class="tips"  style="color:#d5e20a; font-size: 22px; cursor: pointer;" title="Add to Favorite">
+                            <i id="{{ $row->id }}"  @if($row->is_favorite == 0) isfavorite="0" @else isfavorite="1" @endif  class="favoriteItem fa @if($row->is_favorite == 0) fa-star-o @else fa-star @endif"></i>
+                        </span>
+                    </td>
+                                @endif
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                 @if($field['field']=='img')
-                                    <span style="color:#d5e20a; font-size: 22px;"><i class="fa fa-star-o"></i></span>
                                     <?php
-                                    echo SiteHelpers::showUploadedFile($value, '/uploads/products/', 50, false, $row->id)
+                                     echo SiteHelpers::showUploadedFile($value, '/uploads/products/', 50, false, $row->id);
                                     ?>
                                 @elseif($field['field']=='details')
 
@@ -184,7 +191,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                    @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes') <span class="label label-danger">Hot</span> @endif
                                   @if($row->is_new > 0)  <span class="label label-primary">New</span> @endif
                                   @if($row->is_backinstock > 0)  <span class="label label-default">Back in Stock</span> @endif
-                                <br />
+                                       @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes' || $row->is_new > 0 || $row->is_backinstock > 0)   <br /> @endif
                                     {!! $value !!}
 
                                 @elseif($field['field']=='is_default_expense_category')

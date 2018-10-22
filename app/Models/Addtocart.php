@@ -26,6 +26,7 @@ class addtocart extends Sximo
 
     public static function querySelect()
     {
+        $subQueries = self::subQueriesProductsSelect();
         return "SELECT
   requests.*,
   (SELECT
@@ -48,13 +49,15 @@ class addtocart extends Sximo
   merch_request_status.status,
   products.size,
   products.num_items,
+  products.hot_item,
   V1.vendor_name,
   order_type.order_type,
   product_type.type_description,
   IF(products.reserved_qty = 0, '', products.reserved_qty) AS reserved_qty,
   (products.reserved_qty - requests.qty) AS reserved_difference,
   products.prod_type_id,
-  products.prod_sub_type_id
+  products.prod_sub_type_id,
+  $subQueries
 FROM requests
   LEFT JOIN users u1
     ON (requests.request_user_id = u1.id)

@@ -1608,4 +1608,19 @@ class Sximo extends Model {
     public function isTypeRestrictedModule($moduleName){
         return in_array($moduleName,self::MODULES_WITH_RESTRICTED_TYPES);
     }
+
+    /**
+     * @param string $joinWithColumn
+     * @return string
+     */
+    public static function subQueriesProductsSelect($joinWithColumn = 'products.id'){
+        $productLabelNewDays = (object) \FEGHelp::getOption('product_label_new', '0', false, true, true);
+        $productLabelBackinstockDays = (object) \FEGHelp::getOption('product_label_backinstock', '0', false, true, true);
+        $userId = Session::get('uid');
+        $locationId = Session::get('selected_location');
+        $productSubQuery = ' (SELECT COUNT(*) FROM products NP WHERE DATE(NP.created_at) >= (CURRENT_DATE - INTERVAL '.$productLabelNewDays->option_value.' DAY) AND NP.id = '.$joinWithColumn.') as is_new, ';
+        $productSubQuery .= ' (SELECT COUNT(*) FROM products NP1 WHERE DATE(NP1.activated_at) >= (CURRENT_DATE - INTERVAL '.$productLabelBackinstockDays->option_value.' DAY) AND NP1.id = '.$joinWithColumn.') as is_backinstock, ';
+        $productSubQuery .= ' (SELECT COUNT(*) FROM products NP3 inner join user_favorite_products UFP on UFP.product_id = NP3.id WHERE UFP.user_id = '.$userId.' AND UFP.location_id = '.$locationId.' AND NP3.id = '.$joinWithColumn.') as is_favorite ';
+        return $productSubQuery;
+    }
 }

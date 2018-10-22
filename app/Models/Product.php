@@ -4,6 +4,7 @@ use App\Library\FEG\System\FEGSystemHelper;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Log;
 
 class product extends Sximo  {
@@ -43,7 +44,7 @@ class product extends Sximo  {
 
 	public static function querySelect(  ){
 
-	    $supQuries = self::subQueriesSelect();
+	    $supQuries = self::subQueriesProductsSelect();
 
         return " SELECT
   products.*,
@@ -598,12 +599,5 @@ WHERE orders.is_api_visible = 1
         }
         return $rules;
     }
-    public static function subQueriesSelect(){
-       $productLabelNewDays = (object) \FEGHelp::getOption('product_label_new', '0', false, true, true);
-        $productLabelBackinstockDays = (object) \FEGHelp::getOption('product_label_backinstock', '0', false, true, true);
 
-        $productSubQuery = ' (SELECT COUNT(*) FROM products NP WHERE DATE(NP.created_at) >= (CURRENT_DATE - INTERVAL '.$productLabelNewDays->option_value.' DAY) AND NP.id = products.id) as is_new, ';
-        $productSubQuery .= ' (SELECT COUNT(*) FROM products NP1 WHERE DATE(NP1.activated_at) >= (CURRENT_DATE - INTERVAL '.$productLabelBackinstockDays->option_value.' DAY) AND NP1.id = products.id) as is_backinstock ';
-        return $productSubQuery;
-    }
 }

@@ -64,7 +64,8 @@
                                     $colIsSorted = $colIsSortable && $colField == $sortBy;
                                     $colClass = $colIsSortable ? ' dgcsortable' : '';
                                     $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
-                                    $th = '<th'.
+                                    $extaColumn = ($colField == 'img') ? '<th width="80"></th>':'';
+                                    $th = $extaColumn.'<th'.
                                             ' class="'.$colClass.'"'.
                                             ' data-field="'.$colField.'"'.
                                             ' data-sortable="'.$colIsSortable.'"'.
@@ -139,6 +140,13 @@
                             ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
+                                @if($field['field']=='img')
+                                    <td align="center">
+                        <span class="tips"  style="color:#d5e20a; font-size: 22px; cursor: pointer;" title="Add to Favorite">
+                            <i id="{{ $row->id }}"  @if($row->is_favorite == 0) isfavorite="0" @else isfavorite="1" @endif  class="fa @if($row->is_favorite == 0) fa-star-o @else fa-star @endif"></i>
+                        </span>
+                                    </td>
+                                @endif
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                 @if($field['field']=='img')
@@ -148,6 +156,10 @@
                                 @else
 
                                     @if($field['field']=="vendor_description")
+                                        @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes') <span class="label label-danger">Hot</span> @endif
+                                        @if($row->is_new > 0)  <span class="label label-primary">New</span> @endif
+                                        @if($row->is_backinstock > 0)  <span class="label label-default">Back in Stock</span> @endif
+                                        @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes' || $row->is_new > 0 || $row->is_backinstock > 0)   <br /> @endif
                                         <?php
                                         if ($row->details !='') {
 

@@ -14,8 +14,10 @@ class shopfegrequeststore extends Sximo  {
 		parent::__construct();
 	}
 	public static function querySelect(  ){
+
+	    $subQueries = self::subQueriesProductsSelect();
 		
-		return "SELECT products.*,vendor.vendor_name,vendor.hide as vendor_hide,vendor.status as vendor_status,O.order_type,T.product_type FROM products
+		return "SELECT products.*,vendor.vendor_name,vendor.hide as vendor_hide,vendor.status as vendor_status,O.order_type,T.product_type,$subQueries FROM products
                 LEFT JOIN vendor ON (products.vendor_id = vendor.id)
                 LEFT JOIN order_type O ON (O.id = products.prod_type_id)
                 LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id)";
