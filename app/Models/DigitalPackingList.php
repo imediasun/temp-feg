@@ -93,7 +93,7 @@ class DigitalPackingList extends Sximo
     public function cleanAndTruncateString($string, $length = 50)
     {
         $string = str_replace(["&",",",'"'],"",$string);
-        return $this->truncateString($string, $length);
+        return $string; //$this->truncateString($string, $length);
     }
     public function isOrderReceived($order_id)
     {
