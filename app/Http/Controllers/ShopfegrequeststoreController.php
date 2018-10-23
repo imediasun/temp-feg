@@ -182,7 +182,8 @@ class ShopfegrequeststoreController extends Controller
         $this->data['order_type'] = $order_type;
         $product_type = $request->get('product_type');
         $this->data['product_type'] = $product_type;
-        $cond = array('type' => $type, 'active_inactive' => $active_inactive, 'order_type' => $order_type, 'product_type' => $product_type,);
+        $this->data['filterBy'] = $filterBy = $request->get('filterBy');
+        $cond = array('type' => $type, 'active_inactive' => $active_inactive, 'order_type' => $order_type, 'product_type' => $product_type,'filterBy'=>$filterBy);
         $results = $this->model->getRows($params, $cond);
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
