@@ -2964,4 +2964,17 @@ class SiteHelpers
         }
         return (string) $convertedString;
     }
+
+    /**
+     * @param $string
+     * @param $limit
+     * @param bool $ellipsis
+     * @return string
+     */
+    public static function truncateStringToSpecifiedLimit($string,$limit,$ellipsis = false){
+        if(strlen($string) > $limit){
+            $string = substr($string,0,$limit);
+        }
+        return ($ellipsis == true) ? $string.'...' : $string;
+    }
 }
