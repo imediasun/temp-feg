@@ -777,6 +777,7 @@
             excludedOrderTypes = '{!! $excludedOrderTypes !!}';
             excludedOrderTypes = $.parseJSON('[' + excludedOrderTypes + ']');
 
+
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
                     {excludeItems:excludedOrderTypes, isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'],selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
 
