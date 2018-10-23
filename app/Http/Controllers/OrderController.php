@@ -1791,11 +1791,13 @@ class OrderController extends Controller
         $po_full = $po_1 . '-' . $po_2 . '-' . $po_3;
         $location =  location::find($location_id);
         $excludedProductTypeIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($location_id, true, false)['excluded_product_type_ids'];
+        if($this->model->isTypeRestricted()){
+            $otherExcluded = Ordertyperestrictions::select('id')->where('can_request', 1)->whereNotIn('id',[7])->get()->pluck('id')->toArray();
+            $excludedProductTypeIds = array_merge($excludedProductTypeIds,$otherExcluded);
+        }
         $orderTypes = Ordertyperestrictions::select('order_type', 'id')->where('can_request', 1)->whereNotIn('id', $excludedProductTypeIds);
 
-       if($this->model->isTypeRestricted()){
-           $orderTypes->where('id',$this->model->getAllowedTypes());
-       }
+
         $orderTypes = $orderTypes->orderBy('order_type', 'asc')->get();
         return [
             'po_3'                  =>  $this->validatePO($po, $po_full, $location_id),
