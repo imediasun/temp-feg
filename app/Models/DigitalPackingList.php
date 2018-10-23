@@ -36,7 +36,7 @@ class DigitalPackingList extends Sximo
     }
     public function getDPLFileData(){
         $newLine = "\r\n";
-        $fileContent = $this->order->location_id . ", " . $this->order->id . $newLine;
+        $fileContent = $this->order->location_id . ", " . str_replace('-',"",$this->order->po_number) . $newLine;
         $totalItems = $this->order->contents()->count();
         $countIndex = 0;
         foreach ($this->order->contents as $product) {
@@ -68,6 +68,7 @@ class DigitalPackingList extends Sximo
                 $unitTypeUOMUpdated = "EA";
                 $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOMUpdated, $quantityReceived, $price, $tickets, $qtyPerCase, $product->price]) . $newLine;
             } else {
+                $itemName = \SiteHelpers::truncateStringToSpecifiedLimit($itemName,50);
                 $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOMUpdated . "," .$quantityReceived . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
             }
         }
