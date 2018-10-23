@@ -72,6 +72,20 @@ class shopfegrequeststore extends Sximo  {
                     $return.=" AND products.inactive=0";
                 }
 
+                if(!empty($cond['filterBy'])){
+                    $filterBy = $cond['filterBy'];
+                    if($filterBy == 'hot'){
+                        $return.=" having(products.hot_item = 1)";
+                    }elseif($filterBy == 'new'){
+                        $return.=" having(is_new >= 1)";
+                    }elseif($filterBy == 'backinstock'){
+                        $return.=" having(is_backinstock >= 1)";
+                    }elseif($filterBy == 'favorite'){
+                        $return.=" having(is_favorite >= 1)";
+                    }
+
+                }
+
             }
         }
         return $return;
