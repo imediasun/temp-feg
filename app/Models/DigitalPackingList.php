@@ -46,7 +46,7 @@ class DigitalPackingList extends Sximo
             $itemName = $this->cleanAndTruncateString($product->item_name);
 
             $unitTypeUOM = $this->order->getUnitOfMeasurementForOrderType();
-            $price =($unitTypeUOM == "CASE") ? $price = $product->price : $product->price;
+            $price =($unitTypeUOM == "CASE") ? $price = \CurrencyHelpers::formatPrice($product->case_price/$product->qty_per_case, $decimalPlaces = 5,  false,  '', $dec_point = '.',  false) : $product->price;
 
             $tickets = $product->ticket_value;
             $qtyPerCase = $product->qty_per_case;
