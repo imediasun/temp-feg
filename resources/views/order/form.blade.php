@@ -1483,6 +1483,7 @@
                     cancelButtonText: 'No',
                     timeout:6000,
                     confirm: function (){
+                        clearTimeout(showFirstPopup);
                         reloadOrder();
                     },
                     cancel:function () {
@@ -1492,7 +1493,7 @@
                             data:{requestIds:requestIds}
                         }).success(function (data) {
                             clearTimeout(hidePopup);
-                            var settimeout =  showPopups();
+                            showFirstPopup =  showPopups();
                         })
                             .error(function (data) {
 
@@ -1505,7 +1506,7 @@
                         reloadOrder();
                     },60000)
             }, ({{env('notification_popup_time_for_order',1)}} * 60000));
-            return 'Time Out set successfully';
+            return showFirstPopup;
         }
 
 $(function(){
