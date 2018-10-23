@@ -1483,6 +1483,7 @@
                     cancelButtonText: 'No',
                     timeout:6000,
                     confirm: function (){
+                        $(document).scrollTop(0);
                         clearTimeout(showFirstPopup);
                         reloadOrder();
                     },
