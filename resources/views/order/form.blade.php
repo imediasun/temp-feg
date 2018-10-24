@@ -1796,9 +1796,19 @@
                             $('#total_cost').val(0.00);
                             $('input[name="Subtotal"]').val(0.00);
                             console.log("non freehand order");
+                            $('input[name="item_name[]"]').attr('id','item_name');
+                            $('input[name="item_name[]"]').addClass('ui-autocomplete-input');
+                            $('input[name="item_name[]"]').addClass('item_name');
+                            $('input[name="item_name[]"]').addClass('mysearch');
+                            $('input[name="item_name[]"]').change();
                             $("input[name='case_price[]']").attr("onkeyup","calculateUnitPrice(this);");
                         }
                         else{
+                            $('input[name="item_name[]"]').removeAttr('id');
+                            $('input[name="item_name[]"]').removeClass('ui-autocomplete-input');
+                            $('input[name="item_name[]"]').removeClass('item_name');
+                            $('input[name="item_name[]"]').removeClass('mysearch');
+                            $('input[name="item_name[]"]').change();
                             console.log("freehand order");
                             currentElm.data('status','enabled');
                             $("#can-freehand i").toggleClass("fa-check-circle-o");
@@ -1837,6 +1847,11 @@
                     $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
                     console.log("non freehand order");
                     $("input[name='case_price[]']").attr("onkeyup","calculateUnitPrice(this);");
+                    $('input[name="item_name[]"]').attr('id','item_name');
+                    $('input[name="item_name[]"]').addClass('ui-autocomplete-input');
+                    $('input[name="item_name[]"]').addClass('item_name');
+                    $('input[name="item_name[]"]').addClass('mysearch');
+                    $('input[name="item_name[]"]').change();
                 }
                 else{
                     currentElm.data('status','enabled');
@@ -1852,6 +1867,11 @@
                     $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                     $('.itemstable .clonedInput:first-child textarea').val('');
                     $("input[name='case_price[]']").removeAttr("onkeyup");
+                    $('input[name="item_name[]"]').removeAttr('id');
+                    $('input[name="item_name[]"]').removeClass('ui-autocomplete-input');
+                    $('input[name="item_name[]"]').removeClass('item_name');
+                    $('input[name="item_name[]"]').removeClass('mysearch');
+                    $('input[name="item_name[]"]').change();
                     console.log("freehand order");
                 }
             }
@@ -1874,6 +1894,7 @@
 
                 }, 500);
             }
+            reInitParcley();
         });
     </script>
     <style>
