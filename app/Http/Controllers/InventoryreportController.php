@@ -299,8 +299,7 @@ class InventoryreportController extends Controller {
 		$rows = $results['rows'];
 
 		$rows = $this->updateDateInAllRows($rows);
-
-        $rows = \SiteHelpers::addPostPreFixToField($rows,'Cases_Ordered','*','is_broken_case',['yes','YES','Yes',1],true,false,true);
+        $rows = \SiteHelpers::addPostPreFixToField($rows,'Cases_Ordered','*','is_broken_case',['yes','YES','Yes',1],true);
 
 		$content = array(
 			'exportID' => $exportSessionID,
