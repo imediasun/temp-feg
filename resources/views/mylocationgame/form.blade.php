@@ -134,22 +134,6 @@
 					</div>
 
 					<div class="form-group  " >
-						<label for="Location " class=" control-label col-md-4 text-left">
-							{!! SiteHelpers::activeLang('Location ', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}
-						</label>
-						<div class="col-md-6">
-							<input type='hidden' name='prev_location_id' value='{{ $row['prev_location_id'] }}' />
-							<input type='hidden' name='old_location_id' value='{{ $row['location_id'] }}' />
-							<select name='location_id' data-seprate=true id='location_id' class='select2 '
-									@if($isEdit)  readonly='readonly' @endif
-							>
-							</select>
-						</div>
-						<div class="col-md-2">
-
-						</div>
-					</div>
-					<div class="form-group  " >
 						<label for="serial" class=" control-label col-md-4 text-left">
 							{!! SiteHelpers::activeLang('Serial', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
 						</label>
