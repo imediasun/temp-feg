@@ -17,6 +17,7 @@ use \App\Models\Sximo;
 use App\Models\Core\Groups;
 use App\Models\CustemRelation;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Session;
 
 class FEGDBRelationHelpers
 {
@@ -229,6 +230,22 @@ class FEGDBRelationHelpers
        'products' => $products
    ];
         return $data;
+    }
+
+    /**
+     * @return array
+     */
+
+    public static function getExcludedProductTypesOnly(){
+        $productTypeExcludedbyLocation = self::getCustomRelationRecords(Session::get('selected_location'),location::class,Ordertyperestrictions::class,1)->pluck('ordertyperestrictions_id')->toArray();
+        $locationGroups = self::getCustomRelationRecords(Session::get('selected_location'),location::class,Locationgroups::class,0)->pluck('locationgroups_id')->toArray();
+        if(count($locationGroups) > 0) {
+            $groupExcludedTypes = self::getCustomRelationRecords($locationGroups, Locationgroups::class, Ordertyperestrictions::class, 1)->pluck('ordertyperestrictions_id')->toArray();
+            if(count($groupExcludedTypes) > 0){
+                $productTypeExcludedbyLocation = array_merge($productTypeExcludedbyLocation,$groupExcludedTypes);
+            }
+        }
+        return $productTypeExcludedbyLocation;
     }
 
 }
