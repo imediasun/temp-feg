@@ -802,7 +802,7 @@ abstract class Controller extends BaseController
                             }elseif($keys[0] == 'in_development') {
                                 $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
                                 $param .= " AND $field = '" . $keys[2] . "' ";
-                            } elseif(!is_null($customOperator) &&  $customOperator == 'not_in') {
+                            } elseif(!is_null($customOperator) &&  $customOperator == 'not_in' && $keys[1] == 'not_in') {
                                 $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
                                 $param .= " AND $field NOT IN(" . $keys[2] . ") ";
                             }else {

@@ -1000,6 +1000,13 @@ class SiteHelpers
                             }
                         }
 
+                        if(isset($typeRestricted['isTypeRestrictedExclude'])) {
+
+                            if ($typeRestricted['isTypeRestrictedExclude'] == true && ($option['lookup_table'] == "order_type")) {
+                                $query->whereNotIn($option['lookup_key'], $typeRestricted['excluded']);
+                            }
+                        }
+
                         $data = $query->get();
                         foreach ($data as $row) {
                             $selected = '';

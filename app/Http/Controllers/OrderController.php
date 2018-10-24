@@ -202,6 +202,40 @@ class OrderController extends Controller
         }
     }
 
+    public function getSearch($mode = 'ajax')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = $mode;
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+
+
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+
+        if(count($productTypeExcludedbyLocation) > 0){
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] =true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
+        }
+
+
+
+        if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            return view('feg_common.search', $this->data);
+        } else {
+            return view('sximo.module.utility.search', $this->data);
+        }
+
+    }
 
     public function getIndex()
     {
@@ -287,6 +321,14 @@ class OrderController extends Controller
                 ];
             }
         }
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+        if(count($productTypeExcludedbyLocation) > 0) {
+
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] = true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
+        }
+
+
         if($this->model->isTypeRestricted()){
             $filter .= " AND orders.order_type_id IN(".$this->model->getAllowedTypes().") ";
         }

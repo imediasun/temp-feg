@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
+use App\Models\Ordertyperestrictions;
 use App\Models\Product;
 use App\Models\ProductType;
 use Illuminate\Database\Eloquent\Collection;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use phpDocumentor\Reflection\Types\Null_;
 use Validator, Input, Redirect,Image;
 use App\Models\ReservedQtyLog;
@@ -212,6 +214,40 @@ class ProductController extends Controller
         }
     }
 
+    public function getSearch($mode = 'ajax')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = $mode;
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+
+
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+
+        if(count($productTypeExcludedbyLocation) > 0){
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] =true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
+        }
+
+
+
+        if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            return view('feg_common.search', $this->data);
+        } else {
+            return view('sximo.module.utility.search', $this->data);
+        }
+
+    }
     public function getModify(){
         $query ="SELECT products.*  FROM `products` WHERE vendor_description REGEXP '[ ]{2,}'";
         $products = DB::select($query);
@@ -293,9 +329,11 @@ class ProductController extends Controller
             $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
         }
 
+
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput,'not_in');
+
         $filter .= is_null($trimmedSearchQuery) ? '' : $this->buildSearch($trimmedSearchQuery,'not_in');
 
         return $filter;
@@ -339,6 +377,7 @@ class ProductController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         $filter = $this->getSearchFilterQuery();
+
         //(!is_null($request->input('search')) ? $this->buildSearch() : '');
 
         if(strpos($filter,"products.in_development") == false){
@@ -378,6 +417,10 @@ class ProductController extends Controller
         $rows = $this->model->setGroupsAndLocations($rows);
 //die;
         $this->data['ExpenseCategories'] = $ExpenseCategories;
+
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+
+        $this->data['productTypeExcludedbyLocation'] = $productTypeExcludedbyLocation;
 
         foreach ($rows as $index => $data) {
             if ($data->is_reserved == 1) {
