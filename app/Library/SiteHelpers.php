@@ -2977,4 +2977,32 @@ class SiteHelpers
         }
         return ($ellipsis == true) ? $string.'...' : $string;
     }
+
+    /**
+     * @param $rows
+     * @param $field
+     * @param string $sign
+     * @param $conditionField
+     * @param array $conditionFieldValues
+     * @param bool $isPostFix
+     * @param bool $spaceAfter
+     * @param bool $spaceBefore
+     * @return mixed
+     */
+    public static function addPostPreFixToField($rows ,$field ,$sign = '',$conditionField, $conditionFieldValues = [], $isPostFix = true , $spaceAfter = false , $spaceBefore = false){
+
+        foreach ($rows as $index => $row) {
+            if (isset($row->$field)) {
+
+                if(in_array($row->$conditionField, $conditionFieldValues)) {
+
+                    $sign = ($spaceAfter == true) ? $sign . ' ' : $sign;
+                    $sign = ($spaceBefore == true) ? ' ' . $sign : $sign;
+                    $value = ($isPostFix == true) ? $rows[$index]->$field . $sign : $sign . $rows[$index]->$field;
+                    $rows[$index]->$field = $value;
+                }
+            }
+        }
+        return $rows;
+    }
 }

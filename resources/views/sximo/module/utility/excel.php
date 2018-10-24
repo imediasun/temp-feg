@@ -38,7 +38,13 @@
 		}
 		$content .= '</tr>';
 	}
+if (!empty($AddNote)){
+	$content .='<tr><td></td></tr><tr><td></td></tr>';
+	$content .='<tr style="color:red; font-weight: bold;"><td colspan="30" ><strong>Note: '.$AddNote.'</strong></td></tr>';
+}
 	$content .= '</table>';
+
+
 	$path = "../storage/app/".time().".html";
 	file_put_contents($path, $content);
 
