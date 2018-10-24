@@ -389,7 +389,7 @@ if(!empty($order_data['orderQtyArray'])){
                         <td>
                             {{CurrencyHelpers::formatPrice($order_data['orderPriceArray'][$i]) }}
                         </td>
-                        <td>{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
+                        <td>{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}  {{ ($order_data['brokenCaseArray'][$i] == 1) ? '(Broken)':'' }}</td>
                         <td>{{ $order_data['receivedItemsArray'][$i] }}</td>
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
                             <td>{{  \DateHelpers::formatStringValue($order_data['gamenameArray'][$i]) }}</td>

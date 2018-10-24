@@ -123,7 +123,11 @@
 
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
 								if($field['field'] == "Cases_Ordered"){
-									$value = trim($value,"$");
+									$brokenCaseSign = '';
+									if(strtolower($row->is_broken_case) == 'yes' || $row->is_broken_case == 1){
+										$brokenCaseSign = ' *';
+									}
+									$value = trim($value,"$").$brokenCaseSign;
 								}
 						?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
