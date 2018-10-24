@@ -178,8 +178,8 @@ class FEGDBRelationHelpers
         $excludedProductIds = array_merge($idsOfExcludedProductsFromLocationGroup, $idsOfExcludedProductsFromLocation);
 
 
-        $variationIds = product::whereIn('id', $excludedProductIds)->lists('variation_id')->toArray();
-        $excludedProductVariationIds = product::whereIn('variation_id', $variationIds)->lists('id')->toArray();
+        /*$variationIds = product::whereIn('id', $excludedProductIds)->lists('variation_id')->toArray();
+        $excludedProductVariationIds = product::whereIn('variation_id', $variationIds)->lists('id')->toArray();*/
 
         /*
          * getting the ids of products that are related
@@ -187,11 +187,13 @@ class FEGDBRelationHelpers
          * */
 //        $idsOfExcludedProductsFromResultantProductTypes = product::whereIn('prod_type_id', $excludedProductTypeIds)->lists('id')->toArray();
 
-        $finalArrayOfIdsOfExcludedProducts = array_merge(
+        /*$finalArrayOfIdsOfExcludedProducts = array_merge(
             $excludedProductIds,
 //            $idsOfExcludedProductsFromResultantProductTypes,
             $excludedProductVariationIds
-        );
+        );*/
+
+        $finalArrayOfIdsOfExcludedProducts = $excludedProductIds;
 
         if ($isGetExcludedProductTypes && !$isGetExcludedProducts) {
             $result = [
