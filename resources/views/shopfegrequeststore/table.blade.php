@@ -423,6 +423,8 @@
 
 
     $(function(){
+        $("#filterBy").select2('val','{{ $filterBy }}');
+
 
         $.ajax({
             type:"GET",
