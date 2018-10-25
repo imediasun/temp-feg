@@ -299,7 +299,8 @@ class InventoryreportController extends Controller {
 		$rows = $results['rows'];
 
 		$rows = $this->updateDateInAllRows($rows);
-        $rows = \SiteHelpers::addPostPreFixToField($rows,'Cases_Ordered','*','is_broken_case',['yes','YES','Yes',1],true);
+
+        $rows = \SiteHelpers::addPostPreFixToField($rows,'Cases_Ordered','*','is_broken_case',['yes','YES','Yes',1],true,false,true);
 
 		$content = array(
 			'exportID' => $exportSessionID,
@@ -310,7 +311,7 @@ class InventoryreportController extends Controller {
 			'title' => $this->data['pageTitle'],
 			'topMessage' => $results['topMessage'],
 			'excelExcludeFormatting' => $results['excelExcludeFormatting'],
-            'AddNote'=>'Item quantity will show number of units if item ordered as broken case.'
+            'AddNote'=>'Item quantity will show number of units if item ordered as broken.'
 		);
 
 		if ($t == 'word') {
