@@ -221,6 +221,7 @@ class ProductController extends Controller
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['searchMode'] = $mode;
         $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
 
         if($this->model->isTypeRestrictedModule($this->module)){
             if($this->model->isTypeRestricted()){

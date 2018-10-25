@@ -58,6 +58,7 @@ class MylocationgameController extends Controller
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['searchMode'] = $mode;
         $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
 
         if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
             return view('feg_common.search', $this->data);
