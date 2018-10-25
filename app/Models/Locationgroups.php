@@ -51,7 +51,7 @@ class Locationgroups extends Sximo  {
 
             $locations = location::select(\DB::raw("GROUP_CONCAT(DISTINCT CONCAT(location.id,' ',location.location_name) ORDER BY location.id SEPARATOR '<br>') AS location_names"))->whereIn('id',$locationData)->where('active',1)->get()->pluck('location_names')->toArray();
             $productTypeData = Ordertyperestrictions::select(\DB::raw('group_concat(order_type ORDER BY order_type ASC) as product_types'))->whereIn('id', $productType)->get()->pluck('product_types')->toArray();
-            $productsData = product::whereIn('id', $productData)->orderBy('vendor_description', 'asc')->get()->lists('vendor_description')->toArray();
+            $productsData = product::whereIn('id', $productData)->orderBy('vendor_description', 'asc')->groupBy('vendor_description')->groupBy('sku')->groupBy('vendor_id')->groupBy('case_price')->get()->lists('vendor_description')->toArray();
             if(!empty($productTypeData[0])){
                 $productTypes = str_replace(",","<br>",$productTypeData[0]);
                 $row->excluded_product_type_ids = $productTypes.'.';

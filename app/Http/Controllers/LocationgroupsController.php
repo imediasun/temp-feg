@@ -158,7 +158,7 @@ class LocationgroupsController extends Controller {
 
 
         $this->data['productTypes'] = collect(['select_all' => 'Select all'] + Ordertyperestrictions::where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type', 'id')->toArray());
-		$this->data['products']     = collect(['select_all' => 'Select all'] + product::orderBy('vendor_description', 'asc')->lists('vendor_description', 'id')->toArray());
+		$this->data['products']     = collect(['select_all' => 'Select all'] + product::orderBy('vendor_description', 'asc')->groupBy('vendor_description')->groupBy('sku')->groupBy('vendor_id')->groupBy('case_price')->lists('vendor_description', 'id')->toArray());
 
 
 
@@ -263,9 +263,13 @@ class LocationgroupsController extends Controller {
                     }
                 }
 
-                if(count($product_ids) != 0) {
+                if(count($product_ids) > 0) {
                     foreach ($product_ids as $product_id){
-                        FEGDBRelationHelpers::insertCustomRelation($product_id, $id, product::class, Locationgroups::class, 1);
+                        $products = product::find($product_id);
+                        $productVariants =  $products->getProductVariations()->pluck('id')->toArray();
+                        foreach($productVariants as $productVariant) {
+                            FEGDBRelationHelpers::insertCustomRelation($productVariant, $id, product::class, Locationgroups::class, 1);
+                        }
                     }
                 }
             }
@@ -329,7 +333,7 @@ class LocationgroupsController extends Controller {
         $alreadyExcludedProductTypes = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, Ordertyperestrictions::class, 1, true)->lists('ordertyperestrictions_id')->toArray();
         $alreadyExcludedProducts = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, product::class, 1, true)->lists('product_id')->toArray();
 
-        $products = product::select('id','vendor_description')->orderBy('vendor_description')->get();
+        $products = product::select('id','vendor_description')->orderBy('vendor_description')->groupBy('variation_id')->groupBy('vendor_description')->get();
         $productType = Ordertyperestrictions::select('id','order_type as product_type')->where('can_request', 1)->orderBy('order_type','asc')->get();
        // $locations = location::select('id','location_name')->where('active',1)->orderBy('id','asc')->get();
         $locations = UserLocations::getUserAssignedLocations()->get();

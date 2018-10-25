@@ -209,7 +209,7 @@ class LocationController extends Controller
         }
 
         $this->data['productTypes'] = collect(['select_all' => 'Select all'] + Ordertyperestrictions::where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type', 'id')->toArray());
-        $this->data['products']     = collect(['select_all' => 'Select all'] + product::orderBy('vendor_description', 'asc')->lists('vendor_description', 'id')->toArray());
+        $this->data['products']     = collect(['select_all' => 'Select all'] + product::orderBy('vendor_description', 'asc')->groupBy('vendor_description')->groupBy('sku')->groupBy('vendor_id')->groupBy('case_price')->lists('vendor_description', 'id')->toArray());
         $this->data['row'] = $row;
         
         $this->data['setting'] = $this->info['setting'];
@@ -326,7 +326,11 @@ class LocationController extends Controller
                 }
 
                 foreach ($product_ids as $product_id){
-                    FEGDBRelationHelpers::insertCustomRelation($product_id, $id, product::class, location::class, 1);
+                    $products = product::find($product_id);
+                   $productVariants =  $products->getProductVariations()->pluck('id')->toArray();
+                    foreach($productVariants as $productVariant) {
+                        FEGDBRelationHelpers::insertCustomRelation($productVariant, $id, product::class, location::class, 1);
+                    }
                 }
             }
 
@@ -489,7 +493,7 @@ class LocationController extends Controller
     }
     public function getExcludedProductsAndTypesInline($locationId = 0){
 
-        $products = product::select('id','vendor_description')->orderBy('vendor_description','asc')->get()->toArray();
+        $products = product::select('id','vendor_description')->orderBy('vendor_description','asc')->groupBy('vendor_description')->groupBy('sku')->groupBy('vendor_id')->groupBy('case_price')->get()->toArray();
         $productTypes = Ordertyperestrictions::select('id','order_type as product_type')->where('can_request', 1)->orderBy('order_type','asc')->get()->toArray();
         $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,product::class,1)->pluck('product_id')->toArray();
         $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,Ordertyperestrictions::class,1)->pluck('ordertyperestrictions_id')->toArray();

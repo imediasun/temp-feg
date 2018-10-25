@@ -154,7 +154,7 @@ FROM location
                 $productTypeData = Ordertyperestrictions::select(\DB::raw('group_concat(order_type ORDER BY order_type ASC) as product_types'))->whereIn('id', $excludedData['excluded_product_type_ids'])->get()->pluck('product_types')->toArray();
             }
             if(!empty($excludedData['excluded_product_ids'])) {
-                $productsData = product::whereIn('id', $excludedData['excluded_product_ids'])->orderBy('vendor_description', 'asc')->get()->lists('vendor_description')->toArray();
+                $productsData = product::whereIn('id', $excludedData['excluded_product_ids'])->orderBy('vendor_description', 'asc')->groupBy('vendor_description')->groupBy('sku')->groupBy('vendor_id')->groupBy('case_price')->get()->lists('vendor_description')->toArray();
             }
 
             if(!empty($productTypeData[0])){
