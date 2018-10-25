@@ -123,7 +123,7 @@ class ProductusagereportController extends Controller
                         )));
 
         $rows = $this->updateDateInAllRows($rows);
-        $rows = \SiteHelpers::addPostPreFixToField($rows,'Cases_Ordered','*','is_broken_case',['yes','YES','Yes',1],true);
+        $rows = \SiteHelpers::addPostPreFixToField($rows,'Cases_Ordered','*','is_broken_case',['yes','YES','Yes',1],true,false,true);
 
         $content = array(
             'exportID' => $exportSessionID,
@@ -131,7 +131,7 @@ class ProductusagereportController extends Controller
             'rows' => $rows,
             'title' => $this->data['pageTitle'],
             'excelExcludeFormatting' => isset($results['excelExcludeFormatting'])?$results['excelExcludeFormatting']:[],
-            'AddNote'=>'Item quantity will show number of units if item ordered as broken case.'
+            'AddNote'=>'Item quantity will show number of units if item ordered as broken.'
         );
 
         if ($t == 'word') {

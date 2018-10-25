@@ -27,12 +27,18 @@
 				}
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
+				if ($f['field'] == 'Cases_Ordered') {
+					if (in_array($row->is_broken_case, ['YES', 'yes', 'Yes', 1])) {
+						$f['attribute']['formater']['active'] = 0;
+					}
+				}
                 $a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$f['nodata'])));
                 $b = str_replace( ',', '', $a );
                 $c = str_replace('$','',$b);
                 if( is_numeric( $c) ) {
                     $a = $c;
                 }
+
 				$content .= '<td> '. ($a) . '</td>';
 			endif;
 		}
