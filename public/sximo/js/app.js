@@ -683,8 +683,7 @@ function renderDropdown(elements, options) {
 
                     options.closeOnSelect = false;
                     options.allowHtml = true;
-                    options.allowClear = true;
-                    /*options.tags= true;*/
+                    options.tags= true;
             }
 
             if (!$elm.data('select2')) {
@@ -1503,6 +1502,7 @@ function setExcludeLocationDropdown(responseHTML,id,selectedValues){
     totalAttempts = totalAttempts +1;
     if(id){
         $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'}).addClass("select2");
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').select2({closeOnSelect: false});
         $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').html(responseHTML);
         $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').change();
         if(selectedValues.length > 0) {
@@ -1529,18 +1529,26 @@ function updateDropdowns(dropdownName){
 
         var locationDropdownElm = $(this);
         var options  = locationDropdownElm.children('option');
+
         if(this.value == 'select_all'){
+
             var dropdownValues = [];
+
             options.each(function () {
+                console.log(this.value);
                 if (this.value != 'select_all'){
                     dropdownValues.push(Number(this.value));
                 }else {
                     this.value = 'clear_all';
                     this.innerText = 'Clear All';
+                    $('.select2-container--default .select2-results>.select2-results__options').children().first().html('Clear All');
                 }
             });
-            locationDropdownElm.select2('val',dropdownValues);
-            $('.select2-drop').css('display','none');
+
+            locationDropdownElm.val(dropdownValues);
+            locationDropdownElm.change();
+
+
         }
         if(this.value == 'clear_all'){
             var dropdownValues = [];
@@ -1548,15 +1556,16 @@ function updateDropdowns(dropdownName){
                 if (this.value == 'clear_all'){
                     this.value = 'select_all';
                     this.innerText = 'Select All';
+                    $('.select2-container--default .select2-results>.select2-results__options').children().first().html('Select All');
                 }
             });
-            locationDropdownElm.select2('val',dropdownValues);
-            $('.select2-drop').css('display','none');
+            locationDropdownElm.val(dropdownValues);
+            locationDropdownElm.change();
+
         }
     });
 }
 function updateDropdownsGroups(dropdownName){
-
     $(document).on("change",'select[name="'+dropdownName+'"]',function(){
         var prevValue = '';
         var locationDropdownElm = $(this);
@@ -1575,13 +1584,18 @@ function updateDropdownsGroups(dropdownName){
                     this.innerText = 'Clear All';
                 }
             });
-            locationDropdownElm.select2('val',dropdownValues);
+            $('.select2-container--default .select2-results>.select2-results__options').children().first().html('Clear All');
+            locationDropdownElm.val(dropdownValues);
+            locationDropdownElm.trigger('change');
         }
         if(clear == 'clear_all'){
             var dropdownValues = [];
                     locationDropdownElm.children('option').val('select_all');
                     locationDropdownElm.children('option').text('Select All');
-            locationDropdownElm.select2('val',dropdownValues);
+
+            locationDropdownElm.val(dropdownValues);
+            locationDropdownElm.trigger('change');
+            $('.select2-container--default .select2-results>.select2-results__options').children().first().html('Select All');
         }
     });
 }
