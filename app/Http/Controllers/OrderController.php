@@ -14,6 +14,7 @@ use App\Models\location;
 use App\Models\managefegrequeststore;
 use App\Models\DigitalPackingList;
 use App\Models\Order;
+use App\Models\OrderContent;
 use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
@@ -728,8 +729,8 @@ class OrderController extends Controller
             $denied_SIDs = $request->get('denied_SIDs');
             $po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
-
-
+            $isOrderContentPreBroken = OrderContent::where('order_id',$order_id)->whereIn('product_id', is_array($productIdArray)? $productIdArray:[$productIdArray])->select('product_id','is_broken_case')->get()->toArray();
+//dd($isOrderContentPreBroken);
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
@@ -790,7 +791,7 @@ class OrderController extends Controller
                         $reservedLogData = [
                             "product_id" => $product->id,
                             "order_id" => $last_insert_id,
-                            "adjustment_amount" => $removedProduct->qty,
+                            "adjustment_amount" => ($removedProduct->is_broken_case == 1) ? $removedProduct->qty/$removedProduct->qty_per_item:$removedProduct->qty,
                             "adjustment_type" => 'positive',
                             "variation_id" => $product->variation_id,
                             "adjusted_by" => \AUTH::user()->id,
@@ -891,6 +892,7 @@ class OrderController extends Controller
                     $prodVendorId = $vendor_id;
                 }
 
+
                 $contentsData = array(
                     'order_id' => $order_id,
                     'request_id' => $request_id,
@@ -929,6 +931,17 @@ class OrderController extends Controller
                 }
 
                 $contentsData['prev_qty'] = $request->input('prev_qty')[$i];
+                $contentsData['pre_is_broken_case'] = 0;
+
+                if(count($isOrderContentPreBroken) > 0){
+                    foreach ($isOrderContentPreBroken as $isBrokenItem){
+
+                        if($isBrokenItem['product_id'] == $product_id){
+                            $contentsData['pre_is_broken_case'] = $isBrokenItem['is_broken_case'];
+                        }
+                    }
+                }
+
                 if ($is_freehand == 0) {
                     event(new PostSaveOrderEvent($contentsData));
                 }
@@ -1060,6 +1073,7 @@ class OrderController extends Controller
                 $product->item_name = $item_names[$i];
                 $product->qty = $request->input('qty')[$i];
                 $product->prev_qty = $request->input('prev_qty')[$i];
+                $product->product_is_broken_case = $request->input('is_broken_case')[$i];
                 $product->order_product_id = ($request->input('product_id')[$i] == $product->id) ? $request->input('product_id')[$i] : 0;
                 $productInformation[] = $product;
             }
