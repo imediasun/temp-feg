@@ -791,7 +791,7 @@ class OrderController extends Controller
                         $reservedLogData = [
                             "product_id" => $product->id,
                             "order_id" => $last_insert_id,
-                            "adjustment_amount" => ($removedProduct->is_broken_case == 1) ? $removedProduct->qty/$removedProduct->qty_per_item:$removedProduct->qty,
+                            "adjustment_amount" => ($removedProduct->is_broken_case == 1) ? $removedProduct->qty/$removedProduct->qty_per_case:$removedProduct->qty,
                             "adjustment_type" => 'positive',
                             "variation_id" => $product->variation_id,
                             "adjusted_by" => \AUTH::user()->id,
