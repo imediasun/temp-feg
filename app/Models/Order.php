@@ -121,6 +121,12 @@ class order extends Sximo
     {
         $orderContents = $this->contents;
         Log::info("adjustReservedProductQuantities => Total Items = ".$orderContents->count());
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $order_types = [];
+        if(!empty($pass['calculate price according to case price'])) {
+            $order_types = explode(',',$pass['calculate price according to case price']->data_options);
+        }
         foreach ($orderContents as $orderContent) {
 
             $orderedProduct = $orderContent->product;
@@ -132,7 +138,7 @@ class order extends Sximo
                     if ($orderedProduct->allow_negative_reserve_qty == 0 && $orderedProduct->reserved_qty < $orderContent->qty) {
                         throw new \Exception("Product does not have sufficient reserved quantities");
                     }
-                    $reserved_qty =  ($orderContent->is_broken_case == 1) ? ($orderedProduct->reserved_qty - ceil($orderContent->qty/$orderContent->qty_per_case)):$orderedProduct->reserved_qty - $orderContent->qty;
+                    $reserved_qty =  ($orderContent->is_broken_case == 1 && !in_array($this->order_type_id,$order_types)) ? ($orderedProduct->reserved_qty - ceil($orderContent->qty/$orderContent->qty_per_case)):$orderedProduct->reserved_qty - $orderContent->qty;
 
                     $reservedLogData = [
                         "product_id" => $orderContent->product_id,
@@ -157,7 +163,7 @@ class order extends Sximo
                 {
                     //This part is all working
                     Log::info("Putting back qty to product because order is deleting");
-                    $reserved_qty =  ($orderContent->is_broken_case == 1) ? ($orderedProduct->reserved_qty + ceil($orderContent->qty/$orderContent->qty_per_case)):$orderedProduct->reserved_qty + $orderContent->qty;
+                    $reserved_qty =  ($orderContent->is_broken_case == 1 && !in_array($this->order_type_id,$order_types)) ? ($orderedProduct->reserved_qty + ceil($orderContent->qty/$orderContent->qty_per_case)):$orderedProduct->reserved_qty + $orderContent->qty;
 
                     $reservedLogData = [
                         "product_id" => $orderContent->product_id,
