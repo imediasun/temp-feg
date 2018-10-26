@@ -91,7 +91,7 @@
 						@if(SiteHelpers::filterColumn($limited ))
 							@if($t['field'] == 'location_ids' || $t['field'] == 'excluded_product_ids' || $t['field'] == 'excluded_product_type_ids')
 								<td data-form="{{ $t['field'] }}" data-form-type="select">
-									<select name="{{$t['field']}}[]" class="sel-inline {{ $t['field'] }}" multiple="multiple">
+									<select customOption="1" name="{{$t['field']}}[]" class="custom-select2 sel-inline {{ $t['field'] }}" multiple="multiple">
 
 									</select>
 								</td>
@@ -192,6 +192,9 @@
 
 	</div>
 </div>
+{{--@section('select2Custom')
+
+@endsection--}}
 @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
 @foreach ($rowData as $row)
 {!! AjaxHelpers::buttonActionInline($row->id,'key') !!}

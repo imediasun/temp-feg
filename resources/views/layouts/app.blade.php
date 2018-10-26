@@ -102,8 +102,12 @@
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js?version='.config('app.version')) }}"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
 
+	@yield('select2Custom')
+
 	<!-- End Search and storage  -->
-    @yield('beforeheadend', '')	
+    @yield('beforeheadend', '')
+	<link href="{{ asset('sximo/css/select2-custom.css') }}" rel="stylesheet"/>
+	<script src="{{ asset('sximo/js/select2-custom.js') }}" ></script>
   	</head>
   	<body class="sxim-init" >
     @yield('afterbodystart', '')

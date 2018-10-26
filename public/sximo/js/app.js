@@ -675,13 +675,39 @@ function renderDropdown(elements, options) {
     if (elements && elements.length) {
         elements.each(function(i, elm){
             var $elm = $(elm);
+            var attr = $elm.attr('customOption');
+
+            if (typeof attr !== typeof undefined && attr !== false) {
+                loadjscssfile('//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js', 'js')
+                loadjscssfile('//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css', 'css')
+
+                    options.closeOnSelect = false;
+                    options.allowHtml = true;
+                    options.allowClear = true;
+                    /*options.tags= true;*/
+            }
+
             if (!$elm.data('select2')) {
                 $elm.select2(options);
             }
         });
     }
 }
-
+function loadjscssfile(filename, filetype){
+    if (filetype=="js"){ //if filename is a external JavaScript file
+        var fileref=document.createElement('script')
+        fileref.setAttribute("type","text/javascript")
+        fileref.setAttribute("src", filename)
+    }
+    else if (filetype=="css"){ //if filename is an external CSS file
+        var fileref=document.createElement("link")
+        fileref.setAttribute("rel", "stylesheet")
+        fileref.setAttribute("type", "text/css")
+        fileref.setAttribute("href", filename)
+    }
+    if (typeof fileref!="undefined")
+        document.getElementsByTagName("head")[0].appendChild(fileref)
+}
 function detectPUAA($) {
     var linksToPage = $(".linkPUAA.linkToCMSPage"),
         linksToModules = $(".linkPUAA"),
@@ -1514,6 +1540,7 @@ function updateDropdowns(dropdownName){
                 }
             });
             locationDropdownElm.select2('val',dropdownValues);
+            $('.select2-drop').css('display','none');
         }
         if(this.value == 'clear_all'){
             var dropdownValues = [];
@@ -1524,6 +1551,7 @@ function updateDropdowns(dropdownName){
                 }
             });
             locationDropdownElm.select2('val',dropdownValues);
+            $('.select2-drop').css('display','none');
         }
     });
 }
