@@ -10,6 +10,7 @@ use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\Report;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\Core\Users;
 use App\Models\location;
 use App\Models\managefegrequeststore;
 use App\Models\DigitalPackingList;
@@ -18,10 +19,12 @@ use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\SximoDB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect, Cache;
@@ -3100,7 +3103,11 @@ ORDER BY aa_id");
 
         $message = $this->getShow($orderId, 'emails.inquireOrder');
         $subject = 'Inquire orders';
-
+        if(!empty($systemEmailRecipients['to'])){
+            $systemEmailRecipients['to'] .= ','.Users::find(Session::get('uid'))->email;
+        }else{
+            $systemEmailRecipients['to'] .= Users::find(Session::get('uid'))->email;
+        }
 
         $options['message'] = $message;
         $options['subject'] = $subject;
