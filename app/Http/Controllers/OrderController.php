@@ -944,6 +944,7 @@ class OrderController extends Controller
                 $orderTypeIdsArray = is_array($orderTypeIdsArray) ? $orderTypeIdsArray:[$orderTypeIdsArray];
                 if(!in_array($order_type,$orderTypeIdsArray)){
                     $contentsData['pre_is_broken_case'] = 0;
+                    $contentsData['is_broken_case'] = 0;
                 }
                 
                 if ($is_freehand == 0) {
