@@ -39,7 +39,7 @@ class orderEventsHandler
                 ->first();
 
 
-                $adjustmentAmount = $this->validateMerchandiseQty($product , $ReservedProductQtyLogObj);
+                $adjustmentAmount = $this->validateMerchandiseQty($product , $ReservedProductQtyLogObj,$event->isMerch);
 
 
             if ($product->allow_negative_reserve_qty == 0 && $adjustmentAmount > $product->reserved_qty) {
@@ -52,13 +52,19 @@ class orderEventsHandler
         return array_merge($ProductResponse, ['error' => $error, "message" => $message, "adjustQty" => $adjustQty]);
     }
 
-    public function validateMerchandiseQty($product , $ReservedProductQtyLogObj){
+    public function validateMerchandiseQty($product , $ReservedProductQtyLogObj, $isMerch){
         $adjustmentAmount = 0;
-        if($product->product_is_broken_case == 1){
+        if($product->product_is_broken_case == 1 && $isMerch == 0){
             if ($ReservedProductQtyLogObj and $product->prev_qty) {
                 $adjustmentAmount = ceil($product->qty/ $product->num_items) - $product->prev_qty;
             } else {
                 $adjustmentAmount = ceil($product->qty/$product->num_items);
+            }
+        }else{
+            if ($ReservedProductQtyLogObj and $product->prev_qty) {
+                $adjustmentAmount = $product->qty - $product->prev_qty;
+            } else {
+                $adjustmentAmount = $product->qty;
             }
         }
 

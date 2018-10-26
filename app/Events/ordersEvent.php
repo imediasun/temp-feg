@@ -18,12 +18,14 @@ class ordersEvent extends Event
     public $products;
 
     public $order_id;
+    public $isMerch;
 
-    public function __construct($products = array(), $order_id)
+    public function __construct($products = array(), $order_id,$isMerch)
     {
         $this->products = $products;
 
         $this->order_id = $order_id;
+        $this->isMerch = $isMerch;
     }
 
     /**
