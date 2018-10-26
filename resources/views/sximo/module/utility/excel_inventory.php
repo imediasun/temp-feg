@@ -267,6 +267,7 @@ $lastDataEntry = $endOn = $lastRow+$totalCounters+2;
 //$objSheet->getStyle("A3:A".($endOn-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 if(!empty($AddNote)) {
 
+
 	$objSheet->insertNewRowBefore($endOn, 1);
 	$totalsRowStart = $endOn;
 	$objSheet->setCellValue(
@@ -274,6 +275,13 @@ if(!empty($AddNote)) {
 		"Note: ".$AddNote
 	);
 	$objSheet->mergeCells('A'.$totalsRowStart.':P'.$totalsRowStart);
+	$objSheet->getStyle('A'.$totalsRowStart.':P'.$totalsRowStart)->applyFromArray(
+		array(
+			'font'  => array(
+				'color' => array('rgb' => '061ab7'),
+			)
+		)
+	);
 	//$objSheet->getStyle("A".$totalsRowStart)->getAlignment()->setWrapText(true);
 }
 $endOn++;
@@ -282,6 +290,13 @@ $totalsRowStart = $endOn;
 $objSheet->setCellValue(
 	"A".$totalsRowStart,
 	"TOTALS"
+);
+$objSheet->getStyle('A'.$totalsRowStart.':P'.$totalsRowStart)->applyFromArray(
+	array(
+		'font'  => array(
+			'color' => array('rgb' => '000000'),
+		)
+	)
 );
 $loopCounter = 0;
 foreach($categories as $key=>$category)

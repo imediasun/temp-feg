@@ -311,7 +311,7 @@ class InventoryreportController extends Controller {
 			'title' => $this->data['pageTitle'],
 			'topMessage' => $results['topMessage'],
 			'excelExcludeFormatting' => $results['excelExcludeFormatting'],
-            'AddNote'=>'Item quantity will show number of units if item ordered as broken.'
+            'AddNote'=>'* in Quantity Ordered denotes the # of units receive, not cases.'
 		);
 
 		if ($t == 'word') {

@@ -5,6 +5,7 @@
 	$content = $title;
 	$content .= '<table border="1">';
 	$content .= '<tr>';
+$start = 1;
 	foreach($fields as $f )
 	{
 		if($f['download'] =='1') $content .= '<th style="background:#f9f9f9;">'. $f['label'] . '</th>';
@@ -13,9 +14,11 @@
 
 	foreach ($rows as $row)
 	{
+		$start++;
 		$content .= '<tr>';
 		foreach($fields as $f )
 		{
+
 			if($f['download'] =='1'):
 				if(isset($f['attribute']['formater']))
 				{
@@ -45,8 +48,12 @@
 		$content .= '</tr>';
 	}
 if (!empty($AddNote)){
+	$start++;
+	$start++;
+	$start++;
+	$start++;
 	$content .='<tr><td></td></tr><tr><td></td></tr>';
-	$content .='<tr style="color:red; font-weight: bold;"><td colspan="30" ><strong>Note: '.$AddNote.'</strong></td></tr>';
+	$content .='<tr><td colspan="30"><strong>Note: '.$AddNote.'</strong></td></tr>';
 }
 	$content .= '</table>';
 
@@ -65,6 +72,13 @@ if (!empty($AddNote)){
 	//Finding Serial column
 	$serialColumn = '';
 	$row = $objPHPExcel->getActiveSheet()->getRowIterator(2)->current();
+$objPHPExcel->getActiveSheet()->getStyle('A'.$start.':P'.$start)->applyFromArray(
+	array(
+		'font'  => array(
+			'color' => array('rgb' => '061ab7'),
+		)
+	)
+);
 	$cellIterator = $row->getCellIterator();
 	$cellIterator->setIterateOnlyExistingCells(false);
 
