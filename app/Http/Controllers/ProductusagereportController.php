@@ -131,7 +131,7 @@ class ProductusagereportController extends Controller
             'rows' => $rows,
             'title' => $this->data['pageTitle'],
             'excelExcludeFormatting' => isset($results['excelExcludeFormatting'])?$results['excelExcludeFormatting']:[],
-            'AddNote'=>'Item quantity will show number of units if item ordered as broken.'
+            'AddNote'=>'* in Quantity Ordered denotes the # of units receive, not cases.'
         );
 
         if ($t == 'word') {
