@@ -538,6 +538,13 @@
 
         });
 
+        setTimeout(function(){
+            // $(".select2").select2('destroy');
+            $(".select2").select2({
+                closeOnSelect: false,
+                width: '100%'
+            });
+        }, 2000);
     });
 
     function showRequest() {

@@ -509,7 +509,11 @@
                 var selectedValues = response.selectedValues;
 
                 $('select[name="excluded_locations_and_groups[]"]').attr('multiple','multiple');
-               $('select[name="excluded_locations_and_groups[]"]').html(optionHTML);
+                $('select[name="excluded_locations_and_groups[]"]').select2({
+                    width: '100%',
+                    closeOnSelect: false
+                });
+                $('select[name="excluded_locations_and_groups[]"]').html(optionHTML);
                 $('select[name="excluded_locations_and_groups[]"]').change();
                 $('select[name="excluded_locations_and_groups[]"]').val(selectedValues).change();
                 updateDropdownsGroups("excluded_locations_and_groups[]");

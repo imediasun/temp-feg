@@ -1,6 +1,4 @@
-
-<script type="text/javascript" src="{{ asset('sximo/js/plugins/select2/select2.min.js') }}"></script>
-<link href="{{ asset('sximo/js/plugins/select2/select2.css')}}" rel="stylesheet">
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet"/>
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">
@@ -88,10 +86,14 @@
 
 
 	</div>
-
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
 	<script type="text/javascript">
         $(document).ready(function() {
 
+            $('.select2').select2({
+                closeOnSelect: false,
+                width: '100%'
+            });
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
@@ -127,11 +129,13 @@
 
             });
 
-            updateDropdowns('location_ids[]');
-            updateDropdowns('excluded_product_ids[]');
-            updateDropdowns('excluded_product_type_ids[]');
+
 
         });
+
+        updateDropdowns('location_ids[]');
+        updateDropdowns('excluded_product_ids[]');
+        updateDropdowns('excluded_product_type_ids[]');
 
         function showRequest()
         {
