@@ -1,4 +1,5 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+
 <div class="sbox">
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> </h5>
@@ -26,12 +27,13 @@
         @endif
         @endif
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
-
+			<div style="color:#061ab7; padding:5px 0px;">Note: * in Quantity Ordered denotes the # of units receive, not cases.</div>
 	 <?php echo Form::open(array('url'=>'productusagereport/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
     @if(!empty($topMessage))
     <h5 class="topMessage">{{ $topMessage }}</h5>
     @endif
     <div class="table-responsive">
+
 	@if(count($rowData)>=1)
     <table class="table table-striped datagrid " id="{{ $pageModule }}Table" data-module="{{ $pageModule }}" data-url="{{ $pageUrl }}">
         <thead>
