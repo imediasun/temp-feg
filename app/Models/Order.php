@@ -132,11 +132,12 @@ class order extends Sximo
                     if ($orderedProduct->allow_negative_reserve_qty == 0 && $orderedProduct->reserved_qty < $orderContent->qty) {
                         throw new \Exception("Product does not have sufficient reserved quantities");
                     }
-                    $reserved_qty = $orderedProduct->reserved_qty - $orderContent->qty;
+                    $reserved_qty =  ($orderContent->is_broken_case == 1) ? ($orderedProduct->reserved_qty - ceil($orderContent->qty/$orderContent->qty_per_case)):$orderedProduct->reserved_qty - $orderContent->qty;
+
                     $reservedLogData = [
                         "product_id" => $orderContent->product_id,
                         "order_id" => $orderContent->order_id,
-                        "adjustment_amount" => $orderContent->qty,
+                        "adjustment_amount" => ($orderContent->is_broken_case == 1) ? ceil($orderContent->qty/$orderContent->qty_per_case):$orderContent->qty,
                         "variation_id"=>$orderedProduct->variation_id,
                         "adjustment_type" => "negative",
                         "adjusted_by" => \AUTH::user()->id,
@@ -156,11 +157,12 @@ class order extends Sximo
                 {
                     //This part is all working
                     Log::info("Putting back qty to product because order is deleting");
-                    $reserved_qty = $orderedProduct->reserved_qty + $orderContent->qty;
+                    $reserved_qty =  ($orderContent->is_broken_case == 1) ? ($orderedProduct->reserved_qty + ceil($orderContent->qty/$orderContent->qty_per_case)):$orderedProduct->reserved_qty + $orderContent->qty;
+
                     $reservedLogData = [
                         "product_id" => $orderContent->product_id,
                         "order_id" => $orderContent->order_id,
-                        "adjustment_amount" => $orderContent->qty,
+                        "adjustment_amount" => ($orderContent->is_broken_case == 1) ? ceil($orderContent->qty/$orderContent->qty_per_case):$orderContent->qty,
                         "variation_id"=>$orderedProduct->variation_id,
                         "adjustment_type" => "positive",
                         "adjusted_by" => \AUTH::user()->id,
