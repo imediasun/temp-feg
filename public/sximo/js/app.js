@@ -1502,7 +1502,10 @@ function setExcludeLocationDropdown(responseHTML,id,selectedValues){
     totalAttempts = totalAttempts +1;
     if(id){
         $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'}).addClass("select2");
-        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').select2({closeOnSelect: false});
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').select2({
+            closeOnSelect: false,
+            width: '100%'
+        });
         $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').html(responseHTML);
         $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').change();
         if(selectedValues.length > 0) {
