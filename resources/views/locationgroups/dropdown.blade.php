@@ -1,4 +1,4 @@
-<option value="select_all">Select all</option>
+<option  data-badge="" value="select_all">Select all</option>
 @if($type == 'locations')
     @foreach($locations as $location)
         <option data-badge="" value="{{ $location['id'] }}">{{ $location->id." ".$location->location_name }}</option>
