@@ -1,3 +1,4 @@
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet"/>
 @if($setting['form-method'] =='native')
     <style>
         .select2-choices{
@@ -144,7 +145,7 @@
                             {!! SiteHelpers::activeLang('Excluded Product Types', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::select('product_type_ids[]', $productTypes, isset($alreadyExcludedProductTypes) ? $alreadyExcludedProductTypes : null, array('class'=>'select3', 'id'=>'already_excluded_product_type_ids' ,'multiple'=>"multiple" )) !!}
+                            {!! Form::select('product_type_ids[]', $productTypes, isset($alreadyExcludedProductTypes) ? $alreadyExcludedProductTypes : null, array('class'=>'select2', 'id'=>'already_excluded_product_type_ids' ,'multiple'=>"multiple" )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -156,7 +157,7 @@
                             {!! SiteHelpers::activeLang('Excluded Products', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::select('product_ids[]', $products, isset($alreadyExcludedProducts) ? $alreadyExcludedProducts : null, array('class'=>'select3', 'id'=>'already_excluded_product_ids' ,'multiple'=>"multiple" )) !!}
+                            {!! Form::select('product_ids[]', $products, isset($alreadyExcludedProducts) ? $alreadyExcludedProducts : null, array('class'=>'select2', 'id'=>'already_excluded_product_ids' ,'multiple'=>"multiple" )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -444,7 +445,7 @@
     </div>
 @endif
 
-
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -452,9 +453,10 @@
         updateDropdowns('product_ids[]');
         updateDropdowns('product_type_ids[]');
 
-        renderDropdown($(".select2, .select3, .select4, .select5"), {
-            width:"100%"
-        });
+        // renderDropdown($(".select2, .select3, .select4, .select5"), {
+        //     width:"100%",
+        //     closeOnSelect: false
+        // });
         $(".checkInputValidation").keyup(function(e) {
          var value = $(this).val();
             var regx = new RegExp(/[!$%^&*()_+|@#~=`{}\[\]:";'<>?,.\/]+/);

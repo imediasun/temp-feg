@@ -32,7 +32,7 @@
 							{!! SiteHelpers::activeLang('Location', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
 						</label>
 						<div class="col-md-6">
-							{!! Form::select('location_ids[]', $locations, isset($savedLocations) ? $savedLocations : null, array('class'=>'select3', 'id'=>'location_ids' ,'multiple'=>"multiple" )) !!}
+							{!! Form::select('location_ids[]', $locations, isset($savedLocations) ? $savedLocations : null, array('class'=>'select2', 'id'=>'location_ids' ,'multiple'=>"multiple" )) !!}
 						</div>
 						<div class="col-md-2">
 
@@ -44,7 +44,7 @@
                             {!! SiteHelpers::activeLang('Excluded Product Types', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::select('excluded_product_type_ids[]', $productTypes, isset($alreadyExcludedProductTypes) ? $alreadyExcludedProductTypes : null, array('class'=>'select3', 'id'=>'already_excluded_product_type_ids' ,'multiple'=>"multiple" )) !!}
+                            {!! Form::select('excluded_product_type_ids[]', $productTypes, isset($alreadyExcludedProductTypes) ? $alreadyExcludedProductTypes : null, array('class'=>'select2', 'id'=>'already_excluded_product_type_ids' ,'multiple'=>"multiple" )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -56,7 +56,7 @@
                             {!! SiteHelpers::activeLang('Excluded Products', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::select('excluded_product_ids[]', $products, isset($alreadyExcludedProducts) ? $alreadyExcludedProducts : null, array('class'=>'select3', 'id'=>'already_excluded_product_ids' ,'multiple'=>"multiple" )) !!}
+                            {!! Form::select('excluded_product_ids[]', $products, isset($alreadyExcludedProducts) ? $alreadyExcludedProducts : null, array('class'=>'select2', 'id'=>'already_excluded_product_ids' ,'multiple'=>"multiple" )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -95,7 +95,7 @@
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
-            renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
+            // renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
             $('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('input[type="checkbox"],input[type="radio"]').iCheck({

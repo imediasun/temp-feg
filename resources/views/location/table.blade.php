@@ -228,6 +228,10 @@ if (!$colconfigs) {
      * @param selected
      */
     function perseReponse(rowId,field,responseData,selected){
+        $('tr#'+rowId+' td[data-field="'+field+'"] select').select2({
+            closeOnSelect: false,
+            width: '100%'
+        });
         $('tr#'+rowId+' td[data-field="'+field+'"] select').html(responseData);
         $('tr#'+rowId+' td[data-field="'+field+'"] select').change();
         if($.isArray(selected) && selected.length >0 ) {
@@ -237,8 +241,6 @@ if (!$colconfigs) {
 
     }
     $(document).ready(function () {
-        updateDropdowns('product_ids[]');
-        updateDropdowns('product_type_ids[]');
         $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
             var locationId=$(this).data('id');
             var message = '';
@@ -377,7 +379,8 @@ if (!$colconfigs) {
             });
         }
     }
-
+    updateDropdowns('product_ids[]');
+    updateDropdowns('product_type_ids[]');
 </script>
 <style>
     .table th.right {
