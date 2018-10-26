@@ -143,7 +143,7 @@ class order extends Sximo
                     $reservedLogData = [
                         "product_id" => $orderContent->product_id,
                         "order_id" => $orderContent->order_id,
-                        "adjustment_amount" => ($orderContent->is_broken_case == 1) ? ceil($orderContent->qty/$orderContent->qty_per_case):$orderContent->qty,
+                        "adjustment_amount" => ($orderContent->is_broken_case == 1 && !in_array($this->order_type_id,$order_types)) ? ceil($orderContent->qty/$orderContent->qty_per_case):$orderContent->qty,
                         "variation_id"=>$orderedProduct->variation_id,
                         "adjustment_type" => "negative",
                         "adjusted_by" => \AUTH::user()->id,
@@ -168,7 +168,7 @@ class order extends Sximo
                     $reservedLogData = [
                         "product_id" => $orderContent->product_id,
                         "order_id" => $orderContent->order_id,
-                        "adjustment_amount" => ($orderContent->is_broken_case == 1) ? ceil($orderContent->qty/$orderContent->qty_per_case):$orderContent->qty,
+                        "adjustment_amount" => ($orderContent->is_broken_case == 1 && !in_array($this->order_type_id,$order_types)) ? ceil($orderContent->qty/$orderContent->qty_per_case):$orderContent->qty,
                         "variation_id"=>$orderedProduct->variation_id,
                         "adjustment_type" => "positive",
                         "adjusted_by" => \AUTH::user()->id,
