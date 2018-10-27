@@ -145,7 +145,7 @@
                             {!! SiteHelpers::activeLang('Excluded Product Types', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::select('product_type_ids[]', $productTypes, isset($alreadyExcludedProductTypes) ? $alreadyExcludedProductTypes : null, array('class'=>'select2', 'id'=>'already_excluded_product_type_ids' ,'multiple'=>"multiple" )) !!}
+                            {!! Form::select('product_type_ids[]', $productTypes, isset($alreadyExcludedProductTypes) ? $alreadyExcludedProductTypes : null, array('class'=>'select3', 'id'=>'already_excluded_product_type_ids' ,'multiple'=>"multiple" )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -157,7 +157,7 @@
                             {!! SiteHelpers::activeLang('Excluded Products', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::select('product_ids[]', $products, isset($alreadyExcludedProducts) ? $alreadyExcludedProducts : null, array('class'=>'select2', 'id'=>'already_excluded_product_ids' ,'multiple'=>"multiple" )) !!}
+                            {!! Form::select('product_ids[]', $products, isset($alreadyExcludedProducts) ? $alreadyExcludedProducts : null, array('class'=>'select3', 'id'=>'already_excluded_product_ids' ,'multiple'=>"multiple" )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -539,12 +539,11 @@
         });
 
         setTimeout(function(){
-            // $(".select2").select2('destroy');
-            $(".select2").select2({
+            $(".select3").select2({
                 closeOnSelect: false,
                 width: '100%'
             });
-        }, 2000);
+        }, 500);
     });
 
     function showRequest() {
