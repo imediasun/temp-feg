@@ -21,7 +21,7 @@
 		<link href="{{ asset('sximo/js/plugins/datepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet"/>
 		<link href="{{ asset('sximo/js/plugins/bootstrap.datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet"/>
  		@if($_SERVER['REQUEST_URI']  !== '/ordersetting')
-			@if( in_array($pageModule, ['product','locationgroups', 'location']))
+			@if(!str_contains($_SERVER['REQUEST_URI'], 'module') &&  in_array($pageModule, ['product','locationgroups', 'location']))
 				<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet"/>
 			@else
 				<link href="/sximo/js/plugins/select2/select2.css" rel="stylesheet" />
@@ -50,8 +50,9 @@
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery-ui.min.js') }}"></script>
 
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/iCheck/icheck.min.js') }}"></script>
+
 		@if($_SERVER['REQUEST_URI']  !== '/ordersetting')
-			@if( in_array($pageModule, ['product','locationgroups', 'location']))
+			@if(!str_contains($_SERVER['REQUEST_URI'], 'module') && in_array($pageModule, ['product','locationgroups', 'location']))
 				<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
 			@else
 				<script type="text/javascript" src="{{ asset('sximo/js/plugins/select2/select2.js') }}"></script>
@@ -115,7 +116,7 @@
 	<!-- End Search and storage  -->
     @yield('beforeheadend', '')
 
-    @if($pageModule !== 'product')
+    @if(!str_contains($_SERVER['REQUEST_URI'], 'module') && $pageModule !== 'product')
 		<link href="{{ asset('sximo/css/select2-custom.css') }}" rel="stylesheet"/>
     @else
         <link href="{{ asset('sximo/css/select2-custom-for-product.css') }}" rel="stylesheet"/>

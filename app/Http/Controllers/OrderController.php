@@ -2128,30 +2128,40 @@ class OrderController extends Controller
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
         }
         $locationProductRestrictedIds = '';
-        $excludedProductTypeAndProductIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, false, true);
-        $locationProductRestricted = FEGDBRelationHelpers::getCustomRelationRecords($locationId,product::class,location::class,1)->pluck('product_id')->toArray();
-        $locationGroups = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,Locationgroups::class,0)->pluck('locationgroups_id')->toArray();
+//        $excludedProductTypeAndProductIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, false, true);
+//        $locationProductRestricted = FEGDBRelationHelpers::getCustomRelationRecords($locationId,product::class,location::class,1)->pluck('product_id')->toArray();
+//        $locationGroups = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,Locationgroups::class,0)->pluck('locationgroups_id')->toArray();
+//
+//        if (!empty($locationGroups)) {
+//            $locationGroupRestrictedTypes = FEGDBRelationHelpers::getCustomRelationRecords($locationGroups, Ordertyperestrictions::class, Locationgroups::class, 1)->pluck('ordertyperestrictions_id')->toArray();
+//            $locationGroupExcludedProducts = FEGDBRelationHelpers::getCustomRelationRecords($locationGroups, Locationgroups::class, product::class, 1)->pluck('product_id')->toArray();
+//            $whereOrderTypeCondition .= !empty($locationGroupRestrictedTypes) ? " AND products.prod_type_id Not IN(" . implode(',', $locationGroupRestrictedTypes) . ") " : '';
+//            if (count($locationProductRestricted) > 0 && count($locationGroupExcludedProducts) > 0) {
+//                $locationProductRestrictedIds = implode(',', array_merge($locationProductRestricted, $locationGroupExcludedProducts));
+//            }
+//        }
+//
+//        $excludedProductTypeAndProductIdsString = implode(',', $excludedProductTypeAndProductIds['excluded_product_ids']);
+//
+//        $whereNotInProductIdsCondition = '';
+//        if($excludedProductTypeAndProductIdsString != '' ){
+//            $whereNotInProductIdsCondition = " AND products.id NOT IN ($excludedProductTypeAndProductIdsString) ";
+//        }
+//        $whereNotInProductIdsCondition2 = '';
+//        if(!empty($locationProductRestrictedIds)){
+//            $whereNotInProductIdsCondition2 = " AND products.id NOT IN ($locationProductRestrictedIds) ";
+//        }
 
-        if (!empty($locationGroups)) {
-            $locationGroupRestrictedTypes = FEGDBRelationHelpers::getCustomRelationRecords($locationGroups, Ordertyperestrictions::class, Locationgroups::class, 1)->pluck('ordertyperestrictions_id')->toArray();
-            $locationGroupExcludedProducts = FEGDBRelationHelpers::getCustomRelationRecords($locationGroups, Locationgroups::class, product::class, 1)->pluck('product_id')->toArray();
-            $whereOrderTypeCondition .= !empty($locationGroupRestrictedTypes) ? " AND products.prod_type_id Not IN(" . implode(',', $locationGroupRestrictedTypes) . ") " : '';
-            if (count($locationProductRestricted) > 0 && count($locationGroupExcludedProducts) > 0) {
-                $locationProductRestrictedIds = implode(',', array_merge($locationProductRestricted, $locationGroupExcludedProducts));
-            }
-        }
 
-        $excludedProductTypeAndProductIdsString = implode(',', $excludedProductTypeAndProductIds['excluded_product_ids']);
 
+
+        $restrictedProductIdsArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, false, true)['excluded_product_ids'];
+        $restrictedProductIds = implode(',', $restrictedProductIdsArray);
         $whereNotInProductIdsCondition = '';
-        if($excludedProductTypeAndProductIdsString != '' ){
-            $whereNotInProductIdsCondition = " AND products.id NOT IN ($excludedProductTypeAndProductIdsString) ";
+        if(!empty($restrictedProductIds)){
+            $whereNotInProductIdsCondition = " AND products.id NOT IN ($restrictedProductIds) ";
         }
-        $whereNotInProductIdsCondition2 = '';
-        if(!empty($locationProductRestrictedIds)){
-            $whereNotInProductIdsCondition2 = " AND products.id NOT IN ($locationProductRestrictedIds) ";
-        }
-
+        $whereProductTypeInCondition = " AND products.prod_type_id IN ($orderTypeId) ";
         if ($excludeProducts) {
             $excludeProductsArray = explode(',', $excludeProducts);
             $excludeProductsIds = [];
@@ -2179,7 +2189,7 @@ class OrderController extends Controller
                                 FROM products
                                 WHERE vendor_description LIKE '%$term%' 
                                 AND products.inactive=0  $whereWithVendorCondition  $whereWithExcludeProductCondition  
-                                  $whereOrderTypeCondition $whereRestrictedTypeCondition $whereNotInProductIdsCondition $whereNotInProductIdsCondition2
+                                  $whereOrderTypeCondition $whereRestrictedTypeCondition $whereNotInProductIdsCondition $whereProductTypeInCondition
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
                                  Limit 0,10";
