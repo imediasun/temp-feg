@@ -211,7 +211,8 @@
 	 */
 	function perseReponse(rowId,field,responseData,selected){
 		$('tr#'+rowId+' td[data-field="'+field+'"] select').select2({
-			width: '100%'
+			width: '100%',
+            closeOnSelect: false
 		});
 		$('tr#'+rowId+' td[data-field="'+field+'"] select').html(responseData);
 		$('tr#'+rowId+' td[data-field="'+field+'"] select').change();
