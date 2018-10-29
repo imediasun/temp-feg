@@ -158,7 +158,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         @if(SiteHelpers::filterColumn($limited ))
                             @if($field['field']=='img')
                     <td align="center">
-                        <span class="tips"  style="color:#d5e20a; font-size: 22px; cursor: pointer;" title="Add to Favorite">
+                        <span class="tips"  style="color:#d5e20a; font-size: 22px; cursor: pointer;" @if($row->is_favorite == 0) title="Add to Favorite" @else title="Remove from Favorite" @endif>
                             <i id="{{ $row->id }}"  @if($row->is_favorite == 0) isfavorite="0" @else isfavorite="1" @endif  class="favoriteItem fa @if($row->is_favorite == 0) fa-star-o @else fa-star @endif"></i>
                         </span>
                     </td>
@@ -188,10 +188,11 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
 										 }
 										 ?>
                                 @elseif($field['field']=='vendor_description')
-                                   @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes') <span class="label label-danger">Hot</span> @endif
-                                  @if($row->is_new > 0)  <span class="label label-primary">New</span> @endif
-                                  @if($row->is_backinstock > 0)  <span class="label label-default">Back in Stock</span> @endif
-                                       @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes' || $row->is_new > 0 || $row->is_backinstock > 0)   <br /> @endif
+                               <!--    {{--@if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes') <span class="label label-danger">Hot</span> @endif--}}
+                                  {{--@if($row->is_new > 0)  <span class="label label-primary">New</span> @endif--}}
+                                  {{--@if($row->is_backinstock > 0)  <span class="label label-default">Back in Stock</span> @endif--}}
+                                       {{--@if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes' || $row->is_new > 0 || $row->is_backinstock > 0)   <br /> @endif--}}
+                                   -->
                                     {!! $value !!}
 
                                 @elseif($field['field']=='is_default_expense_category')

@@ -163,12 +163,18 @@ class ShopfegrequeststoreController extends Controller
 
         $page = $request->input('page', 1);
         $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
-
+        $extraSorts = [
+            'hot_item'=>'DESC',
+            'is_new' => 'DESC',
+            'is_backinstock' =>'DESC',
+            'sku' =>'ASC',
+        ];
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
             'sort' => $sort,
             'order' => $order,
+            'customSorts' => $extraSorts,
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );

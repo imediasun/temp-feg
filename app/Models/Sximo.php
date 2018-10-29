@@ -99,13 +99,23 @@ class Sximo extends Model {
             'limit' => '0',
             'sort' => '',
             'extraSorts' => [],
+            'customSorts' => [],
             'order' => '',
             'params' => '',
             'global' => 1
                         ), $args));
+        $orderConditional1 = '';
+        if (!empty($customSorts)) {
+            $customOrderConditionals = [];
+            foreach($customSorts as $customSort => $customSortType) {
+                $customSortItem = '`'.$customSort.'` '.$customSortType;
+                $customOrderConditionals[] = $customSortItem;
+            }
+            $orderConditional1 = implode(', ', $customOrderConditionals);
+            $orderConditional1 = !empty($orderConditional1) ? $orderConditional1.", ":$orderConditional1;
+        }
 
-
-        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$sort} {$order} " : '';
+        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$orderConditional1} {$sort} {$order} " : '';
         if (!empty($extraSorts)) {
             if (empty($orderConditional)) {
                 $orderConditional = " ORDER BY ";
@@ -120,6 +130,8 @@ class Sximo extends Model {
             }
             $orderConditional .= implode(', ', $extraOrderConditionals);
         }
+
+
 
         // Update permission global / own access new ver 1.1
         $table = with(new static)->table;
