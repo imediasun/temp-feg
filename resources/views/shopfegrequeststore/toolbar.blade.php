@@ -18,10 +18,10 @@
         <select name="product_type" id="product_type" class="select3" style="margin-top:5px;"></select>
         <select name="filterBy" id="filterBy" class="select3" style="margin-top:5px;">
             <option value="">--Select--</option>
-            <option value="hot">Hot</option>
-            <option value="new">New</option>
-            <option value="backinstock">Back In Stock</option>
-            <option value="favorite">Favorite</option>
+            <option @if($filterBy == 'hot') selected @endif value="hot">Hot</option>
+            <option @if($filterBy == 'new') selected @endif value="new">New</option>
+            <option @if($filterBy == 'backinstock') selected @endif value="backinstock">Back In Stock</option>
+            <option @if($filterBy == 'favorite') selected @endif value="favorite">Favorite</option>
         </select>
     </div>
 </div>
