@@ -765,6 +765,7 @@
 
 
     $("#add_more_types").click(function () {
+        alert('hello');
         types_counter++;
 
         var more_types_html = '<span class="product_types productTypeBox" id="remove_me_'+types_counter+'"><div class="form-group  "> ' +
@@ -792,7 +793,10 @@
 
         $("#prod_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}", {excludeItems: excludedProductTypes});
         $("#expense_category_"+types_counter).jCombo("{{ URL::to('product/expense-category-groups') }}");
-        renderDropdown($(".select2"), {width: "100%"});
+        $("#prod_type_id_"+types_counter).select2({width: "100%"});
+        $("#expense_category_"+types_counter).select2({width: "100%"});
+        $("#prod_sub_type_id_"+types_counter).select2({width: "100%"});
+        // renderDropdown($(".select2"), {width: "100%"});
         <?php $NETSUITE_PRODUCT_MAX_LENGTH = config('app.NETSUITE_PRODUCT_MAX_LENGTH'); ?>
       <?php if($NETSUITE_PRODUCT_MAX_LENGTH !=''){ ?>
         if(types_counter >= Number(<?php echo $NETSUITE_PRODUCT_MAX_LENGTH; ?>)){
