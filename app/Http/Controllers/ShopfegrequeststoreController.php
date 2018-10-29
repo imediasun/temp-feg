@@ -167,8 +167,9 @@ class ShopfegrequeststoreController extends Controller
             'hot_item'=>'DESC',
             'is_new' => 'DESC',
             'is_backinstock' =>'DESC',
-            'sku' =>'ASC',
         ];
+
+
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
