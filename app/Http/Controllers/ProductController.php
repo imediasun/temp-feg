@@ -68,6 +68,11 @@ class ProductController extends Controller
         return $url;
 
     }
+
+    /**
+     * @param string $t
+     * @return \Illuminate\View\View
+     */
     public
     function getExport($t = 'excel')
     {
