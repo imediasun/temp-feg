@@ -139,7 +139,7 @@
                         </td-->
 
                             <td align="center">
-                        <span class="tips"  style="color:#d5e20a; font-size: 22px; cursor: pointer;" title="Add to Favorite">
+                        <span  style="color:#d5e20a; font-size: 22px; cursor: pointer;" >
                             <i id="{{ $row->id }}"  @if($row->is_favorite == 0) isfavorite="0" @else isfavorite="1" @endif  class="fa @if($row->is_favorite == 0) fa-star-o @else fa-star @endif"></i>
                         </span>
                             </td>
