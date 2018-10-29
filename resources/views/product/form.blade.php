@@ -765,7 +765,6 @@
 
 
     $("#add_more_types").click(function () {
-        alert('hello');
         types_counter++;
 
         var more_types_html = '<span class="product_types productTypeBox" id="remove_me_'+types_counter+'"><div class="form-group  "> ' +
