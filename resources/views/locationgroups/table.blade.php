@@ -210,6 +210,9 @@
 	 * @param selected
 	 */
 	function perseReponse(rowId,field,responseData,selected){
+		$('tr#'+rowId+' td[data-field="'+field+'"] select').select2({
+			width: '100%'
+		});
 		$('tr#'+rowId+' td[data-field="'+field+'"] select').html(responseData);
 		$('tr#'+rowId+' td[data-field="'+field+'"] select').change();
 		if($.isArray(selected) && selected.length >0 ) {
