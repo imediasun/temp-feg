@@ -221,6 +221,10 @@ class ProductController extends Controller
 
     }
 
+    /**
+     * @param null $customQueryString
+     * @return string
+     */
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters

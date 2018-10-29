@@ -16,6 +16,10 @@ class product extends Sximo  {
 		parent::__construct();
 		
 	}
+
+    /**
+     * testing git
+     */
     public static function boot()
     {
         parent::boot();
@@ -245,6 +249,10 @@ FROM `products`
 	public static function queryGroup(){
 		return "  ";
 	}
+
+    /**
+     * @return string
+     */
 
     public static function queryGroupAPI(){
         return " GROUP BY products.vendor_description, products.sku, products.vendor_id, products.case_price ";
