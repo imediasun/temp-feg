@@ -27,7 +27,7 @@
 		@endif
 
 		@include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
-			<div style="color:#061ab7; padding:5px 0px;">Note: * in Quantity Ordered denotes the # of units receive, not cases.</div>
+			<div style="color:#061ab7; padding:5px 0px;">Note: An Asteric in the Cases Ordered column indicates a # of unit received, not cases.</div>
 		<?php echo Form::open(array('url'=>'inventoryreport/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 		@if(!empty($topMessage))
 			<h5 class="topMessage">{{ $topMessage }}</h5>
