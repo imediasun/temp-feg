@@ -13,7 +13,13 @@ class Ticketcomment extends Sximo  {
 		parent::__construct();
 		
 	}
-
+    /**
+     * Get all of the service request comments Attachments.
+     */
+    public function attachments()
+    {
+        return $this->morphMany('App\Models\Attachment', 'attachable');
+    }
 	public static function querySelect(  ){
 		
 		return "  SELECT sb_ticketcomments.* FROM sb_ticketcomments  ";

@@ -1185,12 +1185,32 @@ class OrderController extends Controller
         return view($viewName, array('cc' => $cc1, "pageUrl" => $this->data['pageUrl']));
     }
 
+    private function sendEmailFromMerchandise($order)
+    {
+        $pass = $this->pass;
+
+        $dataOptionsString = $pass['Manage order emails']->data_options;
+        $dataOptionsArray = explode(',', $dataOptionsString);
+
+        if(in_array($order->order_type_id, $dataOptionsArray)){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+
     function postSaveorsendemail(Request $request)
     {
         $type = $request->get('type');
         $from = $request->get('from');
-        $from = !empty($from) ? $from : env('MAIL_USERNAME');
         $order_id = $request->get('order_id');
+        $orderObject = $this->model->find($order_id);
+        $sendEmailFromMerchandise = $this->sendEmailFromMerchandise($orderObject);
+
+        $from = !empty($from) ? $from : ( $sendEmailFromMerchandise ? env('MAIL_MERCH_FROM_EMAIL') : env('MAIL_USERNAME'));
+
         if ($type == "send") {
             $to = $request->get('to');
             $to = $this->getMultipleEmails($to);
@@ -1237,7 +1257,7 @@ class OrderController extends Controller
                 ["TO" => $to, "CC" => $cc, "BCC" => $bcc]]);
 
             \Session::put('filter_before_redirect', 'redirect');
-            $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message);
+            $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message, $sendEmailFromMerchandise);
 
             if ($status == 1) {
                 return response()->json(array(
@@ -1560,7 +1580,7 @@ class OrderController extends Controller
         return $filter;
     }
 
-    function getPo($order_id = null, $sendemail = false, $to = null, $from = null, $cc = null, $bcc = null, $message = null)
+    function getPo($order_id = null, $sendemail = false, $to = null, $from = null, $cc = null, $bcc = null, $message = null, $sendEmailFromMerchandise = false)
     {
         $mode = "";
         if (isset($_GET['mode']) && !empty($_GET['mode'])) {
@@ -1705,7 +1725,7 @@ class OrderController extends Controller
                         'type' => 'application/pdf',
                         'preferGoogleOAuthMail' => false
                     ];
-                    $configName = 'Send Email';
+                    $configName = 'send PO copy';
                     $sent = FEGSystemHelper::sendSystemEmail(array(
                         'to' => implode(',', $to),
                         'cc' => $cc,
@@ -1721,7 +1741,7 @@ class OrderController extends Controller
                         'filename' => $filename,
                         'encoding' => 'base64',
                         'type' => 'application/pdf',
-                    ));
+                    ), $sendEmailFromMerchandise);
                     if (!$sent) {
                         return 3;
                     } else {

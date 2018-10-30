@@ -617,7 +617,7 @@ class FEGSystemHelper
      * @param string $from
      * @param type $options
      */
-    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array())
+    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array(), $sendEmailFromMerchandise = false)
     {
         //support@fegllc.com
         if (empty($from)) {
@@ -643,6 +643,23 @@ class FEGSystemHelper
                     }
                     return self::googleOAuthMail($to, $subject, $message, $user, $options);
                 } else {
+
+                    if($sendEmailFromMerchandise){
+                        $config = array(
+                            'username' => env('MAIL_MERCH_USERNAME'),
+                            'password' => env('MAIL_MERCH_PASSWORD'),
+                            'driver' => env('MAIL_DRIVER'),
+                            'host' => env('MAIL_HOST'),
+                            'port' => env('MAIL_PORT'),
+                            'from' => array('address' => env('MAIL_MERCH_FROM_EMAIL'), 'name' => env('MAIL_NAME')),
+                            'encryption' => env('MAIL_ENCRYPTION'),
+                            'sendmail' => '/usr/sbin/sendmail -bs',
+                            'pretend' => false,
+                        );
+                        \Config::set('mail', $config);
+                        $from = env('MAIL_MERCH_FROM_EMAIL');
+                    }
+
                     return self::laravelMail($to, $subject, $message, $from, $options);
                 }
             }
@@ -1179,7 +1196,7 @@ class FEGSystemHelper
      *
      *
      */
-    public static function sendSystemEmail($options)
+    public static function sendSystemEmail($options, $sendEmailFromMerch = false)
     {
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
@@ -1195,7 +1212,6 @@ class FEGSystemHelper
         ), $options);
 
         extract($options);
-
         $configNameSanitized = preg_replace('/[\W]/', '-', strtolower($configName));
 
         $lf = "email-"
@@ -1260,7 +1276,7 @@ $message" .
 
         self::logit("Sending Email", $lf, $lp);
         self::logit($options, $lf, $lp);
-        $status = self::sendEmail($to, $subject, $message, $from, $options);
+        $status = self::sendEmail($to, $subject, $message, $from, $options, $sendEmailFromMerch);
         self::logit("Email sent Status = " . $status, $lf, $lp);
         self::logit("Email sent", $lf, $lp);
         return $status;
@@ -1954,6 +1970,45 @@ $message" .
                 call_user_func(array($command, $msgType), $message);
             }
         }
+    }
+
+    /**
+     * @param $name
+     * @param array $filterREGXs
+     * @param bool $addExtension
+     * @return mixed|string
+     */
+
+    public static function senitizeAttachmentName($name, $filterREGXs=[], $addExtension = true)
+    {
+        $extension = substr($name,strpos($name,".")+1,strlen($name));
+        $prefix = substr($name,0,strpos($name,"."));
+        foreach ($filterREGXs as $filterRegx){
+            $prefix = preg_replace($filterRegx, '', $prefix);
+        }
+        return ($addExtension == true) ? $prefix.".".$extension: $prefix;
+    }
+
+    /**
+     * @param $commentData
+     * @return array
+     */
+
+    public static function getCommentAttachmentDetails($commentData)
+    {
+        $attachmentsDetail = [];
+        if($commentData->attachments) {
+          $userData = self::getTicketCommentUserProfile($commentData);
+            foreach ($commentData->attachments as $attachment) {
+                $attachmentsDetail[] = [
+                    'fullName' => $userData['fullName'],
+                    'date' => \DateHelpers::formatDate($attachment->created_at),
+                    'url' => $attachment->path,
+                    'fileName' => self::senitizeAttachmentName($attachment->name, ['/--.*$/']),
+                ];
+            }
+        }
+        return $attachmentsDetail;
     }
 
 }

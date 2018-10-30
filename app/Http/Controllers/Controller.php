@@ -3,6 +3,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\location;
+use App\Models\UserLocations;
 use App\Library\FEGDBRelationHelpers;
 use Carbon\Carbon;
 use App\Models\Addtocart;
@@ -623,6 +625,7 @@ abstract class Controller extends BaseController
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['searchMode'] = $mode;
         $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
 
         if($this->model->isTypeRestrictedModule($this->module)){
             if($this->model->isTypeRestricted()){
@@ -640,6 +643,15 @@ abstract class Controller extends BaseController
         }
 
     }
+
+    function getUsersExcludedLocations(){
+        $currentUserId = auth()->user()->id;
+        $locationIdsAllottedToCurrentUser = UserLocations::where('user_id', $currentUserId)->lists('location_id')->toArray();
+        $allLocationIds = location::lists('id')->toArray();
+        $excludedLocations = array_diff($allLocationIds, $locationIdsAllottedToCurrentUser);
+        return array_values(array_unique(array_merge([6030,6000], $excludedLocations)));
+    }
+
 
     function getDownload(Request $request)
     {

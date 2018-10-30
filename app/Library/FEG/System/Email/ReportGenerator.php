@@ -2178,7 +2178,7 @@ class ReportGenerator
             $_logger->log("    Start Report for Location $locationId for $humanDate");
 
             $configName = 'Daily Pending Merchandise Order Receipt Report';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $locationId);
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
             self::sendEmailReport(array_merge($emailRecipients, [
                 'subject' => "Orders which need to be Received - $locationName ($locationId)- $humanDate",
                 'message' => $report,
@@ -2198,7 +2198,7 @@ class ReportGenerator
             $_logger->log("    Start Report for Location $locationId for $humanDate");
 
             $configName = 'Daily Pending Non Merchandise Order Receipt Report';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $locationId);
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
             self::sendEmailReport(array_merge($emailRecipients, [
                 'subject' => "Orders which need to be Received - $locationName ($locationId)- $humanDate",
                 'message' => $report,
@@ -2334,12 +2334,15 @@ class ReportGenerator
         $report = [];
         $reportData = [];
 
-        $query = order::where('date_ordered', '<=', $date)->where('invoice_verified', true);
+        $query = order::where('date_ordered', '<=', $date);
+        $query->join("location",'orders.location_id',"=",'location.id');
+        $query->where("location.active",'1');
         $query->whereIn('status_id', [order::OPENID1, order::OPENID2, order::OPENID3]);
         if ($reportType == null && !empty($location) && is_array($location)) {
 
             $query->whereIn('location_id', $location);
         }
+
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
         if(!empty($pass['calculate price according to case price'])) {
@@ -2411,8 +2414,10 @@ class ReportGenerator
         $report = [];
         $reportData = [];
 
-        //$query = order::where('invoice_verified_date', '<=', $date)->where('invoice_verified', true);
-        $query = order::where('date_ordered', '<=', $date)->where('invoice_verified', true);
+        //$query = order::where('invoice_verified_date', '<=', $date);
+        $query = order::where('date_ordered', '<=', $date);
+        $query->join("location",'orders.location_id',"=",'location.id');
+        $query->where("location.active",'1');
         $query->whereIn('status_id', [order::OPENID1, order::OPENID2, order::OPENID3]);
         if ($reportType == null && !empty($location) && is_array($location)) {
 

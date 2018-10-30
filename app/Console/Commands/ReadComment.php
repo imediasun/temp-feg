@@ -3,11 +3,13 @@ namespace App\Console\Commands;
 
 require_once('setting.php');
 
+use App\Models\Attachment;
 use Illuminate\Console\Command;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Servicerequests;
 use App\Models\Ticketcomment;
 use App\Models\Core\TicketMailer;
+use File;
 
 class ReadComment extends Command
 {
@@ -133,6 +135,7 @@ class ReadComment extends Command
                     $L->log("email_number = ".$email_number);
                     $L->log("getMessage() = ".$this->getMessage($inbox, $email_number));
                     $message = $this->cleanUpMessage($this->getMessage($inbox, $email_number));
+                    $attachments = $this->getIMapAttachment($inbox,$email_number,$ticketId);
                     $L->log("Message = ".$posted);
                     //Insert In sb_ticketcomments table
                     $L->log("Creating new comment");
@@ -149,8 +152,17 @@ class ReadComment extends Command
                         'imap_message_id' => $UID,
                     );
                     $L->log("comments data = ".json_encode($commentsData));
+                    $L->log("comments Attachments = ".json_encode($attachments));
                     $L->log('Adding comment to database', $commentsData);
                     $id = $comment_model->insertRow($commentsData, NULL);
+                    $commentModel = $comment_model->getInsertRecordObject($id);
+                    foreach($attachments as $attachment){
+                        $attachmentClass = new Attachment($attachment);
+                        $attachmentClass->name = $attachment['name'];
+                        $attachmentClass->path = $attachment["path"];
+                        $attachmentClass->extension = $attachment['extension'];
+                        $commentModel->attachments()->save($attachmentClass);
+                    }
                     $L->log("Updaet ticket updated date to $posted");
                     Servicerequests::where("TicketID", $ticketId)->update(['updated' => $posted]);
 
@@ -181,8 +193,8 @@ class ReadComment extends Command
             }
         } 
         else {
-            echo "no emails found....";
-            $L->log('No emails found');
+            echo " no emails found....";
+            $L->log(' No emails found');
         }
         /* close the connection */
         imap_close($inbox);
@@ -307,6 +319,7 @@ class ReadComment extends Command
 
                     case 1:
                         // multi-part headers, can ignore
+                      // $this->getIMapAttachment($connection, $messageNumber,'20000115');
 
                         break;
                     case 2:
@@ -381,7 +394,6 @@ class ReadComment extends Command
     private function emailgetEmailAttachmentFilenameFromPart($part) {
 
         $filename = '';
-
         if($part->ifdparameters) {
             foreach($part->dparameters as $object) {
                 if(strtolower($object->attribute) == 'filename') {
@@ -400,6 +412,74 @@ class ReadComment extends Command
 
         return $filename;
 
-    }    
+    }
+    function getIMapAttachment($inbox,$email_number,$ticketId){
+        $structure = imap_fetchstructure($inbox,$email_number);
+        $attachments = array();
+        if(isset($structure->parts) && count($structure->parts)) {
+            for($i = 0; $i < count($structure->parts); $i++) {
+                $attachments[$i] = array(
+                    'is_attachment' => false,
+                    'filename' => '',
+                    'name' => '',
+                    'attachment' => '');
+
+                if($structure->parts[$i]->ifdparameters) {
+                    foreach($structure->parts[$i]->dparameters as $object) {
+                        if(strtolower($object->attribute) == 'filename') {
+                            $attachments[$i]['is_attachment'] = true;
+                            $attachments[$i]['filename'] = $object->value;
+                        }
+                    }
+                }
+
+                if($structure->parts[$i]->ifparameters) {
+                    foreach($structure->parts[$i]->parameters as $object) {
+                        if(strtolower($object->attribute) == 'name') {
+                            $attachments[$i]['is_attachment'] = true;
+                            $attachments[$i]['name'] = $object->value;
+                        }
+                    }
+                }
+
+                if($attachments[$i]['is_attachment']) {
+                    $attachments[$i]['attachment'] = imap_fetchbody($inbox, $email_number, $i+1);
+                    if($structure->parts[$i]->encoding == 3) { // 3 = BASE64
+                        $attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
+                    }
+                    elseif($structure->parts[$i]->encoding == 4) { // 4 = QUOTED-PRINTABLE
+                        $attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
+                    }
+                }
+            } // for($i = 0; $i < count($structure->parts); $i++)
+        } // if(isset($structure->parts) && count($structure->parts))
+
+        $ticketAttachments = [];
+        if(count($attachments)!=0){
+            foreach($attachments as $at){
+                if($at['is_attachment']==1){
+                    $folder = "/uploads/tickets/comments-attachments";
+                    $filePath = $folder;
+                    if(!File::exists($folder."/ticket-".$ticketId."/".date("Y-m-d"))) {
+                        File::makeDirectory('public'.$folder . "/ticket-" . $ticketId . "/" . date("Y-m-d"), 0777, true, true);
+                    }
+                    $filePath = $folder."/ticket-".$ticketId."/".date("Y-m-d")."/";
+
+                    $filename = str_replace(".","--".$ticketId.".",$at['filename']);
+                    if(!File::exists($filePath.$filename)){
+                        $filename = str_replace(".","_1.",$filename);
+                    }
+                    $ticketAttachments[] = [
+                        "name" => $filename,
+                        "path" => $filePath . $filename,
+                        "extension" => substr($filename,strpos($filename,".")+1,strlen($filename)),
+                    ];
+                    file_put_contents("public".$filePath.$filename, $at['attachment']);
+                }
+            }
+        }
+        return $ticketAttachments;
+    }
+
     
 }

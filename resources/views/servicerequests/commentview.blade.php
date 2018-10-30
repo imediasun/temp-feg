@@ -28,6 +28,12 @@
         </div>
         <div class="commentText">
             {!! $comment !!}
-        </div>            
+<br /><br />
+            @if($commentIndex !=0)
+            @foreach($commentClass->attachments as $attachment)
+            <a href="{{ url($attachment->path) }}" class="attachmentLink" style="display: inline-block;" target="_blank">{{ \App\Library\FEG\System\FEGSystemHelper::senitizeAttachmentName($attachment->name,['/--.*$/']) }}</a>
+                @endforeach
+                @endif
+        </div>
     </div>
 </div>
