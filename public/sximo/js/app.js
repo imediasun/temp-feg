@@ -199,14 +199,20 @@ App.autoCallbacks.runCallback = function (eventName, params, options) {
     }
 
 };
-
+var callOnce = true;
 var getExcludedProductTypesAndProducts = [];
 App.autoCallbacks.registerCallback('reloaddata', function(params){
     initExport(this);
     //alignColumns(this);
     //initUserPopup(this);
     $(document).scrollTop(0);
-    getExcludedProductTypesAndProductIds();
+    if(callOnce == true) {
+        getExcludedProductTypesAndProductIds();
+        callOnce = false;
+        setTimeout(function () {
+            callOnce = true;
+        },6000,callOnce);
+    }
 });
 
 App.autoCallbacks.registerCallback('advancedsearch', function(params){
