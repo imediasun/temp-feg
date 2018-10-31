@@ -175,7 +175,8 @@ class productusagereport extends Sximo  {
             GROUP_CONCAT(DISTINCT type_description ORDER BY type_description SEPARATOR ' , ') AS Product_Sub_Type,
             vendor_id,Product,max(ticket_value) as ticket_value
             , Unit_Price,
-            SUM(IF(is_broken_case,(qty/num_items),qty)) AS Cases_Ordered,
+            ##/*SUM(IF(is_broken_case,(qty/num_items),qty)) AS Cases_Ordered,*/
+            SUM(qty) AS Cases_Ordered,
             Case_Price,
             IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,SUM(FORMAT(Unit_Price_ORIGNAL* qty,7)),SUM(Case_Price_ORIGNAL * qty)),SUM(Unit_Price_ORIGNAL*qty)) AS Total_Spent,
             TRUNCATE((SUM(TRUNCATE(total, 5))),5) AS OC_Total_Spent,

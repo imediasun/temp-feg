@@ -62,6 +62,12 @@ foreach ($categories as $key=>$category)
 					}
 					else
 					{
+						if ($f['field'] == 'Cases_Ordered') {
+							if (in_array($row->is_broken_case, ['YES', 'yes', 'Yes', 1])) {
+								$f['attribute']['formater']['active'] = 0;
+							}
+						}
+
 						$a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$nodata)));
 						$b = str_replace( ',', '', $a );
 						$c = str_replace('$','',$b);
@@ -259,11 +265,38 @@ $objSheet->getStyle($QuantityOrderedColumn."3:".$QuantityOrderedColumn.($lastRow
 //$objSheet->getColumnDimension($serialColumn)->setWidth(50);
 $lastDataEntry = $endOn = $lastRow+$totalCounters+2;
 //$objSheet->getStyle("A3:A".($endOn-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+if(!empty($AddNote)) {
+
+
+	$objSheet->insertNewRowBefore($endOn, 1);
+	$totalsRowStart = $endOn;
+	$objSheet->setCellValue(
+		"A" . $totalsRowStart,
+		"Note: ".$AddNote
+	);
+	$objSheet->mergeCells('A'.$totalsRowStart.':P'.$totalsRowStart);
+	$objSheet->getStyle('A'.$totalsRowStart.':P'.$totalsRowStart)->applyFromArray(
+		array(
+			'font'  => array(
+				'color' => array('rgb' => '061ab7'),
+			)
+		)
+	);
+	//$objSheet->getStyle("A".$totalsRowStart)->getAlignment()->setWrapText(true);
+}
+$endOn++;
 $objSheet->insertNewRowBefore($endOn, 1);
 $totalsRowStart = $endOn;
 $objSheet->setCellValue(
 	"A".$totalsRowStart,
 	"TOTALS"
+);
+$objSheet->getStyle('A'.$totalsRowStart.':P'.$totalsRowStart)->applyFromArray(
+	array(
+		'font'  => array(
+			'color' => array('rgb' => '000000'),
+		)
+	)
 );
 $loopCounter = 0;
 foreach($categories as $key=>$category)
@@ -329,6 +362,7 @@ $objSheet->setCellValue(
 	"A".$endOn,
 	"Photo Paper In Stock:"
 );
+
 $objSheet->getStyle("A$hold:B$endOn")->applyFromArray(
 	array(
 		'font'  => array(
@@ -343,6 +377,8 @@ $objSheet->getStyle("A$hold:B$endOn")->applyFromArray(
 
 	)
 );
+
+
 if(isset($pass["Users With Limited Access"]))
 {
 

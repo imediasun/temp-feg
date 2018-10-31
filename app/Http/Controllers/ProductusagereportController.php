@@ -33,6 +33,130 @@ class ProductusagereportController extends Controller
 
     }
 
+    public function getExport($t = 'excel')
+    {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+
+        $info = $this->model->makeInfo($this->module);
+        //$master  	= $this->buildMasterDetail();
+        if (method_exists($this, 'getSearchFilterQuery')) {
+            $filter = $this->getSearchFilterQuery();
+        }
+        else {
+            $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+        }
+
+        //$filter 	.=  $master['masterFilter'];
+//    $params = array(
+//        'params' => ''
+//    );
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby'];
+        $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];
+        $params = array(
+            'params' => '',
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0),
+            'forExcel'=>1
+        );
+
+
+        $results = $this->model->getRows($params);
+
+        $fields = $info['config']['grid'];
+        $rows = $results['rows'];
+        //print_r($fields[0]);die;
+        $extra = array(
+            'field' => '',
+            'alias' => 'departments',
+            'language' =>
+                array('id' => ''),
+            'label' => '',
+            'view' => '1',
+            'detail' => '1',
+            'sortable' => '1',
+            'search' => '1',
+
+            'download' => '1',
+            'frozen' => '1',
+            'limited' => '',
+            'width' => '100',
+            'align' => 'left',
+            'sortlist' => '0',
+            'conn' =>
+                array(
+                    'valid' => '0',
+                    'db' => '',
+                    'key' => '',
+                    'display' => ''),
+            'attribute' =>
+                array(
+                    'hyperlink' => '',
+                    array(
+                        'active' => '0',
+                        'link' => '',
+                        'target' => 'modal',
+                        'html' => ''),
+                    'image' =>
+                        array(
+
+                            'active' => '0',
+                            'path' => '',
+                            'size_x' => '',
+                            'size_y' => '',
+                            'html' => ''),
+                    'formater' =>
+                        array(
+                            'active' => '0',
+                            'value' => '',
+
+
+                        )));
+
+        $rows = $this->updateDateInAllRows($rows);
+        $rows = \SiteHelpers::addPostPreFixToField($rows,'Cases_Ordered','*','is_broken_case',['yes','YES','Yes',1],true,false,true);
+
+        $content = array(
+            'exportID' => $exportSessionID,
+            'fields' => $fields,
+            'rows' => $rows,
+            'title' => $this->data['pageTitle'],
+            'excelExcludeFormatting' => isset($results['excelExcludeFormatting'])?$results['excelExcludeFormatting']:[],
+            'AddNote'=>'* in Quantity Ordered denotes the # of units receive, not cases.'
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('sximo.module.utility.excel', $content);
+        }
+    }
+
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)

@@ -5,6 +5,7 @@
 	$content = $title;
 	$content .= '<table border="1">';
 	$content .= '<tr>';
+$start = 1;
 	foreach($fields as $f )
 	{
 		if($f['download'] =='1') $content .= '<th style="background:#f9f9f9;">'. $f['label'] . '</th>';
@@ -13,9 +14,11 @@
 
 	foreach ($rows as $row)
 	{
+		$start++;
 		$content .= '<tr>';
 		foreach($fields as $f )
 		{
+
 			if($f['download'] =='1'):
 				if(isset($f['attribute']['formater']))
 				{
@@ -27,18 +30,34 @@
 				}
 				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );
+				if ($f['field'] == 'Cases_Ordered') {
+					if (in_array($row->is_broken_case, ['YES', 'yes', 'Yes', 1])) {
+						$f['attribute']['formater']['active'] = 0;
+					}
+				}
                 $a = htmlentities(strip_tags(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn,$f['nodata'])));
                 $b = str_replace( ',', '', $a );
                 $c = str_replace('$','',$b);
                 if( is_numeric( $c) ) {
                     $a = $c;
                 }
+
 				$content .= '<td> '. ($a) . '</td>';
 			endif;
 		}
 		$content .= '</tr>';
 	}
+if (!empty($AddNote)){
+	$start++;
+	$start++;
+	$start++;
+	$start++;
+	$content .='<tr><td></td></tr><tr><td></td></tr>';
+	$content .='<tr><td colspan="30"><strong>Note: '.$AddNote.'</strong></td></tr>';
+}
 	$content .= '</table>';
+
+
 	$path = "../storage/app/".time().".html";
 	file_put_contents($path, $content);
 
@@ -53,6 +72,13 @@
 	//Finding Serial column
 	$serialColumn = '';
 	$row = $objPHPExcel->getActiveSheet()->getRowIterator(2)->current();
+$objPHPExcel->getActiveSheet()->getStyle('A'.$start.':P'.$start)->applyFromArray(
+	array(
+		'font'  => array(
+			'color' => array('rgb' => '061ab7'),
+		)
+	)
+);
 	$cellIterator = $row->getCellIterator();
 	$cellIterator->setIterateOnlyExistingCells(false);
 
