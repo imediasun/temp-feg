@@ -36,14 +36,17 @@ class DigitalPackingList extends Sximo
     }
     public function getDPLFileData(){
         $newLine = "\r\n";
-        $fileContent = $this->order->location_id . ", " . $this->order->id . $newLine;
+        $fileContent = $this->order->location_id . ", " . str_replace('-',"",$this->order->po_number) . $newLine;
+        $totalItems = $this->order->contents()->count();
+        $countIndex = 0;
         foreach ($this->order->contents as $product) {
+            $countIndex++;
             Log::info("DPL Product Name:".$product->item_name);
             $itemId = $product->upc_barcode;
             $itemName = $this->cleanAndTruncateString($product->item_name);
 
             $unitTypeUOM = $this->order->getUnitOfMeasurementForOrderType();
-            $price =($unitTypeUOM == "CASE") ? $price = $product->case_price : $product->price;
+            $price =($unitTypeUOM == "CASE") ? $price = \CurrencyHelpers::formatPrice($product->case_price/$product->qty_per_case, $decimalPlaces = 5,  false,  '', $dec_point = '.',  false) : $product->price;
 
             $tickets = $product->ticket_value;
             $qtyPerCase = $product->qty_per_case;
@@ -55,13 +58,18 @@ class DigitalPackingList extends Sximo
                 Order::ORDER_TYPE_PARTY_SUPPLIES => 'PartySup',
                 Order::ORDER_TYPE_UNIFORM => 'Uniforms'
             ];
-
+            $itemName = \SiteHelpers::removeSpecialCharacters($itemName);
             $productType = isset($orderTypes[$product->prod_type_id]) ? $orderTypes[$product->prod_type_id]:$product->prod_type_id;
 
+            $newLine = ($countIndex == $totalItems) ? '':$newLine;
+            $unitTypeUOMUpdated = ((strtolower($unitTypeUOM) == 'case') ? ($product->is_broken_case == 0) ? 'EACH':'EACH':'EACH');
+            $quantityReceived = ((strtolower($unitTypeUOM) == 'case') ? ($product->is_broken_case == 0) ? ($product->item_received * $qtyPerCase): $product->item_received : $product->item_received);
             if ($this->order->location->debit_type_id == Location::LOCATION_TYPE_SACOA) {
-                $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOM, $product->item_received, $price, $tickets, $qtyPerCase, $product->price]) . $newLine;
+                $unitTypeUOMUpdated = "EA";
+                $fileContent .= implode(",",[$itemId, $itemName, $unitTypeUOMUpdated, $quantityReceived, $price, $tickets, $qtyPerCase, $product->price]) . $newLine;
             } else {
-                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOM . "," . $product->item_received . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
+                $itemName = \SiteHelpers::truncateStringToSpecifiedLimit($itemName,50);
+                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOMUpdated . "," .$quantityReceived . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
             }
         }
         return $fileContent;
@@ -85,7 +93,7 @@ class DigitalPackingList extends Sximo
     public function cleanAndTruncateString($string, $length = 50)
     {
         $string = str_replace(["&",",",'"'],"",$string);
-        return $this->truncateString($string, $length);
+        return $string; //$this->truncateString($string, $length);
     }
     public function isOrderReceived($order_id)
     {

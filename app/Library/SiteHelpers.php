@@ -2944,4 +2944,37 @@ class SiteHelpers
         }
         return $noDataArray;
     }
+
+    /**
+     * @param $string
+     * @param string $replacer
+     * @return string
+     */
+    public static function removeSpecialCharacters($string,$replacer = ''){
+        $convertedString = $string;
+        if(!empty($string)) {
+            $stringToArray = explode(' ', $string);
+           // $resultentArray = (array) preg_replace('/[^a-zA-Z0-9\.]/', $replacer, $stringToArray);
+            $cleanedArray = [];
+            foreach ($stringToArray as $item){
+                $cleanedArray[] = str_replace(['&','\'','"',','],$replacer,$item);
+            }
+            $convertedString = trim(implode(' ', $cleanedArray));
+            $convertedString = trim(preg_replace('/\s+/',' ', $convertedString));
+        }
+        return (string) $convertedString;
+    }
+
+    /**
+     * @param $string
+     * @param $limit
+     * @param bool $ellipsis
+     * @return string
+     */
+    public static function truncateStringToSpecifiedLimit($string,$limit,$ellipsis = false){
+        if(strlen($string) > $limit){
+            $string = substr($string,0,$limit);
+        }
+        return ($ellipsis == true) ? $string.'...' : $string;
+    }
 }
