@@ -519,13 +519,13 @@ class VendorController extends Controller
 
     }
 
-    function getClearAllSchedulesList(){
+    function postClearAllSchedulesList(){
         $schedule = new VendorImportSchedule();
         $clear = $schedule->update(['is_active'=>0]);
         if ($clear) {
             return response()->json(array(
                 'status' => 'success',
-                'message' => 'Record updated successfully.'
+                'message' => 'All vendors schedule cleared successfully.'
             ));
         } else {
             return response()->json(array(
