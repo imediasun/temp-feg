@@ -11,6 +11,11 @@
 			<a href="javascript://ajax" class="btn btn-sm btn-white alignment-left-fixed" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
 			@endif 	
 			@endif
+            <!-- Clear All Product Export Schedules -->
+            <a class="btn btn-sm btn-white alignment-left-fixed" href="{{ URL::to('vendor/clear-all-schedules-list/')}}" onclick="ajaxViewDetail('#vendor',this.href); return false; ">
+                <i class="fa fa-eraser "></i> Clear Export Schedules
+            </a>
+
 			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
                 @if(SiteHelpers::isModuleEnabled($pageModule))
                     <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white alignment-left-fixed" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
