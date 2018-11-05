@@ -3349,9 +3349,9 @@ ORDER BY aa_id");
         $message = $this->getShow($orderId, 'emails.inquireOrder');
         $subject = 'Inquire orders';
         if(!empty($systemEmailRecipients['to'])){
-            $systemEmailRecipients['to'] .= ','.Users::find(Session::get('uid'))->email;
+            $systemEmailRecipients['to'] .= ','.Session::get('eid');
         }else{
-            $systemEmailRecipients['to'] .= Users::find(Session::get('uid'))->email;
+            $systemEmailRecipients['to'] .= Session::get('eid');
         }
 
         $options['message']                 = $message;
