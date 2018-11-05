@@ -12,7 +12,7 @@
 			@endif 	
 			@endif
             <!-- Clear All Product Export Schedules -->
-            <a class="btn btn-sm btn-white alignment-left-fixed" href="{{ URL::to('vendor/clear-all-schedules-list/')}}" onclick="ajaxViewDetail('#vendor',this.href); return false; ">
+            <a class="btn btn-sm btn-white alignment-left-fixed" href="javascript://ajax" onclick="ajaxClearSchedule('{{ URL::to('vendor/clear-all-schedules-list/')}}');">
                 <i class="fa fa-eraser "></i> Clear Export Schedules
             </a>
 
