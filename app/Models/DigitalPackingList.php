@@ -69,7 +69,7 @@ class DigitalPackingList extends Sximo
                 $fileContent .= implode(",",[$itemId, $sku,$tickets, $itemName, $productType, '', '', $price, '','', $quantityReceived]) . $newLine;
             } else {
                 $itemName = \SiteHelpers::truncateStringToSpecifiedLimit($itemName,50);
-                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOMUpdated . "," .$quantityReceived . "," . $price . "," . $tickets . "," . $qtyPerCase . "," . $product->price . "," . $productType . $newLine;
+                $fileContent .= $itemId . "," . $itemName . "," . $unitTypeUOMUpdated . "," .$quantityReceived . "," . $price . "," . $tickets . "," . '1' . "," . $product->price . "," . $productType . $newLine;
             }
         }
         return $fileContent;
