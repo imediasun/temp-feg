@@ -456,11 +456,11 @@ class OrderController extends Controller
 
         if ($row) {
             $row->fedex_number =  $row->location ? $row->location->fedex_number ? $row->location->fedex_number : 'No Data' : 'No Data';
-           if($row->freight_id) {
-               $row->order_freight_id = $row->freight_id ? $row->freight_id : '';
-           }else{
-               $row->order_freight_id = $row->location->location_freight_id ? $row->location->location_freight_id : '';
-           }
+            if($row->freight_id) {
+                $row->order_freight_id = $row->freight_id ? $row->freight_id : '';
+            }else{
+                $row->order_freight_id = $row->location->location_freight_id ? $row->location->location_freight_id : '';
+            }
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
@@ -1124,7 +1124,7 @@ class OrderController extends Controller
             $order_types = $pass['display email address in cc box for order types']->data_options;
         }
         $order_types = explode(",",$order_types);
-       if(in_array($order_type_id,$order_types)){
+        if(in_array($order_type_id,$order_types)){
             $cc1 = $cc;
 
         } else {
@@ -1304,7 +1304,7 @@ class OrderController extends Controller
                 $this->data['messagetext'] = "Following POs cannot be removed: <br>".implode("<br>",$postedtonetsuitePOIds);
                 $this->data['msgstatus'] = "error";
             }
-           return view("order.removalreasonexplain", $this->data);
+            return view("order.removalreasonexplain", $this->data);
 
 
         }else{
@@ -1495,7 +1495,7 @@ class OrderController extends Controller
                     //@todo update order status after code merge
                     $orderStatusCondition = " AND orders.deleted_at is not null  ";
                 } else {
-                   // $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter' AND  orders.tracking_number!='') AND orders.deleted_at is null ";
+                    // $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter' AND  orders.tracking_number!='') AND orders.deleted_at is null ";
                     $orderStatusCondition = "AND (orders.status_id = '$statusIdFilter') AND orders.deleted_at is null ";
 
                 }
@@ -2097,15 +2097,15 @@ class OrderController extends Controller
         $queries = \DB::select($sql);
         if (count($queries) != 0) {
             foreach ($queries as $query) {
-                    $orderTypeId = (int) $orderTypeId;
-                    $product = product::find($query->id);
-                    $productVariations = $product->getProductVariations()->where("prod_type_id",$orderTypeId)->first();
+                $orderTypeId = (int) $orderTypeId;
+                $product = product::find($query->id);
+                $productVariations = $product->getProductVariations()->where("prod_type_id",$orderTypeId)->first();
 
-                    if($productVariations){
-                            $results[] = ['id' => $productVariations->id, 'value' => $productVariations->vendor_description];
-                    }else{
-                        $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
-                    }
+                if($productVariations){
+                    $results[] = ['id' => $productVariations->id, 'value' => $productVariations->vendor_description];
+                }else{
+                    $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
+                }
             }
             echo json_encode($results);
         } else {
@@ -2398,7 +2398,7 @@ class OrderController extends Controller
         return $notes;
     }
 
-   public static function array_splice_assoc(&$input, $offset, $length, $replacement) {
+    public static function array_splice_assoc(&$input, $offset, $length, $replacement) {
         $replacement = (array) $replacement;
         $key_indices = array_flip(array_keys($input));
         if (isset($input[$offset]) && is_string($offset)) {
@@ -2412,7 +2412,7 @@ class OrderController extends Controller
             + $replacement
             + array_slice($input, $offset + $length, NULL, TRUE);
     }
-public static function array_move($which, $where, $array)
+    public static function array_move($which, $where, $array)
     {
 
         $tmpWhich = $which;
@@ -3090,14 +3090,14 @@ ORDER BY aa_id");
     public function getInquireOrder($orderId){
 
         $order = Order::find($orderId);
-
+        $configName = 'Inquire about this order';
         if(!$order)
         {
             return \Redirect::to('order')
                 ->with('messagetext', \Lang::get('core.note_order_not_found'))->with('msgstatus', 'error');
         }
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
-        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients('Inquire about this order', null, $isTest);
+        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($configName, null, $isTest);
 
         $fromEmail = 'info@fegllc.com';
 
@@ -3109,17 +3109,19 @@ ORDER BY aa_id");
             $systemEmailRecipients['to'] .= Users::find(Session::get('uid'))->email;
         }
 
-        $options['message'] = $message;
-        $options['subject'] = $subject;
-        $options['cc'] = $systemEmailRecipients['cc'];
-        $options['bcc'] = $systemEmailRecipients['bcc'];
-        $options['replyTo'] = '';
-        $options['preferGoogleOAuthMail'] = false;
-        FEGSystemHelper::sendEmail(
-            $systemEmailRecipients['to'],
-            'Inquire Order',
-            $message,
-            $fromEmail,
+        $options['message']                 = $message;
+        $options['subject']                 = $subject;
+        $options['cc']                      = $systemEmailRecipients['cc'];
+        $options['bcc']                     = $systemEmailRecipients['bcc'];
+        $options['replyTo']                 = '';
+        $options['preferGoogleOAuthMail']   = false;
+
+        $options['to']                      = $systemEmailRecipients['to'];
+        $options['configName']              = $configName;
+        $options['from']                    = $fromEmail;
+        $options['isTest']                  = $isTest;
+
+        FEGSystemHelper::sendSystemEmail(
             $options,
             true
         );
