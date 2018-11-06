@@ -122,9 +122,9 @@
 			$(this).ajaxSubmit(options);
 			return false;
 
-		} else {
-			return false;
-		}
+                } else {
+                    return false;
+                }
 
 	});
 
