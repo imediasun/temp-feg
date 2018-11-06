@@ -304,6 +304,29 @@ function ajaxRemove( id, url )
         notyMessageError("Please select one or more rows.");
     }
 }
+
+//Clear all vendors mail schedule
+function ajaxClearSchedule( url )
+{
+    if(confirm('Are you sure you want to clear all vendors schedule.')) {
+
+        $.post( url+'/delete',function( data ) {
+
+            if(data.status =='success')
+            {
+                console.log("called succes");
+                notyMessage(data.message);
+            } else {
+                console.log("called error");
+                notyMessageError(data.message);
+            }
+        });
+
+    }
+    
+}
+
+
 function ajaxRemoveProduct(id, url) {
     var datas = $(id + 'Table :input').serialize();
     if ($(".ids:checked").length > 0) {

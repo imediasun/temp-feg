@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
 use DB;
+use App\Models\VendorImportSchedule;
+use Illuminate\Support\Facades\Auth;
 
 class VendorController extends Controller
 {
@@ -475,5 +477,63 @@ class VendorController extends Controller
             ));
         }
     }
+
+
+    function getSendList($id)
+    {
+        dd($id);
+    }
+
+    function getScheduleList(Request $request, $id = null)
+    {
+
+        $this->data['row'] = $this->model->getColumnTable('vendor_import_schedules');
+
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+
+        $this->data['vendorId'] = $id;
+
+        $schedule = VendorImportSchedule::where('vendor_id', $id)->first();
+        $this->data['schedule'] = $schedule;
+        return view('vendor.import_list_schedule', $this->data);
+    }
+
+
+    function postVendorImportSchedule(Request $request, $id = null)
+    {
+//        dd(explode('/',$request->date_month));
+        $schedule = new VendorImportSchedule();
+        $response = $schedule->createOrUpdateSchedule($id, Auth::user()->id, $request->all());
+        if ($response) {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => 'Record updated successfully.'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in updating record.'
+            ));
+        }
+
+    }
+
+    function postClearAllSchedulesList(){
+        $schedule = new VendorImportSchedule();
+        $clear = $schedule->update(['is_active'=>0]);
+        if ($clear) {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => 'All vendors schedule cleared successfully.'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in updating record.'
+            ));
+        }
+    }
+
 
 }
