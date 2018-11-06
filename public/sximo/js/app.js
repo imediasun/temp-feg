@@ -1405,6 +1405,10 @@ function createClone(object,appendAfter){
         'top':'13px',
         'color':'#929292',
     });
+    clone.children('td').find('.select2-container').remove();
+    clone.children('td').children('select.prod_type_id').val(null);
+    clone.children('td').children('select.prod_sub_type_id').val(null);
+    clone.children('td').children('select').select2();
     newElement.insertAfter(actions);
     clone.attr('id',clone.attr('id')+"-"+cloneId);
     clone.attr('data-id',0);
@@ -1414,6 +1418,7 @@ function createClone(object,appendAfter){
     clone.animate({
         'opacity':1
     },1500);
+
     console.log('clone created');
 }
 /**
@@ -1436,4 +1441,55 @@ function removeClone(rowId){
      }
     reloadData('#reviewvendorimportlist','reviewvendorimportlist/data?search=import_vendor_id:equal:'+vendorId)
 
+}
+
+function setProductSubTypes(object,row){
+    $('.ajaxLoading').show();
+
+    $.ajax({
+       url:'/reviewvendorimportlist/all-product-sub-types/'+object.value,
+        data:{id:object.value},
+        type:"GET",
+        success:function (response) {
+            var html = '<option value="">--Select--</option>';
+            row = $(object).parent('td').parent('tr');
+            var field =  row.find('select.prod_sub_type_id');
+            for (var i =0; i<response.length; i++){
+                var data = response[i];
+                html +='<option value="'+data.id+'">'+data.type_description+'</option>';
+            }
+            field.html(html);
+            field.select2();
+            field.change();
+            $('.ajaxLoading').hide();
+        }
+    });
+
+}
+function deleteImportRecord(){
+    App.notyConfirm({
+        message: "Are you sure you want to remove the list?",
+        confirmButtonText: 'Yes',
+        confirm: function () {
+            var selected_vendor = $("#selected_vendor").val();
+            $.ajax({
+                url:"/reviewvendorimportlist/delete",
+                data:{id:selected_vendor},
+                type:"POST",
+                success:function (response) {
+                    $('.btn-search[data-original-title="Clear Search"]').trigger('click');
+                    if(response.status == 'error') {
+                        notyMessageError(response.message);
+                    }else {
+                        notyMessage(response.message);
+                    }
+                }
+            });
+
+        },
+        cancel:function(){
+
+
+        }
+    });
 }
