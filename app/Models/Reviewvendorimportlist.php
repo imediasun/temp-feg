@@ -40,35 +40,54 @@ class reviewvendorimportlist extends Sximo  {
 		return "  ";
 	}
 
-    /**
-     * @param bool $onlyColumnName
-     * @return array
-     */
-	public function editableGridColumns($onlyColumnName = false){
-	    return $onlyColumnName == true ? array_keys($this->editableGridColumns):$this->editableGridColumns;
+    public function getImportVendors(){
+        $fields = [
+            'import_vendors.id',
+        'import_vendors.vendor_id',
+            'vendor.vendor_name',
+            'import_vendors.email_recieved_at'
+        ];
+        $vendors = vendor::select($fields)
+            ->join('import_vendors','import_vendors.vendor_id','=','vendor.id')
+            ->orderBy('vendor.vendor_name','asc')
+            ->where('import_vendors.is_imported','=','0')->get();
+    return $vendors;
     }
-    public function getEditableColumns(){
-        $columns = $this->editableGridColumns();
-        foreach ($columns as $column){
-            if($column['field'] == 'select'){
 
+    public function getExpenseCategoryGroups(){
+        $expense_category = \DB::select("SELECT expense_category_mapping.id,expense_category_mapping.mapped_expense_category,order_type.`order_type`,CONCAT(mapped_expense_category,' ',GROUP_CONCAT(order_type.`order_type` ORDER BY order_type.`order_type` ASC SEPARATOR ' | ')) as order_type
+FROM expense_category_mapping
+JOIN order_type ON order_type.id = expense_category_mapping.order_type
+WHERE product_type IS NULL
+GROUP BY mapped_expense_category");
+        $items = [];
+        foreach ($expense_category as $category) {
+            $orderType = $category->order_type;
+            $categoryId = $category->mapped_expense_category;
+            if ($categoryId == 0) {
+                /* $orderType = "N/A";
+                 $categoryId = "";
+                */
+            } else {
+
+                $items[] = [$categoryId, $orderType];
             }
         }
-        return $columns;
+        return $items;
     }
 
-    public function setFieldOptions($field = []){
-        if ($field['source'] == 'custom' && $field['type'] == 'boolean'){
-            $field['field']['options'] = [
-                [ 'value'=>0, 'display_text'=>'No'],
-                [ 'value'=>1, 'display_text'=>'Yes']
-            ];
-        }else{
-            $field['field']['options'] = [
-                [ 'value'=>0, 'display_text'=>'No'],
-                [ 'value'=>1, 'display_text'=>'Yes']
-            ];
+    public function getProductType(){
+        return Ordertyperestrictions::select('id','order_type')->where('can_request','=','1')->orderBy('order_type','asc')->get();
+    }
+    public function getProductAllSubTypes(){
+       return ProductType::orderBy('type_description','asc')->get();
+    }
+    public function addProductSubTypes($rows){
+        $productSubTypes = $this->getProductAllSubTypes();
+        foreach ($rows as $row){
+            $row->productSubTypes = $productSubTypes->where('request_type_id',$row->prod_type_id);
         }
+        return $rows;
     }
 
 }
