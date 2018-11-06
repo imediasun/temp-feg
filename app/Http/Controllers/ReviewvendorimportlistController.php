@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\product;
 use App\Models\Reviewvendorimportlist;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -91,7 +92,7 @@ class ReviewvendorimportlistController extends Controller {
 		$this->data['message']          = @$results['message'];
 		$this->data['bottomMessage']	= @$results['bottomMessage'];
         
-		$this->data['rowData']		= $results['rows'];
+		$this->data['rowData']		= $this->model->addProductSubTypes($results['rows']);
 		// Build Pagination
 		$this->data['pagination']	= $pagination;
 		// Build pager number and append current param GET
@@ -112,6 +113,14 @@ class ReviewvendorimportlistController extends Controller {
         if ($this->data['config_id'] != 0 && !empty($config)) {
         $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
+        $this->data['importVendorListId'] = 0;
+        $this->data['vendors_list'] = $this->model->getImportVendors();
+        if(!empty($this->data['rowData'])){
+            $this->data['importVendorListId'] = $this->data['rowData']['0']->import_vendor_id;
+        }
+        $this->data['expense_categories'] = $this->model->getExpenseCategoryGroups();
+
+        $this->data['productTypes'] = $this->model->getProductType();
 // Render into template
 		return view('reviewvendorimportlist.table',$this->data);
 
@@ -218,6 +227,34 @@ class ReviewvendorimportlistController extends Controller {
 		}
 
 	}
+    function postSaveData( Request $request, $id =0)
+    {
+        $itemIds = $request->input('item_id');
+        $parentIds = $request->input('parent_id');
+
+        if (count($itemIds) > 0) {
+
+            for ($i = 0; $i < count($itemIds); $i++) {
+                if($itemIds[$i] == 0) {
+                    $product = Reviewvendorimportlist::find($parentIds[$i])->toArray();
+
+                }
+
+
+            }
+dd('end');
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
+        }else{
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.note_error')
+            ));
+        }
+
+    }
 
 	public function postDelete( Request $request)
 	{

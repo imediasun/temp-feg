@@ -3,7 +3,7 @@
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','reviewvendorimportlist/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','reviewvendorimportlist/data?search=import_vendor_id:equal:0')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','reviewvendorimportlist/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
@@ -18,17 +18,17 @@
             @foreach ($simpleSearchForm as $t)
                 <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
                     {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
-                    {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}                    
-                </div>                        
-            @endforeach		
+                    {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                </div>
+            @endforeach
             {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
         </div>
         @endif
         @endif
-        
+
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
-	 <?php echo Form::open(array('url'=>'reviewvendorimportlist/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+	 <?php echo Form::open(array('url'=>'reviewvendorimportlist/save-data/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
     @if(!empty($topMessage))
     <h5 class="topMessage">{{ $topMessage }}</h5>
@@ -37,6 +37,7 @@
     <table class="table table-striped datagrid " id="{{ $pageModule }}Table" data-module="{{ $pageModule }}" data-url="{{ $pageUrl }}">
         <thead>
 			<tr>
+				<td width="25"></td>
                 @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 				<th width="35"> No </th>
                 @endif
@@ -105,8 +106,14 @@
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
-                    @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
-					<td class="number"> <?php echo ++$i;?>  </td>
+					<td style="position: relative;" class="cloneOption">
+						<i  data-id="form-{{ $row->id }}" onclick="createClone($('#form-{{ $row->id }}'),$('#form-{{ $row->id }}'))" class="fa fa-plus-square" style="color:#195a97; top:0px; cursor: pointer; font-size: 14px; position: absolute; "></i>
+                        <input type="hidden" class="parent_id" value="{{ $row->id }}" name="parent_id[]">
+                        <input type="hidden" class="itemId" value="{{ $row->id }}" name="item_id[]">
+
+                    </td>
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+					<td class="number" > <?php echo ++$i;?>  </td>
                     @endif
                     @if($setting['disableactioncheckbox']=='false')
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
@@ -124,7 +131,35 @@
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									{!! $value !!}
+									@if($field['field'] == 'expense_category')
+                                        <select required="" name="{{ $field['field'] }}[]" style="width: 100%;" class="select3 select2">
+                                            <option value="">--Select--</option>
+                                            @foreach($expense_categories as $expense_category)
+                                                <option @if($row->$field['field'] == $expense_category[0]) selected @endif value="{{ $expense_category[0] }}">{{ $expense_category[1] }}</option>
+                                            @endforeach
+                                        </select>
+                                        @elseif($field['field'] == 'prod_type_id')
+                                         <select required="" style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2">
+                                         <option value="">--Select--</option>
+                                         @foreach($productTypes as $productType)
+                                             <option @if($row->$field['field'] == $productType->id) selected @endif value="{{ $productType->id }}">{{ $productType->order_type }}</option>
+                                             @endforeach
+                                         </select>
+                                        @elseif($field['field'] == 'prod_sub_type_id')
+                                         <select required="" name="{{ $field['field'] }}[]" style="width: 100%;" class="select3 select2">
+                                             <option value="">--Select--</option>
+                                             @foreach($row->productSubTypes as $productSubType)
+                                                 <option @if($row->$field['field'] == $productSubType->id) selected @endif value="{{ $productSubType->id }}">{{ $productSubType->type_description }}</option>
+                                             @endforeach
+                                         </select>
+                                        @elseif(in_array($field['field'],['is_reserved','allow_negative_reserve_qty','inactive','in_development','hot_item','exclude_export']))
+                                         <select required="" style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2">
+                                             <option @if($row->$field['field'] == 1) selected @endif value="1">Yes</option>
+                                             <option @if($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0') selected @endif value="0">No</option>
+                                         </select>
+                                        @else
+                                     {!! $value !!}
+                                        @endif
 								 </td>
 							@endif
                     <?php
@@ -181,6 +216,25 @@
 	@if($setting['inline'] =='true')  @include('sximo.module.utility.inlinegrid') @endif
 <script>
 $(document).ready(function() {
+    var singleRequest = true;
+
+    $(document).off('submit').on('submit','#SximoTable',function(e){
+        e.preventDefault();
+       var postData  = $(this).serialize();
+        if(singleRequest) {
+            singleRequest = false;
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: postData,
+                success: function (response) {
+                    singleRequest = true;
+                    console.log(response);
+                }
+            });
+        }
+    });
+
 	$('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',

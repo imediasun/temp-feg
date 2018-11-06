@@ -1,28 +1,23 @@
-<div class="row c-margin">
-	<div class="col-md-9">
-        @if($access['is_add'] ==1)
-        {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
-        <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
-        @endif
-        @if($access['is_remove'] ==1)
-        <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
-        @endif
-        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
-        @if(SiteHelpers::isModuleEnabled($pageModule))
-        <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
-        @if(!empty($colconfigs))
-        <select class="form-control" style="width:auto!important;display:inline;" name="col-config"
-                id="col-config">
-            <option value="0">Select Column Arrangement</option>
-            @foreach( $colconfigs as $configs )
-            <option @if($config_id == $configs['config_id']) selected
-            @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
+<div class="row c-margin" style="background: white;
+    padding: 10px 0px;
+    margin: 0px 3px 10px 3px; border: 1px solid #ececec;">
+    <div class="col-md-8"><label style="display: inline-block;">Please select a list to Review:</label>
+        <select class="select3 selected_vendor" id="selected_vendor" style="width:60%;">
+            <option value="0">--Select--</option>
+            @foreach($vendors_list as $vendor)
+                <option @if($importVendorListId == $vendor->id) selected  @endif value="{{ $vendor->id }}">{{ $vendor->vendor_name.'  '.date('Y-m-d h:s',strtotime($vendor->email_recieved_at)) }}</option>
             @endforeach
         </select>
-        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
-        @endif
-        @endif
+    </div>
+    <div class="col-md-4">
+        <input type="button" value="Open List" onclick="filterByVendor($('#selected_vendor').val());" class="btn btn-primary">
+        <input type="button" value="Save List" id="savelist" onclick="$('#SximoTable').submit(); return false" class="btn btn-primary">
+        <input type="button" value="Delete List"  class="btn btn-danger" style="background-color:#fd4b4b !important; border-color:#fd4b4b !important; ">
+    </div>
+</div>
+<div class="row c-margin">
+	<div class="col-md-9">
+      &nbsp;
     </div>
 	<div class="col-md-3 ">
         <?php 
@@ -56,6 +51,8 @@
 </div>
 <script>
     $(document).ready(function(){
+        $(".select3").select2();
+
         var config_id=$("#col-config").val();
         if(config_id ==0 )
         {

@@ -1385,3 +1385,55 @@ $(function(){
         $(document).scrollTop(0);
     });
 });
+/**
+ *
+ * @param object
+ * @param appendAfter
+ */
+var cloneId = 1;
+function createClone(object,appendAfter){
+    var clone  = $(object).clone();
+    clone.css('opacity',0);
+    clone.children('.cloneOption').children('.itemId').val(0);
+    var actions = clone.children('.cloneOption').children('i');
+    var rowId = clone.attr('id')+"-"+cloneId;
+    actions.attr('onclick',"createClone($('#"+clone.attr('id')+"-"+cloneId+"'),$('#"+clone.attr('id')+"-"+cloneId+"'))");
+    var  newElement = actions.clone();
+    newElement.removeClass('fa-plus-square').addClass('fa-minus-square');
+    newElement.attr('onclick','removeClone(\''+rowId+'\')');
+    newElement.css({
+        'top':'13px',
+        'color':'#929292',
+    });
+    newElement.insertAfter(actions);
+    clone.attr('id',clone.attr('id')+"-"+cloneId);
+    clone.attr('data-id',0);
+    clone.children('.number').text('cloned');
+    clone.insertAfter(appendAfter);
+    cloneId++;
+    clone.animate({
+        'opacity':1
+    },1500);
+    console.log('clone created');
+}
+/**
+ *
+ * @param rowId
+ */
+function removeClone(rowId){
+    $('#'+rowId).animate({
+        'opacity':0
+    },1000,function() {
+        $("#"+rowId).remove();
+    });
+}
+/**
+ * @param vendorId
+ */
+ function filterByVendor(vendorId){
+     if(vendorId = 'auto'){
+         vendorId = $('#selected_vendor').val();
+     }
+    reloadData('#reviewvendorimportlist','reviewvendorimportlist/data?search=import_vendor_id:equal:'+vendorId)
+
+}
