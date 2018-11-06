@@ -6,7 +6,6 @@ use App\Models\location;
 use App\Models\Locationgroups;
 use App\Models\product;
 use App\Models\Ordertyperestrictions;
-use App\Models\ProductType;
 use App\Models\UserLocations;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -230,14 +229,9 @@ class LocationgroupsController extends Controller {
 	function postSave( Request $request, $id =0)
 	{
 	    $rules = [
-            'name'          => 'required|string|max:100|unique:l_groups,name,'.$id,
-            'location_ids'  => 'required|array'
+            'name'              => 'required|string|max:100|unique:l_groups,name,'.$id,
         ];
-	    $custom_messages = [
-	        'location_ids.required' =>  'Locations field is required',
-            'location_ids.array'    =>  'Location field input must be an array'
-        ];
-		$validator = Validator::make($request->all(), $rules, $custom_messages);
+		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {
 			$data = $this->validatePost('l_groups');
 
@@ -249,8 +243,8 @@ class LocationgroupsController extends Controller {
 			if($id){
 
 			    $location_ids       = $request->get('location_ids');
-			    $product_type_ids   = $request->get('product_type_ids');
-			    $product_ids        = $request->get('product_ids');
+			    $product_type_ids   = $request->get('excluded_product_type_ids');
+			    $product_ids        = $request->get('excluded_product_ids');
 
                 FEGDBRelationHelpers::destroyCustomRelation(location::class, Locationgroups::class, 0, 0, $id);
                 FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, Locationgroups::class, 1, 0, $id);

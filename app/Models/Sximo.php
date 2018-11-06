@@ -11,7 +11,6 @@ use App\Library\SximoQueryBuilder;
 use App\Models\Core\Groups;
 use App\Models\CustemRelation;
 use Validator;
-use App\Models\CustemRelation;
 class Sximo extends Model {
 
     public static $getRowsQuery = null;

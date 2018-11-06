@@ -298,8 +298,8 @@ class LocationController extends Controller
                $rules['id'] = 'required';
             }
         }
-        $rules['location_name'] = 'required|regex:/^[-a-zA-Z0-9()\s]+$/';
-        $rules['location_name_short'] = 'required|regex:/^[-a-zA-Z0-9()\s]+$/';
+        $rules['location_name'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
+        $rules['location_name_short'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('location');
@@ -309,13 +309,14 @@ class LocationController extends Controller
             if (empty($newId) || empty($oldId) || $oldId == $newId) {
                 $oldId = null;
             }
-
+            unset($data['product_type_ids']);
+            unset($data['product_ids']);
             $id = $this->model->insertRow($data, $id);
 
             if($id){
 
-                $product_type_ids   = $request->get('product_type_ids');
-                $product_ids        = $request->get('product_ids');
+                $product_type_ids   = is_array($request->get('product_type_ids')) ? $request->get('product_type_ids'):[];
+                $product_ids        = is_array($request->get('product_ids')) ? $request->get('product_ids'):[];
 
                 FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, Locationgroups::class, 1, 0, $id);
                 FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
