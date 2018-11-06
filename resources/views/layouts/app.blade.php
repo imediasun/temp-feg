@@ -21,7 +21,11 @@
 		<link href="{{ asset('sximo/js/plugins/datepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet"/>
 		<link href="{{ asset('sximo/js/plugins/bootstrap.datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet"/>
  		@if($_SERVER['REQUEST_URI']  !== '/ordersetting')
-			<link href="{{ asset('sximo/js/plugins/select2/select2.css')}}" rel="stylesheet"/>
+			@if(!str_contains($_SERVER['REQUEST_URI'], ['module', 'feg/config', 'core', 'feg/tables', 'feg/menu', 'user/profile']) &&  in_array($pageModule, ['product','locationgroups', 'location']))
+				<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet"/>
+			@else
+				<link href="/sximo/js/plugins/select2/select2.css" rel="stylesheet" />
+			@endif
 		@else
 			<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 		@endif
@@ -46,8 +50,13 @@
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery-ui.min.js') }}"></script>
 
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/iCheck/icheck.min.js') }}"></script>
+
 		@if($_SERVER['REQUEST_URI']  !== '/ordersetting')
-			<script type="text/javascript" src="{{ asset('sximo/js/plugins/select2/select2.js') }}"></script>
+			@if(!str_contains($_SERVER['REQUEST_URI'], ['module', 'feg/config', 'core', 'feg/tables', 'feg/menu', 'user/profile']) && in_array($pageModule, ['product','locationgroups', 'location']))
+				<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+			@else
+				<script type="text/javascript" src="{{ asset('sximo/js/plugins/select2/select2.js') }}"></script>
+			@endif
 		@else
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 		@endif
@@ -93,7 +102,7 @@
 		//define global level js variables here
 		var PREVENT_CONSOLE_LOGS = '{{env('PREVENT_CONSOLE_LOGS')}}';
 		var pageModule = '{{$pageModule or ''}}';
-		console.log("My page module is "+pageModule);
+
 	</script>
 	<script type="text/javascript" src="{{ asset('sximo/js/plugins/ajax/noty/packaged/jquery.noty.packaged.min.js') }}"></script>
 
@@ -102,11 +111,71 @@
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js?version='.config('app.version')) }}"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
 
+	@yield('select2Custom')
+
 	<!-- End Search and storage  -->
-    @yield('beforeheadend', '')	
+    @yield('beforeheadend', '')
+
+    @if(!str_contains($_SERVER['REQUEST_URI'], ['module', 'feg/config', 'core', 'feg/tables', 'feg/menu', 'user/profile']) && $pageModule !== 'product')
+		<link href="{{ asset('sximo/css/select2-custom.css') }}" rel="stylesheet"/>
+    @else
+        <link href="{{ asset('sximo/css/select2-custom-for-product.css') }}" rel="stylesheet"/>
+    @endif
+	<script src="{{ asset('sximo/js/select2-custom.js') }}" ></script>
   	</head>
   	<body class="sxim-init" >
     @yield('afterbodystart', '')
+	@if(env('APP_ENV')=='development' || env('APP_ENV')=='staging' || env('APP_ENV')=='demo')
+	<div class="debugbarbtn" onmouseover="$(this).css({'left':'0px'},1000);" onmouseout="$(this).css({'left':'-121px'});" onclick="$('.locationDebugBar').toggle('slow');" style="position: fixed; cursor: pointer; top:0px; z-index: 99999999;  font-weight: 700;     background: #ffffff;
+    color: #2b2929;
+    padding:5px 10px; left: -121px; border-right: 5px solid red;" title="Location DebugBar">Location DebugBar</div>
+	<div class="locationDebugBar container" style="min-height:100px;  box-shadow: black 0px 0px 1px inset; max-height: 450px; overflow-y: auto; font-size: 11px; color: black; background: white; top:20px; position: fixed; display: none; width: 100%; z-index: 99999;">
+		<?php
+		$debuggerData = \App\Library\FEGDBRelationHelpers::getAllExcludedDataDebugger();
+		?>
+		<div class="row" style="max-height:450px; overflow-y: auto;">
+			<div class="col-md-4">
+		<h4>Location Groups</h4>
+				<div>
+					<?php $i=0 ?>
+					@foreach($debuggerData['locationGroups'] as $locationGroup)
+							<div  style="@if($i%2==0) background:#dfdfdf; @endif padding: 2px; border-bottom: 1px dotted black;" >
+						{{ $locationGroup }}
+					</div>
+						<?php $i++ ?>
+						@endforeach
+
+				</div>
+			</div>
+			<div class="col-md-4">
+				<h4>Excluded Product Types for Current Location</h4>
+				<div>
+					<?php $i=0 ?>
+					@foreach($debuggerData['productTypes'] as $productType)
+							<div  style="@if($i%2==0) background:#dfdfdf; @endif padding: 2px; border-bottom: 1px dotted black;" >
+							{{ $productType }}
+						</div>
+						<?php $i++ ?>
+					@endforeach
+
+				</div>
+			</div>
+			<div class="col-md-4">
+				<h4>Excluded Product for Current Location</h4>
+				<div>
+					<?php $i=0 ?>
+					@foreach($debuggerData['products'] as $product)
+						<div  style="@if($i%2==0) background:#dfdfdf; @endif padding: 2px; border-bottom: 1px dotted black;" >
+							{{ $product }}
+						</div>
+						<?php $i++ ?>
+					@endforeach
+
+				</div>
+			</div>
+		</div>
+	</div>
+	@endif
 	<div id="wrapper" {!! (isset($sid) && $sid!='') ? 'style="pointer-events:none"' : '' !!}>
 		@include('layouts/sidemenu')
 		<div class="gray-bg " id="page-wrapper">

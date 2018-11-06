@@ -10,10 +10,13 @@ use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
 use App\Library\FEG\System\Email\Report;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
+use App\Models\Locationgroups;
 use App\Models\managefegrequeststore;
 use App\Models\DigitalPackingList;
 use App\Models\Order;
+use App\Models\Ordertyperestrictions;
 use App\Models\OrderContent;
 use App\Models\product;
 use App\Models\OrderSendDetails;
@@ -201,6 +204,41 @@ class OrderController extends Controller
         }
     }
 
+    public function getSearch($mode = 'ajax')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = $mode;
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
+
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+
+
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+
+        if(count($productTypeExcludedbyLocation) > 0){
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] =true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
+        }
+
+
+
+        if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            return view('feg_common.search', $this->data);
+        } else {
+            return view('sximo.module.utility.search', $this->data);
+        }
+
+    }
 
     public function getIndex()
     {
@@ -286,6 +324,14 @@ class OrderController extends Controller
                 ];
             }
         }
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+        if(count($productTypeExcludedbyLocation) > 0) {
+
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] = true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
+        }
+
+
         if($this->model->isTypeRestricted()){
             $filter .= " AND orders.order_type_id IN(".$this->model->getAllowedTypes().") ";
         }
@@ -476,6 +522,14 @@ class OrderController extends Controller
         $this->data['games_options'] = $this->model->populateGamesDropdown();
         $this->data['isTypeRestricted'] = $this->model->isTypeRestricted();
         $this->data['displayTypesOnly'] = $this->model->getAllowedTypes();
+//        $locationId = $id ? $id : null;
+        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
+
+       if($this->model->isTypeRestricted()){
+           $otherExcluded = Ordertyperestrictions::select('id')->where('can_request', 1)->whereNotIn('id',[7])->get()->pluck('id')->toArray();
+           $excludedOrderTypesArray = array_merge($excludedOrderTypesArray,$otherExcluded);
+       }
+        $this->data['excludedOrderTypes'] = implode(',', $excludedOrderTypesArray);
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
@@ -946,7 +1000,7 @@ class OrderController extends Controller
                     $contentsData['pre_is_broken_case'] = 0;
                     $contentsData['is_broken_case'] = 0;
                 }
-                
+
                 if ($is_freehand == 0) {
                     event(new PostSaveOrderEvent($contentsData));
                 }
@@ -1645,6 +1699,24 @@ class OrderController extends Controller
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
+
+
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
+        $customString = '';
+        if(!empty($excludedProductIdsString)){
+            $customString .= ' AND orders.id not in('.$excludedProductIdsString.') ';
+        }
+        if(!empty($excludedProductTypeIdsString)){
+            $customString .= ' AND orders.order_type_id not in(' . $excludedProductTypeIdsString . ') ';
+        }
+
+        if(!empty($customString)){
+            $filter .= $customString;
+        }
+
         return $filter;
     }
 
@@ -1921,10 +1993,21 @@ class OrderController extends Controller
         $po = $request->get('po');
         $po_full = $po_1 . '-' . $po_2 . '-' . $po_3;
         $location =  location::find($location_id);
+        $excludedProductTypeIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($location_id, true, false)['excluded_product_type_ids'];
+        if($this->model->isTypeRestricted()){
+            $otherExcluded = Ordertyperestrictions::select('id')->where('can_request', 1)->whereNotIn('id',[7])->get()->pluck('id')->toArray();
+            $excludedProductTypeIds = array_merge($excludedProductTypeIds,$otherExcluded);
+        }
+        $orderTypes = Ordertyperestrictions::select('order_type', 'id')->where('can_request', 1)->whereNotIn('id', $excludedProductTypeIds);
+
+
+        $orderTypes = $orderTypes->orderBy('order_type', 'asc')->get();
         return [
-            'po_3'          =>  $this->validatePO($po, $po_full, $location_id),
-            'fedex_number'  =>  $location ? $location->fedex_number ? $location->fedex_number : 'No Data' : 'No Data',
-            'freight_id'    => $location ? $location->freight_id ? $location->freight_id : '' : '',
+            'po_3'                  =>  $this->validatePO($po, $po_full, $location_id),
+            'fedex_number'          =>  $location ? $location->fedex_number ? $location->fedex_number : 'No Data' : 'No Data',
+            'freight_id'            =>  $location ? $location->freight_id ? $location->freight_id : '' : '',
+            'order_types'           =>  $orderTypes,
+            'exclude_the_order_types'  =>  $excludedProductTypeIds
         ];
     }
 
@@ -2181,16 +2264,18 @@ class OrderController extends Controller
     {
         $term = Input::get('term');
         $vendorId = Input::get('vendor_id',0);
+        $locationId = Input::get('location_id');
         $excludeProducts = Input::get('exclude_products', null);
+
+       /* $isAltShippingAddress = Input::get('is_alt_shipping_address');*/
+      /* $locationId = ($isAltShippingAddress != '') ? null : $locationId;*/ // We don't need anymore this condition
+
         $whereWithVendorCondition = $whereWithExcludeProductCondition = "";
 
         $orderTypeId = Input::get('order_type_id', 0);
-        $whereOrderTypeCondition = $whereRestrictedTypeCondition = "";
+        $whereRestrictedTypeCondition = "";
         $restrictedOrderTypes = [Order::ORDER_TYPE_REDEMPTION,Order::ORDER_TYPE_INSTANT_WIN_PRIZE];
-        // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
-        if (!empty($orderTypeId) && in_array($orderTypeId,$restrictedOrderTypes)) {
-            $whereOrderTypeCondition = " AND products.prod_type_id in(".implode(",",$restrictedOrderTypes).")";
-        }
+
         if($this->model->isTypeRestricted()){
             $whereRestrictedTypeCondition = " AND products.prod_type_id in(".$this->model->getAllowedTypes().")";
         }
@@ -2198,6 +2283,27 @@ class OrderController extends Controller
         //get products related to selected vendor only
         if (!empty($vendorId)) {
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
+        }
+
+        $restrictedProductsAndTypesIdsArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true, true);
+        $restrictedProductTypeIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_type_ids'];
+        $restrictedProductIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_ids'];
+
+        $restrictedProductIds = implode(',', $restrictedProductIdsArray);
+        $whereNotInProductIdsCondition = '';
+        if(!empty($restrictedProductIds)){
+            $whereNotInProductIdsCondition = " AND products.id NOT IN ($restrictedProductIds) ";
+        }
+
+        $whereOrderTypeCondition = " AND products.prod_type_id in(".$orderTypeId.")";
+        // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
+        if (
+                !empty($orderTypeId)
+                && in_array($orderTypeId,$restrictedOrderTypes)
+                && !in_array(Order::ORDER_TYPE_REDEMPTION, $restrictedProductTypeIdsArray)
+                && !in_array(Order::ORDER_TYPE_INSTANT_WIN_PRIZE, $restrictedProductTypeIdsArray)
+        ) {
+            $whereOrderTypeCondition = " AND products.prod_type_id in(".implode(",",$restrictedOrderTypes).")";
         }
 
         if ($excludeProducts) {
@@ -2227,7 +2333,7 @@ class OrderController extends Controller
                                 FROM products
                                 WHERE vendor_description LIKE '%$term%' 
                                 AND products.inactive=0  $whereWithVendorCondition  $whereWithExcludeProductCondition  
-                                  $whereOrderTypeCondition $whereRestrictedTypeCondition
+                                  $whereOrderTypeCondition $whereRestrictedTypeCondition $whereNotInProductIdsCondition
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
                                  Limit 0,10";

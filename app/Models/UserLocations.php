@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Session;
 
 class UserLocations extends Sximo  {
 	
@@ -88,5 +89,16 @@ class UserLocations extends Sximo  {
                 ->where('group_id', '!=', null)
                 ->get();
         return $data;
+    }
+
+    /**
+     * @param string $locationNameColumnAs
+     * @return mixed
+     */
+    public static function getUserAssignedLocations($locationNameColumnAs = 'location.location_name'){
+        return  self::select('location.id',$locationNameColumnAs)
+            ->Join('location','location.id','=','user_locations.location_id')
+            ->where('location.active',1)
+            ->where('user_locations.user_id',Session::get('uid'))->orderBy('location.id','asc');
     }
 }

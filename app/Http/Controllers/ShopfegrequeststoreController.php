@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEGDBRelationHelpers;
 use App\Models\Shopfegrequeststore;
 use App\Models\Addtocart;
 use \App\Models\Sximo\Module;
@@ -42,6 +43,41 @@ class ShopfegrequeststoreController extends Controller
 
 
     }
+    public function getSearch($mode = 'ajax')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = $mode;
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
+
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+
+
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+
+        if(count($productTypeExcludedbyLocation) > 0){
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] =true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
+        }
+
+
+
+        if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            return view('feg_common.search', $this->data);
+        } else {
+            return view('sximo.module.utility.search', $this->data);
+        }
+
+    }
 
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
@@ -49,9 +85,35 @@ class ShopfegrequeststoreController extends Controller
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters([
+            'search_all_fields' => '',
+            'prod_type_id'=>'',
+            'prod_sub_type_id'=>'',
+        ]);
         $skipFilters = ['search_all_fields'];
+
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
         $mergeFilters = [];
+
+        if($excludedProductTypeIdsString != '' ){
+            array_push($mergeFilters, [
+                "field"     =>  'prod_type_id',
+                "operater"  =>  'not_in',
+                'value'     =>  $excludedProductTypeIdsString
+            ]);
+        }
+
+        if($excludedProductIdsString != '' ){
+            array_push($mergeFilters, [
+                "field"     =>  'id',
+                "operater"  =>  'not_in',
+                'value'     =>  $excludedProductIdsString
+            ]);
+        }
+
         extract($globalSearchFilter); //search_all_fields
 
         // rebuild search query skipping 'ticket_custom_type' filter
@@ -79,8 +141,8 @@ class ShopfegrequeststoreController extends Controller
 
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
-
+        $filter  = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput, 'not_in');
+        $filter .= is_null($trimmedSearchQuery)  ? '' : $this->buildSearch($trimmedSearchQuery, 'not_in');
 
         return $filter;
     }
@@ -130,6 +192,7 @@ class ShopfegrequeststoreController extends Controller
       //Commented below line to implement single Search field in simple search
       //$filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
         $filter = $this->getSearchFilterQuery();
+
         // add special price range query
         if (!empty($price_range)) {
             $pr1 = '';
@@ -172,6 +235,7 @@ class ShopfegrequeststoreController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
+
         // Get Query
         $type = $request->get('type');
         $this->data['type'] = $type;
@@ -183,7 +247,8 @@ class ShopfegrequeststoreController extends Controller
         $product_type = $request->get('product_type');
         $this->data['product_type'] = $product_type;
         $cond = array('type' => $type, 'active_inactive' => $active_inactive, 'order_type' => $order_type, 'product_type' => $product_type,);
-        $results = $this->model->getRows($params, $cond);
+        $results = $this->model->getRows($params,$cond);
+
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         // Build pagination setting
@@ -225,6 +290,12 @@ class ShopfegrequeststoreController extends Controller
         $this->data['cart'] = $this->model->shoppingCart();
         $this->data['isTypeRestricted'] = $this->model->isTypeRestricted();
         $this->data['displayTypesOnly'] = $this->model->getAllowedTypes();
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+
+        if(count($productTypeExcludedbyLocation) > 0){
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] =true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
+        }
 // Render into template
         return view('shopfegrequeststore.table', $this->data);
 

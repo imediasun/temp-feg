@@ -537,10 +537,10 @@
         var hidePopup;
         var showFirstPopup;
         var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
-        $(document).on('ifChanged','#alt_ship_to', function () {
-                    hideShowAltLocation();
-                }
-        );
+        // $(document).on('ifChanged','#alt_ship_to', function () {
+        //             hideShowAltLocation();
+        //         }
+        // );
 
         @if($data['prefill_type'] == 'SID')
             $('body #sidemenu a:not(.expand)').on('click',function (e) {
@@ -766,8 +766,12 @@
                         initial_text: '-------- Select Freight Type --------'
                     });
 
+            excludedOrderTypes = '{!! $excludedOrderTypes !!}';
+            excludedOrderTypes = $.parseJSON('[' + excludedOrderTypes + ']');
+
+
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
-                    {isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'],selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
+                    {excludeItems:excludedOrderTypes, isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'],selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
 
             $("input[name*='total'] ").attr('readonly', '1');
             $(" input[name*='bulk_Price'] ").addClass('calculate');
@@ -1087,26 +1091,152 @@
             }
         }
         var games_dropdown = [];
+        oldLocationId   = null;
+        oldAltShipToVal = null;
+
         $("#location_id").click(function () {
-            $("#po_1").val($(this).val());
-            var location_id = $(this).val();
-            //if(myloc == location_id)
-            validatePONumber(location_id, 0);
+            changeLocation();
+        });
+
+        $('#orderView .iCheck-helper').on('click', function () {
+
+            if(mode == 'edit'){
+                if($('#alt_ship_to').is(':checked')){
+                    $('#ship_address').css('display', 'block');
+                }else{
+                    $('#ship_address').css('display', 'none');
+                }
+            }else{
+
+                if($('#alt_ship_to').is(':checked')){
+                    var selectedLocationId          = $("#user_locations").val();
+                    var isCheckedAltShippingAddress = true;
+                }else{
+                    var selectedLocationId          =  $("#location_id").val() != '' ? $("#location_id").val() : 0;
+                    var isCheckedAltShippingAddress = false;
+                }
+
+                if($('#vendor_id').val() == '')
+                    onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId);
+                else
+                    confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId);
+            }
+
+        });
+
+        function onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId){
+            $('.ajaxLoading').css('display', 'block');
             $.ajax({
-                type: "GET",
-                url: "{{ url() }}/order/games-dropdown",
-                data: {'location': $(this).val()},
-                success: function (data) {
-                    games_options_js = data;
-                    $("[id^=game_0]").select2('destroy');
-                    renderDropdown($("[id^=game_0]"), {
-                        dataType: 'json',
-                        data: {results: data},
-                        placeholder: "For Various Games", width: "100%"
+                url: '/order/update',
+                method: 'GET',
+                success:function (resultHTML) {
+                    $('#orderView').html(resultHTML);
+                    $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
+                        {
+                            selected_value: isCheckedAltShippingAddress ? '' : selectedLocationId,
+                            initial_text: '-------- Select Location --------',
+                            <?php $data["order_loc_id"] == '' ? '' : print_r("onLoad:addInactiveItem('#location_id', ".$data['order_loc_id']." , 'Location', 'active' , 'id|location_name' )") ?>
+                        });
+
+                    $("#po_1").val(0);
+                    if(isCheckedAltShippingAddress){
+                        $('#ship_address').css('display', 'block');
+                        $('#alt_ship_to').attr('checked', true);
+                        $('#alt_ship_to').parent().addClass('icheckbox_square-blue checked');
+                    }
+
+                    validatePONumber(selectedLocationId, 0, true, isCheckedAltShippingAddress);
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ url() }}/order/games-dropdown",
+                        data: {'location': selectedLocationId},
+                        success: function (data) {
+                            games_options_js = data;
+                            $("[id^=game_0]").select2('destroy');
+                            renderDropdown($("[id^=game_0]"), {
+                                dataType: 'json',
+                                data: {results: data},
+                                placeholder: "For Various Games", width: "100%"
+                            });
+                        }
                     });
+
+                    if(oldLocationId != selectedLocationId)
+                        oldLocationId = selectedLocationId;
                 }
             });
-        });
+        }
+
+        function confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId){
+            App.notyConfirm({
+                message: "Are you sure you want to change Location <br> <b>***WARNING***</b><br>Changing the location will reset everything in the view. Do you really want to proceed?",
+                confirmButtonText: 'Yes',
+                modal: true,
+                confirm: function () {
+
+                    onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId);
+
+
+                    //-------------Code to be copied--------------
+                    {{--$("#po_1").val($(this).val());--}}
+                    {{--var location_id = $(this).val();--}}
+                    {{--//if(myloc == location_id)--}}
+                    {{--validatePONumber(location_id, 0);--}}
+                    {{--$.ajax({--}}
+                    {{--type: "GET",--}}
+                    {{--url: "{{ url() }}/order/games-dropdown",--}}
+                    {{--data: {'location': $(this).val()},--}}
+                    {{--success: function (data) {--}}
+                    {{--games_options_js = data;--}}
+                    {{--$("[id^=game_0]").select2('destroy');--}}
+                    {{--renderDropdown($("[id^=game_0]"), {--}}
+                    {{--dataType: 'json',--}}
+                    {{--data: {results: data},--}}
+                    {{--placeholder: "For Various Games", width: "100%"--}}
+                    {{--});--}}
+                    {{--}--}}
+                    {{--});--}}
+                    //-------------Code to be copied ends here--------------
+
+                },
+                cancel:function(){
+                    @if($mode == 'clone')
+                    oldLocationId = {{ $data['order_loc_id'] }}
+                    @endif
+
+                    $('select#location_id').select2('val', [oldLocationId]);
+
+                    if(oldAltShipToVal){
+                        $('#alt_ship_to').attr('checked', true);
+                        $('#alt_ship_to').parent().addClass('checked');
+                    }else{
+                        $('#alt_ship_to').attr('checked', false);
+                        $('#alt_ship_to').parent().removeClass('checked');
+                    }
+                }
+            });
+        }
+
+
+        function changeLocation(isCheckedAltShippingAddress = false){
+            var selectedLocationId  = isCheckedAltShippingAddress ? $("#user_locations").val() : $("#location_id").val();
+
+            if($("#alt_ship_to").is(':checked')){
+                $('.ajaxLoading').css('display', 'block');
+                $("#po_1").val(selectedLocationId);
+                validatePONumber(selectedLocationId, 0, false);
+            }
+            else  if(!$("#alt_ship_to").is(':checked') && $('#vendor_id').val() != ''){
+                confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId);
+            }
+            else{
+                $('.ajaxLoading').css('display', 'block');
+                $("#po_1").val(selectedLocationId);
+                validatePONumber(selectedLocationId, 0);
+            }
+
+
+        }
 
         renderDropdown($("[id^=game_0]"), {
             dataType: 'json',
@@ -1119,6 +1249,9 @@
             $(this).attr('lastSelected', $(this).val());
         });
         $("#vendor_id").on('change', function() {
+            oldLocationId = $('#location_id').val();
+            oldAltShipToVal = $('#alt_ship_to').is(':checked');
+
             if ($('#is_freehand').val() == 0){
 
 
@@ -1253,7 +1386,7 @@
 
             validatePONumber(location_id, 0);
         }
-        function validatePONumber(location_id, po) {
+        function validatePONumber(location_id, po, rePopulateOrderTypes = true, isCheckedAltShippingAddress = false) {
             $("#submit_btn").attr('disabled', 'disabled');
             var base_url =<?php echo  json_encode(url()) ?>;
             po_1 = $('#po_1').val().trim();
@@ -1281,21 +1414,39 @@
                         po: po
                     },
                     success: function (msg) {
+
+                        if(rePopulateOrderTypes == true){
+
+                            var selectedType = '';
+                             @if($fromStore == 1 or $mode == "edit" or $mode == 'clone')
+                                     selectedType = $("#order_type_id").val();
+                             @endif
+
+                            $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
+                                {excludeItems: msg.exclude_the_order_types, isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'], selected_value: selectedType, initial_text: '-------- Select Order Type --------'});
+
+                        }
+
                         $("#submit_btn").removeAttr('disabled');
 
                         poajax = null;
                         if (msg.po_3 != 'available') {
-                            $("#po_3").val(msg.po_3);
+                            $("#po_3").val(!isCheckedAltShippingAddress ? msg.po_3 : 1);
                         }
                         else {
                             $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is Available.</b>');
                             $("#po_message").show(200);
                         }
 
-                        $("#fedex_number").val(msg.fedex_number);
+                        $("#fedex_number").val(!isCheckedAltShippingAddress ? msg.fedex_number: 'No data');
                         var freightId = $("#freight_type_id");
                         freightId.val(msg.freight_id);
                         freightId.change();
+
+                        if(!isCheckedAltShippingAddress)
+                            $("#po_1").val(location_id);
+
+                        $('.ajaxLoading').css('display', 'none');
                     }
                 });
             }
@@ -1566,6 +1717,44 @@ $(function(){
                         var orderTypeId = $(obj).closest('form').find("#order_type_id").val() || '';
                         if (orderTypeId != "") {
                             request.order_type_id = orderTypeId;
+                        }
+
+                        locationId = '{{ $data["order_loc_id"]}}';
+
+                        @if($data['prefill_type'] != "edit" && $data['prefill_type']!= "SID")
+                            locationId = $('#location_id').val() || '';
+                        @endif
+                                console.log("Debug Autocomplete");
+                        if ($('#location_id').length > 0) {
+                            if ($.trim($('#location_id').val()) != '') {
+                                locationId = $('#location_id').val();
+                            }
+                        }
+
+                        if (locationId != "") {
+                            request.location_id = locationId;
+                        }
+
+                        isAltShippingAddress = '{{ $data['alt_address']}}';
+
+                        @if($data['prefill_type'] != "edit" && $data['prefill_type']!= "SID")
+                            isAltShippingAddress = $('#alt_ship_to').val() || '';
+                        @endif
+
+                        if (isAltShippingAddress != "") {
+                            request.is_alt_shipping_address = isAltShippingAddress;
+                            request.location_id = $('#user_locations').val();
+                        }
+                        if ($('#alt_ship_to').length > 0) {
+                            if ($('#alt_ship_to').is(":checked")) {
+                                request.location_id = $('#user_locations').val();
+                            }else{
+                                if ($('#location_id').length > 0) {
+                                    if ($.trim($('#location_id').val()) != '') {
+                                        request.location_id = $('#location_id').val();
+                                    }
+                                }
+                            }
                         }
 
                         var already_added_products = [], exclude_products = '';

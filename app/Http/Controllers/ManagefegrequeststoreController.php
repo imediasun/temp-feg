@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
 use App\Models\Managefegrequeststore;
 use App\Models\Sximo;
@@ -317,10 +318,23 @@ class ManagefegrequeststoreController extends Controller
 
     public function getSearchFilterQuery($customQueryString = null)
     {
+
+
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
+        $mergeFilters = [];
+
+        $skipFilters = ['search_all_fields'];
+
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
-            $this->buildSearch($customQueryString);
+        $filter = is_null($trimmedSearchQuery) ? (is_null(Input::get('search')) ? '' : $this->buildSearch(Input::get('search'), 'not_in')) :
+            $this->buildSearch($trimmedSearchQuery, 'not_in');
 
         // Get assigned locations list as sql query (part)
         //$locationFilter = \SiteHelpers::getQueryStringForLocation('new_graphics_request', 'location_id', [], ' OR new_graphics_request.location_id=0 ');
@@ -331,6 +345,17 @@ class ManagefegrequeststoreController extends Controller
         $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));
         if (empty($frontendSearchFilters['location_id'])) {
             $filter .= $locationFilter;
+        }
+
+        $customString = '';
+        if(!empty($excludedProductIdsString)){
+            $customString .= ' AND products.id not in ('.$excludedProductIdsString.') ';
+        }
+        if(!empty($excludedProductTypeIdsString)){
+            $customString .= ' AND products.prod_type_id not in (' . $excludedProductTypeIdsString . ') ';
+        }
+        if(!empty($customString)){
+            $filter .= $customString;
         }
 
         return $filter;
