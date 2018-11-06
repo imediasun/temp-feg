@@ -72,9 +72,6 @@
                         }
 					endif;
 				endforeach; ?>
-                @if($setting['disablerowactions']=='false')
-				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
-                @endif
 			  </tr>
         </thead>
 
@@ -96,16 +93,14 @@
 						@endif
 					@endif
 				@endforeach
-				<td >
-					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
-				</td>
+
 			  </tr>
 			  @endif
 
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
+                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" >
 					<td style="position: relative;" class="cloneOption">
 						<i  data-id="form-{{ $row->id }}" onclick="createClone($('#form-{{ $row->id }}'),$('#form-{{ $row->id }}'))" class="fa fa-plus-square" style="color:#195a97; top:0px; cursor: pointer; font-size: 14px; position: absolute; "></i>
                         <input type="hidden" class="parent_id" value="{{ $row->id }}" name="parent_id[]">
@@ -139,21 +134,23 @@
                                             @endforeach
                                         </select>
                                         @elseif($field['field'] == 'prod_type_id')
-                                         <select required="" style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2">
+                                         <select required="" style="width: 100%;" name="{{ $field['field'] }}[]" onchange="setProductSubTypes(this,$('#form-{{ $row->id }}'));" class="select3 select2 {{ $field['field'] }}">
                                          <option value="">--Select--</option>
                                          @foreach($productTypes as $productType)
                                              <option @if($row->$field['field'] == $productType->id) selected @endif value="{{ $productType->id }}">{{ $productType->order_type }}</option>
                                              @endforeach
                                          </select>
+                                     @elseif($field['field'] == 'retail_price')
+                                         <input type="text" name="{{ $field['field'] }}[]" value="{{ $row->$field['field'] }}" class="form-control" style="width: 100%;">
                                         @elseif($field['field'] == 'prod_sub_type_id')
-                                         <select required="" name="{{ $field['field'] }}[]" style="width: 100%;" class="select3 select2">
+                                         <select required="" name="{{ $field['field'] }}[]" style="width: 100%;" class="select3 select2 {{ $field['field'] }}">
                                              <option value="">--Select--</option>
                                              @foreach($row->productSubTypes as $productSubType)
                                                  <option @if($row->$field['field'] == $productSubType->id) selected @endif value="{{ $productSubType->id }}">{{ $productSubType->type_description }}</option>
                                              @endforeach
                                          </select>
                                         @elseif(in_array($field['field'],['is_reserved','allow_negative_reserve_qty','inactive','in_development','hot_item','exclude_export']))
-                                         <select required="" style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2">
+                                         <select required=""  style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2 ">
                                              <option @if($row->$field['field'] == 1) selected @endif value="1">Yes</option>
                                              <option @if($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0') selected @endif value="0">No</option>
                                          </select>
@@ -166,11 +163,7 @@
 						 endif;
 						endforeach;
 					  ?>
-                  @if($setting['disablerowactions']=='false')     
-				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('reviewvendorimportlist',$access,$id ,$setting) !!}
-                 </td>
-                @endif
+
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -219,6 +212,7 @@ $(document).ready(function() {
     var singleRequest = true;
 
     $(document).off('submit').on('submit','#SximoTable',function(e){
+        $('.ajaxLoading').show();
         e.preventDefault();
        var postData  = $(this).serialize();
         if(singleRequest) {
@@ -229,7 +223,12 @@ $(document).ready(function() {
                 data: postData,
                 success: function (response) {
                     singleRequest = true;
-                    console.log(response);
+                    if(response.status == 'error') {
+                        notyMessageError(response.message);
+                    }else {
+                        notyMessage(response.message);
+                    }
+                    $('.ajaxLoading').hide();
                 }
             });
         }

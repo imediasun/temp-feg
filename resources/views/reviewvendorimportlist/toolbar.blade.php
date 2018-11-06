@@ -12,7 +12,7 @@
     <div class="col-md-4">
         <input type="button" value="Open List" onclick="filterByVendor($('#selected_vendor').val());" class="btn btn-primary">
         <input type="button" value="Save List" id="savelist" onclick="$('#SximoTable').submit(); return false" class="btn btn-primary">
-        <input type="button" value="Delete List"  class="btn btn-danger" style="background-color:#fd4b4b !important; border-color:#fd4b4b !important; ">
+        <input type="button" value="Delete List" onclick="deleteImportRecord();"  class="btn btn-danger" style="background-color:#fd4b4b !important; border-color:#fd4b4b !important; ">
     </div>
 </div>
 <div class="row c-margin">
