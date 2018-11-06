@@ -9,7 +9,7 @@
 
 	<div class="sbox-content">
 @endif
-			{!! Form::open(array('url'=>'locationgroups/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationgroupsFormAjax')) !!}
+			{!! Form::open(array('url'=>'locationgroups/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationgroupsFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> Location Groups</legend>
 
@@ -35,7 +35,17 @@
 
 						</div>
 					</div>
+                    <div class="form-group  " >
+                        <label for="Name" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Location', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
+                        </label>
+                        <div class="col-md-6">
+                            {!! Form::select('location_ids[]', $locations, isset($savedLocations) ? $savedLocations : null, array('class'=>'select2', 'id'=>'location_ids' ,'multiple'=>"multiple" )) !!}
+                        </div>
+                        <div class="col-md-2">
 
+                        </div>
+                    </div>
                     <div class="form-group  " >
                         <label for="Name" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Excluded Product Types', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
