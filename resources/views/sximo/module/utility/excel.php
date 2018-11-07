@@ -72,13 +72,15 @@ if (!empty($AddNote)){
 	//Finding Serial column
 	$serialColumn = '';
 	$row = $objPHPExcel->getActiveSheet()->getRowIterator(2)->current();
-$objPHPExcel->getActiveSheet()->getStyle('A'.$start.':P'.$start)->applyFromArray(
-	array(
-		'font'  => array(
-			'color' => array('rgb' => '061ab7'),
+if (empty($reviewVendorList)) {
+	$objPHPExcel->getActiveSheet()->getStyle('A' . $start . ':P' . $start)->applyFromArray(
+		array(
+			'font' => array(
+				'color' => array('rgb' => '061ab7'),
+			)
 		)
-	)
-);
+	);
+}
 	$cellIterator = $row->getCellIterator();
 	$cellIterator->setIterateOnlyExistingCells(false);
 

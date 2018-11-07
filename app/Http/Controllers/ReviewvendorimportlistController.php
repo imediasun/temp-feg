@@ -42,7 +42,126 @@ class ReviewvendorimportlistController extends Controller
         $this->data['access'] = $this->access;
         return view('reviewvendorimportlist.index', $this->data);
     }
+    public function getExport($t = 'excel')
+    {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
 
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+
+        $info = $this->model->makeInfo($this->module);
+        //$master  	= $this->buildMasterDetail();
+        if (method_exists($this, 'getSearchFilterQuery')) {
+            $filter = $this->getSearchFilterQuery();
+        }
+        else {
+            $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+        }
+
+        //$filter 	.=  $master['masterFilter'];
+//    $params = array(
+//        'params' => ''
+//    );
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby'];
+        $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];
+        $params = array(
+            'params' => '',
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0),
+            'forExcel'=>1
+        );
+
+
+        $results = $this->model->getRows($params);
+
+        $fields = $info['config']['grid'];
+        $rows = $results['rows'];
+        //print_r($fields[0]);die;
+        $extra = array(
+            'field' => '',
+            'alias' => 'departments',
+            'language' =>
+                array('id' => ''),
+            'label' => '',
+            'view' => '1',
+            'detail' => '1',
+            'sortable' => '1',
+            'search' => '1',
+
+            'download' => '1',
+            'frozen' => '1',
+            'limited' => '',
+            'width' => '100',
+            'align' => 'left',
+            'sortlist' => '0',
+            'conn' =>
+                array(
+                    'valid' => '0',
+                    'db' => '',
+                    'key' => '',
+                    'display' => ''),
+            'attribute' =>
+                array(
+                    'hyperlink' => '',
+                    array(
+                        'active' => '0',
+                        'link' => '',
+                        'target' => 'modal',
+                        'html' => ''),
+                    'image' =>
+                        array(
+
+                            'active' => '0',
+                            'path' => '',
+                            'size_x' => '',
+                            'size_y' => '',
+                            'html' => ''),
+                    'formater' =>
+                        array(
+                            'active' => '0',
+                            'value' => '',
+                        )));
+
+        $rows = $this->updateDateInAllRows($rows);
+
+        $content = array(
+            'exportID' => $exportSessionID,
+            'fields' => $fields,
+            'rows' => $rows,
+            'title' => $this->data['pageTitle'],
+            'reviewVendorList' => 1,
+            'excelExcludeFormatting' => isset($results['excelExcludeFormatting'])?$results['excelExcludeFormatting']:[]
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('sximo.module.utility.excel', $content);
+        }
+    }
     public function postData(Request $request)
     {
 
@@ -90,7 +209,7 @@ class ReviewvendorimportlistController extends Controller
         $this->data['topMessage'] = @$results['topMessage'];
         $this->data['message'] = @$results['message'];
         $this->data['bottomMessage'] = @$results['bottomMessage'];
-
+        $results['rows'] = $this->model->setRowStatus($results['rows']);
         $this->data['rowData'] = $this->model->addProductSubTypes($results['rows']);
         // Build Pagination
         $this->data['pagination'] = $pagination;
@@ -117,6 +236,14 @@ class ReviewvendorimportlistController extends Controller
         if (!empty($this->data['rowData'])) {
             $this->data['importVendorListId'] = $this->data['rowData']['0']->import_vendor_id;
         }
+        if ($request->has('omit_vendor_list_id')){
+            $this->data['importVendorListId'] = $request->input('omit_vendor_list_id');
+            $this->data['resetOmit'] = [
+                'selectedList'=> $request->input('omit_vendor_list_id'),
+                'buttonText' => 'Add to Vendor Import List'
+            ];
+        }
+
         $this->data['expense_categories'] = $this->model->getExpenseCategoryGroups();
 
         $this->data['productTypes'] = $this->model->getProductType();
@@ -228,6 +355,7 @@ class ReviewvendorimportlistController extends Controller
         $parentIds = $request->input('parent_id');
         $prodTypeId = $request->input('prod_type_id');
         $retailPrice = $request->input('retail_price');
+        $ticketValue = $request->input('ticket_value');
         $prodSubTypeId = $request->input('prod_sub_type_id');
         $expenseCategory = $request->input('expense_category');
         $isReserved = $request->input('is_reserved');
@@ -252,6 +380,7 @@ class ReviewvendorimportlistController extends Controller
                         'in_development' => $inDevelopment[$i],
                         'hot_item' => $hotItem[$i],
                         'exclude_export' => $excludeExport[$i],
+                        'ticket_value' =>$ticketValue[$i],
                     ];
 
                     if ($itemIds[$i] == 0) {
@@ -267,7 +396,6 @@ class ReviewvendorimportlistController extends Controller
                         $data['vendor_id'] = $product['vendor_id'];
                         $data['unit_price'] = $product['unit_price'];
                         $data['case_price'] = $product['case_price'];
-                        $data['ticket_value'] = $product['ticket_value'];
                         $data['reserved_qty'] = $product['reserved_qty'];
                         $data['reserved_qty_reason'] = $product['reserved_qty_reason'];
                         $data['variation_id'] = $product['variation_id'];
@@ -280,7 +408,7 @@ class ReviewvendorimportlistController extends Controller
                         $data['product_id'] = 0;
                         $data['is_imported'] = 0;
                         $data['imported_by'] = 0;
-                        $data['is_omitted'] = 0;
+                        $data['is_omitted'] = $product['is_omitted'];
 
                     }
 
@@ -325,12 +453,62 @@ class ReviewvendorimportlistController extends Controller
 
     }
 
-    public function getAllProductSubTypes($productTypeId = 0)
+    public function getAllProductSubTypes(Request $request)
     {
-        $productTypeId = (int)$productTypeId;
+        $productTypeId = (int)$request->input('id');
         $productSubTypes = $this->model->getProductAllSubTypes();
 
         $filteredTypes = $productSubTypes->where('request_type_id', $productTypeId)->toArray();
-        return response()->json($filteredTypes);
+
+        $types = [];
+        foreach ($filteredTypes as $filteredType){
+            $types[] = [
+                'id'=>$filteredType['id'],
+                'type_description' => $filteredType['type_description'],
+            ];
+        }
+
+        return response()->json($types);
+    }
+
+    public function postOmit(Request $request){
+        $importItemIds = $request->input('ids');
+       $this->model->whereIn('id',$importItemIds)->update(['import_vendor_id'=>null,'is_omitted'=>1]);
+
+        return response()->json(array(
+            'status' => 'success',
+            'message' => "Items has been Omitted Successfully."
+        ));
+
+    }
+
+    public function postUnomit(Request $request){
+        $importItemIds = $request->input('ids');
+        $vendorListId = $request->input('selectedList');
+        $this->model->whereIn('id',$importItemIds)->update(['import_vendor_id'=>$vendorListId,'is_omitted'=>0]);
+
+        return response()->json(array(
+            'status' => 'success',
+            'message' => "Items has been Omitted Successfully."
+        ));
+
+    }
+
+    public function postUpdateProductListModule(Request $request){
+
+        $isUpdated = $this->model->updateProductModule($request->input('id'));
+
+        if($isUpdated)
+        {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => "Product list module has been updated."
+            ));
+        }else{
+            return response()->json(array(
+                'status' => 'error',
+                'message' => "Product list module couldn't be updated."
+            ));
+        }
     }
 }
