@@ -3352,7 +3352,7 @@ ORDER BY aa_id");
         $fromEmail = 'merch.office@fegllc.com';
 
         $message = $this->getShow($orderId, 'emails.inquireOrder');
-        $subject = 'Inquire orders';
+        $subject = 'Inquire order';
         if(!empty($systemEmailRecipients['to'])){
             $systemEmailRecipients['to'] .= ','.Session::get('eid').',merch.office@fegllc.com';
         }else{
