@@ -5,7 +5,7 @@
         <select class="select3 selected_vendor" id="selected_vendor" style="width:60%;">
             <option value="0">--Select--</option>
             @foreach($vendors_list as $vendor)
-                <option @if($importVendorListId == $vendor->id) selected  @endif value="{{ $vendor->id }}">{{ $vendor->vendor_name.'  '.date('Y-m-d h:s',strtotime($vendor->email_recieved_at)) }}</option>
+                <option vendor-id="{{ $vendor->vendor_id }}" @if($importVendorListId == $vendor->id) selected  @endif value="{{ $vendor->id }}">{{ $vendor->vendor_name.'  '.date('Y-m-d h:s',strtotime($vendor->email_recieved_at)) }}</option>
             @endforeach
         </select>
     </div>
@@ -18,6 +18,12 @@
 <div class="row c-margin">
 	<div class="col-md-9">
       &nbsp;
+        @if(!empty($resetOmit))
+            <input type="button" value="{{ $resetOmit['buttonText'] }}" onclick="unomittItem('{{ $resetOmit['selectedList'] }}');"  class="btn btn-primary">
+        @else
+            <input type="button" value="Omit Product" onclick="omittItem();"  class="btn btn-primary">
+        @endif
+        <input type="button" value="Review Vendor's Omitted Products" onclick="showVendorOmittedItems($('#selected_vendor'))"   class="btn btn-primary">
     </div>
 	<div class="col-md-3 ">
         <?php 

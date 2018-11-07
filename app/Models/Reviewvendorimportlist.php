@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Session;
 
 class reviewvendorimportlist extends Sximo  {
 	
@@ -88,6 +89,71 @@ GROUP BY mapped_expense_category");
             $row->productSubTypes = $productSubTypes->where('request_type_id',$row->prod_type_id);
         }
         return $rows;
+    }
+
+    public function setRowStatus($rows){
+        //Red=#fd4b4b;Green=#4fbb39;Blue=#103669;
+
+        foreach ($rows as $row){
+            if ($row->product_id == 0 || $row->product_id == ''){
+                $row->rowStatus = 'New';
+                $row->textColor = '#4fbb39';
+            }elseif ($row->product_id > 0 && $row->product_id != ''){
+                $product = product::find($row->product_id);
+                if(!$product){
+                    $row->rowStatus = 'New';
+                    $row->textColor = '#4fbb39';
+                }else{
+                    $isUpdated = (
+                        $product->vendor_description != $row->vendor_description || $product->sku != $row->sku
+                        || $product->upc_barcode != $row->upc_barcode || $product->num_items != $row->num_items
+                        || $product->unit_price != $row->unit_price || $product->case_price != $row->case_price
+                    );
+                    if($isUpdated){
+                        $row->rowStatus = 'Updated';
+                        $row->textColor = '#1d6dd8';
+                    }else{
+                        $row->rowStatus = 'Equal';
+                        $row->textColor = '#676a6c';
+                    }
+                }
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     */
+    public function updateProductModule($id){
+        if($id > 0){
+            $itemsobjs = self::where('import_vendor_id',$id)->where('is_omitted',0);
+            self::where('import_vendor_id',$id)->where('is_omitted',0)->update(['is_imported'=>1,'imported_by'=>Session::get('uid'),'imported_at'=>date('Y-m-d H:i:s')]);
+
+            $items = $itemsobjs->get()->toArray();
+            $product = new product();
+            $a = [];
+            foreach ($items as $item){
+
+                $productId = $item['product_id'] > 0 ? $item['product_id']:null;
+                unset($item['id']);
+                unset($item['product_id']);
+                unset($item['is_imported']);
+                unset($item['imported_by']);
+                unset($item['imported_at']);
+                unset($item['is_omitted']);
+                unset($item['import_vendor_id']);
+                $product->insertRow($item,$productId);
+            }
+
+            \DB::table('import_vendors')->where('id',$id)->update(['is_imported'=>1,'updated_at'=>date('Y-m-d H:i:s')]);
+            return true;
+        }else{
+            return false;
+        }
+
     }
 
 }

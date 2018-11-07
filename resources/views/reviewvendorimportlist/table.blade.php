@@ -100,7 +100,7 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" >
+                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" style="color: {{ $row->textColor }} !important;" >
 					<td style="position: relative;" class="cloneOption">
 						<i  data-id="form-{{ $row->id }}" onclick="createClone($('#form-{{ $row->id }}'),$('#form-{{ $row->id }}'))" class="fa fa-plus-square" style="color:#195a97; top:0px; cursor: pointer; font-size: 14px; position: absolute; "></i>
                         <input type="hidden" class="parent_id" value="{{ $row->id }}" name="parent_id[]">
@@ -142,7 +142,10 @@
                                          </select>
                                      @elseif($field['field'] == 'retail_price')
                                          <input type="text" name="{{ $field['field'] }}[]" value="{{ $row->$field['field'] }}" class="form-control" style="width: 100%;">
-                                        @elseif($field['field'] == 'prod_sub_type_id')
+                                     @elseif($field['field'] == 'ticket_value')
+                                         <input type="text" name="{{ $field['field'] }}[]" value="{{ $row->$field['field'] }}" class="form-control" style="width: 100%;">
+
+                                     @elseif($field['field'] == 'prod_sub_type_id')
                                          <select required="" name="{{ $field['field'] }}[]" style="width: 100%;" class="select3 select2 {{ $field['field'] }}">
                                              <option value="">--Select--</option>
                                              @foreach($row->productSubTypes as $productSubType)
@@ -196,7 +199,7 @@
     
 	</div>
 	<?php echo Form::close() ;?>
-	@include('ajaxfooter')
+	@include('ajaxfooter',['showImportVendorButton'=>true])
 
 	</div>
 </div>
@@ -248,7 +251,22 @@ $(document).ready(function() {
 
 	$('#{{ $pageModule }}Paginate .pagination li a').click(function() {
 		var url = $(this).attr('href');
-		reloadData('#{{ $pageModule }}',url);
+
+        App.notyConfirm({
+            message: "Do you want to further proceed without makin any permanent changes?",
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
+            confirm: function () {
+             $('#savelist').trigger('click');
+                reloadData('#{{ $pageModule }}',url);
+            },
+            cancel:function(){
+
+                reloadData('#{{ $pageModule }}',url);
+            }
+        });
+
+
 		return false ;
 	});
 
