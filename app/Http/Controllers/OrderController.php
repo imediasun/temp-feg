@@ -3344,14 +3344,14 @@ ORDER BY aa_id");
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
         $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($configName, null, $isTest);
 
-        $fromEmail = 'info@fegllc.com';
+        $fromEmail = 'merch.office@fegllc.com';
 
         $message = $this->getShow($orderId, 'emails.inquireOrder');
         $subject = 'Inquire orders';
         if(!empty($systemEmailRecipients['to'])){
-            $systemEmailRecipients['to'] .= ','.Session::get('eid');
+            $systemEmailRecipients['to'] .= ','.Session::get('eid').',merch.office@fegllc.com';
         }else{
-            $systemEmailRecipients['to'] .= Session::get('eid');
+            $systemEmailRecipients['to'] .= Session::get('eid').',merch.office@fegllc.com';
         }
 
         $options['message']                 = $message;
