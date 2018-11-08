@@ -1209,6 +1209,9 @@ class FEGSystemHelper
             'configName' => "Test",
             'configNamePrefix' => "",
             'configNameSuffix' => "",
+            'overrideToEmailInTestMode' => false,
+            'overrideCCEmailInTestMode' => false,
+            'overrideBCCEmailInTestMode' => false
         ), $options);
 
         extract($options);
@@ -1252,7 +1255,12 @@ $message" .
             $options['message'] = $message;
             $options['subject'] = $subject = "[TEST] " . $subject;
             $emailRecipients = self::getSystemEmailRecipients($configName, null, true);
-            $options['to'] = $to = $emailRecipients['to'];
+            if(overrideToEmailInTestMode){
+                $options['to'] = $to = array_merge($to,$emailRecipients['to']);
+            }
+            else{
+                $options['to'] = $to = $emailRecipients['to'];
+            }
             $options['cc'] = $cc = $emailRecipients['cc'];
             $options['bcc'] = $bcc = $emailRecipients['bcc'];
             if (empty($to)) {

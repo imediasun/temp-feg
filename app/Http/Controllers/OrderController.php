@@ -3109,6 +3109,12 @@ ORDER BY aa_id");
             $systemEmailRecipients['to'] .= Session::get('eid');
         }
 
+        if($isTest){
+            $options['overrideToEmailInTestMode'] = true;
+            $options['overrideCCEmailInTestMode'] = true;
+            $options['overrideBCCEmailInTestMode'] = true;
+        }
+
         $options['message']                 = $message;
         $options['subject']                 = $subject;
         $options['cc']                      = $systemEmailRecipients['cc'];
@@ -3120,6 +3126,8 @@ ORDER BY aa_id");
         $options['configName']              = $configName;
         $options['from']                    = $fromEmail;
         $options['isTest']                  = $isTest;
+
+        $options['overrideToEmail'] =
 
         FEGSystemHelper::sendSystemEmail(
             $options,
