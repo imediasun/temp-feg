@@ -155,5 +155,126 @@ GROUP BY mapped_expense_category");
         }
 
     }
+    public function isVendorExist($fromEmail){
+        $vendor = vendor::select("id")->where(function ($query) use($fromEmail){
+            $query->where('email',$fromEmail);
+            $query->where('email_2',$fromEmail);
+        })->get();
+        return $vendor->count() > 0 ? true:false;
+    }
+    public function importExlAttachment($dataArray = []){
+      /*  $data = [
+            'email_received_at' ,
+            'from_email',
+            'attachments',
+        ];*/
+      $fromEmail = $dataArray['from_email'];
+      $vendor = vendor::select("id")->where(function ($query) use($fromEmail){
+          $query->where('email',$fromEmail);
+          $query->where('email_2',$fromEmail);
+      })->first();
+        $data = [
+        'vendor_id'=>$vendor->id, 'email_recieved_at'=>date('Y-m-d H:i:s',strtotime($dataArray['email_received_at'])), 'created_at'=>date('Y-m-d H:i:s'),
+        ];
+        $importVendor = new ImportVendor();
+        $vendorListId = $importVendor->insertRow($data,null);
 
+        foreach ($dataArray['attachments'] as $attachment){
+            $fileData = \SiteHelpers::getVendorFileImportData($attachment);
+
+            if (!empty($fileData)){
+            foreach ($fileData as $item){
+                if($item['id'] > 0 && !empty($item['id'])) {
+                    $productRows = $this->findProducts($item['id'],$item,$vendorListId);
+                    $this->saveProductList($productRows,$vendor->id);
+                }else{
+                    $productRows = $this->findProducts($item['id'],$item,$vendorListId);
+                    $this->saveProductList($productRows,$vendor->id,true);
+                }
+            }
+            }
+        }
+    }
+
+    /**
+     * @param $rows
+     * @param bool $isNew
+     */
+    public function saveProductList($rows,$vendorId,$isNew = false){
+        foreach ($rows as $row) {
+            if (!empty($row['vendor_description'])) {
+                if ($isNew) {
+                    $row['is_updated'] = 0;
+                    $row['is_new'] = 1;
+                }
+                $updateItems = self::select('id')->where('vendor_id', $vendorId)->where('product_id', $row['product_id'])->where('is_omitted', 1)->first();
+                if ($updateItems) {
+                    self::where('id', $updateItems->id)->update($row);
+                } else {
+                    $this->insertRow($row, null);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $id
+     * @param $updatedFields
+     * @param $vendorListId
+     * @return array
+     */
+    public function findProducts($id,$updatedFields,$vendorListId){
+        $product = product::find($id);
+        if($product && $id > 0){
+
+            $rows = product::where('vendor_description',$product->vendor_description)
+                ->where('sku',$product->sku)
+                ->where('case_price',$product->case_price)->get();
+
+            foreach ($rows as $row) {
+                unset($row->id);
+                $row->is_reserved = !empty($row->is_reserved) ? $row->is_reserved:0;
+
+                $row->is_updated = (
+                $row->vendor_description != $updatedFields['vendor_description']
+                    || $row->sku != $updatedFields['sku']
+                    || $row->upc_barcode != $updatedFields['upc_barcode']
+                    || $row->num_items != $updatedFields['item_per_case']
+                    || $row->case_price != $updatedFields['case_price']
+                    || $row->unit_price != $updatedFields['unit_price']
+                    || $row->ticket_value != $updatedFields['ticket_value']
+                    || $row->reserved_qty != $updatedFields['reserved_qty']
+                 || ($row->is_reserved != in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0)
+                ) ? 1:0;
+                $row->product_id = $id;
+                $row->import_vendor_id = $vendorListId;
+                $row->vendor_description = $updatedFields['vendor_description'];
+                $row->sku = $updatedFields['sku'];
+                $row->upc_barcode = $updatedFields['upc_barcode'];
+                $row->num_items = $updatedFields['item_per_case'];
+                $row->case_price = $updatedFields['case_price'];
+                $row->unit_price = $updatedFields['unit_price'];
+                $row->is_reserved = in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0;
+                $row->ticket_value = $updatedFields['ticket_value'];
+                $row->reserved_qty = $updatedFields['reserved_qty'];
+
+            }
+            return $rows->toArray();
+        }else{
+            $row['product_id'] = $id;
+            $row['import_vendor_id'] = $vendorListId;
+            $row['vendor_description'] = $updatedFields['vendor_description'];
+            $row['sku'] = $updatedFields['sku'];
+            $row['upc_barcode'] = $updatedFields['upc_barcode'];
+            $row['num_items'] = $updatedFields['item_per_case'];
+            $row['case_price'] = $updatedFields['case_price'];
+            $row['unit_price'] = $updatedFields['unit_price'];
+            $row['is_reserved'] = in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0;
+            $row['ticket_value'] = $updatedFields['ticket_value'];
+            $row['reserved_qty'] = $updatedFields['reserved_qty'];
+            $row['is_updated'] = 0;
+            $row['is_new'] = 1;
+            return [$row];
+        }
+    }
 }
