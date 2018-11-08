@@ -309,7 +309,7 @@ function ajaxRemove( id, url )
 function ajaxClearSchedule( url )
 {
     if(confirm('Are you sure you want to clear all vendors schedule.')) {
-
+        $('.ajaxLoading').show();
         $.post( url+'/delete',function( data ) {
 
             if(data.status =='success')
@@ -320,6 +320,7 @@ function ajaxClearSchedule( url )
                 console.log("called error");
                 notyMessageError(data.message);
             }
+            $('.ajaxLoading').hide();
         });
 
     }
@@ -330,8 +331,10 @@ function ajaxClearSchedule( url )
 //This function is used to send product list to respective vendor.
 function ajaxSendProductList( url )
 {
+    $('.ajaxLoading').show();
 
     $.post( url,function( data ) {
+
 
         if(data.status =='success')
         {
@@ -341,6 +344,7 @@ function ajaxSendProductList( url )
             console.log("called error");
             notyMessageError(data.message);
         }
+        $('.ajaxLoading').hide();
     });
 
 

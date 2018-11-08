@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\CheckStuff::class,
         \App\Console\Commands\CheckNetSuiteApi::class,
         \App\Console\Commands\InjectFieldToModule::class,
+        \App\Console\Commands\SendVendorScheduleEmails::class,
     ];
 
     /**
@@ -53,6 +54,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('cleanproductmeta')->hourly();
         $schedule->command('checkapi')->hourly();
+
+        //export product list to their respective vendors
+        $schedule->command('email:sendvendorschedule')->daily();
 
     }
 }

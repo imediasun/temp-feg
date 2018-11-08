@@ -148,7 +148,7 @@
 					{!! AjaxHelpers::buttonAction('vendor',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                             <!--Send vendor list button-->
-                     @if($row->email != '' || $row->email_2 != '')
+                     @if(($row->email != '' || $row->email_2 != '') && ($viewProductListExportOption || $row->ismerch == 1))
                          <a href="javascript://ajax" onclick="ajaxSendProductList('{{ URL::to('vendor/send-list/'.$row->id)}}');" class="tips btn btn-xs btn-white" title="Send List">
                              <i class="fa fa-envelope" aria-hidden="true"></i>
                          </a>
