@@ -16,7 +16,7 @@ class VendorProductsImportHelper
         set_time_limit(0);
 
         $product = new Product();
-        $products = $product->where(['vendor_id' => $vendorId, 'exclude_export' => 0])->get();
+        $products = $product->where(['vendor_id' => $vendorId, 'exclude_export' => 0])->goupBy('variation_id')->get();
         if(!$products){
             return false;
         }
