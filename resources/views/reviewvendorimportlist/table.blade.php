@@ -141,7 +141,7 @@
                                              @endforeach
                                          </select>
                                      @elseif($field['field'] == 'retail_price')
-                                         <input type="text" name="{{ $field['field'] }}[]" value="{{ $row->$field['field'] }}" class="form-control" style="width: 100%;">
+                                         <input type="text" name="{{ $field['field'] }}[]" value="{{ CurrencyHelpers::formatPrice($row->$field['field'],5,false) }}" class="form-control" style="width: 100%;">
                                      @elseif($field['field'] == 'ticket_value')
                                          <input type="text" name="{{ $field['field'] }}[]" value="{{ $row->$field['field'] }}" class="form-control" style="width: 100%;">
 

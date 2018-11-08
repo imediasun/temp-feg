@@ -30,6 +30,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\CheckNetSuiteApi::class,
         \App\Console\Commands\InjectFieldToModule::class,
         \App\Console\Commands\SendVendorScheduleEmails::class,
+        \App\Console\Commands\VendorImportProduct::class,
     ];
 
     /**
