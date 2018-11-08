@@ -527,7 +527,7 @@ class VendorController extends Controller
 
     function postVendorImportSchedule(Request $request, $id = null)
     {
-//        dd(explode('/',$request->date_month));
+//        dd($request->all());
         $schedule = new VendorImportSchedule();
         $response = $schedule->createOrUpdateSchedule($id, Auth::user()->id, $request->all());
         if ($response) {
@@ -546,7 +546,7 @@ class VendorController extends Controller
 
     function postClearAllSchedulesList(){
         $schedule = new VendorImportSchedule();
-        $clear = $schedule->update(['is_active'=>0]);
+        $clear = $schedule->truncate();
         if ($clear) {
             return response()->json(array(
                 'status' => 'success',

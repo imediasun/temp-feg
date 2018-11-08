@@ -11,6 +11,11 @@
 			<a href="javascript://ajax" class="btn btn-sm btn-white alignment-left-fixed" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
 			@endif 	
 			@endif
+            <!-- Schedule All Product Export -->
+            <a href="{{ URL::to('vendor/schedule-list/0')}}" onclick="ajaxViewDetail('#vendor',this.href); return false; " class="btn btn-sm btn-white alignment-left-fixed" title="Schedule List">
+                <i class="fa fa-calendar" aria-hidden="true"></i>Schedule All Product Exports
+            </a>
+
             <!-- Clear All Product Export Schedules -->
             <a class="btn btn-sm btn-white alignment-left-fixed" href="javascript://ajax" onclick="ajaxClearSchedule('{{ URL::to('vendor/clear-all-schedules-list/')}}');">
                 <i class="fa fa-eraser "></i> Clear Export Schedules
