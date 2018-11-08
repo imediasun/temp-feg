@@ -1385,3 +1385,230 @@ $(function(){
         $(document).scrollTop(0);
     });
 });
+/**
+ *
+ * @param object
+ * @param appendAfter
+ */
+var cloneId = 1;
+function createClone(object,appendAfter){
+    var clone  = $(object).clone();
+    clone.css('color','#4fbb39 !important');
+    clone.css('opacity',0);
+    clone.children('.cloneOption').children('.itemId').val(0);
+    var actions = clone.children('.cloneOption').children('i');
+    var rowId = clone.attr('id')+"-"+cloneId;
+    actions.attr('onclick',"createClone($('#"+clone.attr('id')+"-"+cloneId+"'),$('#"+clone.attr('id')+"-"+cloneId+"'))");
+    var  newElement = actions.clone();
+    newElement.removeClass('fa-plus-square').addClass('fa-minus-square');
+    newElement.attr('onclick','removeClone(\''+rowId+'\')');
+    newElement.css({
+        'top':'13px',
+        'color':'#929292',
+    });
+    clone.children('td').find('.select2-container').remove();
+    clone.children('td').children('select.prod_type_id').val(null);
+    clone.children('td').children('select.prod_sub_type_id').val(null);
+    clone.children('td').children('select').select2();
+    newElement.insertAfter(actions);
+    clone.attr('id',clone.attr('id')+"-"+cloneId);
+    clone.attr('data-id',0);
+    clone.children('.number').text('cloned');
+    clone.insertAfter(appendAfter);
+    cloneId++;
+    clone.animate({
+        'opacity':1
+    },1500);
+
+    console.log('clone created');
+}
+/**
+ *
+ * @param rowId
+ */
+function removeClone(rowId){
+    $('#'+rowId).animate({
+        'opacity':0
+    },1000,function() {
+        $("#"+rowId).remove();
+    });
+}
+/**
+ * @param vendorId
+ */
+ function filterByVendor(vendorId){
+     if(vendorId = 'auto'){
+         vendorId = $('#selected_vendor').val();
+     }
+    reloadData('#reviewvendorimportlist','reviewvendorimportlist/data?search=import_vendor_id:equal:'+vendorId)
+
+}
+
+function setProductSubTypes(object,row){
+    $('.ajaxLoading').show();
+
+    $.ajax({
+       url:'/reviewvendorimportlist/all-product-sub-types/',
+        data:{id:object.value},
+        type:"GET",
+        success:function (response) {
+            var html = '<option value="">--Select--</option>';
+            row = $(object).parent('td').parent('tr');
+            var field =  row.find('select.prod_sub_type_id');
+            console.log("Total Sub Types: "+response.length);
+            for (var i =0; i<response.length; i++){
+                var data = response[i];
+                console.log("Product Sub Type: "+data.id+" | "+data.type_description);
+                html +='<option value="'+data.id+'">'+data.type_description+'</option>';
+            }
+            field.html(html);
+            field.select2();
+            field.change();
+            $('.ajaxLoading').hide();
+        }
+    });
+
+}
+function deleteImportRecord(){
+    App.notyConfirm({
+        message: "Are you sure you want to remove the list?",
+        confirmButtonText: 'Yes',
+        confirm: function () {
+            var selected_vendor = $("#selected_vendor").val();
+            $('.ajaxLoading').show();
+            $.ajax({
+                url:"/reviewvendorimportlist/delete",
+                data:{id:selected_vendor},
+                type:"POST",
+                success:function (response) {
+                    $('.btn-search[data-original-title="Clear Search"]').trigger('click');
+                    if(response.status == 'error') {
+                        notyMessageError(response.message);
+                    }else {
+                        notyMessage(response.message);
+                    }
+                }
+            });
+        },
+        cancel:function(){
+
+
+        }
+    });
+}
+/**
+ *
+ */
+function omittItem(){
+
+    var listItems = $('.ids[name="ids[]"]:checked');
+    if(listItems.length > 0) {
+        var itemIds = '';
+        listItems.each(function () {
+            itemIds += 'ids[]='+$(this).val()+"&";
+        });
+        App.notyConfirm({
+            message: "Are you sure you want to omit selected product (s)?<br><br>Note : Omitted  product(s) will not be shown in future reports as well.",
+            confirmButtonText: 'Yes',
+            confirm: function () {
+                $('.ajaxLoading').show();
+                $.ajax({
+                    url:"/reviewvendorimportlist/omit",
+                    data:itemIds,
+                    type:"POST",
+                    success:function (response) {
+                        $('.btn-search[data-original-title="Reload Data"]').trigger('click');
+                        if(response.status == 'error') {
+                            notyMessageError(response.message);
+                        }else {
+                            notyMessage(response.message);
+                        }
+                    }
+                });
+            },
+            cancel:function(){
+
+
+            }
+        });
+
+    }
+
+
+}
+/**
+ *
+ * @param selectedList
+ */
+function unomittItem(selectedList){
+
+    var listItems = $('.ids[name="ids[]"]:checked');
+    if(listItems.length > 0) {
+        var itemIds = '';
+        listItems.each(function () {
+            itemIds += 'ids[]='+$(this).val()+"&";
+        });
+        itemIds +='&selectedList='+selectedList;
+        App.notyConfirm({
+            message: "Are you sure you want to add omitted product(s) back to vendor list?",
+            confirmButtonText: 'Yes',
+            confirm: function () {
+                $('.ajaxLoading').show();
+                $.ajax({
+                    url:"/reviewvendorimportlist/unomit",
+                    data:itemIds,
+                    type:"POST",
+                    success:function (response) {
+                        $("#selected_vendor").val(selectedList);
+                        var vendorId = $('option:selected', $("#selected_vendor")).attr('vendor-id');
+                       var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+selectedList;
+                        reloadData('#reviewvendorimportlist',loadUrl);
+                        if(response.status == 'error') {
+                            notyMessageError(response.message);
+                        }else {
+                            notyMessage(response.message);
+                        }
+                    }
+                });
+            },
+            cancel:function(){
+
+
+            }
+        });
+
+    }
+}
+/**
+ *
+ * @param Object
+ */
+function showVendorOmittedItems(Object){
+    var vendorId = $('option:selected', Object).attr('vendor-id');
+    var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+Object.val();
+    reloadData('#reviewvendorimportlist',loadUrl);
+}
+
+/**
+ *
+ * @param Object
+ */
+
+function importVendorProductList(Object){
+    var vendorImportListId = Object.val();
+    $('.ajaxLoading').show();
+    $.ajax({
+        url:'/reviewvendorimportlist/update-product-list-module',
+        type:"POST",
+        data:{id:vendorImportListId},
+        success:function (response) {
+            if(response.status == 'error') {
+                $('.ajaxLoading').hide();
+                notyMessageError(response.message);
+            }else {
+                $('.btn-search[data-original-title="Reload Data"]').trigger('click');
+                notyMessage(response.message);
+            }
+        }
+    })
+}

@@ -5,7 +5,7 @@ $orders = array('asc','desc');
 ?>
 	<div class="table-footer">
 	<div class="row">
-	 <div class="col-md-6 col-sm-12 col-xs-12">
+	 <div class="col-md-5 col-sm-12 col-xs-12">
 	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule;?>Filter">
   			<input type="hidden" name="page" value="{{ isset($param['page'])?$param['page']:""}}" />
 			<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
@@ -89,7 +89,13 @@ $orders = array('asc','desc');
         @endif
 	  </div>
 	  </div>
-
+		<div class="col-md-1 col-sm-12 col-xs-12">
+			<div class="table-actions" style=" padding: 10px 0">
+			@if(!empty($showImportVendorButton))
+					<input type="button" value="Update Product List Module" onclick="importVendorProductList($('#selected_vendor'));" class="btn btn-primary importVendorProductList">
+				@endif
+			</div>
+		</div>
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
 		<div class="col-md-6 col-sm-12 col-xs-12" id="<?php echo $pageModule;?>Paginate">
             {!! urldecode($pagination->appends($pager)->render()) !!}
