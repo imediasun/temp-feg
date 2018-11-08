@@ -8,6 +8,7 @@ use Validator, Input, Redirect;
 use DB;
 use App\Models\VendorImportSchedule;
 use Illuminate\Support\Facades\Auth;
+use App\Library\VendorProductsImportHelper;
 
 class VendorController extends Controller
 {
@@ -479,9 +480,33 @@ class VendorController extends Controller
     }
 
 
-    function getSendList($id)
+    function postSendList($id)
     {
-        dd($id);
+        $row = $this->getVendor($id);
+        
+        if($row->email == '' || $row->email_2 == ''){
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Vendor Email does not exist.'
+            ));
+        }
+
+        $vendorEmail = empty($row->email) ? $row->email_2: $row->email;//get vendor mail address
+        
+        
+        $response = VendorProductsImportHelper::exportExcel($id, $vendorEmail);
+        if($response){
+//            dd($response);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => 'Mail send successfully.'
+            ));
+        }else{
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Mail sending failed.'
+            ));
+        }
     }
 
     function getScheduleList(Request $request, $id = null)

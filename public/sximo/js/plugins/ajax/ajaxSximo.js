@@ -327,6 +327,26 @@ function ajaxClearSchedule( url )
 }
 
 
+//This function is used to send product list to respective vendor.
+function ajaxSendProductList( url )
+{
+
+    $.post( url,function( data ) {
+
+        if(data.status =='success')
+        {
+            console.log("called succes");
+            notyMessage(data.message);
+        } else {
+            console.log("called error");
+            notyMessageError(data.message);
+        }
+    });
+
+
+}
+
+
 function ajaxRemoveProduct(id, url) {
     var datas = $(id + 'Table :input').serialize();
     if ($(".ids:checked").length > 0) {
