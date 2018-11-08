@@ -3353,10 +3353,11 @@ ORDER BY aa_id");
 
         $message = $this->getShow($orderId, 'emails.inquireOrder');
         $subject = 'Inquire order';
+        $concatMerchandiseEmailOrNot = (!str_contains($systemEmailRecipients['to'], 'merch.office@fegllc.com') ? ',merch.office@fegllc.com' : '');
         if(!empty($systemEmailRecipients['to'])){
-            $systemEmailRecipients['to'] .= ','.Session::get('eid').',merch.office@fegllc.com';
+            $systemEmailRecipients['to'] .= ','.Session::get('eid').$concatMerchandiseEmailOrNot;
         }else{
-            $systemEmailRecipients['to'] .= Session::get('eid').',merch.office@fegllc.com';
+            $systemEmailRecipients['to'] .= Session::get('eid').$concatMerchandiseEmailOrNot;
         }
 
         $options['message']                 = $message;
