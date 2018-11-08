@@ -7,7 +7,6 @@ use App\Events\Event;
 use App\Events\PostSaveOrderEvent;
 use App\Http\Controllers\controller;
 use App\Http\Controllers\Feg\System\SystemEmailReportManagerController;
-use App\Library\FEG\System\Email\Report;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Core\Users;
@@ -31,6 +30,7 @@ use App\Library\SximoDB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\View;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
 use PHPMailerOAuth;
@@ -40,6 +40,11 @@ use Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 
+/**
+ * Test comment 8
+ * Class OrderController
+ * @package App\Http\Controllers
+ */
 class OrderController extends Controller
 {
 
@@ -557,6 +562,7 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
+
         $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit', $this->data['pass']);
         $this->data['typesUsingCasePrice'] = !empty($this->data['pass']['calculate price according to case price']->data_options) ? explode(",",$this->data['pass']['calculate price according to case price']->data_options) : [];
         $this->data['id'] = $id;
@@ -679,7 +685,6 @@ class OrderController extends Controller
             return response()->json(array(
                 'message' => 'Someone has already ordered these products',
                 'status' => 'error',
-
             ));
         }
         $rules = array(
@@ -824,7 +829,6 @@ class OrderController extends Controller
                     'order_total' => $total_cost,
                     'freight_id' => $freight_type_id,
                     'alt_address' => $alt_address,
-                    'request_ids' => $where_in,
                     'po_notes' => $notes,
                     'po_notes_additionaltext' => $po_notes_additionaltext,
                 );
@@ -873,7 +877,6 @@ class OrderController extends Controller
                     'freight_id' => $freight_type_id,
                     'po_number' => $po,
                     'alt_address' => $alt_address,
-                    'request_ids' => $where_in,
                     'new_format' => 1,
                     'is_freehand' => $is_freehand,
                     'po_notes' => $notes,
@@ -950,7 +953,6 @@ class OrderController extends Controller
 
                 $contentsData = array(
                     'order_id' => $order_id,
-                    'request_id' => $request_id,
                     'product_id' => $product_id,
                     'price' => $priceArray[$i],
                     'qty' => $qtyArray[$i],
@@ -1007,7 +1009,7 @@ class OrderController extends Controller
                     event(new PostSaveOrderEvent($contentsData));
                 }
 
-                if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
+                if ($order_type == Order::ORDER_TYPE_PRODUCT_IN_DEVELOPMENT) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
                 {
                     $productData = array(
                         'vendor_id' => $vendor_id,
@@ -1167,13 +1169,7 @@ class OrderController extends Controller
         $order_type = \DB::select('SELECT order_type_id FROM orders WHERE id=' . $order_id);
         $order_type_id = $order_type[0]->order_type_id;
         $is_test = env('APP_ENV', 'development') !== 'production' ? true : false;
-        if ($is_test) {
-            $receipts = FEGSystemHelper::getSystemEmailRecipients("send PO copy", null, true);
-        } else {
-            $receipts = FEGSystemHelper::getSystemEmailRecipients("send PO copy");
-        }
-        extract($receipts);
-        $cc1 = "";
+        $cc ="";
         // for Instant Win, Redemption Prize, Tickets, Uniforms and Office Supply categories send a copy of PO to
         // marissa sexton,mandee cook,lisa price
         $module = new OrderController();
@@ -1183,11 +1179,31 @@ class OrderController extends Controller
         if(!empty($pass['display email address in cc box for order types'])) {
             $order_types = $pass['display email address in cc box for order types']->data_options;
         }
+        //calculate price according to case price
+        $order_types1 = '';
+        if(!empty($pass['calculate price according to case price'])) {
+            $order_types1 = $pass['calculate price according to case price']->data_options;
+        }
 
+        $emailConfigurationName = 'send PO copy Non Merchandise';
         $order_types = explode(",",$order_types);
+        $order_types = is_array($order_types) ? $order_types:[$order_types];
+        $order_types1 = explode(",",$order_types1);
+        if(in_array($order_type_id,$order_types1)){
+            $emailConfigurationName = 'send PO copy Merchandise';
+        }
+
+        if ($is_test) {
+            $receipts = FEGSystemHelper::getSystemEmailRecipients($emailConfigurationName, null, true);
+        } else {
+            $receipts = FEGSystemHelper::getSystemEmailRecipients($emailConfigurationName);
+        }
+        extract($receipts);
+        $cc1 = "";
+
 
         $ccFromSystemEmailManager   = explode(',', $cc);
-        $excludedAndIncludedEmails = self::getIncludedAndExcludedEmailCC("send PO copy", $is_test, true);
+        $excludedAndIncludedEmails = self::getIncludedAndExcludedEmailCC($emailConfigurationName, $is_test, true);
         if(in_array($order_type_id,$order_types)){
 //            dd($emailsToBeShown);
             $emailsToBeShown   = $ccFromSystemEmailManager;
@@ -1330,8 +1346,7 @@ class OrderController extends Controller
     private function sendEmailFromMerchandise($order)
     {
         $pass = $this->pass;
-
-        $dataOptionsString = $pass['Manage order emails']->data_options;
+        $dataOptionsString = !empty($pass['Manage order emails']) ? $pass['Manage order emails']->data_options: '';
         $dataOptionsArray = explode(',', $dataOptionsString);
 
         if(in_array($order->order_type_id, $dataOptionsArray)){
@@ -1724,6 +1739,7 @@ class OrderController extends Controller
 
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null, $cc = null, $bcc = null, $message = null, $sendEmailFromMerchandise = false)
     {
+
         $mode = "";
         if (isset($_GET['mode']) && !empty($_GET['mode'])) {
             $mode = $_GET['mode'];
@@ -1858,23 +1874,23 @@ class OrderController extends Controller
 
                     /* current user */
                     $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
-                    $options = [
-                        'cc' => $cc,
-                        'bcc' => $bcc,
-                        'attach' => $file_to_save,
-                        'filename' => $filename,
-                        'encoding' => 'base64',
-                        'type' => 'application/pdf',
-                        'preferGoogleOAuthMail' => false
-                    ];
-                    $configName = 'send PO copy';
+
+                    $configName = 'send PO copy Non Merchandise';
+                    if (!empty($this->data['pass'])) {
+                        $merchOrderTypes = !empty($this->data['pass']['calculate price according to case price']) ? explode(',', $this->data['pass']['calculate price according to case price']->data_options) : [];
+                        if (is_array($merchOrderTypes)) {
+                            $configName = in_array($row->order_type_id, $merchOrderTypes) ? 'send PO copy Merchandise' : 'send PO copy Non Merchandise';
+                        }
+                    }
+
+
                     $sent = FEGSystemHelper::sendSystemEmail(array(
                         'to' => implode(',', $to),
                         'cc' => $cc,
                         'bcc' => $bcc,
                         'subject' => $subject,
                         'message' => $message,
-                        'preferGoogleOAuthMail' => false,
+                        'preferGoogleOAuthMail' => (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) ? true : false,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                         'configName' => $configName,
                         'from' => (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) ? $google_acc->email : $from,
@@ -2559,8 +2575,7 @@ if($mode !='clone') {
         return response()->json($response);
     }
 
-    function getCheckReceivable(Request $request, $eId)
-    {
+    function getCheckReceivable(Request $request, $eId) {
         $id = \SiteHelpers::encryptID($eId, true);
         $response = ['status' => 'error', 'message' => \Lang::get('core.order_missing_id')];
         if (!empty($id)) {
@@ -2647,8 +2662,26 @@ if($mode !='clone') {
         $notes = \DB::table('requests')->select('notes')->whereIn('id', $request->sids)->get();
         return $notes;
     }
+    public function  getSendtestingemail()
+    {
+        /*\App\Library\FEG\System\Email\ReportGenerator::getDailyGameLocationChangeReport();*/
 
-    public static function array_splice_assoc(&$input, $offset, $length, $replacement) {
+
+            $params['date']=date('Y-m-d', strtotime('-1 day'));
+            $gameLocationChangeReport = \App\Library\FEG\System\Email\ReportGenerator::getDailyGameLocationChangeReport($params);
+
+
+
+            $params['gameLocationChangeReport'] = $gameLocationChangeReport;
+        \App\Library\FEG\System\Email\ReportGenerator::sendDailyGameLocationChangeReport($params);
+            sleep(10);
+            unset($params['gameLocationChangeReport']);
+
+    }
+
+
+    public static function array_splice_assoc(&$input, $offset, $length, $replacement)
+    {
         $replacement = (array) $replacement;
         $key_indices = array_flip(array_keys($input));
         if (isset($input[$offset]) && is_string($offset)) {
@@ -2680,16 +2713,18 @@ if($mode !='clone') {
         self::array_splice_assoc($array, $where, 0, $tmp);
         return $array;
     }
-    public static function changeProductReservedQtyOnRestoreOrder($order_id){
-        if($order_id>0) {
+
+    public static function changeProductReservedQtyOnRestoreOrder($order_id)
+    {
+        if ($order_id > 0) {
             $sql = "SELECT DISTINCT product_id,sum(adjustment_amount) as reducedreservedqty FROM `reserved_qty_log` where order_id=$order_id";
             $result = \DB::select($sql);
-            if(count($result)>0) {
-                $product = \DB::table('products')->where(['id' => $result[0]->product_id,'is_reserved'=>1])->first();
-                if(!empty($product)) {
+            if (count($result) > 0) {
+                $product = \DB::table('products')->where(['id' => $result[0]->product_id, 'is_reserved' => 1])->first();
+                if (!empty($product)) {
                     $items = \DB::table('products')->where(['vendor_description' => $product->vendor_description, 'sku' => $product->sku])->get();
-                    foreach($items as $itms){
-                        $res = \DB::update("update products set  reserved_qty=(reserved_qty-".$result[0]->reducedreservedqty.") where id='".$itms->id."'");
+                    foreach ($items as $itms) {
+                        $res = \DB::update("update products set  reserved_qty=(reserved_qty-" . $result[0]->reducedreservedqty . ") where id='" . $itms->id . "'");
                     }
                 }
             }
@@ -3389,4 +3424,6 @@ ORDER BY aa_id");
             ->with('messagetext', 'Inquire order email sent successfully!')->with('msgstatus', 'success');
 
     }
+
+
 }
