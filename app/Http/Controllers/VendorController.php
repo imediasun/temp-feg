@@ -493,7 +493,10 @@ class VendorController extends Controller
         }
     }
 
-
+    /**
+     * @param $id
+     * @return mixed
+     */
     function postSendList($id)
     {
         $row = $this->getVendor($id);
@@ -523,6 +526,11 @@ class VendorController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @param null $id
+     * @return mixed
+     */
     function getScheduleList(Request $request, $id = null)
     {
 
@@ -539,6 +547,11 @@ class VendorController extends Controller
     }
 
 
+    /**
+     * @param Request $request
+     * @param null $id
+     * @return mixed
+     */
     function postVendorImportSchedule(Request $request, $id = null)
     {
 //        dd($request->all());
@@ -558,6 +571,9 @@ class VendorController extends Controller
 
     }
 
+    /**
+     * @return mixed
+     */
     function postClearAllSchedulesList(){
         $schedule = new VendorImportSchedule();
         $clear = $schedule->truncate();

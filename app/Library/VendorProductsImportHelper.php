@@ -8,7 +8,12 @@ use App\Library\FEG\System\FEGSystemHelper;
 
 class VendorProductsImportHelper
 {
-
+    /**
+     * @param $vendorId
+     * @param $vendorEmail
+     * @return int
+     * @throws \PHPExcel_Reader_Exception
+     */
     public static function exportExcel($vendorId, $vendorEmail)
     {
 //        return $vendorId;
