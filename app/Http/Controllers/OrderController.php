@@ -11,10 +11,14 @@ use App\Library\FEG\System\Email\Report;
 use App\Library\FEG\System\Email\ReportGenerator;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Core\Users;
+use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
+use App\Models\Locationgroups;
 use App\Models\managefegrequeststore;
 use App\Models\DigitalPackingList;
 use App\Models\Order;
+use App\Models\Ordertyperestrictions;
+use App\Models\OrderContent;
 use App\Models\product;
 use App\Models\OrderSendDetails;
 use App\Models\Sximo;
@@ -202,6 +206,41 @@ class OrderController extends Controller
         }
     }
 
+    public function getSearch($mode = 'ajax')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = $mode;
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
+
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+
+
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+
+        if(count($productTypeExcludedbyLocation) > 0){
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] =true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
+        }
+
+
+
+        if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            return view('feg_common.search', $this->data);
+        } else {
+            return view('sximo.module.utility.search', $this->data);
+        }
+
+    }
 
     public function getIndex()
     {
@@ -287,6 +326,14 @@ class OrderController extends Controller
                 ];
             }
         }
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+        if(count($productTypeExcludedbyLocation) > 0) {
+
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] = true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
+        }
+
+
         if($this->model->isTypeRestricted()){
             $filter .= " AND orders.order_type_id IN(".$this->model->getAllowedTypes().") ";
         }
@@ -477,6 +524,14 @@ class OrderController extends Controller
         $this->data['games_options'] = $this->model->populateGamesDropdown();
         $this->data['isTypeRestricted'] = $this->model->isTypeRestricted();
         $this->data['displayTypesOnly'] = $this->model->getAllowedTypes();
+//        $locationId = $id ? $id : null;
+        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
+
+       if($this->model->isTypeRestricted()){
+           $otherExcluded = Ordertyperestrictions::select('id')->where('can_request', 1)->whereNotIn('id',[7])->get()->pluck('id')->toArray();
+           $excludedOrderTypesArray = array_merge($excludedOrderTypesArray,$otherExcluded);
+       }
+        $this->data['excludedOrderTypes'] = implode(',', $excludedOrderTypesArray);
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
@@ -730,8 +785,7 @@ class OrderController extends Controller
             $denied_SIDs = $request->get('denied_SIDs');
             $po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
-
-
+            $isOrderContentPreBroken = OrderContent::where('order_id',$order_id)->whereIn('product_id', is_array($productIdArray)? $productIdArray:[$productIdArray])->select('product_id','is_broken_case')->get()->toArray();
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
@@ -792,7 +846,7 @@ class OrderController extends Controller
                         $reservedLogData = [
                             "product_id" => $product->id,
                             "order_id" => $last_insert_id,
-                            "adjustment_amount" => $removedProduct->qty,
+                            "adjustment_amount" => ($removedProduct->is_broken_case == 1 && !in_array($orderData['order_type_id'],$case_price_categories)) ? $removedProduct->qty/$removedProduct->qty_per_case:$removedProduct->qty,
                             "adjustment_type" => 'positive',
                             "variation_id" => $product->variation_id,
                             "adjusted_by" => \AUTH::user()->id,
@@ -893,6 +947,7 @@ class OrderController extends Controller
                     $prodVendorId = $vendor_id;
                 }
 
+
                 $contentsData = array(
                     'order_id' => $order_id,
                     'request_id' => $request_id,
@@ -931,6 +986,23 @@ class OrderController extends Controller
                 }
 
                 $contentsData['prev_qty'] = $request->input('prev_qty')[$i];
+                $contentsData['pre_is_broken_case'] = 0;
+
+                if(count($isOrderContentPreBroken) > 0){
+                    foreach ($isOrderContentPreBroken as $isBrokenItem){
+
+                        if($isBrokenItem['product_id'] == $product_id){
+                            $contentsData['pre_is_broken_case'] = $isBrokenItem['is_broken_case'];
+                        }
+                    }
+                }
+                $orderTypeIdsArray = (!empty($this->data['pass']['calculate price according to case price']->data_options)) ? explode(",",$this->data['pass']['calculate price according to case price']->data_options):'';
+                $orderTypeIdsArray = is_array($orderTypeIdsArray) ? $orderTypeIdsArray:[$orderTypeIdsArray];
+                if(!in_array($order_type,$orderTypeIdsArray)){
+                    $contentsData['pre_is_broken_case'] = 0;
+                    $contentsData['is_broken_case'] = 0;
+                }
+
                 if ($is_freehand == 0) {
                     event(new PostSaveOrderEvent($contentsData));
                 }
@@ -972,27 +1044,9 @@ class OrderController extends Controller
             }
             // $mailto = $vendor_email;
             $from = \Session::get('eid');
-            //send product order as email to vendor only if sendor and reciever email is available
-            // if(!empty($mailto) && !empty($from))
-            // {
-            // $this->getPo($order_id, true,$mailto,$from);
-            //}
-            //$result = Mail::send('submitservicerequest.test', $message, function ($message) use ($to, $from, $full_upload_path, $subject) {
-//
-//        if (isset($full_upload_path) && !empty($full_upload_path)) {
-//            $message->attach($full_upload_path);
-//        }
-//        $message->subject($subject);
-//        $message->to($to);
-//        $message->from($from);
-//
-//    });
 
             //Deny Denied SID's
             if ($editmode == 'SID' && !empty($denied_SIDs)) {
-                //$denied_SIDs = explode('-', $denied_SIDs);
-                //array_pop($denied_SIDs);
-                //array_shift($denied_SIDs)
                 $denied_SIDs = ltrim($denied_SIDs, ',');
                 \DB::update('UPDATE requests
                          SET status_id = 3
@@ -1005,15 +1059,13 @@ class OrderController extends Controller
             }
 
 
-
-            \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
             if(!empty($denied_SIDs) && empty($where_in)){
                 $redirect_link = "managefegrequeststore";
             }
             \Session::put('redirect', $redirect_link);
 
-            $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
+            $saveOrSendView = $this->getSaveOrSendEmail("pop", $vendor_email)->render();
 
             if (!empty($where_in)) {
                 \DB::update('DELETE FROM requests WHERE id IN(' . $where_in . ')');
@@ -1082,6 +1134,7 @@ class OrderController extends Controller
                 $product->item_name = $item_names[$i];
                 $product->qty = $request->input('qty')[$i];
                 $product->prev_qty = $request->input('prev_qty')[$i];
+                $product->product_is_broken_case = $request->input('is_broken_case')[$i];
                 $product->order_product_id = ($request->input('product_id')[$i] == $product->id) ? $request->input('product_id')[$i] : 0;
                 $productInformation[] = $product;
             }
@@ -1098,11 +1151,17 @@ class OrderController extends Controller
             $group[0]->prev_qty = $group->sum('prev_qty');
             $productInformationCombined[] = $group[0];
         }
+        $orderTypeIdsArray = (!empty($this->data['pass']['calculate price according to case price']->data_options)) ? explode(",",$this->data['pass']['calculate price according to case price']->data_options):'';
+        $orderTypeIdsArray = is_array($orderTypeIdsArray) ? $orderTypeIdsArray:[$orderTypeIdsArray];
+        $isMerch = 1;
+        if(!in_array($request->order_type_id,$orderTypeIdsArray)){
+            $isMerch = 0;
+        }
 
-        return event(new ordersEvent($productInformationCombined, $request->order_id))[0];
+        return event(new ordersEvent($productInformationCombined, $request->order_id,$isMerch))[0];
     }
 
-    public function getSaveOrSendEmail($isPop = null)
+    public function getSaveOrSendEmail($isPop = null, $vendorEmail = null)
     {
         $order_id = \Session::get('order_id');
         $order_type = \DB::select('SELECT order_type_id FROM orders WHERE id=' . $order_id);
@@ -1120,18 +1179,152 @@ class OrderController extends Controller
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
         $order_types = "";
+
         if(!empty($pass['display email address in cc box for order types'])) {
             $order_types = $pass['display email address in cc box for order types']->data_options;
         }
+
         $order_types = explode(",",$order_types);
+
+        $ccFromSystemEmailManager   = explode(',', $cc);
+        $excludedAndIncludedEmails = self::getIncludedAndExcludedEmailCC("send PO copy", $is_test, true);
         if(in_array($order_type_id,$order_types)){
-            $cc1 = $cc;
+//            dd($emailsToBeShown);
+            $emailsToBeShown   = $ccFromSystemEmailManager;
+            //-------------------- Getting Emails for CC ----------------------------
+            $finalStringOfEmailsForCC   = $this->getEmailsAccordingToSpecialPermission($pass, $is_test, $emailsToBeShown, explode(',', $excludedAndIncludedEmails['excluded']), explode(',', $excludedAndIncludedEmails['included']));
 
         } else {
-            $cc1 = "";
+            $includedEmails = $excludedAndIncludedEmails['included'];
+            $excludedEmails = $excludedAndIncludedEmails['excluded'];
+
+            $includedEmailsArray = explode(',', $includedEmails);
+            $excludedEmailsArray = explode(',', $excludedEmails);
+
+            $emailsForCC = array_merge($ccFromSystemEmailManager, $includedEmailsArray);
+            $emailsForCC = array_unique(array_diff($emailsForCC, $excludedEmailsArray));
+            $finalStringOfEmailsForCC = implode(',', $emailsForCC);
         }
+//        dd($finalStringOfEmailsForCC);
+
+        $emailsTo = implode(',', [$vendorEmail,$receipts['to']]);
+        $emailsToArray  = explode(',', $emailsTo);
+        $emailsToArray = array_unique($emailsToArray);
+        $emailsToArray = array_filter($emailsToArray, function($val){
+            return ($val != '');
+        });
+        $emailsTo = implode(',', $emailsToArray);
+        \Session::put('send_to', $emailsTo);
+
         $viewName = empty($isPop) ? 'order.saveorsendemail' : 'order.pop.saveorsendemail';
-        return view($viewName, array('cc' => $cc1, "pageUrl" => $this->data['pageUrl']));
+        return view($viewName, array('cc' => $finalStringOfEmailsForCC, 'bcc'=>$bcc, "pageUrl" => $this->data['pageUrl']));
+    }
+
+
+    public static function getIncludedAndExcludedEmailCC($configName, $isTest = false, $sanitizeEmails = true)
+    {
+        $emails = array('configName' => $configName, 'to' => '', 'cc' => '', 'bcc' => '');
+        $q = "SELECT * from system_email_report_manager WHERE report_name='$configName' AND is_active=1 order by id desc";
+        $data = DB::select($q);
+        $includedExcludedEmail = [];
+        $excludes = '';
+        $includes = '';
+
+        if (!empty($data)) {
+            $data = $data[0];
+
+            if ($isTest) {
+                $includes = $data->test_cc_emails;
+            } else {
+
+                $excludes = array_merge(FEGSystemHelper::split_trim(
+                    $data->cc_exclude_emails), array(null, ''));
+
+                if ($sanitizeEmails) {
+                    $excludes     = FEGSystemHelper::sanitiseEmails($excludes);
+                }
+
+                $excludes = implode(',', $excludes);
+
+                if ($data->has_locationwise_filter) {
+                    $location = empty($location) ? null : $location;
+                } else {
+                    //overwriting location with null if location wise filter in system email manager is off
+                    $location = null;
+                }
+
+                $lucc = $data->cc_email_location_contacts;
+                $locationUsers['cc'] = FEGSystemHelper::getLocationContactsEmails($lucc, $location, true);
+
+
+                $gcc = $data->cc_email_groups;
+                $groups['cc'] = FEGSystemHelper::getGroupsUserEmails($gcc, $location, true);
+
+                $ucc = $data->cc_email_individuals;
+                $users['cc'] = FEGSystemHelper::getUserEmails($ucc, $location, true);
+
+                $inclues['cc'] = FEGSystemHelper::split_trim($data->cc_include_emails);
+
+
+
+
+                $includes = array_unique(array_merge($groups['cc'],
+                        $locationUsers['cc'], $users['cc'], $inclues['cc']));
+
+
+                if ($sanitizeEmails) {
+                    $includes    = FEGSystemHelper::sanitiseEmails($includes);
+                }
+
+                $includes = implode(',', $includes);
+
+            }
+        }
+
+        $includedExcludedEmail['excluded'] = $excludes;
+        $includedExcludedEmail['included'] = $includes;
+
+        return $includedExcludedEmail;
+    }
+
+
+    private function getEmailsAccordingToSpecialPermission($pass, $is_test, $emailsToBeShown, $excludedEmails, $includedEmails){
+//dd($pass['display email address in cc box for order types']);
+        //------ Special Permissions variables --------
+        $userIdsSP        = explode(',', $pass['display email address in cc box for order types']->user_ids);
+        $excludeUserIdsSP = explode(',', $pass['display email address in cc box for order types']->exclude_user_ids);
+        $groupIdsSP = explode(',', $pass['display email address in cc box for order types']->group_ids);
+
+
+        $usersEmailsForCC = User::select('email')
+            ->whereIn('id', $userIdsSP)
+            ->orWhereIn('group_id', $groupIdsSP)
+            ->orWhereIn('email', $emailsToBeShown)
+            ->get();
+
+        $EmailsToBeExcluded = User::select('email')
+            ->whereIn('id', $excludeUserIdsSP)
+            ->get();
+
+        $emailsForCC = \Illuminate\Support\Arr::pluck($usersEmailsForCC, 'email');
+        $UserEmailsToBeExcluded = \Illuminate\Support\Arr::pluck($EmailsToBeExcluded, 'email');
+        $emailsForCC = array_diff($emailsForCC, $UserEmailsToBeExcluded);
+
+//        dd($UserEmailsToBeExcluded);
+
+        $newArrayOfEmailsForCC = [];
+
+        if(in_array(auth()->user()->email, $emailsForCC)){
+            $newArrayOfEmailsForCC = array_merge($includedEmails, ['marissa.sexton@fegllc.com', 'lisa.price@fegllc.com']);
+        }
+
+        if(!$is_test){
+            $newArrayOfEmailsForCC = array_diff($newArrayOfEmailsForCC, $excludedEmails);
+        }
+
+        $newArrayOfEmailsForCC = array_unique($newArrayOfEmailsForCC);
+
+        return $finalStringOfEmailsForCC = implode(',', $newArrayOfEmailsForCC);
     }
 
     private function sendEmailFromMerchandise($order)
@@ -1508,6 +1701,24 @@ class OrderController extends Controller
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
+
+
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
+        $customString = '';
+        if(!empty($excludedProductIdsString)){
+            $customString .= ' AND orders.id not in('.$excludedProductIdsString.') ';
+        }
+        if(!empty($excludedProductTypeIdsString)){
+            $customString .= ' AND orders.order_type_id not in(' . $excludedProductTypeIdsString . ') ';
+        }
+
+        if(!empty($customString)){
+            $filter .= $customString;
+        }
+
         return $filter;
     }
 
@@ -1784,10 +1995,21 @@ class OrderController extends Controller
         $po = $request->get('po');
         $po_full = $po_1 . '-' . $po_2 . '-' . $po_3;
         $location =  location::find($location_id);
+        $excludedProductTypeIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($location_id, true, false)['excluded_product_type_ids'];
+        if($this->model->isTypeRestricted()){
+            $otherExcluded = Ordertyperestrictions::select('id')->where('can_request', 1)->whereNotIn('id',[7])->get()->pluck('id')->toArray();
+            $excludedProductTypeIds = array_merge($excludedProductTypeIds,$otherExcluded);
+        }
+        $orderTypes = Ordertyperestrictions::select('order_type', 'id')->where('can_request', 1)->whereNotIn('id', $excludedProductTypeIds);
+
+
+        $orderTypes = $orderTypes->orderBy('order_type', 'asc')->get();
         return [
-            'po_3'          =>  $this->validatePO($po, $po_full, $location_id),
-            'fedex_number'  =>  $location ? $location->fedex_number ? $location->fedex_number : 'No Data' : 'No Data',
-            'freight_id'    => $location ? $location->freight_id ? $location->freight_id : '' : '',
+            'po_3'                  =>  $this->validatePO($po, $po_full, $location_id),
+            'fedex_number'          =>  $location ? $location->fedex_number ? $location->fedex_number : 'No Data' : 'No Data',
+            'freight_id'            =>  $location ? $location->freight_id ? $location->freight_id : '' : '',
+            'order_types'           =>  $orderTypes,
+            'exclude_the_order_types'  =>  $excludedProductTypeIds
         ];
     }
 
@@ -2044,16 +2266,18 @@ class OrderController extends Controller
     {
         $term = Input::get('term');
         $vendorId = Input::get('vendor_id',0);
+        $locationId = Input::get('location_id');
         $excludeProducts = Input::get('exclude_products', null);
+
+       /* $isAltShippingAddress = Input::get('is_alt_shipping_address');*/
+      /* $locationId = ($isAltShippingAddress != '') ? null : $locationId;*/ // We don't need anymore this condition
+
         $whereWithVendorCondition = $whereWithExcludeProductCondition = "";
 
         $orderTypeId = Input::get('order_type_id', 0);
-        $whereOrderTypeCondition = $whereRestrictedTypeCondition = "";
+        $whereRestrictedTypeCondition = "";
         $restrictedOrderTypes = [Order::ORDER_TYPE_REDEMPTION,Order::ORDER_TYPE_INSTANT_WIN_PRIZE];
-        // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
-        if (!empty($orderTypeId) && in_array($orderTypeId,$restrictedOrderTypes)) {
-            $whereOrderTypeCondition = " AND products.prod_type_id in(".implode(",",$restrictedOrderTypes).")";
-        }
+
         if($this->model->isTypeRestricted()){
             $whereRestrictedTypeCondition = " AND products.prod_type_id in(".$this->model->getAllowedTypes().")";
         }
@@ -2061,6 +2285,27 @@ class OrderController extends Controller
         //get products related to selected vendor only
         if (!empty($vendorId)) {
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
+        }
+
+        $restrictedProductsAndTypesIdsArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true, true);
+        $restrictedProductTypeIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_type_ids'];
+        $restrictedProductIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_ids'];
+
+        $restrictedProductIds = implode(',', $restrictedProductIdsArray);
+        $whereNotInProductIdsCondition = '';
+        if(!empty($restrictedProductIds)){
+            $whereNotInProductIdsCondition = " AND products.id NOT IN ($restrictedProductIds) ";
+        }
+
+        $whereOrderTypeCondition = " AND products.prod_type_id in(".$orderTypeId.")";
+        // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
+        if (
+                !empty($orderTypeId)
+                && in_array($orderTypeId,$restrictedOrderTypes)
+                && !in_array(Order::ORDER_TYPE_REDEMPTION, $restrictedProductTypeIdsArray)
+                && !in_array(Order::ORDER_TYPE_INSTANT_WIN_PRIZE, $restrictedProductTypeIdsArray)
+        ) {
+            $whereOrderTypeCondition = " AND products.prod_type_id in(".implode(",",$restrictedOrderTypes).")";
         }
 
         if ($excludeProducts) {
@@ -2090,7 +2335,7 @@ class OrderController extends Controller
                                 FROM products
                                 WHERE vendor_description LIKE '%$term%' 
                                 AND products.inactive=0  $whereWithVendorCondition  $whereWithExcludeProductCondition  
-                                  $whereOrderTypeCondition $whereRestrictedTypeCondition
+                                  $whereOrderTypeCondition $whereRestrictedTypeCondition $whereNotInProductIdsCondition
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
                                  Limit 0,10";
@@ -3099,14 +3344,15 @@ ORDER BY aa_id");
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
         $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($configName, null, $isTest);
 
-        $fromEmail = 'info@fegllc.com';
+        $fromEmail = 'merch.office@fegllc.com';
 
         $message = $this->getShow($orderId, 'emails.inquireOrder');
-        $subject = 'Inquire orders';
+        $subject = 'Inquire order';
+        $concatMerchandiseEmailOrNot = (!str_contains($systemEmailRecipients['to'], 'merch.office@fegllc.com') ? ',merch.office@fegllc.com' : '');
         if(!empty($systemEmailRecipients['to'])){
-            $systemEmailRecipients['to'] .= ','.Session::get('eid');
+            $systemEmailRecipients['to'] .= ','.Session::get('eid').$concatMerchandiseEmailOrNot;
         }else{
-            $systemEmailRecipients['to'] .= Session::get('eid');
+            $systemEmailRecipients['to'] .= Session::get('eid').$concatMerchandiseEmailOrNot;
         }
 
         if($isTest){

@@ -42,7 +42,7 @@ class servicerequestsController extends Controller
             'pageUrl' => url('servicerequests'),
             'return' => self::returnUrl(),
             
-            'priorityOptions' => $this->model->getPriorities(),
+            /*'priorityOptions' => $this->model->getPriorities(),*/
             'statusOptions' => $this->model->getStatuses(),
             'issueTypeOptions' => $this->model->getIssueTypes(),
             'canChangeStatus' => ticketsetting::canUserChangeStatus(),
@@ -319,7 +319,7 @@ class servicerequestsController extends Controller
         $this->data['id'] = $id;
 
         $this->data['issueType'] = $row['issue_type'];
-        $this->data['priority']  =  $row['Priority'];
+        /*$this->data['priority']  =  $row['Priority'];*/
         $this->data['status'] = $row['Status'];
         $this->data['ticketStatusLabel'] = Formatter::getTicketStatus($row['Status'], 'Open');
         $this->data['needByDate'] = \DateHelpers::formatDate($row['need_by_date'],1);
@@ -331,14 +331,14 @@ class servicerequestsController extends Controller
                                                 'normal' => 'Normal',
                                                 'urgent' => 'Urgent'
                                                 );*/
-        foreach( $this->data['priorityOptions'] as $p_keys =>$p_values){
+        /*foreach( $this->data['priorityOptions'] as $p_keys =>$p_values){
             if($p_keys=="sameday" || strtolower($p_keys)=="urgent"){
                 unset($this->data['priorityOptions'][$p_keys]);
                 $this->data['priorityOptions']['urgent']="URGENT";
 
             }
 
-        }
+        }*/
 
         return view('servicerequests.form', $this->data);
     }
@@ -708,12 +708,12 @@ class servicerequestsController extends Controller
             $date = date("Y-m-d");
             $status = @$request->input('Status');
             $oldStatus = @$request->input('oldStatus');
-            $priority = @$request->input('Priority');
+            /*$priority = @$request->input('Priority');*/
             $ticketsData = [];
             //$ticketsData['updated'] = date('Y-m-d H:i:s');
             if (!empty($status)) {
                 $ticketsData['Status'] = $status;
-                $ticketsData['Priority'] = $priority;
+                /*$ticketsData['Priority'] = $priority;*/
                 $ticketsData['closed'] = null;
                 $isStatusClosed = $status == 'closed';
                 if ($isStatusClosed) {

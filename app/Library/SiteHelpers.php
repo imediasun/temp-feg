@@ -1000,6 +1000,13 @@ class SiteHelpers
                             }
                         }
 
+                        if(isset($typeRestricted['isTypeRestrictedExclude'])) {
+
+                            if ($typeRestricted['isTypeRestrictedExclude'] == true && ($option['lookup_table'] == "order_type")) {
+                                $query->whereNotIn($option['lookup_key'], $typeRestricted['excluded']);
+                            }
+                        }
+
                         $data = $query->get();
                         foreach ($data as $row) {
                             $selected = '';
@@ -2457,6 +2464,7 @@ class SiteHelpers
 
     static function getOrderHistory()
     {
+        \DB::enableQueryLog();
         $loc1 = \Session::get('selected_location');
         $reg_id = \Session::get('reg_id');
         $curMonth = date('M');
@@ -2497,14 +2505,14 @@ class SiteHelpers
 										 	   AS last_month_merch_order_total,
 									      (SELECT SUM(order_total)
 									 	     FROM orders
-									 	    WHERE order_type_id NOT IN(7,8,18)
+									 	    WHERE order_type_id NOT IN(7,8,18,27,28)
 									 	      AND MONTH(date_ordered)=' . $curMonthNumber . '
 											  AND YEAR(date_ordered)=' . $curYear . '
 									 	      AND location_id=' . $loc1 . ')
 									 		   AS monthly_else_order_total,
 									      (SELECT SUM(order_total)
 										     FROM orders
-										    WHERE YEAR(date_ordered)=' . $curYear . '
+										    WHERE order_type_id not in(27,28) and YEAR(date_ordered)=' . $curYear . '
 										      AND location_id=' . $loc1 . ')
 											   AS annual_order_total');
             $data['user_group'] = "regusers";
@@ -2531,13 +2539,13 @@ class SiteHelpers
 											AS last_month_merch_order_total,
 									   (SELECT SUM(O.order_total) FROM orders O, location L
 									   	 WHERE O.location_id = ' . $loc1 . '
-									 	   AND order_type_id NOT IN(7,8,18)
+									 	   AND order_type_id NOT IN(7,8,18,27,28)
 										   AND MONTH(O.date_ordered)=' . $curMonthNumber . '
 										   AND YEAR(O.date_ordered)=' . $curYear . '
 										   AND L.region_id=' . $reg_id . ')
 											AS monthly_else_order_total,
 									   (SELECT SUM(O.order_total) FROM orders O, location L
-										 WHERE YEAR(O.date_ordered)=' . $curYear . '
+										 WHERE O.order_type_id not in(27,28) and YEAR(O.date_ordered)=' . $curYear . '
 									   	   AND O.location_id = ' . $loc1 . '
 										   AND L.region_id=' . $reg_id . ')
 										    AS annual_order_total');
@@ -2563,10 +2571,10 @@ class SiteHelpers
 										WHERE MONTH(date_ordered)=' . $curMonthNumber . '
 										  AND YEAR(date_ordered)=' . $curYear . '
 										  AND location_id=' . $loc1 . '
-										  AND order_type_id NOT IN(7,8))
+										  AND order_type_id NOT IN(7,8,27,28))
 										   AS monthly_else_order_total,
 									  (SELECT SUM(order_total) FROM orders
-										WHERE YEAR(date_ordered)=' . $curYear . '
+										WHERE order_type_id not in(27,28) and YEAR(date_ordered)=' . $curYear . '
 										AND location_id=' . $loc1 . ')
 										   AS annual_order_total');
             $data['user_group'] = "";
@@ -2585,6 +2593,7 @@ class SiteHelpers
         $data['curYear'] = $curYear;
         $data['selected_location'] = $loc1;
         $data['reg_id'] = $reg_id;
+        $queries = \DB::getQueryLog();
 
         return $data;
     }
@@ -2943,5 +2952,66 @@ class SiteHelpers
             }
         }
         return $noDataArray;
+    }
+
+    /**
+     * @param $string
+     * @param string $replacer
+     * @return string
+     */
+    public static function removeSpecialCharacters($string,$replacer = ''){
+        $convertedString = $string;
+        if(!empty($string)) {
+            $stringToArray = explode(' ', $string);
+           // $resultentArray = (array) preg_replace('/[^a-zA-Z0-9\.]/', $replacer, $stringToArray);
+            $cleanedArray = [];
+            foreach ($stringToArray as $item){
+                $cleanedArray[] = str_replace(['&','\'','"',','],$replacer,$item);
+            }
+            $convertedString = trim(implode(' ', $cleanedArray));
+            $convertedString = trim(preg_replace('/\s+/',' ', $convertedString));
+        }
+        return (string) $convertedString;
+    }
+
+    /**
+     * @param $string
+     * @param $limit
+     * @param bool $ellipsis
+     * @return string
+     */
+    public static function truncateStringToSpecifiedLimit($string,$limit,$ellipsis = false){
+        if(strlen($string) > $limit){
+            $string = substr($string,0,$limit);
+        }
+        return ($ellipsis == true) ? $string.'...' : $string;
+    }
+
+    /**
+     * @param $rows
+     * @param $field
+     * @param string $sign
+     * @param $conditionField
+     * @param array $conditionFieldValues
+     * @param bool $isPostFix
+     * @param bool $spaceAfter
+     * @param bool $spaceBefore
+     * @return mixed
+     */
+    public static function addPostPreFixToField($rows ,$field ,$sign = '',$conditionField, $conditionFieldValues = [], $isPostFix = true , $spaceAfter = false , $spaceBefore = false){
+
+        foreach ($rows as $index => $row) {
+            if (isset($row->$field)) {
+
+                if(in_array($row->$conditionField, $conditionFieldValues)) {
+
+                    $sign = ($spaceAfter == true) ? $sign . ' ' : $sign;
+                    $sign = ($spaceBefore == true) ? ' ' . $sign : $sign;
+                    $value = ($isPostFix == true) ? $rows[$index]->$field . $sign : $sign . $rows[$index]->$field;
+                    $rows[$index]->$field = $value;
+                }
+            }
+        }
+        return $rows;
     }
 }

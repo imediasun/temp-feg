@@ -300,6 +300,8 @@ class InventoryreportController extends Controller {
 
 		$rows = $this->updateDateInAllRows($rows);
 
+        $rows = \SiteHelpers::addPostPreFixToField($rows,'Cases_Ordered','*','is_broken_case',['yes','YES','Yes',1],true,false,true);
+
 		$content = array(
 			'exportID' => $exportSessionID,
 			'fields' => $fields,
@@ -308,7 +310,8 @@ class InventoryreportController extends Controller {
 			'categories' => $results['categories'],
 			'title' => $this->data['pageTitle'],
 			'topMessage' => $results['topMessage'],
-			'excelExcludeFormatting' => $results['excelExcludeFormatting']
+			'excelExcludeFormatting' => $results['excelExcludeFormatting'],
+            'AddNote'=>'* in Quantity Ordered denotes the # of units receive, not cases.'
 		);
 
 		if ($t == 'word') {

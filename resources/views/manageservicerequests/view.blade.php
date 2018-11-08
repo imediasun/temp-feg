@@ -28,14 +28,14 @@
 						
 					</tr>
 				
-					<tr>
+					<!--<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Priority ', (isset($fields['priority_id']['language'])? $fields['priority_id']['language'] : array())) }}
+							{{--{{ SiteHelpers::activeLang('Priority ', (isset($fields['priority_id']['language'])? $fields['priority_id']['language'] : array())) }}--}}
 						</td>
-                        <td>{!! SiteHelpers::gridDisplayView($row->priority_id,'priority_id','1:new_graphics_priority:id:id_plus',$nodata['priority_id']) !!} </td>
+                        <td>{{--{!! SiteHelpers::gridDisplayView($row->priority_id,'priority_id','1:new_graphics_priority:id:id_plus',$nodata['priority_id']) !!}--}} </td>
 
 
-                    </tr>
+                    </tr>-->
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>

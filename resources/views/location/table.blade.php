@@ -97,9 +97,17 @@ if (!$colconfigs) {
                                 @if(isset($t['inline']) && $t['inline'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
+                                        @if($t['field'] == 'product_type_ids' || $t['field'] == 'product_ids')
+                                                <td data-form="{{ $t['field'] }}" data-form-type="select">
+                                                    <select name="{{$t['field']}}[]" class="sel-inline {{ $t['field'] }}" multiple="multiple">
+
+                                                    </select>
+                                                </td>
+                                            @else
                                         <td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
                                             {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
                                         </td>
+                                            @endif
                                     @endif
                                 @endif
                             @endforeach
@@ -117,7 +125,7 @@ if (!$colconfigs) {
                     <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
                         @endif id="form-{{ $row->id }}"
                         @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}"
-                        @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this)" @endif @endif>
+                        @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this); excludeProductDropDownData(this);" @endif @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
@@ -212,6 +220,26 @@ if (!$colconfigs) {
 
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
+    /**
+     *
+     * @param rowId
+     * @param field
+     * @param responseData
+     * @param selected
+     */
+    function perseReponse(rowId,field,responseData,selected){
+        $('tr#'+rowId+' td[data-field="'+field+'"] select').select2({
+            closeOnSelect: false,
+            width: '100%'
+        });
+        $('tr#'+rowId+' td[data-field="'+field+'"] select').html(responseData);
+        $('tr#'+rowId+' td[data-field="'+field+'"] select').change();
+        if($.isArray(selected) && selected.length >0 ) {
+            $('tr#' + rowId + ' td[data-field="' + field + '"] select').val(selected);
+            $('tr#' + rowId + ' td[data-field="' + field + '"] select').change();
+        }
+
+    }
     $(document).ready(function () {
         $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
             var locationId=$(this).data('id');
@@ -332,7 +360,27 @@ if (!$colconfigs) {
         });
         $('#user_locations option[value="'+selected_location+'"]').prop('selected', true);
     }
+    var singleRequest = true;
 
+    function excludeProductDropDownData(object){
+        if(singleRequest) {
+            singleRequest = false;
+            $('.ajaxLoading').show();
+            var row = $(object);
+            $.ajax({
+                url: "location/excluded-products-and-types-inline/" + row.attr('data-id'),
+                type: "GET",
+                success: function (response) {
+                    perseReponse(row.attr('id'), 'product_type_ids', response.productTypes, response.ExcludedData.excluded_product_type_ids);
+                    perseReponse(row.attr('id'), 'product_ids', response.products, response.ExcludedData.excluded_product_ids);
+                    $('.ajaxLoading').hide();
+                    singleRequest = true;
+                }
+            });
+        }
+    }
+    updateDropdowns('product_ids[]');
+    updateDropdowns('product_type_ids[]');
 </script>
 <style>
     .table th.right {

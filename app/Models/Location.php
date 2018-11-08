@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Library\FEGDBRelationHelpers;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use SiteHelpers;
@@ -78,7 +79,9 @@ class location extends Sximo  {
   location.ipaddress,
   location.reporting,
   location.active,
-  location.freight_id
+  location.freight_id,
+  '' as product_type_ids,
+  '' as product_ids
 FROM location
   LEFT JOIN debit_type debittype_c
     ON debittype_c.id = location.debit_type_id
@@ -125,4 +128,49 @@ FROM location
         return $rows;
     }
 
+
+    public function excludedProductTypes(){
+        $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, Ordertyperestrictions::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
+        return Ordertyperestrictions::whereIn('id', $excludedProductTypeIds);
+    }
+
+    public function excludedProducts(){
+        $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, product::class, 1, true)->pluck('product_id')->toArray();
+        return Product::whereIn('id', $excludedProductIds);
+    }
+    public function setExcludedData($rows){
+        $returnData = [];
+        foreach ($rows as $row){
+          // $excludedData = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($row->id, true,  true);
+            $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($row->id,location::class,product::class,1)->pluck('product_id')->toArray();
+            $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($row->id,location::class,Ordertyperestrictions::class,1)->pluck('ordertyperestrictions_id')->toArray();
+            $excludedData = [
+                'excluded_product_ids' =>$excludedProductIds,
+                'excluded_product_type_ids' => $excludedProductTypeIds
+            ];
+            $productTypeData =  $productTypes = '';
+            $productsData = [];
+            if(!empty($excludedData['excluded_product_type_ids'])) {
+                $productTypeData = Ordertyperestrictions::select(\DB::raw('group_concat(order_type ORDER BY order_type ASC) as product_types'))->whereIn('id', $excludedData['excluded_product_type_ids'])->get()->pluck('product_types')->toArray();
+            }
+            if(!empty($excludedData['excluded_product_ids'])) {
+                $productsData = product::whereIn('id', $excludedData['excluded_product_ids'])->orderBy('vendor_description', 'asc')->groupBy('vendor_description')->groupBy('sku')->groupBy('vendor_id')->groupBy('case_price')->get()->lists('vendor_description')->toArray();
+            }
+
+            if(!empty($productTypeData[0])){
+                $productTypes = str_replace(",","<br>",$productTypeData[0]);
+                $row->product_type_ids = $productTypes.'.';
+            }
+
+            $row->product_ids = '';
+            if(count($productsData) != 0){
+                $productName= implode("<br>", $productsData);
+                $row->product_ids = $productName.'.';
+            }
+
+            $returnData[]=$row;
+        }
+
+        return $returnData;
+    }
 }

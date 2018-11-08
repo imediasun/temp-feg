@@ -43,22 +43,23 @@
 				         required  >{{ $row['Description'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2"></div>
-                </div> 					
-                <div class="form-group  " > 
+                </div>
+				<!-- FEG-2003 Comment out Priority field from Service Requests -->
+<!--                <div class="form-group  " >
 					<label for="Priority" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}	
+					{{--{!! SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}--}}
 					</label>
 					<div class="col-md-6">
                         <select name='Priority' required class='select2 ' data-current-date='{{ date('Y-m-d') }}'>
-                            @foreach($priorityOptions as $key => $val)
+                           {{-- @foreach($priorityOptions as $key => $val)
                                 <option  value ='{{ $key }}' 
                                     @if($priority == $key) selected='selected' @endif
                                 >{{ $val }}</option>
-                            @endforeach
+                            @endforeach--}}
                         </select>
 					 </div> 
 					 <div class="col-md-2"></div>
-                </div> 					
+                </div>-->
                 <div class="form-group  " > 
 					<label for="Status" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) !!}	

@@ -3,6 +3,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\location;
+use App\Models\UserLocations;
+use App\Library\FEGDBRelationHelpers;
 use Carbon\Carbon;
 use App\Models\Addtocart;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -97,6 +100,21 @@ abstract class Controller extends BaseController
         $this->data = [
             'UQID' =>  uniqid('', true)
         ];
+
+        /*
+         * This approach of using session to get excluded products and excluded product types needs to be optimised
+         *
+            $currentLocation            = \Session::get('selected_location');
+            $recentlySelectedLocation   = \Session::get('recently_selected_location');
+
+            if($currentLocation != $recentlySelectedLocation)
+            {
+                $excludedProductTypesAndProducts = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($currentLocation);
+                \Session::set('excluded_product_types_and_products', $excludedProductTypesAndProducts);
+
+                \Session::set('recently_selected_location', $currentLocation);
+            }
+        */
     }
 
     static function compareArrays($a,$b)
@@ -607,6 +625,7 @@ abstract class Controller extends BaseController
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['searchMode'] = $mode;
         $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
 
         if($this->model->isTypeRestrictedModule($this->module)){
             if($this->model->isTypeRestricted()){
@@ -624,6 +643,15 @@ abstract class Controller extends BaseController
         }
 
     }
+
+    function getUsersExcludedLocations(){
+        $currentUserId = auth()->user()->id;
+        $locationIdsAllottedToCurrentUser = UserLocations::where('user_id', $currentUserId)->lists('location_id')->toArray();
+        $allLocationIds = location::lists('id')->toArray();
+        $excludedLocations = array_diff($allLocationIds, $locationIdsAllottedToCurrentUser);
+        return array_values(array_unique(array_merge([6030,6000], $excludedLocations)));
+    }
+
 
     function getDownload(Request $request)
     {
@@ -689,7 +717,7 @@ abstract class Controller extends BaseController
         return (date('Y-m-d', strtotime($x)) == $x);
     }
 
-    function buildSearch($customSearchString = null)
+    function buildSearch($customSearchString = null,$customOperator = null)
     {
         $keywords = '';
         $fields = '';
@@ -783,7 +811,13 @@ abstract class Controller extends BaseController
                                     $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[2];
                                     $param .= " AND $field IN(" . $keys[2] . ") ";
                                 }
-                            } else {
+                            }elseif($keys[0] == 'in_development') {
+                                $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
+                                $param .= " AND $field = '" . $keys[2] . "' ";
+                            } elseif(!is_null($customOperator) &&  $customOperator == 'not_in' && $keys[1] == 'not_in') {
+                                $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
+                                $param .= " AND $field NOT IN(" . $keys[2] . ") ";
+                            }else {
                                 $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
                                 $param .= " AND $field " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                             }
@@ -826,6 +860,11 @@ abstract class Controller extends BaseController
                                     $keys[3] = $keys[3].' 23:59:59';
                                 }
                                 $param .= " AND (" . $col . " BETWEEN '" . addslashes($keys[2]) . "' AND '" . ($keys[3]) . "' ) ";
+                            }elseif($col == 'in_development') {
+                                $param .= " AND ($col  IN(". addslashes($keys[2]) .")) ";
+                            }
+                            elseif($operate == 'not_in'){
+                                $param .= " AND ($col NOT IN(". addslashes($keys[2]) .")) ";
                             }
                             else
                             {
@@ -880,6 +919,9 @@ abstract class Controller extends BaseController
 
             case 'between':
                 $val = 'between';
+                break;
+            case 'not_in':
+                $val = 'not_in';
                 break;
 
             default:

@@ -916,6 +916,18 @@ class ReportHelpers
         if($productUsageReport->isTypeRestricted()){
             $typeDisplayOnly = " AND order_type_id IN(".$productUsageReport->getAllowedTypes().") ";
         }
+
+//        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(explode(',', $location));
+//        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+//        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
+//        $whereNotInProductTypeAndProductIds = '';
+
+//        if($excludedProductTypeIdsString != '')
+//            $whereNotInProductTypeAndProductIds .= " AND order_type_id NOT IN($excludedProductTypeIdsString) ";
+
+
+
         $Q = "
                 FROM location L
 				LEFT JOIN (

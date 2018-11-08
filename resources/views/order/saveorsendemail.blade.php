@@ -108,7 +108,7 @@
                                         <label class="control-label col-md-4" for="bcc">BCC</label>
 
                                         <div class="col-md-8">
-                                            <input name="bcc" id="bcc" multiple class="form-control" />
+                                            <input name="bcc" value="{{ $bcc }}" id="bcc" multiple class="form-control" />
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -175,7 +175,7 @@
                                         <label class="control-label col-md-4" for="bcc1">BCC</label>
 
                                         <div class="col-md-8">
-                                            <input name="bcc1" id="bcc1" class="form-control" />
+                                            <input name="bcc1" id="bcc1" value="{{ $bcc }}"  class="form-control" />
                                         </div>
                                     </div>
                                     <div class="form-group">

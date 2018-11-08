@@ -1,6 +1,9 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEGDBRelationHelpers;
+use App\Models\location;
+use App\Models\Ordertyperestrictions;
 use App\Models\Product;
 use App\Models\ProductType;
 use Illuminate\Database\Eloquent\Collection;
@@ -8,9 +11,11 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use phpDocumentor\Reflection\Types\Null_;
 use Validator, Input, Redirect,Image;
 use App\Models\ReservedQtyLog;
+use App\Models\Locationgroups;
 class ProductController extends Controller
 {
 
@@ -68,6 +73,11 @@ class ProductController extends Controller
         return $url;
 
     }
+
+    /**
+     * @param string $t
+     * @return \Illuminate\View\View
+     */
     public
     function getExport($t = 'excel')
     {
@@ -109,6 +119,7 @@ class ProductController extends Controller
 
         $fields = $info['config']['grid'];
         $rows = $results['rows'];
+        $rows = $this->model->setGroupsAndLocations($rows,true);
         if($t == 'excel') {
             $results['rows'] = array_map(function ($row) {
                 // changing status only for excel correction
@@ -208,6 +219,41 @@ class ProductController extends Controller
         }
     }
 
+    public function getSearch($mode = 'ajax')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = $mode;
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
+
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+
+
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+
+        if(count($productTypeExcludedbyLocation) > 0){
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] =true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
+        }
+
+
+
+        if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            return view('feg_common.search', $this->data);
+        } else {
+            return view('sximo.module.utility.search', $this->data);
+        }
+
+    }
     public function getModify(){
         $query ="SELECT products.*  FROM `products` WHERE vendor_description REGEXP '[ ]{2,}'";
         $products = DB::select($query);
@@ -221,6 +267,10 @@ class ProductController extends Controller
 
     }
 
+    /**
+     * @param null $customQueryString
+     * @return string
+     */
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
@@ -237,7 +287,33 @@ class ProductController extends Controller
             'inactive' => '',
         ]);
         $skipFilters = ['search_all_fields'];
+
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
+        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+
         $mergeFilters = [];
+
+        if($excludedProductTypeIdsString != '' ){
+            array_push($mergeFilters, [
+                "field"     =>  'prod_type_id',
+                "operater"  =>  'not_in',
+                'value'     =>  $excludedProductTypeIdsString
+            ]);
+        }
+
+        if($excludedProductIdsString != '' ){
+            array_push($mergeFilters, [
+                "field"     =>  'id',
+                "operater"  =>  'not_in',
+                'value'     =>  $excludedProductIdsString
+            ]);
+        }
+
+       /* Example: $mergeFilters = [
+            ["field"=>'prod_type_id',"operater"=>'not_in','value'=>'comma seprated values here'],
+            ["field"=>'product_id',"operater"=>'not_in','value'=>'comma seprated values here'],
+        ];*/
         extract($globalSearchFilter); //search_all_fields
 
         // rebuild search query skipping 'ticket_custom_type' filter
@@ -263,10 +339,13 @@ class ProductController extends Controller
             $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
         }
 
+
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
-        $filter .= is_null($trimmedSearchQuery) ? '' : $this->buildSearch($trimmedSearchQuery);
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput,'not_in');
+
+        $filter .= is_null($trimmedSearchQuery) ? '' : $this->buildSearch($trimmedSearchQuery,'not_in');
+
         return $filter;
     }
     
@@ -308,9 +387,14 @@ class ProductController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         $filter = $this->getSearchFilterQuery();
+
         //(!is_null($request->input('search')) ? $this->buildSearch() : '');
+
         if(strpos($filter,"products.in_development") == false){
         $filter .= ' AND products.in_development = 0 ';
+        }
+        if(strpos($request->input('search'),'in_development:equal:1') > -1){
+        $filter = str_replace("products.in_development = '0'","products.in_development = 1",$filter);
         }
         $filter = str_replace("AND products.in_development = '2'"," ",$filter);
 
@@ -340,7 +424,13 @@ class ProductController extends Controller
 
         $rows = $results['rows'];
         $ExpenseCategories = $this->model->allExpenseCategories();
+        $rows = $this->model->setGroupsAndLocations($rows);
+//die;
         $this->data['ExpenseCategories'] = $ExpenseCategories;
+
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+
+        $this->data['productTypeExcludedbyLocation'] = $productTypeExcludedbyLocation;
 
         foreach ($rows as $index => $data) {
             if ($data->is_reserved == 1) {
@@ -429,6 +519,8 @@ class ProductController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
+        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
+        $this->data['excludedProductTypes'] = implode(',', $excludedOrderTypesArray);
 
         return view('product.form', $this->data);
     }
@@ -578,13 +670,13 @@ class ProductController extends Controller
         $request->vendor_description = trim(preg_replace('/\s+/',' ', $request->vendor_description));
 
         $vendorDescriptin = $request->vendor_description;
-        if(strpos($vendorDescriptin,"&") !=false || strpos($vendorDescriptin,",") !=false || strpos($vendorDescriptin,'"'))
+ /*       if(strpos($vendorDescriptin,"&") !=false || strpos($vendorDescriptin,",") !=false || strpos($vendorDescriptin,'"'))
         {
             return response()->json(array(
                 'message' => "Item name cannot have & , or \" (ampersand, comma or quotation marks)",
                 'status' => 'error'
             ));
-        }
+        }*/
         if(is_array($request->prod_sub_type_id) && $id == 0)
         {
             if(count(array_unique($request->prod_sub_type_id))<count($request->prod_sub_type_id))
@@ -653,6 +745,7 @@ class ProductController extends Controller
             }
         }
 
+        unset($request->excluded_locations_and_groups);
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         //$rules['sku'] = 'required';
@@ -669,7 +762,8 @@ class ProductController extends Controller
         $rules['case_price'] = 'required';
         $rules['unit_price'] = 'required';
         $rules['vendor_id'] = 'required';
-
+        $excludedLocationsAndGroups = $request->excluded_locations_and_groups;
+unset($request->excluded_locations_and_groups);
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
@@ -723,10 +817,13 @@ class ProductController extends Controller
                 }
             }
 
+
             if(is_array($product_categories) && $id > 0){
+
 
                 $products_combined = $this->model->checkProducts($id);
                 unset($data['is_default_expense_category']);
+                unset($data['excluded_locations_and_groups']);
                 $data_attached_products= $data;
 
                 foreach($products_combined as $pc){
@@ -753,6 +850,8 @@ class ProductController extends Controller
                     }
                     $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     $this->model->insertRow($netsuite_description, $pc->id);
+
+                        $this->insertRelations($excludedLocationsAndGroups,$pc->id);
                 }
                 $isDefaultExpenseCategory = $request->input("is_default_expense_category");
                 if ($id > 0 && $isDefaultExpenseCategory > 0) {
@@ -764,6 +863,7 @@ class ProductController extends Controller
 
                 $ids = [];
                 $count = 1;
+                unset($data['excluded_locations_and_groups']);
                 $prodData = $data;
                 foreach ($product_categories as $category) {
                     $prodData['retail_price'] = (isset($retail_price[$count]) && !empty($retail_price[$count])) ? $retail_price[$count] : 0;
@@ -820,6 +920,8 @@ class ProductController extends Controller
                     }
                     $this->model->insertRow($updates, $id);
                     $this->model->setFirstDefaultExpenseCategory($id);
+
+                        $this->insertRelations($excludedLocationsAndGroups,$id);
                 }
 
             }
@@ -828,6 +930,7 @@ class ProductController extends Controller
 
 
                 $products_combined = $this->model->checkProducts($id);
+                unset($data['excluded_locations_and_groups']);
                 $data_attached_products= $data;
                 foreach($products_combined as $pc){
                     if($pc->id == $id){
@@ -849,9 +952,11 @@ class ProductController extends Controller
                     }
                     $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     $this->model->insertRow($netsuite_description, $pc->id);
+
+
+                        $this->insertRelations($excludedLocationsAndGroups,$pc->id);
                 }
             }
-
 
             return response()->json(array(
                 'status' => 'success',
@@ -868,6 +973,29 @@ class ProductController extends Controller
         }
 
     }
+    public function insertRelations($excludedLocationsAndGroups,$id){
+
+        $excludedLocationsAndGroups = is_array($excludedLocationsAndGroups) ? $excludedLocationsAndGroups:[$excludedLocationsAndGroups];
+        FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
+        FEGDBRelationHelpers::destroyCustomRelation(product::class, location::class, 1, 0, $id);
+
+        FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class,product::class,  1, $id,0 );
+        FEGDBRelationHelpers::destroyCustomRelation(location::class,product::class, 1, $id, 0);
+
+
+            if (is_array($excludedLocationsAndGroups) && count($excludedLocationsAndGroups) > 0 && $excludedLocationsAndGroups[0] !=null) {
+
+                foreach ($excludedLocationsAndGroups as $excludedLocationsAndGroup) {
+                    $splitValue = explode('_', $excludedLocationsAndGroup);
+                    if ($splitValue[0] == 'group') {
+                        FEGDBRelationHelpers::insertCustomRelation($id, $splitValue[1], product::class, Locationgroups::class, 1);
+                    } else {
+                        FEGDBRelationHelpers::insertCustomRelation($id, $splitValue[1], product::class, location::class, 1);
+                    }
+                }
+            }
+        }
+
 
     public function postDelete(Request $request)
     {
@@ -1285,5 +1413,56 @@ GROUP BY mapped_expense_category");
             'status' => 'success',
             'barcode'=>$barCode,
         ));
+    }
+    public function getLocationAndGroups($id = 0){
+
+        if($id == 0 ){
+            $locationGroups = Locationgroups::where(function($query){
+                1 == 1;
+            })->orderBy('name','asc')->get();
+
+            $groupsData = '<optgroup label="Location Groups">';
+            foreach($locationGroups as $locationGroup){
+                $groupsData .= '<option value="group_'.$locationGroup->id.'">'.$locationGroup->name.'</option>';
+            }
+            $groupsData .='</optgroup>';
+            $locations = location::where('active','=',1)->orderBy('id','asc')->get();
+            $locationsData = '<optgroup label="Location">';
+            foreach($locations as $location){
+                $locationsData .= '<option value="location_'.$location->id.'">'.$location->id.' '.$location->location_name.'</option>';
+            }
+            $locationsData .='</optgroup>';
+            return response()->json(['groups'=>$groupsData,"locations"=>$locationsData]);
+        }else{
+            $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,Locationgroups::class,1,true);
+            $selectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,location::class,1,true);
+
+            $locationGroups = Locationgroups::where(function($query){
+                1 == 1;
+            })->orderBy('name','asc')->get();
+            $selectValues = [];
+            $groupsData = '<optgroup label="Location Groups">';
+            foreach($locationGroups as $locationGroup){
+
+                if($selectedGroups->where('locationgroups_id',$locationGroup->id)->count()){
+                    $selectValues[] = 'group_'.$locationGroup->id;
+                }
+                $groupsData .= '<option  value="group_'.$locationGroup->id.'">'.$locationGroup->name.'</option>';
+            }
+            $groupsData .='</optgroup>';
+            $locations = location::where('active','=',1)->orderBy('id','asc')->get();
+            $locationsData = '<optgroup label="Location">';
+            foreach($locations as $location){
+
+                if($selectedLocations->where('location_id',$location->id)->count()){
+                    $selectValues[] = 'location_'.$location->id;
+                }
+                $locationsData .= '<option  value="location_'.$location->id.'">'.$location->id.' '.$location->location_name.'</option>';
+            }
+            $locationsData .='</optgroup>';
+
+            return response()->json(['groups'=>$groupsData,"locations"=>$locationsData,'selectedValues'=>$selectValues]);
+
+        }
     }
 }

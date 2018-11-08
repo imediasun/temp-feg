@@ -18,10 +18,10 @@
             'manageservicerequestsFormAjax')) !!}
             <div class="col-md-12">
                 <fieldset>
-                    <div class="form-group  ">
+                   <!-- <div class="form-group  ">
                         <label for="Priority" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Priority ', (isset($fields['priority_id']['language'])?
-                            $fields['priority_id']['language'] : array())) !!}
+                           {{-- {!! SiteHelpers::activeLang('Priority ', (isset($fields['priority_id']['language'])?
+                            $fields['priority_id']['language'] : array())) !!}--}}
                         </label>
 
                         <div class="col-md-6">
@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-md-2">
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form-group  ">
                         <label for="Date Resolved" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang(' Date Closed', (isset($fields['solved_date']['language'])?
@@ -89,8 +89,8 @@
     $(document).ready(function () {
         $("#status_id").jCombo("{{ URL::to('manageservicerequests/comboselect?filter=service_status:id:status') }}",
                 {selected_value: '{{ $row['status_id'] }}', initial_text: 'Select Status'});
-        $("#priority_id").jCombo("{{ URL::to('manageservicerequests/comboselect?filter=new_graphics_priority:id:id_plus') }}",
-                {selected_value: '{{ $row['priority_id'] }}', initial_text: 'Select Priority'});
+      /*  $("#priority_id").jCombo("{{--{{ URL::to('manageservicerequests/comboselect?filter=new_graphics_priority:id:id_plus') }}--}}",
+                {selected_value: '{{--{{ $row['priority_id'] }}--}}', initial_text: 'Select Priority'});*/
 
         $('.editor').summernote();
         $('.previewImage').fancybox();

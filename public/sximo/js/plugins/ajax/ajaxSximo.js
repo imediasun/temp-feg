@@ -378,6 +378,8 @@ function ajaxViewDetail( id , url )
                         $(this).addClass('addcolon');
                     }
                 });
+
+                App.autoCallbacks.runCallback.call(window, 'ajaxViewOpened',eventData);
                 $('.ajaxLoading').hide();
             });
         },

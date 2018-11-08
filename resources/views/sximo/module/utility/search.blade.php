@@ -78,6 +78,16 @@ jQuery(function(){
             container: $("#advance-search")
         });
 	});
+
 });
+
+if('{{ $pageModule }}' == 'merchandisebudget'){
+
+	excludedLocations = {!! json_encode($excluded_locations) !!}
+
+    $('#advance-search > select[name="location_id"]').jCombo("{{ URL::to('merchandisebudget/comboselect?filter=location:id:id|location_name:active:1') }}",
+        {excludeItems: excludedLocations});
+
+}
 
 </script>

@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Library\FEGDBRelationHelpers;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,10 @@ class product extends Sximo  {
 		parent::__construct();
 		
 	}
+
+    /**
+     * testing git
+     */
     public static function boot()
     {
         parent::boot();
@@ -55,7 +60,8 @@ class product extends Sximo  {
   products.id        AS `product_id`,
   IF(products.retail_price = 0.00,TRUNCATE(products.case_price/num_items,5),products.retail_price) AS `retail_price`,
   O.order_type       AS prod_type_id,
-  T.type_description AS prod_sub_type_id
+  T.type_description AS prod_sub_type_id,
+  '' as excluded_locations_and_groups
 FROM `products`
   LEFT JOIN vendor
     ON (products.vendor_id = vendor.id)
@@ -245,6 +251,10 @@ FROM `products`
 	public static function queryGroup(){
 		return "  ";
 	}
+
+    /**
+     * @return string
+     */
 
     public static function queryGroupAPI(){
         return " GROUP BY products.vendor_description, products.sku, products.vendor_id, products.case_price ";
@@ -594,5 +604,43 @@ WHERE orders.is_api_visible = 1
             ];
         }
         return $rules;
+    }
+
+    public function setGroupsAndLocations($rows,$exportData = 0)
+    {
+
+        $dataArray = [];
+        foreach ($rows as $row) {
+            $locationGroup = $locations = '';
+            $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($row->id, self::class, Locationgroups::class, 1, true)->pluck('locationgroups_id');
+            $selectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($row->id, self::class, location::class, 1, true)->pluck('location_id');
+            if ($selectedGroups->count() > 0) {
+                $locationGroup = Locationgroups::select(\DB::raw('group_concat(name) as names'))->whereIn('id', $selectedGroups->toArray())->get();
+            }
+            if ($selectedLocations->count() > 0) {
+                $locations = location::select(\DB::raw('group_concat(location_name) as location_name'))->where('active',1)->whereIn('id', $selectedLocations->toArray())->get();
+            }
+            $data = '';
+            if (!empty($locationGroup[0]->names)) {
+                $data = $locationGroup[0]->names;
+            }
+            if (!empty($locations[0]->location_name)) {
+                if (!empty($data)) {
+                    $data .= "," . $locations[0]->location_name;
+                } else {
+                    $data .= $locations[0]->location_name;
+                }
+            }
+            if (!empty($data)) {
+                if($exportData == 0) {
+                    $data = str_replace(',', '<br>', $data);
+                }else{
+                    $data = str_replace(',', ', ', $data);
+                }
+                $row->excluded_locations_and_groups = $data;
+            }
+            $dataArray[] = $row;
+        }
+        return $dataArray;
     }
 }

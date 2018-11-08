@@ -182,6 +182,7 @@ class GroupsController extends Controller
         $this->data['searchMode'] = 'native';
         $this->data['pageUrl'] = url('core/groups');
         $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
         return view('sximo.module.utility.search', $this->data);
 
     }
