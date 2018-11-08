@@ -147,42 +147,53 @@ class VendorProductsImportHelper
         $content = $objWriter->save("../storage/app/vendor-products/".$fileName );
 
         //Sending mail with Excel file attachment
-        $subject = "Products List";
+        $subject = "Products List - [Vendor Product List #$vendorId] ". date('m/d/Y');
         $file_to_save = storage_path().'/app/vendor-products/' . $fileName;
 
         $cc = 'vendor.products@fegllc.com';
         $bcc = 'vendor.products@fegllc.com';
         $to = $vendorEmail;
-        $message = 'test vendor import mail';
+
         $sendEmailFromMerchandise = false;
         $from = 'vendor.products@fegllc.com';
-
+        $message = '<ul>';
+        $message .= '<ol>1) Document is attached in this email.</ol>';
+        $message .= '<ol>2) Download and review attached document.</ol>';
+        $message .= '<ol>3) For adding new record add new items in the end.</ol>';
+        $message .= '<ol>4) For adding new record add new items in the end.</ol>';
+        $message .= "<ol>5) Id's are unique they cannot be changed. <b>DO NOT UPDATE ID's<b></ol>";
+        $message .= '<ol>6) In case of any inquiry kindly reply with in this EMAIL.</ol></ul>';
 
         /* current user */
         $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
 
-        $configName = '';
-        $sent = FEGSystemHelper::sendSystemEmail(array(
-            'to' => $to,
-            'cc' => $cc,
-            'bcc' => $bcc,
-            'subject' => $subject,
-            'message' => $message,
-            'preferGoogleOAuthMail' => false,
-            'sendEmailFromVendorAccount' => true,
-            'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-//            'configName' => $configName,
-            'from' => $from,
-            'replyTo' => $from,
-            'attach' => $file_to_save,
-            'filename' => $fileName,
-            'encoding' => 'base64',
-            'type' => 'application/vnd.ms-excel',
-        ), $sendEmailFromMerchandise);
-        if (!$sent) {
-            return 3;
-        } else {
-            return 1;
+        $configName = 'Send Product Export To Vendor';
+        $recipients =  \FEGHelp::getSystemEmailRecipients($configName);
+        if(!empty($to)){
+            $recipients['to'].= ','.$to;
+        }
+        if($recipients['to']!='') {
+            $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                'subject' => $subject,
+                'message' => $message,
+                'preferGoogleOAuthMail' => false,
+                'sendEmailFromVendorAccount' => true,
+                'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                'configName' => $configName,
+                'from' => $from,
+                'replyTo' => $from,
+                'attach' => $file_to_save,
+                'filename' => $fileName,
+                'encoding' => 'base64',
+                'type' => 'application/vnd.ms-excel',
+            )), $sendEmailFromMerchandise);
+            if (!$sent) {
+                return 3;
+            } else {
+                // Delete temporary file
+                unlink("../storage/app/vendor-products/" . $fileName);
+                return 1;
+            }
         }
 
     }

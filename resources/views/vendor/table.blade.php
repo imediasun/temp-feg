@@ -143,15 +143,20 @@
 						 <?php endif;					 
 						endforeach; 
 					  ?>
+
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('vendor',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                             <!--Send vendor list button-->
-                     <a href="javascript://ajax" onclick="ajaxSendProductList('{{ URL::to('vendor/send-list/'.$row->id)}}');" class="tips btn btn-xs btn-white"
-                        title="Send List"><i class="fa fa-envelope" aria-hidden="true"></i></a>
-                     <!--Schedule vendor list button-->
-                     <a href="{{ URL::to('vendor/schedule-list/'.$row->id)}}" onclick="ajaxViewDetail('#vendor',this.href); return false; " class="tips btn btn-xs btn-white"
-                        title="Schedule List"><i class="fa fa-calendar" aria-hidden="true"></i></a>
+                     @if($row->email != '' || $row->email_2 != '')
+                         <a href="javascript://ajax" onclick="ajaxSendProductList('{{ URL::to('vendor/send-list/'.$row->id)}}');" class="tips btn btn-xs btn-white" title="Send List">
+                             <i class="fa fa-envelope" aria-hidden="true"></i>
+                         </a>
+                         <!--Schedule vendor list button-->
+                         <a href="{{ URL::to('vendor/schedule-list/'.$row->id)}}" onclick="ajaxViewDetail('#vendor',this.href); return false; " class="tips btn btn-xs btn-white" title="Schedule List">
+                             <i class="fa fa-calendar" aria-hidden="true"></i>
+                         </a>
+                     @endif
 				</td>
                 </tr>
                 @if($setting['view-method']=='expand')
