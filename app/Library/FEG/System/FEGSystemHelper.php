@@ -617,7 +617,7 @@ class FEGSystemHelper
      * @param string $from
      * @param type $options
      */
-    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array(), $sendEmailFromMerchandise = false)
+    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array(), $sendEmailFromMerchandise = false, $sendEmailFromVendorAccount = false)
     {
         //support@fegllc.com
         if (empty($from)) {
@@ -630,7 +630,6 @@ class FEGSystemHelper
         if (!$preventEmailSendingSetting) {
             $usePhpMail = !empty($options['usePHPMail']);
             $preferGoogleSend = !empty($options['preferGoogleOAuthMail']);
-            $sendEmailFromVendorAccount = !empty($options['sendEmailFromVendorAccount']);
             //$useLaravelMail = !empty($options['useLaravelMail']) || !empty($options['attach']);
             if ($usePhpMail) {
                 return self::phpMail($to, $subject, $message, $from, $options);
@@ -1215,7 +1214,7 @@ class FEGSystemHelper
      *
      *
      */
-    public static function sendSystemEmail($options, $sendEmailFromMerch = false)
+    public static function sendSystemEmail($options, $sendEmailFromMerch = false, $sendEmailFromVendorAccount = false)
     {
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
@@ -1295,7 +1294,7 @@ $message" .
 
         self::logit("Sending Email", $lf, $lp);
         self::logit($options, $lf, $lp);
-        $status = self::sendEmail($to, $subject, $message, $from, $options, $sendEmailFromMerch);
+        $status = self::sendEmail($to, $subject, $message, $from, $options, $sendEmailFromMerch, $sendEmailFromVendorAccount);
         self::logit("Email sent Status = " . $status, $lf, $lp);
         self::logit("Email sent", $lf, $lp);
         return $status;
