@@ -1444,7 +1444,14 @@ function removeClone(rowId){
 
 }
 
-function setProductSubTypes(object,row){
+function setProductSubTypes(object,row,existingId){
+    var isTypeValid =  checkVariationExistWithType(object);
+    if(isTypeValid == false){
+
+        $(object).select2('val',null);
+        notyMessageError('A product already exist with the same Product Type');
+        return false;
+    }
     $('.ajaxLoading').show();
 
     $.ajax({
@@ -1455,10 +1462,8 @@ function setProductSubTypes(object,row){
             var html = '<option value="">--Select--</option>';
             row = $(object).parent('td').parent('tr');
             var field =  row.find('select.prod_sub_type_id');
-            console.log("Total Sub Types: "+response.length);
             for (var i =0; i<response.length; i++){
                 var data = response[i];
-                console.log("Product Sub Type: "+data.id+" | "+data.type_description);
                 html +='<option value="'+data.id+'">'+data.type_description+'</option>';
             }
             field.html(html);
@@ -1467,7 +1472,7 @@ function setProductSubTypes(object,row){
             $('.ajaxLoading').hide();
         }
     });
-
+return true;
 }
 function deleteImportRecord(){
     App.notyConfirm({
@@ -1628,5 +1633,26 @@ function setValuesToVariations(object){
         if(inputFeild.length >0) {
             inputFeild.val(field.val());
         }
+    }
+}
+function checkVariationExistWithType(object){
+
+    var field = $(object);
+    var fieldName = field.attr('name');
+    var $row = field.closest("tr");
+    var $variationId = $row.attr("data-variantId");
+    if($variationId != ''){
+        selectFeild = $('tr[data-variantId="'+$variationId+'"] td select[name="'+fieldName+'"]');
+        var ignore  = selectFeild.index(object);
+        var validate = true;
+        selectFeild.each(function(i){
+           if(i != ignore){
+            if($(this).val() == field.val()){
+                validate = false;
+                return validate;
+            }
+           }
+        });
+        return validate;
     }
 }
