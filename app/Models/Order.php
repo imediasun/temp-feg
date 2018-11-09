@@ -1395,16 +1395,16 @@ class order extends Sximo
         $otherProducts = $orderContents->diff($redemptionPrizeProducts);
         foreach($otherProducts as $orderContent){
             $product = $orderContent->product;
-            if(!is_null($product)){
-                $variants = $product->getProductVariations(true);
-                if(!$variants->isEmpty()){
-                    //if any of product variation is redemption prize then add that order content into collection
-                    $variantsWithRedemptionPrize = Product::filterVariationsByType($variants, Order::ORDER_TYPE_REDEMPTION);
-                    if(!$variantsWithRedemptionPrize->isEmpty()){
-                        //important: overriding orderContent.prod_type_id for showing abbrevation in scoa
-                        $orderContent->prod_type_id = Order::ORDER_TYPE_REDEMPTION;
-                        $redemptionPrizeProducts->add($orderContent);
-                    }
+            $variants = !is_null($product) ? $product->getProductVariations(true) : collect();
+            if(!$variants->isEmpty()){
+                //if any of product variation is redemption prize then add that order content into collection
+                $variantsWithRedemptionPrize = Product::filterVariationsByType($variants, Order::ORDER_TYPE_REDEMPTION);
+                if(!$variantsWithRedemptionPrize->isEmpty()){
+                    //important: overriding orderContent.prod_type_id for showing abbrevation in scoa
+                    $orderContent->prod_type_id = Order::ORDER_TYPE_REDEMPTION;
+                    $firstProduct = $variantsWithRedemptionPrize->first();
+                    $orderContent->ticket_value = $firstProduct ? $firstProduct->ticket_value : 0;
+                    $redemptionPrizeProducts->add($orderContent);
                 }
             }
         }
