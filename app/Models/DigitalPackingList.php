@@ -32,31 +32,7 @@ class DigitalPackingList extends Sximo
        return str_replace("-","",$this->order->po_number).".dpl";
     }
 
-    /**
-     * will get all order contents and filter only products which are
-     * 1. redemption price
-     * 2. Any of its variation is redemption prize
-     * @param Collection $orderContents
-     */
-    public function filterRedemptionTypeProducts(Collection $orderContents){
 
-        $redemptionPrizeProducts = Product::filterVariationsByType($orderContents, Order::ORDER_TYPE_REDEMPTION);
-        $otherProducts = $orderContents->diff($redemptionPrizeProducts);
-        foreach($otherProducts as $orderContent){
-            $product = $orderContent->product;
-            $variants = $product->getProductVariations(true);
-            if(!$variants->isEmpty()){
-                //if any of product variation is redemption prize then add that order content into collection
-                $variantsWithRedemptionPrize = Product::filterVariationsByType($variants, Order::ORDER_TYPE_REDEMPTION);
-                if(!$variantsWithRedemptionPrize->isEmpty()){
-                    //important: overriding orderContent.prod_type_id for showing abbrevation in scoa
-                    $orderContent->prod_type_id = Order::ORDER_TYPE_REDEMPTION;
-                    $redemptionPrizeProducts->add($orderContent);
-                }
-            }
-        }
-        return $redemptionPrizeProducts;
-    }
 
     public function order(){
         return $this->belongsTo("App\Models\Order");
@@ -66,7 +42,7 @@ class DigitalPackingList extends Sximo
         $fileContent = $this->order->location_id . ", " . str_replace('-',"",$this->order->po_number) . $newLine;
         $totalItems = $this->order->contents()->count();
         $countIndex = 0;
-        $redemptionPrizeProducts = $this->filterRedemptionTypeProducts($this->order->contents);
+        $redemptionPrizeProducts = $this->order->filterRedemptionTypeProducts();
         foreach ($redemptionPrizeProducts as $product) {
             $countIndex++;
             Log::info("DPL Product Name:".$product->item_name);
@@ -123,26 +99,7 @@ class DigitalPackingList extends Sximo
         $string = str_replace(["&",",",'"'],"",$string);
         return $string; //$this->truncateString($string, $length);
     }
-    public function isOrderReceived($order_id)
-    {
-        $order = Order::where("id",'=',$order_id)->first();
-            $orderedQty = 0;
-            $receivedQty = -1;
-        if($order) {
-            if ($order->contents) {
-                $orderedQty = $order->contents->sum('qty');
-            }
-            if ($order->orderReceived) {
-                $receivedQty = $order->orderReceived->sum('quantity');
-            }
-        }
-            if ($orderedQty == $receivedQty && $order->is_freehand == 0 && in_array($order->location->debit_type_id,location::DEBIT_TYPES)) {
-                return $flagCheck = true;
-            } else {
-                return $flagCheck = false;
-            }
 
-    }
     public function getTruncateString($string)
     {
         $string = str_replace(["&",",",'"'],"",$string);
