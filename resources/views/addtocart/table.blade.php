@@ -396,7 +396,7 @@ $(function(){
             $('.ajaxLoading').hide();
         }else{
             $.ajax({
-                url: "addtocart/save/" + id + "/" + qty + "/" + encodeURIComponent(vendor) + "/" + notes,
+                url: "addtocart/save/" + id + "/" + qty + "?vendor=" + encodeURIComponent(vendor) + "&notes=" + encodeURIComponent(notes),
                 method: 'get',
                 dataType: 'json',
                 success: function (data) {

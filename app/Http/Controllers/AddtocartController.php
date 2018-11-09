@@ -332,6 +332,11 @@ class AddtocartController extends Controller
 
     public function getSave($id = null, $qty = null, $vendor_name = null, $notes = null)
     {
+        if(is_null($vendor_name))
+            $vendor_name = \request()->get('vendor');
+
+        if(is_null($notes))
+            $notes = \request()->get('notes');
 
         try {
             $data = array('qty' => $qty, 'notes' => $notes);
