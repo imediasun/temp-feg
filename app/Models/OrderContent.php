@@ -45,4 +45,6 @@ class OrderContent extends Sximo
         return self::where('order_id', $order_id)->sum('qty');
     }
 
+
+
 }

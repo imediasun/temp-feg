@@ -1361,6 +1361,17 @@ class order extends Sximo
             return false;
         }
     }
+
+    /**
+     * check if order is eligible for DPL button
+     */
+    public function isDPLAble(){
+
+        $orderFullyReceived = $this->isOrderReceived();
+        $redemptionPrizeProducts = $this->filterRedemptionTypeProducts();
+        return $orderFullyReceived && !$redemptionPrizeProducts->isEmpty();
+    }
+
     public function getUnitOfMeasurementForOrderType(){
         $module = new OrderController();
         $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
@@ -1371,6 +1382,31 @@ class order extends Sximo
         }
             return "EACH";
 
+    }
+
+    /**
+     * will get all order contents and filter only products which are
+     * 1. redemption price
+     * 2. Any of its variation is redemption prize
+     */
+    public function filterRedemptionTypeProducts(){
+        $orderContents = $this->contents;
+        $redemptionPrizeProducts = Product::filterVariationsByType($orderContents, Order::ORDER_TYPE_REDEMPTION);
+        $otherProducts = $orderContents->diff($redemptionPrizeProducts);
+        foreach($otherProducts as $orderContent){
+            $product = $orderContent->product;
+            $variants = $product->getProductVariations(true);
+            if(!$variants->isEmpty()){
+                //if any of product variation is redemption prize then add that order content into collection
+                $variantsWithRedemptionPrize = Product::filterVariationsByType($variants, Order::ORDER_TYPE_REDEMPTION);
+                if(!$variantsWithRedemptionPrize->isEmpty()){
+                    //important: overriding orderContent.prod_type_id for showing abbrevation in scoa
+                    $orderContent->prod_type_id = Order::ORDER_TYPE_REDEMPTION;
+                    $redemptionPrizeProducts->add($orderContent);
+                }
+            }
+        }
+        return $redemptionPrizeProducts;
     }
 
 }

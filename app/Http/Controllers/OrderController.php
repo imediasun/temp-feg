@@ -413,7 +413,7 @@ class OrderController extends Controller
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status . $partial : '');
 
             $order  = Order::find($data->id);
-            $rows[$index]->isFullyReceived = !is_null($order) ? $order->isOrderReceived():false;
+            $rows[$index]->isFullyReceived = !is_null($order) ? $order->isDPLAble():false;
         }
 
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
@@ -2034,7 +2034,8 @@ class OrderController extends Controller
         $dpl = new DigitalPackingList();
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
         $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name, O.id as id  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
-        $showdblbutton = $dpl->isOrderReceived($order_id);
+        $order = Order::find($order_id);
+        $showdblbutton = $order->isDPLAble();
         $this->data['showdblbutton']=$showdblbutton;
         return view('order.order-receipt', $this->data);
     }
