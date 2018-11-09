@@ -58,6 +58,7 @@ class Kernel extends ConsoleKernel
 
         //export product list to their respective vendors
         $schedule->command('email:sendvendorschedule')->daily();
+        $schedule->command('vendorproduct:import')->withoutOverlapping(2);
 
     }
 }
