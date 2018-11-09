@@ -94,29 +94,14 @@ GROUP BY mapped_expense_category");
     public function setRowStatus($rows){
         //Red=#fd4b4b;Green=#4fbb39;Blue=#103669;
 
+
         foreach ($rows as $row){
-            if ($row->product_id == 0 || $row->product_id == ''){
-                $row->rowStatus = 'New';
+            if($row->is_deleted == 1 && $row->is_updated == 0 && $row->is_new == 0) {
+                $row->textColor = '#fd4b4b';
+            }elseif($row->is_deleted == 0 && $row->is_updated == 1 && $row->is_new == 0){
+                $row->textColor = '#1c78f5';
+            }elseif($row->is_deleted == 0 && $row->is_updated == 0 && $row->is_new == 1){
                 $row->textColor = '#4fbb39';
-            }elseif ($row->product_id > 0 && $row->product_id != ''){
-                $product = product::find($row->product_id);
-                if(!$product){
-                    $row->rowStatus = 'New';
-                    $row->textColor = '#4fbb39';
-                }else{
-                    $isUpdated = (
-                        $product->vendor_description != $row->vendor_description || $product->sku != $row->sku
-                        || $product->upc_barcode != $row->upc_barcode || $product->num_items != $row->num_items
-                        || $product->unit_price != $row->unit_price || $product->case_price != $row->case_price
-                    );
-                    if($isUpdated){
-                        $row->rowStatus = 'Updated';
-                        $row->textColor = '#1d6dd8';
-                    }else{
-                        $row->rowStatus = 'Equal';
-                        $row->textColor = '#676a6c';
-                    }
-                }
             }
         }
 
@@ -136,7 +121,7 @@ GROUP BY mapped_expense_category");
             $product = new product();
             $a = [];
             foreach ($items as $item){
-
+                $isDeleted = $item['is_deleted'] == 1 ? 1:0;
                 $productId = $item['product_id'] > 0 ? $item['product_id']:null;
                 unset($item['id']);
                 unset($item['product_id']);
@@ -145,7 +130,14 @@ GROUP BY mapped_expense_category");
                 unset($item['imported_at']);
                 unset($item['is_omitted']);
                 unset($item['import_vendor_id']);
-                $product->insertRow($item,$productId);
+                unset($item['is_new']);
+                unset($item['is_updated']);
+                unset($item['is_deleted']);
+                if($isDeleted == 1){
+                    $product->where('id',$productId)->delete();
+                }else {
+                    $product->insertRow($item, $productId);
+                }
             }
 
             \DB::table('import_vendors')->where('id',$id)->update(['is_imported'=>1,'updated_at'=>date('Y-m-d H:i:s')]);
@@ -163,36 +155,46 @@ GROUP BY mapped_expense_category");
         return $vendor->count() > 0 ? true:false;
     }
     public function importExlAttachment($dataArray = []){
-      /*  $data = [
-            'email_received_at' ,
-            'from_email',
-            'attachments',
-        ];*/
       $fromEmail = $dataArray['from_email'];
       $vendor = vendor::select("id")->where(function ($query) use($fromEmail){
           $query->where('email',$fromEmail);
           $query->where('email_2',$fromEmail);
       })->first();
-        $data = [
-        'vendor_id'=>$vendor->id, 'email_recieved_at'=>date('Y-m-d H:i:s',strtotime($dataArray['email_received_at'])), 'created_at'=>date('Y-m-d H:i:s'),
-        ];
-        $importVendor = new ImportVendor();
-        $vendorListId = $importVendor->insertRow($data,null);
+        if($vendor) {
+            $data = [
+                'vendor_id' => $vendor->id, 'email_recieved_at' => date('Y-m-d H:i:s', strtotime($dataArray['email_received_at'])), 'created_at' => date('Y-m-d H:i:s'),
+            ];
+            $importVendor = new ImportVendor();
+            $vendorListId = $importVendor->insertRow($data, null);
 
-        foreach ($dataArray['attachments'] as $attachment){
-            $fileData = \SiteHelpers::getVendorFileImportData($attachment);
+            foreach ($dataArray['attachments'] as $attachment) {
+                $fileData = \SiteHelpers::getVendorFileImportData($attachment);
 
-            if (!empty($fileData)){
-            foreach ($fileData as $item){
-                if($item['id'] > 0 && !empty($item['id'])) {
-                    $productRows = $this->findProducts($item['id'],$item,$vendorListId);
-                    $this->saveProductList($productRows,$vendor->id);
-                }else{
-                    $productRows = $this->findProducts($item['id'],$item,$vendorListId);
-                    $this->saveProductList($productRows,$vendor->id,true);
+                if (!empty($fileData)) {
+                    foreach ($fileData as $item) {
+                        if ($item['id'] > 0 && !empty($item['id'])) {
+                            $productRows = $this->findProducts($item['id'], $item, $vendorListId);
+                            $this->saveProductList($productRows, $vendor->id);
+                        } else {
+                            $productRows = $this->findProducts($item['id'], $item, $vendorListId);
+                            $this->saveProductList($productRows, $vendor->id, true);
+                        }
+                    }
                 }
             }
+
+            $products = product::where(['vendor_id' => $vendor->id, 'exclude_export' => 0])
+                ->groupBy('variation_id')
+                ->orderBy('id','asc')->get();
+            foreach ($products as $product){
+                $productInImportList  = self::where('import_vendor_id',$vendorListId)
+                    ->where('vendor_id',$vendor->id)
+                    ->where('product_id',$product->id)->get();
+                if($productInImportList->count() == 0){
+                    $this->insertDeletedRecord($product,$vendorListId);
+                }
             }
+
         }
     }
 
@@ -242,7 +244,6 @@ GROUP BY mapped_expense_category");
                     || $row->num_items != $updatedFields['item_per_case']
                     || $row->case_price != $updatedFields['case_price']
                     || $row->unit_price != $updatedFields['unit_price']
-                    || $row->ticket_value != $updatedFields['ticket_value']
                     || $row->reserved_qty != $updatedFields['reserved_qty']
                  || ($row->is_reserved != in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0)
                 ) ? 1:0;
@@ -276,5 +277,24 @@ GROUP BY mapped_expense_category");
             $row['is_new'] = 1;
             return [$row];
         }
+    }
+
+    public function insertDeletedRecord($product,$vendorListId){
+
+        $variations = product::where('vendor_description',$product->vendor_description)
+                                ->where('sku',$product->sku)
+                                ->where('case_price',$product->case_price)->get();
+            foreach ($variations as $variation){
+                $this->saveDeletedItems($variation,$vendorListId);
+            }
+    }
+    public function saveDeletedItems($variation,$vendorListId){
+        $productId = $variation->id;
+        unset($variation->id);
+        $variation->product_id = $productId;
+        $variation->import_vendor_id = $vendorListId;
+        $variation->is_deleted = 1;
+        $data = (array) $variation->toArray();
+        $this->insertRow($data, null);
     }
 }

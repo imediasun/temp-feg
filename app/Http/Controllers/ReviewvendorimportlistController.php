@@ -351,13 +351,23 @@ class ReviewvendorimportlistController extends Controller
 
     function postSaveData(Request $request, $id = 0)
     {
-        $itemIds = $request->input('item_id');
         $parentIds = $request->input('parent_id');
         $prodTypeId = $request->input('prod_type_id');
+        $expenseCategory = $request->input('expense_category');
+     if('validation'==1){
+         return response()->json(array(
+             'status' => 'error',
+             'message' => 'Putt your Message Here'
+         ));
+     }
+
+        $itemIds = $request->input('item_id');
+
+
         $retailPrice = $request->input('retail_price');
         $ticketValue = $request->input('ticket_value');
         $prodSubTypeId = $request->input('prod_sub_type_id');
-        $expenseCategory = $request->input('expense_category');
+
         $isReserved = $request->input('is_reserved');
         $allowNegativeReserveQty = $request->input('allow_negative_reserve_qty');
         $inactive = $request->input('inactive');

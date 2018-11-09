@@ -1834,7 +1834,7 @@ function importVendorProductList(Object){
                 $('.ajaxLoading').hide();
                 notyMessageError(response.message);
             }else {
-                $('.btn-search[data-original-title="Reload Data"]').trigger('click');
+                $('.btn-search[data-original-title="Clear Search"]').trigger('click');
                 notyMessage(response.message);
             }
         }
