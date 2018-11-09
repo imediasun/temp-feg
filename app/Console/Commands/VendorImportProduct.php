@@ -104,6 +104,16 @@ class VendorImportProduct extends Command
                     ];
                     $reviewVendorImportList = new reviewvendorimportlist();
                     if($reviewVendorImportList->isVendorExist($fromEmail)) {
+                        foreach ($attachments['attachments'] as $attachment) {
+                            $fileData = \SiteHelpers::getVendorFileImportData($attachment);
+                            $duplicateItems = $this->checkDuplicateItems($fileData);
+                            if($duplicateItems['status'] == true){
+                                $subject = '[System Error] Unable to import products';
+                                $this->sendVendorEmailNotification($subject,$duplicateItems['message'],$fromEmail);
+                                echo " [System Error] Unable to import products Notification has been sent at".$fromEmail." ";
+                                return true;
+                            }
+                        }
                         $reviewVendorImportList->importExlAttachment($data);
                     }else{
 
@@ -245,4 +255,78 @@ class VendorImportProduct extends Command
         return $attachmentSaved;
     }
 
+    /**
+     * @param $items
+     * @return array
+     */
+    public function checkDuplicateItems($items){
+
+        $itemNotify = ['status'=>false,'message'=>'<b>We cannot import your file into system because of following errors:</b> <ul>'];
+        $ignoreIndex = 1;
+        $rowIndex = 1;
+        $duplicateCheck = [];
+
+        foreach ($items as $listItem){
+            $rowIndexEqualTo = 1;
+            $ignoreIndex = $rowIndex;
+            foreach ($items as $item) {
+                if (!empty($item['vendor_description']) && !in_array($rowIndex,$duplicateCheck)) {
+                    if ($rowIndexEqualTo <> $ignoreIndex) {
+                        if (
+                            $item['vendor_description'] == $listItem['vendor_description']
+                            && $item['sku'] == $listItem['sku']
+                            && $item['upc_barcode'] == $listItem['upc_barcode']
+                            && $item['item_per_case'] == $listItem['item_per_case']
+                            && $item['case_price'] == $listItem['case_price']
+                            && $item['unit_price'] == $listItem['unit_price']
+                            && $item['vendor_description'] == $listItem['vendor_description']
+                            && $item['ticket_value'] == $listItem['ticket_value']
+                            && $item['is_reserved'] == $listItem['is_reserved']
+                            && $item['reserved_qty'] == $listItem['reserved_qty']
+                        ) {
+                            $duplicateCheck[] = $rowIndexEqualTo;
+                            $itemNotify['status'] = true;
+                            $itemNotify['message'] .= '<li>Duplicate item found : ' . $listItem['vendor_description'] . ' duplicate on Row ' . ($rowIndex+1) . '  and ' . ($rowIndexEqualTo+1) . ' </li>';
+                        }
+                    }
+                    $rowIndexEqualTo++;
+                }
+            }
+            $rowIndex++;
+        }
+        $itemNotify['message'] .= '</ul>';
+
+        return $itemNotify;
+
+    }
+
+    /**
+     * @param $subject
+     * @param $message
+     * @param $to
+     */
+    public function sendVendorEmailNotification($subject,$message,$to)
+    {
+
+        $from = 'vendor.products@fegllc.com';
+        $sendEmailFromMerchandise = false;
+        $sendEmailFromVendorAccount = true;
+        $configName = 'Send Product Export To Vendor';
+        $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
+        if (!empty($to)) {
+            $recipients['to'] .= ',' . $to;
+        }
+
+        if ($recipients['to'] != '') {
+            $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                'subject' => $subject,
+                'message' => $message,
+                'preferGoogleOAuthMail' => false,
+                'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                'configName' => $configName,
+                'from' => $from,
+                'replyTo' => $from,
+            )), $sendEmailFromMerchandise,$sendEmailFromVendorAccount);
+        }
+    }
 }
