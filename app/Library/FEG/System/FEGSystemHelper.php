@@ -1239,21 +1239,6 @@ class FEGSystemHelper
                 $attachmentContent =isset($attach) ? $attach: '';
             }
 
-            $message = "
-*************** EMAIL START --- DEBUG INFO *******************<br>
-[FROM: $from]<br/>
-[SUBJECT: $subject]<br/>
-[TO: $to]<br/>
-[CC: $cc]<br/>
-[BCC: $bcc]<br/>
-
-***************** DEBUG INFO END *****************************<br><br>
-$message" .
-                (isset($attach) ? "<br><br> ================ ATTACHMENTS ===================================<br><ul><li>" . ($attachmentContent) . '</ul>' : '') .
-                "<br><br>******************************************* EMAIL END ********************************<br><br/>";
-
-            $options['message'] = $message;
-            $options['subject'] = $subject = "[TEST] " . $subject;
             $emailRecipients = self::getSystemEmailRecipients($configName, null, true);
 
             if($overrideToEmailInTestMode){
@@ -1277,6 +1262,22 @@ $message" .
             else{
                 $options['bcc'] = $bcc = $emailRecipients['bcc'];
             }
+
+            $message = "
+*************** EMAIL START --- DEBUG INFO *******************<br>
+[FROM: $from]<br/>
+[SUBJECT: $subject]<br/>
+[TO: $to]<br/>
+[CC: $cc]<br/>
+[BCC: $bcc]<br/>
+
+***************** DEBUG INFO END *****************************<br><br>
+$message" .
+                (isset($attach) ? "<br><br> ================ ATTACHMENTS ===================================<br><ul><li>" . ($attachmentContent) . '</ul>' : '') .
+                "<br><br>******************************************* EMAIL END ********************************<br><br/>";
+
+            $options['message'] = $message;
+            $options['subject'] = $subject = "[TEST] " . $subject;
 
             if (empty($to)) {
                 $to = "e5devmail@gmail.com";
