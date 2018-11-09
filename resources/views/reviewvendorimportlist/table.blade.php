@@ -100,7 +100,7 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" style="color: {{ $row->textColor }} !important;" >
+                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" @if(!empty($row->textColor)) style="color: {{ $row->textColor }} !important;" @endif >
 					<td style="position: relative;" class="cloneOption">
 						<i  data-id="form-{{ $row->id }}" onclick="createClone($('#form-{{ $row->id }}'),$('#form-{{ $row->id }}'))" class="fa fa-plus-square" style="color:#195a97; top:0px; cursor: pointer; font-size: 14px; position: absolute; "></i>
                         <input type="hidden" class="parent_id" value="{{ $row->id }}" name="parent_id[]">
