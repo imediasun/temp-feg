@@ -125,8 +125,8 @@ class VendorImportProduct extends Command
                 if(!env('DONT_DELETE_VENDOR_EMAIL', true))
                 {
                     //commented for testing on dev
-                    $L->log('Delete email');
-                    imap_delete($inbox, $email_number);
+                    //$L->log('Delete email');
+                   // imap_delete($inbox, $email_number); // uncomment if needed
                 }
 
 
