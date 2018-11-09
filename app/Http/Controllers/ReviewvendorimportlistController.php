@@ -351,15 +351,26 @@ class ReviewvendorimportlistController extends Controller
 
     function postSaveData(Request $request, $id = 0)
     {
+        //check if type of all product is selected
+        if(count($request->input('parent_id')) != count(array_filter($request->input('prod_type_id')))){
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Please set type of all products.'
+            ));
+        }
+
+        //check if expense categories of all product is selected
+        if(count($request->input('parent_id')) != count(array_filter($request->input('expense_category')))){
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Please set expense categories of all products.'
+            ));
+        }
+
+
         $parentIds = $request->input('parent_id');
         $prodTypeId = $request->input('prod_type_id');
         $expenseCategory = $request->input('expense_category');
-     if('validation'==1){
-         return response()->json(array(
-             'status' => 'error',
-             'message' => 'Putt your Message Here'
-         ));
-     }
 
         $itemIds = $request->input('item_id');
 

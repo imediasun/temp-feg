@@ -100,7 +100,7 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" @if(!empty($row->textColor)) style="color: {{ $row->textColor }} !important;" @endif >
+                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" @if(!empty($row->textColor)) style="color: {{ $row->textColor }} !important;" @endif data-variantId="{{ $row->variation_id  }}">
 					<td style="position: relative;" class="cloneOption">
 						<i  data-id="form-{{ $row->id }}" onclick="createClone($('#form-{{ $row->id }}'),$('#form-{{ $row->id }}'))" class="fa fa-plus-square" style="color:#195a97; top:0px; cursor: pointer; font-size: 14px; position: absolute; "></i>
                         <input type="hidden" class="parent_id" value="{{ $row->id }}" name="parent_id[]">
@@ -141,9 +141,9 @@
                                              @endforeach
                                          </select>
                                      @elseif($field['field'] == 'retail_price')
-                                         <input type="text" name="{{ $field['field'] }}[]" value="{{ CurrencyHelpers::formatPrice($row->$field['field'],5,false) }}" class="form-control" style="width: 100%;">
+                                         <input type="text" name="{{ $field['field'] }}[]" value="{{ CurrencyHelpers::formatPrice($row->$field['field'],5,false) }}" class="form-control" style="width: 100%;" onkeyup="setValuesToVariations(this)">
                                      @elseif($field['field'] == 'ticket_value')
-                                         <input type="text" name="{{ $field['field'] }}[]" value="{{ $row->$field['field'] }}" class="form-control" style="width: 100%;">
+                                         <input type="text" name="{{ $field['field'] }}[]" value="{{ $row->$field['field'] }}" class="form-control" style="width: 100%;" onkeyup="setValuesToVariations(this)">
 
                                      @elseif($field['field'] == 'prod_sub_type_id')
                                          <select required="" name="{{ $field['field'] }}[]" style="width: 100%;" class="select3 select2 {{ $field['field'] }}">
@@ -153,7 +153,7 @@
                                              @endforeach
                                          </select>
                                         @elseif(in_array($field['field'],['is_reserved','allow_negative_reserve_qty','inactive','in_development','hot_item','exclude_export']))
-                                         <select required=""  style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2 ">
+                                         <select required=""  style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2" onchange="setValuesToVariations(this)">
                                              <option @if($row->$field['field'] == 1) selected @endif value="1">Yes</option>
                                              <option @if($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0') selected @endif value="0">No</option>
                                          </select>
