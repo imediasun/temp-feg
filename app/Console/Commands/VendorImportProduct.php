@@ -286,7 +286,7 @@ class VendorImportProduct extends Command
                         ) {
                             $duplicateCheck[] = $rowIndexEqualTo;
                             $itemNotify['status'] = true;
-                            $itemNotify['message'] .= '<li>Duplicate item found : ' . $listItem['vendor_description'] . ' duplicate on Row ' . ($rowIndex+1) . '  and ' . ($rowIndexEqualTo+1) . ' </li>';
+                            $itemNotify['message'] .= '<li>Duplicate item found : <b>' . $listItem['vendor_description'] . '</b> duplicate on Row ' . ($rowIndex+1) . '  and ' . ($rowIndexEqualTo+1) . ' </li>';
                         }
                     }
                     $rowIndexEqualTo++;
