@@ -1168,6 +1168,9 @@
         }
 
         function confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId){
+            if(mode == 'clone'){
+                return ;
+            }
             App.notyConfirm({
                 message: "Are you sure you want to change Location <br> <b>***WARNING***</b><br>Changing the location will reset everything in the view. Do you really want to proceed?",
                 confirmButtonText: 'Yes',
