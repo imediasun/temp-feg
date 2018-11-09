@@ -3,6 +3,7 @@
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Library\FEGDBRelationHelpers;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Log;
@@ -520,11 +521,17 @@ WHERE orders.is_api_visible = 1
 
     }
 
-
-    public function getProductVariations()
+    /**
+     * @param bool $excludeSelf
+     * @return Collection
+     */
+    public function getProductVariations($excludeSelf = false)
     {
-        $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price' => $this->case_price])->get();
-        return $items;
+        $items = self::where(['vendor_description' => $this->vendor_description, 'sku' => $this->sku, 'case_price' => $this->case_price]);
+        if($excludeSelf){
+            $items = $items->where('id','!=',$this->id);
+        }
+        return $items->get();
     }
 
     public function getAutoComplete($term, $vendorId, $excludeProductsIds){
@@ -604,6 +611,21 @@ WHERE orders.is_api_visible = 1
             ];
         }
         return $rules;
+    }
+
+    /**
+     * @param Collection $variants
+     * @param $productType
+     * @return Collection
+     */
+    public static function filterVariationsByType(Collection $variants, $productType){
+        $filteredProducts = new Collection();
+        foreach($variants as $product){
+            if($product->prod_type_id == $productType){
+                $filteredProducts->add($product);
+            }
+        }
+        return $filteredProducts;
     }
 
     public function setGroupsAndLocations($rows,$exportData = 0)

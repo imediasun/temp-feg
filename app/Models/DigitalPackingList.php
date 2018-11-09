@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\File;
@@ -31,6 +32,32 @@ class DigitalPackingList extends Sximo
        return str_replace("-","",$this->order->po_number).".dpl";
     }
 
+    /**
+     * will get all order contents and filter only products which are
+     * 1. redemption price
+     * 2. Any of its variation is redemption prize
+     * @param Collection $orderContents
+     */
+    public function filterRedemptionTypeProducts(Collection $orderContents){
+
+        $redemptionPrizeProducts = Product::filterVariationsByType($orderContents, Order::ORDER_TYPE_REDEMPTION);
+        $otherProducts = $orderContents->diff($redemptionPrizeProducts);
+        foreach($otherProducts as $orderContent){
+            $product = $orderContent->product;
+            $variants = $product->getProductVariations(true);
+            if(!$variants->isEmpty()){
+                //if any of product variation is redemption prize then add that order content into collection
+                $variantsWithRedemptionPrize = Product::filterVariationsByType($variants, Order::ORDER_TYPE_REDEMPTION);
+                if(!$variantsWithRedemptionPrize->isEmpty()){
+                    //important: overriding orderContent.prod_type_id for showing abbrevation in scoa
+                    $orderContent->prod_type_id = Order::ORDER_TYPE_REDEMPTION;
+                    $redemptionPrizeProducts->add($orderContent);
+                }
+            }
+        }
+        return $redemptionPrizeProducts;
+    }
+
     public function order(){
         return $this->belongsTo("App\Models\Order");
     }
@@ -39,7 +66,8 @@ class DigitalPackingList extends Sximo
         $fileContent = $this->order->location_id . ", " . str_replace('-',"",$this->order->po_number) . $newLine;
         $totalItems = $this->order->contents()->count();
         $countIndex = 0;
-        foreach ($this->order->contents as $product) {
+        $redemptionPrizeProducts = $this->filterRedemptionTypeProducts($this->order->contents);
+        foreach ($redemptionPrizeProducts as $product) {
             $countIndex++;
             Log::info("DPL Product Name:".$product->item_name);
             $itemId = $product->upc_barcode;
