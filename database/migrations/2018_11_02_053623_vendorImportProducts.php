@@ -19,7 +19,7 @@ class VendorImportProducts extends Migration
             'ALTER TABLE vendor_import_products ADD product_id int(11) DEFAULT 0;',
             'ALTER TABLE vendor_import_products ADD is_imported int(11) DEFAULT 0;',
             'ALTER TABLE vendor_import_products ADD imported_by int(11) DEFAULT NULL;',
-            'ALTER TABLE vendor_import_products ADD imported_at TIMESTAMP DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;',
+            'ALTER TABLE vendor_import_products ADD imported_at TIMESTAMP DEFAULT NULL;',
             'ALTER TABLE vendor_import_products ADD is_omitted int(11) DEFAULT 0;',
         ];
 
