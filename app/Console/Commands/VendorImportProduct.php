@@ -3,7 +3,7 @@ namespace App\Console\Commands;
 
 require_once('setting.php');
 
-use App\Models\reviewvendorimportlist;
+use App\Models\Reviewvendorimportlist;
 use Illuminate\Console\Command;
 use App\Library\FEG\System\FEGSystemHelper;
 use File;
