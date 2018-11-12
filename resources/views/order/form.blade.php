@@ -1115,16 +1115,24 @@
                     var selectedLocationId          =  $("#location_id").val() != '' ? $("#location_id").val() : 0;
                     var isCheckedAltShippingAddress = false;
                 }
-
-                if($('#vendor_id').val() == '')
-                    onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId);
-                else
-                    confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId);
+                @if($mode != 'clone')
+                        if($('#vendor_id').val() == '') {
+                     onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId);
+                 }else {
+                     confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId);
+                 }
+                 @else
+                 if($('#alt_ship_to').is(':checked')){
+                     $('#ship_address').css('display', 'block');
+                 }else{
+                     $('#ship_address').css('display', 'none');
+                 }
+                @endif
             }
 
         });
 
-        function onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId){
+        function  onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId){
             $('.ajaxLoading').css('display', 'block');
             $.ajax({
                 url: '/order/update',
@@ -1230,7 +1238,13 @@
                 validatePONumber(selectedLocationId, 0, false);
             }
             else  if(!$("#alt_ship_to").is(':checked') && $('#vendor_id').val() != ''){
+                @if($mode == 'clone')
+                $('.ajaxLoading').css('display', 'block');
+                $("#po_1").val(selectedLocationId);
+                validatePONumber(selectedLocationId, 0);
+                @else
                 confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId);
+                @endif
             }
             else{
                 $('.ajaxLoading').css('display', 'block');
@@ -1424,10 +1438,10 @@
                              @if($fromStore == 1 or $mode == "edit" or $mode == 'clone')
                                      selectedType = $("#order_type_id").val();
                              @endif
-
+            @if($mode !='clone')
                             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
                                 {excludeItems: msg.exclude_the_order_types, isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'], selected_value: selectedType, initial_text: '-------- Select Order Type --------'});
-
+@endif
                         }
 
                         $("#submit_btn").removeAttr('disabled');
@@ -1727,7 +1741,7 @@ $(function(){
                         @if($data['prefill_type'] != "edit" && $data['prefill_type']!= "SID")
                             locationId = $('#location_id').val() || '';
                         @endif
-                                console.log("Debug Autocomplete");
+
                         if ($('#location_id').length > 0) {
                             if ($.trim($('#location_id').val()) != '') {
                                 locationId = $('#location_id').val();
@@ -1775,6 +1789,7 @@ $(function(){
                         if (exclude_products) {
                             request.exclude_products = exclude_products;
                         }
+                        request.mode = '{{ $mode }}';
 
                         lastXhr = $.getJSON("{{url()}}/order/autocomplete", request, function (data, status, xhr) {
                             cache[term] = data;

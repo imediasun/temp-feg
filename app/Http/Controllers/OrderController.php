@@ -2266,6 +2266,7 @@ class OrderController extends Controller
         $vendorId = Input::get('vendor_id',0);
         $locationId = Input::get('location_id');
         $excludeProducts = Input::get('exclude_products', null);
+        $mode = input::get('mode');
 
        /* $isAltShippingAddress = Input::get('is_alt_shipping_address');*/
       /* $locationId = ($isAltShippingAddress != '') ? null : $locationId;*/ // We don't need anymore this condition
@@ -2284,17 +2285,20 @@ class OrderController extends Controller
         if (!empty($vendorId)) {
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
         }
-
-        $restrictedProductsAndTypesIdsArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true, true);
-        $restrictedProductTypeIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_type_ids'];
-        $restrictedProductIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_ids'];
-
-        $restrictedProductIds = implode(',', $restrictedProductIdsArray);
         $whereNotInProductIdsCondition = '';
-        if(!empty($restrictedProductIds)){
-            $whereNotInProductIdsCondition = " AND products.id NOT IN ($restrictedProductIds) ";
-        }
+        $restrictedProductTypeIdsArray = [];
+if($mode !='clone') {
+    $restrictedProductsAndTypesIdsArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true, true);
+    $restrictedProductTypeIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_type_ids'];
+    $restrictedProductIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_ids'];
 
+    $restrictedProductIds = implode(',', $restrictedProductIdsArray);
+
+    if (!empty($restrictedProductIds)) {
+        $whereNotInProductIdsCondition = " AND products.id NOT IN ($restrictedProductIds) ";
+    }
+
+}
         $whereOrderTypeCondition = " AND products.prod_type_id in(".$orderTypeId.")";
         // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
         if (
