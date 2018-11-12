@@ -400,7 +400,7 @@ $(function(){
                 method: 'get',
                 dataType: 'json',
                 success: function (data) {
-                    reloadData('#addtocart', 'addtocart/data?return=');
+                    $("a[data-original-title='Reload Data']").click();//Reload page along with sorting.
                     $(".cartsubmitaction").removeAttr("disabled");
                     $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
                 },
