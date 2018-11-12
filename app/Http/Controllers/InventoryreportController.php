@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEGDBRelationHelpers;
 use App\Models\Inventoryreport;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -79,6 +80,12 @@ class InventoryreportController extends Controller {
                     'displayTypeOnly' => $this->model->getAllowedTypes(),
                 ];
             }
+        }
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+
+        if(count($productTypeExcludedbyLocation) > 0){
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] =true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
         }
 
 		$page = $request->input('page', 1);
@@ -261,6 +268,38 @@ class InventoryreportController extends Controller {
 		}
 
 	}
+    public
+    function getSearch($mode = 'ajax')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = $mode;
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
+
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+        $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
+
+        if(count($productTypeExcludedbyLocation) > 0){
+            $this->data['typeRestricted']['isTypeRestrictedExclude'] =true;
+            $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
+        }
+
+        if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            return view('feg_common.search', $this->data);
+        } else {
+            return view('sximo.module.utility.search', $this->data);
+        }
+
+    }
 
 	function getExport($t = 'excel')
 	{

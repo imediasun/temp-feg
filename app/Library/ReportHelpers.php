@@ -917,14 +917,14 @@ class ReportHelpers
             $typeDisplayOnly = " AND order_type_id IN(".$productUsageReport->getAllowedTypes().") ";
         }
 
-//        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(explode(',', $location));
-//        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
-//        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
 
-//        $whereNotInProductTypeAndProductIds = '';
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
 
-//        if($excludedProductTypeIdsString != '')
-//            $whereNotInProductTypeAndProductIds .= " AND order_type_id NOT IN($excludedProductTypeIdsString) ";
+        $whereNotInProductTypeAndProductIds = '';
+        if($excludedProductTypeIdsString != '') {
+            $whereNotInProductTypeAndProductIds .= " AND order_type_id NOT IN($excludedProductTypeIdsString) ";
+        }
 
 
 
@@ -936,7 +936,7 @@ class ReportHelpers
                         $whereNotInPoNumber    
                             date_ordered >= '$dateStart' 
                             AND date_ordered <= '$dateEnd' 
-                            AND order_type_id IN(7,8) $typeDisplayOnly
+                            AND order_type_id IN(7,8) $typeDisplayOnly $whereNotInProductTypeAndProductIds 
                             AND status_id IN(".implode(',',order::ORDER_CLOSED_STATUS).") 
                             
                         GROUP BY location_id) O 
