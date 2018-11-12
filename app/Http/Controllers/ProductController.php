@@ -467,8 +467,19 @@ class ProductController extends Controller
             ($results['total'] > 0 ? $results['total'] : '1')));
 
         $pagination->setPath('product/data');
+        if(!empty($sort)) {
+            if (in_array($sort, ['excluded_locations_and_groups'])) {
+                usort($rows, function ($a, $b) use ($sort, $order) {
 
+                    if ($order == 'asc') {
+                        return strcmp($a->$sort, $b->$sort) > 0;
+                    } else {
+                        return strcmp($a->$sort, $b->$sort) < 0;
+                    }
+                });
 
+            }
+        }
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
         // Build Pagination

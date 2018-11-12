@@ -100,7 +100,17 @@ class LocationgroupsController extends Controller {
 		$this->data['message']          = @$results['message'];
 		$this->data['bottomMessage']	= @$results['bottomMessage'];
         $results['rows'] = $this->model->setExcludedData($results['rows']);
-
+        if(!empty($sort)) {
+            if (in_array($sort, ['location_ids','excluded_product_ids','excluded_product_type_ids'])) {
+                usort($results['rows'], function ($a, $b) use ($sort, $order) {
+                    if ($order == 'asc') {
+                        return strcmp($a->$sort, $b->$sort) > 0;
+                    } else {
+                        return strcmp($a->$sort, $b->$sort) < 0;
+                    }
+                });
+            }
+        }
 		$this->data['rowData']		= $results['rows'];
 		// Build Pagination
 		$this->data['pagination']	= $pagination;

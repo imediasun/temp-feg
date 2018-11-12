@@ -143,6 +143,19 @@ class LocationController extends Controller
             $results['total'] = 1;
         }
         $results['rows'] = $this->model->setExcludedData($results['rows']);
+        if(!empty($sort)) {
+            if (in_array($sort, ['product_ids','product_type_ids'])) {
+                usort($results['rows'], function ($a, $b) use ($sort, $order) {
+
+                    if ($order == 'asc') {
+                        return strcmp($a->$sort, $b->$sort) > 0;
+                    } else {
+                        return strcmp($a->$sort, $b->$sort) < 0;
+                    }
+                });
+
+            }
+        }
 
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
