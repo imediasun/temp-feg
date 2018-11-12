@@ -318,7 +318,10 @@ class ManagefegrequeststoreController extends Controller
 
     public function getSearchFilterQuery($customQueryString = null)
     {
-
+        if(is_array($customQueryString))
+        {
+            $customQueryString = 'description:like:'.$customQueryString['query'];
+        }
 
         $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
         $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
