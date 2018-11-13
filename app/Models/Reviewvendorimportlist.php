@@ -217,7 +217,7 @@ GROUP BY mapped_expense_category");
                 if ($updateItems) {
                     self::where('id', $updateItems->id)->update($row);
                 } else {
-
+                    $row['vendor_id'] = $vendorId;
                     $this->insertRow($row, null);
                 }
             }
