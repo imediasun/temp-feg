@@ -206,6 +206,7 @@ GROUP BY mapped_expense_category");
     public function saveProductList($rows,$vendorId,$isNew = false){
         foreach ($rows as $row) {
             unset($row['item_name']);
+
             if (!empty($row['vendor_description'])) {
                 if ($isNew) {
                     $row['is_updated'] = 0;
@@ -213,15 +214,19 @@ GROUP BY mapped_expense_category");
                     $UniqueID = (!empty($row['variation_id'])) ? $row['variation_id']:substr(md5(md5(time()+time())."-".md5(time())),0,10);
                     $row['variation_id'] = $UniqueID;
                 }
-                $updateItems = self::select('id')->where('vendor_id', $vendorId)->where('product_id', $row['product_id'])->where('is_omitted', 1)->first();
+                $updateItems = self::select('id')->where('vendor_id', $vendorId)->where('vendor_description', $row['vendor_description'])
+                    ->where('sku', $row['sku'])
+                    ->where('case_price', $row['case_price'])->where('is_omitted', 1)->first();
+
                 if ($updateItems) {
+                    unset($row['import_vendor_id']);
                     self::where('id', $updateItems->id)->update($row);
                 } else {
                     $row['vendor_id'] = $vendorId;
                     $this->insertRow($row, null);
                 }
             }
-        }
+    }
     }
 
     /**
@@ -290,7 +295,12 @@ GROUP BY mapped_expense_category");
                                 ->where('sku',$product->sku)
                                 ->where('case_price',$product->case_price)->get();
             foreach ($variations as $variation){
-                $this->saveDeletedItems($variation,$vendorListId);
+                $updateItems = self::select('id')->where('vendor_id', $variation->vendor_id)->where('vendor_description', $variation->vendor_description)
+                    ->where('sku', $variation->sku)
+                    ->where('case_price', $variation->case_price)->where('is_omitted', 1)->first();
+                if(!$updateItems) {
+                    $this->saveDeletedItems($variation, $vendorListId);
+                }
             }
     }
     public function saveDeletedItems($variation,$vendorListId){
