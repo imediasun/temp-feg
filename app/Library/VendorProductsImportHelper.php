@@ -27,7 +27,7 @@ class VendorProductsImportHelper
         }
         $fields = [
                 'ID',
-                'Vendor Description',
+                'Item Description',
                 'SKU',
                 'UPC/Barcode',
                 'Item Per Case',
