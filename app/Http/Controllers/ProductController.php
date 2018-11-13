@@ -774,7 +774,10 @@ class ProductController extends Controller
         $rules['unit_price'] = 'required';
         $rules['vendor_id'] = 'required';
         $excludedLocationsAndGroups = $request->excluded_locations_and_groups;
-unset($request->excluded_locations_and_groups);
+        $productTypeExcludedLocationsAndGroups = $request->product_type_excluded_data;
+        $productTypeId = $request->prod_type_id;
+        unset($request->excluded_locations_and_groups);
+        unset($request->product_type_excluded_data);
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
@@ -862,7 +865,7 @@ unset($request->excluded_locations_and_groups);
                     $netsuite_description['netsuite_description'] = $pc->id."...".$postedtoNetSuite;
                     $this->model->insertRow($netsuite_description, $pc->id);
 
-                        $this->insertRelations($excludedLocationsAndGroups,$pc->id);
+                        $this->insertRelations($excludedLocationsAndGroups,$productTypeExcludedLocationsAndGroups,$pc->id,$productTypeId);
                 }
                 $isDefaultExpenseCategory = $request->input("is_default_expense_category");
                 if ($id > 0 && $isDefaultExpenseCategory > 0) {
@@ -875,6 +878,7 @@ unset($request->excluded_locations_and_groups);
                 $ids = [];
                 $count = 1;
                 unset($data['excluded_locations_and_groups']);
+                unset($data['product_type_excluded_data']);
                 $prodData = $data;
                 foreach ($product_categories as $category) {
                     $prodData['retail_price'] = (isset($retail_price[$count]) && !empty($retail_price[$count])) ? $retail_price[$count] : 0;
@@ -932,7 +936,7 @@ unset($request->excluded_locations_and_groups);
                     $this->model->insertRow($updates, $id);
                     $this->model->setFirstDefaultExpenseCategory($id);
 
-                        $this->insertRelations($excludedLocationsAndGroups,$id);
+                        $this->insertRelations($excludedLocationsAndGroups,$productTypeExcludedLocationsAndGroups,$id,$productTypeId);
                 }
 
             }
@@ -965,7 +969,7 @@ unset($request->excluded_locations_and_groups);
                     $this->model->insertRow($netsuite_description, $pc->id);
 
 
-                        $this->insertRelations($excludedLocationsAndGroups,$pc->id);
+                        $this->insertRelations($excludedLocationsAndGroups,$productTypeExcludedLocationsAndGroups,$pc->id,$productTypeId);
                 }
             }
 
@@ -984,14 +988,22 @@ unset($request->excluded_locations_and_groups);
         }
 
     }
-    public function insertRelations($excludedLocationsAndGroups,$id){
+    public function insertRelations($excludedLocationsAndGroups,$productTypeExcludedLocationsAndGroups,$id,$productTypeId = 0){
 
         $excludedLocationsAndGroups = is_array($excludedLocationsAndGroups) ? $excludedLocationsAndGroups:[$excludedLocationsAndGroups];
+        $productTypeExcludedLocationsAndGroups = is_array($productTypeExcludedLocationsAndGroups) ? $productTypeExcludedLocationsAndGroups:[$productTypeExcludedLocationsAndGroups];
+
         FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
         FEGDBRelationHelpers::destroyCustomRelation(product::class, location::class, 1, 0, $id);
 
         FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class,product::class,  1, $id,0 );
         FEGDBRelationHelpers::destroyCustomRelation(location::class,product::class, 1, $id, 0);
+
+        FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, Locationgroups::class, 1, 0, $productTypeId);
+        FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, location::class, 1, 0, $productTypeId);
+
+        FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class,Ordertyperestrictions::class,  1, $productTypeId,0 );
+        FEGDBRelationHelpers::destroyCustomRelation(location::class,Ordertyperestrictions::class, 1, $productTypeId, 0);
 
 
             if (is_array($excludedLocationsAndGroups) && count($excludedLocationsAndGroups) > 0 && $excludedLocationsAndGroups[0] !=null) {
@@ -1005,6 +1017,19 @@ unset($request->excluded_locations_and_groups);
                     }
                 }
             }
+
+        if (is_array($productTypeExcludedLocationsAndGroups) && count($productTypeExcludedLocationsAndGroups) > 0 && $productTypeExcludedLocationsAndGroups[0] !=null) {
+
+            foreach ($productTypeExcludedLocationsAndGroups as $productTypeExcludedLocationsAndGroup) {
+                $splitValue = explode('_', $productTypeExcludedLocationsAndGroup);
+                if ($splitValue[0] == 'group') {
+                    FEGDBRelationHelpers::insertCustomRelation($productTypeId, $splitValue[1], Ordertyperestrictions::class, Locationgroups::class, 1);
+                } else {
+                    FEGDBRelationHelpers::insertCustomRelation($productTypeId, $splitValue[1], Ordertyperestrictions::class, location::class, 1);
+                }
+            }
+        }
+
         }
 
 
@@ -1425,9 +1450,9 @@ GROUP BY mapped_expense_category");
             'barcode'=>$barCode,
         ));
     }
-    public function getLocationAndGroups($id = 0){
+    public function getLocationAndGroups(Request $request,$id = 0){
 
-        if($id == 0 ){
+        if($id == 0 && empty($request->input('mode'))){
             $locationGroups = Locationgroups::where(function($query){
                 1 == 1;
             })->orderBy('name','asc')->get();
@@ -1447,16 +1472,29 @@ GROUP BY mapped_expense_category");
         }else{
             $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,Locationgroups::class,1,true);
             $selectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,location::class,1,true);
+            $productType = $request->input('productType');
+            $productTypeId = $request->input('productTypeId',0);
+            if(!empty($productType)) {
+                $productTypeId = Ordertyperestrictions::where('order_type', $productType)->value('id');
+            }
 
+                if($productTypeId > 0){
+                    $productTypeSelectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,Locationgroups::class,1,true);
+                    $productTypeSelectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,location::class,1,true);
+                }
             $locationGroups = Locationgroups::where(function($query){
                 1 == 1;
             })->orderBy('name','asc')->get();
             $selectValues = [];
+            $productTypeSelectedValues = [];
             $groupsData = '<optgroup label="Location Groups">';
             foreach($locationGroups as $locationGroup){
 
                 if($selectedGroups->where('locationgroups_id',$locationGroup->id)->count()){
                     $selectValues[] = 'group_'.$locationGroup->id;
+                }
+                if($productTypeSelectedGroups->where('locationgroups_id',$locationGroup->id)->count()){
+                    $productTypeSelectedValues[] = 'group_'.$locationGroup->id;
                 }
                 $groupsData .= '<option  value="group_'.$locationGroup->id.'">'.$locationGroup->name.'</option>';
             }
@@ -1468,11 +1506,14 @@ GROUP BY mapped_expense_category");
                 if($selectedLocations->where('location_id',$location->id)->count()){
                     $selectValues[] = 'location_'.$location->id;
                 }
+                if($productTypeSelectedLocations->where('location_id',$location->id)->count()){
+                    $productTypeSelectedValues[] = 'location_'.$location->id;
+                }
                 $locationsData .= '<option  value="location_'.$location->id.'">'.$location->id.' '.$location->location_name.'</option>';
             }
             $locationsData .='</optgroup>';
 
-            return response()->json(['groups'=>$groupsData,"locations"=>$locationsData,'selectedValues'=>$selectValues]);
+            return response()->json(['groups'=>$groupsData,"locations"=>$locationsData,'selectedValues'=>$selectValues,'productTypeSelectedValues' => $productTypeSelectedValues]);
 
         }
     }

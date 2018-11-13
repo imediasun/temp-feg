@@ -363,13 +363,27 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="Reserved Qty Limit" class=" control-label col-md-4 text-left">
+                        <label for="Excluded Locations and Groups" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Excluded Locations and Groups', (isset($fields['excluded_locations_and_groups']['language'])?
                             $fields['excluded_locations_and_groups']['language'] : array())) !!}
                         </label>
 
                         <div class="col-md-6">
                             <select name='excluded_locations_and_groups[]' data-seprate='true' id='excluded_locations_and_groups' class='select2' multiple></select>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Excluded Location and Group for Product Type" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Excluded Location and Group for Product Type', (isset($fields['product_type_excluded_data']['language'])?
+                            $fields['product_type_excluded_data']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <select name='product_type_excluded_data[]' data-seprate='true' id='product_type_excluded_data' class='select2' multiple></select>
                         </div>
                         <div class="col-md-2">
 
@@ -500,13 +514,19 @@
     $(function(){
         $('select[name="excluded_locations_and_groups[]"]').attr('multiple','multiple');
         $('select[name="excluded_locations_and_groups[]"]').change();
+
+        $('select[name="product_type_excluded_data[]"]').attr('multiple','multiple');
+        $('select[name="product_type_excluded_data[]"]').change();
+        var productTypeId = '{{ $row['prod_type_id'] }}';
         $.ajax({
             url: '/product/location-and-groups/{{ $row['id'] }}',
+            data: {productTypeId:productTypeId},
             type: 'GET',
             success: function (response) {
                 var optionHTML = '<option value="select_all">Select All</option>'+response.groups;
                 optionHTML +=response.locations;
                 var selectedValues = response.selectedValues;
+                var productTypeSelectedValues = response.productTypeSelectedValues;
 
                 $('select[name="excluded_locations_and_groups[]"]').attr('multiple','multiple');
                 $('select[name="excluded_locations_and_groups[]"]').select2({
@@ -516,7 +536,18 @@
                 $('select[name="excluded_locations_and_groups[]"]').html(optionHTML);
                 $('select[name="excluded_locations_and_groups[]"]').change();
                 $('select[name="excluded_locations_and_groups[]"]').val(selectedValues).change();
+
+                $('select[name="product_type_excluded_data[]"]').attr('multiple','multiple');
+                $('select[name="product_type_excluded_data[]"]').select2({
+                    width: '100%',
+                    closeOnSelect: false
+                });
+                $('select[name="product_type_excluded_data[]"]').html(optionHTML);
+                $('select[name="product_type_excluded_data[]"]').change();
+                $('select[name="product_type_excluded_data[]"]').val(productTypeSelectedValues).change();
+
                 updateDropdownsGroups("excluded_locations_and_groups[]");
+                updateDropdownsGroups("product_type_excluded_data[]");
                             }
         });
 
@@ -653,6 +684,25 @@
 
                 $(this).parents('.product_types').find("select.prod_sub_type").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+selectedType+"");
                 //renderDropdown($(".select2"), {width: "100%"});
+
+                var productTypeId = selectedType;
+                if(productTypeId > 0) {
+                    $('.ajaxLoading').show();
+                    $.ajax({
+                        url: '/product/location-and-groups/{{ $row['id'] }}',
+                        data: {productTypeId: productTypeId,mode:'changingType'},
+                        type: 'GET',
+                        success: function (response) {
+
+                            var productTypeSelectedValues = response.productTypeSelectedValues;
+                            $('select[name="product_type_excluded_data[]"]').val(productTypeSelectedValues).change();
+                            updateDropdownsGroups("product_type_excluded_data[]");
+                            $('.ajaxLoading').hide();
+                        }
+                    });
+                }
+
+
 
                 getExpenseCategory(selectedType,null,counter);
                 var sku = 'input[name="sku"]';
