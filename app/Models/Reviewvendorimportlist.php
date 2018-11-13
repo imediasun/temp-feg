@@ -205,7 +205,6 @@ GROUP BY mapped_expense_category");
      */
     public function saveProductList($rows,$vendorId,$isNew = false){
         foreach ($rows as $row) {
-            $row['vendor_description'] = $row['item_name'];
             unset($row['item_name']);
             if (!empty($row['vendor_description'])) {
                 if ($isNew) {
