@@ -101,7 +101,7 @@
 
                     <div class="form-group  " >
                         <label for="Summery" class=" control-label col-md-4 text-left">
-                            Summery
+                            Summary
                         </label>
                         <div class="col-md-6" id="summeryText" style="text-transform:capitalize">
                             {!! isset($schedule)?$schedule->reoccur_by:''  !!}

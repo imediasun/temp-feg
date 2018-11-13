@@ -1669,7 +1669,6 @@ function removeClone(rowId){
         notyMessageError('Please select a vendor list.');
     }else {
         if (vendorId = 'auto') {
-            alert($('#selected_vendor').val());
             vendorId = $('#selected_vendor').val();
         }
         reloadData('#reviewvendorimportlist', 'reviewvendorimportlist/data?search=import_vendor_id:equal:' + vendorId)
