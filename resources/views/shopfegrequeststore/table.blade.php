@@ -142,8 +142,8 @@
                         @if(SiteHelpers::filterColumn($limited ))
                                 @if($field['field']=='img')
                                     <td align="center">
-                        <span   style="color:#d5e20a; font-size: 22px; cursor: pointer;" >
-                            <i id="{{ $row->id }}"  @if($row->is_favorite == 0) isfavorite="0" @else isfavorite="1" @endif  class="fa @if($row->is_favorite == 0) fa-star-o @else fa-star @endif"></i>
+                        <span   style="color:#d5e20a; font-size: 22px; cursor: pointer;"  @if($row->is_favorite == 0) title="Add to Favorite" @else title="Remove from Favorite" @endif>
+                            <i id="{{ $row->id }}"  @if($row->is_favorite == 0) isfavorite="0" @else isfavorite="1" @endif  class="favoriteItem fa @if($row->is_favorite == 0) fa-star-o @else fa-star @endif"></i>
                         </span>
                                     </td>
                                 @endif

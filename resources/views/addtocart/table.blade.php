@@ -51,7 +51,6 @@
                         @endif
                         <th width="100">Already on Order</th>
                        <!-- <th width="70"><?php echo Lang::get('core.btn_action');?></th> -->
-                        <th width="80"></th>
                         <th width="100">Image</th>
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
@@ -138,11 +137,7 @@
                             <div class=" action dropup"><a href="#" onclick="if(confirm('Are you sure you want to remove this item from cart?')){ return removeItemFromCart('{{ $row->id }}'); } return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Remove"><i class="fa fa-trash-o"></i></a></div>
                         </td-->
 
-                            <td align="center">
-                        <span  style="color:#d5e20a; font-size: 22px; cursor: pointer;" >
-                            <i id="{{ $row->id }}"  @if($row->is_favorite == 0) isfavorite="0" @else isfavorite="1" @endif  class="fa @if($row->is_favorite == 0) fa-star-o @else fa-star @endif"></i>
-                        </span>
-                            </td>
+
 
                         <td>
                             <?php
