@@ -1,4 +1,12 @@
+<style>
+    .week-schedule-label {
+        margin-left: 2px;
+        margin-right: 20px;
+        font-size: 16px;
+        vertical-align: text-top !important;
+    }
 
+</style>
 @if($setting['form-method'] =='native')
     <div class="sbox">
         <div class="sbox-title">
@@ -49,26 +57,26 @@
                         </label>
 
                         <div class="col-md-6">
-                            {!! Form::checkbox('days[]', 'sunday', isset($schedule)? (in_array("sunday", explode(',',$schedule->days)) ? true : false) : '') !!}
-                            {!! Form::label('sunday', 'S') !!}
+                            {!! Form::checkbox('days[]', 'sunday', isset($schedule)? (in_array("sunday", explode(',',$schedule->days)) ? true : false) : '',['class'=>'i-check']) !!}
+                            {!! Form::label('sunday', 'S', ['class' => 'week-schedule-label']) !!}
 
                             {!! Form::checkbox('days[]', 'monday', isset($schedule)? (in_array("monday", explode(',',$schedule->days)) ? true : false) : '') !!}
-                            {!! Form::label('monday', 'M') !!}
+                            {!! Form::label('monday', 'M', ['class' => 'week-schedule-label']) !!}
 
                             {!! Form::checkbox('days[]', 'tuesday', isset($schedule)? (in_array("tuesday", explode(',',$schedule->days)) ? true : false) : '') !!}
-                            {!! Form::label('tuesday', 'T') !!}
+                            {!! Form::label('tuesday', 'T', ['class' => 'week-schedule-label']) !!}
 
                             {!! Form::checkbox('days[]', 'wednesday', isset($schedule)? (in_array("wednesday", explode(',',$schedule->days)) ? true : false) : '') !!}
-                            {!! Form::label('wednesday', 'W') !!}
+                            {!! Form::label('wednesday', 'W', ['class' => 'week-schedule-label']) !!}
 
                             {!! Form::checkbox('days[]', 'thursday', isset($schedule)? (in_array("thursday", explode(',',$schedule->days)) ? true : false) : '') !!}
-                            {!! Form::label('thursday', 'T') !!}
+                            {!! Form::label('thursday', 'T', ['class' => 'week-schedule-label']) !!}
 
                             {!! Form::checkbox('days[]', 'friday', isset($schedule)? (in_array("friday", explode(',',$schedule->days)) ? true : false) : '') !!}
-                            {!! Form::label('friday', 'F') !!}
+                            {!! Form::label('friday', 'F', ['class' => 'week-schedule-label']) !!}
 
                             {!! Form::checkbox('days[]', 'saturday', isset($schedule)? (in_array("saturday", explode(',',$schedule->days)) ? true : false) : '') !!}
-                            {!! Form::label('saturday', 'S') !!}
+                            {!! Form::label('saturday', 'S', ['class' => 'week-schedule-label']) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -135,6 +143,10 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+            $('input[type="checkbox"],input[type="radio"]').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue'
+            });
 
             $('#repeatType').on('change', function() {
 
