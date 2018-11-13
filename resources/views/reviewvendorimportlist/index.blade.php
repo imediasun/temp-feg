@@ -24,7 +24,7 @@
 </div>	
 <script>
 $(document).ready(function(){
-	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?search=vendor_id:equal:0');
+	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?search=import_vendor_id:equal:0');
 });	
 </script>	
 @endsection
