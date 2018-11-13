@@ -468,7 +468,7 @@ class ProductController extends Controller
 
         $pagination->setPath('product/data');
         if(!empty($sort)) {
-            if (in_array($sort, ['excluded_locations_and_groups'])) {
+            if (in_array($sort, ['excluded_locations_and_groups','product_type_excluded_data'])) {
                 usort($rows, function ($a, $b) use ($sort, $order) {
 
                     if ($order == 'asc') {
