@@ -3372,7 +3372,24 @@ ORDER BY aa_id");
     public function getInquireOrder($orderId){
 
         $order = Order::find($orderId);
-        $configName = 'Inquire about this order';
+
+        $pass = $this->pass;
+        $order_types = '';
+        if(!empty($pass['calculate price according to case price'])) {
+            $order_types = $pass['calculate price according to case price']->data_options;
+        }
+
+        $configName = 'Non-Merchandise-Related Order Inquires';
+        $order_types = explode(",", $order_types);
+        $order_types = is_array($order_types) ? $order_types:[$order_types];
+        $fromEmail = 'info@fegllc.com';
+        $sendEmailFromMerchandiseOrNot = false;
+        if(in_array($order->order_type_id, $order_types)){
+            $configName = 'Merchandise-Related Order Inquires';
+            $fromEmail = 'merch.office@fegllc.com';
+            $sendEmailFromMerchandiseOrNot = true;
+        }
+
         if(!$order)
         {
             return \Redirect::to('order')
@@ -3381,15 +3398,12 @@ ORDER BY aa_id");
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
         $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($configName, null, $isTest);
 
-        $fromEmail = 'merch.office@fegllc.com';
-
         $message = $this->getShow($orderId, 'emails.inquireOrder');
         $subject = 'Inquire order';
-        $concatMerchandiseEmailOrNot = (!str_contains($systemEmailRecipients['to'], 'merch.office@fegllc.com') ? ',merch.office@fegllc.com' : '');
         if(!empty($systemEmailRecipients['to'])){
-            $systemEmailRecipients['to'] .= ','.Session::get('eid').$concatMerchandiseEmailOrNot;
+            $systemEmailRecipients['to'] .= ','.Session::get('eid');
         }else{
-            $systemEmailRecipients['to'] .= Session::get('eid').$concatMerchandiseEmailOrNot;
+            $systemEmailRecipients['to'] .= Session::get('eid');
         }
 
         if($isTest){
@@ -3412,7 +3426,7 @@ ORDER BY aa_id");
 
         FEGSystemHelper::sendSystemEmail(
             $options,
-            true
+            $sendEmailFromMerchandiseOrNot
         );
 
         return \Redirect::to('order')
