@@ -1459,7 +1459,27 @@ $(document).on('change', 'select' ,function () {
                 "product_type",
                 "prod_sub_type_id[1]"
             ];
+
+
             getProductSubTypes(productTypeId, productSubTypeSelectors, $(this));
+
+            if(pageModule == 'product'){
+                if(productTypeId > 0) {
+                    $('.ajaxLoading').show();
+                    $.ajax({
+                        url: '/product/location-and-groups/0}',
+                        data: {productTypeId: productTypeId,mode:'changingType'},
+                        type: 'GET',
+                        success: function (response) {
+
+                            var productTypeSelectedValues = response.productTypeSelectedValues;
+                            $('select[name="product_type_excluded_data[]"]').val(productTypeSelectedValues).change();
+                            updateDropdownsGroups("product_type_excluded_data[]");
+                            $('.ajaxLoading').hide();
+                        }
+                    });
+                }
+            }
         }
     }
 });
