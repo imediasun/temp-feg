@@ -270,16 +270,16 @@ class VendorImportProduct extends Command
             $rowIndexEqualTo = 1;
             $ignoreIndex = $rowIndex;
             foreach ($items as $item) {
-                if (!empty($item['vendor_description']) && !in_array($rowIndex,$duplicateCheck)) {
+                if (!empty($item['item_name']) && !in_array($rowIndex,$duplicateCheck)) {
                     if ($rowIndexEqualTo <> $ignoreIndex) {
                         if (
-                            $item['vendor_description'] == $listItem['vendor_description']
+                            $item['item_name'] == $listItem['item_name']
                             && $item['sku'] == $listItem['sku']
                             && $item['upc_barcode'] == $listItem['upc_barcode']
                             && $item['item_per_case'] == $listItem['item_per_case']
                             && $item['case_price'] == $listItem['case_price']
                             && $item['unit_price'] == $listItem['unit_price']
-                            && $item['vendor_description'] == $listItem['vendor_description']
+                            && $item['item_name'] == $listItem['item_name']
                             && $item['ticket_value'] == $listItem['ticket_value']
                             && $item['is_reserved'] == $listItem['is_reserved']
                             && $item['reserved_qty'] == $listItem['reserved_qty']

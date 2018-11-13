@@ -172,6 +172,7 @@ GROUP BY mapped_expense_category");
 
                 if (!empty($fileData)) {
                     foreach ($fileData as $item) {
+
                         if ($item['id'] > 0 && !empty($item['id'])) {
                             $productRows = $this->findProducts($item['id'], $item, $vendorListId);
                             $this->saveProductList($productRows, $vendor->id);
@@ -204,6 +205,8 @@ GROUP BY mapped_expense_category");
      */
     public function saveProductList($rows,$vendorId,$isNew = false){
         foreach ($rows as $row) {
+            $row['vendor_description'] = $row['item_name'];
+            unset($row['item_name']);
             if (!empty($row['vendor_description'])) {
                 if ($isNew) {
                     $row['is_updated'] = 0;
@@ -241,7 +244,7 @@ GROUP BY mapped_expense_category");
                 $row->is_reserved = !empty($row->is_reserved) ? $row->is_reserved:0;
 
                 $row->is_updated = (
-                $row->vendor_description != $updatedFields['vendor_description']
+                $row->vendor_description != $updatedFields['item_name']
                     || $row->sku != $updatedFields['sku']
                     || $row->upc_barcode != $updatedFields['upc_barcode']
                     || $row->num_items != $updatedFields['item_per_case']
@@ -252,7 +255,7 @@ GROUP BY mapped_expense_category");
                 ) ? 1:0;
                 $row->product_id = $id;
                 $row->import_vendor_id = $vendorListId;
-                $row->vendor_description = $updatedFields['vendor_description'];
+                $row->vendor_description = $updatedFields['item_name'];
                 $row->sku = $updatedFields['sku'];
                 $row->upc_barcode = $updatedFields['upc_barcode'];
                 $row->num_items = $updatedFields['item_per_case'];
@@ -267,7 +270,7 @@ GROUP BY mapped_expense_category");
         }else{
             $row['product_id'] = $id;
             $row['import_vendor_id'] = $vendorListId;
-            $row['vendor_description'] = $updatedFields['vendor_description'];
+            $row['vendor_description'] = $updatedFields['item_name'];
             $row['sku'] = $updatedFields['sku'];
             $row['upc_barcode'] = $updatedFields['upc_barcode'];
             $row['num_items'] = $updatedFields['item_per_case'];
