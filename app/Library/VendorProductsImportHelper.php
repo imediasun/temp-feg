@@ -172,9 +172,8 @@ class VendorProductsImportHelper
         $message .= '<ol>1) Document is attached in this email.</ol>';
         $message .= '<ol>2) Download and review attached document.</ol>';
         $message .= '<ol>3) For adding new record add new items in the end.</ol>';
-        $message .= '<ol>4) For adding new record add new items in the end.</ol>';
-        $message .= "<ol>5) Id's are unique they cannot be changed. <b>DO NOT UPDATE ID's</b></ol>";
-        $message .= '<ol>6) In case of any inquiry kindly reply with in this EMAIL.</ol></ul>';
+        $message .= "<ol>4) Id's are unique they cannot be changed. <b>DO NOT UPDATE ID's</b></ol>";
+        $message .= '<ol>5) In case of any inquiry kindly reply with in this EMAIL.</ol></ul>';
 
         /* current user */
         $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
