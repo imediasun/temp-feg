@@ -1665,11 +1665,15 @@ function removeClone(rowId){
  * @param vendorId
  */
  function filterByVendor(vendorId){
-     if(vendorId = 'auto'){
-         vendorId = $('#selected_vendor').val();
-     }
-    reloadData('#reviewvendorimportlist','reviewvendorimportlist/data?search=import_vendor_id:equal:'+vendorId)
-
+    if($('#selected_vendor').val() == '0'){
+        notyMessageError('Please select a vendor list.');
+    }else {
+        if (vendorId = 'auto') {
+            alert($('#selected_vendor').val());
+            vendorId = $('#selected_vendor').val();
+        }
+        reloadData('#reviewvendorimportlist', 'reviewvendorimportlist/data?search=import_vendor_id:equal:' + vendorId)
+    }
 }
 
 function setProductSubTypes(object,row,existingId){
@@ -1702,32 +1706,46 @@ function setProductSubTypes(object,row,existingId){
     });
 return true;
 }
+
+function saveImportListRecord() {
+    if($('#selected_vendor').val() == '0'){
+        notyMessageError('Please select a vendor list.');
+    }else {
+        $('#SximoTable').submit();
+        return false
+    }
+}
+
 function deleteImportRecord(){
-    App.notyConfirm({
-        message: "Are you sure you want to remove the list?",
-        confirmButtonText: 'Yes',
-        confirm: function () {
-            var selected_vendor = $("#selected_vendor").val();
-            $('.ajaxLoading').show();
-            $.ajax({
-                url:"/reviewvendorimportlist/delete",
-                data:{id:selected_vendor},
-                type:"POST",
-                success:function (response) {
-                    $('.btn-search[data-original-title="Clear Search"]').trigger('click');
-                    if(response.status == 'error') {
-                        notyMessageError(response.message);
-                    }else {
-                        notyMessage(response.message);
+    if($('#selected_vendor').val() == '0'){
+        notyMessageError('Please select a vendor list.');
+    }else {
+        App.notyConfirm({
+            message: "Are you sure you want to remove the list?",
+            confirmButtonText: 'Yes',
+            confirm: function () {
+                var selected_vendor = $("#selected_vendor").val();
+                $('.ajaxLoading').show();
+                $.ajax({
+                    url: "/reviewvendorimportlist/delete",
+                    data: {id: selected_vendor},
+                    type: "POST",
+                    success: function (response) {
+                        $('.btn-search[data-original-title="Clear Search"]').trigger('click');
+                        if (response.status == 'error') {
+                            notyMessageError(response.message);
+                        } else {
+                            notyMessage(response.message);
+                        }
                     }
-                }
-            });
-        },
-        cancel:function(){
+                });
+            },
+            cancel: function () {
 
 
-        }
-    });
+            }
+        });
+    }
 }
 /**
  *
