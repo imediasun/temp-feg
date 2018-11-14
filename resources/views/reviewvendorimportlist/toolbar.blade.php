@@ -23,7 +23,7 @@
         @else
             <input type="button" value="Omit Product" onclick="omittItem();"  class="btn btn-primary">
         @endif
-        <input type="button" value="Review Vendor's Omitted Products" onclick="showVendorOmittedItems($('#selected_vendor'))"   class="btn btn-primary">
+        <input type="button" value="Review Vendor's Omitted Products" data-hide-same-item="1" onclick="showVendorOmittedItems($('#selected_vendor'))"   class="btn btn-primary">
     </div>
 	<div class="col-md-3 ">
         <?php 
