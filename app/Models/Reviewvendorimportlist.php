@@ -365,6 +365,7 @@ GROUP BY mapped_expense_category");
                 ->where('case_price',$product->case_price)->get();
 
             foreach ($rows as $row) {
+                $row->product_id = $row->id;
                 unset($row->id);
                 $row->is_reserved = !empty($row->is_reserved) ? $row->is_reserved:0;
 
@@ -378,7 +379,7 @@ GROUP BY mapped_expense_category");
                     || $row->reserved_qty != $updatedFields['reserved_qty']
                  || ($row->is_reserved != in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0)
                 ) ? 1:0;
-                $row->product_id = $id;
+
                 $row->import_vendor_id = $vendorListId;
                 $row->vendor_description = $updatedFields['item_name'];
                 $row->sku = $updatedFields['sku'];
