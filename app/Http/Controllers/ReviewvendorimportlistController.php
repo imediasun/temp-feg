@@ -244,6 +244,9 @@ class ReviewvendorimportlistController extends Controller
                 'buttonText' => 'Add to Vendor Import List'
             ];
         }
+        if($request->has('hideUnchanged')){
+            $this->data['importVendorListId'] = $request->input('omit_vendor_list_id');
+        }
 
         $this->data['expense_categories'] = $this->model->getExpenseCategoryGroups();
 
