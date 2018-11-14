@@ -1615,7 +1615,7 @@ function hideUnchanged(element,Object){
     var btnOption = $(element);
     var changeStatus = btnOption.attr('data-hide-same-item');
 
-    var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:0&hideUnchanged="+changeStatus+"&omit_vendor_list_id="+Object.val();
+    var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:0|import_vendor_id:equal:"+Object.val()+"&hideUnchanged="+changeStatus+"&omit_vendor_list_id="+Object.val();
     reloadData('#reviewvendorimportlist',loadUrl);
 
     if(changeStatus > 0){
