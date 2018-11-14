@@ -626,7 +626,7 @@ WHERE orders.is_api_visible = 1
             if ($selectedLocations->count() > 0) {
                 $locations = location::select(\DB::raw('group_concat(location_name) as location_name'))->where('active',1)->whereIn('id', $selectedLocations->toArray())->get();
             }
-
+            $productTypeLocationGroup = $productTypeLocations = "";
             if ($productTypeSelectedGroups->count() > 0) {
                 $productTypeLocationGroup = Locationgroups::select(\DB::raw('group_concat(name) as names'))->whereIn('id', $productTypeSelectedGroups->toArray())->get();
             }
