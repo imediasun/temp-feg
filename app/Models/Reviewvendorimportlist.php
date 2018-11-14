@@ -332,7 +332,7 @@ GROUP BY mapped_expense_category");
                 if ($isNew) {
                     $row['is_updated'] = 0;
                     $row['is_new'] = 1;
-                    $UniqueID = (!empty($row['variation_id'])) ? $row['variation_id']:substr(md5(md5(time()+time())."-".md5(time())),0,10);
+                    $UniqueID = (!empty($row['variation_id'])) ? $row['variation_id']:substr(md5(microtime(true)."-".md5(microtime(true))),0,10);
                     $row['variation_id'] = $UniqueID;
                 }
                 $updateItems = self::select('id')->where('vendor_id', $vendorId)->where('vendor_description', $row['vendor_description'])
@@ -347,7 +347,7 @@ GROUP BY mapped_expense_category");
                     $this->insertRow($row, null);
                 }
             }
-    }
+        }
     }
 
     /**
