@@ -76,7 +76,7 @@ class VendorImportProduct extends Command
         $L->log("connection established");
         echo "connection established";
         /* grab emails */
-        $emails = imap_search($inbox, 'ALL');
+        $emails = imap_search($inbox, 'UNSEEN');
         /* if emails are returned, cycle through each... */
         if ($emails) {
             /* begin output var */

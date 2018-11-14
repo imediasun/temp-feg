@@ -96,7 +96,7 @@ GROUP BY mapped_expense_category");
 
 
         foreach ($rows as $row){
-            if($row->is_deleted == 1 && $row->is_updated == 0 && $row->is_new == 0) {
+            if($row->is_omitted == 1 && $row->is_updated == 0 && $row->is_new == 0) {
                 $row->textColor = '#fd4b4b';
             }elseif($row->is_deleted == 0 && $row->is_updated == 1 && $row->is_new == 0){
                 $row->textColor = '#1c78f5';
@@ -121,7 +121,7 @@ GROUP BY mapped_expense_category");
             $product = new product();
             $a = [];
             foreach ($items as $item){
-                $isDeleted = $item['is_deleted'] == 1 ? 1:0;
+                $isOmitted = $item['is_omitted'] == 1 ? 1:0;
                 $productId = $item['product_id'] > 0 ? $item['product_id']:null;
                 unset($item['id']);
                 unset($item['product_id']);
@@ -133,9 +133,7 @@ GROUP BY mapped_expense_category");
                 unset($item['is_new']);
                 unset($item['is_updated']);
                 unset($item['is_deleted']);
-                if($isDeleted == 1){
-                    $product->where('id',$productId)->delete();
-                }else {
+                if($isOmitted == 0){
                     $product->insertRow($item, $productId);
                 }
             }
@@ -184,17 +182,6 @@ GROUP BY mapped_expense_category");
                 }
             }
 
-            $products = product::where(['vendor_id' => $vendor->id, 'exclude_export' => 0])
-                ->groupBy('variation_id')
-                ->orderBy('id','asc')->get();
-            foreach ($products as $product){
-                $productInImportList  = self::where('import_vendor_id',$vendorListId)
-                    ->where('vendor_id',$vendor->id)
-                    ->where('product_id',$product->id)->get();
-                if($productInImportList->count() == 0){
-                    $this->insertDeletedRecord($product,$vendorListId);
-                }
-            }
 
         }
     }
@@ -289,27 +276,4 @@ GROUP BY mapped_expense_category");
         }
     }
 
-    public function insertDeletedRecord($product,$vendorListId){
-
-        $variations = product::where('vendor_description',$product->vendor_description)
-                                ->where('sku',$product->sku)
-                                ->where('case_price',$product->case_price)->get();
-            foreach ($variations as $variation){
-                $updateItems = self::select('id')->where('vendor_id', $variation->vendor_id)->where('vendor_description', $variation->vendor_description)
-                    ->where('sku', $variation->sku)
-                    ->where('case_price', $variation->case_price)->where('is_omitted', 1)->first();
-                if(!$updateItems) {
-                    $this->saveDeletedItems($variation, $vendorListId);
-                }
-            }
-    }
-    public function saveDeletedItems($variation,$vendorListId){
-        $productId = $variation->id;
-        unset($variation->id);
-        $variation->product_id = $productId;
-        $variation->import_vendor_id = $vendorListId;
-        $variation->is_deleted = 1;
-        $data = (array) $variation->toArray();
-        $this->insertRow($data, null);
-    }
 }
