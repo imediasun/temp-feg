@@ -774,7 +774,8 @@ class ProductController extends Controller
         $rules['unit_price'] = 'required';
         $rules['vendor_id'] = 'required';
         $excludedLocationsAndGroups = $request->excluded_locations_and_groups;
-        $productTypeExcludedLocationsAndGroups = $request->product_type_excluded_data;
+        $productTypeExcludedLocationsAndGroups = $request->has('product_type_excluded_data') ? $request->product_type_excluded_data:false;
+
         $productTypeId = $request->prod_type_id;
         unset($request->excluded_locations_and_groups);
         unset($request->product_type_excluded_data);
@@ -991,19 +992,22 @@ class ProductController extends Controller
     public function insertRelations($excludedLocationsAndGroups,$productTypeExcludedLocationsAndGroups,$id,$productTypeId = 0){
 
         $excludedLocationsAndGroups = is_array($excludedLocationsAndGroups) ? $excludedLocationsAndGroups:[$excludedLocationsAndGroups];
-        $productTypeExcludedLocationsAndGroups = is_array($productTypeExcludedLocationsAndGroups) ? $productTypeExcludedLocationsAndGroups:[$productTypeExcludedLocationsAndGroups];
-
+        if($productTypeExcludedLocationsAndGroups !=false) {
+            $productTypeExcludedLocationsAndGroups = is_array($productTypeExcludedLocationsAndGroups) ? $productTypeExcludedLocationsAndGroups : [$productTypeExcludedLocationsAndGroups];
+        }
         FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
         FEGDBRelationHelpers::destroyCustomRelation(product::class, location::class, 1, 0, $id);
 
         FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class,product::class,  1, $id,0 );
         FEGDBRelationHelpers::destroyCustomRelation(location::class,product::class, 1, $id, 0);
 
-        FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, Locationgroups::class, 1, 0, $productTypeId);
-        FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, location::class, 1, 0, $productTypeId);
+        if($productTypeExcludedLocationsAndGroups !=false) {
+            FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, Locationgroups::class, 1, 0, $productTypeId);
+            FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, location::class, 1, 0, $productTypeId);
 
-        FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class,Ordertyperestrictions::class,  1, $productTypeId,0 );
-        FEGDBRelationHelpers::destroyCustomRelation(location::class,Ordertyperestrictions::class, 1, $productTypeId, 0);
+            FEGDBRelationHelpers::destroyCustomRelation(Locationgroups::class, Ordertyperestrictions::class, 1, $productTypeId, 0);
+            FEGDBRelationHelpers::destroyCustomRelation(location::class, Ordertyperestrictions::class, 1, $productTypeId, 0);
+        }
 
 
             if (is_array($excludedLocationsAndGroups) && count($excludedLocationsAndGroups) > 0 && $excludedLocationsAndGroups[0] !=null) {
@@ -1017,18 +1021,19 @@ class ProductController extends Controller
                     }
                 }
             }
+            if($productTypeExcludedLocationsAndGroups != false) {
+                if (is_array($productTypeExcludedLocationsAndGroups) && count($productTypeExcludedLocationsAndGroups) > 0 && $productTypeExcludedLocationsAndGroups[0] != null) {
 
-        if (is_array($productTypeExcludedLocationsAndGroups) && count($productTypeExcludedLocationsAndGroups) > 0 && $productTypeExcludedLocationsAndGroups[0] !=null) {
-
-            foreach ($productTypeExcludedLocationsAndGroups as $productTypeExcludedLocationsAndGroup) {
-                $splitValue = explode('_', $productTypeExcludedLocationsAndGroup);
-                if ($splitValue[0] == 'group') {
-                    FEGDBRelationHelpers::insertCustomRelation($productTypeId, $splitValue[1], Ordertyperestrictions::class, Locationgroups::class, 1);
-                } else {
-                    FEGDBRelationHelpers::insertCustomRelation($productTypeId, $splitValue[1], Ordertyperestrictions::class, location::class, 1);
+                    foreach ($productTypeExcludedLocationsAndGroups as $productTypeExcludedLocationsAndGroup) {
+                        $splitValue = explode('_', $productTypeExcludedLocationsAndGroup);
+                        if ($splitValue[0] == 'group') {
+                            FEGDBRelationHelpers::insertCustomRelation($productTypeId, $splitValue[1], Ordertyperestrictions::class, Locationgroups::class, 1);
+                        } else {
+                            FEGDBRelationHelpers::insertCustomRelation($productTypeId, $splitValue[1], Ordertyperestrictions::class, location::class, 1);
+                        }
+                    }
                 }
             }
-        }
 
         }
 
