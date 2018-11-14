@@ -22,7 +22,7 @@ class VendorImportProduct extends Command
      *
      * @var string
      */
-    protected $description = 'Command description.';
+    protected $description = 'To import vendor product list from.';
 
     /**
      * Create a new command instance.

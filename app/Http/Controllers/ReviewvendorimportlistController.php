@@ -194,6 +194,7 @@ class ReviewvendorimportlistController extends Controller
             'sort' => $sort,
             'order' => $order,
             'params' => $filter,
+            'hideUnchanged'=>$request->input('hideUnchanged',0),
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
@@ -247,6 +248,7 @@ class ReviewvendorimportlistController extends Controller
         $this->data['expense_categories'] = $this->model->getExpenseCategoryGroups();
 
         $this->data['productTypes'] = $this->model->getProductType();
+        $this->data['hideUnchanged'] = $request->input('hideUnchanged',0);
 // Render into template
         return view('reviewvendorimportlist.table', $this->data);
 
