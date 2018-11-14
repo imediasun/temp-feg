@@ -1838,6 +1838,24 @@ function showVendorOmittedItems(Object){
     var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+Object.val();
     reloadData('#reviewvendorimportlist',loadUrl);
 }
+function hideUnchanged(element,Object){
+    var vendorId = $('option:selected', Object).attr('vendor-id');
+    var btnOption = $(element);
+    var changeStatus = btnOption.attr('data-hide-same-item');
+
+    var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:0&hideUnchanged="+changeStatus+"&omit_vendor_list_id="+Object.val();
+    reloadData('#reviewvendorimportlist',loadUrl);
+    $.ajaxComplete(function(){
+        if(changeStatus > 0){
+            btnOption.val('Show All Items');
+            btnOption.attr('data-hide-same-item',0);
+        }else{
+            btnOption.val('Hide Unchanged Items');
+            btnOption.attr('data-hide-same-item',1);
+        }
+    });
+
+}
 
 /**
  *
