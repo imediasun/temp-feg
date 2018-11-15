@@ -36,7 +36,6 @@ class VendorProductsImportHelper
                 'Item Per Case',
                 'Case Price',
                 'Unit Price',
-                'Is Reserved',
                 'Reserved Qty',
                 ];
 //        return $products;
@@ -68,7 +67,6 @@ class VendorProductsImportHelper
             $content .= '<td> '. ($product->num_items) . '</td>';
             $content .= '<td> '. ($product->case_price) . '</td>';
             $content .= '<td> '. ($product->unit_price) . '</td>';
-            $content .= '<td> '. ($product->is_reserved) . '</td>';
             $content .= '<td> '. ($product->reserved_qty) . '</td>';
             $content .= '</tr>';
         }
