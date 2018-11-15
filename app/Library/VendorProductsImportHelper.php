@@ -1,6 +1,7 @@
 <?php
 namespace App\Library;
 use App\Models\Product;
+use App\Models\vendor;
 use PHPExcel_Reader_HTML;
 use PHPExcel_IOFactory;
 use App\Library\FEG\System\FEGSystemHelper;
@@ -19,6 +20,8 @@ class VendorProductsImportHelper
 //        return $vendorId;
         ini_set('memory_limit', '1G');
         set_time_limit(0);
+
+        $vendor = vendor::find($vendorId);//get vendor detail.
 
         $product = new Product();
         $products = $product->where(['vendor_id' => $vendorId, 'exclude_export' => 0])->groupBy('variation_id')->orderBy('id','asc')->get();
@@ -168,12 +171,28 @@ class VendorProductsImportHelper
 
         $sendEmailFromMerchandise = false;
         $from = 'vendor.products@fegllc.com';
-        $message = '<ul>';
-        $message .= '<ol>1) Document is attached in this email.</ol>';
-        $message .= '<ol>2) Download and review attached document.</ol>';
-        $message .= '<ol>3) For adding new record add new items in the end.</ol>';
-        $message .= "<ol>4) Id's are unique they cannot be changed. <b>DO NOT UPDATE ID's</b></ol>";
-        $message .= '<ol>5) In case of any inquiry kindly reply with in this EMAIL.</ol></ul>';
+
+        $message = '<p>Hello <strong>'.$vendor->vendor_name.'</strong>,</p>';
+
+        $message .= '<p>Attached you will find the most up-to-date pricing and product information we have for your products. Please download and review this file, making any necessary product updates. Please do not make any changes to the file\'s name. Any new products may be added to this file. If you no longer offer a product contained in this file, please delete the row.</p>';
+
+        $message .= '<p>Do not make any changes to the ID field (Column A), except as noted below:</p>';
+        $message .= '<ul>';
+        $message .= '<ol>1. Newly added products do not need an ID# added to the file.</ol>';
+        $message .= '<ol>2. If a product needs to be removed, you may remove the entire row, including the ID.</ol>';
+        $message .= '<ol>3. Make no changes to the ID number.</ol></ul>';
+
+        $message .= '<p>When you have finished making updates, please save the file and attach it to your REPLY ALL to this email.</p>';
+
+        $message .= '<p>Should you have any questions, please REPLY ALL to this email and we\'ll get back to you as soon as possible.</p>';
+
+        $message .= '<p>Best regards,</p>';
+
+        $message .= '<p>The Merchandise Team</p>';
+        $message .= '<p>Family Entertainment Group</p>';
+        $message .= '<p><a href="https://fegllc.com/">https://fegllc.com/</a></p>';
+        $message .= '<p>Phone: (847) 842-6310</p>';
+        $message .= '<p>Email: merch.office@fegllc.com</p>';
 
         /* current user */
         $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
