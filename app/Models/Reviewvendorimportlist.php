@@ -230,7 +230,7 @@ GROUP BY mapped_expense_category");
 
 
         foreach ($rows as $row){
-            if($row->is_omitted == 1 && $row->is_updated == 0 && $row->is_new == 0) {
+            if($row->is_omitted == 1) {
                 $row->textColor = '#fd4b4b';
             }elseif($row->is_deleted == 0 && $row->is_updated == 1 && $row->is_new == 0){
                 $row->textColor = '#1c78f5';
