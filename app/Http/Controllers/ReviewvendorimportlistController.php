@@ -33,6 +33,32 @@ class ReviewvendorimportlistController extends Controller
 
 
     }
+    function returnUrl()
+    {
+        $pages = (isset($_GET['page']) ? $_GET['page'] : '');
+        $omit_vendor_list_id = (isset($_GET['omit_vendor_list_id']) ? $_GET['omit_vendor_list_id'] : '');
+        $sort = (isset($_GET['sort']) ? $_GET['sort'] : '');
+        $order = (isset($_GET['order']) ? $_GET['order'] : '');
+        $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
+        $search = (isset($_GET['search']) ? $_GET['search'] : '');
+        $v1 = (isset($_GET['v1']) ? $_GET['v1'] : '');
+        $v2 = (isset($_GET['v2']) ? $_GET['v2'] : '');
+        $v3 = (isset($_GET['v3']) ? $_GET['v3'] : '');
+
+        $appends = array();
+        if ($pages != '') $appends['page'] = $pages;
+        if ($sort != '') $appends['sort'] = $sort;
+        if ($order != '') $appends['order'] = $order;
+        if ($rows != '') $appends['rows'] = $rows;
+        if ($search != '') $appends['search'] = $search;
+        if ($omit_vendor_list_id != '') $appends['omit_vendor_list_id'] = $omit_vendor_list_id;
+        $url = "";
+        foreach ($appends as $key => $val) {
+            $url .= "&$key=$val";
+        }
+        return $url;
+
+    }
 
     public function getIndex($vendorId = 0)
     {
