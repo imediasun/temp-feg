@@ -1874,7 +1874,7 @@ function importVendorProductList(Object){
                 $('.ajaxLoading').hide();
                 notyMessageError(response.message);
             }else {
-                reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id=' + vendorId)
+                reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id=' + vendorId + '&search=import_vendor_id:equal:0|is_omitted:equal:0')
                 // $('.btn-search[data-original-title="Clear Search"]').trigger('click');
                 notyMessage(response.message);
             }
