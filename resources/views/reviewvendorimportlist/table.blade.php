@@ -8,7 +8,8 @@
 			@if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/product') }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
-		</div>
+            <a href="javascript:void(0)" class="btn btn-xs btn-danger tips" style="color: #FFF!important;" title="Back to Product List" onclick="reloadData('#product','product/data')"><i class="fa fa-times"></i></a>
+        </div>
 	</div>
 	<div class="sbox-content">
         @if($setting['usesimplesearch']!='false')     

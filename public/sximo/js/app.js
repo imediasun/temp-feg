@@ -1607,7 +1607,7 @@ function unomittItem(selectedList){
  */
 function showVendorOmittedItems(Object){
     var vendorId = $('option:selected', Object).attr('vendor-id');
-    var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+Object.val();
+    var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+Object.val()+"$showOnlyOmitted=1";
     reloadData('#product',loadUrl);
 }
 function hideUnchanged(element,Object){
