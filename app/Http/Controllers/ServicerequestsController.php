@@ -51,7 +51,32 @@ class servicerequestsController extends Controller
         $this->sortUnMapping = ['L.location_name11' => 'location_id', 'U.first_name' => 'last_user'];
 
     }
+    function returnUrl()
+    {
+        $pages = (isset($_GET['page']) ? $_GET['page'] : '');
+        $ticketType = (isset($_GET['ticket_type']) ? $_GET['ticket_type'] : '');
+        $sort = (isset($_GET['sort']) ? $_GET['sort'] : '');
+        $order = (isset($_GET['order']) ? $_GET['order'] : '');
+        $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
+        $search = (isset($_GET['search']) ? $_GET['search'] : '');
+        $v1 = (isset($_GET['v1']) ? $_GET['v1'] : '');
+        $v2 = (isset($_GET['v2']) ? $_GET['v2'] : '');
+        $v3 = (isset($_GET['v3']) ? $_GET['v3'] : '');
 
+        $appends = array();
+        if ($pages != '') $appends['page'] = $pages;
+        if ($ticketType != '') $appends['ticket_type'] = $ticketType;
+        if ($sort != '') $appends['sort'] = $sort;
+        if ($order != '') $appends['order'] = $order;
+        if ($rows != '') $appends['rows'] = $rows;
+        if ($search != '') $appends['search'] = $search;
+        $url = "";
+        foreach ($appends as $key => $val) {
+            $url .= "&$key=$val";
+        }
+        return $url;
+
+    }
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
@@ -165,6 +190,10 @@ class servicerequestsController extends Controller
         $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
+        $this->data['ticketType'] = 'debit-card-related';
+        if($request->has('ticket_type')){
+            $this->data['ticketType'] = $request->input('ticket_type');
+        }
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
@@ -174,6 +203,7 @@ class servicerequestsController extends Controller
             ],
             'order' => $order,
             'params' => $filter,
+            'ticket_type' =>$this->data['ticketType'],
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
@@ -285,10 +315,7 @@ class servicerequestsController extends Controller
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
-        $this->data['ticketType'] = 'debit-card-related';
-        if($request->has('ticket_type')){
-            $this->data['ticketType'] = $request->input('ticket_type');
-        }
+
         // Render into template
         return view('servicerequests.table', $this->data);
 
@@ -297,6 +324,10 @@ class servicerequestsController extends Controller
 
     function getUpdate(Request $request, $id = null)
     {
+        $view = 'form';
+        if($request->has('ticket_type')){
+            $view = ($request->input('ticket_type') == 'game-related') ? 'game-related-form':$view;
+        }
 
         $isAdd = $this->data['isAdd'] = is_null($id);
         
@@ -344,8 +375,7 @@ class servicerequestsController extends Controller
             }
 
         }*/
-
-        return view('servicerequests.form', $this->data);
+        return view('servicerequests.'.$view, $this->data);
     }
 
     public function getShow($id = null)

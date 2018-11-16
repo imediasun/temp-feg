@@ -270,7 +270,7 @@ class AjaxHelpers
         return $html;
     }
 
-    static public function buttonActionCreate($module, $method = 'newpage', $title = null)
+    static public function buttonActionCreate($module, $method = 'newpage', $title = null,$queryString = '')
     {
 
         $onclick = " onclick=\"ajaxViewDetail('#" . preg_replace('/\/?[^\/]+?\//', '', $module) . "',this.href); return false; \"";
@@ -279,7 +279,7 @@ class AjaxHelpers
 
 
         $html = '
-			<a id="btn-create" href="' . URL::to($module . '/update') . '" class="tips btn btn-sm btn-white"  title="' . Lang::get('core.btn_create') . '" ' . $onclick . '>
+			<a id="btn-create" href="' . URL::to($module . '/update'.$queryString) . '" class="tips btn btn-sm btn-white"  title="' . Lang::get('core.btn_create') . '" ' . $onclick . '>
 			<i class="fa fa-plus "></i> ' . Lang::get('core.btn_create') . '</a>
 		';
         if ($title) {

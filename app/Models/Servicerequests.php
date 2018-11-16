@@ -31,6 +31,7 @@ class Servicerequests extends Observerable  {
                       UC.first_name   AS firstname,
                       UC.last_name    AS lastname,
                       sbc.USERNAME    AS sbcusername,
+                      sb_tickets.ticket_type,
                       (SELECT
                      GROUP_CONCAT(sb_ticketcomments.Comments)
                     FROM sb_ticketcomments
@@ -246,6 +247,10 @@ class Servicerequests extends Observerable  {
         }
         if(!empty($active)){//added for location
             $select .= " AND location.active='$active'";
+        }
+
+        if(!empty($ticket_type)){
+            $select .= " AND sb_tickets.ticket_type='$ticket_type'";
         }
 
         Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");

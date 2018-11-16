@@ -2,7 +2,7 @@
 	<div class="col-md-9">
 		@if($access['is_add'] ==1)
             <div class="float-margin">
-			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
+			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting,'',"?ticket_type=".$ticketType) !!}
                 </div>
 		@endif
 		@if($setting['disableactioncheckbox']=='false')
