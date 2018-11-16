@@ -1628,9 +1628,9 @@ function hideUnchanged(element,Object){
     var changeStatus = btnOption.attr('data-hide-same-item');
     var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:0|import_vendor_id:equal:"+Object.val()+"&hideUnchanged="+changeStatus+"&omit_vendor_list_id="+Object.val();
 
-    if(changeStatus == 0){
+    if(Number(changeStatus) == 0){
      loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=import_vendor_id:equal:'+Object.val();
-}
+    }
     reloadData('#product',loadUrl);
 
     if(changeStatus > 0){
