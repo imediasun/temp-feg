@@ -309,7 +309,7 @@
                 notyMessageError('Please select a vendor.');
             }else {
                // window.location = '/get-vendor-import-list/'+vendorId;
-                reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id=' + vendorId)
+                reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id=' + vendorId+"&search=import_vendor_id:equal:0|is_omitted:equal:0")
             }
         }
 
