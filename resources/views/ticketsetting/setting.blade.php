@@ -24,8 +24,13 @@
 
             <div class="sbox">
                 <div class="sbox-title"><h5> Setting </h5></div>
+
                 <div class="sbox-content">
-                    <div class="table-responsive">
+                    <div class="settingTabContainer">
+                        <div class="setting-tab setting-tab-active" is-active='1' onclick="return serverRequestTabsSelect(this,'setting-tab','settingtab-content','content1');">Debit Card-related</div>
+                        <div class="setting-tab setting-tab-second" is-active='0' onclick="return serverRequestTabsSelect(this,'setting-tab','settingtab-content','content2');">Game-related</div>
+                    </div>
+                    <div class="table-responsive settingtab-content" id="content1">
                         <table class="table table-striped table-bordered no-white-space" id="table">
                         <thead class="no-border">
                         <tr>
@@ -107,6 +112,88 @@
                         </tbody>
                     </table>
                     </div>
+                    <div class="table-responsive settingtab-content" id="content2" style="display: none;">
+                        <table class="table table-striped table-bordered no-white-space" id="table">
+                            <thead class="no-border">
+                            <tr>
+                                <!--                            <th field="name1" width="5%">No</th>-->
+                                <th field="name2" width="10%">Title</th>
+                                <th field="name2" width="20%">Description</th>
+                                <th field="name3" width="30%">Roles</th>
+                                <th field="name4" width="40%">Individuals</th>
+
+                            </tr>
+                            </thead>
+                            <tbody class="no-border-x no-border-y">
+                            <tr>
+                                <!--<td>1</td>-->
+                                <td>View All Tickets</td>
+                                <td>Users and/or User Groups assigned to this category will be able to see ALL tickets from ALL locations, including locations not assigned to that user.</td>
+                                <td>
+                                    <select name='game_related_role1[]' multiple id="game-related-role1" rows='5' class='select2 '>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name='game_related_individual1[]' multiple rows='5' id="game-related-individual1" class='select2 '>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <!--<td>2</td>-->
+                                <td>All Email Notifications</td>
+                                <td>Users and/or User Groups assigned to this category will receive ALL email notifications for tickets that have been created in a location to which they have been assigned.</td>
+                                <td>
+                                    <select name='game_related_role2[]' multiple id="game-related-role2" rows='5' class='select2 '>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name='game_related_individual2[]' multiple rows='5' id="game-related-individual2" class='select2 '>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <!--<td>4</td>-->
+                                <td>Receive 1st Email Notifications</td>
+                                <td>Users and/or User Groups assigned to this category will only receive the 1st email notification when a ticket is created in a location to which they have been assigned.</td>
+                                <td>
+                                    <select name='game_related_role4[]' multiple id="game-related-role4" rows='5' class='select2 '>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name='game_related_individual4[]' multiple rows='5' id="game-related-individual4" class='select2 '>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <!--<td>3</td>-->
+                                <td>Can change status</td>
+                                <td>Users and/or User Groups assigned to this category will be able to change ticket status.</td>
+                                <td>
+                                    <select name='game_related_role3[]' multiple id="game-related-role3" class='select2 '>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name='game_related_individual3[]' multiple id="game-related-individual3" class='select2 '>
+                                    </select>
+                                </td>
+                            </tr>
+                            {{--<tr>--}}
+                            {{--<td>5</td>--}}
+                            {{--<td>Able to subscribe to email alerts by ticket</td>--}}
+                            {{--<td>--}}
+                            {{--<select name='role5[]' multiple id="role5" rows='5' class='select2 '>--}}
+
+                            {{--</select>--}}
+                            {{--</td>--}}
+                            {{--<td>--}}
+                            {{--<select name='individual5[]' multiple rows='5' id="individual5" class='select2 '>--}}
+
+                            {{--</select>--}}
+                            {{--</td>--}}
+                            {{--</tr>--}}
+                            </tbody>
+                        </table>
+                    </div>
                     <br>
                     <button type="submit" class="btn btn-success"> Save Changes </button>
                 </div>	</div>
@@ -119,26 +206,54 @@
         $(document).ready(function(){
             superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
             $("#role1").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $ticket_setting->role1 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->role1 }}'});
             $("#role2").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $ticket_setting->role2 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->role2 }}'});
             $("#role3").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $ticket_setting->role3 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->role3 }}'});
             $("#role4").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $ticket_setting->role4 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->role4 }}'});
             $("#role5").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $ticket_setting->role5 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->role5 }}'});
             $("#individual1").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting->individual1 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->individual1 }}'});
             $("#individual2").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting->individual2 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->individual2 }}'});
             $("#individual3").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting->individual3 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->individual3 }}'});
             $("#individual4").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting->individual4 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->individual4 }}'});
             $("#individual5").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting->individual5 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->individual5 }}'});
+
+        /**
+         *
+         *
+         *
+         * */
+        $("#game-related-role1").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
+                {selected_value: '{{ $ticket_setting[1]->role1 }}'});
+        $("#game-related-role2").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
+                {selected_value: '{{ $ticket_setting[1]->role2 }}'});
+        $("#game-related-role3").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
+                {selected_value: '{{ $ticket_setting[1]->role3 }}'});
+        $("#game-related-role4").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
+                {selected_value: '{{ $ticket_setting[1]->role4 }}'});
+        $("#game-related-role5").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
+                {selected_value: '{{ $ticket_setting[1]->role5 }}'});
+        $("#game-related-individual1").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
+                {selected_value: '{{ $ticket_setting[1]->individual1 }}'});
+        $("#game-related-individual2").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
+                {selected_value: '{{ $ticket_setting[1]->individual2 }}'});
+        $("#game-related-individual3").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
+                {selected_value: '{{ $ticket_setting[1]->individual3 }}'});
+        $("#game-related-individual4").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
+                {selected_value: '{{ $ticket_setting[1]->individual4 }}'});
+        $("#game-related-individual5").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
+                {selected_value: '{{ $ticket_setting[1]->individual5 }}'});
         });
+
+
         @if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN)
                     $( document ).ajaxStop(function() {
             console.log( "Triggered ajaxStop handler." );

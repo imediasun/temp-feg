@@ -139,6 +139,7 @@ class servicerequestsController extends Controller
     }
     public function postData(Request $request)
     {
+
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'servicerequests')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -283,6 +284,10 @@ class servicerequestsController extends Controller
         $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
+        }
+        $this->data['ticketType'] = 'debit-card-related';
+        if($request->has('ticket_type')){
+            $this->data['ticketType'] = $request->input('ticket_type');
         }
         // Render into template
         return view('servicerequests.table', $this->data);

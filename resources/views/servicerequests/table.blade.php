@@ -17,6 +17,17 @@
         </div>
     </div>
     <div class="sbox-content">
+        <div class="settingTabContainer">
+            <?php $isActive1 = 1; $isActive2 = 0;  ?>
+            @if($ticketType == 'game-related')
+                <?php $isActive2 = 1; $isActive1 = 0; ?>
+                @else
+                <?php $isActive1 = 1; $isActive2 = 0; ?>
+                @endif
+
+            <div class="setting-tab @if( $isActive1 == 1) setting-tab-active @endif" is-active='{{ $isActive1 }}' data-type="debit-card-related" onclick="return serverRequestTabsSelect(this,'setting-tab','','',true);">Debit Card Related</div>
+            <div class="setting-tab setting-tab-second @if( $isActive2 == 1) setting-tab-active @endif" is-active='{{ $isActive2 }}' data-type="game-related" onclick="return serverRequestTabsSelect(this,'setting-tab','','',true);">Game Related</div>
+        </div>
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
             @if(!empty($simpleSearchForm))
@@ -37,6 +48,7 @@
        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
         <div class="table-responsive">
+
             @if(count($rowData)>=1)
 
                 <table class="table table-striped  datagrid" id="{{ $pageModule }}Table">

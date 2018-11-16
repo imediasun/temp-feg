@@ -1613,3 +1613,22 @@ function updateDropdownsGroups(dropdownName){
         }
     });
 }
+
+function serverRequestTabsSelect(tabElement,tabClass,contentClass,contentId,loadContent){
+    var tab = $(tabElement);
+    if(tab.attr('is-active') == 1){
+        return false;
+    }
+    $('.'+tabClass).removeClass('setting-tab-active');
+    $('.'+tabClass).attr('is-active',0);
+    tab.addClass('setting-tab-active');
+    tab.attr('is-active',1);
+    if(loadContent == true){
+        var type = tab.data('type');
+        reloadData('#servicerequests','servicerequests/data?return=&sort=Created&order=desc&rows=20&ticket_type='+type);
+    }else {
+        $('.' + contentClass).slideUp('medium');
+        $("#" + contentId).slideDown('medium');
+    }
+    return true;
+}
