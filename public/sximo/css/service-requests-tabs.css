@@ -1,0 +1,33 @@
+.settingTabContainer{
+    min-height: 25px;
+    position: relative;
+    z-index: 222222;
+    height: 38px;
+}
+.setting-tab{
+    padding: 8px 5px;
+    display: inline-block;
+    border: 1px solid #dddddd;
+    border-bottom: none;
+    width: 140px;
+    top: 0px;
+    position: absolute;
+    z-index: 1111111;
+    text-align: center;
+    border-top-right-radius: 30px;
+    user-select: none;
+    z-index: 1;
+    bottom: -1px;
+    cursor: pointer;
+    color: #195a97;
+    opacity: 0.7;
+    transition: all 0.30s ease-in-out;
+}
+.setting-tab-second{
+    left: 130px;
+}
+.setting-tab-active{
+    background: white;
+    z-index: 2;
+    opacity: 1;
+}

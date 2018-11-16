@@ -1,4 +1,4 @@
-{{--*/      use App\Library\FEG\System\FEGSystemHelper;                   /*--}}
+
 <style>
     .collapse-close
     {
@@ -17,7 +17,7 @@
             </div>
             <div class="headerThumbnail tips" data-ticket-type="{{ $row->issue_type }}" 
                  data-toggle="tooltip" data-placement="top" 
-                title="{{ $row->issue_type }}" >{{ substr($row->issue_type, 0, 1) }}</div>
+                title="{{ $rticketsettingow->issue_type }}" >{{ substr($row->issue_type, 0, 1) }}</div>
             <div class="headerTextsContainer clearfix" >
                 <div class="clearfix headerTopText" >
                     <span class="ticketIdText">{{ $ticketID }}</span>
@@ -54,13 +54,12 @@
                     {!! Form::hidden('TicketID', $row['TicketID']) !!}
                     {!! Form::hidden('Status', $row['Status']) !!}
                     {!! Form::hidden('oldStatus', $row['Status']) !!}
-                    {{--{!! Form::hidden('Priority', $row['Priority']) !!}--}}
                 {!! Form::close() !!}
                 {!! Form::open(array('url'=>'servicerequests/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'servicerequestsFormAjax')) !!}
                
                 <div class="ticketLeftSidebarContainer col-sm-4 col-lg-3">
                     <div class="ticketLeftSidebar">
-                        <!--<h2 class="sidebarTicketIDText sidebarText" data-caption="Ticket ID: #">{{$ticketID}}</h2>-->
+
                         <div class="clearfix">
                         <div class="followControlContainer">
                             <input name="isFollowingTicket"
@@ -145,15 +144,7 @@
                                         </div>
                                         @endif
                                         
-                                     <!--   <div class="selectPriorityDropdownContainer col-md-4 col-sm-6">
-                                            <select name='Priority' required class='Priority '>
-                                               {{-- @foreach($priorityOptions as $key => $val)
-                                                    <option  value ='{{ $key }}' 
-                                                        @if($row['Priority'] == $key) selected='selected' @endif
-                                                    >{{ $val }}</option>";
-                                                @endforeach--}}
-                                            </select>                                            
-                                        </div>-->
+
                                         
                                         <div class=" @if ($canChangeStatus) col-md-8 col-sm-12 @else col-md-12 col-sm-12 @endif ">
                                             <button type="submit" class="btn btn-primary btn-sm pull-right submitButton">
@@ -187,7 +178,7 @@
                             
                         </div>   
                         
-                        {{--*/ $commentsCountIndex = $commentsCount /*--}}
+
                         @foreach ($comments as $comment)                            
                             @include('servicerequests.commentview', [
                                 'comment' => html_entity_decode(nl2br($comment->Comments)), 
@@ -197,7 +188,7 @@
                                 'userProfile' => FEGSystemHelper::getTicketCommentUserProfile($comment),
                                 'commentClass' => $comment,
                             ])
-                            {{--*/ $commentsCountIndex-- /*--}}
+
                         @endforeach
                         
                         @include('servicerequests.commentview', [

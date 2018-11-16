@@ -37,12 +37,14 @@ class TicketsettingController extends Controller
 
     public function getSetting()
     {
+
+
         $ticket_setting = \DB::select("Select * FROM sbticket_setting");
 
         $individuals = \DB::select("Select id,first_name,last_name FROM users");
         $roles = \DB::select("Select group_id,name FROM tb_groups");
 
-        $this->data['ticket_setting'] = $ticket_setting[0];
+        $this->data['ticket_setting'] = $ticket_setting;
         $this->data['roles'] = $roles;
         $this->data['individuals'] = $individuals;
         $this->data['access'] = $this->access;

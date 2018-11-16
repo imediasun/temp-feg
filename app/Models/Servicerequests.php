@@ -159,7 +159,8 @@ class Servicerequests extends Observerable  {
             'extraSorts' => [],
             'order' => '',
             'params' => '',
-            'global' => 1
+            'global' => 1,
+            'ticket_type' => 'debit-card-related',
         ), $args));
 
 

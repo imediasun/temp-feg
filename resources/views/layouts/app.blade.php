@@ -111,7 +111,7 @@
     <script type="text/javascript" src="{{ asset('sximo/js/search.js?version='.config('app.version')) }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js?version='.config('app.version')) }}"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
-
+	<link href="{{ asset('sximo/css/service-requests-tabs.css')}}" rel="stylesheet"/>
 	@yield('select2Custom')
 
 	<!-- End Search and storage  -->
