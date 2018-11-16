@@ -1671,7 +1671,7 @@ function removeClone(rowId){
         if (vendorId = 'auto') {
             vendorId = $('#selected_vendor').val();
         }
-        reloadData('#product', 'reviewvendorimportlist/data?search=import_vendor_id:equal:' + vendorId)
+        reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&search=import_vendor_id:equal:' + vendorId)
     }
 }
 
@@ -1811,7 +1811,7 @@ function unomittItem(selectedList){
                     success:function (response) {
                         $("#selected_vendor").val(selectedList);
                         var vendorId = $('option:selected', $("#selected_vendor")).attr('vendor-id');
-                       var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+selectedList;
+                       var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+selectedList;
                         reloadData('#product',loadUrl);
                         if(response.status == 'error') {
                             notyMessageError(response.message);
@@ -1835,7 +1835,7 @@ function unomittItem(selectedList){
  */
 function showVendorOmittedItems(Object){
     var vendorId = $('option:selected', Object).attr('vendor-id');
-    var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+Object.val();
+    var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+Object.val();
     reloadData('#product',loadUrl);
 }
 function hideUnchanged(element,Object){
@@ -1843,7 +1843,7 @@ function hideUnchanged(element,Object){
     var btnOption = $(element);
     var changeStatus = btnOption.attr('data-hide-same-item');
 
-    var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:0|import_vendor_id:equal:"+Object.val()+"&hideUnchanged="+changeStatus+"&omit_vendor_list_id="+Object.val();
+    var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:0|import_vendor_id:equal:"+Object.val()+"&hideUnchanged="+changeStatus+"&omit_vendor_list_id="+Object.val();
     reloadData('#product',loadUrl);
 
     if(changeStatus > 0){

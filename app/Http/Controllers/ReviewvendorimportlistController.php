@@ -239,6 +239,7 @@ class ReviewvendorimportlistController extends Controller
         if (!empty($this->data['rowData'])) {
             $this->data['importVendorListId'] = $this->data['rowData']['0']->import_vendor_id;
         }
+        $this->data['product_import_vendor_id'] = $request->product_import_vendor_id;
         if ($request->has('omit_vendor_list_id') && !$request->has('hideUnchanged')){
             $this->data['importVendorListId'] = $request->input('omit_vendor_list_id');
             $this->data['resetOmit'] = [
