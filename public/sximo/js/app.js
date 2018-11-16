@@ -1829,6 +1829,8 @@ function unomittItem(selectedList){
             }
         });
 
+    }else {
+        notyMessageError('Please select one or more item(s).');
     }
 }
 /**
