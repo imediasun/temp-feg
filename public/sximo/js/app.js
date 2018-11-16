@@ -1566,45 +1566,51 @@ function omittItem(){
  *
  * @param selectedList
  */
-function unomittItem(selectedList){
-
-    var listItems = $('.ids[name="ids[]"]:checked');
-    if(listItems.length > 0) {
-        var itemIds = '';
-        listItems.each(function () {
-            itemIds += 'ids[]='+$(this).val()+"&";
-        });
-        itemIds +='&selectedList='+selectedList;
-        App.notyConfirm({
-            message: "Are you sure you want to add omitted product(s) back to vendor list?",
-            confirmButtonText: 'Yes',
-            confirm: function () {
-                $('.ajaxLoading').show();
-                $.ajax({
-                    url:"/reviewvendorimportlist/unomit",
-                    data:itemIds,
-                    type:"POST",
-                    success:function (response) {
-                        $("#selected_vendor").val(selectedList);
-                        var vendorId = $('option:selected', $("#selected_vendor")).attr('vendor-id');
-                       var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+selectedList;
-                        reloadData('#product',loadUrl);
-                        if(response.status == 'error') {
-                            notyMessageError(response.message);
-                        }else {
-                            notyMessage(response.message);
-                        }
-                    }
-                });
-            },
-            cancel:function(){
-
-
-            }
-        });
-
+function unomittItem(Object,selectedList){
+    selectedList = Object.val();
+    console.log(selectedList);
+    if(Object.val() == '0'){
+        notyMessageError('Please select a vendor list.');
     }else {
-        notyMessageError('Please select one or more item(s).');
+
+        var listItems = $('.ids[name="ids[]"]:checked');
+        if (listItems.length > 0) {
+            var itemIds = '';
+            listItems.each(function () {
+                itemIds += 'ids[]=' + $(this).val() + "&";
+            });
+            itemIds += '&selectedList=' + selectedList;
+            App.notyConfirm({
+                message: "Are you sure you want to add omitted product(s) back to vendor list?",
+                confirmButtonText: 'Yes',
+                confirm: function () {
+                    $('.ajaxLoading').show();
+                    $.ajax({
+                        url: "/reviewvendorimportlist/unomit",
+                        data: itemIds,
+                        type: "POST",
+                        success: function (response) {
+                            $("#selected_vendor").val(selectedList);
+                            var vendorId = $('option:selected', $("#selected_vendor")).attr('vendor-id');
+                            var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id=' + vendorId + '&return=&search=vendor_id:equal:' + vendorId + "|is_omitted:equal:1&omit_vendor_list_id=" + selectedList;
+                            reloadData('#product', loadUrl);
+                            if (response.status == 'error') {
+                                notyMessageError(response.message);
+                            } else {
+                                notyMessage(response.message);
+                            }
+                        }
+                    });
+                },
+                cancel: function () {
+
+
+                }
+            });
+
+        } else {
+            notyMessageError('Please select one or more item(s).');
+        }
     }
 }
 /**
