@@ -1436,14 +1436,16 @@ function removeClone(rowId){
 /**
  * @param vendorId
  */
- function filterByVendor(vendorId){
-    if($('#selected_vendor').val() == '0'){
+ function filterByVendor(Object){
+    var vendorImportListId = Object.val();
+    var vendorId = $("#selected_vendor option:selected").attr("vendor-id");
+    if(Object.val() == '0'){
         notyMessageError('Please select a vendor list.');
     }else {
-        if (vendorId = 'auto') {
-            vendorId = $('#selected_vendor').val();
+        if (vendorImportListId = 'auto') {
+            vendorImportListId = $('#selected_vendor').val();
         }
-        reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&search=import_vendor_id:equal:' + vendorId)
+        reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&search=import_vendor_id:equal:' + vendorImportListId)
     }
 }
 
@@ -1646,7 +1648,7 @@ function importVendorProductList(Object){
                 $('.ajaxLoading').hide();
                 notyMessageError(response.message);
             }else {
-                reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id=' + vendorId)
+                reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id=' + vendorId + '&search=import_vendor_id:equal:0|is_omitted:equal:0')
                 // $('.btn-search[data-original-title="Clear Search"]').trigger('click');
                 notyMessage(response.message);
             }
