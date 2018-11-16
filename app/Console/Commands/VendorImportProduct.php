@@ -7,6 +7,7 @@ use App\Models\Reviewvendorimportlist;
 use Illuminate\Console\Command;
 use App\Library\FEG\System\FEGSystemHelper;
 use File;
+use Carbon\Carbon;
 
 class VendorImportProduct extends Command
 {
@@ -49,7 +50,7 @@ class VendorImportProduct extends Command
 
         global $__logger;
         $L = $this->L = $__logger = FEGSystemHelper::setLogger($this->L, "fetch-vendor-emails.log", "FEGVendorCron/VendorImportProduct", "VendorImport");
-        $L->log('Start Fetching Emails');
+        $L->log('----------------Start Fetching Emails----------------'.Carbon::now());
 
 
 
@@ -110,6 +111,7 @@ class VendorImportProduct extends Command
                             if($duplicateItems['status'] == true){
                                 $subject = '[System Error] Unable to import products';
                                 $this->sendVendorEmailNotification($subject,$duplicateItems['message'],$fromEmail);
+                                $L->log('[System Error] Duplicate Items found. Unable to import products.');
                                 echo " [System Error] Unable to import products Notification has been sent at".$fromEmail." ";
                                 return true;
                             }
@@ -139,7 +141,7 @@ class VendorImportProduct extends Command
         }
         /* close the connection */
         imap_close($inbox);
-        $L->log('End Fetching Emails');
+        $L->log('-------------End Fetching Emails-----------------------------');
     }
 
     public function getMessageDetails($inbox, $email_number) {
@@ -280,8 +282,8 @@ class VendorImportProduct extends Command
                             && $item['case_price'] == $listItem['case_price']
                             && $item['unit_price'] == $listItem['unit_price']
                             && $item['item_name'] == $listItem['item_name']
-                            && $item['ticket_value'] == $listItem['ticket_value']
-                            && $item['is_reserved'] == $listItem['is_reserved']
+//                            && $item['ticket_value'] == $listItem['ticket_value']
+//                            && $item['is_reserved'] == $listItem['is_reserved']
                             && $item['reserved_qty'] == $listItem['reserved_qty']
                         ) {
                             $duplicateCheck[] = $rowIndexEqualTo;

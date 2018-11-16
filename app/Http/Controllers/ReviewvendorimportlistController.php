@@ -34,14 +34,16 @@ class ReviewvendorimportlistController extends Controller
 
     }
 
-    public function getIndex()
+    public function getIndex($vendorId = 0)
     {
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $this->data['access'] = $this->access;
+        $this->data['vendor_id'] = $vendorId;
         return view('reviewvendorimportlist.index', $this->data);
     }
+    
     public function getExport($t = 'excel')
     {
         global $exportSessionID;

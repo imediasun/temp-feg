@@ -603,4 +603,20 @@ WHERE orders.is_api_visible = 1
         }
         return $rules;
     }
+
+
+    public function getImportVendors(){
+        $fields = [
+            'import_vendors.id',
+            'import_vendors.vendor_id',
+            'vendor.vendor_name',
+            'import_vendors.email_recieved_at'
+        ];
+        $vendors = vendor::select($fields)
+            ->join('import_vendors','import_vendors.vendor_id','=','vendor.id')
+            ->orderBy('vendor.vendor_name','asc')
+            ->groupBy('import_vendors.vendor_id')
+            ->where('import_vendors.is_imported','=','0')->get();
+        return $vendors;
+    }
 }

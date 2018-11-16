@@ -409,6 +409,9 @@ class ProductController extends Controller
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
+
+        $this->data['vendorsList'] = $this->model->getImportVendors();//list of vendors who send products list on email
+
         // Render into template
         return view('product.table', $this->data);
 
