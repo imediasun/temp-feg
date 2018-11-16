@@ -367,7 +367,7 @@ GROUP BY mapped_expense_category");
             foreach ($rows as $row) {
                 $row->product_id = $row->id;
                 unset($row->id);
-                $row->is_reserved = !empty($row->is_reserved) ? $row->is_reserved:0;
+//                $row->is_reserved = !empty($row->is_reserved) ? $row->is_reserved:0;
 
                 $row->is_updated = (
                 $row->vendor_description != $updatedFields['item_name']
@@ -377,7 +377,7 @@ GROUP BY mapped_expense_category");
                     || $row->case_price != $updatedFields['case_price']
                     || $row->unit_price != $updatedFields['unit_price']
                     || $row->reserved_qty != $updatedFields['reserved_qty']
-                 || ($row->is_reserved != in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0)
+//                 || ($row->is_reserved != in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0)
                 ) ? 1:0;
 
                 $row->import_vendor_id = $vendorListId;
@@ -387,8 +387,8 @@ GROUP BY mapped_expense_category");
                 $row->num_items = $updatedFields['item_per_case'];
                 $row->case_price = $updatedFields['case_price'];
                 $row->unit_price = $updatedFields['unit_price'];
-                $row->is_reserved = in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0;
-                $row->ticket_value = $updatedFields['ticket_value'];
+//                $row->is_reserved = in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0;
+//                $row->ticket_value = $updatedFields['ticket_value'];
                 $row->reserved_qty = $updatedFields['reserved_qty'];
 
             }
@@ -402,8 +402,8 @@ GROUP BY mapped_expense_category");
             $row['num_items'] = $updatedFields['item_per_case'];
             $row['case_price'] = $updatedFields['case_price'];
             $row['unit_price'] = $updatedFields['unit_price'];
-            $row['is_reserved'] = in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0;
-            $row['ticket_value'] = $updatedFields['ticket_value'];
+//            $row['is_reserved'] = in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0;
+//            $row['ticket_value'] = $updatedFields['ticket_value'];
             $row['reserved_qty'] = $updatedFields['reserved_qty'];
             $row['is_updated'] = 0;
             $row['is_new'] = 1;

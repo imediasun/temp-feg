@@ -1671,7 +1671,7 @@ function removeClone(rowId){
         if (vendorId = 'auto') {
             vendorId = $('#selected_vendor').val();
         }
-        reloadData('#reviewvendorimportlist', 'reviewvendorimportlist/data?search=import_vendor_id:equal:' + vendorId)
+        reloadData('#product', 'reviewvendorimportlist/data?search=import_vendor_id:equal:' + vendorId)
     }
 }
 
@@ -1812,7 +1812,7 @@ function unomittItem(selectedList){
                         $("#selected_vendor").val(selectedList);
                         var vendorId = $('option:selected', $("#selected_vendor")).attr('vendor-id');
                        var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+selectedList;
-                        reloadData('#reviewvendorimportlist',loadUrl);
+                        reloadData('#product',loadUrl);
                         if(response.status == 'error') {
                             notyMessageError(response.message);
                         }else {
@@ -1836,7 +1836,7 @@ function unomittItem(selectedList){
 function showVendorOmittedItems(Object){
     var vendorId = $('option:selected', Object).attr('vendor-id');
     var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:1&omit_vendor_list_id="+Object.val();
-    reloadData('#reviewvendorimportlist',loadUrl);
+    reloadData('#product',loadUrl);
 }
 function hideUnchanged(element,Object){
     var vendorId = $('option:selected', Object).attr('vendor-id');
@@ -1844,7 +1844,7 @@ function hideUnchanged(element,Object){
     var changeStatus = btnOption.attr('data-hide-same-item');
 
     var loadUrl = '/reviewvendorimportlist/data?return=&search=vendor_id:equal:'+vendorId+"|is_omitted:equal:0|import_vendor_id:equal:"+Object.val()+"&hideUnchanged="+changeStatus+"&omit_vendor_list_id="+Object.val();
-    reloadData('#reviewvendorimportlist',loadUrl);
+    reloadData('#product',loadUrl);
 
     if(changeStatus > 0){
         btnOption.val('Show All Items');

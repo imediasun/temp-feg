@@ -21,7 +21,7 @@
 		<div id="{{ $pageModule }}Grid"></div>
 	</div>	
 	<!-- End Content -->  
-</div>	
+</div>
 <script>
 $(document).ready(function(){
 	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?search=import_vendor_id:equal:0|is_omitted:equal:0');

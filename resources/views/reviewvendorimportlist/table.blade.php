@@ -1,7 +1,7 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
 	<div class="sbox-title">
-		<h5> <i class="fa fa-table"></i> </h5>
+		<h5> <i class="fa fa-table"></i> Review Vendor Import List </h5>
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','reviewvendorimportlist/data?search=import_vendor_id:equal:0|is_omitted:equal:0')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','reviewvendorimportlist/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
@@ -253,7 +253,7 @@ $(document).ready(function() {
 		var url = $(this).attr('href');
 
         App.notyConfirm({
-            message: "Do you want to further proceed without makin any permanent changes?",
+            message: "Do you want to further proceed without making any permanent changes?",
             confirmButtonText: 'Yes',
             cancelButtonText: 'No',
             confirm: function () {
