@@ -161,8 +161,7 @@ class VendorProductsImportHelper
         $subject = "Products List - [Vendor Product List #$vendorId] ". date('m/d/Y');
         $file_to_save = storage_path().'/app/vendor-products/' . $fileName;
 
-        $cc = 'vendor.products@fegllc.com';
-        $bcc = 'vendor.products@fegllc.com';
+        
         $to = $vendorEmail;
 
         $sendEmailFromMerchandise = false;

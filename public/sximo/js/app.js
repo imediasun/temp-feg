@@ -1645,25 +1645,42 @@ function hideUnchanged(element,Object){
  * @param Object
  */
 
-function importVendorProductList(Object){
+function importVendorProductList(Object) {
     var vendorImportListId = Object.val();
     var vendorId = $("#selected_vendor option:selected").attr("vendor-id");
-    $('.ajaxLoading').show();
-    $.ajax({
-        url:'/reviewvendorimportlist/update-product-list-module',
-        type:"POST",
-        data:{id:vendorImportListId},
-        success:function (response) {
-            if(response.status == 'error') {
-                $('.ajaxLoading').hide();
-                notyMessageError(response.message);
-            }else {
-                reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id=' + vendorId + '&search=import_vendor_id:equal:0|is_omitted:equal:0')
-                // $('.btn-search[data-original-title="Clear Search"]').trigger('click');
-                notyMessage(response.message);
+    if (vendorImportListId == 0) {
+        notyMessageError('Please select a list.');
+    } else {
+
+        App.notyConfirm({
+            message: "Are you sure you want to update product list (s)?",
+            confirmButtonText: 'Yes',
+            confirm: function () {
+
+                $('.ajaxLoading').show();
+                $.ajax({
+                    url: '/reviewvendorimportlist/update-product-list-module',
+                    type: "POST",
+                    data: {id: vendorImportListId},
+                    success: function (response) {
+                        if (response.status == 'error') {
+                            $('.ajaxLoading').hide();
+                            notyMessageError(response.message);
+                        } else {
+                            reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id=' + vendorId + '&search=import_vendor_id:equal:0|is_omitted:equal:0')
+                            // $('.btn-search[data-original-title="Clear Search"]').trigger('click');
+                            notyMessage(response.message);
+                        }
+                    }
+                })
+            },
+            cancel: function () {
+
+
             }
-        }
-    })
+        });
+    }
+
 }
 
 function setValuesToVariations(object){
