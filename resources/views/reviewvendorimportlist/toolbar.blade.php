@@ -20,7 +20,7 @@
       &nbsp;
         @if(!empty($resetOmit))
             <input type="button" value="{{ $resetOmit['buttonText'] }}" onclick="unomittItem('{{ $resetOmit['selectedList'] }}');"  class="btn btn-primary">
-            <input type="button" value="Back to Vendor's Product List"  onclick="filterByVendor($('#selected_vendor').val());"   class="btn btn-primary">
+            <input type="button" value="Back to Vendor's Product List"  onclick="filterByVendor($('#selected_vendor'));"   class="btn btn-primary">
         @else
             <input type="button" value="Omit Product" onclick="omittItem();"  class="btn btn-primary">
             <input type="button" value="Review Vendor's Omitted Products"  onclick="showVendorOmittedItems($('#selected_vendor'))"   class="btn btn-primary">
