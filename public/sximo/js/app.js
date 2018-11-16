@@ -1863,6 +1863,7 @@ function hideUnchanged(element,Object){
 
 function importVendorProductList(Object){
     var vendorImportListId = Object.val();
+    var vendorId = $("#selected_vendor option:selected").attr("vendor-id");
     $('.ajaxLoading').show();
     $.ajax({
         url:'/reviewvendorimportlist/update-product-list-module',
@@ -1873,7 +1874,8 @@ function importVendorProductList(Object){
                 $('.ajaxLoading').hide();
                 notyMessageError(response.message);
             }else {
-                $('.btn-search[data-original-title="Clear Search"]').trigger('click');
+                reloadData('#product', 'reviewvendorimportlist/data?search=import_vendor_id:equal:' + vendorId)
+                // $('.btn-search[data-original-title="Clear Search"]').trigger('click');
                 notyMessage(response.message);
             }
         }
