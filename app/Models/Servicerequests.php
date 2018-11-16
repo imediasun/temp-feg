@@ -288,4 +288,39 @@ class Servicerequests extends Observerable  {
         }
         return $results = array('rows' => $result, 'total' => $total);
     }
+
+    public function getGameRelatedfields(){
+        $fields = [
+            'game_related'=>[
+                'TicketID',
+                'shipping_priority_id',
+                'Created',
+                'issue_type',
+                'location_id',
+                'Description',
+                'need_by_date',
+                'closed',
+                'Status',
+                'last_user',
+                'last_updated_elapsed_days',
+            ],
+            ['debit_card_related']=>[
+                'TicketID',
+                'Created',
+                'issue_type',
+                'location_id',
+                'debit_type',
+                'Subject',
+                'Description',
+                'need_by_date',
+                'closed',
+                'Status',
+                'last_user',
+                'last_updated_elapsed_days',
+            ],
+
+        ];
+
+        return $fields;
+        }
 }
