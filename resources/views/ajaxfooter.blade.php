@@ -92,7 +92,9 @@ $orders = array('asc','desc');
 		<div class="col-md-1 col-sm-12 col-xs-12">
 			<div class="table-actions" style=" padding: 10px 0">
 			@if(!empty($showImportVendorButton))
+					@if(empty($resetOmit))
 					<input type="button" value="Update Product List Module" onclick="importVendorProductList($('#selected_vendor'));" class="btn btn-primary importVendorProductList">
+				@endif
 				@endif
 			</div>
 		</div>

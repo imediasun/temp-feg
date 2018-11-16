@@ -20,19 +20,19 @@
       &nbsp;
         @if(!empty($resetOmit))
             <input type="button" value="{{ $resetOmit['buttonText'] }}" onclick="unomittItem('{{ $resetOmit['selectedList'] }}');"  class="btn btn-primary">
-            <input type="button" value="Back to Vendor's Product List"  onclick="filterByVendor($('#selected_vendor').val());"   class="btn btn-primary">
         @else
             <input type="button" value="Omit Product" onclick="omittItem();"  class="btn btn-primary">
             <input type="button" value="Review Vendor's Omitted Products"  onclick="showVendorOmittedItems($('#selected_vendor'))"   class="btn btn-primary">
+            @if($hideUnchanged == 0)
+                <input type="button" value="Hide Unchanged Items" data-hide-same-item="1" onclick="hideUnchanged(this,$('#selected_vendor'));"   class="btn btn-primary">
+            @else
+                <input type="button" value="Show All Items" data-hide-same-item="0" onclick="hideUnchanged(this,$('#selected_vendor'));"   class="btn btn-primary">
+            @endif
         @endif
 
 
 
-        @if($hideUnchanged == 0)
-            <input type="button" value="Hide Unchanged Items" data-hide-same-item="1" onclick="hideUnchanged(this,$('#selected_vendor'));"   class="btn btn-primary">
-         @else
-            <input type="button" value="Show All Items" data-hide-same-item="0" onclick="hideUnchanged(this,$('#selected_vendor'));"   class="btn btn-primary">
-        @endif
+
     </div>
 	<div class="col-md-3 ">
         <?php 
