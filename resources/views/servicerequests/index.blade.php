@@ -41,7 +41,7 @@
             if(hasViewTicket){
                 ajaxViewDetail('#'+pageModule, pageUrl + "/show/"+viewTicketId);
             }
-            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data', UNFN, { isBackground: hasViewTicket});
+            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?ticket_type=debit-card-related', UNFN, { isBackground: hasViewTicket});
         });
     </script>
     <script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/grid.js') }}"></script>          
