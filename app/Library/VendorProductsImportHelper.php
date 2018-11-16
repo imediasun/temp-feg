@@ -168,7 +168,7 @@ class VendorProductsImportHelper
         $sendEmailFromMerchandise = false;
         $from = 'vendor.products@fegllc.com';
 
-        $message = '<p>Hello <strong>'.$vendor->vendor_name.'</strong>,</p>';
+        $message = '<p>Hello '.$vendor->vendor_name.',</p>';
 
         $message .= '<p>Attached you will find the most up-to-date pricing and product information we have for your products. Please download and review this file, making any necessary product updates. Please do not make any changes to the file\'s name. Any new products may be added to this file. If you no longer offer a product contained in this file, please delete the row.</p>';
 
