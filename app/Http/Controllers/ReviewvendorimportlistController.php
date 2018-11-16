@@ -256,6 +256,7 @@ class ReviewvendorimportlistController extends Controller
 
         $this->data['productTypes'] = $this->model->getProductType();
         $this->data['hideUnchanged'] = $request->input('hideUnchanged',0);
+        $this->data['showOnlyOmitted'] = $request->input('showOnlyOmitted',0);
 // Render into template
         return view('reviewvendorimportlist.table', $this->data);
 
