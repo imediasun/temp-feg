@@ -1784,6 +1784,8 @@ function omittItem(){
             }
         });
 
+    }else {
+        notyMessageError('Please select one or more item(s).');
     }
 
 
