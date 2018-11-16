@@ -227,7 +227,7 @@ class inventoryreport extends Sximo  {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
 
-            $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($location_id);
+            $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null);
             $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
             $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
 
