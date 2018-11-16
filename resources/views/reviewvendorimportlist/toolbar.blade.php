@@ -19,7 +19,7 @@
 	<div class="col-md-9">
       &nbsp;
         @if(!empty($resetOmit))
-            <input type="button" value="{{ $resetOmit['buttonText'] }}" onclick="unomittItem('{{ $resetOmit['selectedList'] }}');"  class="btn btn-primary">
+            <input type="button" value="{{ $resetOmit['buttonText'] }}" onclick="unomittItem($('#selected_vendor'), '{{ $resetOmit['selectedList'] }}');"  class="btn btn-primary">
         @else
             <input type="button" value="Omit Product" onclick="omittItem();"  class="btn btn-primary">
             <input type="button" value="Review Vendor's Omitted Products"  onclick="showVendorOmittedItems($('#selected_vendor'),{{ $product_import_vendor_id }})"   class="btn btn-primary">
