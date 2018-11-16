@@ -282,7 +282,7 @@ GROUP BY mapped_expense_category");
     public function isVendorExist($fromEmail){
         $vendor = vendor::select("id")->where(function ($query) use($fromEmail){
             $query->where('email',$fromEmail);
-            $query->where('email_2',$fromEmail);
+            $query->orWhere('email_2',$fromEmail);
         })->get();
         return $vendor->count() > 0 ? true:false;
     }
@@ -290,7 +290,7 @@ GROUP BY mapped_expense_category");
       $fromEmail = $dataArray['from_email'];
       $vendor = vendor::select("id")->where(function ($query) use($fromEmail){
           $query->where('email',$fromEmail);
-          $query->where('email_2',$fromEmail);
+          $query->orWhere('email_2',$fromEmail);
       })->first();
         if($vendor) {
             $data = [
