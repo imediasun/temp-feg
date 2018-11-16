@@ -175,7 +175,7 @@ class reviewvendorimportlist extends Sximo  {
         return $results = array('rows' => $result, 'total' => $total);
     }
 
-    public function getImportVendors(){
+    public function getImportVendors($vendorId){
         $fields = [
             'import_vendors.id',
         'import_vendors.vendor_id',
@@ -185,7 +185,7 @@ class reviewvendorimportlist extends Sximo  {
         $vendors = vendor::select($fields)
             ->join('import_vendors','import_vendors.vendor_id','=','vendor.id')
             ->orderBy('vendor.vendor_name','asc')
-            ->where('import_vendors.is_imported','=','0')->get();
+            ->where('import_vendors.is_imported','=','0')->where('vendor_id',$vendorId)->get();
     return $vendors;
     }
 

@@ -234,12 +234,13 @@ class ReviewvendorimportlistController extends Controller
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
+        $this->data['product_import_vendor_id'] = $request->product_import_vendor_id;
         $this->data['importVendorListId'] = 0;
-        $this->data['vendors_list'] = $this->model->getImportVendors();
+        $this->data['vendors_list'] = $this->model->getImportVendors($request->product_import_vendor_id);
         if (!empty($this->data['rowData'])) {
             $this->data['importVendorListId'] = $this->data['rowData']['0']->import_vendor_id;
         }
-        $this->data['product_import_vendor_id'] = $request->product_import_vendor_id;
+
         if ($request->has('omit_vendor_list_id') && !$request->has('hideUnchanged')){
             $this->data['importVendorListId'] = $request->input('omit_vendor_list_id');
             $this->data['resetOmit'] = [
