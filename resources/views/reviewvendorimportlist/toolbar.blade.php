@@ -11,7 +11,7 @@
     </div>
     <div class="col-md-4">
         <input type="button" value="Open List" onclick="filterByVendor($('#selected_vendor'));" class="btn btn-primary">
-        <input type="button" value="Save List" id="savelist" onclick="saveImportListRecord();" class="btn btn-primary">
+        @if(empty($resetOmit)) <input type="button" value="Save List" id="savelist" onclick="saveImportListRecord();" class="btn btn-primary"> @endif
         <input type="button" value="Delete List" onclick="deleteImportRecord();"  class="btn btn-danger" style="background-color:#fd4b4b !important; border-color:#fd4b4b !important; ">
     </div>
 </div>
@@ -22,7 +22,7 @@
             <input type="button" value="{{ $resetOmit['buttonText'] }}" onclick="unomittItem('{{ $resetOmit['selectedList'] }}');"  class="btn btn-primary">
         @else
             <input type="button" value="Omit Product" onclick="omittItem();"  class="btn btn-primary">
-            <input type="button" value="Review Vendor's Omitted Products"  onclick="showVendorOmittedItems($('#selected_vendor'))"   class="btn btn-primary">
+            <input type="button" value="Review Vendor's Omitted Products"  onclick="showVendorOmittedItems($('#selected_vendor'),'{{ $product_import_vendor_id }}')"   class="btn btn-primary">
             @if($hideUnchanged == 0)
                 <input type="button" value="Hide Unchanged Items" data-hide-same-item="1" onclick="hideUnchanged(this,$('#selected_vendor'));"   class="btn btn-primary">
             @else
