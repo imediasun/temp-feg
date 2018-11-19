@@ -38,7 +38,7 @@
     <table class="table table-striped datagrid " id="{{ $pageModule }}Table" data-module="{{ $pageModule }}" data-url="{{ $pageUrl }}">
         <thead>
 			<tr>
-				<td width="25"></td>
+
                 @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 				<th width="35"> No </th>
                 @endif
@@ -46,6 +46,7 @@
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
                 @endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif
+                    <td width="25"></td>
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
 						$limited = isset($t['limited']) ? $t['limited'] :'';
@@ -102,12 +103,7 @@
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" @if(!empty($row->textColor)) style="color: {{ $row->textColor }} !important;" @endif data-variantId="{{ $row->variation_id  }}">
-					<td style="position: relative;" class="cloneOption">
-						<i  data-id="form-{{ $row->id }}" onclick="createClone($('#form-{{ $row->id }}'),$('#form-{{ $row->id }}'))" class="fa fa-plus-square" style="color:#195a97; top:0px; cursor: pointer; font-size: 14px; position: absolute; "></i>
-                        <input type="hidden" class="parent_id" value="{{ $row->id }}" name="parent_id[]">
-                        <input type="hidden" class="itemId" value="{{ $row->id }}" name="item_id[]">
 
-                    </td>
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td class="number" > <?php echo ++$i;?>  </td>
                     @endif
@@ -117,6 +113,12 @@
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('reviewvendorimportlist/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
+                        <td style="position: relative;" class="cloneOption">
+                            <i  data-id="form-{{ $row->id }}" onclick="createClone($('#form-{{ $row->id }}'),$('#form-{{ $row->id }}'))" class="fa fa-plus-square" style="color:#195a97; top:0px; cursor: pointer; font-size: 14px; position: absolute; "></i>
+                            <input type="hidden" class="parent_id" value="{{ $row->id }}" name="parent_id[]">
+                            <input type="hidden" class="itemId" value="{{ $row->id }}" name="item_id[]">
+
+                        </td>
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
