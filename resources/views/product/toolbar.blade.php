@@ -31,7 +31,7 @@
             <div class="col-md-6 sm13  col-sm-6 col-xs-9">
                 <input name="exportID" value="{{ uniqid('vendorFromProducts', true) }}" type="hidden"/>
                 <select name='vendor_id' id="vendor_import_list" rows='5' class='select3'>
-                    <option value="" selected >--- Select Type ---</option>
+                    <option value="" selected >--- Select Vendor ---</option>
                     @foreach($vendorsList as $vendor)
                         <option value="{{ $vendor->vendor_id }}" >{{ $vendor->vendor_name }}</option>
                     @endforeach
