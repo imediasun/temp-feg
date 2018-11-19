@@ -340,12 +340,14 @@ GROUP BY mapped_expense_category");
                     ->where('case_price', $row['case_price'])->where('is_omitted', 1)->first();
 
                 if ($updateItems) {
-                    unset($row['import_vendor_id']);
-                    self::where('id', $updateItems->id)->update($row);
-                } else {
+                    $row['is_omitted'] = 1;
+                }else{
+                    $row['is_omitted'] = 0;
+                }
+
                     $row['vendor_id'] = $vendorId;
                     $this->insertRow($row, null);
-                }
+
             }
         }
     }
