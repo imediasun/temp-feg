@@ -178,7 +178,7 @@ class reviewvendorimportlist extends Sximo  {
     public function getImportVendors($vendorId){
         $fields = [
             'import_vendors.id',
-        'import_vendors.vendor_id',
+//        'import_vendors.vendor_id',
             'vendor.vendor_name',
             'import_vendors.email_recieved_at'
         ];
