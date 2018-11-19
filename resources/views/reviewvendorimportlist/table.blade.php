@@ -46,7 +46,7 @@
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
                 @endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif
-                    <td width="25"></td>
+                <th width="25"></th>
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
 						$limited = isset($t['limited']) ? $t['limited'] :'';
@@ -114,7 +114,7 @@
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('reviewvendorimportlist/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
                         <td style="position: relative;" class="cloneOption">
-                            <i  data-id="form-{{ $row->id }}" onclick="createClone($('#form-{{ $row->id }}'),$('#form-{{ $row->id }}'))" class="fa fa-plus-square" style="color:#195a97; top:0px; cursor: pointer; font-size: 14px; position: absolute; "></i>
+                            <i  data-id="form-{{ $row->id }}" onclick="createClone($('#form-{{ $row->id }}'),$('#form-{{ $row->id }}'))" class="fa fa-plus-square" style="color:#195a97; top:5px; cursor: pointer; font-size: 14px; position: absolute; "></i>
                             <input type="hidden" class="parent_id" value="{{ $row->id }}" name="parent_id[]">
                             <input type="hidden" class="itemId" value="{{ $row->id }}" name="item_id[]">
 
