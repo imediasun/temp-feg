@@ -51,7 +51,7 @@ class ReviewvendorimportlistController extends Controller
         if ($order != '') $appends['order'] = $order;
         if ($rows != '') $appends['rows'] = $rows;
         if ($search != '') $appends['search'] = $search;
-        if ($omit_vendor_list_id != '') $appends['omit_vendor_list_id'] = $omit_vendor_list_id;
+//        if ($omit_vendor_list_id != '') $appends['omit_vendor_list_id'] = $omit_vendor_list_id;
         $url = "";
         foreach ($appends as $key => $val) {
             $url .= "&$key=$val";
