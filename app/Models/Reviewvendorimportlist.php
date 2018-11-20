@@ -30,7 +30,11 @@ class reviewvendorimportlist extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT vendor_import_products.* FROM vendor_import_products  ";
+		return "  SELECT
+  vendor_import_products.*,
+  IF(vendor_import_products.is_omitted = 1, 0,vendor_import_products.is_new) AS newItem,
+IF(vendor_import_products.is_omitted = 1, 0,vendor_import_products.is_updated) AS updatedItem 
+FROM vendor_import_products  ";
 	}	
 
 	public static function queryWhere(  ){
@@ -59,7 +63,7 @@ class reviewvendorimportlist extends Sximo  {
         ), $args));
 
 
-        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY is_new DESC , is_updated DESC , is_omitted DESC  " : ' ORDER BY is_new DESC , is_updated DESC , is_omitted DESC   ';
+        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY newItem DESC , updatedItem DESC , is_omitted ASC ,  {$sort} {$order} " : ' ORDER BY is_new DESC , is_updated DESC , is_omitted DESC   ';
         if (!empty($extraSorts)) {
             if (empty($orderConditional)) {
                 $orderConditional = " ORDER BY ";
