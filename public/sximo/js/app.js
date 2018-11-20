@@ -1717,6 +1717,32 @@ function saveImportListRecord() {
     }
 }
 
+function updateVendorImportList(singleRequest, showResponseMessages)
+{
+    var postData  = $('#SximoTable').serialize();
+    var url = $('#SximoTable').attr('action');
+    $.ajax({
+        type: 'POST',
+        url: $('#SximoTable').attr('action'),
+        data: postData,
+        success: function (response) {
+            singleRequest = true;
+            if(showResponseMessages){
+                if(response.status == 'error') {
+                    notyMessageError(response.message);
+                }else {
+                    notyMessage(response.message);
+                }
+                $('.ajaxLoading').hide();
+            }else{
+                return true;
+            }
+
+        }
+    });
+
+}
+
 function deleteImportRecord(){
     if($('#selected_vendor').val() == '0'){
         notyMessageError('Please select a vendor list.');
@@ -1887,23 +1913,33 @@ function importVendorProductList(Object) {
             message: "Are you sure you want to update product list (s)?",
             confirmButtonText: 'Yes',
             confirm: function () {
-
                 $('.ajaxLoading').show();
+
+                var postData  = $('#SximoTable').serialize();
+                var url = $('#SximoTable').attr('action');
                 $.ajax({
-                    url: '/reviewvendorimportlist/update-product-list-module',
-                    type: "POST",
-                    data: {id: vendorImportListId},
+                    type: 'POST',
+                    url: $('#SximoTable').attr('action'),
+                    data: postData,
                     success: function (response) {
-                        if (response.status == 'error') {
-                            $('.ajaxLoading').hide();
-                            notyMessageError(response.message);
-                        } else {
-                            reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id=' + vendorId + '&search=import_vendor_id:equal:0|is_omitted:equal:0')
-                            // $('.btn-search[data-original-title="Clear Search"]').trigger('click');
-                            notyMessage(response.message);
-                        }
+                        $.ajax({
+                            url: '/reviewvendorimportlist/update-product-list-module',
+                            type: "POST",
+                            data: {id: vendorImportListId},
+                            success: function (response) {
+                                if (response.status == 'error') {
+                                    $('.ajaxLoading').hide();
+                                    notyMessageError(response.message);
+                                } else {
+                                    reloadData('#product', 'reviewvendorimportlist/data?product_import_vendor_id=' + vendorId + '&search=import_vendor_id:equal:0|is_omitted:equal:0')
+                                    // $('.btn-search[data-original-title="Clear Search"]').trigger('click');
+                                    notyMessage(response.message);
+                                }
+                            }
+                        })
                     }
-                })
+                });
+
             },
             cancel: function () {
 

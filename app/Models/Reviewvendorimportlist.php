@@ -248,6 +248,17 @@ GROUP BY mapped_expense_category");
      */
     public function updateProductModule($id){
         if($id > 0){
+
+            $vendorImportList = self::where('import_vendor_id',$id)->where('is_omitted',0)->where('prod_type_id', 0)->get()->toArray();
+            if(count($vendorImportList) > 0)//if product type id of any item is not set.
+            {
+                dd($vendorImportList);
+                return response()->json(array(
+                    'status' => 'error',
+                    'message' => "Select Product type of all Items."
+                ));
+            }
+
             $itemsobjs = self::where('import_vendor_id',$id)->where('is_omitted',0);
             self::where('import_vendor_id',$id)->where('is_omitted',0)->update(['is_imported'=>1,'imported_by'=>Session::get('uid'),'imported_at'=>date('Y-m-d H:i:s')]);
 
@@ -273,9 +284,15 @@ GROUP BY mapped_expense_category");
             }
 
             \DB::table('import_vendors')->where('id',$id)->update(['is_imported'=>1,'updated_at'=>date('Y-m-d H:i:s')]);
-            return true;
+            return response()->json(array(
+                'status' => 'success',
+                'message' => "Product list module has been updated."
+            ));
         }else{
-            return false;
+            return response()->json(array(
+                'status' => 'error',
+                'message' => "Product list module couldn't be updated."
+            ));
         }
 
     }

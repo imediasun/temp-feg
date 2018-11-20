@@ -555,17 +555,6 @@ class ReviewvendorimportlistController extends Controller
 
         $isUpdated = $this->model->updateProductModule($request->input('id'));
 
-        if($isUpdated)
-        {
-            return response()->json(array(
-                'status' => 'success',
-                'message' => "Product list module has been updated."
-            ));
-        }else{
-            return response()->json(array(
-                'status' => 'error',
-                'message' => "Product list module couldn't be updated."
-            ));
-        }
+        return $isUpdated;
     }
 }

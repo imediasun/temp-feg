@@ -678,7 +678,7 @@ WHERE orders.is_api_visible = 1
             ->join('import_vendors','import_vendors.vendor_id','=','vendor.id')
             ->orderBy('vendor.vendor_name','asc')
             ->groupBy('import_vendors.vendor_id')
-            ->where('import_vendors.is_imported','=','0')->get();
+            ->get();
         return $vendors;
     }
 }
