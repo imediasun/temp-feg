@@ -1113,52 +1113,57 @@ class SyncHelpers
         }
         
         return $count > 0;        
-    }    
-    
+    }
+
     public static function getReaderExclude($debit_type_id = null, $location = null, $encapsulateQuotes = true) {
         $excluded = array();
         //$q = "SELECT concat(reader_id, '@', loc_id) as loc_reader_id FROM reader_exclude WHERE id IS NOT NULL " .
-        $q = "SELECT reader_id FROM reader_exclude WHERE id IS NOT NULL " .
-                (!empty($debit_type_id) ?  " AND debit_type_id IN ($debit_type_id)" : "") .
-                (!empty($location) ?  " AND loc_id IN ($location)" : "");
-                
+        $q = "SELECT reader_id, loc_id FROM reader_exclude WHERE id IS NOT NULL " .
+            (!empty($debit_type_id) ?  " AND debit_type_id IN ($debit_type_id)" : "") .
+            (!empty($location) ?  " AND loc_id IN ($location)" : "");
+
         $items = DB::select($q);
         foreach ($items as $exclude_row) {
             //$readerId = $exclude_row->loc_reader_id;
             $readerId = $exclude_row->reader_id;
+            $locationId = $exclude_row->loc_id;
             if ($encapsulateQuotes) {
                 $readerId = "'".$readerId."'";
+                $locationId = "'".$locationId."'";
             }
-            $excluded[] = $readerId;
+            $excluded[] = ['reader'=>$readerId,'location'=>$locationId];
         }
         return $excluded;
     }
-    
+
     public static function getReaderExcludeQuery($debit_type_id = null, $location = null, $field = "reader_id") {
         $q = '';
         $readerExcludes = self::getReaderExclude($debit_type_id, $location);
         if (!empty($readerExcludes)) {
             $q = " AND $field NOT IN (" . implode(",", $readerExcludes). ") ";
         }
-        return $q;        
+        return $q;
     }
-        
+
     public static function TransferEarningsGeneric($debit_type, $date_start, $location = "", $chunkSize = 500) {
         global $__logger;
         $table = "game_earnings";
-        
+
         $sourceDBName = self::getDebitTypeDBName($debit_type);
-      
-        DB::connection($sourceDBName)->setFetchMode(PDO::FETCH_ASSOC); 
-        //DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
+
+        DB::connection($sourceDBName)->setFetchMode(PDO::FETCH_ASSOC);
+        //DB::connection()->setFetchMode(PDO::FETCH_ASSOC);
         $sourceDB = DB::connection($sourceDBName);
         $date_end = date("Y-m-d", strtotime($date_start . ' +1 day'));
         $locations = explode(',', $location);
-        
+
         $logDetails = "$date_start " . (empty($location) ? "" : " Location: $location");
 
         $readerExclude = self::getReaderExclude($debit_type, $location,false);
-        
+        $readerLocationConcatArray = [];
+        foreach ($readerExclude as $readerLocationArray){
+            $readerLocationConcatArray[] = "'".$readerLocationArray['location'].'@'.$readerLocationArray['reader']."'";
+        }
         //$readerExcludeQuery = self::getReaderExcludeQuery($debit_type, $location);
         $query = $sourceDB->table($table);
         //sudipto code commented
@@ -1187,7 +1192,7 @@ class SyncHelpers
                         ticket_payout,
                         ticket_value,
                         loc_game_title"));
-//        
+//
 //        $query->select('debit_type_id',
 //                        'loc_id',
 //                        'game_id',
@@ -1211,52 +1216,53 @@ class SyncHelpers
 //                        'ticket_payout',
 //                        'ticket_value',
 //                        'loc_game_title');
-        
+
         $query->where('date_start', '>=', $date_start)
               ->where('date_start', '<',$date_end);
-        
+
         if (!empty(trim($location))) {
             $query->whereIn('loc_id', $locations);
         }
+        $readerLocationConcatArray = implode(',',$readerLocationConcatArray);
         if (!empty($readerExclude)) {
-            $query->whereNotIn('reader_id', $readerExclude);
+            $query->havingRaw("CONCAT(loc_id, '@', reader_id) NOT IN ($readerLocationConcatArray)");
             //$query->whereNotIn('loc_reader_id', $readerExclude);
         }
-         
+
         $rowcount = 0;
         $__logger->log("Syncing $sourceDBName");
-        $query->chunk($chunkSize, 
+        $query->chunk($chunkSize,
                 function($data)  use ($table, &$rowcount, &$chunkCount){
                     global $__logger;
                     global $_scheduleId;
-                    
+
                     try {
                         if (!empty($data)) {
                              $dataSize = count($data);
                              $chunkCount++;
                              $rowcount += $dataSize;
-                             $__logger->log("Data received chunk #$chunkCount of size $dataSize. Total items received so far: $rowcount");        
+                             $__logger->log("Data received chunk #$chunkCount of size $dataSize. Total items received so far: $rowcount");
                              $__logger->log("Adding data to local");
                              //unset($data['loc_reader_id']);
                              DB::table($table)->insert($data);
                          }
                          else {
                              self::$L->log("NO data to add");
-                         }                            
-                    } 
+                         }
+                    }
                     catch (Exception $ex) {
                         $errorFile = $ex->getFile();
-                        $errorLine = $ex->getLine();                
+                        $errorLine = $ex->getLine();
                         $errorMessage = $ex->getMessage() . " - $errorFile at line $errorLine";
                         \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
                         \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
                         \App\Library\Elm5Tasks::log("Error: ".$errorMessage);
                         $__logger->log($errorMessage);
                         exit();
-                    }                            
-                });              
+                    }
+                });
         $__logger->log("End Syncing $sourceDBName");
-  
+
         DB::connection()->setFetchMode(PDO::FETCH_CLASS);
         DB::connection($sourceDBName)->setFetchMode(PDO::FETCH_CLASS);
         if ($rowcount > 0) {
@@ -1266,8 +1272,8 @@ class SyncHelpers
         else {
             $__logger->log("Transferred no data items for : $logDetails");
         }
-                
-        return false;     
+
+        return false;
 
     }
     public static function deleteEarningsGeneric($date_start = "", $location = "", $debit_type = "") {
