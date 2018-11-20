@@ -98,7 +98,6 @@
 
 			  </tr>
 			  @endif
-
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
@@ -113,12 +112,15 @@
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('reviewvendorimportlist/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
+                    @if($row->is_omitted == 0)
                         <td style="position: relative;" class="cloneOption">
                             <i  data-id="form-{{ $row->id }}" onclick="createClone($('#form-{{ $row->id }}'),$('#form-{{ $row->id }}'))" class="fa fa-plus-square" style="color:#195a97; top:0px; cursor: pointer; font-size: 14px; position: absolute; "></i>
                             <input type="hidden" class="parent_id" value="{{ $row->id }}" name="parent_id[]">
                             <input type="hidden" class="itemId" value="{{ $row->id }}" name="item_id[]">
-
                         </td>
+                    @else
+                        <td></td>
+                    @endif
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
