@@ -45,7 +45,7 @@ class reviewvendorimportlist extends Sximo  {
     public static function getRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
-        $hideUnchanged = 0;
+        $hideUnchanged = $hideOmittedItems = 0;
         extract(array_merge(array(
             'page' => '0',
             'limit' => '0',
@@ -53,6 +53,7 @@ class reviewvendorimportlist extends Sximo  {
             'extraSorts' => [],
             'order' => '',
             'hideUnchanged'=>0,
+            'hideOmittedItems' => 0,
             'params' => '',
             'global' => 1
         ), $args));
@@ -145,6 +146,10 @@ class reviewvendorimportlist extends Sximo  {
 
         if($hideUnchanged == 1){
             $select .= ' AND (is_new = 1 OR is_updated = 1) ';
+        }
+        if($hideOmittedItems == 1){
+
+            $select .= ' AND is_omitted = 0 ';
         }
 
         Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
