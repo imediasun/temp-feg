@@ -59,7 +59,7 @@ class reviewvendorimportlist extends Sximo  {
         ), $args));
 
 
-        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY is_new DESC , is_updated DESC , is_omitted DESC ,  {$sort} {$order} " : ' ORDER BY is_new DESC , is_updated DESC , is_omitted DESC   ';
+        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY is_new DESC , is_updated DESC , is_omitted DESC  " : ' ORDER BY is_new DESC , is_updated DESC , is_omitted DESC   ';
         if (!empty($extraSorts)) {
             if (empty($orderConditional)) {
                 $orderConditional = " ORDER BY ";
