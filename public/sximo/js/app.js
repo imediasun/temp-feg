@@ -1618,8 +1618,10 @@ function unomittItem(Object,selectedList){
                         success: function (response) {
                             $("#selected_vendor").val(selectedList);
                             var vendorId = $('option:selected', $("#selected_vendor")).attr('vendor-id');
-                            var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id=' + vendorId + '&return=&search=vendor_id:equal:' + vendorId + "|is_omitted:equal:1&omit_vendor_list_id=" + selectedList;
-                            reloadData('#product', loadUrl);
+                            // var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id=' + vendorId + '&return=&search=vendor_id:equal:' + vendorId + "|omit_vendor_list_id=" + selectedList;
+                            // reloadData('#product','reviewvendorimportlist/data?product_import_vendor_id=3023&return=&search=vendor_id:equal:3023|import_vendor_id:equal:21')
+                            // reloadData('#product', loadUrl);
+                            $('.btn-search[data-original-title="Reload Data"]').trigger('click');
                             if (response.status == 'error') {
                                 notyMessageError(response.message);
                             } else {
