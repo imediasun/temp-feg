@@ -532,7 +532,22 @@ class ReviewvendorimportlistController extends Controller
 
     public function postOmit(Request $request){
         $importItemIds = $request->input('ids');
-       $this->model->whereIn('id',$importItemIds)->update(['is_omitted'=>1]);
+       $itemRows = $this->model->select('vendor_description','sku','case_price')->whereIn('id',$importItemIds)->get();
+
+foreach($itemRows as $itemRow){
+    $items = $this->model->where([
+        'vendor_description'=>$itemRow->vendor_description,
+        'sku' => $itemRow->sku,
+        'case_price' => $itemRow->case_price,
+    ])->get();
+
+    foreach ($items as $item){
+        $itemToUpdate = $this->model->find($item->id);
+        $itemToUpdate->is_omitted=1;
+        $itemToUpdate->save();
+    }
+}
+
 
         return response()->json(array(
             'status' => 'success',
@@ -543,8 +558,21 @@ class ReviewvendorimportlistController extends Controller
 
     public function postUnomit(Request $request){
         $importItemIds = $request->input('ids');
-        $vendorListId = $request->input('selectedList');
-        $this->model->whereIn('id',$importItemIds)->update(['is_omitted'=>0]);
+        $itemRows = $this->model->select('vendor_description','sku','case_price')->whereIn('id',$importItemIds)->get();
+
+        foreach($itemRows as $itemRow){
+            $items = $this->model->where([
+                'vendor_description'=>$itemRow->vendor_description,
+                'sku' => $itemRow->sku,
+                'case_price' => $itemRow->case_price,
+            ])->get();
+
+            foreach ($items as $item){
+                $itemToUpdate = $this->model->find($item->id);
+                $itemToUpdate->is_omitted = 0;
+                $itemToUpdate->save();
+            }
+        }
 
         return response()->json(array(
             'status' => 'success',
