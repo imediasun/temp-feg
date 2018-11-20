@@ -252,10 +252,9 @@ GROUP BY mapped_expense_category");
             $vendorImportList = self::where('import_vendor_id',$id)->where('is_omitted',0)->where('prod_type_id', 0)->get()->toArray();
             if(count($vendorImportList) > 0)//if product type id of any item is not set.
             {
-                dd($vendorImportList);
                 return response()->json(array(
                     'status' => 'error',
-                    'message' => "Select Product type of all Items."
+                    'message' => "Please select product type of all Items."
                 ));
             }
 
