@@ -405,7 +405,6 @@ class ReviewvendorimportlistController extends Controller
 //            ));
 //        }
 
-
         $parentIds = $request->input('parent_id');
         $prodTypeId = $request->input('prod_type_id');
         $expenseCategory = $request->input('expense_category');
@@ -468,7 +467,8 @@ class ReviewvendorimportlistController extends Controller
                         $data['is_imported'] = 0;
                         $data['imported_by'] = 0;
                         $data['is_omitted'] = $product['is_omitted'];
-
+                        $data['is_updated'] = $product['is_updated'];
+                        $data['is_new'] = $product['is_new'];
                     }
 
                     $itemIds[$i] = $itemIds[$i] == 0 ? null : $itemIds[$i];
