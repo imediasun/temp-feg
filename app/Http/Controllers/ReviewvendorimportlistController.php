@@ -223,6 +223,7 @@ class ReviewvendorimportlistController extends Controller
             'order' => $order,
             'params' => $filter,
             'hideUnchanged'=>$request->input('hideUnchanged',0),
+            'hideOmittedItems' => $request->input('hideOmittedItems',0),
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
@@ -282,6 +283,7 @@ class ReviewvendorimportlistController extends Controller
 
         $this->data['productTypes'] = $this->model->getProductType();
         $this->data['hideUnchanged'] = $request->input('hideUnchanged',0);
+        $this->data['hideOmittedItems'] = $request->input('hideOmittedItems',0);
         $this->data['showOnlyOmitted'] = $request->input('showOnlyOmitted',0);
 // Render into template
         return view('reviewvendorimportlist.table', $this->data);
@@ -530,7 +532,7 @@ class ReviewvendorimportlistController extends Controller
 
     public function postOmit(Request $request){
         $importItemIds = $request->input('ids');
-       $this->model->whereIn('id',$importItemIds)->update(['import_vendor_id'=>null,'is_omitted'=>1]);
+       $this->model->whereIn('id',$importItemIds)->update(['is_omitted'=>1]);
 
         return response()->json(array(
             'status' => 'success',
@@ -542,7 +544,7 @@ class ReviewvendorimportlistController extends Controller
     public function postUnomit(Request $request){
         $importItemIds = $request->input('ids');
         $vendorListId = $request->input('selectedList');
-        $this->model->whereIn('id',$importItemIds)->update(['import_vendor_id'=>$vendorListId,'is_omitted'=>0]);
+        $this->model->whereIn('id',$importItemIds)->update(['is_omitted'=>0]);
 
         return response()->json(array(
             'status' => 'success',
