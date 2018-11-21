@@ -1457,9 +1457,6 @@
                         }
 
                         $("#fedex_number").val(!isCheckedAltShippingAddress ? msg.fedex_number: 'No data');
-                        var freightId = $("#freight_type_id");
-                        freightId.val(msg.freight_id);
-                        freightId.change();
 
                         if(!isCheckedAltShippingAddress)
                             $("#po_1").val(location_id);
