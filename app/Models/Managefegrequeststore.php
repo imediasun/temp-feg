@@ -22,6 +22,9 @@ class managefegrequeststore extends Sximo
     public function location(){
         return $this->belongsTo(location::class);
     }
+    public function vendor(){
+        return $this->belongsTo('App\Models\Vendor');
+    }
     public static function querySelect()
     {
 
