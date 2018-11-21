@@ -121,7 +121,18 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
+				  </div>
+							<div class="form-group  ">
+								<label for="freight_id" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Default Freight Type', (isset($fields['freight_id']['language'])? $fields['freight_id']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									<select name='freight_id' rows='5' id='freight_id' class='select2 '></select>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
 				  <div class="form-group  " > 
 					<label for="Contact Person" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Contact Person', (isset($fields['contact']['language'])? $fields['contact']['language'] : array())) !!}	
@@ -330,9 +341,11 @@
 @endif
 			 
 <script type="text/javascript">
-$(document).ready(function() { 
-	 
-	
+$(document).ready(function() {
+
+	$("#freight_id").jCombo("{{ URL::to('location/comboselect?filter=freight:id:freight_type') }}",
+			{selected_value: '{{ $row["freight_id"] }}'});
+	//freight_id
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
