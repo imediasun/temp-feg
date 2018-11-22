@@ -89,7 +89,7 @@ $orders = array('asc','desc');
         @endif
 	  </div>
 	  </div>
-		<div class="col-md-1 col-sm-12 col-xs-12">
+		<div class="col-md-3 col-sm-12 col-xs-12">
 			<div class="table-actions" style=" padding: 10px 0">
 			@if(!empty($showImportVendorButton))
 					@if(empty($resetOmit))
@@ -99,7 +99,7 @@ $orders = array('asc','desc');
 			</div>
 		</div>
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
-		<div class="col-md-6 col-sm-12 col-xs-12" id="<?php echo $pageModule;?>Paginate">
+		<div class="col-md-4 col-sm-12 col-xs-12" id="<?php echo $pageModule;?>Paginate">
             {!! urldecode($pagination->appends($pager)->render()) !!}
         </div>
         @endif
