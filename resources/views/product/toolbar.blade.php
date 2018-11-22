@@ -33,7 +33,7 @@
                 <select name='vendor_id' id="vendor_import_list" rows='5' class='select3'>
                     <option value="" selected >--- Select Vendor ---</option>
                     @foreach($vendorsList as $vendor)
-                        <option value="{{ $vendor->vendor_id }}" >{{ $vendor->vendor_name }}</option>
+                        <option value="{{ $vendor->id }}" >{{ $vendor->vendor_name }}</option>
                     @endforeach
                 </select>
             </div>
