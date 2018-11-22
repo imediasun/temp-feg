@@ -1450,6 +1450,9 @@ function removeClone(rowId){
 }
 
 function setProductSubTypes(object,row,existingId){
+    if ($(object).val() == ''){
+        return false;
+    }
     var isTypeValid =  checkVariationExistWithType(object);
     if(isTypeValid == false){
 
