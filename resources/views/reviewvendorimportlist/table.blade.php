@@ -272,11 +272,11 @@ $(document).ready(function() {
 
         App.notyConfirm({
             message: "Do you want to further proceed without making any permanent changes?",
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No',
+            confirmButtonText: 'No',
+            cancelButtonText: 'Yes',
             confirm: function () {
-             $('#savelist').trigger('click');
-                reloadData('#product',url);
+//             $('#savelist').trigger('click');
+//                reloadData('#product',url);
             },
             cancel:function(){
 
