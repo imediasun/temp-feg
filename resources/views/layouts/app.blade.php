@@ -53,8 +53,9 @@
 
 		@if($_SERVER['REQUEST_URI']  !== '/ordersetting')
 			@if(!str_contains($_SERVER['REQUEST_URI'], ['module', 'feg/config', 'core', 'feg/tables', 'feg/menu', 'user/profile','holidays', 'preemployment','currentemployees','adpsource','newhires','independentcontractors','terminate','gamemaintenance','trainings', 'shippinggames','inventor','generaltips','trainingmatrials', 'popupblocker', 'privacy-policy','terms-and-conditions','expense-report','coming-soon','delete']) && in_array($pageModule, ['product','locationgroups', 'location']))
-				<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
-			@else
+				{{--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>--}}
+			<script src="{{asset('sximo/js/select2options.js')}}"></script>
+		@else
 				<script type="text/javascript" src="{{ asset('sximo/js/plugins/select2/select2.js') }}"></script>
 			@endif
 		@else
