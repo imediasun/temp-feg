@@ -1454,6 +1454,8 @@ function setProductSubTypes(object,row,existingId){
     if(isTypeValid == false){
 
         $(object).select2('val',null);
+        $(object).val('');
+        $(object).change();
         notyMessageError('A product already exist with the same Product Type');
         return false;
     }
