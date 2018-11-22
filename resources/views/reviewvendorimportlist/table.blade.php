@@ -135,7 +135,7 @@
                                             @endforeach
                                         </select>
                                         @elseif($field['field'] == 'prod_type_id')
-                                         <select required="" style="width: 100%;" name="{{ $field['field'] }}[]" onchange="return setProductSubTypes(this,$('#form-{{ $row->id }}'),'{{ $row->$field['field'] }}');" class="productTypeSelect {{ $field['field'] }}">
+                                         <select required="" style="width: 100%;" name="{{ $field['field'] }}[]" onchange="return setProductSubTypes(this,$('#form-{{ $row->id }}'),'{{ $row->$field['field'] }}');" class="productTypeSelect exclude-from-event {{ $field['field'] }}">
                                          <option value="">--Select--</option>
                                          @foreach($productTypes as $productType)
                                              <option @if($row->$field['field'] == $productType->id) selected @endif value="{{ $productType->id }}">{{ $productType->order_type }}</option>
@@ -276,11 +276,11 @@ $(document).ready(function() {
             cancelButtonText: 'No',
             confirm: function () {
              $('#savelist').trigger('click');
-                reloadData('#{{ $pageModule }}',url);
+                reloadData('#product',url);
             },
             cancel:function(){
 
-                reloadData('#{{ $pageModule }}',url);
+                reloadData('#product',url);
             }
         });
 
