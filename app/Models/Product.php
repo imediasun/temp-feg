@@ -668,17 +668,8 @@ WHERE orders.is_api_visible = 1
 
 
     public function getImportVendors(){
-        $fields = [
-            'import_vendors.id',
-            'import_vendors.vendor_id',
-            'vendor.vendor_name',
-            'import_vendors.email_recieved_at'
-        ];
-        $vendors = vendor::select($fields)
-            ->join('import_vendors','import_vendors.vendor_id','=','vendor.id')
-            ->orderBy('vendor.vendor_name','asc')
-            ->groupBy('import_vendors.vendor_id')
-            ->get();
+
+        $vendors = vendor::where(['ismerch'=> 1, 'status' => 1])->get();
         return $vendors;
     }
 }
