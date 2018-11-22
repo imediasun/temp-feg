@@ -482,8 +482,8 @@ class ReviewvendorimportlistController extends Controller
                 ));
             } else {
                 return response()->json(array(
-                    'status' => 'error',
-                    'message' => \Lang::get('core.note_error')
+                    'status' => 'success',
+                    'message' => \Lang::get('core.note_success')
                 ));
             }
 
