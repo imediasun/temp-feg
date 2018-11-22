@@ -271,11 +271,11 @@ $(document).ready(function() {
             cancelButtonText: 'No',
             confirm: function () {
              $('#savelist').trigger('click');
-                reloadData('#{{ $pageModule }}',url);
+                reloadData('#product',url);
             },
             cancel:function(){
 
-                reloadData('#{{ $pageModule }}',url);
+                reloadData('#product',url);
             }
         });
 
