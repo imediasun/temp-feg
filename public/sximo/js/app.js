@@ -1451,8 +1451,9 @@ $(document).on('change', 'select' ,function () {
     if(pageModule != 'shopfegrequeststore'){
         var nameOfSelectBox = $(this).attr('name');
         var productTypeId = $(this).val();
-        var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type', 'prod_type_id[]']
-        if(productTypeSelectorsNames.indexOf(nameOfSelectBox) != -1){
+        var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type', 'prod_type_id[]'];
+        var excludeClass = $(this).hasClass('exclude-from-event');
+        if(productTypeSelectorsNames.indexOf(nameOfSelectBox) != -1 && !excludeClass){
             var productSubTypeSelectors = [
                 "prod_sub_type_id",
                 "Product_Sub_Type",
