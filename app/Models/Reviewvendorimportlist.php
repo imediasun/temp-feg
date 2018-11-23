@@ -414,7 +414,7 @@ GROUP BY mapped_expense_category");
                 $row->num_items = $updatedFields['item_per_case'];
                 $row->case_price = $updatedFields['case_price'];
                 $row->unit_price = $updatedFields['unit_price'];
-//                $row->is_reserved = in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0;
+                $row->is_reserved = ($updatedFields['reserved_qty'] > 0) ? 1 : 0;
 //                $row->ticket_value = $updatedFields['ticket_value'];
                 $row->reserved_qty = $updatedFields['reserved_qty'];
 
@@ -432,8 +432,10 @@ GROUP BY mapped_expense_category");
 //            $row['is_reserved'] = in_array($updatedFields['is_reserved'], ['YES', 'yes', 'Yes', 1, 'enabled', 'Enabled']) ? 1 : 0;
 //            $row['ticket_value'] = $updatedFields['ticket_value'];
             $row['reserved_qty'] = $updatedFields['reserved_qty'];
+            $row['is_reserved'] = ($updatedFields['reserved_qty'] > 0) ? 1 : 0;
             $row['is_updated'] = 0;
             $row['is_new'] = 1;
+            $row['inactive'] = 1;
             return [$row];
         }
     }

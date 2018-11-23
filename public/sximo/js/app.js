@@ -1970,7 +1970,7 @@ function importVendorProductList(Object) {
 var callOnce = false;
 setInterval(function(){
     callOnce = false;
-},500);
+},100);
 function setValuesToVariations(object){
 
 
