@@ -1976,7 +1976,7 @@ function setValuesToVariations(object){
     if($variationId != ''){
         var selectFeild = $('tr[data-variantId="'+$variationId+'"] td select[name="'+fieldName+'"]');
         var inputFeild = $('tr[data-variantId="'+$variationId+'"] td input[name="'+fieldName+'"]');
-        
+
         if(selectFeild.length >0) {
             selectFeild.select2('val', field.val());
        }
