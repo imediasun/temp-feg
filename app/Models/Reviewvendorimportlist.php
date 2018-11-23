@@ -417,6 +417,7 @@ GROUP BY mapped_expense_category");
                 $row->is_reserved = ($updatedFields['reserved_qty'] > 0) ? 1 : 0;
 //                $row->ticket_value = $updatedFields['ticket_value'];
                 $row->reserved_qty = $updatedFields['reserved_qty'];
+                $row->inactive = 0;
 
             }
             return $rows->toArray();
@@ -435,7 +436,7 @@ GROUP BY mapped_expense_category");
             $row['is_reserved'] = ($updatedFields['reserved_qty'] > 0) ? 1 : 0;
             $row['is_updated'] = 0;
             $row['is_new'] = 1;
-            $row['inactive'] = 1;
+            $row['inactive'] = 0;
             return [$row];
         }
     }

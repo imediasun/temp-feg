@@ -164,8 +164,9 @@
                                          </select>
                                      @elseif(in_array($field['field'],['inactive']))
                                          <select required="" style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2" onchange="setValuesToVariations(this)">
-                                             <option @if($row->$field['field'] == 1) selected @endif value="1">Active</option>
-                                             <option @if($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0') selected @endif value="0">Inactive</option>
+                                             <option @if($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0') selected @endif value="0">Active</option>
+                                             <option @if($row->$field['field'] == 1) selected @endif value="1">Inactive</option>
+
                                          </select>
                                         @elseif(in_array($field['field'],['allow_negative_reserve_qty','in_development','hot_item','exclude_export']))
                                          <select required=""  style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2" onchange="setValuesToVariations(this)">
