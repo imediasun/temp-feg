@@ -263,7 +263,7 @@ GROUP BY mapped_expense_category");
             {
                 return response()->json(array(
                     'status' => 'error',
-                    'message' => "Please select product type of all Items."
+                    'message' => "Please select a product type for each non-omitted item."
                 ));
             }
 
