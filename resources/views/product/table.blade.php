@@ -30,7 +30,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                     @foreach ($simpleSearchForm as $t)
                         <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
                             {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
-                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm,false,'',['isTypeRestrictedExclude'=>(count($productTypeExcludedbyLocation) > 0) ? true : false,'excluded'=>$productTypeExcludedbyLocation]) !!}
                         </div>
                     @endforeach
                     <div class="sscol-submit"><br/>
@@ -91,7 +91,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
 
                     <tbody>
                     @if(($access['is_add'] =='1' || $access['is_edit']=='1' ) && $setting['inline']=='true' )
-                        <tr id="form-0" style="display: none">
+                        <tr id="form-0" style="display: none;">
                             <td> #</td>
                             @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                                 <td></td>
@@ -102,10 +102,18 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                 @if(isset($t['inline']) && $t['inline'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
+                                        @if($t['field'] == 'excluded_locations_and_groups')
+                                                <td data-form="excluded_locations_and_groups" data-form-type="select">
+                                                    <select name="excluded_locations_and_groups[]" class="sel-inline excluded_locations_and_groups" multiple="multiple">
+
+                                                    </select>
+                                                </td>
+                                            @else
                                         <td data-form="{{ $t['field'] }}"
                                             data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
                                             {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
                                         </td>
+                                            @endif
                                     @endif
                                 @endif
                             @endforeach
@@ -131,7 +139,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         @endif product-id="{!! $product_id !!}"
                         onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
                         data-id="{{ $row->id }}"
-                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this); editedProduct('{!! $product_id !!}',this);" @endif @endif>
+                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this); editedProduct('{!! $product_id !!}',this); productExcludedLocationDropDown(this);" @endif @endif>
                         <input type="hidden" name="numberOfItems" value="{{$row->num_items}}"/>
                         <input id="sku-{{ $row->id }}" type="hidden" name="old-sku" value="{{$row->sku}}"/>
                         <input id="vd-{{ $row->id }}" type="hidden" name="old-vd" value="{{$row->vendor_description}}"/>
@@ -363,6 +371,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
     }
 
 $(document).ready(function() {
+    updateDropdownsGroups('excluded_locations_and_groups[]');
 	//$(".sel-search").select2({ width:"100%"});
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
         productId=$(this).data('id');

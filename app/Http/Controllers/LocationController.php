@@ -1,8 +1,11 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEGDBRelationHelpers;
 use App\Models\Core\Users;
 use App\Models\Location;
+use App\Models\Ordertyperestrictions;
+use App\Models\product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -139,6 +142,8 @@ class LocationController extends Controller
             $results['rows'] = $this->model->getRow($id);
             $results['total'] = 1;
         }
+        $results['rows'] = $this->model->setExcludedData($results['rows']);
+
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
 
         // Build pagination setting
@@ -197,9 +202,14 @@ class LocationController extends Controller
 
         if ($row) {
             $row = $row[0];
+            $this->data['alreadyExcludedProductTypes']  =   FEGDBRelationHelpers::getCustomRelationRecords($id, location::class, Ordertyperestrictions::class, 1, true)->lists('ordertyperestrictions_id')->toArray();
+            $this->data['alreadyExcludedProducts']      =   FEGDBRelationHelpers::getCustomRelationRecords($id, location::class, product::class, 1, true)->lists('product_id')->toArray();
         } else {
             $row = $this->model->getColumnTable('location');
         }
+
+        $this->data['productTypes'] = collect(['select_all' => 'Select all'] + Ordertyperestrictions::where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type', 'id')->toArray());
+        $this->data['products']     = collect(['select_all' => 'Select all'] + product::orderBy('vendor_description', 'asc')->groupBy('vendor_description')->groupBy('sku')->groupBy('vendor_id')->groupBy('case_price')->lists('vendor_description', 'id')->toArray());
         $this->data['row'] = $row;
         
         $this->data['setting'] = $this->info['setting'];
@@ -219,6 +229,10 @@ class LocationController extends Controller
         $row = $this->model->getRow($id);
         if ($row) {
             $row = $this->data['row'] = $row[0];
+
+            $location                           =   $this->model->find($id);
+            $this->data['excludedProductTypes'] =   $location->excludedProductTypes()->get();
+            $this->data['excludedProducts']     =   $location->excludedProducts()->get();
         } else {
             $row = $this->data['row'] = $this->model->getColumnTable('location');
         }
@@ -284,8 +298,8 @@ class LocationController extends Controller
                $rules['id'] = 'required';
             }
         }
-        $rules['location_name'] = 'required|regex:/^[-a-zA-Z0-9()\s]+$/';
-        $rules['location_name_short'] = 'required|regex:/^[-a-zA-Z0-9()\s]+$/';
+        $rules['location_name'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
+        $rules['location_name_short'] = 'required|regex:/^[-a-zA-Z0-9\s]+$/';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('location');
@@ -295,8 +309,30 @@ class LocationController extends Controller
             if (empty($newId) || empty($oldId) || $oldId == $newId) {
                 $oldId = null;
             }
-
+            unset($data['product_type_ids']);
+            unset($data['product_ids']);
             $id = $this->model->insertRow($data, $id);
+
+            if($id){
+
+                $product_type_ids   = is_array($request->get('product_type_ids')) ? $request->get('product_type_ids'):[];
+                $product_ids        = is_array($request->get('product_ids')) ? $request->get('product_ids'):[];
+
+                FEGDBRelationHelpers::destroyCustomRelation(Ordertyperestrictions::class, Locationgroups::class, 1, 0, $id);
+                FEGDBRelationHelpers::destroyCustomRelation(product::class, Locationgroups::class, 1, 0, $id);
+
+                foreach ($product_type_ids as $product_type_id){
+                    FEGDBRelationHelpers::insertCustomRelation($product_type_id, $id, Ordertyperestrictions::class, location::class, 1);
+                }
+
+                foreach ($product_ids as $product_id){
+                    $products = product::find($product_id);
+                   $productVariants =  $products->getProductVariations()->pluck('id')->toArray();
+                    foreach($productVariants as $productVariant) {
+                        FEGDBRelationHelpers::insertCustomRelation($productVariant, $id, product::class, location::class, 1);
+                    }
+                }
+            }
 
             // clean orphan user location assignmens
             \SiteHelpers::addLocationToAllLocationUsers();
@@ -332,6 +368,14 @@ class LocationController extends Controller
         }
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
+
+//            $locationIds = $request->input('ids');
+//
+//            foreach ($locationIds as $locationId){
+//                FEGDBRelationHelpers::destroyCustomRelation(location::class, product::class, 1, 0, $locationId);
+//                FEGDBRelationHelpers::destroyCustomRelation(location::class, Ordertyperestrictions::class, 1, 0, $locationId);
+//            }
+
             $this->model->destroy($request->input('ids'));
             
             // clean orphan user location assignmens
@@ -444,4 +488,27 @@ class LocationController extends Controller
         return response()->json(['location_id'=>$locationId,'all_location'=>$allLocations]);
     }
 
+    public function getExcludedProductsAndProductTypes($locationId = null){
+       return FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true,  true);
+    }
+    public function getExcludedProductsAndTypesInline($locationId = 0){
+
+        $products = product::select('id','vendor_description')->orderBy('vendor_description','asc')->groupBy('vendor_description')->groupBy('sku')->groupBy('vendor_id')->groupBy('case_price')->get()->toArray();
+        $productTypes = Ordertyperestrictions::select('id','order_type as product_type')->where('can_request', 1)->orderBy('order_type','asc')->get()->toArray();
+        $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,product::class,1)->pluck('product_id')->toArray();
+        $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,Ordertyperestrictions::class,1)->pluck('ordertyperestrictions_id')->toArray();
+        $excludedData = [
+            'excluded_product_ids' =>$excludedProductIds,
+            'excluded_product_type_ids' => $excludedProductTypeIds
+];
+        $products = view('location.dropdown',['products' => $products,'optionType'=>'products'])->render();
+        $productTypes = view('location.dropdown',['productTypes' => $productTypes,'optionType'=>'productTypes'])->render();
+        $data = [
+            'products' => $products,
+            'productTypes' => $productTypes,
+            'ExcludedData' => $excludedData
+        ];
+        return response()->json($data);
+
+    }
 }

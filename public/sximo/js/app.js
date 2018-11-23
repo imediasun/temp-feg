@@ -199,18 +199,76 @@ App.autoCallbacks.runCallback = function (eventName, params, options) {
     }
 
 };
-
+var callOnce = true;
+var getExcludedProductTypesAndProducts = [];
 App.autoCallbacks.registerCallback('reloaddata', function(params){
     initExport(this);
     //alignColumns(this);
     //initUserPopup(this);
     $(document).scrollTop(0);
+    if(callOnce == true) {
+        getExcludedProductTypesAndProductIds();
+        callOnce = false;
+        setTimeout(function () {
+            callOnce = true;
+        },6000,callOnce);
+    }
 });
+
+App.autoCallbacks.registerCallback('advancedsearch', function(params){
+    excludeProductsAndProductTypes();
+});
+
+App.autoCallbacks.registerCallback('ajaxViewOpened', function(params){
+    setTimeout(function () {
+        excludeProductsAndProductTypes();
+    }, 1000);
+});
+App.autoCallbacks.registerCallback('inline.row.config.after', function(params){
+    setTimeout(function () {
+        excludeProductsAndProductTypes();
+    }, 1000);
+});
+App.autoCallbacks.registerCallback('inline.row.config.after', function(params){
+    if(pageModule == 'shopfegrequeststore' || pageModule == 'order' || pageModule == 'product' || pageModule == 'location' || pageModule == 'locationgroups' || pageModule == 'managefegrequeststore') {
+        setTimeout(function () {
+            excludeProductsAndProductTypes();
+        }, 1000);
+    }
+});
+function getExcludedProductTypesAndProductIds(){
+    $.ajax({
+        url: '/location/get-excluded-products-and-product-types',
+        method: 'GET',
+        success: function (result) {
+            getExcludedProductTypesAndProducts = result;
+            excludeProductsAndProductTypes();
+        }
+    })
+}
+
+function excludeProductsAndProductTypes(){
+    setTimeout(function(){
+         if(pageModule == 'shopfegrequeststore' || pageModule == 'order' || pageModule == 'product' || pageModule == 'location' || pageModule == 'locationgroups' || pageModule == 'managefegrequeststore'){
+            var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type', 'prod_type_id[]'];
+            $.each(productTypeSelectorsNames, function (key, val) {
+
+
+                var selectBox = $('select[name="'+val+'"]');
+                if(selectBox.length != 0){
+
+                    $.each(getExcludedProductTypesAndProducts.excluded_product_type_ids, function(key, val){
+                        selectBox.find('[value="'+val+'"]').remove();
+                    });
+                }
+            })
+         }
+    }, 1000);
+}
 App.autoCallbacks.registerCallback('columnselector', function(params){
 
 });
 App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
-
 });
 
 App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
@@ -628,13 +686,38 @@ function renderDropdown(elements, options) {
     if (elements && elements.length) {
         elements.each(function(i, elm){
             var $elm = $(elm);
+            var attr = $elm.attr('customOption');
+
+            if (typeof attr !== typeof undefined && attr !== false) {
+                loadjscssfile('//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js', 'js')
+                loadjscssfile('//cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css', 'css')
+
+                    options.closeOnSelect = false;
+                    options.allowHtml = true;
+                    options.tags= true;
+            }
+
             if (!$elm.data('select2')) {
                 $elm.select2(options);
             }
         });
     }
 }
-
+function loadjscssfile(filename, filetype){
+    if (filetype=="js"){ //if filename is a external JavaScript file
+        var fileref=document.createElement('script')
+        fileref.setAttribute("type","text/javascript")
+        fileref.setAttribute("src", filename)
+    }
+    else if (filetype=="css"){ //if filename is an external CSS file
+        var fileref=document.createElement("link")
+        fileref.setAttribute("rel", "stylesheet")
+        fileref.setAttribute("type", "text/css")
+        fileref.setAttribute("href", filename)
+    }
+    if (typeof fileref!="undefined")
+        document.getElementsByTagName("head")[0].appendChild(fileref)
+}
 function detectPUAA($) {
     var linksToPage = $(".linkPUAA.linkToCMSPage"),
         linksToModules = $(".linkPUAA"),
@@ -1384,7 +1467,152 @@ $(function(){
     $(document).on("click",".collapse-close,.cancelButton",function(){
         $(document).scrollTop(0);
     });
+if (window.location.href.indexOf('/product') > -1) {
+    $.ajax({
+        url: '/product/location-and-groups',
+        type: 'GET',
+        success: function (response) {
+            var optionHTML = response.groups;
+            optionHTML += response.locations;
+            setTimeout(setExcludeLocationDropdown, 2000, optionHTML);
+        }
+    });
+
+}
+
 });
+var signleAjaxCall = true;
+ function productExcludedLocationDropDown(object) {
+    $('.ajaxLoading').show();
+    if(signleAjaxCall) {
+        signleAjaxCall = false;
+        reinitfield($(object).attr('data-id'));
+        var row = $(object);
+        $.ajax({
+            url: '/product/location-and-groups/' + row.attr('data-id'),
+            type: 'GET',
+            success: function (response) {
+                var optionHTML = '<option value="select_all">Select All</option>'+response.groups;
+                optionHTML += response.locations;
+                var selectedValues = response.selectedValues;
+                setExcludeLocationDropdown(optionHTML, row.attr('data-id'), selectedValues);
+                $('.ajaxLoading').hide();
+                signleAjaxCall = true;
+            }
+        });
+    }
+}
+function reinitfield(id){
+    $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'})
+    $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').change();
+    $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'})
+    $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').change();
+}
+var totalAttempts = 0;
+function setExcludeLocationDropdown(responseHTML,id,selectedValues){
+    totalAttempts = totalAttempts +1;
+    if(id){
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'}).addClass("select2");
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').select2({
+            closeOnSelect: false,
+            width: '100%'
+        });
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').html(responseHTML);
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').change();
+        if(selectedValues.length > 0) {
+            $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').val(selectedValues);
+        }
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').change();
+        return ;
+    }
+    if($('tr#form-0 td[data-form="excluded_locations_and_groups"] select').length > 0){
+        $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').html(responseHTML);
+        $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'})
+        $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').change();
+    }else{
+        if(totalAttempts > 15){
+            return false;
+        }
+        setTimeout(setExcludeLocationDropdown, 2000, responseHTML);
+        //setExcludeLocationDropdown(responseHTML);
+    }
+}
+
+function updateDropdowns(dropdownName){
+    $(document).on("change",'select[name="'+dropdownName+'"]',function(){
+
+        var locationDropdownElm = $(this);
+        var options  = locationDropdownElm.children('option');
+
+        if(this.value == 'select_all'){
+
+            var dropdownValues = [];
+
+            options.each(function () {
+                console.log(this.value);
+                if (this.value != 'select_all'){
+                    dropdownValues.push(Number(this.value));
+                }else {
+                    this.value = 'clear_all';
+                    this.innerText = 'Clear All';
+                    $('.select2-results__options').children().first().html('Clear All');
+                }
+            });
+
+            locationDropdownElm.val(dropdownValues);
+            locationDropdownElm.change();
+
+
+        }
+        if(this.value == 'clear_all'){
+            var dropdownValues = [];
+            options.each(function () {
+                if (this.value == 'clear_all'){
+                    this.value = 'select_all';
+                    this.innerText = 'Select All';
+                    $('.select2-results__options').children().first().html('Select All');
+                }
+            });
+            locationDropdownElm.val(dropdownValues);
+            locationDropdownElm.change();
+
+        }
+    });
+}
+function updateDropdownsGroups(dropdownName){
+    $(document).on("change",'select[name="'+dropdownName+'"]',function(){
+        var prevValue = '';
+        var locationDropdownElm = $(this);
+        var options  = locationDropdownElm.children('optgroup').children('option');
+        var clear = this.value;
+        if(this.value == 'select_all'){
+            var dropdownValues = [];
+            options.each(function () {
+                if (this.value != 'select_all'){
+                    dropdownValues.push(this.value);
+                    locationDropdownElm.children('option').val('clear_all');
+                    locationDropdownElm.children('option').text('Clear All');
+                }else {
+                    prevValue = this.value;
+                    this.value = 'clear_all';
+                    this.innerText = 'Clear All';
+                }
+            });
+            $('.select2-results__options').children().first().html('Clear All');
+            locationDropdownElm.val(dropdownValues);
+            locationDropdownElm.trigger('change');
+        }
+        if(clear == 'clear_all'){
+            var dropdownValues = [];
+                    locationDropdownElm.children('option').val('select_all');
+                    locationDropdownElm.children('option').text('Select All');
+
+            locationDropdownElm.val(dropdownValues);
+            locationDropdownElm.trigger('change');
+            $('.select2-results__options').children().first().html('Select All');
+        }
+    });
+}
 /**
  *
  * @param object
@@ -1748,7 +1976,7 @@ function setValuesToVariations(object){
     if($variationId != ''){
         var selectFeild = $('tr[data-variantId="'+$variationId+'"] td select[name="'+fieldName+'"]');
         var inputFeild = $('tr[data-variantId="'+$variationId+'"] td input[name="'+fieldName+'"]');
-        
+
         if(selectFeild.length >0) {
             selectFeild.select2('val', field.val());
        }

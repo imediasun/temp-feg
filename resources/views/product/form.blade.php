@@ -362,6 +362,19 @@
 
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="Reserved Qty Limit" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Excluded Locations and Groups', (isset($fields['excluded_locations_and_groups']['language'])?
+                            $fields['excluded_locations_and_groups']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <select name='excluded_locations_and_groups[]' data-seprate='true' id='excluded_locations_and_groups' class='select2' multiple></select>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
 
                      <div class="form-group  " >
                         <label for="Img" class=" control-label col-md-4 text-left">
@@ -462,7 +475,6 @@
                 </fieldset>
             </div>
 
-
             <div style="clear:both"></div>
 
             <div class="form-group">
@@ -485,6 +497,31 @@
 
 //
 <script type="text/javascript">
+    $(function(){
+        $('select[name="excluded_locations_and_groups[]"]').attr('multiple','multiple');
+        $('select[name="excluded_locations_and_groups[]"]').change();
+        $.ajax({
+            url: '/product/location-and-groups/{{ $row['id'] }}',
+            type: 'GET',
+            success: function (response) {
+                var optionHTML = '<option value="select_all">Select All</option>'+response.groups;
+                optionHTML +=response.locations;
+                var selectedValues = response.selectedValues;
+
+                $('select[name="excluded_locations_and_groups[]"]').attr('multiple','multiple');
+                $('select[name="excluded_locations_and_groups[]"]').select2({
+                    width: '100%',
+                    closeOnSelect: false
+                });
+                $('select[name="excluded_locations_and_groups[]"]').html(optionHTML);
+                $('select[name="excluded_locations_and_groups[]"]').change();
+                $('select[name="excluded_locations_and_groups[]"]').val(selectedValues).change();
+                updateDropdownsGroups("excluded_locations_and_groups[]");
+                            }
+        });
+
+    });
+
     var types_counter = 1;
     $(document).ready(function () {
 
@@ -509,8 +546,8 @@
         $("#expense_category_1").jCombo("{{ URL::to('product/expense-category-groups') }}",
                 {selected_value: '{{ $row["expense_category"] }}'});
         /*$("#prod_type_id_1").click(function () {
-            $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id_1').val()+"",
-                    {selected_value: '{{ $row["prod_sub_type_id"] }}'});
+            $("#prod_sub_type_id_1").jCombo("&parent=request_type_id:"+$('#prod_type_id_1').val()+"",
+                    {selected_value: ''});
             if($(this).val()) {
                 //need to uncomment after discussion
                 getExpenseCategory($(this).val(),null,1);
@@ -750,16 +787,21 @@
         //console.log(more_types_html);
         $("#more_types_container").append(more_types_html);
 
-        $("#prod_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}");
+        excludedProductTypes = '{!! $excludedProductTypes !!}';
+        excludedProductTypes = $.parseJSON('[' + excludedProductTypes + ']');
+
+        $("#prod_type_id_"+types_counter).jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}", {excludeItems: excludedProductTypes});
         $("#expense_category_"+types_counter).jCombo("{{ URL::to('product/expense-category-groups') }}");
-        renderDropdown($(".select2"), {width: "100%"});
+        $("#prod_type_id_"+types_counter).select2({width: "100%"});
+        $("#expense_category_"+types_counter).select2({width: "100%"});
+        $("#prod_sub_type_id_"+types_counter).select2({width: "100%"});
+        // renderDropdown($(".select2"), {width: "100%"});
         <?php $NETSUITE_PRODUCT_MAX_LENGTH = config('app.NETSUITE_PRODUCT_MAX_LENGTH'); ?>
       <?php if($NETSUITE_PRODUCT_MAX_LENGTH !=''){ ?>
         if(types_counter >= Number(<?php echo $NETSUITE_PRODUCT_MAX_LENGTH; ?>)){
             $(this).hide();
         }
         <?php } ?>
-
         console.log('debug');
         console.log(types_counter);
     });
