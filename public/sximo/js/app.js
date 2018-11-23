@@ -1967,12 +1967,21 @@ function importVendorProductList(Object) {
     }
 
 }
-
+var callOnce = false;
+setInterval(function(){
+    callOnce = false;
+},500);
 function setValuesToVariations(object){
+
+
+    if(callOnce == true){
+        return false;
+    }
+    callOnce = true;
     var field = $(object);
     var fieldName = field.attr('name');
     var $row = field.closest("tr");
-    var $variationId = $row.attr("data-variantId")
+    var $variationId = $row.attr("data-variantId");
     if($variationId != ''){
         var selectFeild = $('tr[data-variantId="'+$variationId+'"] td select[name="'+fieldName+'"]');
         var inputFeild = $('tr[data-variantId="'+$variationId+'"] td input[name="'+fieldName+'"]');
