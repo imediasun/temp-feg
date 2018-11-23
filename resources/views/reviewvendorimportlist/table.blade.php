@@ -145,9 +145,15 @@
                                          <input type="text" name="{{ $field['field'] }}[]" value="{{ CurrencyHelpers::formatPrice($row->$field['field'],5,false) }}" class="form-control" style="width: 100%;" onkeyup="setValuesToVariations(this)">
                                      @elseif($field['field'] == 'ticket_value')
                                          <input type="text" name="{{ $field['field'] }}[]" value="{{ $row->$field['field'] }}" class="form-control" style="width: 100%;" onkeyup="setValuesToVariations(this)">
+
                                      @elseif($field['field'] == 'reserved_qty')
                                          <input type="text" name="{{ $field['field'] }}[]" value="{{ $row->$field['field'] }}" class="form-control" style="width: 100%;" onkeyup="setValuesToVariations(this)">
 
+                                     @elseif(in_array($field['field'],['is_reserved']))
+                                         <select required=""  style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2" onchange="setValuesToVariations(this)">
+                                             <option @if($row->$field['field'] == 1 && $row->reserved_qty >0 ) selected @endif value="1">Yes</option>
+                                             <option @if(($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0') && $row->reserved_qty < 0) selected @endif value="0">No</option>
+                                         </select>
 
                                      @elseif($field['field'] == 'prod_sub_type_id')
                                          <select required="" name="{{ $field['field'] }}[]" style="width: 100%;" class="select3 select2 {{ $field['field'] }}">
@@ -161,7 +167,7 @@
                                              <option @if($row->$field['field'] == 1) selected @endif value="1">Active</option>
                                              <option @if($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0') selected @endif value="0">Inactive</option>
                                          </select>
-                                        @elseif(in_array($field['field'],['is_reserved','allow_negative_reserve_qty','in_development','hot_item','exclude_export']))
+                                        @elseif(in_array($field['field'],['allow_negative_reserve_qty','in_development','hot_item','exclude_export']))
                                          <select required=""  style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2" onchange="setValuesToVariations(this)">
                                              <option @if($row->$field['field'] == 1) selected @endif value="1">Yes</option>
                                              <option @if($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0') selected @endif value="0">No</option>
