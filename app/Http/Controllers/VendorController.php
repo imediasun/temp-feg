@@ -501,7 +501,7 @@ class VendorController extends Controller
     {
         $row = $this->getVendor($id);
         
-        if($row->email == '' || $row->email_2 == ''){
+        if($row->email == '' && $row->email_2 == ''){
             return response()->json(array(
                 'status' => 'error',
                 'message' => 'Vendor Email does not exist.'
