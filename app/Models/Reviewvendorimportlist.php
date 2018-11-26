@@ -187,15 +187,16 @@ FROM vendor_import_products  ";
     public function getImportVendors($vendorId){
         $fields = [
             'import_vendors.id',
-        'import_vendors.vendor_id',
+            'import_vendors.vendor_id',
             'vendor.vendor_name',
             'import_vendors.email_recieved_at'
         ];
         $vendors = vendor::select($fields)
             ->join('import_vendors','import_vendors.vendor_id','=','vendor.id')
-            ->orderBy('vendor.vendor_name','asc')
+            ->orderBy('import_vendors.email_recieved_at','desc')
             ->where('import_vendors.is_imported','=','0')->get();
-    return $vendors;
+        
+        return $vendors;
     }
 
     public function getExpenseCategoryGroups(){

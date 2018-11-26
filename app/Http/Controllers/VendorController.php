@@ -516,7 +516,7 @@ class VendorController extends Controller
 //            dd($response);
             return response()->json(array(
                 'status' => 'success',
-                'message' => 'Mail send successfully.'
+                'message' => 'Mail sent successfully.'
             ));
         }else{
             return response()->json(array(

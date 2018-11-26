@@ -264,6 +264,14 @@ class ReviewvendorimportlistController extends Controller
         $this->data['product_import_vendor_id'] = $request->input('product_import_vendor_id');
         $this->data['importVendorListId'] = 0;
         $this->data['vendors_list'] = $this->model->getImportVendors($request->input('product_import_vendor_id'));
+//        dd($this->data['vendors_list']);
+        foreach ($this->data['vendors_list'] as $vendorImportList){
+            if($vendorImportList->vendor_id == $request->input('product_import_vendor_id')){
+                $this->data['importVendorListId'] = $vendorImportList->id;
+            }
+            break;
+        }
+
         if (!empty($this->data['rowData'])) {
             $this->data['importVendorListId'] = $this->data['rowData']['0']->import_vendor_id;
         }
