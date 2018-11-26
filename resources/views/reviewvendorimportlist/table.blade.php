@@ -3,7 +3,7 @@
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> Review Vendor Import List </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#product','reviewvendorimportlist/data?product_import_vendor_id={{ $product_import_vendor_id }}&search=import_vendor_id:equal:0|is_omitted:equal:0')"><i class="fa fa-trash-o"></i> Clear Search </a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#product','reviewvendorimportlist/data?product_import_vendor_id={{ $product_import_vendor_id }}&clearSearch=1&search=import_vendor_id:equal:0|is_omitted:equal:0')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#product','reviewvendorimportlist/data?product_import_vendor_id={{ $product_import_vendor_id }}&return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/product') }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>

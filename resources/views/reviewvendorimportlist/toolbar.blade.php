@@ -5,7 +5,7 @@
         <select class="select3 selected_vendor" id="selected_vendor" style="width:60%;">
             <option value="0">--Select--</option>
             @foreach($vendors_list as $vendor)
-                <option vendor-id="{{ $vendor->vendor_id }}" @if($importVendorListId == $vendor->id) @if(empty($resetOmit)) selected @endif  @endif value="{{ $vendor->id }}">{{ $vendor->vendor_name.'  '.date('m/d/Y h:i a',strtotime($vendor->email_recieved_at)) }}</option>
+                <option vendor-id="{{ $vendor->vendor_id }}" @if($importVendorListId == $vendor->id && $clearSearch == 0) @if(empty($resetOmit)) selected @endif  @endif value="{{ $vendor->id }}">{{ $vendor->vendor_name.'  '.date('m/d/Y h:i a',strtotime($vendor->email_recieved_at)) }}</option>
             @endforeach
         </select>
     </div>
