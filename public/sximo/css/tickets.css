@@ -474,3 +474,11 @@ img.notAnUser {
 #servicerequestsView .file_pathUpl input, #servicerequestsView .attachmentInputs input {
     margin-left: 0;
 }
+
+.headerThumbnail[data-ticket-type="Advance Request"],
+.headerThumbnail[data-ticket-type="Parts Approval"],
+.headerThumbnail[data-ticket-type="Repair Request"],
+.headerThumbnail[data-ticket-type="Troubleshooting Assistance"]{
+    background-color: #ddd;
+    padding: 0px 10px;
+}

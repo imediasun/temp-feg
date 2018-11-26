@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Models\SbTicketsTroubleshootingCheckList;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Observers\Observerable;
@@ -12,6 +13,22 @@ class Servicerequests extends Observerable  {
     protected $table = 'sb_tickets';
     protected $primaryKey = 'TicketID';
     public $timestamps = false;
+    public $hideGridFieldsTab1 = [
+        'functionality_id',
+        'issue_type_id',
+        'game_realted_date',
+        'part_number',
+        'cost',
+        'qty',
+    ];
+    public $hideGridFieldsTab2 = [
+        'issue_type',
+        'functionality_id',
+        'game_realted_date',
+        'part_number',
+        'cost',
+        'qty',
+    ];
     
     public function __construct() {
         parent::__construct();
@@ -323,4 +340,50 @@ class Servicerequests extends Observerable  {
 
         return $fields;
         }
+
+        public function getGames($locationId = 0){
+           return game::select('game.id','game_title.game_title')->join('game_title','game.game_title_id','=','game_title.id')->where('game.location_id',$locationId)->get();
+        }
+
+    public function displayFieldsByType($tableGrid, $type)
+    {
+
+        $updatedGrid = [];
+
+        foreach ($tableGrid as $item) {
+            if (in_array($item['field'], $this->hideGridFieldsTab1) && $type == 'debit-card-related') {
+                $item['view'] = 0;
+            }elseif(in_array($item['field'], $this->hideGridFieldsTab2) && $type == 'game-related'){
+                $item['view'] = 0;
+            }
+            $updatedGrid[] = $item;
+        }
+        return $updatedGrid;
+    }
+
+    public function saveTroubleshootingChecklist($checkList = [],$ticketId){
+    $sbTicketsTroubleshootingCheckList = new SbTicketsTroubleshootingCheckList();
+        $removeItems = $sbTicketsTroubleshootingCheckList->where('sb_ticket_id',$ticketId)->delete();
+        foreach ($checkList as $item){
+            $data = ['sb_ticket_id'=>$ticketId,'troubleshooting_check_list_id'=>$item];
+            $sbTicketsTroubleshootingCheckList->insertRow($data,null);
+        }
+
+    }
+    public function prepareDataforGameEmail($data = []){
+        $game_id = $data['game_id'];
+        $game = game::find($game_id);
+        $gameTitle = Gamestitle::find($game->game_title_id);
+        $data['game']['game_id'] = $game_id;
+        $data['game']['game_title'] = $gameTitle->game_title;
+
+        $data['location'] = location::find($data['location_id']);
+        $data['issue_type'] = IssueType::find($data['issue_type_id'])->issue_type_name;
+        $data['functionality'] = GameFunctionality::find($data['functionality_id'])->functionality_name;
+        if(!empty($data['shipping_priority_id'])) {
+            $data['shipping_priority'] = ShippingPriority::find($data['shipping_priority_id'])->priority_name;
+        }
+        return $data;
+    }
+
 }

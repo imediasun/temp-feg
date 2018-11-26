@@ -1,4 +1,4 @@
-
+{{--*/      use App\Library\FEG\System\FEGSystemHelper;                   /*--}}
 <style>
     .form-group{
         position: static !important;
@@ -19,36 +19,135 @@
 
     <div class="sbox-content">
         @endif
-        {!! Form::open(array('url'=>'servicerequests/save/'.$row['TicketID'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
+        {!! Form::open(array('url'=>'servicerequests/save-game-related/'.$row['TicketID'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 
         <input type="hidden" name='assign_to' value="{{ $row['assign_to']}}">
         <input type="hidden" name='entry_by' value="{{ $entryBy }}">
         <div class="col-md-12 clearfix p-lg-f">
             <fieldset>
-                <div class="form-group  " >
-                    <label for="Subject" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}
-                    </label>
+                <div class="row">
                     <div class="col-md-6">
-                        {!! Form::text('Subject', $row['Subject'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
+                <div class="form-group  " >
+                    <label for="Location" class=" control-label col-md-4 text-left">
+                        {!! SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}
+                    </label>
+                    <div class="col-md-8">
+                        <select name='location_id' rows='5' id='location_id' class='select2 ' required  ></select>
                     </div>
-                    <div class="col-md-2"></div>
+
                 </div>
-                <div class="form-group  " >
-                    <label for="Description" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Description', (isset($fields['Description']['language'])? $fields['Description']['language'] : array())) !!}
-                    </label>
+                    </div>
                     <div class="col-md-6">
+                <div class="form-group  " >
+                    <label for="Game" class=" control-label col-md-3 text-left">
+                        {!! SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}
+                    </label>
+                    <div class="col-md-9">
+                        <select name='game_id' rows='5' id='game_id' class='select2 ' required  ></select>
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                <div class="form-group  " >
+                    <label for="Functionality" class=" control-label col-md-4 text-left">
+                        {!! SiteHelpers::activeLang('Functionality', (isset($fields['functionality_id']['language'])? $fields['functionality_id']['language'] : array())) !!}
+                    </label>
+                    <div class="col-md-8">
+                        <select name='functionality_id' rows='5'   class='select2 ' required >
+                            <option value="">Select Game Functionality</option>
+                            @foreach($game_functionalities as $gameFunctionality)
+                                <option @if(!empty($row->functionality_id)) @if($row->functionality_id == $gameFunctionality->id) selected @endif @endif  value ='{{ $gameFunctionality->id }}'>{{ $gameFunctionality->functionalty_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group  " >
+                            <label for="Issue Type" class=" control-label col-md-3 text-left">
+                                {!! SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type_id']['language'])? $fields['issue_type_id']['language'] : array())) !!}
+                            </label>
+                            <div class="col-md-9">
+                                <select name='issue_type_id' rows='5'   class='select2 ' required >
+                                    <option value="">Select Issue Type</option>
+                                    @foreach($game_related_issue_types as $gameRelatedIssueType)
+                                        <option @if(!empty($row->issue_type_id)) @if($row->issue_type_id == $gameRelatedIssueType->id) selected @endif @endif value ='{{ $gameRelatedIssueType->id }}'>{{ $gameRelatedIssueType->issue_type_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                <div class="form-group  " >
+                    <label for="Date" class=" control-label col-md-2 text-left">
+                        {!! SiteHelpers::activeLang('Date', (isset($fields['game_realted_date']['language'])? $fields['game_realted_date']['language'] : array())) !!}
+                    </label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" readonly required value="{{ !empty($row->game_realted_date) ?  date('m / d / Y',strtotime($row->game_realted_date)) : date('m / d / Y')}}" name="game_realted_date">
+                    </div>
+                </div>
+                </div>
+                    <div class="col-md-12">
+                        <div class="form-group" >
+                            <label for="Service Request Title" class="control-label col-md-2 text-left">
+                                {!! SiteHelpers::activeLang('Service Request Title', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}
+                            </label>
+                            <div class="col-md-10">
+                                {!! Form::text('Subject', $row['Subject'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group  " >
+                            <label for="Description" class=" control-label col-md-2 text-left">
+                                {!! SiteHelpers::activeLang('Troubleshooting Description', (isset($fields['Description']['language'])? $fields['Description']['language'] : array())) !!}
+                            </label>
+                            <div class="col-md-10">
 					  <textarea name='Description' rows='5' id='Description' class='form-control '
-                                required  >{{ $row['Description'] }}</textarea>
+                                required  placeholder="Actions taken before opening game service request. Please provide concise and detailed information!">{{ $row['Description'] }}</textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-2"></div>
                 </div>
+
+                <div class="row">
+
+                    <div class="col-md-12">
                 <div class="form-group  " >
-                    <label for="Status" class=" control-label col-md-4 text-left">
+                    <label for="Description" class=" control-label col-md-2 text-left">
+                        {!! SiteHelpers::activeLang('Troubleshooting Checklist', (isset($fields['troubleshootchecklist']['language'])? $fields['troubleshootchecklist']['language'] : array())) !!}
+                    </label>
+                    <div class="col-md-10">
+                        <div class="row">
+                        <?php $index = 0 ?>
+                        <div class="col-md-6">
+                        @foreach($troubleshootingCheckLists as $troubleshootingCheckList)
+                            <?php $index++ ?>
+                            @if($index == 7)
+                                </div>
+                        <div class="col-md-6">
+                                @endif
+					<input type="checkbox" name="troubleshootchecklist[]" @if(in_array($troubleshootingCheckList->id,$savedCheckList)) checked @endif id="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}" value="{{ $troubleshootingCheckList->id }}"> <label style="vertical-align: middle; width: 90%; font-size: 12px; white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;" for="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}">{{ $troubleshootingCheckList->check_list_name }}</label><br /><br />
+                        @endforeach
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+
+                <div class="row">
+                    <div style="display: none; visibility: hidden;" class="col-md-6">
+                <div class="form-group  " >
+                    <label for="Status" class=" control-label col-md-3 text-left">
                         {!! SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) !!}
                     </label>
-                    <div class="col-md-6">
+                    <div class="col-md-9">
                         @if($isAdd || !$canChangeStatus)
                         <input type='hidden' name='oldStatus' value='{{ $status }}' />
                         <input type='hidden' name='Status' value='{{ empty($status) ? 'open' : $status }}' />
@@ -64,91 +163,72 @@
                         </select>
                         @endif
                     </div>
-                    <div class="col-md-2"></div>
                 </div>
+                    </div>
+                    <div class="col-md-6">
                 <div class="form-group  " >
-                    <label for="Issue Type" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type']['language'])? $fields['issue_type']['language'] : array())) !!}
+                    <label for="Part Number" class=" control-label col-md-3 text-left">
+                        {!! SiteHelpers::activeLang('Part Number', (isset($fields['part_number']['language'])? $fields['part_number']['language'] : array())) !!}
                     </label>
-                    <div class="col-md-6">
-                        <select name='issue_type' rows='5'   class='select2 ' required >
-                            <option value="">Select Issue Type</option>
-                            @foreach($issueTypeOptions as $key=>$val)
-                            <option  value ='{{ $key }}'
-                                     @if($issueType == $key) selected='selected' @endif
-                            >{{ $val }}</option>
-                            @endforeach
-                        </select>
+                    <div class="col-md-9">
+                    <input type="text" name="part_number" value="{{ $row->part_number }}" class="form-control">
                     </div>
-                    <div class="col-md-2"></div>
                 </div>
-                <div class="form-group  " >
-                    <label for="Location" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}
-                    </label>
+        </div>
                     <div class="col-md-6">
-                        <select name='location_id' rows='5' id='location_id' class='select2 ' required  ></select>
-                    </div>
-                    <div class="col-md-2"></div>
-                </div>
-                <div class="form-group  " style="display:none" >
-                    <label for="Game" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}
-                    </label>
-                    <div class="col-md-6">
-                        <select name='game_id' rows='5' id='game_id' class='select2 '   ></select>
-                    </div>
-                    <div class="col-md-2"></div>
-                </div>
-                <div class="form-group  " style="display:none" >
-                    <label for="Department" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) !!}
-                    </label>
-                    <div class="col-md-6">
-                        <select name='department_id' rows='5' id='department_id' class='select2 '   ></select>
-                    </div>
-                    <div class="col-md-2"></div>
-                </div>
-
-                <div class="form-group  " style="display:none" >
-                    <label for="Assign To" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}
-                    </label>
-                    <div class="col-md-6">
-                        <select name='assign_to[]' multiple  id='assign_to' class='select2 '  ></select>
-                    </div>
-                    <div class="col-md-2"></div>
-                </div>
-                <div class="form-group  " >
-                    <label for="phone" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Best Phone Number to Contact Me', (isset($fields['phone']['language'])? $fields['phone']['language'] : array())) !!}
-                    </label>
-                    <div class="col-md-6">
-                        {!! Form::text('phone', $row['phone'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
-                        <ul id="parsley-8881212123219" class="parsley-error-list" style="display: none;">
-                            <li class="required" style="display: list-item;">Please enter valid phone number</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-2"></div>
-                </div>
-                <div class="form-group  " >
-                    <label for="Date Needed" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
-                    </label>
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-addon datepickerHandleButton" style="width: 32px;"><i class="fa fa-calendar" id="icon"></i></span>
-                            {!! Form::text('need_by_date', $needByDate, array('class'=>'form-control date', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
+                        <div class="form-group">
+                            <label for="Costs" class=" control-label col-md-3 text-left">
+                                {!! SiteHelpers::activeLang('Costs', (isset($fields['cost']['language'])? $fields['cost']['language'] : array())) !!}
+                            </label>
+                            <div class="col-md-9">
+                            <div class="input-group ig-full">
+                                <span class="input-group-addon" style="padding: 8px 20px 8px 10px;">$</span>
+                                <input type="number" step="1" placeholder="0.00" value="{{ $row->cost }}" name="cost" style="width: 91%;" class="form-control">
+                            </div>
+                                </div>
                         </div>
                     </div>
-                    <div class="col-md-2"></div>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-6">
+                <div class="form-group" >
+                    <label for="Quantity" class=" control-label col-md-3 text-left">
+                        {!! SiteHelpers::activeLang('Quantity', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) !!}
+                    </label>
+                    <div class="col-md-9">
+                        <input type="number" name="qty" step="1" value="{{ $row->qty }}" class="form-control" >
+                    </div>
+                </div>
+                    </div>
+                    <div class="col-md-6">
+                <div class="form-group  "  >
+                    <label for="Shipping Priority" class=" control-label col-md-3 text-left">
+                        {!! SiteHelpers::activeLang('Shipping Priority', (isset($fields['shipping_priority_id']['language'])? $fields['shipping_priority_id']['language'] : array())) !!}
+                    </label>
+                    <div class="col-md-9">
+                        <select name='shipping_priority_id' rows='5' id='shipping_priority_id' class='select2'>
+                            <option value="">--Select Shipping Priority--</option>
+                           @foreach($shippingPriorities as $shippingPriority)
+
+                                <option @if($shippingPriority->id == $row->shipping_priority_id) selected @endif value="{{ $shippingPriority->id }}">{{ $shippingPriority->priority_name }}</option>
+
+                               @endforeach
+
+                        </select>
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-12">
                 <div class="form-group clearfix" >
-                    <label for="Attach File" class=" control-label col-md-4 text-left">
+                    <label for="Attach File" class=" control-label col-md-3 text-left">
                         {!! SiteHelpers::activeLang('Attach File', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}
                     </label>
-                    <div class="col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-md-10 col-sm-10 col-xs-12">
                         <div class="file_pathUpl">
                             <input  type='file' name='file_path[]'  />
                         </div>
@@ -166,6 +246,9 @@
                         </ul>
                     </div>
                 </div>
+                    </div>
+                </div>
+
             </fieldset>
         </div>
 
@@ -173,7 +256,6 @@
         {!! Form::hidden('Created', $row['Created']) !!}
         {!! Form::hidden('department_id', $row->department_id) !!}
         {!! Form::hidden('assign_to', $row->assign_to) !!}
-        {!! Form::hidden('game_id', $row->game_id) !!}
         @endif
 
         <div class="form-group clearfix">
@@ -194,8 +276,27 @@
 
         $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
             {  selected_value : '{{ $locationId }}','initial-text': "Select Location" ,
-                <?php $locationId == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$locationId." , 'Location', 'active' , 'id|location_name' )") ?>
+                <?php $locationId == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$locationId." , 'Location', 'active' , 'id | location_name' )") ?>
             });
+$(document).on('change','#location_id',function(){
+   var locationId = $(this).val();
+        $.ajax({
+            url:'/servicerequests/location-games',
+            data:{location_id:locationId},
+            type:"GET",
+            success:function(response){
+                if(response.status == 'error'){
+                    notyMessageError(response.message);
+                }else{
+
+                    $("#game_id").html(response.gameOptions).change();
+                    @if(!empty($row->game_id))
+                    $("#game_id").val({{ $row->game_id }}).change();
+                    @endif
+                }
+            }
+        });
+});
 
         $('.datepickerHandleButton').click(function(){
             $("#my-datepicker").datepicker().focus();
@@ -238,30 +339,11 @@
             $(this).parent('div').empty();
             return false;
         });
-        function validatePhone() {
-            var phone_pattern = /^((\+)?[1-9]{1,2})?([-\s\.])?((\(\d{1,4}\))|\d{1,4})(([-\s\.])?[0-9]{1,12}){1,2}$/;
-            var phone = $("input[name=phone]").val();
-            var digits = phone.replace(/[^0-9]/g,"").length;
-            var alphabets = phone.replace(/[^a-zA-Z]/g,"").length;
-            var valid =(phone_pattern.test( phone ) && digits >= 10 && alphabets == 0 );
-            if(valid)
-            {
-                $("#parsley-8881212123219").hide()
-            }
-            else if(phone.length > 0)
-            {
-                $("#parsley-8881212123219").show()
-            }
-            return valid;
-        }
-        $("input[name=phone]").keyup(function () {
-            validatePhone()
-        });
+
         var form = $('#sbticketFormAjax');
         form.parsley();
         form.submit(function(){
-            var valid = validatePhone();
-            if(form.parsley('isValid') == true && valid){
+            if(form.parsley('isValid') == true ){
                 var options = {
                     dataType:      'json',
                     beforeSubmit :  showRequest,

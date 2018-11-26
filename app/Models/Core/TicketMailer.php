@@ -14,11 +14,12 @@ class TicketMailer
             $ticketData = $data['ticket'];
             $ticketId = $data['ticketId'];
             $message = $data['message'];
+            $ticketType = !empty($data['ticket_type']) ? $data['ticket_type']:'debit-card-related';
             $skipUsers = isset($data['skipUsers']) ? $data['skipUsers'] : [];
             $locationId = $ticketData['location_id'];
             $isFirstNotification = $type == 'FirstEmail';
             
-            $followers = $this->getTicketFollowers($ticketId, $locationId);
+            $followers = $this->getTicketFollowers($ticketId, $locationId,'',$ticketType);
             if (!empty($skipUsers)) {
                 $followers = array_diff($followers, $skipUsers);
             }
@@ -30,7 +31,8 @@ class TicketMailer
                     $firstFollowers = array_diff($firstFollowers, $skipUsers);
                 }                
                 $emails['bcc'] = $this->getFollowersEmails($firstFollowers, $locationId);
-            }           
+            }
+
             $this->sendTicketNotification($ticketId, $message, $emails, $ticketData);
         }
         
@@ -97,8 +99,8 @@ class TicketMailer
         $emails = Ticketfollowers::getDefaultFollowers($locationId, true, true);
         return array_diff(array_unique($emails), ['', null]);
     }
-    protected function getTicketFollowers($ticketId, $locationId = null, $type = '') {
-        $emails = Ticketfollowers::getAllFollowers($ticketId, $locationId, $type == 'FirstEmail');
+    protected function getTicketFollowers($ticketId, $locationId = null, $type = '',$ticketType) {
+        $emails = Ticketfollowers::getAllFollowers($ticketId, $locationId, $type == 'FirstEmail',$ticketType);
         return array_diff(array_unique($emails), ['', null]);
     }
     protected function getFollowersEmails($followerIDs = array(), $locationId = null) {

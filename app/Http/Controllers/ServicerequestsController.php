@@ -1,12 +1,20 @@
 <?php namespace App\Http\Controllers;
 
+use App\GameFunctionality;
 use App\Http\Controllers\controller;
+use App\Models\game;
+use App\Models\Gamestitle;
+use App\Models\IssueType;
+use App\Models\location;
+use App\Models\SbTicketsTroubleshootingCheckList;
 use App\Models\Servicerequests;
 use App\Models\servicerequestsSetting;
+use App\Models\ShippingPriority;
 use App\Models\Ticketcomment;
 use App\Models\Ticketfollowers;
 use App\Models\ticketsetting;
 use App\Models\Core\TicketMailer;
+use App\Models\TroubleshootingCheckList;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Session;
@@ -315,7 +323,7 @@ class servicerequestsController extends Controller
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
-
+        $this->data['tableGrid'] = $this->model->displayFieldsByType($this->data['tableGrid'],$this->data['ticketType']);
         // Render into template
         return view('servicerequests.table', $this->data);
 
@@ -362,29 +370,28 @@ class servicerequestsController extends Controller
         $this->data['filePaths'] = explode(",", $row['file_path']);        
         $this->data['entryBy'] = $isAdd ? $userId : $row['entry_by'];
         $this->data['locationId'] = $isAdd ? \Session::get('selected_location') : $row['location_id'];
+        $this->data['games'] = $this->model->getGames();
+        $this->data['game_related_issue_types'] = IssueType::isActive()->orderBy('issue_type_name','asc')->get();
+        $this->data['game_functionalities'] = \App\Models\GameFunctionality::isActive()->orderBy('functionalty_name','asc')->get();
+        $this->data['troubleshootingCheckLists'] = TroubleshootingCheckList::isActive()->orderBy('check_list_name','asc')->get();
+        $this->data['shippingPriorities'] = ShippingPriority::isActive()->orderBy('priority_name')->get();
+        $this->data['savedCheckList'] = SbTicketsTroubleshootingCheckList::where('sb_ticket_id',$id)->get()->pluck('troubleshooting_check_list_id')->toArray();
 
-        /*$this->data['priorityOptions'] = array(
-                                                'normal' => 'Normal',
-                                                'urgent' => 'Urgent'
-                                                );*/
-        /*foreach( $this->data['priorityOptions'] as $p_keys =>$p_values){
-            if($p_keys=="sameday" || strtolower($p_keys)=="urgent"){
-                unset($this->data['priorityOptions'][$p_keys]);
-                $this->data['priorityOptions']['urgent']="URGENT";
-
-            }
-
-        }*/
         return view('servicerequests.'.$view, $this->data);
     }
 
-    public function getShow($id = null)
+    public function getShow(Request $request,$id = null)
     {
+
+        $ticketType = $request->input('ticket_type','debit-card-related');
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $row = $this->model->find($id);
+        if($ticketType == 'game-related'){
+            $row->issue_type = IssueType::find($row->issue_type_id)->issue_type_name;
+        }
         $assign_employee_ids = explode(',', $row->assign_to);
         $assign_employee_names = array();
 
@@ -399,7 +406,18 @@ class servicerequestsController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
         }
-        
+        $row->shipping_priroty ='';
+        if(!empty($row->shipping_priority_id)){
+            $row->shipping_priroty = ShippingPriority::find($row->shipping_priority_id)->priority_name;
+        }
+        $row->issue_type ='';
+        if(!empty($row->issue_type_id)){
+            $row->issue_type = IssueType::find($row->issue_type_id)->issue_type_name;
+        }
+        $row->functionality ='';
+        if(!empty($row->functionality_id)){
+            $row->functionality = \App\Models\GameFunctionality::find($row->functionality_id)->functionalty_name;
+        }
         $comments = Ticketcomment::getCommentsWithUserData($id);
         $this->data['comments'] = $comments;
 
@@ -409,7 +427,7 @@ class servicerequestsController extends Controller
         $this->data['uid'] = $userId;
         $this->data['fid'] = \Session::get('fid');
         $this->data['creator'] = $creator = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
-        $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
+        $this->data['following'] = Ticketfollowers::isFollowing($id, $userId,'',$ticketType);
         $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
         $this->data['setting'] = $this->info['setting'];
         $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
@@ -428,7 +446,11 @@ class servicerequestsController extends Controller
         $this->data['updatedOn'] = \DateHelpers::formatDate($row->updated);
         $this->data['updatedOnWithTime'] = \DateHelpers::formatDateCustom($row->updated);
         $this->data['locationName'] = \SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name');
-
+        if(!empty($row->game_id)) {
+            $gameTitleId = game::find($row->game_id)->game_title_id;
+            $gameTitle = Gamestitle::find($gameTitleId)->game_title;
+            $this->data['gameName'] = $row->game_id." | ".$gameTitle;
+        }
         $this->data['creatorID'] = $row->entry_by;
         $this->data['creatorProfile'] = $creatorProfile = FEGSystemHelper::getUserProfileDetails($creator);
 
@@ -437,8 +459,11 @@ class servicerequestsController extends Controller
         $this->data['creatorTooltip'] = $creatorProfile['tooltip'];
 
         $this->data['myUserAvatar'] = FEGSystemHelper::getUserAvatarUrl($userId);
-        $this->data['myUserTooltip'] = "You";        
-        
+        $this->data['myUserTooltip'] = "You";
+
+        $this->data['savedCheckList'] = SbTicketsTroubleshootingCheckList::where('sb_ticket_id',$id)->get()->pluck('troubleshooting_check_list_id')->toArray();
+        $this->data['troubleshootingCheckList'] = TroubleshootingCheckList::all();
+        $this->data['ticketType'] = $ticketType;
         
         return view('servicerequests.view', $this->data);
     }
@@ -1020,5 +1045,119 @@ class servicerequestsController extends Controller
         $this->data['individuals'] = $individuals;
         $this->data['access'] = $this->access;
         return view('servicerequests.setting', $this->data);
+    }
+    public function getLocationGames(Request $request){
+        $locationId = $request->input('location_id',0);
+        if($locationId > 0){
+            $locationGames = $this->model->getGames($locationId);
+            $locationGamesOptions = view('servicerequests.dropdowns.games',['games'=>$locationGames])->render();
+            return response()->json(['gameOptions'=>$locationGamesOptions,'status' => 'success']);
+        }else{
+            return response()->json(array(
+                'message' => 'Error',
+                'status' => 'error'
+            ));
+        }
+    }
+
+    function postSaveGameRelated(Request $request, $id = NULL)
+    {
+        $date = date("Y-m-d");
+        //$data['need_by_date'] = date('Y-m-d');
+        //$rules = $this->validateForm();
+        $isAdd = empty($id);
+        $rules = $this->validateForm();
+        unset($rules['department_id']);
+        //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
+        //unset($rules['debit_card']);
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+            $data = $this->validatePost('sb_tickets', !empty($id));
+            $data = $this->validateDates($data);
+            $data['game_realted_date']= date("Y-m-d H:i:s", strtotime(str_replace(" ","",$request->get('game_realted_date'))));
+            $data['shipping_priority_id'] = $request->input('shipping_priority_id',0);
+            $data['Status'] = $request->get('Status');
+            $oldStatus = $request->get('oldStatus');
+            $data['ticket_type'] = 'game-related';
+            if (!$isAdd) {
+                if (!ticketsetting::canUserChangeStatus()) {
+                    unset($data['Status']);
+                    unset($data['closed']);
+                }
+                if(isset($data['Status'])) {
+                    if ($data['Status'] == "closed") {
+                        if ($oldStatus != 'closed') {
+                            $data['closed'] = date('Y-m-d H:i:s');
+                        }
+                    }
+                    else {
+                        $data['closed'] = null;
+                    }
+                }
+            }
+            else {
+                $data['Created'] = date('Y-m-d H:i:s');
+            }
+
+            unset($data['oldStatus']);
+            $id = $this->model->insertRow($data, $id);
+            $troubleshootingchecklist = $request->has('troubleshootchecklist') ? $request->input('troubleshootchecklist'):[];
+            $this->model->saveTroubleshootingChecklist($troubleshootingchecklist,$id);
+
+            $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
+            if (!empty($files['file_path'])) {
+                if ($isAdd) {
+                    $data['file_path'] = $files['file_path'];
+                }
+                else {
+                    $oldFiles = $data['file_path'];
+                    if (empty($oldFiles)) {
+                        $data['file_path'] = $files['file_path'];
+                    }
+                    else {
+                        $data['file_path'] .= ','.$files['file_path'];
+                    }
+                }
+
+                $data['_base_file_path'] = $files['_base_file_path'];
+
+                $this->model->where('TicketID', $id)
+                    ->update(['file_path' => $data['file_path']]);
+            }
+
+            $data = $this->model->prepareDataforGameEmail($data);
+
+            if($isAdd){
+                Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
+                $message = '';
+                $message .= \View::make('servicerequests.email.game-related-email', [
+                    'data'=>$data,
+                    'savedCheckList' => $troubleshootingchecklist,
+                    'checkList' => TroubleshootingCheckList::all(),
+                    'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($id)."&ticket_type=game-related",
+                ])->render();
+
+                $this->model->notifyObserver('FirstEmail',[
+                    "message"       =>$message,
+                    "ticketId"      => $id,
+                    'ticket'        => $data,
+                    'ticket_type' => 'game-related'
+                ]);
+            }
+
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
+
+        } else {
+
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));
+        }
+
     }
 }
