@@ -212,6 +212,8 @@
 	<div style="margin:100px 0; text-align:center;">
         @if(!empty($message))
             <p class='centralMessage'>{{ $message }}</p>
+        @elseif($setRecent == 1)
+            <p class='centralMessage'> Loading data ... </p>
         @else
             <p class='centralMessage'> No Record Found </p>
         @endif
