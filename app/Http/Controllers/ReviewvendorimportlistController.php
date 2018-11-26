@@ -295,6 +295,7 @@ class ReviewvendorimportlistController extends Controller
         $this->data['hideOmittedItems'] = $request->input('hideOmittedItems',0);
         $this->data['showOnlyOmitted'] = $request->input('showOnlyOmitted',0);
         $this->data['clearSearch'] = $request->input('clearSearch',0);
+        $this->data['setRecent'] = $request->input('setRecent',0);
 // Render into template
         return view('reviewvendorimportlist.table', $this->data);
 
