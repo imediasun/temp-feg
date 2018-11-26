@@ -268,8 +268,9 @@ class ReviewvendorimportlistController extends Controller
         foreach ($this->data['vendors_list'] as $vendorImportList){
             if($vendorImportList->vendor_id == $request->input('product_import_vendor_id')){
                 $this->data['importVendorListId'] = $vendorImportList->id;
+                break;
             }
-            break;
+
         }
 
         if (!empty($this->data['rowData'])) {
