@@ -67,7 +67,7 @@ class VendorProductsImportHelper
             $content .= '<td> '. ($product->num_items) . '</td>';
             $content .= '<td> '. ($product->case_price) . '</td>';
             $content .= '<td> '. ($product->unit_price) . '</td>';
-            $content .= '<td> '. ((int)$product->reserved_qty) . '</td>';
+            $content .= '<td> '. (number_format($product->reserved_qty)) . '</td>';
             $content .= '</tr>';
         }
         if (!empty($AddNote)){
