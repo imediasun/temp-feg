@@ -86,22 +86,22 @@ class Ticketfollowers extends Model {
             }
         }            
     }    
-    public static function isFollowing($ticketId, $userId = null, $custom = '') {
+    public static function isFollowing($ticketId, $userId = null, $custom = '',$ticketType) {
         if (empty($userId)) {
             $userId = \Session::get('uid');
         } 
         
-        $allFollowers = self::getAllFollowers($ticketId);
+        $allFollowers = self::getAllFollowers($ticketId,null,false,$ticketType);
         $isFollower = in_array($userId, $allFollowers);
         
         return $isFollower;
     }   
     
-    public static function getAllFollowers($ticketId, $location = null, $includeNewTicketOnlyFollowers = false) {
+    public static function getAllFollowers($ticketId, $location = null, $includeNewTicketOnlyFollowers = false,$ticketType = 'debit-card-related') {
         if (empty($location)) {
             $location = \App\Models\Servicerequests::where('TicketId', $ticketId)->pluck('location_id');
         }
-        $default = self::getDefaultFollowers($location, $includeNewTicketOnlyFollowers);
+        $default = self::getDefaultFollowers($location, $includeNewTicketOnlyFollowers,false,$ticketType);
         $others = self::getRecordedFollowersUnFollowers($ticketId);
         
         $recordedFollowers = $others['followers'];
@@ -183,8 +183,8 @@ class Ticketfollowers extends Model {
         }
         return $unfollowers;        
     }    
-    public static function getDefaultFollowers($location = null, $includeNewTicketOnlyFollowers = false, $onlyFirstFollowers = false) {
-        $settings = ticketsetting::getSettings();
+    public static function getDefaultFollowers($location = null, $includeNewTicketOnlyFollowers = false, $onlyFirstFollowers = false,$ticketType) {
+        $settings = ticketsetting::getSettings($ticketType);
         $userGroups = '';
         $individuals = '';
         

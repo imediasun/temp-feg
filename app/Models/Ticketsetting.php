@@ -27,8 +27,8 @@ class ticketsetting extends Sximo  {
 		return "  ";
 	}
     
-    public static function getSettings() {
-        return self::first()->toArray();
+    public static function getSettings($ticketType = 'debit-card-related') {
+        return self::where('setting_type',$ticketType)->first()->toArray();
     }
 
 	public static function getUserPermissions($id = null){
