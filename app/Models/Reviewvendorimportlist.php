@@ -310,14 +310,28 @@ GROUP BY mapped_expense_category");
             $query->where('email',$fromEmail);
             $query->orWhere('email_2',$fromEmail);
         })->get();
-        return $vendor->count() > 0 ? true:false;
+        return $vendor->count();
     }
-    public function importExlAttachment($dataArray = []){
+
+    public function getVendorById($vendorId){
+        $vendor = vendor::find($vendorId);
+        return $vendor;
+    }
+    
+    public function importExlAttachment($dataArray = [], $vendorCount){
       $fromEmail = $dataArray['from_email'];
-      $vendor = vendor::select("id")->where(function ($query) use($fromEmail){
-          $query->where('email',$fromEmail);
-          $query->orWhere('email_2',$fromEmail);
-      })->first();
+        $vendor = '';
+        //if email id exist against single vendor
+        if($vendorCount == 1){
+            $vendor = vendor::select("id")->where(function ($query) use($fromEmail){
+                $query->where('email',$fromEmail);
+                $query->orWhere('email_2',$fromEmail);
+            })->first();
+        }else{//If multiple vendors exist with same email id.
+            $vendorId = $dataArray['vendor_id'];
+            $vendor = vendor::find($vendorId);
+        }
+      
         if($vendor) {
             $data = [
                 'vendor_id' => $vendor->id, 'email_recieved_at' => date('Y-m-d H:i:s', strtotime($dataArray['email_received_at'])), 'created_at' => date('Y-m-d H:i:s'),

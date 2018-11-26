@@ -104,7 +104,10 @@ class VendorImportProduct extends Command
                         'attachments' =>$attachments['attachments'],
                     ];
                     $reviewVendorImportList = new reviewvendorimportlist();
-                    if($reviewVendorImportList->isVendorExist($fromEmail)) {
+                    $vendorCount = $reviewVendorImportList->isVendorExist($fromEmail);
+
+                    if($vendorCount > 0) {
+
                         foreach ($attachments['attachments'] as $attachment) {
                             $fileData = \SiteHelpers::getVendorFileImportData($attachment);
                             $duplicateItems = $this->checkDuplicateItems($fileData);
@@ -116,7 +119,31 @@ class VendorImportProduct extends Command
                                 return true;
                             }
                         }
-                        $reviewVendorImportList->importExlAttachment($data);
+                        //if email id exist against single vendor
+                        if($vendorCount == 1){
+                            $reviewVendorImportList->importExlAttachment($data, $vendorCount);
+
+                        }else{//If multiple vendors exist with same email id.
+
+                            /* get information specific to this email */
+                            $overview = imap_fetch_overview($inbox, $email_number, 0);
+
+                            //Parse subject to find vendor id
+                            $subject = $overview[0]->subject;
+                            $vendorId = str_replace("]","",substr($subject, strpos($subject, "#") + 1));
+                            $vendor = $reviewVendorImportList->getVendorById($vendorId);
+                            if(!$vendor){
+                                $L->log(' Vendor Id does not exist.');
+                                $subject = '[System Error] Email subject does not contain vendor ID.';
+                                $message = 'We found that your email is associated with multiple vendors. To correctly associate list with vendor, you must provide vendor ID in email subject like [Vendor Product List #xxxx] (replace xxxx with vendor ID).';
+                                $this->sendVendorEmailNotification($subject,$message,$fromEmail);
+                            }else{
+                                $L->log(' Vendor Id: '.$vendorId);
+                                $data['vendor_id'] =  $vendorId;
+                                $reviewVendorImportList->importExlAttachment($data, $vendorCount);
+                            }
+                        }
+
                     }else{
 
                     }
