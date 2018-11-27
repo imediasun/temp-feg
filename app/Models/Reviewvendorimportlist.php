@@ -344,7 +344,8 @@ GROUP BY mapped_expense_category");
 
                 if (!empty($fileData)) {
                     foreach ($fileData as $item) {
-
+                        $item['id'] = $item['product_id'];
+                        unset($item['product_id']);
                         if ($item['id'] > 0 && !empty($item['id'])) {
                             $productRows = $this->findProducts($item['id'], $item, $vendorListId);
                             $this->saveProductList($productRows, $vendor->id);

@@ -3061,7 +3061,7 @@ class SiteHelpers
             $internalRow = [];
             foreach ($row as $key => $value){
                 if(!empty(trim($key))) {
-                    if(in_array($key,['id','ticket_value','reserved_qty','item_per_case'])){
+                    if(in_array($key,['product_id','ticket_value','reserved_qty','item_per_case'])){
                         $value = (int) $value;
                     }
                     if ($key =='sku'){
