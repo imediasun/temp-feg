@@ -35,9 +35,13 @@ class Servicerequests extends Observerable  {
     ];
     public $tab2FieldLabels = [
         'fields'=>[
-        'Description'
+        'Description',
+            'Subject',
         ],
-        'labels'=>[],
+        'labels'=>[
+            'Description'=>'Troubleshooting Description',
+            'Subject'=>'Service Request Title',
+        ],
     ];
     public function __construct() {
         parent::__construct();
@@ -364,6 +368,11 @@ class Servicerequests extends Observerable  {
                 $item['view'] = 0;
             }elseif(in_array($item['field'], $this->hideGridFieldsTab2) && $type == 'game-related'){
                 $item['view'] = 0;
+            }
+            if ($type == 'game-related'){
+                if(in_array($item['field'],$this->tab2FieldLabels['fields'])){
+                $item['label'] = $this->tab2FieldLabels['labels'][$item['field']];
+                }
             }
             $updatedGrid[] = $item;
         }
