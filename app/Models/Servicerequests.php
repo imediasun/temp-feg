@@ -21,6 +21,7 @@ class Servicerequests extends Observerable  {
         'part_number',
         'cost',
         'qty',
+        'updated',
     ];
     public $hideGridFieldsTab2 = [
         'issue_type',
