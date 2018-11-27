@@ -5,10 +5,10 @@
 
         <div class="sbox-tools">
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips clearSearchButton" title="Clear Search"
-               onclick="reloadData('#{{ $pageModule }}','servicerequests/data?search=')"><i class="fa fa-trash-o"></i> Clear
+               onclick="reloadData('#{{ $pageModule }}','servicerequests/data?search=&ticket_type={{$ticketType}}')"><i class="fa fa-trash-o"></i> Clear
                 Search </a>
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips reloadDataButton" title="Reload Data"
-               onclick="reloadData('#{{ $pageModule }}','servicerequests/data?return={{ $return.'&ticket_type='.$ticketType }}')"><i
+               onclick="reloadData('#{{ $pageModule }}','servicerequests/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
             @if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
