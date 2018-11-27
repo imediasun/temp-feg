@@ -17,7 +17,6 @@ class AddNewColumnintickets6 extends Migration
             $table->integer('issue_type_id')->default(0);
             $table->timestamp('game_realted_date')->nullable();
             $table->string('part_number')->nullable();
-            $table->integer('issue_type_id')->default(0);
             $table->decimal('cost',10,5)->default(0);
             $table->integer('qty')->default(0);
         });
