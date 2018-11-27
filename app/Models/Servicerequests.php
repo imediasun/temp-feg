@@ -29,6 +29,7 @@ class Servicerequests extends Observerable  {
         'part_number',
         'cost',
         'qty',
+        'debit_type',
         'need_by_date',
     ];
     public $tab2FieldLabels = [
