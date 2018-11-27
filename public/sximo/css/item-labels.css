@@ -1,0 +1,17 @@
+.item-label{
+    background: #ccc;
+    display: inline-block;
+    margin: 0 15px 15px 0;
+    padding: 5px 10px;
+    position: relative;
+}
+
+.item-label:after{
+    display: block;
+    content: " ";
+    position: absolute;
+    right: -30px;
+    top: 0;
+    border: 15px solid transparent;
+    border-left: 15px solid #ccc;
+}

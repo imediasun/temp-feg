@@ -6,6 +6,7 @@ use App\Models\location;
 use App\Models\Ordertyperestrictions;
 use App\Models\Product;
 use App\Models\ProductType;
+use App\Models\UserFavoriteProduct;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -1266,9 +1267,9 @@ class ProductController extends Controller
         $isActive = $request->get('isActive');
         $productId = $request->get('productId');
         if ($isActive == "true") {
-            $update = \DB::update('update products set inactive = 1, inactive_by = ' . Auth::user()->id . ' where id=' . $productId);
+            $update = \DB::update('update products set activated_at = null, inactive = 1, inactive_by = ' . Auth::user()->id . ' where id=' . $productId);
         } else {
-            $update = \DB::update('update products set inactive = 0, in_development = 0, inactive_by = NULL where id=' . $productId);
+            $update = \DB::update('update products set activated_at = NOW(), inactive = 0, in_development = 0, inactive_by = NULL where id=' . $productId);
         }
         if ($update) {
             return response()->json(array(
@@ -1453,6 +1454,29 @@ GROUP BY mapped_expense_category");
         return response()->json(array(
             'status' => 'success',
             'barcode'=>$barCode,
+        ));
+    }
+    public function postFavorite(Request $request){
+        $message = '';
+        $productId = $request->product_id;
+        if($request->isfavorite == 1){
+            $data = [
+                'user_id' => Session::get('uid'),
+                'location_id' => Session::get('selected_location'),
+                'product_id' => $productId,
+            ];
+            $userFavoriteProduct = new UserFavoriteProduct();
+            $userFavoriteProduct->insertRow($data,0);
+            $message = \Lang::get('core.note_success');
+        }
+        if ($request->isfavorite == 0){
+            UserFavoriteProduct::where('user_id' , Session::get('uid'))->where('product_id', $productId)->delete();
+            $message = \Lang::get('core.note_success_delete');
+
+        }
+        return response()->json(array(
+            'status' => 'success',
+            'message' => $message
         ));
     }
     public function getLocationAndGroups(Request $request,$id = 0){

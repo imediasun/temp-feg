@@ -67,7 +67,8 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                     $colIsSorted = $colIsSortable && $colField == $sortBy;
                                     $colClass = $colIsSortable ? ' dgcsortable' : '';
                                     $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
-                                    $th = '<th' .
+                                    $extaColumn = ($colField == 'img') ? '':'';
+                                    $th = $extaColumn.'<th' .
                                             ' class="' . $colClass . '"' .
                                             ' data-field="' . $colField . '"' .
                                             ' data-sortable="' . $colIsSortable . '"' .
@@ -163,12 +164,15 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
+                            @if($field['field']=='img')
+
+                                @endif
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                 @if($field['field']=='img')
                                     <?php
-                                    echo SiteHelpers::showUploadedFile($value, '/uploads/products/', 50, false, $row->id)
+                                     echo SiteHelpers::showUploadedFile($value, '/uploads/products/', 50, false, $row->id);
                                     ?>
                                 @elseif($field['field']=='details')
 
@@ -187,7 +191,15 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
 										 	echo $value;
 										 }
 										 ?>
-									 @elseif($field['field']=='is_default_expense_category')
+                                @elseif($field['field']=='vendor_description')
+                               <!--    {{--@if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes') <span class="label label-danger">Hot</span> @endif--}}
+                                  {{--@if($row->is_new > 0)  <span class="label label-primary">New</span> @endif--}}
+                                  {{--@if($row->is_backinstock > 0)  <span class="label label-default">Back in Stock</span> @endif--}}
+                                       {{--@if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes' || $row->is_new > 0 || $row->is_backinstock > 0)   <br /> @endif--}}
+                                   -->
+                                    {!! $value !!}
+
+                                @elseif($field['field']=='is_default_expense_category')
 
 										 <input type='checkbox' name="mycheckbox" @if($value == 'Yes') checked
 												@endif data-field="is_default_expense_category" data-size="mini"

@@ -1501,6 +1501,51 @@ if (window.location.href.indexOf('/product') > -1) {
 
 }
 
+
+
+    /*$(document).on('mouseover','.favoriteItem',function(){
+       var element = $(this);
+        if(element.hasClass('fa-star-o')){
+            element.removeClass('fa-star-o');
+        }
+            element.addClass('fa-star');
+    });
+
+    $(document).on('mouseleave','.favoriteItem',function(){
+        var element = $(this);
+        if(element.hasClass('fa-star')){
+            element.removeClass('fa-star');
+        }
+        element.addClass('fa-star-o');
+    });*/
+    $(document).on('click','.favoriteItem',function(){
+        $(".ajaxLoading").show();
+        var element = $(this);
+        if (Number(element.attr('isfavorite')) == 0) {
+            if (element.hasClass('fa-star-o')) {
+                element.removeClass('fa-star-o');
+                element.addClass('fa-star');
+                element.attr('isfavorite', 1);
+            }
+        } else {
+            if (element.hasClass('fa-star')) {
+                element.removeClass('fa-star');
+                element.addClass('fa-star-o');
+                element.attr('isfavorite', 0);
+            }
+        }
+        $.ajax({
+            type:"POST",
+            url:"product/favorite",
+            data:{product_id:element.attr('id'),isfavorite:element.attr('isfavorite')},
+            success:function(response){
+                $(".ajaxLoading").hide();
+                console.log(response);
+                notyMessage(response.message);
+            }
+        });
+
+    });
 });
 var signleAjaxCall = true;
  function productExcludedLocationDropDown(object) {
@@ -1667,3 +1712,4 @@ function updateDropdownsGroups(dropdownName){
         }
     });
 }
+
