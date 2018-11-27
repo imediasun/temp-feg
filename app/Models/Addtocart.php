@@ -372,27 +372,55 @@ FROM requests
         if(!is_array($productIds)){
             $productIds = [$productIds];
         }
+        sort($productIds);
+        $productIds = array_values($productIds);
 
         $column = [
-            'requests.id',
             'requests.product_id',
-            'products.vendor_description',
-            \DB::raw('products.reserved_qty - requests.qty as remainingQTY'),
-            \DB::raw('products.reserved_qty  as productQty'),
             \DB::raw('requests.qty as requestedQTY'),
-            'requests.request_user_id',
-            'requests.location_id'
         ];
         $requests = $this->select($column)->
         join('products', 'products.id', '=', 'requests.product_id')
+            ->groupBy("requests.product_id")
             ->whereIn("requests.product_id", $productIds)
-            ->where("requests.status_id", 4)
+            ->whereIn("requests.status_id", [4])
             ->where("requests.request_user_id", \Session::get('uid'))
             ->where("requests.location_id", \Session::get('selected_location'))
             ->where('products.allow_negative_reserve_qty', '=', 0)
             ->where('products.is_reserved', '=', 1)
-            ->having('remainingQTY', '<', 0)
-            ->get();
-        return $requests;
+            ->lists('requestedQTY', "requests.product_id");
+        $requestedObjects = $requests;
+
+
+        $requestsArray = [];
+
+        foreach($requestedObjects as $productId=>$requestedQTY){
+            $column = [
+                'requests.id',
+                'requests.product_id',
+                'products.vendor_description',
+                \DB::raw('CONVERT((products.reserved_qty - requests.qty), SIGNED INTEGER) as remainingQTY'),
+                \DB::raw('products.reserved_qty  as productQty'),
+                \DB::raw('requests.qty as alreadyRequestedQTY'),
+                'requests.request_user_id',
+                'requests.location_id'
+            ];
+            $requestss = $this->select($column)->
+            join('products', 'products.id', '=', 'requests.product_id')
+                ->groupBy("requests.product_id")
+                ->where("requests.product_id", $productId)
+                ->where("requests.status_id", 1)
+                ->where("requests.location_id", \Session::get('selected_location'))
+                ->where('products.allow_negative_reserve_qty', '=', 0)
+                ->where('products.is_reserved', '=', 1)
+                ->having('remainingQTY', '<', $requestedQTY);
+
+            if($requestss->first()){
+                $requestsArray[] = $requestss->first();
+            }
+        }
+
+        $requestsArray = collect($requestsArray);
+        return $requestsArray;
     }
 }
