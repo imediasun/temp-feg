@@ -197,7 +197,7 @@
                         {!! SiteHelpers::activeLang('Quantity', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) !!}
                     </label>
                     <div class="col-md-9">
-                        <input type="number" name="qty" step="1" value="{{ $row['qty'] }}" class="form-control" >
+                        <input type="number" name="qty" step="1" min="0" minlength="0" value="{{ $row['qty'] }}" class="form-control" >
                     </div>
                 </div>
                     </div>
