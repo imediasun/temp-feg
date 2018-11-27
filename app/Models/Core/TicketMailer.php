@@ -10,7 +10,7 @@ class TicketMailer
         
         $actions = ["AddComment", "FirstEmail"];
         if (in_array($type, $actions)) {
-            
+
             $ticketData = $data['ticket'];
             $ticketId = $data['ticketId'];
             $message = $data['message'];
@@ -18,6 +18,10 @@ class TicketMailer
             $skipUsers = isset($data['skipUsers']) ? $data['skipUsers'] : [];
             $locationId = $ticketData['location_id'];
             $isFirstNotification = $type == 'FirstEmail';
+            $gameRelatedSubject = '';
+            if($ticketData['ticket_type'] == 'game-related' && !empty($ticketData['game'])){
+                $gameRelatedSubject = " ".$ticketData['game']['game_id']." | ".$ticketData['game']['game_title'].", ";
+            }
             
             $followers = $this->getTicketFollowers($ticketId, $locationId,'',$ticketType);
             if (!empty($skipUsers)) {
@@ -26,19 +30,19 @@ class TicketMailer
             $emails['to'] = $this->getFollowersEmails($followers, $locationId);
             $emails['bcc'] = [];
             if ($isFirstNotification) {
-                $firstFollowers = $this->getTicketInitialFollowers($locationId);
+                $firstFollowers = $this->getTicketInitialFollowers($locationId,$ticketType);
                 if (!empty($skipUsers)) {
                     $firstFollowers = array_diff($firstFollowers, $skipUsers);
                 }                
                 $emails['bcc'] = $this->getFollowersEmails($firstFollowers, $locationId);
             }
 
-            $this->sendTicketNotification($ticketId, $message, $emails, $ticketData);
+            $this->sendTicketNotification($ticketId, $message, $emails, $ticketData,$gameRelatedSubject);
         }
         
     }
 
-    protected function sendTicketNotification($ticketId, $message, $users, $data)
+    protected function sendTicketNotification($ticketId, $message, $users, $data,$gameRelatedSubject)
     {
         // $assigneesTo = $assigneesTo = \DB::select("select users.email FROM users WHERE users.id IN (" . $assignTo . ")");
         $title = @$data['Subject'];
@@ -52,7 +56,7 @@ class TicketMailer
         $reply_to   ='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
         /* FEG-2003 Comment out Priority field from Service Requests */
        /* $subject    = "$locationName, $title, [".(strtolower($priority)=="urgent" ? strtoupper($priority):$priority)."][Service Request #{$ticketId}] $createdOn" ;*/
-        $subject    = "$locationName, $title, [Service Request #{$ticketId}] $createdOn" ;
+        $subject    = "$locationName,$gameRelatedSubject $title, [Service Request #{$ticketId}] $createdOn" ;
 //        $headers    = 'MIME-Version: 1.0' . "\r\n";
 //        $headers   .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 //        $headers   .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
@@ -95,8 +99,8 @@ class TicketMailer
 //        }
     }
  
-    protected function getTicketInitialFollowers($locationId = null) {
-        $emails = Ticketfollowers::getDefaultFollowers($locationId, true, true);
+    protected function getTicketInitialFollowers($locationId = null,$ticketType) {
+        $emails = Ticketfollowers::getDefaultFollowers($locationId, true, true,$ticketType);
         return array_diff(array_unique($emails), ['', null]);
     }
     protected function getTicketFollowers($ticketId, $locationId = null, $type = '',$ticketType) {

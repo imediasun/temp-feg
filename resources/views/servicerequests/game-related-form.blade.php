@@ -59,7 +59,7 @@
                         <select name='functionality_id' rows='5'   class='select2 ' required >
                             <option value="">Select Game Functionality</option>
                             @foreach($game_functionalities as $gameFunctionality)
-                                <option @if(!empty($row->functionality_id)) @if($row->functionality_id == $gameFunctionality->id) selected @endif @endif  value ='{{ $gameFunctionality->id }}'>{{ $gameFunctionality->functionalty_name }}</option>
+                                <option @if(!empty($row['functionality_id'])) @if($row['functionality_id'] == $gameFunctionality->id) selected @endif @endif  value ='{{ $gameFunctionality->id }}'>{{ $gameFunctionality->functionalty_name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -74,7 +74,7 @@
                                 <select name='issue_type_id' rows='5'   class='select2 ' required >
                                     <option value="">Select Issue Type</option>
                                     @foreach($game_related_issue_types as $gameRelatedIssueType)
-                                        <option @if(!empty($row->issue_type_id)) @if($row->issue_type_id == $gameRelatedIssueType->id) selected @endif @endif value ='{{ $gameRelatedIssueType->id }}'>{{ $gameRelatedIssueType->issue_type_name }}</option>
+                                        <option @if(!empty($row['issue_type_id'])) @if($row['issue_type_id'] == $gameRelatedIssueType->id) selected @endif @endif value ='{{ $gameRelatedIssueType->id }}'>{{ $gameRelatedIssueType->issue_type_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -86,7 +86,7 @@
                         {!! SiteHelpers::activeLang('Date', (isset($fields['game_realted_date']['language'])? $fields['game_realted_date']['language'] : array())) !!}
                     </label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" readonly required value="{{ !empty($row->game_realted_date) ?  date('m / d / Y',strtotime($row->game_realted_date)) : date('m / d / Y')}}" name="game_realted_date">
+                        <input type="text" class="form-control" readonly required value="{{ !empty($row['game_realted_date']) ?  date('m / d / Y',strtotime($row['game_realted_date'])) : date('m / d / Y')}}" name="game_realted_date">
                     </div>
                 </div>
                 </div>
@@ -171,7 +171,7 @@
                         {!! SiteHelpers::activeLang('Part Number', (isset($fields['part_number']['language'])? $fields['part_number']['language'] : array())) !!}
                     </label>
                     <div class="col-md-9">
-                    <input type="text" name="part_number" value="{{ $row->part_number }}" class="form-control">
+                    <input type="text" name="part_number" value="{{ $row['part_number'] }}" class="form-control">
                     </div>
                 </div>
         </div>
@@ -183,7 +183,7 @@
                             <div class="col-md-9">
                             <div class="input-group ig-full">
                                 <span class="input-group-addon" style="padding: 8px 20px 8px 10px;">$</span>
-                                <input type="number" step="1" placeholder="0.00" value="{{ $row->cost }}" name="cost" style="width: 91%;" class="form-control">
+                                <input type="number" step="1" placeholder="0.00" value="{{ $row['cost'] }}" name="cost" style="width: 91%;" class="form-control">
                             </div>
                                 </div>
                         </div>
@@ -197,7 +197,7 @@
                         {!! SiteHelpers::activeLang('Quantity', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) !!}
                     </label>
                     <div class="col-md-9">
-                        <input type="number" name="qty" step="1" value="{{ $row->qty }}" class="form-control" >
+                        <input type="number" name="qty" step="1" value="{{ $row['qty'] }}" class="form-control" >
                     </div>
                 </div>
                     </div>
@@ -211,7 +211,7 @@
                             <option value="">--Select Shipping Priority--</option>
                            @foreach($shippingPriorities as $shippingPriority)
 
-                                <option @if($shippingPriority->id == $row->shipping_priority_id) selected @endif value="{{ $shippingPriority->id }}">{{ $shippingPriority->priority_name }}</option>
+                                <option @if($shippingPriority->id == $row['shipping_priority_id']) selected @endif value="{{ $shippingPriority->id }}">{{ $shippingPriority->priority_name }}</option>
 
                                @endforeach
 
@@ -254,8 +254,8 @@
 
         @if (!$isAdd)
         {!! Form::hidden('Created', $row['Created']) !!}
-        {!! Form::hidden('department_id', $row->department_id) !!}
-        {!! Form::hidden('assign_to', $row->assign_to) !!}
+        {!! Form::hidden('department_id', $row['department_id']) !!}
+        {!! Form::hidden('assign_to', $row['assign_to']) !!}
         @endif
 
         <div class="form-group clearfix">
@@ -290,13 +290,33 @@ $(document).on('change','#location_id',function(){
                 }else{
 
                     $("#game_id").html(response.gameOptions).change();
-                    @if(!empty($row->game_id))
-                    $("#game_id").val({{ $row->game_id }}).change();
+                    @if(!empty($row['game_id']))
+                    $("#game_id").val({{ $row['game_id'] }}).change();
                     @endif
                 }
             }
         });
 });
+        setTimeout(function(){
+            var locationId = $('#location_id').val();
+
+            $.ajax({
+                url:'/servicerequests/location-games',
+                data:{location_id:locationId},
+                type:"GET",
+                success:function(response){
+                    if(response.status == 'error'){
+                        notyMessageError(response.message);
+                    }else{
+                        $("#game_id").html(response.gameOptions).change();
+                        @if(!empty($row['game_id']))
+                        $("#game_id").val({{ $row['game_id'] }}).change();
+                        @endif
+                    }
+                }
+            });
+
+        },3000);
 
         $('.datepickerHandleButton').click(function(){
             $("#my-datepicker").datepicker().focus();

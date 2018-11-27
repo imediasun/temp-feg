@@ -378,6 +378,7 @@ class Servicerequests extends Observerable  {
 
     }
     public function prepareDataforGameEmail($data = []){
+
         $game_id = $data['game_id'];
         $game = game::find($game_id);
         $gameTitle = Gamestitle::find($game->game_title_id);
@@ -386,7 +387,7 @@ class Servicerequests extends Observerable  {
 
         $data['location'] = location::find($data['location_id']);
         $data['issue_type'] = IssueType::find($data['issue_type_id'])->issue_type_name;
-        $data['functionality'] = GameFunctionality::find($data['functionality_id'])->functionality_name;
+        $data['functionality'] = GameFunctionality::find($data['functionality_id'])->functionalty_name;
         if(!empty($data['shipping_priority_id'])) {
             $data['shipping_priority'] = ShippingPriority::find($data['shipping_priority_id'])->priority_name;
         }
