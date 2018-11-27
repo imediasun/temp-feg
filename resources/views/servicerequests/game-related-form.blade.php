@@ -126,11 +126,11 @@
                         <div class="col-md-6">
                         @foreach($troubleshootingCheckLists as $troubleshootingCheckList)
                             <?php $index++ ?>
-                            @if($index == 7)
+                            @if($index == 8)
                                 </div>
                         <div class="col-md-6">
                                 @endif
-					<input type="checkbox" name="troubleshootchecklist[]" @if(in_array($troubleshootingCheckList->id,$savedCheckList)) checked @endif id="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}" value="{{ $troubleshootingCheckList->id }}"> <label style="vertical-align: middle; width: 90%; font-size: 12px; white-space: nowrap;
+					<input type="checkbox" name="troubleshootchecklist[]" @if(in_array($troubleshootingCheckList->id,$savedCheckList)) checked @endif id="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}" value="{{ $troubleshootingCheckList->id }}"> <label title="{{ $troubleshootingCheckList->check_list_name }}" class="tips" style="vertical-align: middle; width: 90%; font-size: 12px; white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;" for="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}">{{ $troubleshootingCheckList->check_list_name }}</label><br /><br />
                         @endforeach
