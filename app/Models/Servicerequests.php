@@ -16,6 +16,7 @@ class Servicerequests extends Observerable  {
     public $hideGridFieldsTab1 = [
         'functionality_id',
         'issue_type_id',
+        'shipping_priority_id',
         'game_realted_date',
         'part_number',
         'cost',
@@ -28,8 +29,14 @@ class Servicerequests extends Observerable  {
         'part_number',
         'cost',
         'qty',
+        'need_by_date',
     ];
-    
+    public $tab2FieldLabels = [
+        'fields'=>[
+        'Description'
+        ],
+        'labels'=>[],
+    ];
     public function __construct() {
         parent::__construct();
 
