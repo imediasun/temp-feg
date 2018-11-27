@@ -223,12 +223,12 @@
 
                 <div class="row">
 
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                 <div class="form-group clearfix" >
                     <label for="Attach File" class=" control-label col-md-3 text-left">
                         {!! SiteHelpers::activeLang('Attach File', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}
                     </label>
-                    <div class="col-md-10 col-sm-10 col-xs-12">
+                    <div class="col-md-9 col-sm-10 col-xs-12">
                         <div class="file_pathUpl">
                             <input  type='file' name='file_path[]'  />
                         </div>
