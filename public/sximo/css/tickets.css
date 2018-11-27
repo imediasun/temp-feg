@@ -484,5 +484,5 @@ img.notAnUser {
 }
 
 .modal{
-    z-index: 60000;
+    z-index: 60000000;
 }
