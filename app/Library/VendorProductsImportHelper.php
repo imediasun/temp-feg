@@ -28,124 +28,12 @@ class VendorProductsImportHelper
         if(!$products){
             return false;
         }
-        $fields = [
-                'ID',
-                'Item Name',
-                'SKU',
-                'UPC/Barcode',
-                'Item Per Case',
-                'Case Price',
-                'Unit Price',
-                'Reserved Qty',
-                ];
-//        return $products;
 
-
-        $title = 'Products List';
-        $AddNote = "Don't update Product ID.";
-
-
-//        $content = $title;
-        $content = '<table border="1">';
-        $content .= '<tr>';
-        $start = 1;
-        foreach($fields as $f )
-        {
-            $content .= '<th style="background:#f9f9f9;">'. $f . '</th>';
-        }
-        $content .= '</tr>';
-
-        foreach ($products as $product)
-        {
-//            dd($product);
-            $start++;
-            $content .= '<tr>';
-            $content .= '<td> '. ($product->id) . '</td>';
-            $content .= '<td> '. ($product->vendor_description) . '</td>';
-            $content .= '<td> '. ($product->sku) . '</td>';
-            $content .= '<td> '. ($product->upc_barcode) . '</td>';
-            $content .= '<td> '. ($product->num_items) . '</td>';
-            $content .= '<td> '. ($product->case_price) . '</td>';
-            $content .= '<td> '. ($product->unit_price) . '</td>';
-            $content .= '<td> '. ((string)number_format($product->reserved_qty, 0)) . '</td>';
-            $content .= '</tr>';
-        }
-        if (!empty($AddNote)){
-            $start++;
-            $start++;
-            $start++;
-            $start++;
-            $content .='<tr><td></td></tr><tr><td></td></tr>';
-            $content .='<tr><td colspan="30"><strong style="color: red;">Note: '.$AddNote.'</strong></td></tr>';
-        }
-        $content .= '</table>';
-
-        $path = storage_path("/app/".time().".html");
-        file_put_contents($path, $content);
-
-
-        // Read the contents of the file into PHPExcel Reader class
-        $reader = new PHPExcel_Reader_HTML;
-        // set error level
-        $internalErrors = libxml_use_internal_errors(true);
-
-        $content = $reader->load($path);
-//        dd($path);
-
-        // Pass to writer and output as needed
-        $objWriter = PHPExcel_IOFactory::createWriter($content, 'Excel2007');
-        $objPHPExcel = $objWriter->getPHPExcel();
-
-        //Finding Serial column
-        $serialColumn = '';
-        $row = $objPHPExcel->getActiveSheet()->getRowIterator(2)->current();
-        $objPHPExcel->getActiveSheet()->getStyle('A'.$start.':P'.$start)->applyFromArray(
-            array(
-                'font'  => array(
-                    'color' => array('rgb' => '061ab7'),
-                )
-            )
-        );
-        $cellIterator = $row->getCellIterator();
-        $cellIterator->setIterateOnlyExistingCells(false);
-
-        if(!isset($excelExcludeFormatting)) {
-            $excelExcludeFormatting = [];
-        }
-        $excelExcludeFormatting = array_merge([
-            'Unit Price',
-            'Case Price',
-            'Total Spent',
-            'Retail Price',
-            'Total Cost',
-            'Price'
-        ],$excelExcludeFormatting);
-
-        foreach ($cellIterator as $cell) {
-            if(in_array($cell->getValue(),$excelExcludeFormatting))
-            {
-                $serialColumn = $cell->getColumn();
-                //$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
-                $serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
-                $colString = ($serialCol->getColumnIndex().'1:'.$serialCol->getColumnIndex() . (count($products)+2));
-
-                $objPHPExcel->getActiveSheet()->getStyle($colString)
-                    ->getNumberFormat()
-                    ->setFormatCode('0.00###');
-            }
-        }
-
-
-        // Delete temporary file
-        unlink($path);
-
-        // We'll be outputting an excel file
+        $fileName = 'vendor-'.$vendorId.'-product-list'. '-' . date("mdYHis").'.csv';
         header('Content-type: text/csv');
 
         // It will be called file.xls
-        header('Content-disposition: attachment; filename="'.($title . '-' . date("mdYHis")).'.csv"');
-
-        $fileName = 'vendor-'.$vendorId.'-product-list'. '-' . date("mdYHis").'.csv';
+        header('Content-disposition: attachment; filename="'.$fileName.'"');
 
         $directoryName = storage_path("/app/vendor-products");
 
@@ -155,7 +43,43 @@ class VendorProductsImportHelper
             mkdir($directoryName, 0755, true);
         }
 
-        $content = $objWriter->save(storage_path("/app/vendor-products/".$fileName ));
+        $file = fopen(storage_path("/app/vendor-products/".$fileName ), 'w');
+
+        // save the column headers
+        fputcsv($file, array('Product ID', 'Item Name', 'SKU', 'UPC/Barcode', 'Item Per Case', 'Case Price', 'Unit Price', 'Reserved Qty'));
+
+        $start = 0;
+
+
+        foreach ($products as $product)
+        {
+//            dd($product);
+            $start++;
+            $data[$start] = [
+                                $product->id,
+                                $product->vendor_description,
+                                $product->sku,
+                                $product->upc_barcode,
+                                $product->num_items,
+                                $product->case_price,
+                                $product->unit_price,
+                                $product->reserved_qty
+                            ];
+        }
+        $data[] = [];
+        $data[] = [];
+        $data[] = ["Don't update Product ID."];
+
+
+    // save each row of the data
+        foreach ($data as $row)
+        {
+//            dd($row);
+            fputcsv($file, $row);
+        }
+
+        // Close the file
+        fclose($file);
 
         //Sending mail with Excel file attachment
         $subject = "Products List - [Vendor Product List #$vendorId] ". date('m/d/Y');
