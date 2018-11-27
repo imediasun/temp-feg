@@ -13,7 +13,7 @@ Date : {{ date('Y/m/d',strtotime($data['game_realted_date'])) }}
 @endforeach
 
 
-Part Number : {{ $data['functionality'] }}<br/>
+Part Number : {{ $data['part_number'] }}<br/>
 Costs : {{ CurrencyHelpers::formatCurrency($data['cost']) }}<br/>
 Quantity : {{ $data['qty'] }}<br/>
 Shipping Priority : {{ $data['shipping_priority'] }}

@@ -886,7 +886,14 @@ class servicerequestsController extends Controller
         $message .= \View::make('servicerequests.email.commentviewlink', [
             'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($ticketId),
         ])->render();
-        
+        $ticketInfo = Servicerequests::select('*')->where('TicketID',$ticketId)->first()->toArray();
+        $ticketsData['ticket_type'] = $ticketInfo['ticket_type'];
+        if(!empty($ticketInfo['game_id'])) {
+            $game = game::find($ticketInfo['game_id']);
+            $gameTitle = Gamestitle::find($game->game_title_id);
+            $ticketsData['game']['game_id'] = $ticketInfo['game_id'];
+            $ticketsData['game']['game_title'] = $gameTitle->game_title;
+        }
         $message .= $ticketThreadContent;
         $this->model->notifyObserver('AddComment',[
                 'message'       =>$message,
