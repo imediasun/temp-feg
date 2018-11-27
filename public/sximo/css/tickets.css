@@ -482,3 +482,7 @@ img.notAnUser {
     background-color: #ddd;
     padding: 0px 10px;
 }
+
+.modal{
+    z-index: 60000;
+}
