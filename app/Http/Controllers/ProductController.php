@@ -1145,12 +1145,14 @@ class ProductController extends Controller
     {
         $data['img'] = \DB::table('products')->where('id', $id)->pluck('img');
         $data['return'] = "";
+        $data['pageModule'] = $this->data['pageModule'];
         return view('product.upload', $data);
     }
     function getUploadPopup($id = NULL)
     {
         $data['img'] = \DB::table('products')->where('id', $id)->pluck('img');
         $data['return'] = "";
+        $data['pageModule'] = $this->data['pageModule'];
         return view('product.upload-image-popup', $data);
     }
 
