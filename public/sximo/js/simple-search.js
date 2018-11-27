@@ -11,6 +11,7 @@ function performSimpleSearch(params) {
         ajaxSearch = params.ajaxSearch !== false,
         searchAttr = '',
         searchAttr2 = '',
+        ticketType = params.ticketType || '',
         cache = {};
 
     container.find('.form-control').each(function(i){
@@ -92,7 +93,7 @@ function performSimpleSearch(params) {
     
     // build final querystring
     attr = '?simplesearch=1&search=' + searchAttr + 
-            getFooterFilters({'simplesearch': true, 'search': true, 'page': true});
+            getFooterFilters({'simplesearch': true, 'search': true, 'page': true})+ticketType;
     
     // store cache
     App.simpleSearch.cache = cache;

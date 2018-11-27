@@ -247,8 +247,9 @@
             simpleSearch.find('.doSimpleSearch').click(function(event){
                 performSimpleSearch.call($(this), {
                     moduleID: '#{{ $pageModule }}',
-                    url: "{{ $pageUrl.'?ticket_type='.$ticketType }}",
+                    url: "{{ $pageUrl }}",
                     event: event,
+                    ticketType:'&ticket_type={{ $ticketType }}',
                     container: simpleSearch
                 });
             });
