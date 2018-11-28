@@ -156,8 +156,8 @@
                                 @else
 
                                     @if($field['field']=="vendor_description")
-                                        @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes') <span class="label label-danger">Hot</span> @endif
                                         @if($row->is_new > 0)  <span class="label label-primary">New</span> @endif
+                                        @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes') <span class="label label-danger">Hot</span> @endif
                                         @if($row->is_backinstock > 0)  <span class="label label-default">Back in Stock</span> @endif
                                         @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes' || $row->is_new > 0 || $row->is_backinstock > 0)   <br /> @endif
                                         <?php
