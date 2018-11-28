@@ -415,10 +415,12 @@ class ReviewvendorimportlistController extends Controller
 //                'message' => 'Please set expense categories of all products.'
 //            ));
 //        }
+//        dd($request->all());
 
         $parentIds = $request->input('parent_id');
         $prodTypeId = $request->input('prod_type_id');
         $expenseCategory = $request->input('expense_category');
+        $reservedQuantity = $request->input('reserved_qty');
 
         $itemIds = $request->input('item_id');
 
@@ -443,6 +445,7 @@ class ReviewvendorimportlistController extends Controller
                         'prod_sub_type_id' => $prodSubTypeId[$i],
                         'retail_price' => $retailPrice[$i],
                         'expense_category' => $expenseCategory[$i],
+                        'reserved_qty' => $reservedQuantity[$i],
                         'is_reserved' => $isReserved[$i],
                         'allow_negative_reserve_qty' => $allowNegativeReserveQty[$i],
                         'inactive' => $inactive[$i],
@@ -454,7 +457,6 @@ class ReviewvendorimportlistController extends Controller
 
                     if ($itemIds[$i] == 0) {
                         $product = Reviewvendorimportlist::find($parentIds[$i])->toArray();
-
                         $data['sku'] = $product['sku'];
                         $data['upc_barcode'] = $product['upc_barcode'];
                         $data['vendor_description'] = $product['vendor_description'];
