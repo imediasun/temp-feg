@@ -277,13 +277,13 @@ class ReviewvendorimportlistController extends Controller
             $this->data['importVendorListId'] = $this->data['rowData']['0']->import_vendor_id;
         }
 
-        if ($request->has('omit_vendor_list_id') && !$request->has('hideUnchanged')){
-            $this->data['importVendorListId'] = $request->input('omit_vendor_list_id');
-            $this->data['resetOmit'] = [
-                'selectedList'=> $request->input('omit_vendor_list_id'),
-                'buttonText' => 'Remove from omitted filter'
-            ];
-        }
+//        if ($request->has('omit_vendor_list_id') && !$request->has('hideUnchanged')){
+//            $this->data['importVendorListId'] = $request->input('omit_vendor_list_id');
+//            $this->data['resetOmit'] = [
+//                'selectedList'=> $request->input('omit_vendor_list_id'),
+//                'buttonText' => 'Remove from omitted filter'
+//            ];
+//        }
         if($request->has('hideUnchanged')){
             $this->data['importVendorListId'] = $request->input('omit_vendor_list_id');
         }

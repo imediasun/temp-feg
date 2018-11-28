@@ -1881,12 +1881,19 @@ function unomittItem(Object,selectedList){
 function showVendorOmittedItems(element,Object){
     var vendorId = $('option:selected', Object).attr('vendor-id');
     var btnOption = $(element);
-    var changeStatus = btnOption.attr('data-hide-same-item');
-    var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=vendor_id:equal:'+vendorId+"|import_vendor_id:equal:"+Object.val()+"&hideOmittedItems="+changeStatus+"&importVendorListId="+Object.val();
+    var omittedItemsStatus = btnOption.attr('data-hide-same-item');
+    var unchangedItemsStatus = $('#unchangedItemsShowHide').attr('data-hide-same-item');
+    if(unchangedItemsStatus == 1){
+        unchangedItemsStatus = 0;
+    }
+    else{
+        unchangedItemsStatus = 1;
+    }
+    var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=vendor_id:equal:'+vendorId+"|import_vendor_id:equal:"+Object.val()+"&hideOmittedItems="+omittedItemsStatus+"&hideUnchanged="+unchangedItemsStatus+"&importVendorListId="+Object.val()+"&omit_vendor_list_id="+Object.val();
 
     reloadData('#product',loadUrl);
 
-    if(changeStatus > 0){
+    if(omittedItemsStatus > 0){
         btnOption.val('Show Omitted Items');
         btnOption.attr('data-hide-same-item',0);
     }else{
@@ -1897,16 +1904,26 @@ function showVendorOmittedItems(element,Object){
 function hideUnchanged(element,Object){
     var vendorId = $('option:selected', Object).attr('vendor-id');
     var btnOption = $(element);
-    var changeStatus = btnOption.attr('data-hide-same-item');
-    var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=vendor_id:equal:'+vendorId+"|import_vendor_id:equal:"+Object.val()+"&hideUnchanged="+changeStatus+"&omit_vendor_list_id="+Object.val();
-
-    if(Number(changeStatus) == 0){
-     loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=import_vendor_id:equal:'+Object.val();
+    var unchangedItemsStatus = btnOption.attr('data-hide-same-item');
+    var omittedItemsStatus = $('#omittedItemsShowHide').attr('data-hide-same-item');
+    if(omittedItemsStatus == 1){
+        omittedItemsStatus = 0;
     }
+    else{
+        omittedItemsStatus = 1;
+    }
+
+    var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=vendor_id:equal:'+vendorId+"|import_vendor_id:equal:"+Object.val()+"&hideOmittedItems="+omittedItemsStatus+"&hideUnchanged="+unchangedItemsStatus+"&importVendorListId="+Object.val()+"&omit_vendor_list_id="+Object.val();
+
+    // var loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=import_vendor_id:equal:'+Object.val()+"&hideUnchanged="+unchangedItemsStatus+"&hideOmittedItems="+omittedItemsStatus+"&omit_vendor_list_id="+Object.val();
+
+    // if(Number(unchangedItemsStatus) == 0){
+    //  loadUrl = '/reviewvendorimportlist/data?product_import_vendor_id='+vendorId+'&return=&search=import_vendor_id:equal:'+Object.val();
+    // }
     reloadData('#product',loadUrl);
 
-    if(changeStatus > 0){
-        btnOption.val('Show All Items');
+    if(unchangedItemsStatus > 0){
+        btnOption.val('Show Unchanged Items');
         btnOption.attr('data-hide-same-item',0);
     }else{
         btnOption.val('Hide Unchanged Items');

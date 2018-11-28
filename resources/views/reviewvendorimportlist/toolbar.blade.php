@@ -23,14 +23,14 @@
 
 
             @if($hideOmittedItems == 0)
-            <input type="button" value="Hide Omitted Items" data-hide-same-item="1"  onclick="showVendorOmittedItems(this,$('#selected_vendor'))"   class="btn btn-primary">
+                <input type="button" id="omittedItemsShowHide" value="Hide Omitted Items" data-hide-same-item="1"  onclick="showVendorOmittedItems(this,$('#selected_vendor'))"   class="btn btn-primary">
             @else
-                <input type="button" value="Show Omitted Items" data-hide-same-item="0"  onclick="showVendorOmittedItems(this,$('#selected_vendor'))"   class="btn btn-primary">
-                @endif
+                <input type="button" id="omittedItemsShowHide" value="Show Omitted Items" data-hide-same-item="0"  onclick="showVendorOmittedItems(this,$('#selected_vendor'))"   class="btn btn-primary">
+            @endif
             @if($hideUnchanged == 0)
-                <input type="button" value="Hide Unchanged Items" data-hide-same-item="1" onclick="hideUnchanged(this,$('#selected_vendor'));"   class="btn btn-primary">
+                <input type="button" id="unchangedItemsShowHide" value="Hide Unchanged Items" data-hide-same-item="1" onclick="hideUnchanged(this,$('#selected_vendor'));"   class="btn btn-primary">
             @else
-                <input type="button" value="Show All Items" data-hide-same-item="0" onclick="hideUnchanged(this,$('#selected_vendor'));"   class="btn btn-primary">
+                <input type="button" id="unchangedItemsShowHide" value="Show Unchanged Items" data-hide-same-item="0" onclick="hideUnchanged(this,$('#selected_vendor'));"   class="btn btn-primary">
             @endif
 
 

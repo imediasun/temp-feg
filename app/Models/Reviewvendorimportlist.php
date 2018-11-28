@@ -149,7 +149,7 @@ FROM vendor_import_products  ";
         }
 
         if($hideUnchanged == 1){
-            $select .= ' AND (is_new = 1 OR is_updated = 1) ';
+            $select .= ' AND (is_new = 1 OR is_updated = 1 OR is_omitted = 1) ';
         }
         if($hideOmittedItems == 1){
 
