@@ -102,9 +102,9 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                 @if(isset($t['inline']) && $t['inline'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
-                                        @if($t['field'] == 'excluded_locations_and_groups')
-                                                <td data-form="excluded_locations_and_groups" data-form-type="select">
-                                                    <select name="excluded_locations_and_groups[]" class="sel-inline excluded_locations_and_groups" multiple="multiple">
+                                        @if(in_array($t['field'],['excluded_locations_and_groups','product_type_excluded_data']))
+                                                <td data-form="{{ $t['field'] }}" data-form-type="select">
+                                                    <select name="{{ $t['field'] }}[]" class="sel-inline {{ $t['field'] }}" multiple="multiple">
 
                                                     </select>
                                                 </td>
@@ -137,7 +137,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                     {{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
                     <tr variation-id="{{ $row->variation_id }}" @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
                         @endif product-id="{!! $product_id !!}"
-                        onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}"
+                        onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}" product-type-id="{{ $row->prod_type_id }}"
                         data-id="{{ $row->id }}"
                         @if($setting['inline']!='false' && $setting['disablerowactions']=='false') @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this); editedProduct('{!! $product_id !!}',this); productExcludedLocationDropDown(this);" @endif @endif>
                         <input type="hidden" name="numberOfItems" value="{{$row->num_items}}"/>
@@ -372,6 +372,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
 
 $(document).ready(function() {
     updateDropdownsGroups('excluded_locations_and_groups[]');
+    updateDropdownsGroups('product_type_excluded_data[]');
 	//$(".sel-search").select2({ width:"100%"});
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
         productId=$(this).data('id');

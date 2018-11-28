@@ -1451,15 +1451,36 @@ $(document).on('change', 'select' ,function () {
     if(pageModule != 'shopfegrequeststore'){
         var nameOfSelectBox = $(this).attr('name');
         var productTypeId = $(this).val();
-        var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type', 'prod_type_id[]']
-        if(productTypeSelectorsNames.indexOf(nameOfSelectBox) != -1){
+        var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type', 'prod_type_id[]'];
+        var excludeClass = $(this).hasClass('exclude-from-event');
+        if(productTypeSelectorsNames.indexOf(nameOfSelectBox) != -1 && !excludeClass){
             var productSubTypeSelectors = [
                 "prod_sub_type_id",
                 "Product_Sub_Type",
                 "product_type",
                 "prod_sub_type_id[1]"
             ];
+
+
             getProductSubTypes(productTypeId, productSubTypeSelectors, $(this));
+
+            if(pageModule == 'product'){
+                if(productTypeId > 0) {
+                    $('.ajaxLoading').show();
+                    $.ajax({
+                        url: '/product/location-and-groups/0}',
+                        data: {productTypeId: productTypeId,mode:'changingType'},
+                        type: 'GET',
+                        success: function (response) {
+
+                            var productTypeSelectedValues = response.productTypeSelectedValues;
+                            $('select[name="product_type_excluded_data[]"]').val(productTypeSelectedValues).change();
+                            updateDropdownsGroups("product_type_excluded_data[]");
+                            $('.ajaxLoading').hide();
+                        }
+                    });
+                }
+            }
         }
     }
 });
@@ -1487,15 +1508,18 @@ var signleAjaxCall = true;
     if(signleAjaxCall) {
         signleAjaxCall = false;
         reinitfield($(object).attr('data-id'));
+        var productType = $(object).attr('product-type-id');
         var row = $(object);
         $.ajax({
             url: '/product/location-and-groups/' + row.attr('data-id'),
+            data:{productType:productType},
             type: 'GET',
             success: function (response) {
                 var optionHTML = '<option value="select_all">Select All</option>'+response.groups;
                 optionHTML += response.locations;
                 var selectedValues = response.selectedValues;
-                setExcludeLocationDropdown(optionHTML, row.attr('data-id'), selectedValues);
+                var productTypeSelectedValues = response.productTypeSelectedValues;
+                setExcludeLocationDropdown(optionHTML, row.attr('data-id'), selectedValues,productTypeSelectedValues);
                 $('.ajaxLoading').hide();
                 signleAjaxCall = true;
             }
@@ -1505,14 +1529,16 @@ var signleAjaxCall = true;
 function reinitfield(id){
     $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'})
     $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').change();
-    $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'})
-    $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').change();
+    $('tr#form-'+id+' td[data-field="product_type_excluded_data"] select').attr({"multiple":'multiple',"name":'product_type_excluded_data[]'})
+    $('tr#form-'+id+' td[data-field="product_type_excluded_data"] select').change();
 }
 var totalAttempts = 0;
-function setExcludeLocationDropdown(responseHTML,id,selectedValues){
+function setExcludeLocationDropdown(responseHTML,id,selectedValues,productTypeSelectedValues){
     totalAttempts = totalAttempts +1;
     if(id){
-        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'}).addClass("select2");
+        $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').attr(
+            {"multiple":'multiple',"name":'excluded_locations_and_groups[]'}
+            ).addClass("select2");
         $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').select2({
             closeOnSelect: false,
             width: '100%'
@@ -1523,12 +1549,39 @@ function setExcludeLocationDropdown(responseHTML,id,selectedValues){
             $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').val(selectedValues);
         }
         $('tr#form-'+id+' td[data-field="excluded_locations_and_groups"] select').change();
+
+
+        /* *
+        *
+        *
+        * *
+        * */
+
+        $('tr#form-'+id+' td[data-field="product_type_excluded_data"] select').attr(
+            {"multiple":'multiple',"name":'product_type_excluded_data[]'}
+        ).addClass("select2");
+        $('tr#form-'+id+' td[data-field="product_type_excluded_data"] select').select2({
+            closeOnSelect: false,
+            width: '100%'
+        });
+        $('tr#form-'+id+' td[data-field="product_type_excluded_data"] select').html(responseHTML);
+        $('tr#form-'+id+' td[data-field="product_type_excluded_data"] select').change();
+        if(productTypeSelectedValues.length > 0) {
+            $('tr#form-'+id+' td[data-field="product_type_excluded_data"] select').val(productTypeSelectedValues);
+        }
+        $('tr#form-'+id+' td[data-field="product_type_excluded_data"] select').change();
+
         return ;
     }
     if($('tr#form-0 td[data-form="excluded_locations_and_groups"] select').length > 0){
         $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').html(responseHTML);
         $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').attr({"multiple":'multiple',"name":'excluded_locations_and_groups[]'})
         $('tr#form-0 td[data-form="excluded_locations_and_groups"] select').change();
+
+        $('tr#form-0 td[data-form="product_type_excluded_data"] select').html(responseHTML);
+        $('tr#form-0 td[data-form="product_type_excluded_data"] select').attr({"multiple":'multiple',"name":'product_type_excluded_data[]'})
+        $('tr#form-0 td[data-form="product_type_excluded_data"] select').change();
+        //
     }else{
         if(totalAttempts > 15){
             return false;
@@ -1536,6 +1589,7 @@ function setExcludeLocationDropdown(responseHTML,id,selectedValues){
         setTimeout(setExcludeLocationDropdown, 2000, responseHTML);
         //setExcludeLocationDropdown(responseHTML);
     }
+
 }
 
 function updateDropdowns(dropdownName){
