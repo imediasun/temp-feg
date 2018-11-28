@@ -151,8 +151,8 @@
 
                                      @elseif(in_array($field['field'],['is_reserved']))
                                          <select required=""  style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2" onchange="setValuesToVariations(this)">
-                                             <option @if($row->$field['field'] == 1 && ($row->reserved_qty > 0 || $row->reserved_qty != '0')) selected @endif value="1">Yes</option>
-                                             <option @if(($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0') && ($row->reserved_qty <= 0 || $row->reserved_qty == '' || $row->reserved_qty == '0')) selected @endif value="0">No</option>
+                                             <option @if($row->$field['field'] == 1 ) selected @endif value="1">Yes</option>
+                                             <option @if(($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0')) selected @endif value="0">No</option>
                                          </select>
 
                                      @elseif($field['field'] == 'prod_sub_type_id')
