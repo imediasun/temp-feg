@@ -52,10 +52,10 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group  " >
-                            <label for="Issue Type" class=" control-label col-md-3 text-left">
+                            <label for="Issue Type" class=" control-label col-md-4 text-left">
                                 {!! SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type_id']['language'])? $fields['issue_type_id']['language'] : array())) !!}
                             </label>
-                            <div class="col-md-9">
+                            <div class="col-md-8">
                                 <select name='issue_type_id' rows='5'   class='select2 ' required >
                                     <option value="">Select Issue Type</option>
                                     @foreach($game_related_issue_types as $gameRelatedIssueType)
@@ -67,10 +67,10 @@
                     </div>
                     <div class="col-md-6">
                 <div class="form-group  " >
-                    <label for="Functionality" class=" control-label col-md-4 text-left">
+                    <label for="Functionality" class=" control-label col-md-3 text-left">
                         {!! SiteHelpers::activeLang('Functionality', (isset($fields['functionality_id']['language'])? $fields['functionality_id']['language'] : array())) !!}
                     </label>
-                    <div class="col-md-8">
+                    <div class="col-md-9">
                         <select name='functionality_id' rows='5'   class='select2 ' required >
                             <option value="">Select Game Functionality</option>
                             @foreach($game_functionalities as $gameFunctionality)
