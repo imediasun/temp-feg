@@ -168,6 +168,11 @@
                                             <div class="selectStatusDropdownContainer col-md-4 col-sm-6">
                                                 <input type='hidden' name='oldStatus' value='{{ $ticketStatus }}' />
                                                 <select name='Status' required class='Status '>
+                                                    <?php
+                                                    if($ticketType == 'game-related'){
+                                                        unset($statusOptions['development']);
+                                                    }
+                                                    ?>
                                                     @foreach($statusOptions as $key => $val)
                                                         <option  value ='{{ $key }}'
                                                                  @if($ticketStatus == $key) selected='selected' @endif
