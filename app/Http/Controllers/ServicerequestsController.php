@@ -371,10 +371,10 @@ class servicerequestsController extends Controller
         $this->data['entryBy'] = $isAdd ? $userId : $row['entry_by'];
         $this->data['locationId'] = $isAdd ? \Session::get('selected_location') : $row['location_id'];
         $this->data['games'] = $this->model->getGames();
-        $this->data['game_related_issue_types'] = IssueType::isActive()->orderBy('issue_type_name','asc')->get();
-        $this->data['game_functionalities'] = \App\Models\GameFunctionality::isActive()->orderBy('functionalty_name','asc')->get();
-        $this->data['troubleshootingCheckLists'] = TroubleshootingCheckList::isActive()->orderBy('check_list_name','asc')->get();
-        $this->data['shippingPriorities'] = ShippingPriority::isActive()->orderBy('priority_name')->get();
+        $this->data['game_related_issue_types'] = IssueType::isActive()->get();
+        $this->data['game_functionalities'] = \App\Models\GameFunctionality::isActive()->get();
+        $this->data['troubleshootingCheckLists'] = TroubleshootingCheckList::isActive()->get();
+        $this->data['shippingPriorities'] = ShippingPriority::isActive()->get();
         $this->data['savedCheckList'] = SbTicketsTroubleshootingCheckList::where('sb_ticket_id',$id)->get()->pluck('troubleshooting_check_list_id')->toArray();
 
         return view('servicerequests.'.$view, $this->data);
