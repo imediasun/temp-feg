@@ -51,21 +51,6 @@
 
                 <div class="row">
                     <div class="col-md-6">
-                <div class="form-group  " >
-                    <label for="Functionality" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Functionality', (isset($fields['functionality_id']['language'])? $fields['functionality_id']['language'] : array())) !!}
-                    </label>
-                    <div class="col-md-8">
-                        <select name='functionality_id' rows='5'   class='select2 ' required >
-                            <option value="">Select Game Functionality</option>
-                            @foreach($game_functionalities as $gameFunctionality)
-                                <option @if(!empty($row['functionality_id'])) @if($row['functionality_id'] == $gameFunctionality->id) selected @endif @endif  value ='{{ $gameFunctionality->id }}'>{{ $gameFunctionality->functionalty_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                    </div>
-                    <div class="col-md-6">
                         <div class="form-group  " >
                             <label for="Issue Type" class=" control-label col-md-3 text-left">
                                 {!! SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type_id']['language'])? $fields['issue_type_id']['language'] : array())) !!}
@@ -80,6 +65,22 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                <div class="form-group  " >
+                    <label for="Functionality" class=" control-label col-md-4 text-left">
+                        {!! SiteHelpers::activeLang('Functionality', (isset($fields['functionality_id']['language'])? $fields['functionality_id']['language'] : array())) !!}
+                    </label>
+                    <div class="col-md-8">
+                        <select name='functionality_id' rows='5'   class='select2 ' required >
+                            <option value="">Select Game Functionality</option>
+                            @foreach($game_functionalities as $gameFunctionality)
+                                <option @if(!empty($row['functionality_id'])) @if($row['functionality_id'] == $gameFunctionality->id) selected @endif @endif  value ='{{ $gameFunctionality->id }}'>{{ $gameFunctionality->functionalty_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                    </div>
+
                     <div class="col-md-12">
                 <div class="form-group  " >
                     <label for="Date" class=" control-label col-md-2 text-left">
@@ -167,10 +168,10 @@
                     </div>
                     <div class="col-md-6">
                 <div class="form-group  " >
-                    <label for="Part Number" class=" control-label col-md-3 text-left">
+                    <label for="Part Number" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Part Number', (isset($fields['part_number']['language'])? $fields['part_number']['language'] : array())) !!}
                     </label>
-                    <div class="col-md-9">
+                    <div class="col-md-8">
                     <input type="text" name="part_number" value="{{ $row['part_number'] }}" class="form-control">
                     </div>
                 </div>
@@ -193,10 +194,10 @@
                 <div class="row">
                     <div class="col-md-6">
                 <div class="form-group" >
-                    <label for="Quantity" class=" control-label col-md-3 text-left">
+                    <label for="Quantity" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Quantity', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) !!}
                     </label>
-                    <div class="col-md-9">
+                    <div class="col-md-8">
                         <input type="number" name="qty" step="1" min="0" minlength="0" value="{{ $row['qty'] }}" class="form-control" >
                     </div>
                 </div>
@@ -225,10 +226,10 @@
 
                     <div class="col-md-6">
                 <div class="form-group clearfix" >
-                    <label for="Attach File" class=" control-label col-md-3 text-left">
+                    <label for="Attach File" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Attach File', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}
                     </label>
-                    <div class="col-md-9 col-sm-10 col-xs-12">
+                    <div class="col-md-8 col-sm-10 col-xs-12">
                         <div class="file_pathUpl">
                             <input  type='file' name='file_path[]'  />
                         </div>
