@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Observers\Observerable;
 use App\Models\ticketsetting;
 use App\Library\FEG\System\Formatter;
+use Illuminate\Support\Facades\Session;
 use Log;
 
 class Servicerequests extends Observerable  {
@@ -403,6 +404,78 @@ class Servicerequests extends Observerable  {
             $data['shipping_priority'] = ShippingPriority::find($data['shipping_priority_id'])->priority_name;
         }
         return $data;
+    }
+
+    /**
+     * @param string $type
+     * @param array $passes
+     * @return bool
+     */
+    public function canEdit($type = 'debit-card-related' , $passes = []){
+        $groups = [];
+        $users = [];
+        $excludedUsers = [];
+        if(empty($passes)){
+            return false;
+        }
+        if($type == 'debit-card-related'){
+            if(empty($passes['can edit debit card related requests'])){
+                return false;
+            }
+             $pass = $passes['can edit debit card related requests'];
+            $groups = !empty($pass->group_ids)? explode(',',$pass->group_ids):[];
+            $users = !empty($pass->user_ids)? explode(',',$pass->user_ids):[];
+            $excludedUsers = !empty($pass->exclude_user_ids)? explode(',',$pass->exclude_user_ids):[];
+        }else{
+            if(empty($passes['can edit game related requests'])){
+                return false;
+            }
+            $pass = $passes['can edit game related requests'];
+            $groups = !empty($pass->group_ids)? explode(',',$pass->group_ids):[];
+            $users = !empty($pass->user_ids)? explode(',',$pass->user_ids):[];
+            $excludedUsers = !empty($pass->exclude_user_ids)? explode(',',$pass->exclude_user_ids):[];
+        }
+
+        return (
+        (in_array(Session::get('gid'),$groups) || in_array(Session::get('uid'),$users))
+        && (!in_array(Session::get('uid'),$excludedUsers))
+            );
+    }
+
+    /**
+     * @param string $type
+     * @param array $passes
+     * @return bool
+     */
+    public function canDelete($type = 'debit-card-related' , $passes = []){
+        $groups = [];
+        $users = [];
+        $excludedUsers = [];
+        if(empty($passes)){
+            return false;
+        }
+        if($type == 'debit-card-related'){
+            if(empty($passes['can remove debit card related requests'])){
+                return false;
+            }
+            $pass = $passes['can remove debit card related requests'];
+            $groups = !empty($pass->group_ids)? explode(',',$pass->group_ids):[];
+            $users = !empty($pass->user_ids)? explode(',',$pass->user_ids):[];
+            $excludedUsers = !empty($pass->exclude_user_ids)? explode(',',$pass->exclude_user_ids):[];
+        }else{
+            if(empty($passes['can remove game related requests'])){
+                return false;
+            }
+            $pass = $passes['can remove game related requests'];
+            $groups = !empty($pass->group_ids)? explode(',',$pass->group_ids):[];
+            $users = !empty($pass->user_ids)? explode(',',$pass->user_ids):[];
+            $excludedUsers = !empty($pass->exclude_user_ids)? explode(',',$pass->exclude_user_ids):[];
+        }
+
+        return (
+            (in_array(Session::get('gid'),$groups) || in_array(Session::get('uid'),$users))
+            && (!in_array(Session::get('uid'),$excludedUsers))
+        );
     }
 
 }
