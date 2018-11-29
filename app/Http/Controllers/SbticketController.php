@@ -433,43 +433,19 @@ class SbticketController extends Controller
         }
     }
 
-    public function postSavepermission(Request $request)
+    public function postSavepermission(Request $request,$id = 1)
     {
         $data = $request->all();
         unset($data['_token']);
-
-
         foreach ($data as $index => $value) {
             $data[$index] = implode(',', $data[$index]);
         }
-
         $data = $this->filterPermissions($data);
-        $dataKeys = array_keys($data);
-        $rowData1 = [];
-        $rowData2 = [];
-        foreach ($dataKeys as $dataKey){
-            if(!empty($data['game_related_'.$dataKey])) {
-                $rowData1[$dataKey] = $data['game_related_' . $dataKey];
-            }
-        }
-
-        foreach ($dataKeys as $dataKey){
-            $dataKey = str_replace("game_related_","",$dataKey);
-            if(!empty($data[$dataKey])) {
-                $rowData2[$dataKey] = $data[$dataKey];
-            }
-        }
-        $data = [$rowData1,$rowData2];
 
         $sbticketsetting = new SbticketSetting();
-        $id = 0;
-       for($i = 1; $i<3; $i++) {
-           if(!empty($data[$i])) {
-               $id = $sbticketsetting->insertRow($data[$i], $i);
-           }
-       }
+        $id = $sbticketsetting->insertRow($data, $id);
 
-        if ($id == 1) {
+        if ($id >= 1) {
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -497,14 +473,12 @@ class SbticketController extends Controller
     }
     protected function filterPermissions($data){
         $cols = \App\Models\Sximo::getColumnTable('sbticket_setting');
-        unset($cols["setting_type"]);unset($cols["id"]);unset($cols["updated_at"]);
+        unset($cols["id"]);unset($cols["updated_at"]);
         foreach ($cols as $col => $value){
             if(!array_key_exists($col,$data))
                     $data[$col]="";
         }
         return $data;
     }
-
-
 
 }
