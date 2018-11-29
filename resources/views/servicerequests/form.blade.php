@@ -80,7 +80,13 @@
                             @endforeach                        
 						</select> 
 					 </div> 
-					 <div class="col-md-2"></div>
+					 <div class="col-md-2" > </div>
+					<div class="col-md-10" style="color: blue; text-align: right;">
+						<a href="{{ url('servicerequests/update/?ticket_type=game-related&close_return=debit-card-related') }}"
+						   onclick="ajaxViewDetail('#servicerequests',this.href); return false;"
+						   class="tips"
+						   title="Create Game Related Service Request">Click Here</a> to create Game Related Service Request</div>
+					<div class="col-md-2" > </div>
                 </div> 					
                 <div class="form-group  " > 
 					<label for="Location" class=" control-label col-md-4 text-left"> 
