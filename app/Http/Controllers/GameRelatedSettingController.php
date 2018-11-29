@@ -8,12 +8,12 @@ use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
 
 
-class TicketsettingController extends Controller
+class GameRelatedSettingController extends Controller
 {
 
     protected $layout = "layouts.main";
     protected $data = array();
-    public $module = 'ticketsetting';
+    public $module = 'gamerelatedsetting';
     static $per_page = '10';
 
     public function __construct()
@@ -27,8 +27,8 @@ class TicketsettingController extends Controller
         $this->data = array(
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'ticketsetting',
-            'pageUrl' => url('ticketsetting'),
+            'pageModule' => 'gamerelatedsetting',
+            'pageUrl' => url('gamerelatedsetting'),
             'return' => self::returnUrl()
 
         );
@@ -39,7 +39,11 @@ class TicketsettingController extends Controller
     {
 
 
-        $ticket_setting = \DB::select("Select * FROM sbticket_setting where id = 1");
+        $ticket_setting = \DB::select("Select * FROM sbticket_setting where id = 2");
+
+        if(!$ticket_setting){
+            $ticket_setting[] = (object) $this->model->getColumnTable('sbticket_setting');
+        }
 
         $individuals = \DB::select("Select id,first_name,last_name FROM users");
         $roles = \DB::select("Select group_id,name FROM tb_groups");
@@ -48,7 +52,7 @@ class TicketsettingController extends Controller
         $this->data['roles'] = $roles;
         $this->data['individuals'] = $individuals;
         $this->data['access'] = $this->access;
-        return view('ticketsetting.setting', $this->data);
+        return view('gamerelatedsetting.setting', $this->data);
     }
 
 

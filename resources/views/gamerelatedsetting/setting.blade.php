@@ -6,7 +6,7 @@
         <!-- Page header -->
         <div class="page-header">
             <div class="page-title">
-                <h3>Debit Card Related Setting </h3>
+                <h3>Game Related Setting </h3>
             </div>
 
             <ul class="breadcrumb">
@@ -20,10 +20,10 @@
                 {{ Session::get('message') }}
             @endif
 
-            {!! Form::open(array('url'=>'sbticket/savepermission', 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ', 'id'=> 'sbticketSetting')) !!}
+            {!! Form::open(array('url'=>'sbticket/savepermission/2', 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ', 'id'=> 'gamerelatedsetting')) !!}
 
             <div class="sbox">
-                <div class="sbox-title"><h5> Debit Card Related Setting </h5></div>
+                <div class="sbox-title"><h5>Game Related Setting </h5></div>
 
                 <div class="sbox-content">
                     <div class="table-responsive settingtab-content">
@@ -140,6 +140,9 @@
             $("#individual5").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting[0]->individual5 }}'});
 
+        });
+
+
         @if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN)
                     $( document ).ajaxStop(function() {
             console.log( "Triggered ajaxStop handler." );
@@ -148,7 +151,7 @@
             $('#role1,#role2,#role3,#role4,#role5').trigger('change');
         });
                 @endif
-        var form = $('#sbticketSetting');
+        var form = $('#gamerelatedsetting');
         form.parsley();
         form.submit(function () {
             if (form.parsley('isValid') == true) {
