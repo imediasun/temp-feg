@@ -136,8 +136,10 @@
                         @endif
 
                         @if($setting['view-method']=='expand')
-                            <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->TicketID }}"
-                                   data-url="{{ url('servicerequests/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
+                            <td>
+                                <a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->TicketID }}"
+                                   data-url="{{ url('servicerequests/show/'.$id) }}"><i class="fa fa-plus "></i></a>
+                            </td>
                         @endif
                         <?php foreach ($tableGrid as $field) :
                         if($field['view'] == '1') :
@@ -166,8 +168,12 @@
                         ?>
                         <td data-values="action" data-key="<?php echo $row->TicketID;?>">
                             <div class=" action dropup">
+
                                 <a href="{{ url('servicerequests/show/'.$row->TicketID."?ticket_type=".$ticketType) }}" onclick="ajaxViewDetail('#servicerequests',this.href); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="View"><i class="fa fa-search"></i></a>
+
+                                @if($canEditDetail)
                                 <a href="{{ url('servicerequests/update/'.$row->TicketID."?ticket_type=".$ticketType) }}" onclick="ajaxViewDetail('#servicerequests',this.href); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Edit"><i class="fa  fa-edit"></i></a>
+                                @endif
                             </div>
 
 

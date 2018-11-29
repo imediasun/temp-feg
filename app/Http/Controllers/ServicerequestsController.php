@@ -10,6 +10,7 @@ use App\Models\SbTicketsTroubleshootingCheckList;
 use App\Models\Servicerequests;
 use App\Models\servicerequestsSetting;
 use App\Models\ShippingPriority;
+use App\Models\Sximo\Module;
 use App\Models\Ticketcomment;
 use App\Models\Ticketfollowers;
 use App\Models\ticketsetting;
@@ -26,9 +27,10 @@ class servicerequestsController extends Controller
 {
 
     static $per_page = '10';
-    public $module = 'Servicerequests';
+    public $module = 'servicerequests';
     protected $layout = "layouts.main";
     protected $data = array();
+    public $module_id = '';
     protected $sortMapping = [];
     protected $sortUnMapping = [];
 
@@ -42,6 +44,8 @@ class servicerequestsController extends Controller
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
 
         $this->data = array(
             'pageTitle' => $this->info['title'],
@@ -57,7 +61,6 @@ class servicerequestsController extends Controller
         );
         $this->sortMapping = ['location_id11' => 'L.location_name', 'last_user' => 'U.first_name'];
         $this->sortUnMapping = ['L.location_name11' => 'location_id', 'U.first_name' => 'last_user'];
-
     }
     function returnUrl()
     {
@@ -324,6 +327,8 @@ class servicerequestsController extends Controller
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
         $this->data['tableGrid'] = $this->model->displayFieldsByType($this->data['tableGrid'],$this->data['ticketType']);
+        $this->data['canEditDetail'] = $this->model->canEdit($this->data['ticketType'],$this->pass);
+        $this->data['canRemoveRequests'] = $this->model->canDelete($this->data['ticketType'],$this->pass);
         // Render into template
         return view('servicerequests.table', $this->data);
 
