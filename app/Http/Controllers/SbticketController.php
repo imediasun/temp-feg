@@ -444,6 +444,7 @@ class SbticketController extends Controller
 
         $sbticketsetting = new SbticketSetting();
         unset($data['setting_type']);
+
         $id = $sbticketsetting->insertRow($data, $id);
 
         if ($id >= 1) {
@@ -474,7 +475,7 @@ class SbticketController extends Controller
     }
     protected function filterPermissions($data){
         $cols = \App\Models\Sximo::getColumnTable('sbticket_setting');
-        unset($cols["id"]);unset($cols["updated_at"]);
+        unset($cols["id"]);unset($cols["updated_at"]);unset($cols["setting_type"]);
         foreach ($cols as $col => $value){
             if(!array_key_exists($col,$data))
                     $data[$col]="";

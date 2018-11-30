@@ -231,7 +231,7 @@
                                 'comment' => html_entity_decode(nl2br($row->Description)), 
                                 'postedOn' => $createdOnWithTime, 
                                 'commentIndex' => 0, 
-                                'commentIndexText' => 'INITIAL REQUEST', 
+                                'commentIndexText' => ($ticketType == 'game-related') ? 'TROUBLESHOOTING DESCRIPTION':'INITIAL REQUEST',
                                 'userProfile' => $creatorProfile,
                                 'commentClass' => $comments,
                             ])
