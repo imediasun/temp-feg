@@ -3392,8 +3392,8 @@ ORDER BY aa_id");
 
         $pass = $this->pass;
         $order_types = '';
-        if(!empty($pass['calculate price according to case price'])) {
-            $order_types = $pass['calculate price according to case price']->data_options;
+        if(!empty($pass['merchandise type for inquire about orders email'])) {
+            $order_types = $pass['merchandise type for inquire about orders email']->data_options;
         }
 
         $configName = 'Non-Merchandise-Related Order Inquires';
