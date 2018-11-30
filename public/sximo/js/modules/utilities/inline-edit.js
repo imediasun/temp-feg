@@ -63,7 +63,7 @@
         if (row.hasClass('inline_edit_applied')) {
             return;
         }
-        
+        var namesOfFieldsWhomValueIsNotAppearingProperlyOnInlineEdit = ['upc_barcode'];
         App.autoCallbacks.runCallback('inline.row.config.before', rowHookParams);        
         row.addClass('inline_edit_applied');
         rowHookParams.count = ++editingRowsCount;
@@ -132,8 +132,8 @@
                         }                        
                     }
                     break;
-                default: 
-                    input.val(originalValue);
+                default:
+                    input.val( (inArray( fieldName, namesOfFieldsWhomValueIsNotAppearingProperlyOnInlineEdit )) ? cellOriginalHTML.trim() : originalValue);
             }
         /*
             if(inputType =='select'){
@@ -185,7 +185,13 @@
         initiateInlineFormFields($('#'+ rowDomId + ' td[data-edit=1]'), siteUrl, rowHookParams);
     });       
    };
-   
+    function inArray(needle, haystack) {
+        var length = haystack.length;
+        for(var i = 0; i < length; i++) {
+            if(haystack[i] == needle) return true;
+        }
+        return false;
+    }
     window.cancelInlineEdit = cancelInlineEdit = function (rowDomId, event, element,actionColumnHidden) {
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {
             event.preventDefault();
