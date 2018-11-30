@@ -443,6 +443,7 @@ class SbticketController extends Controller
         $data = $this->filterPermissions($data);
 
         $sbticketsetting = new SbticketSetting();
+        unset($data['setting_type']);
         $id = $sbticketsetting->insertRow($data, $id);
 
         if ($id >= 1) {
