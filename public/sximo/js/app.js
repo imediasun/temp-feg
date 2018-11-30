@@ -1619,6 +1619,7 @@ function serverRequestTabsSelect(tabElement,tabClass,contentClass,contentId,load
     if(tab.attr('is-active') == 1){
         return false;
     }
+    clearFields(true);
     $('.'+tabClass).removeClass('setting-tab-active');
     $('.'+tabClass).attr('is-active',0);
     tab.addClass('setting-tab-active');
@@ -1631,4 +1632,15 @@ function serverRequestTabsSelect(tabElement,tabClass,contentClass,contentId,load
         $("#" + contentId).slideDown('medium');
     }
     return true;
+}
+
+function clearFields(doSearch) {
+    $('input[name="search_all_fields"]').val('');
+    $('select[name="ticket_custom_type"]').val('').change();
+    $('select[name="Status"]').val('').change();
+    $('#showAll').prop('checked',false);
+    $('#showAll').change();
+    if(doSearch === undefined) {
+        $('.doSimpleSearch').trigger('click');
+    }
 }
