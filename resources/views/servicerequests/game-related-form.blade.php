@@ -281,13 +281,16 @@
             });
 $(document).on('change','#location_id',function(){
    var locationId = $(this).val();
+
         $.ajax({
             url:'/servicerequests/location-games',
             data:{location_id:locationId},
             type:"GET",
             success:function(response){
                 if(response.status == 'error'){
-                    notyMessageError(response.message);
+                    if(locationId !='') {
+                        notyMessageError(response.message);
+                    }
                 }else{
 
                     $("#game_id").html(response.gameOptions).change();
