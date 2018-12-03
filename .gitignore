@@ -24,3 +24,4 @@ public/upload/pageCmsPDF/
 resources/views/pages/
 public/.htaccess
 app/Http/pageroutes.php
+storage/google-drive/

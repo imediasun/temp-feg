@@ -3,11 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Library\MyLog;
-use App\Models\Core\Users;
 use App\Models\googledriveearningreport;
-use App\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Session;
 
 
 class ExtractGoogleDriveFiles extends Command
@@ -17,7 +14,7 @@ class ExtractGoogleDriveFiles extends Command
      *
      * @var string
      */
-    protected $signature = 'extract:googledrivefiles';
+    protected $signature = 'extract:googledrivefiles {period}';
 
     /**
      * The console command description.
@@ -51,35 +48,44 @@ class ExtractGoogleDriveFiles extends Command
             return;
         }
         $this->L->log('------------Command Started.-------------');
-        echo 'Command Executed.';
+
+        $this->info('Command Executed.');
+        $period = $this->argument('period');
+        $this->info('Period: '.$period);
+//        exit();
 
         $client = new \Google_Client();
-        $client->setAccessToken('ya29.GltnBp1PkYXk4xWkaSRcSogic3o8OqaujdTqSXWeYUqs5mPBZzBx-jFxoc1Wmq7Tp8n5PMjwjRLyV0op-fIljtE6jGQavsp0wXhR8p6vVylhTWVZ2DS3QnexyidL');
+        $client->setAccessToken('ya29.GlxnBpB7uLzr32eFbTbGuzQYmORlFWrU48yTxCPJQLjujwi3lv2ZDXMMl68pNqQ9HtL9mS8zgmPaunn8Hg0q2DfMvm3lMzh4qR6Gs0FAgLFaU6cP5Ubum8-d79Vf8w');
 
         $parentId = '1lgiyuKBI1BczHh2RMGPIFxyUGKAjy_td'; //Location Debit Card Reports folder
 
         $this->L->log('Google Client', $client->getAccessToken());
-        $drive = new \Google_Service_Drive($client);
 
+        $drive = new \Google_Service_Drive($client);
         $files = $this->getAllLocationFoldersFromDrive($drive, $parentId);
 
         $locations = [];
         foreach ($files as $file){
             if($file->mimeType == 'application/vnd.google-apps.folder'){
+
                 $locationObj = new \stdClass();
                 $locationObj->locationFolderId = $file->id;
                 $locationObj->locationFolderName = $file->name;
+
                 $this->L->log('--------------  File Detail ----------------');
                 $this->L->log('File Id: '.$file->id);
                 $this->L->log('File Name: '.$file->name);
-                echo 'Getting Files from '.$file->name;
+                $this->info('Getting Files from '.$file->name);
+
                 $locations[] = $locationObj;
             }
         }
 
         foreach ($locations as $location){
             $this->path = $location->locationFolderName;
+
             $this->L->log('Extracting Files From: '. $location->locationFolderName);
+
             $this->getFilesFromLocationFolder($drive,$location->locationFolderId, $location);
         }
 
@@ -87,35 +93,14 @@ class ExtractGoogleDriveFiles extends Command
     }
 
     function getAllLocationFoldersFromDrive(\Google_Service_Drive $drive, $parentId = '1lgiyuKBI1BczHh2RMGPIFxyUGKAjy_td'){
-        $parameters = [
-            'q' => "trashed = false and '$parentId' in parents",
-            'pageSize' => 1000,0,
-            'fields' => 'nextPageToken, files(id, name, fileExtension, fullFileExtension, kind, mimeType, createdTime, modifiedTime, iconLink, webViewLink, webContentLink, parents)',
-
-        ];
-
-        $result = $drive->files->listFiles($parameters);
-        if($result){
-            $files = $result->files;
-        }
+        $files = $this->getFiles($drive, $parentId);//get file from drive
         return $files;
     }
 
 
     function getFilesFromLocationFolder(\Google_Service_Drive $drive, $parentId, $location){
 
-        $parameters = [
-            'q' => "trashed = false and '$parentId' in parents",
-            'pageSize' => 1000,0,
-            'fields' => 'nextPageToken, files(id, name, fileExtension, fullFileExtension, kind, mimeType, createdTime, modifiedTime, iconLink, webViewLink, webContentLink, parents)',
-
-        ];
-
-        $result = $drive->files->listFiles($parameters);
-        if($result){
-            $files = $result->files;
-        }
-
+        $files = $this->getFiles($drive, $parentId);//get file from drive
 
         foreach ($files as $file){
 
@@ -144,6 +129,19 @@ class ExtractGoogleDriveFiles extends Command
     }
 
 
+    function getFiles(\Google_Service_Drive $drive, $parentId){
+        $parameters = [
+            'q' => "trashed = false and '$parentId' in parents",
+            'pageSize' => 1000,0,
+            'fields' => 'nextPageToken, files(id, name, fileExtension, fullFileExtension, kind, mimeType, createdTime, modifiedTime, iconLink, webViewLink, webContentLink, parents)',
 
+        ];
+
+        $result = $drive->files->listFiles($parameters);
+        if($result){
+            $files = $result->files;
+        }
+        return $files;
+    }
 
 }
