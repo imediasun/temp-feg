@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\ExtractGoogleDriveFiles;
 use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -32,6 +33,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\VendorImportProduct::class,
         \App\Console\Commands\SendVendorScheduleEmails::class,
         \App\Console\Commands\CheckEnvConfiguration::class,
+        \App\Console\Commands\ExtractGoogleDriveFiles::class,
     ];
 
     /**
@@ -63,5 +65,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('env:checkenv')->daily();
 
+        $schedule->command('extract:googledrivefiles')->hourly();//Get the google drive files
     }
 }
