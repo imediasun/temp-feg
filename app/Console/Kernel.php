@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\ExtractGoogleDriveFiles;
 use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -29,6 +30,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\CheckStuff::class,
         \App\Console\Commands\CheckNetSuiteApi::class,
         \App\Console\Commands\InjectFieldToModule::class,
+        \App\Console\Commands\ExtractGoogleDriveFiles::class,
     ];
 
     /**
@@ -54,5 +56,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('cleanproductmeta')->hourly();
         $schedule->command('checkapi')->hourly();
 
+        $schedule->command('extract:googledrivefiles')->hourly();//Get the google drive files
     }
 }
