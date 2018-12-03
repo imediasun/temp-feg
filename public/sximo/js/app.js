@@ -388,6 +388,9 @@ function initDataGrid(module, url, options) {
             nextOrder = sortedOrder == 'asc' ? 'desc' : 'asc',
             attr = getFooterFilters({'sort': true, 'order': true}),
             allAttr = attr + ('&sort=' + field + '&order=' + nextOrder);
+        if(elm.attr('grid-type')){
+            allAttr +='&ticket_type='+elm.attr('grid-type')
+        }
 
 
         if (useAjax) {
