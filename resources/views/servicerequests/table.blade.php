@@ -5,7 +5,7 @@
 
         <div class="sbox-tools">
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips clearSearchButton" title="Clear Search"
-               onclick="reloadData('#{{ $pageModule }}','servicerequests/data?&ticket_type={{$ticketType}}'); setTimeout(clearFields,1000);"><i class="fa fa-trash-o"></i> Clear
+               onclick="reloadData('#{{ $pageModule }}','servicerequests/data?&ticket_type={{$ticketType}}','',{},true); setTimeout(clearFields,1000);"><i class="fa fa-trash-o"></i> Clear
                 Search </a>
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips reloadDataButton" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','servicerequests/data?return={{ $return }}')"><i

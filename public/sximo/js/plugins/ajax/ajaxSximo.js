@@ -1,14 +1,15 @@
 
-function reloadData( id,url,callback, options)
+function reloadData( id,url,callback, options,tabSwitch)
 {
     options = options || {};
     var isClearSearch = /data\?search\=$/.test(url),
         isBackground = options.isBackground || false,
         clearFilters;
 
-    
-    App.autoCallbacks.runCallback.call($( id +'Grid' ), 'beforereloaddata', 
-        {id:id, url:url, isClear: isClearSearch});       
+    if (tabSwitch === undefined) {
+        App.autoCallbacks.runCallback.call($(id + 'Grid'), 'beforereloaddata',
+            {id: id, url: url, isClear: isClearSearch});
+    }
         
     if (isClearSearch) {
         clearFilters = getClearDataFilters();        
@@ -21,8 +22,10 @@ function reloadData( id,url,callback, options)
 	$.post( encodeURI(url) ,function( data ) {
 		$( id +'Grid' ).html( data );
 		typeof callback === 'function' && callback(data);
-        App.autoCallbacks.runCallback.call($( id +'Grid' ), 'reloaddata', 
-            {id:id, url:url, data:data, isClear: isClearSearch});
+        if (tabSwitch === undefined) {
+            App.autoCallbacks.runCallback.call($(id + 'Grid'), 'reloaddata',
+                {id: id, url: url, data: data, isClear: isClearSearch});
+        }
         if (!isBackground) {
             $(document).scrollTop(0);
             $( id +'Grid' ).show();
