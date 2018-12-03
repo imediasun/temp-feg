@@ -1,4 +1,9 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<style>
+    .select2-drop{
+        z-index: 600000000 !important;
+    }
+</style>
 <div class="sbox">
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>
