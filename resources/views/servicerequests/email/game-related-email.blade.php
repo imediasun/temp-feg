@@ -14,14 +14,14 @@ Date : {{ date('Y/m/d',strtotime($data['game_realted_date'])) }}
                 style="font-weight: 700;"> {{ in_array($item->id,$savedCheckList) ? 'Done':'Not Done' }}</span></div>
 @endforeach
 
-
+<br/><br/>
 Part Number : {{ $data['part_number'] }}<br/>
-Costs : {{ CurrencyHelpers::formatCurrency($data['cost']) }}<br/>
+Costs : {{ CurrencyHelpers::formatPrice($data['cost']) }}<br/>
 Quantity : {{ $data['qty'] }}<br/>
 Shipping Priority : {{ $data['shipping_priority'] }}
-<br/>
+<br/><br/>
 <b>Troubleshooting Description :</b>
 
-<p>{{ @nl2br($data['Description']) }}</p>
+<p>{{ nl2br($data['Description']) }}</p>
 
 Direct link to service request: {{ $url }}
