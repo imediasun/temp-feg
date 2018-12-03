@@ -22,6 +22,6 @@ Shipping Priority : {{ $data['shipping_priority'] }}
 <br/><br/>
 <b>Troubleshooting Description :</b>
 
-<p>{<?php echo nl2br($data['Description']); ?></p>
+<p><?php echo nl2br($data['Description']); ?></p>
 
 Direct link to service request: {{ $url }}
