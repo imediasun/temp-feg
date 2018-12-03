@@ -96,6 +96,38 @@ class servicerequestsController extends Controller
         $this->data['access'] = $this->access;
         return view('servicerequests.index', $this->data);
     }
+
+    public function getSearch($mode = 'ajax')
+    {
+        $this->data['ticketType'] = 'debit-card-related';
+        if(!empty($_GET['ticket_type'])){
+            $this->data['ticketType'] = $_GET['ticket_type'];
+        }
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        if($this->data['ticketType'] == 'game-related') {
+            $this->data['tableForm'] = $this->model->resetFormElements($this->data['tableForm']);
+        }
+        $this->data['tableGrid'] = $this->model->displayFieldsByType($this->info['config']['grid'],$this->data['ticketType']);
+        $this->data['searchMode'] = $mode;
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
+
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+
+        if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            return view('feg_common.search', $this->data);
+        } else {
+            return view('sximo.module.utility.search', $this->data);
+        }
+
+    }
     
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
@@ -330,6 +362,9 @@ class servicerequestsController extends Controller
         $this->data['canEditDetail'] = $this->model->canEdit($this->data['ticketType'],$this->pass);
         $this->data['canRemoveRequests'] = $this->model->canDelete($this->data['ticketType'],$this->pass);
         // Render into template
+        if($this->data['ticketType'] == 'game-related') {
+            $this->data['tableForm'] = $this->model->resetFormElements($this->data['tableForm']);
+        }
         return view('servicerequests.table', $this->data);
 
     }
