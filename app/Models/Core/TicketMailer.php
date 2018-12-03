@@ -19,8 +19,10 @@ class TicketMailer
             $locationId = $ticketData['location_id'];
             $isFirstNotification = $type == 'FirstEmail';
             $gameRelatedSubject = '';
-            if($ticketData['ticket_type'] == 'game-related' && !empty($ticketData['game'])){
-                $gameRelatedSubject = " ".$ticketData['game']['game_id']." | ".$ticketData['game']['game_title'].", ";
+            if(!empty($ticketData['ticket_type'])) {
+                if ($ticketData['ticket_type'] == 'game-related' && !empty($ticketData['game'])) {
+                    $gameRelatedSubject = " " . $ticketData['game']['game_id'] . " | " . $ticketData['game']['game_title'] . ", ";
+                }
             }
             
             $followers = $this->getTicketFollowers($ticketId, $locationId,'',$ticketType);
