@@ -15,7 +15,7 @@
 		@endif
 		<a href="{{ URL::to( $pageModule .'/search?ticket_type='.$ticketType) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
             @if(SiteHelpers::isModuleEnabled($pageModule))
-                <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+                <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'?tab_type='.$ticketType) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
                 @if(!empty($colconfigs))
                     <select class="form-control float-margin height-set" style="width:auto!important;display:inline;" name="col-config"
                             id="col-config">
@@ -113,7 +113,7 @@
 
         if (data.status == 'success') {
             ajaxViewClose('#{{ $pageModule }}');
-            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data','&ticket_type={{$ticketType}}');
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');
         } else {
@@ -123,6 +123,6 @@
         }
     }
     $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?ticket_type={{ $ticketType }}&config_id='+$("#col-config").val()+ getFooterFilters());
     });
 </script>

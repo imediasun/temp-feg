@@ -51,7 +51,7 @@
                 </div>
             @endif
         @endif
-       @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
+       @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id,$ticketType)])
 
         <div class="table-responsive">
 
