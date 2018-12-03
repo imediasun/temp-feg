@@ -207,7 +207,10 @@ class servicerequestsController extends Controller
     }
     public function postData(Request $request)
     {
-
+        $this->data['ticketType'] = 'debit-card-related';
+        if($request->has('ticket_type')){
+            $this->data['ticketType'] = $request->input('ticket_type');
+        }
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'servicerequests')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -220,7 +223,8 @@ class servicerequestsController extends Controller
         }
         $this->data['config_id'] = $config_id;
         \Session::put('config_id', $config_id);
-        $config = $this->model->getModuleConfig($module_id, $config_id);
+        $config = $this->model->getModuleConfig($module_id, $config_id,$this->data['ticketType']);
+
         if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
         }
@@ -233,10 +237,7 @@ class servicerequestsController extends Controller
         $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
-        $this->data['ticketType'] = 'debit-card-related';
-        if($request->has('ticket_type')){
-            $this->data['ticketType'] = $request->input('ticket_type');
-        }
+
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
