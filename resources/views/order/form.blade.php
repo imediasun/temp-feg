@@ -333,7 +333,7 @@
                         <th class="game" style="display:none" width="200">Game</th>
                         <th width="90">Total ( $ )</th>
                         @if(is_object($row))  @if($fromStore != 1 && $mode == "edit")  <th width="90">Broken Case</th> @endif @endif
-                        <th width="60" align="center"><span id="remove-col">Remove </span></th>
+                        <th width="80" align="center"><span id="remove-col">Remove </span></th>
                     </tr>
 
                     </thead>
@@ -377,7 +377,7 @@
                                          placeholder="00"
                                          required>
                             <input type="hidden" name="prev_qty[]" value="0"/>
-                            <input type="hidden" class="case_per_quantity" id="case_per_quantity" value="0"/>
+                            <input type="hidden" class="case_per_quantity" name="case_per_quantity[]" disabled id="case_per_quantity" value="0"/>
                         </td>
                         <td class="game game_dropdown" style="display:none">
                             <br/> <input type='hidden' name='game[]' id='game_0'>
@@ -403,6 +403,9 @@
                             <p id="hide-button" data-id=""
                                onclick="removeRow(this.id);"
                                class="remove btn btn-xs btn-danger hide-button">-
+                            </p>
+                            <p id="hide-button" style="display: none;" data-id=""
+                               class="addToProductList btn btn-xs btn-danger hide-button tips" title="Add product to the Product List">+
                             </p>
                             <input type="hidden" name="counter[]">
                         </td>
@@ -1610,31 +1613,7 @@
                 counter = index + 1;
             });
             calculateSum();
-            /*
-             if(mode == "add")
-             {
-             counter = 1;
-             }
-             $('input[name^=item_num]').each(function () {
-             if(mode == "add") {
 
-             counter = counter + 1;
-             $('input[name^=item_num]').eq(counter-1).val(counter);
-
-             }
-             else if (mode == "remove")
-             {
-             if(counter >0)
-             counter = counter-1;
-             $('input[name^=item_num]').eq(counter-1).val(counter);
-
-
-             }
-
-             });*/
-
-
-            // init("item_name"+counter);
         }
         /**
          *
@@ -1675,7 +1654,7 @@
             }, ({{env('notification_popup_time_for_order',1)}} * 60000));
             return showFirstPopup;
         }
-
+        var settimeout = undefined;
 $(function(){
     /**
      * Order.create -> after specific time period if system remains idle on SAVE will show message related timeout
@@ -1683,7 +1662,7 @@ $(function(){
      * Order.clone -> after specific time period if system remains idle on SAVE will show message related timeout and order will be changed to its initial state
      * managefegrequeststore.create -> after specific time period if system remains idle on SAVE will show message related timeout
      */
-    var settimeout =  showPopups();
+     settimeout =  showPopups();
 });
 
     </script>
@@ -1985,6 +1964,7 @@ $(function(){
                             $('input[name="item_name[]"]').addClass('mysearch');
                             $('input[name="item_name[]"]').change();
                             $("input[name='case_price[]']").attr("onkeyup","calculateUnitPrice(this);");
+                            $('.addToProductList').hide();
                         }
                         else{
                             $('input[name="item_name[]"]').removeAttr('id');
@@ -2009,6 +1989,7 @@ $(function(){
                             $('#total_cost').val(0.00);
                             $('input[name="Subtotal"]').val(0.00);
                             $("input[name='case_price[]']").removeAttr("onkeyup");
+                            $('.addToProductList').show();
                             reInitParcley();
                         }
                     }
@@ -2035,6 +2016,7 @@ $(function(){
                     $('input[name="item_name[]"]').addClass('item_name');
                     $('input[name="item_name[]"]').addClass('mysearch');
                     $('input[name="item_name[]"]').change();
+                    $('.addToProductList').hide();
                 }
                 else{
                     currentElm.data('status','enabled');
@@ -2056,6 +2038,7 @@ $(function(){
                     $('input[name="item_name[]"]').removeClass('mysearch');
                     $('input[name="item_name[]"]').change();
                     console.log("freehand order");
+                    $('.addToProductList').show();
                 }
             }
             if (currentElm.data('status') == 'enabled') {
@@ -2280,5 +2263,37 @@ $(function(){
                 }
             });
             reInitParcley();
+
+            $('.addToProductList').click(function(){
+                $('.ajaxLoading').show();
+                var ordersubmitFormAjax = $("#ordersubmitFormAjax");
+                var url = '/order/productform/' + '{{ $id }}';
+               // $('#orderView').hide('slow');
+                var rowId = $(this).parent().parent();
+                var rowData = $('#'+rowId.attr('id')+" input");
+                var dataRow = {};
+                rowData.each(function(){
+                    var name = ($(this).attr('name')) ? ($(this).attr('name')).replace('[]',''):undefined;
+                    if ($(this).attr('type') == 'checkbox' || $(this).attr('type') == 'radio' || $(this).attr('name') == undefined){
+                       /* if($(this).is(":checked")){
+                            dataRow[$(this).attr('name')] = $(this).val();
+                        }*/
+                    }else{
+                        dataRow[name] = $(this).val();
+                    }
+                });
+                clearTimeout(settimeout);
+                $.ajax({
+                    type:"POST",
+                    url:url,
+                    data:dataRow,
+                    success:function(response){
+                        $('.ajaxLoading').hide();
+                        $('#orderView').hide('slow');
+                        $('#orderViewItemForm').html(response);
+                        $('#orderViewItemForm').show('slow');
+                    }
+                })
+            });
         });
     </script>
