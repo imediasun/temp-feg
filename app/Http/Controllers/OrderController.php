@@ -3434,5 +3434,10 @@ ORDER BY aa_id");
 
     }
 
+    public function postProductform(Request $request,$id = 0){
+        $this->data['row'] = $this->model->getColumnTable('products');
+        return view('order.freehand-product-form',$this->data);
+    }
+
 
 }
