@@ -477,5 +477,25 @@ class Servicerequests extends Observerable  {
             && (!in_array(Session::get('uid'),$excludedUsers))
         );
     }
-
+  function resetFormElements($formData = []){
+      $formElements = [];
+      foreach ($formData as $item) {
+          if ($item['field'] == 'Status') {
+              $item['option']["opt_type"] = "datalist";
+              $item['option']["lookup_query"] = "open:Open|inqueue:Pending|closed:Closed";
+              $formElements[] = $item;
+          }elseif ($item['field'] == 'issue_type') {
+              $item['field'] = 'issue_type_id';
+              $item['option']["lookup_query"] = "";
+              $item['option']["opt_type"] = "external";
+              $item['option']["lookup_table"] = "issue_types";
+              $item['option']["lookup_key"] = "id";
+              $item['option']["lookup_value"] = "issue_type_name";
+              $formElements[] = $item;
+          } else {
+              $formElements[] = $item;
+          }
+      }
+      return $formElements;
+  }
 }
