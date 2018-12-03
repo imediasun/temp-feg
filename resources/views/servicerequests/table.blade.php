@@ -81,6 +81,7 @@
                                     $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
                                     $th = '<th'.
                                             ' class="'.$colClass.'"'.
+                                            ' grid-type="'.$ticketType.'"'.
                                             ' data-field="'.$colField.'"'.
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
