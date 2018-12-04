@@ -3416,7 +3416,7 @@ ORDER BY aa_id");
         $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($configName, null, $isTest);
 
         $message = $this->getShow($orderId, 'emails.inquireOrder');
-        $subject = 'Inquire order';
+        $subject = 'INQUIRE ORDER '.$order->po_number;
         if(!empty($systemEmailRecipients['to'])){
             $systemEmailRecipients['to'] .= ','.Session::get('eid');
         }else{
