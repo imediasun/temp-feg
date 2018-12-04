@@ -53,6 +53,7 @@ class googledriveearningreport extends Sximo  {
         $loc = explode('-',$location);
         $saved = $this->updateOrcreate(['google_file_id' => $file->id],
             [
+                'google_file_id' => $file->id,
                 'file_name' => $file->name,
                 'web_view_link' => $file->webViewLink,
                 'icon_link' => $file->iconLink,
