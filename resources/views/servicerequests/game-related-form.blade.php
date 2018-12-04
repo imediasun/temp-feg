@@ -132,7 +132,7 @@
                             <?php $index++ ?>
                             @if($index == 8)
                                 </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" style="padding-left: 6%; padding-right: 0px;">
                                 @endif
 					<input type="checkbox" name="troubleshootchecklist[]" @if(in_array($troubleshootingCheckList->id,$savedCheckList)) checked @endif id="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}" value="{{ $troubleshootingCheckList->id }}">&nbsp;&nbsp; <label title="{{ $troubleshootingCheckList->check_list_name }}" class="tips" style="vertical-align: middle; width: 90%; font-size: 12px; white-space: nowrap;
     overflow: hidden;
