@@ -5,11 +5,11 @@
     height: 38px;
 }
 .setting-tab{
-    padding: 8px 5px;
+    padding: 8px 15px;
     display: inline-block;
     border: 1px solid #dddddd;
     border-bottom: none;
-    width: 140px;
+    width: auto;
     top: 0px;
     position: absolute;
     z-index: 1111111;
@@ -24,7 +24,7 @@
     transition: all 0.30s ease-in-out;
 }
 .setting-tab-second{
-    left: 130px;
+    left: 135px;
 }
 .setting-tab-active{
     background: white;

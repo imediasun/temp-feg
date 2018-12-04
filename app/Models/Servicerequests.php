@@ -485,7 +485,17 @@ class Servicerequests extends Observerable  {
               $item['option']["lookup_query"] = "open:Open|inqueue:Pending|closed:Closed";
               $formElements[] = $item;
           }elseif ($item['field'] == 'issue_type') {
+             // $item['field'] = 'issue_type_id';
+              $item['search'] = 0;
+             /* $item['option']["lookup_query"] = "";
+              $item['option']["opt_type"] = "external";
+              $item['option']["lookup_table"] = "issue_types";
+              $item['option']["lookup_key"] = "id";
+              $item['option']["lookup_value"] = "issue_type_name";*/
+              $formElements[] = $item;
+          } elseif($item['field'] == 'ticket_custom_type'){
               $item['field'] = 'issue_type_id';
+              $item['label'] = 'Issue Type';
               $item['option']["lookup_query"] = "";
               $item['option']["opt_type"] = "external";
               $item['option']["lookup_table"] = "issue_types";

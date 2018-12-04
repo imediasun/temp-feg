@@ -3,15 +3,18 @@
     .form-group{
         position: static !important;
     }
+    .form-horizontal .control-label{
+        text-align: right;
+    }
 </style>
 @if($setting['form-method'] =='native')
 <div class="sbox">
     <div class="sbox-title">
         <h4>
             @if($id)
-            <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Ticket
+            <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Game-Related Service Request
             @else
-            <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Ticket
+            <i class="fa fa-plus"></i>&nbsp;&nbsp;Create Game-Related Service Request
             @endif
             <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
         </h4>
@@ -27,8 +30,8 @@
             <fieldset>
                 <div class="row">
                     <div class="col-md-6">
-                <div class="form-group  " >
-                    <label for="Location" class=" control-label col-md-4 text-left">
+                <div class="form-group  " text-align >
+                    <label for="Location" class=" control-label col-md-4">
                         {!! SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}
                     </label>
                     <div class="col-md-8">
@@ -131,7 +134,7 @@
                                 </div>
                         <div class="col-md-6">
                                 @endif
-					<input type="checkbox" name="troubleshootchecklist[]" @if(in_array($troubleshootingCheckList->id,$savedCheckList)) checked @endif id="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}" value="{{ $troubleshootingCheckList->id }}"> <label title="{{ $troubleshootingCheckList->check_list_name }}" class="tips" style="vertical-align: middle; width: 90%; font-size: 12px; white-space: nowrap;
+					<input type="checkbox" name="troubleshootchecklist[]" @if(in_array($troubleshootingCheckList->id,$savedCheckList)) checked @endif id="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}" value="{{ $troubleshootingCheckList->id }}">&nbsp;&nbsp; <label title="{{ $troubleshootingCheckList->check_list_name }}" class="tips" style="vertical-align: middle; width: 90%; font-size: 12px; white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;" for="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}">{{ $troubleshootingCheckList->check_list_name }}</label><br /><br />
                         @endforeach
