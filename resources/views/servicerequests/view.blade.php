@@ -263,6 +263,7 @@
                 {!! Form::hidden('issue_type', $row->issue_type) !!}
                 {!! Form::hidden('location_id', $row->location_id) !!}
                 {!! Form::hidden('department_id', $row->department_id) !!}
+                {!! Form::hidden('ticket_type', $ticketType) !!}
                 {!! Form::hidden('assign_to', $row->assign_to) !!}
                 {!! Form::hidden('game_id', $row->game_id) !!}
                 {!! Form::close() !!}

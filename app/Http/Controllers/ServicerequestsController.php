@@ -847,8 +847,10 @@ class servicerequestsController extends Controller
     }
     public function postComment(Request $request)
     {
+
         $date = date("Y-m-d");
         $ticketId = $request->input('TicketID');
+        $ticketType = $request->input('ticket_type','debit-card-related');
 
         //validate post for sb_tickets module
         $ticketsData = $this->validatePost('sb_tickets', true);
@@ -858,7 +860,7 @@ class servicerequestsController extends Controller
         $comment_model = new Ticketcomment();
         $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
         
-        if (!ticketsetting::canUserChangeStatus()) {
+        if (!ticketsetting::canUserChangeStatus($ticketType)) {
             unset($ticketsData['Status']);
             unset($ticketsData['closed']);
         }
