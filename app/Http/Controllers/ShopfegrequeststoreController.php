@@ -226,9 +226,9 @@ class ShopfegrequeststoreController extends Controller
 
         $page = $request->input('page', 1);
         $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
-        $extraSorts = [
-            'hot_item'=>'DESC',
+        $extraSorts = $sort != 'id' ? [] : [
             'is_new' => 'DESC',
+            'hot_item'=>'DESC',
             'is_backinstock' =>'DESC',
         ];
 
