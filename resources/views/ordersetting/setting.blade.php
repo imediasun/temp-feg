@@ -35,6 +35,7 @@
                                 <th field="name3" width="60%">PO Note</th>
                                 <th field="name4" width="40%">Order Types</th>
                                 <th field="name5" width="40%">Groups</th>
+                                <th field="name6" width="40%">Users</th>
                             </tr>
                             </thead>
                             <tbody class="no-border-x no-border-y">
@@ -61,6 +62,8 @@
                                 </td>
                                 <td >
                                 </td>
+                                <td >
+                                </td>
                             </tr>
                             <tr>
                                 <!--<td>1</td>-->
@@ -84,6 +87,8 @@
                                 </td>
                                 <td >
                                 </td>
+                                <td >
+                                </td>
                             </tr>
                             <tr>
                                 <!--<td>1</td>-->
@@ -96,6 +101,8 @@
                                 </td>
                                 <td>
 
+                                </td>
+                                <td >
                                 </td>
                                 <td >
                                 </td>
@@ -114,6 +121,8 @@
                                 </td>
                                 <td >
                                 </td>
+                                <td >
+                                </td>
                             </tr>
                             @if (!empty($fegSettings))
                                 @foreach($fegSettings as $settingItem)
@@ -127,6 +136,8 @@
                                             />
                                         </td>
                                         <td>
+                                        </td>
+                                        <td >
                                         </td>
                                         <td >
                                         </td>
@@ -147,6 +158,8 @@
                                 </td>
                                 <td >
                                 </td>
+                                <td >
+                                </td>
                             </tr>
                             <tr>
                                 <td>Exclude Order(s) From Specified User Groups</td>
@@ -163,6 +176,8 @@
                                 <td>
                                     <select class="select2" multiple id="userGroups" name="userGroups[]"></select>
                                 </td>
+                                <td>
+                                </td>
                             </tr>
 
                             <tr>
@@ -173,6 +188,8 @@
                                     <input type="number" value="{!! $product_label_new or 0 !!}" class="form-control" min="0" step="1" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');" name="product_label_new" placeholder="Enter number of days" />
                                 </td>
                                 <td id="last_td">
+                                </td>
+                                <td>
                                 </td>
                                 <td>
                                 </td>
@@ -187,6 +204,22 @@
                                 <td id="last_td">
                                 </td>
                                 <td>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Users and User Groups Exemption</td>
+                                <td>Exempt Users and User Groups from Product Type and Product Exclusions</td>
+                                <td>
+                                </td>
+                                <td id="last_td">
+                                </td>
+                                <td>
+                                    <select class="select2" multiple id="exemptedGroups" name="exemptedGroups[]"></select>
+                                </td>
+                                <td>
+                                    <select class="select2" multiple id="exemptedUsers" name="exemptedUsers[]"></select>
                                 </td>
                             </tr>
                             </tbody>
@@ -213,6 +246,13 @@
                     });
             $("#userGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: "{{ $excludedGroups }}"});
+
+            $("#exemptedUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
+                    {selected_value: "{{ $exemptedUsers }}"});
+
+            $("#exemptedGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
+                    {selected_value: "{{ $exemptedGroups }}"});
+
         });
 
         var form = $('#orderSetting');
@@ -263,7 +303,7 @@
         $(document).ready(function() {
 
             $('#excluded_orders').select2({
-                width: 300,
+                width: '100%',
                 ajax: {
                     // The number of milliseconds to wait for the user to stop typing before
                     // issuing the ajax request.
@@ -331,7 +371,7 @@
                 }
             });
             $('#excluded_orders_from_selected_groups').select2({
-                width: 300,
+                width: '100%',
                 ajax: {
                     // The number of milliseconds to wait for the user to stop typing before
                     // issuing the ajax request.

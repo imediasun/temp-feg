@@ -1,5 +1,6 @@
 <?php namespace App\Models\Core;
 
+use App\Models\Feg\System\Options;
 use App\Models\Sximo;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Authenticatable;
@@ -154,4 +155,29 @@ FROM users
         $this->save();
     }
 
+    public function userBelongsToExemptedUsersList(){
+
+        $exemptedUsersIdsArray = [];
+        $exemptedUserObj = Options::where('option_name', 'exempted_users')->first();
+        if($exemptedUserObj){
+            $exemptedUsersIdsArray = explode(',', $exemptedUserObj->option_value);
+        }
+
+        $exemptedGroupsIdsArray = [];
+        $exemptedGroupObj = Options::where('option_name', 'exempted_groups')->first();
+        if($exemptedGroupObj){
+            $exemptedGroupsIdsArray = explode(',', $exemptedGroupObj->option_value);
+        }
+
+
+        if(in_array($this->group_id, $exemptedGroupsIdsArray)){
+            return true;
+        }
+
+        if(in_array($this->id, $exemptedUsersIdsArray)){
+            return true;
+        }
+
+        return false;
+    }
 }
