@@ -279,7 +279,7 @@
             }
         },400);
     });
-
+    makeSimpleSearchFieldsToInitiateSearchOnEnter();
 </script>
 <style>
     .table th.right {
