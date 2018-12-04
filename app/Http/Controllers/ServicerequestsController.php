@@ -102,6 +102,9 @@ class servicerequestsController extends Controller
         $this->data['ticketType'] = 'debit-card-related';
         if(!empty($_GET['ticket_type'])){
             $this->data['ticketType'] = $_GET['ticket_type'];
+            if($this->data['ticketType'] == 'game-related'){
+                $this->data['pageTitle'] = '+ Create Game-Related Service Request';
+            }
         }
         $this->data['tableForm'] = $this->info['config']['forms'];
         if($this->data['ticketType'] == 'game-related') {
@@ -210,6 +213,9 @@ class servicerequestsController extends Controller
         $this->data['ticketType'] = 'debit-card-related';
         if($request->has('ticket_type')){
             $this->data['ticketType'] = $request->input('ticket_type');
+            if($this->data['ticketType'] == 'game-related'){
+                $this->data['pageTitle'] = '+ Create Game-Related Service Request';
+            }
         }
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'servicerequests')->pluck('module_id');
         $this->data['module_id'] = $module_id;
@@ -376,6 +382,9 @@ class servicerequestsController extends Controller
         $view = 'form';
         if($request->has('ticket_type')){
             $view = ($request->input('ticket_type') == 'game-related') ? 'game-related-form':$view;
+            if($view == 'game-related-form'){
+                $this->data['pageTitle'] = '+ Create Game-Related Service Request';
+            }
         }
 
         $isAdd = $this->data['isAdd'] = is_null($id);
@@ -505,7 +514,11 @@ class servicerequestsController extends Controller
         $this->data['savedCheckList'] = SbTicketsTroubleshootingCheckList::where('sb_ticket_id',$id)->get()->pluck('troubleshooting_check_list_id')->toArray();
         $this->data['troubleshootingCheckList'] = TroubleshootingCheckList::all();
         $this->data['ticketType'] = $ticketType;
-        
+
+        if($this->data['ticketType'] == 'game-related'){
+            $this->data['canChangeStatus'] = ticketsetting::canUserChangeStatus(null,'game-related');
+        }
+
         return view('servicerequests.view', $this->data);
     }
     function getSubscribe(Request $request, $id = NULL, $userID = NULL, $unfollow = NULL) {
@@ -1128,7 +1141,7 @@ class servicerequestsController extends Controller
             $oldStatus = $request->get('oldStatus');
             $data['ticket_type'] = 'game-related';
             if (!$isAdd) {
-                if (!ticketsetting::canUserChangeStatus()) {
+                if (!ticketsetting::canUserChangeStatus('game-related')) {
                     unset($data['Status']);
                     unset($data['closed']);
                 }

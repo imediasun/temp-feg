@@ -116,18 +116,30 @@
                         </div>
                         <div class="followersListContainer sidebarInput" style="border: 1px solid black;">
                             <div style="font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 5px; padding: 5px 0px;">Part Information</div>
-                            <div style="font-size:12px; text-align: right; ">
-                                <div style="margin-bottom: 5px; margin-right: 5px;">
-                                    Part Number: <input type="text" disabled value="{{ $row->part_number }}">
+                            <div style="font-size:12px; text-align: left; ">
+                                <div class="row" style="margin-bottom: 5px; margin-left: 0px; margin-right: 0px;">
+                                    <div class="col-md-5" style="text-align: right; padding: 0px;">Part Number:&nbsp;&nbsp;</div>
+                                    <div class="col-md-7" style="padding: 0px; padding-right: 2px;">
+                                        <input type="text" style="width: 100%;" disabled value="{{ $row->part_number }}">
+                                    </div>
                                 </div>
-                                <div style="margin-bottom: 5px; margin-right: 5px;">
-                                    Costs: <input type="text" disabled value="{{ CurrencyHelpers::formatCurrency($row->cost) }}">
+                                <div class="row" style="margin-bottom: 5px; margin-left: 0px; margin-right: 0px;">
+                                    <div class="col-md-5" style="text-align: right;  padding: 0px;">Costs:&nbsp;&nbsp;</div>
+                                    <div class="col-md-7" style="padding: 0px; padding-right: 2px;">
+                                        <input type="text" style="width: 100%;" disabled value="{{ CurrencyHelpers::formatCurrency($row->cost) }}">
+                                    </div>
+                                    </div>
+                                <div class="row" style="margin-bottom: 5px; margin-left: 0px; margin-right: 0px;">
+                                    <div class="col-md-5" style="text-align: right; padding: 0px;">Quantity:&nbsp;&nbsp;</div>
+                                    <div class="col-md-7" style="padding: 0px; padding-right: 2px;">
+                                        <input type="text" style="width: 100%;" disabled value="{{ $row->qty }}">
+                                    </div>
                                 </div>
-                                <div style="margin-bottom: 5px; margin-right: 5px;">
-                                    Quantity: <input type="text" disabled value="{{ $row->qty }}">
-                                </div>
-                                <div style="margin-bottom: 5px; margin-right: 5px;">
-                                    Shipping Priority: <input type="text" disabled value="{{ $row->shipping_priroty }}">
+                                <div class="row" style="margin-bottom: 5px; margin-left: 0px; margin-right: 0px;">
+                                    <div class="col-md-5" style="text-align: right; padding: 0px;">Shipping Priority:&nbsp;&nbsp;</div>
+                                    <div class="col-md-7" style="padding: 0px; padding-right: 2px;">
+                                        <input type="text" style="width: 100%;" disabled value="{{ $row->shipping_priroty }}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -269,6 +281,11 @@
             userId = '{{ $uid }}';
 
     $(document).ready(function() {
+
+        @if($ticketType == 'game-related')
+        $('.ticketMainViewContainer').height($('.ticketLeftSidebarContainer').height()-84);
+        @endif
+
         App.modules.tickets.detailedView.init({
                     'container': $('#'+pageModule+'View'),
                     'moduleName': pageModule,
