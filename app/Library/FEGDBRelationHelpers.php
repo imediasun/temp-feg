@@ -9,6 +9,7 @@
 namespace App\Library;
 
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\Core\Users;
 use App\Models\location;
 use App\Models\Locationgroups;
 use App\Models\Ordertyperestrictions;
@@ -35,7 +36,10 @@ class FEGDBRelationHelpers
 
         $customRelation = CustemRelation::select('id', 'related_id', 'related_to', 'related_type', 'related_type_to', 'is_excluded', 'created_at', 'updated_at');
 
-        $result = $customRelation
+        $user = Users::find(Auth()->user()->id);
+        $userBelongsToExemptedUsers = $user->userBelongsToExemptedUsersList();
+
+        $result = $userBelongsToExemptedUsers ? collect([]) :  $customRelation
             ->where(function ($query) use ($relatedId){
                 $query->whereIn('related_id', $relatedId)
                     ->orWhereIn('related_to', $relatedId);
@@ -219,11 +223,11 @@ class FEGDBRelationHelpers
 
         $products = product::select('vendor_description')->whereIn('id',$productData['excluded_product_ids'])->get()->pluck('vendor_description')->toArray();
         $productTypes = Ordertyperestrictions::select('order_type as product_type')->whereIn('id',$productData['excluded_product_type_ids'])->get()->pluck('product_type')->toArray();
-   $data =[
-       'locationGroups' => $locationGroup,
-       'productTypes' => $productTypes,
-       'products' => $products
-   ];
+        $data =[
+           'locationGroups' => $locationGroup,
+           'productTypes' => $productTypes,
+           'products' => $products
+        ];
         return $data;
     }
 

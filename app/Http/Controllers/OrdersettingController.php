@@ -91,6 +91,17 @@ class OrdersettingController extends Controller
         if($option){
             $excludedGroups = $option->option_value; // explode(',', $option->option_value);
         }
+        $option = Options::where('option_name', 'exempted_users')->first();
+        $exemptedUsers = "";
+        if($option){
+            $exemptedUsers = $option->option_value; // explode(',', $option->option_value);
+        }
+
+        $option = Options::where('option_name', 'exempted_groups')->first();
+        $exemptedGroups = "";
+        if($option){
+            $exemptedGroups = $option->option_value; // explode(',', $option->option_value);
+        }
 
         $newOrdersArray = [];
         foreach ($orders as $order){
@@ -108,6 +119,8 @@ class OrdersettingController extends Controller
         $this->data['Orders']               = $orders;
         $this->data['ExcludedOrdersPos']    = $excludedOrdersPos;
         $this->data['excludedGroups']       = $excludedGroups;
+        $this->data['exemptedUsers']        = $exemptedUsers;
+        $this->data['exemptedGroups']       = $exemptedGroups;
         $productOptions =   Options::whereIn('option_name', ['product_label_new','product_label_backinstock'])->get();
 
         foreach ($productOptions as $productOption){
@@ -132,6 +145,8 @@ class OrdersettingController extends Controller
         $NonMerchandiseOrderTypes = $request->input('Nonmerchandiseordertypes');
         $GraphicsRequestSenderContent = $request->input('newgraphicsrequestsendercontent');
         $GraphicsRequestReceiverContent = $request->input('newgraphicsrequestreceivercontent');
+        $exemptedUsers = !empty($request->input('exemptedUsers')) ? implode(',', $request->input('exemptedUsers')) : '';
+        $exemptedGroups = !empty($request->input('exemptedGroups')) ? implode(',', $request->input('exemptedGroups')) : '';
         $excludedOrders = !empty($request->input('excluded_orders')) ? implode(',', $request->input('excluded_orders')) : '';
         $excludedOrdersFromSpecifiedGroup = !empty($request->input('excluded_orders_from_groups')) ? implode(',', $request->input('excluded_orders_from_groups')) : '';
         $excludedUserGroups = !empty($request->input('userGroups')) ? implode(',', $request->input('userGroups')) : '';;
@@ -229,6 +244,44 @@ class OrdersettingController extends Controller
                 'option_description' => 'The tag will be present for a # of days configured in the Orders/Requests > Settings module. The default configuration will be 14 days from the date found in the product\'s Updated_On field in the Product List module.',
                 'option_form_element_details' => null
             ]);
+        }
+
+        $option = Options::where('option_name', 'exempted_users')->first();
+        if(!$option){
+            Options::addOption('exempted_users', $exemptedUsers, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'Users Exemption',
+                'option_description' => 'Exempt Users from Product Type and Product Exclusions',
+                'option_form_element_details' => null
+            ]);
+        }else{
+                Options::updateOption('exempted_users', $exemptedUsers, [
+                    'is_active' => 1,
+                    'notes' => null,
+                    'option_title' => 'Users Exemption',
+                    'option_description' => 'Exempt Users from Product Type and Product Exclusions',
+                    'option_form_element_details' => null
+                ]);
+        }
+
+        $option = Options::where('option_name', 'exempted_groups')->first();
+        if(!$option){
+            Options::addOption('exempted_groups', $exemptedGroups, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'User Groups Exemption',
+                'option_description' => 'Exempt User Groups from Product Type and Product Exclusions',
+                'option_form_element_details' => null
+            ]);
+        }else{
+                Options::updateOption('exempted_groups', $exemptedGroups, [
+                    'is_active' => 1,
+                    'notes' => null,
+                    'option_title' => 'User Groups Exemption',
+                    'option_description' => 'Exempt User Groups from Product Type and Product Exclusions',
+                    'option_form_element_details' => null
+                ]);
         }
 
         $option = Options::where('option_name', 'excluded_orders')->first();
