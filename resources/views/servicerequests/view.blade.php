@@ -58,6 +58,7 @@
             <div class="ticketViewParentContainer clearfix">
                 {!! Form::open(array('url'=>'servicerequests/status-update/'.SiteHelpers::encryptID($row['TicketID']), 'id'=> 'servicerequestsStatusUpdateFormAjax')) !!}
                 {!! Form::hidden('TicketID', $row['TicketID']) !!}
+                {!! Form::hidden('ticket_type', $ticketType) !!}
                 {!! Form::hidden('Status', $row['Status']) !!}
                 {!! Form::hidden('oldStatus', $row['Status']) !!}
                 {!! Form::close() !!}
