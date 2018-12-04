@@ -818,7 +818,7 @@ class servicerequestsController extends Controller
     public function postStatusUpdate(Request $request, $id) {
         $response = ['status' => 'error',  'message' => 'Not authorized to change status'];
        $ticketType = $request->input('ticket_type','debit-card-related');
-        if (ticketsetting::canUserChangeStatus($ticketType)){
+        if (ticketsetting::canUserChangeStatus(null,$ticketType)){
             $id = \SiteHelpers::encryptID($id, true);
             $date = date("Y-m-d");
             $status = @$request->input('Status');
@@ -861,7 +861,7 @@ class servicerequestsController extends Controller
         $comment_model = new Ticketcomment();
         $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
         
-        if (!ticketsetting::canUserChangeStatus($ticketType)) {
+        if (!ticketsetting::canUserChangeStatus(null,$ticketType)) {
             unset($ticketsData['Status']);
             unset($ticketsData['closed']);
         }
