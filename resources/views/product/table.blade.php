@@ -224,7 +224,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         ?>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
 
-                            {!! AjaxHelpers::GamestitleButtonAction('product',$access,$id ,$setting) !!}
+                            {!! AjaxHelpers::GamestitleButtonAction('product',$access,$id ,$setting, null , true) !!}
                             <a href="#{{ $row->id }}" onclick="return updateBarcode('{{ $row->id }}');"  class="tips btn btn-xs btn-white"
                                title="Generate UPC/Barcode"><i class="fa fa-barcode" aria-hidden="true"></i></a>
                             <a href="{{ URL::to('product/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"
