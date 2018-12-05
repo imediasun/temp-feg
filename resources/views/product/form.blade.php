@@ -35,6 +35,7 @@
             width: 100%;
             margin-bottom: 14px;
         }
+
     </style>
     <div class="sbox">
         <div class="sbox-title">
@@ -177,8 +178,16 @@
 
                         </div>
                     </div>
+                    <?php
+                    $variationCount = 1;
+                    ?>
+                    @if(count($variations) > 0)
+                    @foreach($variations as $variation)
 
-                    <span class="product_types">
+                        @if($variationCount == 1)
+
+                            <span class="product_types">
+                                <input type="hidden" name="itemId[]" value="{{ $variation['id'] }}">
                     <div class="form-group  ">
                         <label for="Prod Type Id" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Product Type', (isset($fields['prod_type_id']['language'])?
@@ -187,7 +196,8 @@
 
                         <div class="col-md-6">
 
-                            <select name='prod_type_id[]' data-previous="{{$row['prod_type_id']}}" rows='5' data-counter="1" id='prod_type_id_1' class='select2 prod_type'
+                            <select name='prod_type_id[]' data-previous="{{$row['prod_type_id']}}" rows='5'
+                                    data-counter="1" id='prod_type_id_1' class='select2 prod_type'
                                     required='required'></select>
 
                         </div>
@@ -204,7 +214,185 @@
                         </label>
 
                         <div class="col-md-6">
-                            <select name='prod_sub_type_id[1]' data-counter="1" rows='5' id='prod_sub_type_id_1' class='select2 prod_sub_type'></select>
+                            <select name='prod_sub_type_id[1]' data-counter="1" rows='5' id='prod_sub_type_id_1'
+                                    class='select2 prod_sub_type'></select>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Expense Category" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
+                        </label>
+                        <div class="col-md-6">
+                            <select name='expense_category[1]' rows='5' id='expense_category_1' class='select2'
+                                    required></select>
+                            {{--<input class="form-control" placeholder="" parsley-type="number" required="required" id="expense_category_1" name="expense_category[1]" type="text" value="{{$row['expense_category']}}">--}}
+                        </div>
+                        <div class="col-md-2">
+                            @if(!empty($variation['id']))
+                                <?php
+                                $disabledcheckbox = '';
+                                if ($variation['is_default_expense_category']) {
+                                    $disabledcheckbox = 'disabled="disabled"';
+                                }
+                                ?>
+                                <label class='checked checkbox-inline'>
+                                    <input type='radio'  name='is_default_expense_category'
+                                           value='{{ $variation['id'] }}' class=''
+                                           @if($variation['is_default_expense_category']==1) checked @endif /> Make Default</label>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="form-group" id="retail_price_1">
+                        <label for="Retail Price" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])?
+                            $fields['retail_price']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <div class="input-group ig-full">
+                                <span class="input-group-addon">$</span>
+                                {!! Form::text('retail_price[1]',
+                                $row['retail_price'] == ''?'':(double)$row['retail_price'],array('class'=>'form-control',
+                                'placeholder'=>'0.00','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'retail_input_1' )) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group  " id="ticket_value_1">
+                        <label for="Ticket Value" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])?
+                            $fields['ticket_value']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            {!! Form::text('ticket_value[1]', $row['ticket_value'],array('class'=>'form-control',
+                            'placeholder'=>'','id'=>'ticket_input_1')) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    </span>
+
+                            <span id="more_types_container">
+                        @else
+                                    <span class="product_types productTypeBox" id="remove_me_{{ $variationCount }}">
+                                        <input type="hidden" name="itemId[]" value="{{ $variation['id'] }}">
+                                        <div class="form-group  ">
+                <label for="Prod Type Id" class=" control-label col-md-4 text-left">
+                    {!! SiteHelpers::activeLang("Product Type", (isset($fields["prod_type_id"]["language"])? $fields["prod_type_id"]["language"] : array())) !!}
+                </label>
+                <div class="col-md-6">
+                    <select data-previous="0" name="prod_type_id[]" rows="5"
+                            data-counter="{{ $variationCount }}"
+                            id="prod_type_id_{{ $variationCount }}" class="prod_type select2 "
+                            required="required"></select>
+                </div>
+                                            <div class="col-md-2">
+                                                <button data-remove-id="{{ $variation['id'] }}" data-count="{{ $variationCount }}"
+                                                        class="remove_me pull-right btn btn-xs btn-danger"><i
+                                                            class="fa fa fa-times"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group  ">
+                <label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
+                    {!! SiteHelpers::activeLang("Product Subtype",(isset($fields["prod_sub_type_id"]["language"])? $fields["prod_sub_type_id"]["language"] : array())) !!}
+                </label>
+                <div class="col-md-6">
+                    <select name="prod_sub_type_id[{{ $variationCount }}]" rows="5" data-counter="{{ $variationCount }}"
+                            id="prod_sub_type_id_{{ $variationCount }}" class="prod_sub_type select2 "></select>
+                </div>
+                                            <div class="col-md-2">
+                                            </div>
+                                        </div>
+                <div class="form-group">
+                    <label for="Expense Category" class=" control-label col-md-4 text-left">
+                        {!! SiteHelpers::activeLang("Expense Category", (isset($fields["expense_category"]["language"])? $fields["expense_category"]["language"] : array())) !!}
+                    </label>
+                <div class="col-md-6">
+                    <select name="expense_category[{{ $variationCount }}]" rows="5"
+                            id="expense_category_{{ $variationCount }}" class="select2"
+                            required></select>
+                </div>
+                    <div class="col-md-2">
+
+                         @if(!empty($variation['id']))
+                            <?php
+
+                            $disabledcheckbox = '';
+                            if ($variation['is_default_expense_category'] == 1) {
+                                $disabledcheckbox = 'disabled="disabled"';
+                            }
+                            ?>
+                            <label class='checked checkbox-inline'>
+
+                                    <input type='radio'  name='is_default_expense_category'
+                                           value='{{ $variation['id'] }}' class=''
+                                           @if($variation['is_default_expense_category']==1) checked @endif /> Make Default</label>
+                        @endif
+
+                    </div>
+                </div>
+                <div class="form-group" id="retail_price_{{ $variationCount }}">
+                    <label for="Retail Price" class="control-label col-md-4 text-left addcolon">Retail Price </label>
+                <div class="col-md-6">
+                <div class="input-group ig-full">
+                    <span class="input-group-addon">$</span>
+                    <input class="form-control parsley-validated retail_prices" placeholder="0.00" type="text"
+                           parsley-min="0" step="1" id="retail_input_{{ $variationCount }}"
+                           name="retail_price[{{ $variationCount }}]" value="{{ '' }}">
+                </div>
+                </div>
+                <div class="col-md-2"> </div> </div>' +
+                <div class="form-group ticket_values " id="ticket_value_{{ $variationCount }}">
+                    <label for="Ticket Value" class="control-label col-md-4 text-left addcolon">Ticket Value </label>
+                <div class="col-md-6">
+                    <input class="form-control" placeholder="" id="ticket_input_{{ $variationCount }}" name="ticket_value[{{ $variationCount }}]" type="text" value="{{ '' }}"> </div>
+                    <div class="col-md-2"></div>
+                </div>
+                </span>
+                        @endif
+                                <?php
+                                    $variationCount++;
+                                ?>
+                    @endforeach
+                            </span>
+@else
+                                <span class="product_types">
+                                    <input type="hidden" name="itemId[]" value="{{ $row['id'] }}">
+                    <div class="form-group  ">
+                        <label for="Prod Type Id" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Product Type', (isset($fields['prod_type_id']['language'])?
+                            $fields['prod_type_id']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+
+                            <select name='prod_type_id[]' data-previous="{{$row['prod_type_id']}}" rows='5'
+                                    data-counter="1" id='prod_type_id_1' class='select2 prod_type'
+                                    required='required'></select>
+
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group  ">
+                        <label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Product Subtype',
+                            (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] :
+                            array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <select name='prod_sub_type_id[1]' data-counter="1" rows='5' id='prod_sub_type_id_1'
+                                    class='select2 prod_sub_type'></select>
                         </div>
                         <div class="col-md-2">
 
@@ -271,15 +459,12 @@
                         </div>
                     </div>
                     </span>
-                    @if(!$id)
-                        <span id="more_types_container">
 
-                        </span>
+                                <span id="more_types_container"></span>
+                            @endif
+
+<input type="hidden" id="removedItemIds" name="removedItemIds" value="" />
                         <a id="add_more_types" class="btn btn-primary pull-right">Add More</a>
-                    @endif
-
-
-
 
 
 
@@ -499,6 +684,7 @@
 //
 <script type="text/javascript">
     $(function(){
+        showRequest();
         $('select[name="excluded_locations_and_groups[]"]').attr('multiple','multiple');
         $('select[name="excluded_locations_and_groups[]"]').change();
 
@@ -539,11 +725,30 @@
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue'
         });
+        renderDropdown($(".select2"), {width: "100%"});
 
+        @if(count($variations) > 0)
+        <?php $variationCount = 1; ?>
+        @foreach($variations as $variation)
+ $("#prod_type_id_{{ $variationCount }}").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
+                {selected_value: '{{ $variation['prod_type_id'] }}'});
+
+
+        if ('{{ $variation['prod_type_id'] }}') {
+            $("#prod_sub_type_id_{{ $variationCount }}").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $variation["prod_type_id"] }}",
+                    {selected_value: '{{ $variation['prod_sub_type_id'] }}'});
+        }
+        $("#expense_category_{{ $variationCount }}").jCombo("{{ URL::to('product/expense-category-groups') }}",
+                {selected_value: '{{ $variation['expense_category'] }}'});
+        <?php
+            $variationCount++;
+        ?>
+        @endforeach
+    @else
             $("#prod_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
             {selected_value: '{{ $row["prod_type_id"] }}'});
 
-        renderDropdown($(".select2"), {width: "100%"});
+
         if('{{ $row["prod_type_id"] }}')
         {
             $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
@@ -551,51 +756,7 @@
         }
         $("#expense_category_1").jCombo("{{ URL::to('product/expense-category-groups') }}",
                 {selected_value: '{{ $row["expense_category"] }}'});
-        /*$("#prod_type_id_1").click(function () {
-            $("#prod_sub_type_id_1").jCombo("&parent=request_type_id:"+$('#prod_type_id_1').val()+"",
-                    {selected_value: ''});
-            if($(this).val()) {
-                //need to uncomment after discussion
-                getExpenseCategory($(this).val(),null,1);
-            }
-            if($('#prod_type_id_1').val() == 1 || $('#prod_type_id_1').val() == 4 || $('#prod_type_id_1').val() == 20)
-            {
-                form.parsley().destroy();
-                $('input[name="sku"]').removeAttr('required');
-                form.parsley();
-            }
-            else
-            {
-                form.parsley().destroy();
-                $('input[name="sku"]').attr('required','required');
-                form.parsley();
-            }
-
-            if ($(this).val() == "8") {
-                $("#retail_price_1").show(300);
-                $("#retail_input_1").attr('required','required');
-            }
-            else {
-                $("#retail_price_1").hide(300);
-                $("#retail_input_1").removeAttr('required');
-            }
-            if ($(this).val() == "7") {
-                $("#ticket_value_1").show(300);
-                $("#ticket_input_1").attr('required','required');
-            }else if($(this).val() == "8"){
-                $("#ticket_value_1").show(300);
-            }
-            else {
-                $("#ticket_value_1").hide(300);
-                $("#ticket_input_1").removeAttr('required');
-            }
-        });*/
-        //need to uncomment after discussion
-//        $("#prod_sub_type_id_1").click(function () {
-//            if($(this).val()) {
-//                getExpenseCategory($("#prod_type_id_1").val(),$(this).val(),1);
-//            }
-//        });
+        @endif
 
         $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '{{ $row["vendor_id"] }}' ,
@@ -729,8 +890,18 @@
 //    });
         $(document).on('click',".remove_me",function(){
             count = $(this).attr('data-count');
+            var itemId = $(this).attr('data-remove-id');
+            var  removedItemIds = document.getElementById('removedItemIds');
+            if(Number(itemId) > 0){
+                var IdString = '';
+                if(removedItemIds.value == ''){
+                    IdString = itemId;
+                }else{
+                    IdString = removedItemIds.value +','+ itemId;
+                }
+                removedItemIds.val(IdString);
+            }
             count = "#remove_me_"+count;
-           // console.log(count);
             $("#add_more_types").show();
             $(count).remove();
         });
@@ -792,10 +963,10 @@
     $("#add_more_types").click(function () {
         types_counter++;
 
-        var more_types_html = '<span class="product_types productTypeBox" id="remove_me_'+types_counter+'"><div class="form-group  "> ' +
+        var more_types_html = '<span class="product_types productTypeBox" id="remove_me_'+types_counter+'"><div class="form-group  "> <input type="hidden" name="itemId[]" value="0">' +
                 '<label for="Prod Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Type", (isset($fields["prod_type_id"]["language"])? $fields["prod_type_id"]["language"] : array())) !!}</label> ' +
                 '<div class="col-md-6"> <select data-previous="0" name="prod_type_id[]" rows="5" data-counter="'+types_counter+'" id="prod_type_id_'+types_counter+'" class="prod_type select2 "required="required"></select>' +
-                ' </div> <div class="col-md-2"> <button data-count="'+types_counter+'" class="remove_me pull-right btn btn-xs btn-danger"><i class="fa fa fa-times"></i></button></div> </div> <div class="form-group  "> ' +
+                ' </div> <div class="col-md-2"> <button data-count="'+types_counter+'" data-remove-id="0"  class="remove_me pull-right btn btn-xs btn-danger"><i class="fa fa fa-times"></i></button></div> </div> <div class="form-group  "> ' +
                 '<label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Subtype",(isset($fields["prod_sub_type_id"]["language"])? $fields["prod_sub_type_id"]["language"] : array())) !!} </label>' +
                 ' <div class="col-md-6"> <select name="prod_sub_type_id['+types_counter+']" rows="5" data-counter="'+types_counter+'" id="prod_sub_type_id_'+types_counter+'" class="prod_sub_type select2 "></select>' +
                 ' </div> <div class="col-md-2"> </div> </div> ' +
