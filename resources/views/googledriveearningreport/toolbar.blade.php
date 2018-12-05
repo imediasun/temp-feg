@@ -2,13 +2,10 @@
 	<div class="col-md-9">
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
 
-        <a href="{{URL::to('')}}" class="btn btn-sm btn-white"><i class="fa fa-eye"></i>View File</a>
-        <a href="{{URL::to('')}}" class="btn btn-sm btn-white"><i class="fa fa-file"></i>Rename File</a>
-        <a href="{{URL::to('')}}" class="btn btn-sm btn-white"><i class="fa fa-download"></i>Download Files</a>
-        <a href="{{URL::to('')}}" class="btn btn-sm btn-white"><i class="fa fa-arrow-right"></i>Move Files</a>
-        <form method="GET" action="/login">
-            <button class="btn btn-primary">Login with Google</button>
-        </form>
+        <a href="#" class="btn btn-sm btn-white"><i class="fa fa-eye"></i>View File</a>
+        <a href="#" class="btn btn-sm btn-white"><i class="fa fa-file"></i>Rename File</a>
+        <a href="#" class="btn btn-sm btn-white"><i class="fa fa-download"></i>Download Files</a>
+        <a href="#" class="btn btn-sm btn-white"><i class="fa fa-arrow-right"></i>Move Files</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
         <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
         @if(!empty($colconfigs))
