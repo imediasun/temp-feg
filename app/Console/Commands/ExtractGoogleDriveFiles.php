@@ -5,6 +5,10 @@ namespace App\Console\Commands;
 use App\Library\MyLog;
 use App\Models\googledriveearningreport;
 use Illuminate\Console\Command;
+use App\Models\GoogleDriveAuthToken;
+use GuzzleHttp\Client;
+
+use App\Models\location;
 
 
 class ExtractGoogleDriveFiles extends Command
@@ -14,7 +18,7 @@ class ExtractGoogleDriveFiles extends Command
      *
      * @var string
      */
-    protected $signature = 'extract:googledrivefiles {period}';
+    protected $signature = 'extract:googledrivefiles {period}';// period value must be Daily, Weekly, Monthly or 13Weeks
 
     /**
      * The console command description.
@@ -25,6 +29,8 @@ class ExtractGoogleDriveFiles extends Command
 
     protected $L = null;
     protected $path = '';
+    protected $period = '';
+    protected $refreshDriveObjectAt = '';
     /**
      * Create a new command instance.
      *
@@ -34,6 +40,7 @@ class ExtractGoogleDriveFiles extends Command
     {
         parent::__construct();
         $this->L = new MyLog('google-drive.log', 'google-drive', 'GoogleDrive');
+
 
     }
 
@@ -50,51 +57,56 @@ class ExtractGoogleDriveFiles extends Command
         $this->L->log('------------Command Started.-------------');
 
         $this->info('Command Executed.');
-        $period = $this->argument('period');
-        $this->info('Period: '.$period);
-//        exit();
+        $this->period = $this->argument('period');
+        $this->info('Period: '.$this->period);
 
-        $client = new \Google_Client();
-        $client->setAccessToken('ya29.GlxnBpB7uLzr32eFbTbGuzQYmORlFWrU48yTxCPJQLjujwi3lv2ZDXMMl68pNqQ9HtL9mS8zgmPaunn8Hg0q2DfMvm3lMzh4qR6Gs0FAgLFaU6cP5Ubum8-d79Vf8w');
+        $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->first();
 
-        $parentId = '1lgiyuKBI1BczHh2RMGPIFxyUGKAjy_td'; //Location Debit Card Reports folder
+        $drive = $this->getGoogleDriveObject($user);
 
-        $this->L->log('Google Client', $client->getAccessToken());
+        $currentTime = time();
+        $this->refreshDriveObjectAt = $currentTime+3500;
+        $this->info('Current Time : '.$currentTime);
+        $this->info('Drive object will refresh at : '.$this->refreshDriveObjectAt);
+        $this->L->log('Drive object will refresh at : '.$this->refreshDriveObjectAt);
 
-        $drive = new \Google_Service_Drive($client);
-        $files = $this->getAllLocationFoldersFromDrive($drive, $parentId);
-
-        $locations = [];
-        foreach ($files as $file){
-            if($file->mimeType == 'application/vnd.google-apps.folder'){
-
-                $locationObj = new \stdClass();
-                $locationObj->locationFolderId = $file->id;
-                $locationObj->locationFolderName = $file->name;
-
-                $this->L->log('--------------  File Detail ----------------');
-                $this->L->log('File Id: '.$file->id);
-                $this->L->log('File Name: '.$file->name);
-                $this->info('Getting Files from '.$file->name);
-
-                $locations[] = $locationObj;
-            }
+        $locations = null;
+        if($this->period == 'Daily' || $this->period == 'daily'){
+            $locations = location::select('id','location_name_short','daily_folder_id As parent_id')->where('daily_folder_id', '!=', '')->get();
+            $this->L->log('Daily Folders ID: ' . $locations);
+        }
+        elseif($this->period == 'Weekly' || $this->period == 'weekly'){
+            $locations = location::select('id','location_name_short','weekly_folder_id As parent_id')->where('weekly_folder_id', '!=', '')->get();
+            $this->L->log('Weekly Folders ID: ' . $locations);
+        }
+        elseif($this->period == 'Monthly' || $this->period == 'monthly'){
+            $locations = location::select('id','location_name_short','monthly_folder_id As parent_id')->where('monthly_folder_id', '!=', '')->get();
+            $this->L->log('Monthly Folders ID: ' . $locations);
+        }
+        elseif($this->period == '13Weeks' || $this->period == '13weeks'){
+            $locations = location::select('id','location_name_short','thirteen_weeks_folder_id As parent_id')->where('thirteen_weeks_folder_id', '!=', '')->get();
+            $this->L->log('13Weeks Folders ID: ' . $locations);
         }
 
         foreach ($locations as $location){
-            $this->path = $location->locationFolderName;
+            $this->path = $this->period.'-'.$location->id;
 
-            $this->L->log('Extracting Files From: '. $location->locationFolderName);
-
-            $this->getFilesFromLocationFolder($drive,$location->locationFolderId, $location);
+            $this->getFilesFromLocationFolder($drive,$location->parent_id, $location);
         }
 
 
     }
 
-    function getAllLocationFoldersFromDrive(\Google_Service_Drive $drive, $parentId = '1lgiyuKBI1BczHh2RMGPIFxyUGKAjy_td'){
-        $files = $this->getFiles($drive, $parentId);//get file from drive
-        return $files;
+
+    function getGoogleDriveObject($user){
+        $client = new \Google_Client();
+        $client->setAccessToken($user->oauth_token);
+
+
+        $this->L->log('Google Client', $client->getAccessToken());
+
+        return new \Google_Service_Drive($client);
+
     }
 
 
@@ -106,6 +118,10 @@ class ExtractGoogleDriveFiles extends Command
 
             if($file->mimeType == 'application/vnd.google-apps.folder'){
                 $this->path .= '/'.$file->name;
+                if(time() > $this->refreshDriveObjectAt){
+                    $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->first();//Refresh google auth token
+                    $drive = $this->getGoogleDriveObject($user);//reset google drive object
+                }
                 $this->getFilesFromLocationFolder($drive, $file->id, $location);
             }else {
 
@@ -121,8 +137,8 @@ class ExtractGoogleDriveFiles extends Command
                 $this->L->log('File Parent ID: ' . $file->parents[0]);
                 $this->path .= '/'.$file->name;
                 $storeFileObject = new googledriveearningreport();
-                $storeFileObject->createOrUpdateFile($file, $location->locationFolderName, $this->path);
-                $this->path = $location->locationFolderName;
+                $storeFileObject->createOrUpdateFile($file, $location, $this->path);
+                $this->path = $this->period.'-'.$location->id;
             }
         }
         return $files;
@@ -134,7 +150,6 @@ class ExtractGoogleDriveFiles extends Command
             'q' => "trashed = false and '$parentId' in parents",
             'pageSize' => 1000,0,
             'fields' => 'nextPageToken, files(id, name, fileExtension, fullFileExtension, kind, mimeType, createdTime, modifiedTime, iconLink, webViewLink, webContentLink, parents)',
-
         ];
 
         $result = $drive->files->listFiles($parameters);
@@ -143,5 +158,6 @@ class ExtractGoogleDriveFiles extends Command
         }
         return $files;
     }
+
 
 }
