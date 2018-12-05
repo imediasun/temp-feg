@@ -1629,7 +1629,7 @@ function serverRequestTabsSelect(tabElement,tabClass,contentClass,contentId,load
     tab.attr('is-active',1);
     if(loadContent == true){
         var type = tab.data('type');
-        reloadData('#servicerequests','servicerequests/data?return=&sort=Created&order=desc&rows=20&ticket_type='+type,'',{},true);
+        reloadData('#servicerequests','servicerequests/data?return=&sort=Created&order=desc&rows=20&ticket_type='+type,'',{},undefined,true);
     }else {
         $('.' + contentClass).slideUp('medium');
         $("#" + contentId).slideDown('medium');

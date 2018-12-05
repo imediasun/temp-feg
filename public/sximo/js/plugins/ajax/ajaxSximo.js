@@ -1,11 +1,14 @@
 
-function reloadData( id,url,callback, options,tabSwitch)
+function reloadData( id,url,callback, options,tabSwitch,clear)
 {
     options = options || {};
     var isClearSearch = /data\?search\=$/.test(url),
         isBackground = options.isBackground || false,
         clearFilters;
 
+    if (clear != undefined){
+        isClearSearch = true;
+    }
     if (tabSwitch === undefined) {
         App.autoCallbacks.runCallback.call($(id + 'Grid'), 'beforereloaddata',
             {id: id, url: url, isClear: isClearSearch});
@@ -21,7 +24,10 @@ function reloadData( id,url,callback, options,tabSwitch)
     }
 	$.post( encodeURI(url) ,function( data ) {
 		$( id +'Grid' ).html( data );
-		typeof callback === 'function' && callback(data);
+        if (clear != undefined) {
+            typeof callback === 'function' && callback(data);
+        }
+
         if (tabSwitch === undefined) {
             App.autoCallbacks.runCallback.call($(id + 'Grid'), 'reloaddata',
                 {id: id, url: url, data: data, isClear: isClearSearch});
