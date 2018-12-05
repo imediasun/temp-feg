@@ -16,9 +16,16 @@ Date : {{ date('Y/m/d',strtotime($data['game_realted_date'])) }}
 
 <br/><br/>
 Part Number : {{ $data['part_number'] }}<br/>
+@if(!empty($data['cost']))
 Costs : {{ CurrencyHelpers::formatPrice($data['cost']) }}<br/>
-Quantity : {{ $data['qty'] }}<br/>
+@endif
+@if(!empty($data['qty']))
+Quantity : {{ $data['qty'] }}
+@endif
+@if(!empty($data['shipping_priority']))
+<br/>
 Shipping Priority : {{ $data['shipping_priority'] }}
+@endif
 <br/><br/>
 <b>Troubleshooting Description :</b>
 

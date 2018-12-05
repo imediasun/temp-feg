@@ -1119,7 +1119,7 @@ class servicerequestsController extends Controller
         }else{
             return response()->json(array(
                 'message' => 'Error',
-                'status' => 'error'
+                'status' => 'commentError'
             ));
         }
     }
