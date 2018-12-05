@@ -524,12 +524,27 @@ class ProductController extends Controller
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
 
+        $variations = [];
         $row = $this->model->find($id);
         if ($row) {
             $this->data['row'] = $row;
+            $columns = ['id','prod_type_id','prod_sub_type_id','retail_price','ticket_value','expense_category','is_default_expense_category'];
+
+            if (empty($row->variation_id)){
+                $variations = [];
+            }else {
+                $variations = $this->model->select($columns)->where('variation_id', $row->variation_id)->get()->toArray();
+            }
+
         } else {
             $this->data['row'] = $this->model->getColumnTable('products');
         }
+        if($id == null || $id == '' || $id == 0){
+            $this->data['actionUrl'] = 'product/save/'.$row['id'];
+        }else{
+            $this->data['actionUrl'] = 'product/saveupdated';
+        }
+        $this->data['variations'] = $variations;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
@@ -1579,5 +1594,8 @@ $message = '';
                 'message' => 'Some Error occurred while updating item status'
             ));
         }
+    }
+    public function postSaveupdated(Request $request){
+
     }
 }

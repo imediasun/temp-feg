@@ -231,7 +231,7 @@ class AjaxHelpers
         return $html;
     }
 
-    static public function GamestitleButtonAction($module, $access, $id, $setting, $edit = null)
+    static public function GamestitleButtonAction($module, $access, $id, $setting, $edit = null,$closeLoadingAfterComplete = flase)
     {
 
         $html = '<div class="action">';
@@ -245,7 +245,7 @@ class AjaxHelpers
         }
         if ($edit == null) {
             if ($access['is_edit'] == 1) {
-                $onclick = " onclick=\"ajaxViewDetail('#" . preg_replace('/\/?[^\/]+?\//', '', $module) . "',this.href); return false; \"";
+                $onclick = " onclick=\"ajaxViewDetail('#" . preg_replace('/\/?[^\/]+?\//', '', $module) . "',this.href,$closeLoadingAfterComplete); return false; \"";
                 if ($setting['form-method'] == 'modal')
                     $onclick = " onclick=\"SximoModal(this.href,'Edit Form'); return false; \"";
 
