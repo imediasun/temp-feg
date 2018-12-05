@@ -31,6 +31,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\CheckNetSuiteApi::class,
         \App\Console\Commands\InjectFieldToModule::class,
         \App\Console\Commands\ExtractGoogleDriveFiles::class,
+        \App\Console\Commands\ExtractGoogleDriveLoctionsReports::class,
+        \App\Console\Commands\RefreshGoogleDriveAccessToken::class
     ];
 
     /**
@@ -56,6 +58,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('cleanproductmeta')->hourly();
         $schedule->command('checkapi')->hourly();
 
-        $schedule->command('extract:googledrivefiles')->hourly();//Get the google drive files
+        $schedule->command('extract:googledrivefiles Daily')->daily();//Get Daily google drive files
+        $schedule->command('extract:googledrivefiles Weekly')->weekly();//Get Daily google drive files
+        $schedule->command('extract:googledrivefiles Monthly')->monthly();//Get Daily google drive files
+        $schedule->command('extract:googledrivefiles 13Weeks')->weekly();//Get Daily google drive files
+
+        $schedule->command('extract:googledrivelocations')->weekly();//Get the google drive location files ID (Daily, weekly, monthly, 13 weeks)
+        $schedule->command('refresh:googledriveaccesstoken')->everyMinute();//Refresh Google drive access token.
     }
 }

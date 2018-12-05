@@ -3,6 +3,8 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\location;
+
 class googledriveearningreport extends Sximo  {
 	
 	protected $table = 'google_drive_earning_reports';
@@ -48,9 +50,9 @@ class googledriveearningreport extends Sximo  {
 		return "  ";
 	}
 
-	public function createOrUpdateFile($file, $location, $path)
+	public function createOrUpdateFile($file, location $location, $path)
     {
-        $loc = explode('-',$location);
+
         $saved = $this->updateOrcreate(['google_file_id' => $file->id],
             [
                 'google_file_id' => $file->id,
@@ -61,8 +63,8 @@ class googledriveearningreport extends Sximo  {
                 'created_time' =>$file->createdTime,
                 'mime_type' =>$file->mimeType,
                 'parent_id' =>$file->parents[0],
-                'location_name' => $loc[1],
-                'loc_id' => $loc[0],
+                'location_name' => $location->location_name_short,
+                'loc_id' => $location->id,
                 'path'=>$path,
             ]);
         return $saved;
