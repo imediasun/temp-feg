@@ -51,8 +51,7 @@
 
         <div class="sbox-content">
             @endif
-            {!! Form::open(array('url'=>'product/save/'.$row['id'], 'class'=>'form-horizontal','files' => true ,
-            'parsley-validate'=>'','novalidate'=>' ','id'=> 'productFormAjax')) !!}
+            {!! Form::open(array('url'=>$actionUrl, 'class'=>'form-horizontal','files' => true ,'parsley-validate'=>'','novalidate'=>' ','id'=> 'productFormAjax')) !!}
             <div class="col-md-12">
                 <fieldset>
 
@@ -214,7 +213,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            <select name='prod_sub_type_id[1]' data-counter="1" rows='5' id='prod_sub_type_id_1'
+                            <select name='prod_sub_type_id[]' data-counter="1" rows='5' id='prod_sub_type_id_1'
                                     class='select2 prod_sub_type'></select>
                         </div>
                         <div class="col-md-2">
@@ -226,7 +225,7 @@
                             {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <select name='expense_category[1]' rows='5' id='expense_category_1' class='select2'
+                            <select name='expense_category[]' rows='5' id='expense_category_1' class='select2'
                                     required></select>
                             {{--<input class="form-control" placeholder="" parsley-type="number" required="required" id="expense_category_1" name="expense_category[1]" type="text" value="{{$row['expense_category']}}">--}}
                         </div>
@@ -254,7 +253,7 @@
                         <div class="col-md-6">
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
-                                {!! Form::text('retail_price[1]',
+                                {!! Form::text('retail_price[]',
                                 $row['retail_price'] == ''?'':(double)$row['retail_price'],array('class'=>'form-control',
                                 'placeholder'=>'0.00','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'retail_input_1' )) !!}
                             </div>
@@ -270,7 +269,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            {!! Form::text('ticket_value[1]', $row['ticket_value'],array('class'=>'form-control',
+                            {!! Form::text('ticket_value[]', $row['ticket_value'],array('class'=>'form-control',
                             'placeholder'=>'','id'=>'ticket_input_1')) !!}
                         </div>
                         <div class="col-md-2">
@@ -304,7 +303,7 @@
                     {!! SiteHelpers::activeLang("Product Subtype",(isset($fields["prod_sub_type_id"]["language"])? $fields["prod_sub_type_id"]["language"] : array())) !!}
                 </label>
                 <div class="col-md-6">
-                    <select name="prod_sub_type_id[{{ $variationCount }}]" rows="5" data-counter="{{ $variationCount }}"
+                    <select name="prod_sub_type_id[]" rows="5" data-counter="{{ $variationCount }}"
                             id="prod_sub_type_id_{{ $variationCount }}" class="prod_sub_type select2 "></select>
                 </div>
                                             <div class="col-md-2">
@@ -315,7 +314,7 @@
                         {!! SiteHelpers::activeLang("Expense Category", (isset($fields["expense_category"]["language"])? $fields["expense_category"]["language"] : array())) !!}
                     </label>
                 <div class="col-md-6">
-                    <select name="expense_category[{{ $variationCount }}]" rows="5"
+                    <select name="expense_category[]" rows="5"
                             id="expense_category_{{ $variationCount }}" class="select2"
                             required></select>
                 </div>
@@ -345,14 +344,14 @@
                     <span class="input-group-addon">$</span>
                     <input class="form-control parsley-validated retail_prices" placeholder="0.00" type="text"
                            parsley-min="0" step="1" id="retail_input_{{ $variationCount }}"
-                           name="retail_price[{{ $variationCount }}]" value="{{ '' }}">
+                           name="retail_price[]" >
                 </div>
                 </div>
-                <div class="col-md-2"> </div> </div>' +
+                <div class="col-md-2"> </div> </div>
                 <div class="form-group ticket_values " id="ticket_value_{{ $variationCount }}">
                     <label for="Ticket Value" class="control-label col-md-4 text-left addcolon">Ticket Value </label>
                 <div class="col-md-6">
-                    <input class="form-control" placeholder="" id="ticket_input_{{ $variationCount }}" name="ticket_value[{{ $variationCount }}]" type="text" value="{{ '' }}"> </div>
+                    <input class="form-control" placeholder="" id="ticket_input_{{ $variationCount }}" name="ticket_value[]" type="text" > </div>
                     <div class="col-md-2"></div>
                 </div>
                 </span>
@@ -391,7 +390,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            <select name='prod_sub_type_id[1]' data-counter="1" rows='5' id='prod_sub_type_id_1'
+                            <select name='prod_sub_type_id[]' data-counter="1" rows='5' id='prod_sub_type_id_1'
                                     class='select2 prod_sub_type'></select>
                         </div>
                         <div class="col-md-2">
@@ -403,7 +402,7 @@
                             {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <select name='expense_category[1]' rows='5' id='expense_category_1' class='select2'
+                            <select name='expense_category[]' rows='5' id='expense_category_1' class='select2'
                                     required></select>
                             {{--<input class="form-control" placeholder="" parsley-type="number" required="required" id="expense_category_1" name="expense_category[1]" type="text" value="{{$row['expense_category']}}">--}}
                         </div>
@@ -435,7 +434,7 @@
                         <div class="col-md-6">
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
-                                {!! Form::text('retail_price[1]',
+                                {!! Form::text('retail_price[]',
                                 $row['retail_price'] == ''?'':(double)$row['retail_price'],array('class'=>'form-control',
                                 'placeholder'=>'0.00','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'retail_input_1' )) !!}
                             </div>
@@ -451,7 +450,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            {!! Form::text('ticket_value[1]', $row['ticket_value'],array('class'=>'form-control',
+                            {!! Form::text('ticket_value[]', $row['ticket_value'],array('class'=>'form-control',
                             'placeholder'=>'','id'=>'ticket_input_1')) !!}
                         </div>
                         <div class="col-md-2">
@@ -730,14 +729,14 @@
         @if(count($variations) > 0)
         <?php $variationCount = 1; ?>
         @foreach($variations as $variation)
- $("#prod_type_id_{{ $variationCount }}").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
+            $("#prod_type_id_{{ $variationCount }}").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
                 {selected_value: '{{ $variation['prod_type_id'] }}'});
 
 
-        if ('{{ $variation['prod_type_id'] }}') {
+
             $("#prod_sub_type_id_{{ $variationCount }}").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $variation["prod_type_id"] }}",
                     {selected_value: '{{ $variation['prod_sub_type_id'] }}'});
-        }
+
         $("#expense_category_{{ $variationCount }}").jCombo("{{ URL::to('product/expense-category-groups') }}",
                 {selected_value: '{{ $variation['expense_category'] }}'});
         <?php
@@ -818,8 +817,15 @@
             var counter = $(this).attr('data-counter');
             if(selectedType && selectedType != previous){
 
-                $(this).parents('.product_types').find("select.prod_sub_type").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+selectedType+"");
-                //renderDropdown($(".select2"), {width: "100%"});
+                var productSubType = $(this).parents('.product_types').find("select.prod_sub_type");
+                var docElm = document.getElementById(productSubType.attr('id'));
+                var productSubTypeId = Number(docElm.value) > 0 ? docElm.value:'0';
+
+                console.log('Sub Type Id:'+productSubTypeId);
+
+                    $(docElm).jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:" + selectedType + "",
+                            {selected_value: productSubTypeId});
+
 
                 var productTypeId = selectedType;
                 if(productTypeId > 0) {
@@ -938,9 +944,7 @@
             $('#unit_price_input').val(0.000);
         }
     });
-    $("#prod_type_id_1").click(function () {
 
-    });
     function getExpenseCategory(order_type_id,product_type_id,count)
     {
         var expence_field = $("#expense_category_"+count);
@@ -961,24 +965,23 @@
 
 
     $("#add_more_types").click(function () {
-        types_counter++;
-
+        types_counter = document.getElementsByClassName('product_types').length + 1;
         var more_types_html = '<span class="product_types productTypeBox" id="remove_me_'+types_counter+'"><div class="form-group  "> <input type="hidden" name="itemId[]" value="0">' +
                 '<label for="Prod Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Type", (isset($fields["prod_type_id"]["language"])? $fields["prod_type_id"]["language"] : array())) !!}</label> ' +
                 '<div class="col-md-6"> <select data-previous="0" name="prod_type_id[]" rows="5" data-counter="'+types_counter+'" id="prod_type_id_'+types_counter+'" class="prod_type select2 "required="required"></select>' +
                 ' </div> <div class="col-md-2"> <button data-count="'+types_counter+'" data-remove-id="0"  class="remove_me pull-right btn btn-xs btn-danger"><i class="fa fa fa-times"></i></button></div> </div> <div class="form-group  "> ' +
                 '<label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Subtype",(isset($fields["prod_sub_type_id"]["language"])? $fields["prod_sub_type_id"]["language"] : array())) !!} </label>' +
-                ' <div class="col-md-6"> <select name="prod_sub_type_id['+types_counter+']" rows="5" data-counter="'+types_counter+'" id="prod_sub_type_id_'+types_counter+'" class="prod_sub_type select2 "></select>' +
+                ' <div class="col-md-6"> <select name="prod_sub_type_id[]" rows="5" data-counter="'+types_counter+'" id="prod_sub_type_id_'+types_counter+'" class="prod_sub_type select2 "></select>' +
                 ' </div> <div class="col-md-2"> </div> </div> ' +
                 '<div class="form-group"> <label for="Expense Category" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Expense Category", (isset($fields["expense_category"]["language"])? $fields["expense_category"]["language"] : array())) !!}</label> ' +
-                '<div class="col-md-6"><select name="expense_category[' + types_counter + ']" rows="5" id="expense_category_' + types_counter + '" class="select2" required></select> ' +
+                '<div class="col-md-6"><select name="expense_category[]" rows="5" id="expense_category_' + types_counter + '" class="select2" required></select> ' +
                 '</div> <div class="col-md-2"></div> </div>' +
                 '<div class="form-group" id="retail_price_'+types_counter+'"> <label for="Retail Price" class="control-label col-md-4 text-left addcolon">Retail Price </label> ' +
                 '<div class="col-md-6"> ' +
-                '<div class="input-group ig-full"> <span class="input-group-addon">$</span> <input class="form-control parsley-validated retail_prices" placeholder="0.00" type="text" parsley-min="0" step="1" id="retail_input_'+types_counter+'" name="retail_price['+types_counter+']" value=""> </div> </div>' +
+                '<div class="input-group ig-full"> <span class="input-group-addon">$</span> <input class="form-control parsley-validated retail_prices" placeholder="0.00" type="text" parsley-min="0" step="1" id="retail_input_'+types_counter+'" name="retail_price[]" value=""> </div> </div>' +
                 ' <div class="col-md-2"> </div> </div>' +
                 '<div class="form-group ticket_values " id="ticket_value_'+types_counter+'"> <label for="Ticket Value" class="control-label col-md-4 text-left addcolon">Ticket Value </label> ' +
-                '<div class="col-md-6"> <input class="form-control" placeholder="" id="ticket_input_'+types_counter+'" name="ticket_value['+types_counter+']" type="text" value=""> </div> <div class="col-md-2">  </div> </div>' +
+                '<div class="col-md-6"> <input class="form-control" placeholder="" id="ticket_input_'+types_counter+'" name="ticket_value[]" type="text" value=""> </div> <div class="col-md-2">  </div> </div>' +
                 '</span>';
         //console.log(more_types_html);
         $("#more_types_container").append(more_types_html);
