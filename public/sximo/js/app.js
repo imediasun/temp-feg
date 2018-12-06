@@ -405,7 +405,7 @@ function initDataGrid(module, url, options) {
 
 
     });
-    console.log($('ul.pagination li').length);
+
     $('ul.pagination li.active')
         .prev().addClass('show-mobile')
         .prev().addClass('show-mobile');
@@ -1436,7 +1436,6 @@ function populateProductSubTypeSelect(subTypeSelectBox, result, selectBox, selec
 
             var selectedOrNot = (selectedSubtypes.length > 0 && selectedSubtypes.indexOf(item.id) != -1) ? 'selected' : '';
 
-            console.log(item.id, item.type_description);
             subTypeSelectBox.append('<option '+selectedOrNot+' value="'+item.id+'">'+item.type_description+'</option>');
         });
 
@@ -1658,7 +1657,7 @@ function updateDropdowns(dropdownName){
             var dropdownValues = [];
 
             options.each(function () {
-                console.log(this.value);
+
                 if (this.value != 'select_all'){
                     dropdownValues.push(Number(this.value));
                 }else {

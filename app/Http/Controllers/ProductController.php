@@ -896,7 +896,7 @@ class ProductController extends Controller
             {
 
                 $ids = [];
-                $count = 1;
+                $count = 0;
                 unset($data['excluded_locations_and_groups']);
                 unset($data['product_type_excluded_data']);
                 $prodData = $data;
@@ -1596,6 +1596,220 @@ $message = '';
         }
     }
     public function postSaveupdated(Request $request){
-        dd($request->all());
+        $id = max($request->input('itemId'));
+        $product = "";
+        $rules = $this->validateForm();
+        if($id){
+            $productID = !empty($request->product_id) ?  $request->product_id:$id;
+            $product = product::find($productID);
+
+        }
+
+        $customMessages = [
+            'min'=> 'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.',
+            'max'=> 'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.',
+            'regex'=> 'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.',
+            'unique'=> 'UPC/Barcode needs to be unique for each item.',
+
+        ];
+        $varients =  ($product) ? $product->getProductVariations()->pluck("id")->toArray() :[0];
+        $rules['upc_barcode'] = 'min:12|max:12|regex:/^[a-zA-Z0-9\s]+$/';
+        $validator = Validator::make($request->all(), $rules,$customMessages);
+        $customValidate =  (strlen(trim($request->input('upc_barcode'))) > 0 ) ? $this->model->ValidateRequest($request->all(), $rules,$customMessages,['id'=>$varients],['upc_barcode' => $request->input('upc_barcode')],'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.'):$customValidate['error'] = false;
+
+        //to remove the extra spaces im between the string
+        $request->vendor_description = trim(preg_replace('/\s+/',' ', $request->vendor_description));
+
+        if ($validator->passes() && !$customValidate['error']) {
+            $this->model->updateReservedQty($request, $id, \AUTH::user()->id);
+        }else{
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => ($customValidate['error']) ? $customValidate['customMessage']:$message,
+                'status' => 'error'
+            ));
+        }
+        $isDuplicate = $this->model->checkDuplicateProductTypes($request, $id);
+        if ($isDuplicate['status'] == 'error') {
+            return response()->json($isDuplicate);
+        }
+
+        if ($request->hasFile('img'))
+        {
+            $file = $request->file('img');
+            $img = Image::make($file->getRealPath());
+            $mime = $img->mime();
+            if ($mime == 'image/jpeg') {
+                $extension = '.jpg';
+            } elseif ($mime == 'image/png') {
+                $extension = '.png';
+            } elseif ($mime == 'image/gif') {
+                $extension = '.gif';
+            } else {
+                $extension = '';
+            }
+        }
+        unset($request->excluded_locations_and_groups);
+        $rules = $this->validateForm();
+        $rules['img'] = 'mimes:jpeg,gif,png';
+        //$rules['sku'] = 'required';
+
+        $rules['expense_category'] = 'required';
+
+
+        $request->Product_Type = $request->prod_type_id;
+        $request->Vendor = $request->vendor_id;
+
+        $rules['vendor_description'] = 'required';
+        $rules['prod_type_id'] = 'required';
+        $rules['sku'] = "required";
+        $rules['case_price'] = 'required';
+        $rules['unit_price'] = 'required';
+        $rules['vendor_id'] = 'required';
+        $excludedLocationsAndGroups = $request->excluded_locations_and_groups;
+        $productTypeExcludedLocationsAndGroups = $request->has('product_type_excluded_data') ? $request->product_type_excluded_data:false;
+
+        $productTypeId = $request->prod_type_id;
+        unset($request->excluded_locations_and_groups);
+        unset($request->product_type_excluded_data);
+        $validator = Validator::make($request->all(), $rules);
+        $retail_price = $request->get('retail_price');
+        $product_categories = $request->get('prod_type_id');
+        if ($validator->passes()) {
+            //for inline editing all fields do not get saved
+            $data = $this->validatePost('products',true);
+            $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
+            $data['netsuite_description'] = "$id...".$data['vendor_description'];
+
+            if(empty($product->variation_id)){
+                $UniqueID = substr(md5(md5(time()+time())."-".md5(time())),0,10);
+                $data['variation_id'] = $UniqueID;
+            }else{
+                $data['variation_id'] = $product->variation_id;
+            }
+            $postedtoNetSuite = $data['vendor_description'];
+
+            if(strlen( $data['vendor_description'])>53){
+                $postedtoNetSuite = mb_substr($data['vendor_description'],0,53);
+            }
+
+            if($id>0) {
+                $products_combined = $this->model->checkProducts($id);
+                $hot_items=0;
+                if(!empty($request->input('hot_item')) && $request->input('hot_item')>0){
+                    $hot_items = "'1'";
+                }else if(!empty($request->input('hot_item')) && $request->input('hot_item')==0){
+                    $hot_items = "'0'";
+                }else{
+                    $hot_items = "null";
+                }
+                \DB::update("update products set hot_item=$hot_items where id='$id'");
+
+            }
+
+            if (isset($data['inactive'])) {
+                if ($data['inactive']) {
+                    $data['inactive_by'] = Auth::user()->id;
+                } else {
+                    $data['inactive_by'] = NULL;
+                }
+            }
+
+           if(is_array($product_categories))
+            {
+
+                $ids = [];
+                $itemIds = [];
+                foreach ($request->itemId as $itemid){
+                    if (!empty($itemid) && $itemid > 0) {
+                        $itemIds[] = $itemid;
+                    }else{
+                        $itemIds[] = null;
+                    }
+                }
+                $count = 0;
+                unset($data['itemId']);
+                unset($data['excluded_locations_and_groups']);
+                unset($data['product_type_excluded_data']);
+                $prodData = $data;
+
+                foreach ($product_categories as $category) {
+                    $prodData['retail_price'] = (isset($retail_price[$count]) && !empty($retail_price[$count])) ? $retail_price[$count] : 0;
+                    $prodData['ticket_value'] = (isset($data['ticket_value'][$count]) && !empty($data['ticket_value'][$count])) ? $data['ticket_value'][$count] : 0;
+                    $prodData['prod_type_id'] = $category;
+                    $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count])) ? $data['prod_sub_type_id'][$count] : 0;
+                    $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count])) ? $data['expense_category'][$count] : 0;
+                    $prodData['netsuite_description'] = mb_substr(time()."-".$count."...".$data['vendor_description'],0,60);
+
+                    if (isset($img)) {
+                        $newfilename = ($itemIds[$count] == null) ? time(). '' . $extension: time().'-'.$itemIds[$count]. '' . $extension;
+                        $img_path='./uploads/products/' . $newfilename;
+                        $img->save($img_path);
+                        $prodData['img'] = $newfilename;
+
+                    }
+
+                    $ids[] = $this->model->insertRow($prodData, $itemIds[$count]);
+                    $count++;
+                }
+
+
+                $productImage = product::whereIn('id',$ids)->where(function ($query){
+                    $query->whereNotNull('img')->where('img','!=','');
+                })->first();
+
+
+                foreach ($ids as $id)
+                {
+                    $postedtoNetSuite = $data['vendor_description'];
+
+                    if(strlen( $data['vendor_description'])>53){
+                        $postedtoNetSuite = mb_substr($data['vendor_description'],0, 53);
+                    }
+
+                    $updates = array();
+                    $updates['netsuite_description'] = "$id...".$postedtoNetSuite;
+                    if (isset($img)) {
+                        $newfilename = time().'-'.$id . '' . $extension;
+                        $img_path='./uploads/products/' . $newfilename;
+                        $img->save($img_path);
+                        $updates['img'] = $newfilename;
+
+                    }else{
+                        if(!empty($productImage->img)){
+                            $updates['img'] = $productImage->img;
+                        }
+                    }
+                    $updates['is_default_expense_category'] = 0;
+                    $this->model->insertRow($updates, $id);
+                    $this->model->setFirstDefaultExpenseCategory($id);
+
+                    $product = product::find($request->is_default_expense_category);
+                    $product->is_default_expense_category = 1;
+                    $product->save();
+
+                    $this->insertRelations($excludedLocationsAndGroups,$productTypeExcludedLocationsAndGroups,$id,$productTypeId);
+                }
+
+            }else{
+               return response()->json(array(
+                   'status' => 'error',
+                   'message' => 'There is only one category'
+               ));
+           }
+
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
+
+        }else{
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));
+        }
+
     }
 }
