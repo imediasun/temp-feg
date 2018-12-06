@@ -1508,7 +1508,8 @@ GROUP BY mapped_expense_category");
             if(!empty($productType)) {
                 $productTypeId = Ordertyperestrictions::where('order_type', $productType)->value('id');
             }
-
+            $productTypeSelectedGroups      = collect([]);
+            $productTypeSelectedLocations   = collect([]);
                 if($productTypeId > 0){
                     $productTypeSelectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,Locationgroups::class,1,true);
                     $productTypeSelectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,location::class,1,true);
