@@ -147,20 +147,20 @@ FROM location
 
 
     public function excludedProductTypes(){
-        $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, Ordertyperestrictions::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
+        $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, Ordertyperestrictions::class, 1, true, false)->pluck('ordertyperestrictions_id')->toArray();
         return Ordertyperestrictions::whereIn('id', $excludedProductTypeIds);
     }
 
     public function excludedProducts(){
-        $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, product::class, 1, true)->pluck('product_id')->toArray();
+        $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, product::class, 1, true, false)->pluck('product_id')->toArray();
         return Product::whereIn('id', $excludedProductIds);
     }
     public function setExcludedData($rows){
         $returnData = [];
         foreach ($rows as $row){
           // $excludedData = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($row->id, true,  true);
-            $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($row->id,location::class,product::class,1)->pluck('product_id')->toArray();
-            $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($row->id,location::class,Ordertyperestrictions::class,1)->pluck('ordertyperestrictions_id')->toArray();
+            $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($row->id,location::class,product::class,1, true, false)->pluck('product_id')->toArray();
+            $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($row->id,location::class,Ordertyperestrictions::class,1, true, false)->pluck('ordertyperestrictions_id')->toArray();
             $excludedData = [
                 'excluded_product_ids' =>$excludedProductIds,
                 'excluded_product_type_ids' => $excludedProductTypeIds

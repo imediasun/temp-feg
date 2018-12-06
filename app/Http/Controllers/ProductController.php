@@ -289,7 +289,7 @@ class ProductController extends Controller
         ]);
         $skipFilters = ['search_all_fields'];
 
-        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null,false,false);
         $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
         $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
 
@@ -531,7 +531,7 @@ class ProductController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
-        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
+        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false, false)['excluded_product_type_ids'];
         $this->data['excludedProductTypes'] = implode(',', $excludedOrderTypesArray);
 
         return view('product.form', $this->data);
@@ -1501,8 +1501,8 @@ GROUP BY mapped_expense_category");
             $locationsData .='</optgroup>';
             return response()->json(['groups'=>$groupsData,"locations"=>$locationsData]);
         }else{
-            $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,Locationgroups::class,1,true);
-            $selectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,location::class,1,true);
+            $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,Locationgroups::class,1,true, false);
+            $selectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($id,product::class,location::class,1,true, false);
             $productType = $request->input('productType');
             $productTypeId = $request->input('productTypeId',0);
             if(!empty($productType)) {
@@ -1511,8 +1511,8 @@ GROUP BY mapped_expense_category");
             $productTypeSelectedGroups      = collect([]);
             $productTypeSelectedLocations   = collect([]);
                 if($productTypeId > 0){
-                    $productTypeSelectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,Locationgroups::class,1,true);
-                    $productTypeSelectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,location::class,1,true);
+                    $productTypeSelectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,Locationgroups::class,1,true, false);
+                    $productTypeSelectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,location::class,1,true, false);
                 }
             $locationGroups = Locationgroups::where(function($query){
                 1 == 1;

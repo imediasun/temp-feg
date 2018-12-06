@@ -215,8 +215,8 @@ class LocationController extends Controller
 
         if ($row) {
             $row = $row[0];
-            $this->data['alreadyExcludedProductTypes']  =   FEGDBRelationHelpers::getCustomRelationRecords($id, location::class, Ordertyperestrictions::class, 1, true)->lists('ordertyperestrictions_id')->toArray();
-            $this->data['alreadyExcludedProducts']      =   FEGDBRelationHelpers::getCustomRelationRecords($id, location::class, product::class, 1, true)->lists('product_id')->toArray();
+            $this->data['alreadyExcludedProductTypes']  =   FEGDBRelationHelpers::getCustomRelationRecords($id, location::class, Ordertyperestrictions::class, 1, true, false)->lists('ordertyperestrictions_id')->toArray();
+            $this->data['alreadyExcludedProducts']      =   FEGDBRelationHelpers::getCustomRelationRecords($id, location::class, product::class, 1, true, false)->lists('product_id')->toArray();
         } else {
             $row = $this->model->getColumnTable('location');
         }
@@ -508,8 +508,8 @@ class LocationController extends Controller
 
         $products = product::select('id','vendor_description')->orderBy('vendor_description','asc')->groupBy('vendor_description')->groupBy('sku')->groupBy('vendor_id')->groupBy('case_price')->get()->toArray();
         $productTypes = Ordertyperestrictions::select('id','order_type as product_type')->where('can_request', 1)->orderBy('order_type','asc')->get()->toArray();
-        $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,product::class,1)->pluck('product_id')->toArray();
-        $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,Ordertyperestrictions::class,1)->pluck('ordertyperestrictions_id')->toArray();
+        $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,product::class,1, true, false)->pluck('product_id')->toArray();
+        $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($locationId,location::class,Ordertyperestrictions::class,1, true, false)->pluck('ordertyperestrictions_id')->toArray();
         $excludedData = [
             'excluded_product_ids' =>$excludedProductIds,
             'excluded_product_type_ids' => $excludedProductTypeIds
