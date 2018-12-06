@@ -639,12 +639,12 @@ WHERE orders.is_api_visible = 1
         $dataArray = [];
         foreach ($rows as $row) {
             $locationGroup = $locations = '';
-            $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($row->id, self::class, Locationgroups::class, 1, true)->pluck('locationgroups_id');
-            $selectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($row->id, self::class, location::class, 1, true)->pluck('location_id');
+            $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($row->id, self::class, Locationgroups::class, 1, true, false)->pluck('locationgroups_id');
+            $selectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($row->id, self::class, location::class, 1, true, false)->pluck('location_id');
 
             $productTypeId = Ordertyperestrictions::where('order_type',$row->prod_type_id)->value('id');
-            $productTypeSelectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,Locationgroups::class,1,true)->pluck('locationgroups_id');
-            $productTypeSelectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,location::class,1,true)->pluck('location_id');
+            $productTypeSelectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,Locationgroups::class,1,true, false)->pluck('locationgroups_id');
+            $productTypeSelectedLocations = FEGDBRelationHelpers::getCustomRelationRecords($productTypeId,Ordertyperestrictions::class,location::class,1,true, false)->pluck('location_id');
 
             if ($selectedGroups->count() > 0) {
                 $locationGroup = Locationgroups::select(\DB::raw('group_concat(name) as names'))->whereIn('id', $selectedGroups->toArray())->get();

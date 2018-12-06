@@ -530,7 +530,7 @@ class OrderController extends Controller
         $this->data['isTypeRestricted'] = $this->model->isTypeRestricted();
         $this->data['displayTypesOnly'] = $this->model->getAllowedTypes();
 //        $locationId = $id ? $id : null;
-        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
+        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false, false)['excluded_product_type_ids'];
 
        if($this->model->isTypeRestricted()){
            $otherExcluded = Ordertyperestrictions::select('id')->where('can_request', 1)->whereNotIn('id',[7])->get()->pluck('id')->toArray();

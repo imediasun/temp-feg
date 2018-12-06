@@ -157,10 +157,10 @@ class LocationgroupsController extends Controller {
 		if($row)
 		{
 			$this->data['row'] 	                        =   $row;
-            $savedLocations                             =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, location::class, 0, true)->lists('location_id')->toArray();
+            $savedLocations                             =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, location::class, 0, true, false)->lists('location_id')->toArray();
             $this->data['savedLocations'] 	            =   $savedLocations;
-            $this->data['alreadyExcludedProductTypes']  =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, Ordertyperestrictions::class, 1, true)->lists('ordertyperestrictions_id')->toArray();
-            $this->data['alreadyExcludedProducts']      =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, product::class, 1, true)->lists('product_id')->toArray();
+            $this->data['alreadyExcludedProductTypes']  =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, Ordertyperestrictions::class, 1, true, false)->lists('ordertyperestrictions_id')->toArray();
+            $this->data['alreadyExcludedProducts']      =   FEGDBRelationHelpers::getCustomRelationRecords($id, Locationgroups::class, product::class, 1, true, false)->lists('product_id')->toArray();
 		} else {
 			$this->data['row'] 		= $this->model->getColumnTable('l_groups');
 		}

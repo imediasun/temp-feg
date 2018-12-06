@@ -29,25 +29,25 @@ class Locationgroups extends Sximo  {
 	}
 
 	public function locations(){
-	    $locationIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, Locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
+	    $locationIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, Locationgroups::class, location::class, 0, true, false)->pluck('location_id')->toArray();
 	    return location::whereIn('id', $locationIds);
     }
 
 	public function excludedProductTypes(){
-	    $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, Ordertyperestrictions::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
+	    $excludedProductTypeIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, Ordertyperestrictions::class, 1, true, false)->pluck('ordertyperestrictions_id')->toArray();
 	    return Ordertyperestrictions::whereIn('id', $excludedProductTypeIds);
     }
 
 	public function excludedProducts(){
-	    $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, Product::class, 1, true)->pluck('product_id')->toArray();
+	    $excludedProductIds = FEGDBRelationHelpers::getCustomRelationRecords($this->id, self::class, Product::class, 1, true, false)->pluck('product_id')->toArray();
 	    return Product::whereIn('id', $excludedProductIds);
     }
     public function setExcludedData($rows){
         $returnData = [];
         foreach ($rows as $row){
-            $locationData = FEGDBRelationHelpers::getCustomRelationRecords($row->id,location::class,self::class,0)->pluck('location_id')->toArray();
-            $productData = FEGDBRelationHelpers::getCustomRelationRecords($row->id,product::class,self::class,1)->pluck('product_id')->toArray();
-            $productType = FEGDBRelationHelpers::getCustomRelationRecords($row->id,Ordertyperestrictions::class,self::class,1)->pluck('ordertyperestrictions_id')->toArray();
+            $locationData = FEGDBRelationHelpers::getCustomRelationRecords($row->id,location::class,self::class,0, true, false)->pluck('location_id')->toArray();
+            $productData = FEGDBRelationHelpers::getCustomRelationRecords($row->id,product::class,self::class,1, true, false)->pluck('product_id')->toArray();
+            $productType = FEGDBRelationHelpers::getCustomRelationRecords($row->id,Ordertyperestrictions::class,self::class,1, true, false)->pluck('ordertyperestrictions_id')->toArray();
 
             $locations = location::select(\DB::raw("GROUP_CONCAT(DISTINCT CONCAT(location.id,' ',location.location_name) ORDER BY location.id SEPARATOR '<br>') AS location_names"))->whereIn('id',$locationData)->where('active',1)->get()->pluck('location_names')->toArray();
             $productTypeData = Ordertyperestrictions::select(\DB::raw('group_concat(order_type ORDER BY order_type ASC) as product_types'))->whereIn('id', $productType)->get()->pluck('product_types')->toArray();

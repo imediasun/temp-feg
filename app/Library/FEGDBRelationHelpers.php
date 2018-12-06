@@ -28,16 +28,21 @@ class FEGDBRelationHelpers
      * @param $relatedTypeTo
      * @param int $isExcluded
      * @param bool $aliasOverride
+     * @param bool $applyUserAndGroupsExemptionFunctionality
      * @return Collection
      */
-    public static function getCustomRelationRecords($relatedId, $relatedType, $relatedTypeTo, $isExcluded = 0, $aliasOverride = true)
+    public static function getCustomRelationRecords($relatedId, $relatedType, $relatedTypeTo, $isExcluded = 0, $aliasOverride = true, $applyUserAndGroupsExemptionFunctionality = true)
     {
         $relatedId = is_array($relatedId) ? $relatedId : [$relatedId];
 
         $customRelation = CustemRelation::select('id', 'related_id', 'related_to', 'related_type', 'related_type_to', 'is_excluded', 'created_at', 'updated_at');
 
-        $user = Users::find(Auth()->user()->id);
-        $userBelongsToExemptedUsers = $user->userBelongsToExemptedUsersList();
+        $userBelongsToExemptedUsers = false;
+
+        if($applyUserAndGroupsExemptionFunctionality){
+            $user = Users::find(Auth()->user()->id);
+            $userBelongsToExemptedUsers = $user->userBelongsToExemptedUsersList();
+        }
 
         $result = $userBelongsToExemptedUsers ? collect([]) :  $customRelation
             ->where(function ($query) use ($relatedId){
@@ -151,13 +156,14 @@ class FEGDBRelationHelpers
      * @param $locationId
      * @param $isGetExcludedProductTypes
      * @param $isGetExcludedProducts
+     * @param boolean $applyUserAndGroupsExemptionFunctionality
      * @return mixed
      */
-    public static function getExcludedProductTypeAndExcludedProductIds($locationId = null, $isGetExcludedProductTypes = false,  $isGetExcludedProducts = false){
+    public static function getExcludedProductTypeAndExcludedProductIds($locationId = null, $isGetExcludedProductTypes = false,  $isGetExcludedProducts = false, $applyUserAndGroupsExemptionFunctionality = true){
 
         $locationId = !is_null($locationId) ? $locationId : \Session::get('selected_location');
 
-        $locationGroupIds   = self::getCustomRelationRecords($locationId, Locationgroups::class, location::class, 0, true)->pluck('locationgroups_id')->toArray();
+        $locationGroupIds   = self::getCustomRelationRecords($locationId, Locationgroups::class, location::class, 0, true, $applyUserAndGroupsExemptionFunctionality)->pluck('locationgroups_id')->toArray();
 //        $locationIds        = self::getCustomRelationRecords($locationGroupIds, Locationgroups::class, location::class, 0, true)->pluck('location_id')->toArray();
 
         $locationIds = []; //new written line
@@ -168,8 +174,8 @@ class FEGDBRelationHelpers
          * Getting the Ids of Product Types that are related to
          * the current Location and related Location Groups
          * */
-        $idsOfExcludedProductTypesFromLocationGroup = self::getCustomRelationRecords($locationGroupIds, Ordertyperestrictions::class, Locationgroups::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
-        $idsOfExcludedProductTypesFromLocation      = self::getCustomRelationRecords($locationIds, Ordertyperestrictions::class, location::class, 1, true)->pluck('ordertyperestrictions_id')->toArray();
+        $idsOfExcludedProductTypesFromLocationGroup = self::getCustomRelationRecords($locationGroupIds, Ordertyperestrictions::class, Locationgroups::class, 1, true, $applyUserAndGroupsExemptionFunctionality)->pluck('ordertyperestrictions_id')->toArray();
+        $idsOfExcludedProductTypesFromLocation      = self::getCustomRelationRecords($locationIds, Ordertyperestrictions::class, location::class, 1, true, $applyUserAndGroupsExemptionFunctionality)->pluck('ordertyperestrictions_id')->toArray();
         $excludedProductTypeIds = array_merge($idsOfExcludedProductTypesFromLocationGroup, $idsOfExcludedProductTypesFromLocation);
 
 
@@ -177,8 +183,8 @@ class FEGDBRelationHelpers
          * Getting the Ids of Products that are related to the
          * current Location and related Location Groups
          * */
-        $idsOfExcludedProductsFromLocationGroup     = self::getCustomRelationRecords($locationGroupIds, product::class, Locationgroups::class, 1, true)->pluck('product_id')->toArray();
-        $idsOfExcludedProductsFromLocation          = self::getCustomRelationRecords($locationIds, product::class, location::class, 1, true)->pluck('product_id')->toArray();
+        $idsOfExcludedProductsFromLocationGroup     = self::getCustomRelationRecords($locationGroupIds, product::class, Locationgroups::class, 1, true, $applyUserAndGroupsExemptionFunctionality)->pluck('product_id')->toArray();
+        $idsOfExcludedProductsFromLocation          = self::getCustomRelationRecords($locationIds, product::class, location::class, 1, true, $applyUserAndGroupsExemptionFunctionality)->pluck('product_id')->toArray();
         $excludedProductIds = array_merge($idsOfExcludedProductsFromLocationGroup, $idsOfExcludedProductsFromLocation);
 
 
