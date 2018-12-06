@@ -231,7 +231,7 @@ class AjaxHelpers
         return $html;
     }
 
-    static public function GamestitleButtonAction($module, $access, $id, $setting, $edit = null,$closeLoadingAfterComplete = flase)
+    static public function GamestitleButtonAction($module, $access, $id, $setting, $edit = null,$closeLoadingAfterComplete = false)
     {
 
         $html = '<div class="action">';
