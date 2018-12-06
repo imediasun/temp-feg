@@ -1593,6 +1593,6 @@ $message = '';
         }
     }
     public function postSaveupdated(Request $request){
-
+        dd($request->all());
     }
 }
