@@ -1564,6 +1564,6 @@ GROUP BY mapped_expense_category");
         }
     }
     public function postSaveupdated(Request $request){
-
+        dd($request->all());
     }
 }
