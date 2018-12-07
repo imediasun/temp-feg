@@ -3,6 +3,7 @@
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopfegrequeststoreController;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Core\Groups;
 use Illuminate\Support\Facades\Session;
@@ -372,26 +373,14 @@ FROM requests
         sort($productIds);
         $productIds = array_values($productIds);
 
-        $column = [
-            'requests.product_id',
-            \DB::raw('requests.qty as requestedQTY'),
-        ];
-        $requests = $this->select($column)->
-        join('products', 'products.id', '=', 'requests.product_id')
-            ->groupBy("requests.product_id")
-            ->whereIn("requests.product_id", $productIds)
-            ->whereIn("requests.status_id", [4])
-            ->where("requests.request_user_id", \Session::get('uid'))
-            ->where("requests.location_id", \Session::get('selected_location'))
-            ->where('products.allow_negative_reserve_qty', '=', 0)
-            ->where('products.is_reserved', '=', 1)
-            ->lists('requestedQTY', "requests.product_id");
-        $requestedObjects = $requests;
+        $productIdsWithRequestedQuantitiesList = $this->getRequestObjects($productIds)->toArray();
 
+        $variants = $this->returnVariantsAgainstRequestedProductIds(array_keys($productIdsWithRequestedQuantitiesList));
+        dd($variants);
 
         $requestsArray = [];
 
-        foreach($requestedObjects as $productId=>$requestedQTY){
+        foreach($productIdsWithRequestedQuantitiesList as $productId=>$requestedQTY){
             $column = [
                 'requests.id',
                 'requests.product_id',
@@ -420,4 +409,44 @@ FROM requests
         $requestsArray = collect($requestsArray);
         return $requestsArray;
     }
+
+    /**
+     * calculates products total according to product type defined in configuration
+     * @param array $productIds
+     * @return Collection
+     * */
+    private function getRequestObjects($productIds){
+        $column = [
+            'requests.product_id',
+            \DB::raw('requests.qty as requestedQTY'),
+        ];
+        $requests = $this->select($column)->
+        join('products', 'products.id', '=', 'requests.product_id')
+            ->groupBy("requests.product_id")
+            ->whereIn("requests.product_id", $productIds)
+            ->whereIn("requests.status_id", [4])
+            ->where("requests.request_user_id", \Session::get('uid'))
+            ->where("requests.location_id", \Session::get('selected_location'))
+            ->where('products.allow_negative_reserve_qty', '=', 0)
+            ->where('products.is_reserved', '=', 1)
+            ->lists('requestedQTY', "requests.product_id");
+        return $requests;
+    }
+
+    private function returnVariantsAgainstRequestedProductIds($productIds){
+        $productObj = new product();
+        $variants = [];
+        $tempArray = [];
+        foreach ($productIds as $productId){
+            $productIdsArray = collect($productObj->checkProducts($productId))->pluck('id')->toArray();
+            if(!in_array($productId, $tempArray))
+                $variants[]     = $productIdsArray;
+
+            $tempArray    = array_merge($tempArray, $productIdsArray);
+        }
+        return $variants;
+    }
+
+
+
 }
