@@ -131,6 +131,8 @@ class servicerequestsController extends Controller
 
         if($ticketType == 'game-related'){
             $this->data['pageTitle'] = 'Game Related Service Request';
+        }else{
+            $this->data['pageTitle'] = 'Debit Card Related Service Request';
         }
 
         $info['config']['grid'] = $this->model->displayFieldsByType($info['config']['grid'],$ticketType);
