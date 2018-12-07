@@ -1786,7 +1786,7 @@ $message = '';
 
                     $this->insertRelations($excludedLocationsAndGroups,$productTypeExcludedLocationsAndGroups,$id,$productTypeId);
                 }
-                 $this->insertRow(['is_default_expense_category'=>1],$request->is_default_expense_category);
+                 $this->model->insertRow(['is_default_expense_category'=>1],$request->is_default_expense_category);
 
             }else{
                return response()->json(array(
