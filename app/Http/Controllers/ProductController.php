@@ -1781,12 +1781,9 @@ $message = '';
                     $this->model->insertRow($updates, $id);
                     $this->model->setFirstDefaultExpenseCategory($id);
 
-                    $product = product::find($request->is_default_expense_category);
-                    $product->is_default_expense_category = 1;
-                    $product->save();
-
                     $this->insertRelations($excludedLocationsAndGroups,$productTypeExcludedLocationsAndGroups,$id,$productTypeId);
                 }
+                 $this->insertRow(['is_default_expense_category'=>1],$request->is_default_expense_category);
 
             }else{
                return response()->json(array(
