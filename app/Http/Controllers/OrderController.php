@@ -530,8 +530,9 @@ class OrderController extends Controller
         $this->data['isTypeRestricted'] = $this->model->isTypeRestricted();
         $this->data['displayTypesOnly'] = $this->model->getAllowedTypes();
 //        $locationId = $id ? $id : null;
-        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false, false)['excluded_product_type_ids'];
-
+        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
+        $userObj = Users::find(Auth()->user()->id);
+        $this->data['userBelongsToExemptedUsers'] = $userObj->userBelongsToExemptedUsersList();
        if($this->model->isTypeRestricted()){
            $otherExcluded = Ordertyperestrictions::select('id')->where('can_request', 1)->whereNotIn('id',[7])->get()->pluck('id')->toArray();
            $excludedOrderTypesArray = array_merge($excludedOrderTypesArray,$otherExcluded);
@@ -2011,7 +2012,7 @@ class OrderController extends Controller
         $po = $request->get('po');
         $po_full = $po_1 . '-' . $po_2 . '-' . $po_3;
         $location =  location::find($location_id);
-        $excludedProductTypeIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($location_id, true, false)['excluded_product_type_ids'];
+        $excludedProductTypeIds = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($location_id, true, false, false)['excluded_product_type_ids'];
         if($this->model->isTypeRestricted()){
             $otherExcluded = Ordertyperestrictions::select('id')->where('can_request', 1)->whereNotIn('id',[7])->get()->pluck('id')->toArray();
             $excludedProductTypeIds = array_merge($excludedProductTypeIds,$otherExcluded);
@@ -2307,7 +2308,7 @@ class OrderController extends Controller
         $whereNotInProductIdsCondition = '';
         $restrictedProductTypeIdsArray = [];
 if($mode !='clone') {
-    $restrictedProductsAndTypesIdsArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true, true);
+    $restrictedProductsAndTypesIdsArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true, true, false);
     $restrictedProductTypeIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_type_ids'];
     $restrictedProductIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_ids'];
 
