@@ -41,7 +41,7 @@
             <a href="{{ url('servicerequests/update/?ticket_type=debit-card-related&close_return=game-related') }}"
                onclick="ajaxViewDetail('#servicerequests',this.href); return false;"
                class="tips"
-               title="Create Game Related Service Request">Click Here</a> to create Debit Card-Related Service Request</div>
+               title="Create Debit Card-Related Service Request">Click Here</a> to create Debit Card-Related Service Request</div>
         @endif
         <div class="col-md-12 clearfix p-lg-f">
             <fieldset>
