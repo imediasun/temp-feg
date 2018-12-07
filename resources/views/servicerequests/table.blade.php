@@ -237,7 +237,7 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
-        $('select[name="Status"]').change(function () {
+        /*$('select[name="Status"]').change(function () {
             var showAll = $('input[name=showAll]');
             if($('select[name="Status"] :selected')[0].index == 0)
             {
@@ -248,7 +248,7 @@
                 showAll.attr('disabled','disabled');
                 showAll.parent('.icheckbox_square-blue').removeClass('checked');
             }
-        });
+        });*/
         <?php if ($setting['view-method'] == 'expand') :
         echo AjaxHelpers::htmlExpandGrid();
     endif;
@@ -268,7 +268,7 @@
         }
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
-        setTimeout(function () {
+      /*  setTimeout(function () {
             console.log($('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text(),$('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen')[0]);
             if($('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text() == ' -- Select  -- ')
             {
@@ -277,9 +277,10 @@
             else {
                 $('input[name=showAll]').attr('disabled','disabled').parent('.icheckbox_square-blue').removeClass('checked').css('cursor','no-drop');
             }
-        },400);
+        },400);*/
     });
     makeSimpleSearchFieldsToInitiateSearchOnEnter();
+
 </script>
 <style>
     .table th.right {

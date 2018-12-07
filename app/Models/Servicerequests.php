@@ -367,8 +367,10 @@ class Servicerequests extends Observerable  {
         foreach ($tableGrid as $item) {
             if (in_array($item['field'], $this->hideGridFieldsTab1) && $type == 'debit-card-related') {
                 $item['view'] = 0;
+                $item['download'] = 0;
             }elseif(in_array($item['field'], $this->hideGridFieldsTab2) && $type == 'game-related'){
                 $item['view'] = 0;
+                $item['download'] = 0;
             }
             if ($type == 'game-related'){
                 if(in_array($item['field'],$this->tab2FieldLabels['fields'])){

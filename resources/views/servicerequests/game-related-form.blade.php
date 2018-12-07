@@ -6,6 +6,15 @@
     .form-horizontal .control-label{
         text-align: right;
     }
+    .input-group span.input-group-addon {
+        padding: 8px 18px 8px 10px;
+    }
+    @media screen and  (max-width:992px){
+        .change-padding{
+            padding-right: 15px !important;
+            padding-left: 15px !important;
+        }
+    }
 </style>
 @if($setting['form-method'] =='native')
 <div class="sbox">
@@ -26,6 +35,14 @@
 
         <input type="hidden" name='assign_to' value="{{ $row['assign_to']}}">
         <input type="hidden" name='entry_by' value="{{ $entryBy }}">
+        @if($id)
+            @else
+        <div class="col-md-12 clearfix p-lg-f" style="color: blue; text-align: left; padding: 15px 30px 0px !important;">
+            <a href="{{ url('servicerequests/update/?ticket_type=debit-card-related&close_return=game-related') }}"
+               onclick="ajaxViewDetail('#servicerequests',this.href); return false;"
+               class="tips"
+               title="Create Game Related Service Request">Click Here</a> to create Debit Card-Related Service Request</div>
+        @endif
         <div class="col-md-12 clearfix p-lg-f">
             <fieldset>
                 <div class="row">
@@ -132,7 +149,7 @@
                             <?php $index++ ?>
                             @if($index == 8)
                                 </div>
-                        <div class="col-md-6" style="padding-left: 6%; padding-right: 0px;">
+                        <div class="col-md-6 change-padding" style="padding-left: 6%; padding-right: 0px;">
                                 @endif
 					<input type="checkbox" name="troubleshootchecklist[]" @if(in_array($troubleshootingCheckList->id,$savedCheckList)) checked @endif id="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}" value="{{ $troubleshootingCheckList->id }}">&nbsp;&nbsp; <label title="{{ $troubleshootingCheckList->check_list_name }}" class="tips" style="vertical-align: middle; width: 90%; font-size: 12px; white-space: nowrap;
     overflow: hidden;
@@ -186,8 +203,10 @@
                             </label>
                             <div class="col-md-9">
                             <div class="input-group ig-full">
-                                <span class="input-group-addon" style="padding: 8px 20px 8px 10px;">$</span>
-                                <input type="number" step="1" placeholder="0.00" value="{{ $row['cost'] }}" name="cost" style="width: 91%;" class="form-control">
+                                <span class="input-group-addon" style="border-right: 1px solid #e5e6e7;
+    position: absolute;
+    left: 0;    z-index: 111111;" >$</span>
+                                <input type="number" step="1" placeholder="0.00" value="{{ $row['cost'] }}" style="padding-left: 35px;" name="cost"  class="form-control">
                             </div>
                                 </div>
                         </div>

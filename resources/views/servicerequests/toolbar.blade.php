@@ -7,10 +7,10 @@
 		@endif
 		@if($setting['disableactioncheckbox']=='false')
 		@if($access['is_add'] ==1)
-			<a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
+			<a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}','{{ '&ticket_type='.$ticketType }}')"><i class="fa fa-file-o"></i> Copy </a>
 		@endif
 		@if($canRemoveRequests == true)
-			<a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+			<a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}','{{ '&ticket_type='.$ticketType }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
 		@endif
 		@endif
 		<a href="{{ URL::to( $pageModule .'/search?ticket_type='.$ticketType) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>

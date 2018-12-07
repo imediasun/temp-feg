@@ -1467,7 +1467,11 @@ $(document).on('change', 'select' ,function () {
     }
 });
 $(function(){
+    $(document).on('click','.modal',function () {
+        $('select.select3,select.select2').select2();
+    });
     $(document).on("click",".collapse-close,.cancelButton",function(){
+        $('select.select3,select.select2').select2();
         $(document).scrollTop(0);
     });
 if (window.location.href.indexOf('/product') > -1) {
