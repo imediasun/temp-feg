@@ -19,7 +19,7 @@
         .change-padding{
             padding-right: 15px !important;
             padding-left: 15px !important;
-            font-size: 4px;
+            font-size: 4px !important;
         }
     }
 </style>
