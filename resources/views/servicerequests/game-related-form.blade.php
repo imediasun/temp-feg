@@ -15,6 +15,13 @@
             padding-left: 15px !important;
         }
     }
+    @media screen and  (max-width:9425px){
+        .change-padding{
+            padding-right: 15px !important;
+            padding-left: 15px !important;
+            font-size: 4px;
+        }
+    }
 </style>
 @if($setting['form-method'] =='native')
 <div class="sbox">
