@@ -15,7 +15,7 @@
             padding-left: 15px !important;
         }
     }
-    @media screen and  (max-width:9425px){
+    @media screen and  (max-width:425px){
         .change-padding{
             padding-right: 15px !important;
             padding-left: 15px !important;
