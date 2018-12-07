@@ -263,7 +263,7 @@ reloadData(id, url+"?"+attr);
 
 
 
-function ajaxCopy(  id , url )
+function ajaxCopy(  id , url,extra )
 {
     if($(".ids:checked").length > 0) {
         if (confirm('Are you sure you want to copy selected row(s)')) {
@@ -271,7 +271,7 @@ function ajaxCopy(  id , url )
             $.post(url + '/copy', datas, function (data) {
                 if (data.status == 'success') {
                     notyMessage(data.message);
-                    ajaxFilter(id, url + '/data');
+                    ajaxFilter(id, url + '/data',extra);
                 } else {
                     notyMessage(data.message);
                 }
@@ -287,7 +287,7 @@ function ajaxCopy(  id , url )
 
 }
 
-function ajaxRemove( id, url )
+function ajaxRemove( id, url,extra )
 {
     var datas = $( id +'Table :input').serialize();
     if($(".ids:checked").length > 0) {
@@ -299,7 +299,7 @@ function ajaxRemove( id, url )
             {
                 //console.log("called succes");
                 notyMessage(data.message);
-                ajaxFilter( id ,url+'/data' );
+                ajaxFilter( id ,url+'/data',extra );
             } else {
                 //console.log("called error");
                 notyMessageError(data.message);

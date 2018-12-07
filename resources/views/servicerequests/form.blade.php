@@ -9,9 +9,9 @@
 		<div class="sbox-title">  
 			<h4>
 				@if($id)
-					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Ticket
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Debit Card-Related Service Request
 				@else
-					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Ticket
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create Debit Card-Related Service Request
 				@endif
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
@@ -23,6 +23,14 @@
 
 		<input type="hidden" name='assign_to' value="{{ $row['assign_to']}}">        
 		<input type="hidden" name='entry_by' value="{{ $entryBy }}">
+		@if($id)
+			@else
+		<div class="col-md-12 clearfix p-lg-f" style="color: blue; text-align: left; padding: 15px 30px 0px !important;">
+			<a href="{{ url('servicerequests/update/?ticket_type=game-related&close_return=debit-card-related') }}"
+			   onclick="ajaxViewDetail('#servicerequests',this.href); return false;"
+			   class="tips"
+			   title="Create Game Related Service Request">Click Here</a> to create Game Related Service Request</div>
+		@endif
 		<div class="col-md-12 clearfix p-lg-f">
             <fieldset>
                 <div class="form-group  " > 
@@ -81,12 +89,6 @@
 						</select> 
 					 </div> 
 					 <div class="col-md-2" > </div>
-					<div class="col-md-10" style="color: blue; text-align: right;">
-						<a href="{{ url('servicerequests/update/?ticket_type=game-related&close_return=debit-card-related') }}"
-						   onclick="ajaxViewDetail('#servicerequests',this.href); return false;"
-						   class="tips"
-						   title="Create Game Related Service Request">Click Here</a> to create Game Related Service Request</div>
-					<div class="col-md-2" > </div>
                 </div> 					
                 <div class="form-group  " > 
 					<label for="Location" class=" control-label col-md-4 text-left"> 
