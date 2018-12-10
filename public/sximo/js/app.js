@@ -216,11 +216,13 @@ App.autoCallbacks.registerCallback('reloaddata', function(params){
 });
 
 App.autoCallbacks.registerCallback('advancedsearch', function(params){
+    getExcludedProductTypesAndProductIds();
     excludeProductsAndProductTypes();
 });
 
 App.autoCallbacks.registerCallback('ajaxViewOpened', function(params){
     setTimeout(function () {
+        getExcludedProductTypesAndProductIds();
         excludeProductsAndProductTypes();
     }, 1000);
 });
@@ -232,6 +234,7 @@ App.autoCallbacks.registerCallback('inline.row.config.after', function(params){
 App.autoCallbacks.registerCallback('inline.row.config.after', function(params){
     if(pageModule == 'shopfegrequeststore' || pageModule == 'order' || pageModule == 'product' || pageModule == 'location' || pageModule == 'locationgroups' || pageModule == 'managefegrequeststore') {
         setTimeout(function () {
+            getExcludedProductTypesAndProductIds();
             excludeProductsAndProductTypes();
         }, 1000);
     }
