@@ -431,8 +431,8 @@
                                 <label class='checked checkbox-inline'>
                                     <input type="hidden" {{ $disabledcheckbox }}   name="is_default_expense_category"
                                            value="0"/>
-                                    <input type='checkbox' {{ $disabledcheckbox }} name='is_default_expense_category'
-                                           value='1' class=''
+                                    <input type='radio' {{ $disabledcheckbox }} name='is_default_expense_category'
+                                           value='{{ $id }}' class=''
                                            @if($row['is_default_expense_category']==1) checked @endif /> Make Default</label>
                             @endif
                         </div>
