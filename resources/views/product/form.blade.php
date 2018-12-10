@@ -242,8 +242,9 @@
                                 }
                                 ?>
                                 <label class='checked checkbox-inline'>
-                                    <input type='radio'  name='is_default_expense_category'
-                                           value='{{ $variation['id'] }}' class=''
+                                    <input type="hidden" id="isDefaultExpenseCategory_{{ $variationCount }}" name="is_default_expense_category[]" value="0">
+                                    <input type='checkbox'  data-count="{{ $variationCount }}"
+                                           value='1' name="isdefault[]" class='isDefaultExpenseCategoryElm' id="isDefaultExpenseCategoryElm_{{ $variationCount }}"
                                            @if($variation['is_default_expense_category']==1) checked @endif /> Make Default</label>
                             @endif
                         </div>
@@ -337,9 +338,10 @@
                             }
                             ?>
                             <label class='checked checkbox-inline'>
+                                <input type="hidden" id="isDefaultExpenseCategory_{{ $variationCount }}" name="is_default_expense_category[]" value="0">
 
-                                    <input type='radio'  name='is_default_expense_category'
-                                           value='{{ $variation['id'] }}' class=''
+                                    <input type='checkbox' data-count="{{ $variationCount }}"  class="isDefaultExpenseCategoryElm"
+                                           value='1' name="isdefault[]" id="isDefaultExpenseCategoryElm_{{ $variationCount }}"
                                            @if($variation['is_default_expense_category']==1) checked @endif /> Make Default</label>
                         @endif
 
@@ -429,10 +431,10 @@
                                 }
                                 ?>
                                 <label class='checked checkbox-inline'>
-                                    <input type="hidden" {{ $disabledcheckbox }}   name="is_default_expense_category"
+                                    <input type="hidden"  id="isDefaultExpenseCategory_1"  name="is_default_expense_category[]"
                                            value="0"/>
-                                    <input type='radio' {{ $disabledcheckbox }} name='is_default_expense_category'
-                                           value='{{ $id }}' class=''
+                                    <input type='checkbox' name="isdefault[]" class="isDefaultExpenseCategoryElm" id="isDefaultExpenseCategoryElm_1"
+                                           value='1' data-count="1"
                                            @if($row['is_default_expense_category']==1) checked @endif /> Make Default</label>
                             @endif
                         </div>
@@ -752,9 +754,11 @@
             $variationCount++;
         ?>
         @endforeach
-                $('.ajaxLoading').hide();
+        //$('.ajaxLoading').hide();
+        $("select.prod_type").trigger('change');
     @else
-$('.ajaxLoading').hide();
+//$('.ajaxLoading').hide();
+        $("select.prod_type").trigger('change');
         if('{{ $row["prod_type_id"] }}')
         {
             $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
@@ -973,6 +977,11 @@ $('.ajaxLoading').hide();
 
     $("#add_more_types").click(function () {
         types_counter = document.getElementsByClassName('product_types').length + 1;
+        var events = ' data-count="'+types_counter+'" ';
+        var isDefaultExpenseCategoryInput = ' <label class="checked checkbox-inline">';
+        isDefaultExpenseCategoryInput += '<input type="hidden" id="isDefaultExpenseCategory_'+types_counter+'"   name="is_default_expense_category[]" value="0"/>';
+        isDefaultExpenseCategoryInput += '<input type="checkbox"  name="isdefault[]" class="isDefaultExpenseCategoryElm" id="isDefaultExpenseCategoryElm_'+types_counter+'" '+events+'  value="1"  /> Make Default</label>';
+
         var more_types_html = '<span class="product_types productTypeBox" id="remove_me_'+types_counter+'"><div class="form-group  "> <input type="hidden" name="itemId[]" value="0">' +
                 '<label for="Prod Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Type", (isset($fields["prod_type_id"]["language"])? $fields["prod_type_id"]["language"] : array())) !!}</label> ' +
                 '<div class="col-md-6"> <select data-previous="0" name="prod_type_id[]" rows="5" data-counter="'+types_counter+'" id="prod_type_id_'+types_counter+'" class="prod_type select2 "required="required"></select>' +
@@ -982,7 +991,7 @@ $('.ajaxLoading').hide();
                 ' </div> <div class="col-md-2"> </div> </div> ' +
                 '<div class="form-group"> <label for="Expense Category" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Expense Category", (isset($fields["expense_category"]["language"])? $fields["expense_category"]["language"] : array())) !!}</label> ' +
                 '<div class="col-md-6"><select name="expense_category[]" rows="5" id="expense_category_' + types_counter + '" class="select2" required></select> ' +
-                '</div> <div class="col-md-2"></div> </div>' +
+                '</div> <div class="col-md-2">'+isDefaultExpenseCategoryInput+'</div> </div>' +
                 '<div class="form-group" id="retail_price_'+types_counter+'"> <label for="Retail Price" class="control-label col-md-4 text-left addcolon">Retail Price </label> ' +
                 '<div class="col-md-6"> ' +
                 '<div class="input-group ig-full"> <span class="input-group-addon">$</span> <input class="form-control parsley-validated retail_prices" placeholder="0.00" type="text" parsley-min="0" step="1" id="retail_input_'+types_counter+'" name="retail_price[]" value=""> </div> </div>' +
@@ -1001,6 +1010,10 @@ $('.ajaxLoading').hide();
         $("#prod_type_id_"+types_counter).select2({width: "100%"});
         $("#expense_category_"+types_counter).select2({width: "100%"});
         $("#prod_sub_type_id_"+types_counter).select2({width: "100%"});
+        $('#isDefaultExpenseCategoryElm_'+types_counter).iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue'
+        });
         // renderDropdown($(".select2"), {width: "100%"});
         <?php $NETSUITE_PRODUCT_MAX_LENGTH = config('app.NETSUITE_PRODUCT_MAX_LENGTH'); ?>
       <?php if($NETSUITE_PRODUCT_MAX_LENGTH !=''){ ?>
@@ -1014,12 +1027,7 @@ $('.ajaxLoading').hide();
     $(".fixDecimal").blur(function () {
         $(this).val($(this).fixDecimal());
     });
-    $("checkbox[name='is_default_expense_category[]']").change(function () {
-        // if($(this).is(":checked")){
-        $("checkbox[name='is_default_expense_category[]']").prop("checked", false);
-        $(this).prop("checked", true);
-        //}
-    });
+
     function uniqueBarcode(productId){
         $('.ajaxLoading').show();
         $.ajax({
@@ -1033,6 +1041,21 @@ $('.ajaxLoading').hide();
         });
         return false;
     }
+    $(document).on('ifChecked','.isDefaultExpenseCategoryElm',function(){
+        $(this).trigger('change');
+    });
+
+    $(document).off('change','.isDefaultExpenseCategoryElm').on('change','.isDefaultExpenseCategoryElm',function(){
+
+        if($(this).is(':checked')) {
+            $("input.isDefaultExpenseCategoryElm").each(function(){
+                $('#isDefaultExpenseCategory_'+$(this).attr('data-count')).val('0');
+            });
+            $("input.isDefaultExpenseCategoryElm").not('#'+$(this).attr('id')).iCheck('uncheck');
+            $('#isDefaultExpenseCategory_'+$(this).attr('data-count')).val('1');
+        }
+    });
+
 </script>
 <style>
 
