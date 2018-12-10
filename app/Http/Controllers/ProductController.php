@@ -1580,6 +1580,23 @@ GROUP BY mapped_expense_category");
             $product = product::find($productID);
 
         }
+        if(!empty($request->input('is_default_expense_category'))){
+            $defaultExpenseCategories = $request->input('is_default_expense_category');
+            $defaultExpenseCategoryValidator = [];
+            foreach ($defaultExpenseCategories as $defaultExpenseCategory){
+                if($defaultExpenseCategory == 1){
+                    $defaultExpenseCategoryValidator[] = 1;
+                }
+            }
+
+            if(count($defaultExpenseCategoryValidator) <> 1){
+                return response()->json(array(
+                    'message' => 'Expense category need to be checked.',
+                    'status' => 'error'
+                ));
+            }
+        }
+
 
         $customMessages = [
             'min'=> 'UPC/Barcode can be of 12 character only. Combination of alphabets and digits only.',
@@ -1716,7 +1733,7 @@ GROUP BY mapped_expense_category");
                     $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count])) ? $data['prod_sub_type_id'][$count] : 0;
                     $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count])) ? $data['expense_category'][$count] : 0;
                     $prodData['netsuite_description'] = mb_substr(time()."-".$count."...".$data['vendor_description'],0,60);
-                    $prodData['is_default_expense_category'] = 0;
+                    $prodData['is_default_expense_category'] = (isset($data['is_default_expense_category'][$count]) && !empty($data['is_default_expense_category'][$count])) ? $data['is_default_expense_category'][$count] : 0;
                     if (isset($img)) {
                         $newfilename = ($itemIds[$count] == null) ? time(). '' . $extension: time().'-'.$itemIds[$count]. '' . $extension;
                         $img_path='./uploads/products/' . $newfilename;
@@ -1755,12 +1772,11 @@ GROUP BY mapped_expense_category");
                             $updates['img'] = $productImage->img;
                         }
                     }
-                    $updates['is_default_expense_category'] = 0;
+
                     $this->model->insertRow($updates, $id);
 
                     $this->insertRelations($excludedLocationsAndGroups,$productTypeExcludedLocationsAndGroups,$id,$productTypeId);
                 }
-                 $this->model->insertRow(['is_default_expense_category'=>1],$request->is_default_expense_category);
 
             }else{
                return response()->json(array(
