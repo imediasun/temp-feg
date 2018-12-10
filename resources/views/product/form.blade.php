@@ -197,7 +197,11 @@
 
                             <select name='prod_type_id[]' data-previous="{{$row['prod_type_id']}}" rows='5'
                                     data-counter="1" id='prod_type_id_1' class='select2 prod_type'
-                                    required='required'></select>
+                                    required='required'>
+                                @foreach($productTypes as $productType)
+                                    <option @if($variation['prod_type_id'] == $productType['id']) selected @endif value="{{ $productType['id'] }}">{{ $productType['order_type'] }}</option>
+                                @endforeach
+                            </select>
 
                         </div>
                         <div class="col-md-2">
@@ -290,7 +294,11 @@
                     <select data-previous="0" name="prod_type_id[]" rows="5"
                             data-counter="{{ $variationCount }}"
                             id="prod_type_id_{{ $variationCount }}" class="prod_type select2 "
-                            required="required"></select>
+                            required="required">
+                        @foreach($productTypes as $productType)
+                            <option @if($variation['prod_type_id'] == $productType['id']) selected @endif value="{{ $productType['id'] }}">{{ $productType['order_type'] }}</option>
+                        @endforeach
+                    </select>
                 </div>
                                             <div class="col-md-2">
                                                 <button data-remove-id="{{ $variation['id'] }}" data-count="{{ $variationCount }}"
@@ -374,7 +382,11 @@
 
                             <select name='prod_type_id[]' data-previous="{{$row['prod_type_id']}}" rows='5'
                                     data-counter="1" id='prod_type_id_1' class='select2 prod_type'
-                                    required='required'></select>
+                                    required='required'>
+                                @foreach($productTypes as $productType)
+                                    <option @if($row['prod_type_id'] == $productType['id']) selected @endif value="{{ $productType['id'] }}">{{ $productType['order_type'] }}</option>
+                                @endforeach
+                            </select>
 
                         </div>
                         <div class="col-md-2">
@@ -729,9 +741,6 @@
         @if(count($variations) > 0)
         <?php $variationCount = 1; ?>
         @foreach($variations as $variation)
-            $("#prod_type_id_{{ $variationCount }}").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
-                {selected_value: '{{ $variation['prod_type_id'] }}'});
-
 
 
             $("#prod_sub_type_id_{{ $variationCount }}").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $variation["prod_type_id"] }}",
@@ -743,11 +752,9 @@
             $variationCount++;
         ?>
         @endforeach
+                $('.ajaxLoading').hide();
     @else
-            $("#prod_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
-            {selected_value: '{{ $row["prod_type_id"] }}'});
-
-
+$('.ajaxLoading').hide();
         if('{{ $row["prod_type_id"] }}')
         {
             $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
