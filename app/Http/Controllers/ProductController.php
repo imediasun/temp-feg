@@ -551,6 +551,12 @@ class ProductController extends Controller
         $this->data['id'] = $id;
         $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
         $this->data['excludedProductTypes'] = implode(',', $excludedOrderTypesArray);
+        $productTypes = Ordertyperestrictions::where('can_request',1);
+        if(!empty($excludedOrderTypesArray)){
+            $productTypes->whereNotIn('id',$excludedOrderTypesArray);
+        }
+        $this->data['productTypes'] = $productTypes->orderBy('order_type','asc')->get()->toArray();
+
 
         return view('product.form', $this->data);
     }
@@ -1596,6 +1602,7 @@ $message = '';
         }
     }
     public function postSaveupdated(Request $request){
+
         $id = max($request->input('itemId'));
         $product = "";
         $rules = $this->validateForm();
@@ -1740,7 +1747,7 @@ $message = '';
                     $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count])) ? $data['prod_sub_type_id'][$count] : 0;
                     $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count])) ? $data['expense_category'][$count] : 0;
                     $prodData['netsuite_description'] = mb_substr(time()."-".$count."...".$data['vendor_description'],0,60);
-
+                    $prodData['is_default_expense_category'] = 0;
                     if (isset($img)) {
                         $newfilename = ($itemIds[$count] == null) ? time(). '' . $extension: time().'-'.$itemIds[$count]. '' . $extension;
                         $img_path='./uploads/products/' . $newfilename;
@@ -1748,7 +1755,6 @@ $message = '';
                         $prodData['img'] = $newfilename;
 
                     }
-
                     $ids[] = $this->model->insertRow($prodData, $itemIds[$count]);
                     $count++;
                 }
@@ -1782,7 +1788,6 @@ $message = '';
                     }
                     $updates['is_default_expense_category'] = 0;
                     $this->model->insertRow($updates, $id);
-                    $this->model->setFirstDefaultExpenseCategory($id);
 
                     $this->insertRelations($excludedLocationsAndGroups,$productTypeExcludedLocationsAndGroups,$id,$productTypeId);
                 }
