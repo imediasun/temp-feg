@@ -198,6 +198,7 @@
                             <select name='prod_type_id[]' data-previous="{{$row['prod_type_id']}}" rows='5'
                                     data-counter="1" id='prod_type_id_1' class='select2 prod_type'
                                     required='required'>
+                                <option value="">--select--</option>
                                 @foreach($productTypes as $productType)
                                     <option @if($variation['prod_type_id'] == $productType['id']) selected @endif value="{{ $productType['id'] }}">{{ $productType['order_type'] }}</option>
                                 @endforeach
@@ -385,6 +386,7 @@
                             <select name='prod_type_id[]' data-previous="{{$row['prod_type_id']}}" rows='5'
                                     data-counter="1" id='prod_type_id_1' class='select2 prod_type'
                                     required='required'>
+                                <option value="">--select--</option>
                                 @foreach($productTypes as $productType)
                                     <option @if($row['prod_type_id'] == $productType['id']) selected @endif value="{{ $productType['id'] }}">{{ $productType['order_type'] }}</option>
                                 @endforeach
