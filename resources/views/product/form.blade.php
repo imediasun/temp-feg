@@ -998,7 +998,7 @@
         var isDefaultExpenseCategoryInput = ' <label class="checked checkbox-inline">';
         isDefaultExpenseCategoryInput += '<input type="hidden" id="isDefaultExpenseCategory_'+types_counter+'"   name="is_default_expense_category[]" value="0"/>';
         isDefaultExpenseCategoryInput += '<input type="checkbox"  name="isdefault[]" class="isDefaultExpenseCategoryElm" id="isDefaultExpenseCategoryElm_'+types_counter+'" '+events+'  value="1"  /> Make Default</label>';
-            @if(empty($row['id]))
+            @if(empty($row['id']))
         isDefaultExpenseCategoryInput = '';
                 @endif
         var more_types_html = '<span class="product_types productTypeBox" id="remove_me_'+types_counter+'"><div class="form-group  "> <input type="hidden" name="itemId[]" value="0">' +
