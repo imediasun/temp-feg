@@ -213,6 +213,8 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
 												id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 									 @elseif($field['field']=='exclude_export')
 										 <input type='checkbox' name="mycheckbox" @if(strtolower($value) == 'yes') checked  @endif data-field="exclude_export"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}" id="exclude_export_{{$row->id}}" onSwitchChange="trigger()" />
+                                @elseif($field['field']=='hot_item')
+										 <input type='checkbox' name="mycheckbox" @if(strtolower($value) == 'yes' || $value == 'YES' || $value == 'Yes') checked  @endif data-field="hot_item"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}" id="hot_item_{{$row->id}}" onSwitchChange="trigger()" />
                                 @else
                                     {!! $value !!}
                                 @endif
@@ -427,6 +429,19 @@ $(document).ready(function() {
 				}
 		);
 	});
+    $("[id^='hot_item_']").on('switchChange.bootstrapSwitch', function(event, state) {
+        productId=$(this).data('id');
+        $.ajax(
+                {
+                    type:'POST',
+                    url:'product/hotitemstatus',
+                    data:{itemStatus:state,productId:productId},
+                    success:function(data){
+
+                    }
+                }
+        );
+    });
 	$("[id^='is_default_expense_']").on('switchChange.bootstrapSwitch', function (event, state) {
 		productId = $(this).data('id');
 		console.log(state);
@@ -452,6 +467,7 @@ $(document).ready(function() {
 
     $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
     $("[id^='exclude_export_']").bootstrapSwitch();
+    $("[id^='hot_item_']").bootstrapSwitch();
 	$("[id^='is_default_expense_']").bootstrapSwitch();
 	$('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
