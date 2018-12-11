@@ -1557,12 +1557,12 @@ GROUP BY mapped_expense_category");
 $message = '';
         if ($itemStatus == "true") {
             $update = \DB::update('update products set hot_item = 1 where id IN(' . implode(',', $ids) . ')');
-            $message = 'Item has been changed successfully';
+            $message = 'Item has been marked as hot item successfully';
         }
         else
         {
             $update = \DB::update('update products set hot_item = 0 where id IN(' . implode(',', $ids) . ')');
-            $message = 'Item has been changed successfully';
+            $message = 'Hot item has been unmarked successfully';
         }
         if ($update) {
             return response()->json(array(
