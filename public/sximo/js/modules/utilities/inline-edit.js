@@ -63,8 +63,7 @@
         if (row.hasClass('inline_edit_applied')) {
             return;
         }
-        var namesOfFieldsWhomValueIsNotAppearingProperlyOnInlineEdit = ['upc_barcode'];
-        App.autoCallbacks.runCallback('inline.row.config.before', rowHookParams);        
+        App.autoCallbacks.runCallback('inline.row.config.before', rowHookParams);
         row.addClass('inline_edit_applied');
         rowHookParams.count = ++editingRowsCount;
 
@@ -93,8 +92,15 @@
             if (!cell.length) {
                 return;
             }
-            originalValue = config.originalValue = cell.data('values');
-            formattedValue = config.formattedValue = cell.data('format');
+
+            /*
+            Ref: https://stackoverflow.com/questions/7962464/jquery-data-attribute-removes-leading-zeros
+             =========================================================================================================
+            Every attempt is made to convert the string to a JavaScript value (this includes booleans, numbers, objects, arrays, and null)
+            otherwise it is left as a string. To retrieve the value's attribute as a string without any attempt to convert it, use the attr() meth
+             =========================================================================================================*/
+            originalValue = config.originalValue = cell.attr('data-values');
+            formattedValue = config.formattedValue = cell.attr('data-format');
             cellOriginalHTML = config.originalHtmlValue = cell.html();
             App.autoCallbacks.runCallback('inline.cell.config.before', cellHookParams);
             
@@ -133,7 +139,7 @@
                     }
                     break;
                 default:
-                    input.val( (inArray( fieldName, namesOfFieldsWhomValueIsNotAppearingProperlyOnInlineEdit )) ? cellOriginalHTML.trim() : originalValue);
+                    input.val(originalValue);
             }
         /*
             if(inputType =='select'){
@@ -185,14 +191,7 @@
         initiateInlineFormFields($('#'+ rowDomId + ' td[data-edit=1]'), siteUrl, rowHookParams);
     });       
    };
-    function inArray(needle, haystack) {
-        var length = haystack.length;
-        for(var i = 0; i < length; i++) {
-            if(haystack[i] == needle) return true;
-        }
-        return false;
-    }
-    window.cancelInlineEdit = cancelInlineEdit = function (rowDomId, event, element,actionColumnHidden) {
+   window.cancelInlineEdit = cancelInlineEdit = function (rowDomId, event, element,actionColumnHidden) {
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {
             event.preventDefault();
         }
