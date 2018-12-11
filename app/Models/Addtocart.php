@@ -487,20 +487,46 @@ FROM requests
         return $requests;
     }
 
-    private function returnVariantsAgainstRequestedProductIds($productIds){
-        $productObj = new product();
-        $variants = [];
-        $tempArray = [];
-        foreach ($productIds as $productId){
-            $productIdsArray = collect($productObj->checkProducts($productId))->pluck('id')->toArray();
-            if(!in_array($productId, $tempArray))
-                $variants[]     = $productIdsArray;
+    public function returnVariantsAgainstRequestedProductIds($productIds){
+        $productIds = is_array($productIds) ? implode(',',$productIds):$productIds;
+        $sql = "SELECT
+  variations  AS item_ids,
+  reservedQty,
+  item_name
+FROM (SELECT
+        vendor_description    AS item_name,
+        reserved_qty          AS reservedQty,
+        GROUP_CONCAT(id)      AS variations,
+        COUNT(id)             AS variationCount,
+        products.variation_id,
+        products.reserved_qty
+      FROM products
+      WHERE products.id IN($productIds)
+      GROUP BY products.variation_id
+      HAVING variationCount > 1) AS cc";
 
-            $tempArray    = array_merge($tempArray, $productIdsArray);
+        $result  = \DB::select(\DB::raw($sql));
+        if(!empty($result)){
+            $result = collect($result);
+        }else{
+            $result = collect([]);
         }
-        return $variants;
+        foreach ($result as $item){
+            $sql = "SELECT
+  SUM(qty) AS totalQty
+FROM requests
+WHERE product_id IN(".$item->item_ids.")
+    AND requests.status_id = 4";
+            $response  = \DB::select(\DB::raw($sql));
+            if(!empty($response)){
+                $item->totalQty = $response[0]->totalQty;
+            }
+        }
+        $variationResponse = $result->filter(function ($query){
+           return  $query->reservedQty < $query->totalQty;
+        });
+        return $variationResponse;
+
     }
-
-
 
 }
