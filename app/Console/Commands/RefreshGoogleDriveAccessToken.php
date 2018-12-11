@@ -70,7 +70,7 @@ class RefreshGoogleDriveAccessToken extends Command
             $this->info('Token refresh at: '. $nextRefreshTime);
             $now = new \DateTime();
             $now = $now->getTimestamp();
-            if($now >= $nextRefreshTime || !GoogleDriveAuthToken::verifyOAuthTokenIsValid($user->oauth_token)){
+            if($now || !GoogleDriveAuthToken::verifyOAuthTokenIsValid($user->oauth_token)){
                 try{
                     $this->info('Token refresh: '. $user->refresh_token);
                     $tokenArray = GoogleDriveAuthToken::refreshOAuthToken($user->refresh_token);
