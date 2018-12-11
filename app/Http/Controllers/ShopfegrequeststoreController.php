@@ -232,7 +232,7 @@ class ShopfegrequeststoreController extends Controller
 //            'is_backinstock' =>'DESC',
         ];
 
-
+        $extraSorts = $sort == 'is_favorite' ? []:$extraSorts;
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
