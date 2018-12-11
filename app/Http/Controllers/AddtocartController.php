@@ -376,6 +376,25 @@ class AddtocartController extends Controller
             'showError' => false,
         ];
 
+        $variants = $this->model->returnVariantsAgainstRequestedProductIds($inputs['products']);
+
+        if ($variants->count() > 0) {
+            $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
+            foreach ($variants as $variant) {
+                $productsNames .= "<li>" . addslashes($variants->item_name) . " | Reserve Qty = " . $variants->reservedQty . " | Already Requested Qty = " . $variants->totalQty . " | Remaining Qty = " . $request->remainingQTY . "</li>";
+            }
+            $productsNames .= "</ul>";
+            $qtyCheckMessage = [
+                'messagetext' => "Update Error Message Heading here.<br /><br /> $productsNames <br />Please reduce the amount requested for purchase below or contact the Merchandise Team.",
+                'showError' => $variants->count() > 0,
+            ];
+            return response()->json([
+                'hasPermission' => $addToCart->hasPermission(),
+                'exceptionMessage' => $addToCart->getsubmittedRequests($inputs['products']),
+                'qtyErrorMessage' => $qtyCheckMessage
+            ]);
+        }
+
         $requestQtyCheck = $this->model->requestQtyFilterCheck($inputs['products']);
         if ($requestQtyCheck->count() > 0) {
             $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
