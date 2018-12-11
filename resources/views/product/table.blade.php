@@ -437,7 +437,12 @@ $(document).ready(function() {
                     url:'product/hotitemstatus',
                     data:{itemStatus:state,productId:productId},
                     success:function(data){
-
+                        if(data.status == "error"){
+                            notyMessageError(data.message);
+                        }
+                        if(data.status == "success"){
+                            notyMessage(data.message);
+                        }
                     }
                 }
         );
