@@ -4,6 +4,7 @@ use App\Http\Controllers\controller;
 use App\Library\FEGDBRelationHelpers;
 use App\Models\Shopfegrequeststore;
 use App\Models\Addtocart;
+use App\Models\Sximo;
 use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -90,7 +91,7 @@ class ShopfegrequeststoreController extends Controller
             'prod_type_id'=>'',
             'prod_sub_type_id'=>'',
         ]);
-        $skipFilters = ['search_all_fields'];
+        $skipFilters = ['search_all_fields','filterby_label'];
 
         $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
         $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
@@ -253,7 +254,11 @@ class ShopfegrequeststoreController extends Controller
         $this->data['order_type'] = $order_type;
         $product_type = $request->get('product_type');
         $this->data['product_type'] = $product_type;
+        $filteredArray = Sximo::getSearchFilters();
         $this->data['filterBy'] = $filterBy = $request->get('filterBy');
+        if(empty($filterBy)){
+            $filterBy = !empty($filteredArray['filterby_label']) ? $filteredArray['filterby_label']:'';
+        }
         $cond = array('type' => $type, 'active_inactive' => $active_inactive, 'order_type' => $order_type, 'product_type' => $product_type,'filterBy'=>$filterBy);
         $results = $this->model->getRows($params, $cond);
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
