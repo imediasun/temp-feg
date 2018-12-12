@@ -368,11 +368,7 @@ FROM requests
             ->where("location_id",\Session::get('selected_location'));
     }
 
-    private function getProducts($productIds){
-        return product::whereIn('id', $productIds)->get();
-    }
-
-    public function requestQtyFilterCheck($productIds)
+    public function requestQtyFilterCheck($productIds, $checkSingle = true)
     {
         if(!is_array($productIds)){
             $productIds = [$productIds];
@@ -428,19 +424,28 @@ FROM requests
                 'products.vendor_description',
                 \DB::raw('CONVERT((products.reserved_qty - requests.qty), SIGNED INTEGER) as remainingQTY'),
                 \DB::raw('products.reserved_qty  as productQty'),
-                \DB::raw('requests.qty as alreadyRequestedQTY'),
+                $checkSingle ? \DB::raw('requests.qty as alreadyRequestedQTY') : \DB::raw('CONVERT(SUM(requests.qty), SIGNED INTEGER)  as alreadyRequestedQTY'),
                 'requests.request_user_id',
                 'requests.location_id'
             ];
             $requestss = $this->select($column)->
             join('products', 'products.id', '=', 'requests.product_id')
                 ->groupBy("requests.product_id")
-                ->where("requests.product_id", $productId)
-                ->whereIn("requests.status_id", [1,4])
-                ->where("requests.location_id", \Session::get('selected_location'))
+                ->where("requests.product_id", $productId);
+
+            if($checkSingle)
+                $requestss = $requestss->whereIn("requests.status_id", [1,4]);
+            else
+                $requestss = $requestss->whereIn("requests.status_id", [1]);
+
+            $requestss = $requestss->where("requests.location_id", \Session::get('selected_location'))
                 ->where('products.allow_negative_reserve_qty', '=', 0)
-                ->where('products.is_reserved', '=', 1)
-                ->having('productQty', '<', $requestedQTY);
+                ->where('products.is_reserved', '=', 1);
+
+            if($checkSingle)
+                $requestss = $requestss->having('productQty', '<', $requestedQTY);
+            else
+                $requestss = $requestss->having('remainingQTY', '<', $requestedQTY);
 
             if($requestss->first()){
                 $requestsArray[] = $requestss->first();
