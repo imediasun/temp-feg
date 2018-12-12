@@ -420,6 +420,7 @@ $(document).ready(function() {
 						/*if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
 						{
 							//window.location.reload();
+							//window.location.reload();
 							$('#form-'+productId).hide(800);
 						}
 						if(data.status == "error"){
