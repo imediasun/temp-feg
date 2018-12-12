@@ -1573,6 +1573,13 @@ GROUP BY mapped_expense_category");
     public function postSaveupdated(Request $request){
 
         $id = max($request->input('itemId'));
+        $removedItemIds = $request->input('removedItemIds',0);
+
+            $removedItemIds = explode(',',$removedItemIds);
+            $removedItemIds = is_array($removedItemIds) ? $removedItemIds:[$removedItemIds];
+if(!empty($removedItemIds)) {
+    product::whereIn('id', $removedItemIds)->delete();
+}
         $product = "";
         $rules = $this->validateForm();
         if($id){
@@ -1733,7 +1740,11 @@ GROUP BY mapped_expense_category");
                     $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count])) ? $data['prod_sub_type_id'][$count] : 0;
                     $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count])) ? $data['expense_category'][$count] : 0;
                     $prodData['netsuite_description'] = mb_substr(time()."-".$count."...".$data['vendor_description'],0,60);
-                    $prodData['is_default_expense_category'] = (isset($data['is_default_expense_category'][$count]) && !empty($data['is_default_expense_category'][$count])) ? $data['is_default_expense_category'][$count] : 0;
+                    if(count($request->input('itemId')) == 1){
+                        $prodData['is_default_expense_category'] = 1;
+                    }else {
+                        $prodData['is_default_expense_category'] = (isset($data['is_default_expense_category'][$count]) && !empty($data['is_default_expense_category'][$count])) ? $data['is_default_expense_category'][$count] : 0;
+                    }
                     if (isset($img)) {
                         $newfilename = ($itemIds[$count] == null) ? time(). '' . $extension: time().'-'.$itemIds[$count]. '' . $extension;
                         $img_path='./uploads/products/' . $newfilename;
