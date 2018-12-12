@@ -436,11 +436,11 @@ FROM requests
             join('products', 'products.id', '=', 'requests.product_id')
                 ->groupBy("requests.product_id")
                 ->where("requests.product_id", $productId)
-                ->where("requests.status_id", 1)
+                ->whereIn("requests.status_id", [1,4])
                 ->where("requests.location_id", \Session::get('selected_location'))
                 ->where('products.allow_negative_reserve_qty', '=', 0)
                 ->where('products.is_reserved', '=', 1)
-                ->having('remainingQTY', '<', $requestedQTY);
+                ->having('productQty', '<', $requestedQTY);
 
             if($requestss->first()){
                 $requestsArray[] = $requestss->first();
@@ -486,47 +486,4 @@ FROM requests
             ->lists('requestedQTY', "requests.product_id");
         return $requests;
     }
-
-    public function returnVariantsAgainstRequestedProductIds($productIds){
-        $productIds = is_array($productIds) ? implode(',',$productIds):$productIds;
-        $sql = "SELECT
-  variations  AS item_ids,
-  reservedQty,
-  item_name
-FROM (SELECT
-        vendor_description    AS item_name,
-        reserved_qty          AS reservedQty,
-        GROUP_CONCAT(id)      AS variations,
-        COUNT(id)             AS variationCount,
-        products.variation_id,
-        products.reserved_qty
-      FROM products
-      WHERE products.id IN($productIds)
-      GROUP BY products.variation_id
-      HAVING variationCount > 1) AS cc";
-
-        $result  = \DB::select(\DB::raw($sql));
-        if(!empty($result)){
-            $result = collect($result);
-        }else{
-            $result = collect([]);
-        }
-        foreach ($result as $item){
-            $sql = "SELECT
-  SUM(qty) AS totalQty
-FROM requests
-WHERE product_id IN(".$item->item_ids.")
-    AND requests.status_id = 4";
-            $response  = \DB::select(\DB::raw($sql));
-            if(!empty($response)){
-                $item->totalQty = $response[0]->totalQty;
-            }
-        }
-        $variationResponse = $result->filter(function ($query){
-           return  $query->reservedQty < $query->totalQty;
-        });
-        return $variationResponse;
-
-    }
-
 }
