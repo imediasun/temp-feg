@@ -32,6 +32,35 @@
     }
     ?>
     <script>
+        /**
+         * this function take array of objects and return back all objects which are variations
+         * @param rowData
+         */
+        function findDuplicateVariationsInCart(rowData){
+            var variationIds = [];
+            $(rowData).each(function(index,value){
+                if(value.variation_id != null && value.variation_id != ""){
+                    variationIds.push(value.variation_id);
+                }
+            })
+            variationIds = findDuplicatesInArray(variationIds)
+            var duplicateVariationProducts = [];
+
+            $(variationIds).first().each(function(index,value){
+                $(rowData).each(function(index,data){
+                    if(data.variation_id == value){
+                        duplicateVariationProducts.push(data);
+                    }
+                });
+            });
+            return duplicateVariationProducts;
+        }
+
+        App.autoCallbacks.registerCallback('reloaddata', function (params) {
+            var duplicateVariationProducts = findDuplicateVariationsInCart(rowData);
+            console.log(duplicateVariationProducts)
+
+        });
         $(document).ready(function () {
             var id ={{$id}}
             if (id) {

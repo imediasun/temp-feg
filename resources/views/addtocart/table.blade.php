@@ -243,6 +243,8 @@
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>
+    //this variation is in use at index.blade.php for finding duplicate variation ids
+    var rowData = <?php echo json_encode($rowData) ?>;
     $(".inputqty").on("keypress",function (e) {
         var keycode = e.which || e.charCode || e.keyCode;
         if (keycode == 8){

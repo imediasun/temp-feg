@@ -55,7 +55,8 @@ class addtocart extends Sximo
   IF(products.reserved_qty = 0, '', products.reserved_qty) AS reserved_qty,
   (products.reserved_qty - requests.qty) AS reserved_difference,
   products.prod_type_id,
-  products.prod_sub_type_id
+  products.prod_sub_type_id,
+  products.variation_id
 FROM requests
   LEFT JOIN users u1
     ON (requests.request_user_id = u1.id)
