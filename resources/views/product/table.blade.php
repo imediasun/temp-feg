@@ -442,6 +442,7 @@ $(document).ready(function() {
                             notyMessageError(data.message);
                         }
                         if(data.status == "success"){
+                            $('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
                             notyMessage(data.message);
                         }
                     }
