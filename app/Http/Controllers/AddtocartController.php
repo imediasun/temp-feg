@@ -376,25 +376,6 @@ class AddtocartController extends Controller
             'showError' => false,
         ];
 
-        $variants = $this->model->returnVariantsAgainstRequestedProductIds($inputs['products']);
-
-        if ($variants->count() > 0) {
-            $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
-            foreach ($variants as $variant) {
-                $productsNames .= "<li>" . addslashes($variants->item_name) . " | Reserve Qty = " . $variants->reservedQty . " | Already Requested Qty = " . $variants->totalQty . " | Remaining Qty = " . $request->remainingQTY . "</li>";
-            }
-            $productsNames .= "</ul>";
-            $qtyCheckMessage = [
-                'messagetext' => "Update Error Message Heading here.<br /><br /> $productsNames <br />Please reduce the amount requested for purchase below or contact the Merchandise Team.",
-                'showError' => $variants->count() > 0,
-            ];
-            return response()->json([
-                'hasPermission' => $addToCart->hasPermission(),
-                'exceptionMessage' => $addToCart->getsubmittedRequests($inputs['products']),
-                'qtyErrorMessage' => $qtyCheckMessage
-            ]);
-        }
-
         $requestQtyCheck = $this->model->requestQtyFilterCheck($inputs['products']);
         if ($requestQtyCheck->count() > 0) {
             $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
@@ -402,7 +383,6 @@ class AddtocartController extends Controller
                 $productsNames .= "<li>" . addslashes($request->vendor_description) . " | Reserve Qty = ".$request->productQty." | Already Requested Qty = ".$request->alreadyRequestedQTY." | Remaining Qty = ".$request->remainingQTY."</li>";
             }
             $productsNames .= "</ul>";
-            //return redirect('/addtocart')->with('messagetext', "You are unable to submit request as following product(s) doesn't allow the negative reserved quantity: $productsNames Please remove product(s) or adjust quantity before submitting the request.")->with('msgstatus', 'error');
             $qtyCheckMessage = [
                 'messagetext' => "Your request cannot be submitted because there is not enough reserve qty to allow the purchase.<br /><br /> $productsNames <br />Please reduce the amount requested for purchase below or contact the Merchandise Team.",
                 'showError' => $requestQtyCheck->count() > 0,
