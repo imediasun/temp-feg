@@ -35,7 +35,6 @@
             width: 100%;
             margin-bottom: 14px;
         }
-
     </style>
     <div class="sbox">
         <div class="sbox-title">
