@@ -36,6 +36,7 @@
          * this function take array of objects and return back all objects which are variations
          * @param rowData
          */
+        var duplicateVariationProducts = [];
         function findDuplicateVariationsInCart(rowData){
             var variationIds = [];
             $(rowData).each(function(index,value){
@@ -44,8 +45,6 @@
                 }
             })
             variationIds = findDuplicatesInArray(variationIds)
-            var duplicateVariationProducts = [];
-
             $(variationIds).first().each(function(index,value){
                 $(rowData).each(function(index,data){
                     if(data.variation_id == value){
@@ -57,9 +56,7 @@
         }
 
         App.autoCallbacks.registerCallback('reloaddata', function (params) {
-            var duplicateVariationProducts = findDuplicateVariationsInCart(rowData);
-            console.log(duplicateVariationProducts)
-
+            duplicateVariationProducts = findDuplicateVariationsInCart(rowData);
         });
         $(document).ready(function () {
             var id ={{$id}}
@@ -136,6 +133,22 @@
                         }
                     }
                     else {
+                        if(duplicateVariationProducts.length > 0){
+                            var errorMessages = getDuplicateErrorMessage(duplicateVariationProducts);
+                            App.notyConfirm({
+                                type:'alert',
+                                buttons:false,
+                                container: '.custom-container',
+                                message: errorMessages,
+                                afterShow: function(){
+                                    $('#button-0').remove();
+                                },
+                                cancel: function () {
+                                    $('.custom_overlay').slideUp(500);
+                                }
+                            });
+                            return;
+                        }
                         //   alert('{{ $pageModule }}/submit-requests');
                         var inputs = document.getElementsByClassName('cartProductsItems'),
                         products  = [].map.call(inputs, function( input ) {
@@ -212,6 +225,14 @@
             }
 
         }
-
+        function getDuplicateErrorMessage(duplicateVariationProducts) {
+            var errorMessage = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
+            errorMessage += "The following items are "+duplicateVariationProducts.length+" variations of the same product. Please remove one of them before proceeding.";
+            $.each(duplicateVariationProducts, function (index, product) {
+                errorMessage += "<li> Item Name = " + product.vendor_description + " | SKU = "+product.sku +" | Product Type = " + product.order_type + " | Product Sub Type = " + product.type_description+"</li>";
+            });
+            errorMessage += "</ul>";
+            return errorMessage;
+        }
     </script>
 @endsection
