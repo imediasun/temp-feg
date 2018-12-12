@@ -1085,7 +1085,10 @@
         var retail_price_div = '#retail_price_' + counter;
         var ticket_input = '#ticket_input_' + counter;
         var ticket_input_div = '#ticket_value_' + counter;
-        $('.isDefaultExpenseCategoryElm').trigger('change');
+       setTimeout(function(){
+           $('input[name="isdefault[]"]:checked').trigger('change');
+       },1000);
+
         if (selectedType == 1 || selectedType == 4 || selectedType == 20) {
             form.parsley().destroy();
             $(sku).removeAttr('required');
