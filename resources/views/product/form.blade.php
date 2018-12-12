@@ -932,7 +932,7 @@
                 }else{
                     IdString = removedItemIds.value +','+ itemId;
                 }
-                removedItemIds.val(IdString);
+                removedItemIds.value = IdString;
             }
             count = "#remove_me_"+count;
             $("#add_more_types").show();
