@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\Core\Users;
 use App\Models\excludedreaders;
 use App\Models\Googledriveearningreport;
 use App\Models\GoogleDriveAuthToken;
@@ -116,6 +117,7 @@ class GoogledriveearningreportController extends Controller {
         if ($this->data['config_id'] != 0 && !empty($config)) {
         $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
+        $this->data['excludedUserLocations']		= $this->getUsersExcludedLocations();
 // Render into template
 		return view('googledriveearningreport.table',$this->data);
 

@@ -270,6 +270,13 @@ $(document).ready(function() {
     // Configure data grid columns for sorting 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
+
+App.autoCallbacks.registerCallback('reloaddata', function () {
+	var excludedLocations = {!! json_encode($excludedUserLocations) !!}
+	$("select[name='loc_id']").jCombo("{{ URL::to('googledriveearningreport/comboselect?filter=location:id:id|location_name') }}", {
+		excludeItems: excludedLocations
+	});
+});
 </script>
 <style>
 .table th.right { text-align:right !important;}
