@@ -35,7 +35,6 @@
             width: 100%;
             margin-bottom: 14px;
         }
-
     </style>
     <div class="sbox">
         <div class="sbox-title">
@@ -250,7 +249,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="form-group" id="retail_price_1">
+                    <div class="form-group" id="retail_price_{{ $variationCount }}" style="display: none;">
                         <label for="Retail Price" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])?
                             $fields['retail_price']['language'] : array())) !!}
@@ -260,23 +259,23 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('retail_price[]',
-                                $row['retail_price'] == ''?'':(double)$row['retail_price'],array('class'=>'form-control',
-                                'placeholder'=>'0.00','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'retail_input_1' )) !!}
+                                $variation['retail_price'] == ''?'':(double)$variation['retail_price'],array('class'=>'form-control',
+                                'placeholder'=>'0.00','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'retail_input_'.$variationCount )) !!}
                             </div>
                         </div>
                         <div class="col-md-2">
 
                         </div>
                     </div>
-                    <div class="form-group  " id="ticket_value_1">
+                    <div class="form-group  " id="ticket_value_{{ $variationCount }}" style="display: none;">
                         <label for="Ticket Value" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])?
                             $fields['ticket_value']['language'] : array())) !!}
                         </label>
 
                         <div class="col-md-6">
-                            {!! Form::text('ticket_value[]', $row['ticket_value'],array('class'=>'form-control',
-                            'placeholder'=>'','id'=>'ticket_input_1')) !!}
+                            {!! Form::text('ticket_value[]', $variation['ticket_value'],array('class'=>'form-control',
+                            'placeholder'=>'','id'=>'ticket_input_'.$variationCount)) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -348,23 +347,38 @@
 
                     </div>
                 </div>
-                <div class="form-group" id="retail_price_{{ $variationCount }}">
-                    <label for="Retail Price" class="control-label col-md-4 text-left addcolon">Retail Price </label>
-                <div class="col-md-6">
-                <div class="input-group ig-full">
-                    <span class="input-group-addon">$</span>
-                    <input class="form-control parsley-validated retail_prices" placeholder="0.00" type="text"
-                           parsley-min="0" step="1" id="retail_input_{{ $variationCount }}"
-                           name="retail_price[]" >
-                </div>
-                </div>
-                <div class="col-md-2"> </div> </div>
-                <div class="form-group ticket_values " id="ticket_value_{{ $variationCount }}">
-                    <label for="Ticket Value" class="control-label col-md-4 text-left addcolon">Ticket Value </label>
-                <div class="col-md-6">
-                    <input class="form-control" placeholder="" id="ticket_input_{{ $variationCount }}" name="ticket_value[]" type="text" > </div>
-                    <div class="col-md-2"></div>
-                </div>
+                <div class="form-group" id="retail_price_{{ $variationCount }}" style="display: none;">
+                        <label for="Retail Price" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])?
+                            $fields['retail_price']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <div class="input-group ig-full">
+                                <span class="input-group-addon">$</span>
+                                {!! Form::text('retail_price[]',
+                                $variation['retail_price'] == ''?'':(double)$variation['retail_price'],array('class'=>'form-control',
+                                'placeholder'=>'0.00','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'retail_input_'.$variationCount )) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group  " id="ticket_value_{{ $variationCount }}" style="display: none;">
+                        <label for="Ticket Value" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])?
+                            $fields['ticket_value']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            {!! Form::text('ticket_value[]', $variation['ticket_value'],array('class'=>'form-control',
+                            'placeholder'=>'','id'=>'ticket_input_'.$variationCount)) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
                 </span>
                         @endif
                                 <?php
@@ -752,15 +766,15 @@
 
         $("#expense_category_{{ $variationCount }}").jCombo("{{ URL::to('product/expense-category-groups') }}",
                 {selected_value: '{{ $variation['expense_category'] }}'});
+        setTicketAndRetailFields('{{ $variation["prod_type_id"] }}','{{ $variationCount }}');
         <?php
             $variationCount++;
         ?>
         @endforeach
-        //$('.ajaxLoading').hide();
-        $("select.prod_type").trigger('change');
+        $('.ajaxLoading').hide();
+
     @else
-//$('.ajaxLoading').hide();
-        $("select.prod_type").trigger('change');
+    $('.ajaxLoading').hide();
         if('{{ $row["prod_type_id"] }}')
         {
             $("#prod_sub_type_id_1").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
@@ -1059,7 +1073,51 @@
             $('#isDefaultExpenseCategory_'+$(this).attr('data-count')).val('1');
         }
     });
+    /**
+     *
+     * @param selectedType
+     * @param counter
+     */
+    function setTicketAndRetailFields(selectedType, counter) {
+        var form = $('#productFormAjax');
+        var sku = 'input[name="sku"]';
+        var retail_price = '#retail_input_' + counter;
+        var retail_price_div = '#retail_price_' + counter;
+        var ticket_input = '#ticket_input_' + counter;
+        var ticket_input_div = '#ticket_value_' + counter;
+        $('.isDefaultExpenseCategoryElm').trigger('change');
+        if (selectedType == 1 || selectedType == 4 || selectedType == 20) {
+            form.parsley().destroy();
+            $(sku).removeAttr('required');
+            form.parsley();
+        }
+        else {
+            form.parsley().destroy();
+            $(sku).attr('required', 'required');
+            form.parsley();
+        }
 
+        if (selectedType == "8") {
+            $(retail_price_div).show(300);
+            $(retail_price).attr('required', 'required');
+        }
+        else {
+            $(retail_price_div).hide(300);
+            $(retail_price).removeAttr('required');
+        }
+        if (selectedType == "7") {
+            $(ticket_input_div).show(300);
+            $(ticket_input).attr('required', 'required');
+        }
+        else if (selectedType == "8") {
+            $(ticket_input_div).show(300);
+        }
+        else {
+            $(ticket_input_div).hide(300);
+            $(ticket_input).removeAttr('required');
+        }
+
+    }
 </script>
 <style>
 
