@@ -109,7 +109,7 @@
 					<td class="number"> <?php echo ++$i;?>  </td>
                     @endif
                     @if($setting['disableactioncheckbox']=='false')
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+					<td ><input type="checkbox" webLink="{{$row->web_view_link}}" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                     @endif
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('googledriveearningreport/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
@@ -124,9 +124,14 @@
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									{!! $value !!}
+									@if($field['field'] == 'mime_type')
+										{{ SiteHelpers::getExtensionName($value) }}
+										@else
+									 {!! $value !!}
+										@endif
 								 </td>
 							@endif
+
                     <?php
 						 endif;
 						endforeach;
@@ -217,6 +222,50 @@ $(document).ready(function() {
             });
         });        
     }
+	var arr = [];
+	$('.ads_Checkbox:checked').each(function () {
+		arr[i++] = $(this).val();
+	});
+
+	$(".download-drfile").click(function(e){
+		e.preventDefault();
+		var downloadFileIdsArray = '';
+		$.each($(".ids:checkbox:checked"), function(){
+			if(downloadFileIdsArray.length > 0) {
+				downloadFileIdsArray +=','+ $(this).val();
+			}else{
+				downloadFileIdsArray = $(this).val();
+			}
+
+		});
+//    	window.location.href = '/googledriveearningreport/download-drive-file/'+downloadFileIdsArray;
+		window.open('/googledriveearningreport/download-drive-file/'+downloadFileIdsArray,'_self')
+
+	});
+
+	$('.view-file').click(function (e) {
+		e.preventDefault();
+		var val = $('input[name="ids[]"]:checked').length;
+		var linkValue = $('.ids:checkbox:checked').attr('weblink');
+		if (linkValue) {
+			if (val > 1) {
+				notyMessageError('Please select ony single Item');
+				$('.ids').prop('checked', false);
+				$('.icheckbox_square-blue').removeClass('checked');
+				//$('icheckbox_square-blue').removeAttr('checked');
+				linkValue = '';
+			}
+			else
+			{
+				window.open(linkValue);
+				$('.ids').prop('checked', false);
+			}
+		}else{
+			notyMessageError("Please select Item to Preview");
+		}
+		});
+
+
     
     // Configure data grid columns for sorting 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
