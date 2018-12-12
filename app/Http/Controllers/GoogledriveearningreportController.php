@@ -1,10 +1,14 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\excludedreaders;
 use App\Models\Googledriveearningreport;
+use App\Models\GoogleDriveAuthToken;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Illuminate\Support\Facades\Session;
+use Validator, Input, Redirect ;
+use Illuminate\Support\Facades\Response;
 
 class GoogledriveearningreportController extends Controller {
 
@@ -13,11 +17,11 @@ class GoogledriveearningreportController extends Controller {
 	public $module = 'googledriveearningreport';
 	static $per_page	= '10';
 	
-	public function __construct() 
+	public function __construct()
 	{
 		parent::__construct();
 		$this->model = new Googledriveearningreport();
-		
+
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
 
@@ -248,5 +252,29 @@ class GoogledriveearningreportController extends Controller {
 		}
 
 	}
+	public function getDownloadDriveFile($filesIds){
+        $filesIds = !is_array($filesIds) ? explode(',',$filesIds):$filesIds;
+        $path= public_path('upload/googledrive/'.Session::get('uid'));
+        \File::makeDirectory($path, $mode = 0777, true, true);
+        $data =  Googledriveearningreport::select('*')->whereIn('id', $filesIds)->get();
+        $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->first();
+        $client = new \Google_Client();
+        $client->setAccessToken($user->oauth_token);
+        $drive = new \Google_Service_Drive($client);
+        $cf_zip = new \ZipHelpers;
+        foreach ($data as $files){
+            $response = $drive->files->get($files['google_file_id'], array(
+                'alt' => 'media'));
+            $content = $response->getBody()->getContents();
+            $cf_zip->add_data($files['file_name'],$content);
+        }
+        $zip_file = $path."/drivefiles.zip";
+        $_zip = $cf_zip->archive($zip_file);
+        $cf_zip->clear_data();
+        $headers = array(
+            'Content-type: application/octet-stream',
+        );
+        return Response::download($zip_file, rand(9999,99999999)."_driverfiles.zip", $headers)->deleteFileAfterSend(true);
+    }
 
 }
