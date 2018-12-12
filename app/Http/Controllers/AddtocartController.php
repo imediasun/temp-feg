@@ -376,7 +376,7 @@ class AddtocartController extends Controller
             'showError' => false,
         ];
 
-        $requestQtyCheck = $this->model->requestQtyFilterCheck($inputs['products'], false);
+        $requestQtyCheck = $this->model->requestQtyFilterCheck($inputs['products']);
         if ($requestQtyCheck->count() > 0) {
             $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
             foreach ($requestQtyCheck as $request) {
