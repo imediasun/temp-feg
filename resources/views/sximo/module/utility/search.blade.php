@@ -1,3 +1,8 @@
+<style>
+	.datepicker{
+		z-index: 90000000;
+	}
+</style>
 <?php
     $searchoperators = array(
 //        "equal" => " = ",
