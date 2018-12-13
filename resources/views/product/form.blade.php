@@ -992,7 +992,12 @@
 
 
     $("#add_more_types").click(function () {
-        types_counter = document.getElementsByClassName('product_types').length + 1;
+        var totalBox = document.getElementsByClassName('product_types').length + 1;
+        if(types_counter < totalBox){
+            types_counter = totalBox;
+        }else{
+            types_counter++;
+        }
         var events = ' data-count="'+types_counter+'" ';
         var isDefaultExpenseCategoryInput = ' <label class="checked checkbox-inline">';
         isDefaultExpenseCategoryInput += '<input type="hidden" id="isDefaultExpenseCategory_'+types_counter+'"   name="is_default_expense_category[]" value="0"/>';
