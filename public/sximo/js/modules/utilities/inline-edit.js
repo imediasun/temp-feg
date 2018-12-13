@@ -99,7 +99,7 @@
             Every attempt is made to convert the string to a JavaScript value (this includes booleans, numbers, objects, arrays, and null)
             otherwise it is left as a string. To retrieve the value's attribute as a string without any attempt to convert it, use the attr() meth
              =========================================================================================================*/
-            originalValue = config.originalValue = cell.attr('data-values');
+            originalValue = config.originalValue = (cell.attr('data-values') == 'No Data') ? '' : cell.attr('data-values');
             formattedValue = config.formattedValue = cell.attr('data-format');
             cellOriginalHTML = config.originalHtmlValue = cell.html();
             App.autoCallbacks.runCallback('inline.cell.config.before', cellHookParams);
