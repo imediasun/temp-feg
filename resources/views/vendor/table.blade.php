@@ -69,7 +69,7 @@
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="135"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="80"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
@@ -148,14 +148,14 @@
 					{!! AjaxHelpers::buttonAction('vendor',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                             <!--Send vendor list button-->
-                     @if(($row->email != '' || $row->email_2 != '') && ($viewProductListExportOption || $row->ismerch == 1))
-                         <a href="javascript://ajax" onclick="ajaxSendProductList('{{ URL::to('vendor/send-list/'.$row->id)}}');" class="tips btn btn-xs btn-white" title="Send List">
+                      @if(($row->email != '' || $row->email_2 != '') && ($viewProductListExportOption || $row->ismerch == 1))
+                        <!-- <a href="javascript://ajax" onclick="ajaxSendProductList('{{ URL::to('vendor/send-list/'.$row->id)}}');" class="tips btn btn-xs btn-white" title="Send List">
                              <i class="fa fa-envelope" aria-hidden="true"></i>
-                         </a>
+                         </a> -->
                          <!--Schedule vendor list button-->
-                         <a href="{{ URL::to('vendor/schedule-list/'.$row->id)}}" onclick="ajaxViewDetail('#vendor',this.href); return false; " class="tips btn btn-xs btn-white" title="Schedule List">
+                         <!--<a href="{{ URL::to('vendor/schedule-list/'.$row->id)}}" onclick="ajaxViewDetail('#vendor',this.href); return false; " class="tips btn btn-xs btn-white" title="Schedule List">
                              <i class="fa fa-calendar" aria-hidden="true"></i>
-                         </a>
+                         </a>--->
                      @endif
 				</td>
                 </tr>
