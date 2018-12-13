@@ -19,8 +19,11 @@
             @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
             @endforeach
         </select>
-        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
+                    @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
+                        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips float-margin"
+                           onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit column arrangement">  <i class="fa fa-pencil-square-o"></i></a>
+                        <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips float-margin" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
+                    @endif
         @endif
         @endif
     </div>
@@ -69,4 +72,37 @@
     $("#col-config").on('change',function(){
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val() + getFooterFilters());
     });
+    $('#delete-cols').click(function(){
+        if(confirm('Are you sure, You want to delete this columns arrangement?')) {
+            showRequest();
+            var module = "{{ $pageModule }}";
+            var config_id = $("#col-config").val();
+            $.ajax(
+                    {
+                        method: 'get',
+                        data: {module: module, config_id: config_id},
+                        url: '{{ url() }}/tablecols/delete-config',
+                        success: function (data) {
+                            showResponse(data);
+                        }
+                    }
+            );
+        }
+    });
+    function showRequest() {
+        $('.ajaxLoading').show();
+    }
+    function showResponse(data) {
+
+        if (data.status == 'success') {
+            ajaxViewClose('#{{ $pageModule }}');
+            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+            notyMessage(data.message);
+            $('#sximo-modal').modal('hide');
+        } else {
+            notyMessageError(data.message);
+            $('.ajaxLoading').hide();
+            return false;
+        }
+    }
 </script>

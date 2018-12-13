@@ -227,17 +227,17 @@ class inventoryreport extends Sximo  {
                 $closeOrderStatus = implode(',',$closeOrderStatus);
             }
 
-            $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($location_id);
+            $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null);
             $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
             $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
 
             $whereNotInProductTypeAndProductIds = '';
 
             if($excludedProductTypeIdsString != '')
-                $whereNotInProductTypeAndProductIds .= " AND P.prod_type_id NOT IN($excludedProductTypeIdsString) ";
+                $whereNotInProductTypeAndProductIds .= " AND OC.prod_type_id NOT IN($excludedProductTypeIdsString) ";
 
             if($excludedProductIdsString != '')
-                $whereNotInProductTypeAndProductIds .= " AND (P.id NOT IN($excludedProductIdsString)) ";
+                $whereNotInProductTypeAndProductIds .= " AND (OC.product_id NOT IN($excludedProductIdsString)) ";
 
             $whereQuery = " WHERE O.status_id IN ($closeOrderStatus) AND O.created_at >= '$date_start'
                             AND O.created_at <= '$date_end' 

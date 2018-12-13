@@ -218,71 +218,79 @@ usort($tableGrid, "SiteHelpers::_sort");
                     <td data-values="action" data-key="<?php echo $row->id ;?>">
 
                         @if(empty($row->deleted_at))
-                        {!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
-                        <a href="{{ URL::to('order/po/'.$row->id)}}"
-                            data-id="{{$eid}}"
-                            data-action="po"
-                           class="tips btn btn-xs btn-white orderGenPOAction"
-                           title="Generate PO">
-                            <i class="fa fa-cogs" aria-hidden="true"></i>
-                        </a>
-                        <a href="{{ $pageModule }}/update/{{$row->id}}/clone"
-                            onclick="ajaxViewDetail('#order',this.href); return false; "
-                            data-id="{{$eid}}"
-                            data-action="clone"
-                           class="tips btn btn-xs btn-white orderCloneAction"
-                           title="Clone Order">
-                            <i class=" fa fa-random" aria-hidden="true"></i>
-                        </a>
-
-                        <?php
-                        $canPostToNetSuit = Order::canPostToNetSuit($row->id, $row);
-                        $isApified = Order::isApified($id, $row);
-
-                        ?>
-
-                        @if(!$isApified)
-                            <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
-                               data-id="{{$eid}}"
-                               data-action="receipt"
-                               class="tips btn btn-xs btn-white orderReceiptAction"
-                               title="Receive Order">
-                                <i class="fa fa fa-truck" aria-hidden="true"></i>
+                            {!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
+                            <a href="{{ URL::to('order/po/'.$row->id)}}"
+                                data-id="{{$eid}}"
+                                data-action="po"
+                               class="tips btn btn-xs btn-white orderGenPOAction"
+                               title="Generate PO">
+                                <i class="fa fa-cogs" aria-hidden="true"></i>
                             </a>
-                        @endif
-
-                        @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
-
-                            <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
-                               data-id="{{$eid}}"
-                               data-action="removal"
-                               class="tips btn btn-xs btn-white orderRemovalRequestAction"
-                               title="Request Removal">
-                                <i class="fa fa-trash-o " aria-hidden="true"></i>
+                            <a href="{{ $pageModule }}/update/{{$row->id}}/clone"
+                                onclick="ajaxViewDetail('#order',this.href); return false; "
+                                data-id="{{$eid}}"
+                                data-action="clone"
+                               class="tips btn btn-xs btn-white orderCloneAction"
+                               title="Clone Order">
+                                <i class=" fa fa-random" aria-hidden="true"></i>
                             </a>
 
-                        @endif
+                            <?php
+                            $canPostToNetSuit = Order::canPostToNetSuit($row->id, $row);
+                            $isApified = Order::isApified($id, $row);
 
-                        @if($canPostToNetSuit  && !$isApified && Order::isApiable($id, $row, true))
-                            <a href="javascript:void(0)"
-                               data-id="{{$eid}}"
-                               data-action="post"
-                               class="tips btn btn-xs btn-white postToNetSuitAction"
-                               title="{{ Lang::get('core.order_api_expose_button_label') }}">
-                                <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                            </a>
-                        @endif
+                            ?>
 
-                        @if($row->invoice_verified == 0)
-                            <a href="javascript:void(0)"
+                            @if(!$isApified)
+                                <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
+                                   data-id="{{$eid}}"
+                                   data-action="receipt"
+                                   class="tips btn btn-xs btn-white orderReceiptAction"
+                                   title="Receive Order">
+                                    <i class="fa fa fa-truck" aria-hidden="true"></i>
+                                </a>
+                            @endif
+
+                            @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
+
+                                <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
+                                   data-id="{{$eid}}"
+                                   data-action="removal"
+                                   class="tips btn btn-xs btn-white orderRemovalRequestAction"
+                                   title="Request Removal">
+                                    <i class="fa fa-trash-o " aria-hidden="true"></i>
+                                </a>
+
+                            @endif
+
+                            @if($canPostToNetSuit  && !$isApified && Order::isApiable($id, $row, true))
+                                <a href="javascript:void(0)"
+                                   data-id="{{$eid}}"
+                                   data-action="post"
+                                   class="tips btn btn-xs btn-white postToNetSuitAction"
+                                   title="{{ Lang::get('core.order_api_expose_button_label') }}">
+                                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                </a>
+                            @endif
+
+                            @if($row->invoice_verified == 0)
+                                <a href="javascript:void(0)"
+                                   data-id="{{$eid}}"
+                                   data-action="post"
+                                   class="tips btn btn-xs btn-white verifyInvoiceAction"
+                                   title="{{ Lang::get('core.order_invoice_verify_btn_title') }}">
+                                    <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                                </a>
+                            @endif
+
+                            <a href="{{ $pageModule }}/inquire/{{$row->id}}/order"
                                data-id="{{$eid}}"
-                               data-action="post"
-                               class="tips btn btn-xs btn-white verifyInvoiceAction"
-                               title="{{ Lang::get('core.order_invoice_verify_btn_title') }}">
-                                <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                               class="tips btn btn-xs btn-white inquireOrderAction"
+                               title="{{ Lang::get('core.order_inquiry_button_title') }}">
+                                <i class="fa fa-question" aria-hidden="true"></i>
                             </a>
-                        @endif
-                            @else
+
+                        @else
                             <a href="{{ URL::to('order/restoreorder/'.$row->id)}}"
                                data-id="{{$eid}}"
                                data-action="removal"
@@ -291,12 +299,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-refresh " aria-hidden="true"></i>
                             </a>
                         @endif
-                        <a href="{{ $pageModule }}/inquire/{{$row->id}}/order"
-                           data-id="{{$eid}}"
-                           class="tips btn btn-xs btn-white inquireOrderAction"
-                           title="{{ Lang::get('core.order_inquiry_button_title') }}">
-                            <i class="fa fa-question" aria-hidden="true"></i>
-                        </a>
+
 
                         @if($row->isFullyReceived)
                             <a href="/order/dpl-file/{{ $row->id }}" class="tips btn btn-xs btn-white" title="Download Full DPL"><i class="fa fa-download"></i></a>

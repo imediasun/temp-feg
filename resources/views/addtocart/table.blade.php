@@ -65,6 +65,7 @@
                                     $colIsSorted = $colIsSortable && $colField == $sortBy;
                                     $colClass = $colIsSortable ? ' dgcsortable' : '';
                                     $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+
                                     $th = '<th'.
                                         ' class="'.$colClass.'"'.
                                         ' data-field="'.$colField.'"'.
@@ -135,6 +136,9 @@
                         <!--td data-values="action" data-key="<?php echo $row->id;?>">
                             <div class=" action dropup"><a href="#" onclick="if(confirm('Are you sure you want to remove this item from cart?')){ return removeItemFromCart('{{ $row->id }}'); } return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Remove"><i class="fa fa-trash-o"></i></a></div>
                         </td-->
+
+
+
                         <td>
                             <?php
                             echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false, 0,false,'',false);
@@ -156,7 +160,13 @@
 
                                 @if($field['field']=='qty')
                                     <input type="number" value="{{ $value }}" min="1" step="1" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  class="inputqty qtyfield qtyfield_{{ $row->id }}"/>
-                                    @else
+                                    @elseif($field['field'] == 'vendor_description')
+                                    @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes') <span class="label label-danger">Hot</span> @endif
+                                    @if($row->is_new > 0)  <span class="label label-primary">New</span> @endif
+                                    @if($row->is_backinstock > 0)  <span class="label label-default">Back in Stock</span> @endif
+                                    @if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes' || $row->is_new > 0 || $row->is_backinstock > 0)   <br /> @endif
+                                        {!! $value !!}
+                                @else
 
                                     {!! $value !!}
 
@@ -400,7 +410,7 @@ $(function(){
                 method: 'get',
                 dataType: 'json',
                 success: function (data) {
-                    reloadData('#addtocart', 'addtocart/data?return=');
+                    $("a[data-original-title='Reload Data']").click();//Reload page along with sorting.
                     $(".cartsubmitaction").removeAttr("disabled");
                     $(".cartsubmitaction").removeClass("btn-disable").addClass("btn-success");
                 },

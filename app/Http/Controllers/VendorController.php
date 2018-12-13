@@ -90,6 +90,7 @@ class VendorController extends Controller
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
+        $filter .= $this->buildSearch($trimmedSearchQuery);
 
 //
 //        // Special filter for default active status
@@ -101,6 +102,9 @@ class VendorController extends Controller
 //            $filter .= " AND vendor.hide = '0'";
 //        }
         // and showing both active and inactive vendors
+        if (stripos($filter, "AND updated_by_user") >= 0 ) {
+            $filter = str_replace("AND updated_by_user", "AND users.id", $filter);
+        }
         if (stripos($filter, "AND vendor.status = '-1'") >= 0 ) {
             $filter = str_replace("AND vendor.status = '-1'", "", $filter);
         }

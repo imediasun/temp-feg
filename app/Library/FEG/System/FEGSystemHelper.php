@@ -1227,6 +1227,9 @@ class FEGSystemHelper
             'configName' => "Test",
             'configNamePrefix' => "",
             'configNameSuffix' => "",
+            'overrideToEmailInTestMode' => false,
+            'overrideCCEmailInTestMode' => false,
+            'overrideBCCEmailInTestMode' => false
         ), $options);
 
         extract($options);
@@ -1254,6 +1257,30 @@ class FEGSystemHelper
                 $attachmentContent =isset($attach) ? $attach: '';
             }
 
+            $emailRecipients = self::getSystemEmailRecipients($configName, null, true);
+
+            if($overrideToEmailInTestMode){
+                $options['to'] = $to = self::mergeTheConfigEmailAndPopUpEmails($to, $emailRecipients['to']);
+            }
+            else{
+                $options['to'] = $to = $emailRecipients['to'];
+            }
+
+            if($overrideCCEmailInTestMode){
+                $options['cc'] = $cc = self::mergeTheConfigEmailAndPopUpEmails($cc, $emailRecipients['cc']);
+            }
+            else{
+                $options['cc'] = $cc = $emailRecipients['cc'];
+            }
+
+
+            if($overrideBCCEmailInTestMode){
+                $options['bcc'] = $bcc = self::mergeTheConfigEmailAndPopUpEmails($bcc, $emailRecipients['bcc']);
+            }
+            else{
+                $options['bcc'] = $bcc = $emailRecipients['bcc'];
+            }
+
             $message = "
 *************** EMAIL START --- DEBUG INFO *******************<br>
 [FROM: $from]<br/>
@@ -1269,10 +1296,7 @@ $message" .
 
             $options['message'] = $message;
             $options['subject'] = $subject = "[TEST] " . $subject;
-            $emailRecipients = self::getSystemEmailRecipients($configName, null, true);
-            $options['to'] = $to = $emailRecipients['to'];
-            $options['cc'] = $cc = $emailRecipients['cc'];
-            $options['bcc'] = $bcc = $emailRecipients['bcc'];
+
             if (empty($to)) {
                 $to = "e5devmail@gmail.com";
             }
@@ -1298,6 +1322,21 @@ $message" .
         self::logit("Email sent Status = " . $status, $lf, $lp);
         self::logit("Email sent", $lf, $lp);
         return $status;
+    }
+
+    public static function mergeTheConfigEmailAndPopUpEmails($popUpEmails, $configEmails){
+        $popUpEmailsArray = explode(',', $popUpEmails);
+        $emailRecipientsArray = explode(',', $configEmails);
+        $finalArray = array_merge($popUpEmailsArray,$emailRecipientsArray);
+        $finalArray = array_unique($finalArray);
+        $finalArray = array_filter($finalArray, function($entry){
+            return ($entry != '') ? true : false;
+        });
+        return $finalEmailsString = implode(',', $finalArray);
+    }
+
+    function remove_empty_entry($entry){
+        return ($entry != '') ? true : false;
     }
 
     public static function getOption($optionName, $default = '', $all = false, $skipInactive = false, $details = false)

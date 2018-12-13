@@ -239,7 +239,7 @@ class productusagereport extends Sximo  {
                 $whereIsBrokenCase = " AND OC.is_broken_case = '".$isBrokenCase."'";
             }
 
-            $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
+            $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null);
             $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
             $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
 

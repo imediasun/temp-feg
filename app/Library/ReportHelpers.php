@@ -4,6 +4,8 @@ namespace App\Library;
 use App\Library\MyLog;
 use App\Models\order;
 use App\Models\productusagereport;
+use Illuminate\Contracts\Logging\Log;
+
 class ReportHelpers
 {
     public static function getLocationRanksQuery($dateStart, $dateEnd, $location = "",
@@ -108,7 +110,7 @@ class ReportHelpers
                 E.record_status = 1 AND
                 E.report_status = 0 AND
                 E.date_played >= L.date_opened AND 
-                E.date_played >= '$dateStart' and E.date_played <= '$dateEnd' ";
+                E.date_played >= '$dateStart' and E.date_played <= '$dateEnd' AND L.active=1 ";
 
         if (!empty($location)) {
             $Q .= " AND E.location_id IN ($location)";
@@ -761,7 +763,7 @@ class ReportHelpers
 
     public static function getGamesNotPlayedQuery($dateStart, $dateEnd, $location = "",
                                                   $debit = "", $gameType = "", $gameCat = "all", $onTest = "",
-                                                  $gameId = "", $gameTitleId= "", $sortby = "date_start", $order = ""){
+                                                  $gameId = "", $gameTitleId= "", $sortby = "date_start", $order = "",$queryHaving = false){
         extract(self::getGameCategoryDetails($gameCat));
         $Q = "SELECT E.id,
                 E.location_id,
@@ -781,11 +783,13 @@ class ReportHelpers
                 E.date_played as date_start,
                 E.date_played as date_end,
                 E.date_last_played,
-                DATEDIFF(E.date_played, E.date_last_played) as days_not_played
+                DATEDIFF(E.date_played, E.date_last_played) as days_not_played,
+                (select count(reader_id) from readers where date(last_report_date) < '".date('Y-m-d',strtotime($dateStart))."' and YEAR(readers.date_added) >= 2018 AND readers.game_id = G.id AND readers.location_id = E.location_id) as total_readers_reported,
+                G.total_readers
                 ";
 
         $Q .= self::_getGamesNotPlayedQuery($dateStart, $dateEnd, $location, $debit,
-            $gameType, $gameCat, $onTest, $gameId, $gameTitleId);
+            $gameType, $gameCat, $onTest, $gameId, $gameTitleId,$queryHaving);
         // ORDER BY
         $sortbys = array(
         );
@@ -802,7 +806,7 @@ class ReportHelpers
     }
     public static function _getGamesNotPlayedQuery($dateStart, $dateEnd, $location = "",
                                                    $debit = "", $gameType = "", $gameCat = "all", $onTest = "",
-                                                   $gameId = "", $gameTitleId= ""){
+                                                   $gameId = "", $gameTitleId= "",$queryHaving=false){
         extract(self::getGameCategoryDetails($gameCat));
         $gameTypeIds = self::mergeGameTypeAndCategories($gameType, $game_category_type);
         if (!empty($dateStart)) {
@@ -820,7 +824,7 @@ class ReportHelpers
             LEFT JOIN game_type Y ON Y.id = E.game_type_id
                 WHERE E.game_id <> 0  AND E.game_not_debit = 0 
                 AND G.sold != 1
-                AND E.report_status = 0 AND E.record_status = 1 ";
+                AND E.report_status = 0 AND E.record_status = 1 AND L.active = 1";
 
         if (!empty($gameTitleId)) {
             $Q .= " AND E.game_title_id IN ($gameTitleId) ";
@@ -860,7 +864,11 @@ class ReportHelpers
         // GROUP BY
         $Q .= " ";
 
-        return $Q;
+        // Having Query
+        if($queryHaving) {
+            $Q .= ' having (total_readers_reported = G.total_readers OR (total_readers_reported = 0 AND G.total_readers >= 1 ) )';
+        }
+            return $Q;
     }
     public static function getGamesNotPlayedCount($dateStart, $dateEnd, $location = "",
                                                   $debit = "", $gameType = "", $gameCat = "all", $onTest = "",
@@ -917,14 +925,14 @@ class ReportHelpers
             $typeDisplayOnly = " AND order_type_id IN(".$productUsageReport->getAllowedTypes().") ";
         }
 
-//        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(explode(',', $location));
-//        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
-//        $excludedProductIdsString       = implode(',', $excludedProductsAndTypes['excluded_product_ids']);
+        $excludedProductsAndTypes = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds();
 
-//        $whereNotInProductTypeAndProductIds = '';
+        $excludedProductTypeIdsString   = implode(',', $excludedProductsAndTypes['excluded_product_type_ids']);
 
-//        if($excludedProductTypeIdsString != '')
-//            $whereNotInProductTypeAndProductIds .= " AND order_type_id NOT IN($excludedProductTypeIdsString) ";
+        $whereNotInProductTypeAndProductIds = '';
+        if($excludedProductTypeIdsString != '') {
+            $whereNotInProductTypeAndProductIds .= " AND order_type_id NOT IN($excludedProductTypeIdsString) ";
+        }
 
 
 
@@ -936,7 +944,7 @@ class ReportHelpers
                         $whereNotInPoNumber    
                             date_ordered >= '$dateStart' 
                             AND date_ordered <= '$dateEnd' 
-                            AND order_type_id IN(7,8) $typeDisplayOnly
+                            AND order_type_id IN(7,8) $typeDisplayOnly $whereNotInProductTypeAndProductIds 
                             AND status_id IN(".implode(',',order::ORDER_CLOSED_STATUS).") 
                             
                         GROUP BY location_id) O 
@@ -1062,7 +1070,7 @@ class ReportHelpers
                 LEFT JOIN location ON location.id = game.location_id
                 LEFT JOIN debit_type ON debit_type.id = location.debit_type_id
                 WHERE game.not_debit = 1 AND game.sold = 0 
-                AND location.reporting = 1 
+                AND location.reporting = 1 AND location.active = 1 
                 $locationQuery";
 
         return $sql;
@@ -1097,7 +1105,7 @@ class ReportHelpers
             FROM game_earnings_transfer_adjustments GA 
             LEFT JOIN location L ON L.id=GA.loc_id
             WHERE 
-            GA.status = 1 ";
+            GA.status = 1 AND L.active = 1 ";
         if (!empty($location)) {
             $q .= " AND GA.loc_id IN ($location) ";
         }

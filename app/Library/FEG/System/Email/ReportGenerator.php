@@ -4,6 +4,7 @@ namespace App\Library\FEG\System\Email;
 
 use App\Http\Controllers\OrderController;
 use App\Models\Feg\System\Options;
+use App\Models\Reader;
 use PDO;
 use DB;
 use App\Library\MyLog;
@@ -115,13 +116,14 @@ class ReportGenerator
             $readersMissingAssetIds = self::getReadersMissingAssetIdsReport($params);
         }
         $__logger->log("        End processing Game Earnings DB Transfer Report for $date");
-
+        $readersNotPlayed = self::getReaderNotPlayedReport($params);
         if ($noTransferSummary != 1) {
             $message = $dailyTransferStatusReport .
                     "<br><br><b><u>Locations Not Reporting:</u></b><em>(Either Closed or Error in Data Transfer)</em><br>" .
                     @$locationsNotReportingReport .
                     "<br><b><u>Readers Missing Asset Ids:</u></b><br>" .
                     @$readersMissingAssetIds .
+                    @$readersNotPlayed .
                     "<br><b><u>Games Not Played:</u></b><br>" .
                     @$gamesNotPlayed .
                     "<br><b><u style='color:red;'>Unknown Asset IDs:</u></b><br>" .
@@ -344,7 +346,7 @@ class ReportGenerator
             'configName' => $configName,
             'configNameSuffix' => $date,           
         )));       
-        
+
     }
 
     public static function getLocationWiseDailyReport($params) {
@@ -1225,7 +1227,7 @@ class ReportGenerator
         }
         
         $q = ReportHelpers::getGamesNotPlayedQuery($date, $date, 
-                null, null, null, "all", "", "", "", "days_not_played", "DESC");
+                null, null, null, "all", "", "", "", "days_not_played", "DESC",true);
         
         //$q .= " AND E.location_id NOT IN (" . implode(',', $locationsNotReportingIds). ")";
         
@@ -1258,15 +1260,14 @@ class ReportGenerator
                 "days_not_played_text" => $downForText,
             );
             $notPlayedGamesFlat[] = $game;
-            $notPlayedGames[$locationId][] = $game;            
-            if ($daysNotPlayed > 6) {
-                $notPlayedMoreThanAWeek[] = $game;
-            }
-            
             if (!in_array($locationId, $locationsNotReportingIds)) {
-                $rowIndex++;                
-                $report[] = "$rowIndex.) <b>$gameId | $gameTitle</b>" . 
-                    " at <b>$locationId | $locationName</b> $downForText<br>";                
+                $rowIndex++;
+                if ($daysNotPlayed > 6) {
+                    $notPlayedMoreThanAWeek[] = $game;
+                }
+                $report[] = "$rowIndex.) <b>$gameId | $gameTitle</b>" .
+                    " at <b>$locationId | $locationName</b> $downForText<br>";
+                $notPlayedGames[$locationId][] = $game;
             }
 
         }
@@ -1280,7 +1281,32 @@ class ReportGenerator
         }
         return $reportString;        
     }
-    
+    public static function getReaderNotPlayedReport($params = array()){
+        //Readers Not Played
+        extract(array_merge(array(
+            'date' => date('Y-m-d', strtotime('-1 day')),
+            'location' => null,
+            'locationsNotReportingIds' => null,
+            '_task' => array(),
+            '_logger' => null,
+        ), $params));
+        $readerNotPlayed = Reader::getReaderNotPlayed($params);
+        $report = [];
+        $rowIndex = 0;
+        foreach($readerNotPlayed as $item){
+            $rowIndex++;
+            //30005710 | Toy Soldier - 40in (R1,R2 Not reported)
+            $report[] = $rowIndex.") <b>$item->game_id | $item->gameTitle</b>" .
+                " <span style='color:red'>( $item->reader_id Not Reported )</span>";
+        }
+        $reportString = "";
+        if(count($report)>0) {
+            $reportString = "<br /><b><u>Games Not Played/ Reader not reported Yesterday</u></b><br />";
+            $reportString .= implode("<br />", $report);
+        }
+        return $reportString."<br />";
+    }
+
     public static function getOverreportingReport($params = array()) {
         global $__logger;
          extract(array_merge(array(

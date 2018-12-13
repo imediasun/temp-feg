@@ -363,7 +363,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="Reserved Qty Limit" class=" control-label col-md-4 text-left">
+                        <label for="Excluded Locations and Groups" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Excluded Locations and Groups', (isset($fields['excluded_locations_and_groups']['language'])?
                             $fields['excluded_locations_and_groups']['language'] : array())) !!}
                         </label>
@@ -375,6 +375,7 @@
 
                         </div>
                     </div>
+
 
                      <div class="form-group  " >
                         <label for="Img" class=" control-label col-md-4 text-left">
@@ -500,8 +501,11 @@
     $(function(){
         $('select[name="excluded_locations_and_groups[]"]').attr('multiple','multiple');
         $('select[name="excluded_locations_and_groups[]"]').change();
+
+        var productTypeId = '{{ $row['prod_type_id'] }}';
         $.ajax({
             url: '/product/location-and-groups/{{ $row['id'] }}',
+            data: {productTypeId:productTypeId},
             type: 'GET',
             success: function (response) {
                 var optionHTML = '<option value="select_all">Select All</option>'+response.groups;
@@ -516,8 +520,10 @@
                 $('select[name="excluded_locations_and_groups[]"]').html(optionHTML);
                 $('select[name="excluded_locations_and_groups[]"]').change();
                 $('select[name="excluded_locations_and_groups[]"]').val(selectedValues).change();
+
                 updateDropdownsGroups("excluded_locations_and_groups[]");
-                            }
+
+                 }
         });
 
     });
@@ -653,6 +659,25 @@
 
                 $(this).parents('.product_types').find("select.prod_sub_type").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+selectedType+"");
                 //renderDropdown($(".select2"), {width: "100%"});
+
+                var productTypeId = selectedType;
+                if(productTypeId > 0) {
+                    $('.ajaxLoading').show();
+                    $.ajax({
+                        url: '/product/location-and-groups/{{ $row['id'] }}',
+                        data: {productTypeId: productTypeId,mode:'changingType'},
+                        type: 'GET',
+                        success: function (response) {
+
+                            var productTypeSelectedValues = response.productTypeSelectedValues;
+                            $('select[name="product_type_excluded_data[]"]').val(productTypeSelectedValues).change();
+                            updateDropdownsGroups("product_type_excluded_data[]");
+                            $('.ajaxLoading').hide();
+                        }
+                    });
+                }
+
+
 
                 getExpenseCategory(selectedType,null,counter);
                 var sku = 'input[name="sku"]';
