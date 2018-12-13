@@ -206,8 +206,8 @@
             var cellHookParams = $.extend({}, rowHookParams, {cells: null, config: {}}),
                 config = cellHookParams.config,
                 cell = cellHookParams.cell = $(this),
-                cellOriginalValue = config.originalValue = cell.data('values'),
-                cellFormattedValue = config.formattedValue = cell.data('format'),
+                cellOriginalValue = config.originalValue = cell.attr('data-values'),
+                cellFormattedValue = config.formattedValue = cell.attr('data-format'),
                 cellOriginalHTML = config.originalHtmlValue = cell.data('original-value-html'),
                 cellOriginalDomElements = config.cellOriginalValue = cell.data('original-value-elments');
                 
@@ -435,7 +435,7 @@
             //cellOriginalValue = config.originalValue = cell.data('values'),
                 orgVal = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val(),//cell.data('values'),
                 cellOriginalValue = config.originalValue = orgVal,
-                cellFormattedValue = config.formattedValue = cell.data('format'),
+                cellFormattedValue = config.formattedValue = cell.attr('data-format'),
             //cellOriginalHTML = config.originalHtmlValue = cell.data('original-value-html'),
                 htmlVal = cell.find("[name='"+cell.data('field')+"']").is('select')? cell.find("[name='"+cell.data('field')+"']").find(":selected").text() : cell.find("[name='"+cell.data('field')+"']").val();//cell.data('original-value-html'),
 
@@ -466,7 +466,7 @@
                 var cellOriginalHTML = config.originalHtmlValue = htmlVal,
                 cellOriginalDomElements = config.cellOriginalValue = cell.data('original-value-elments');
 
-            cell.data('values', cell.find("[name='"+cell.data('field')+"']").val());
+            cell.attr('data-values', cell.find("[name='"+cell.data('field')+"']").val());
             if(cellOriginalValue !== undefined && cellOriginalValue !== 'action' )
             {
                 App.autoCallbacks.runCallback('inline.cell.cancel.before', cellHookParams);
