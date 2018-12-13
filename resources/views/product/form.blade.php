@@ -1040,7 +1040,7 @@
         // renderDropdown($(".select2"), {width: "100%"});
         <?php $NETSUITE_PRODUCT_MAX_LENGTH = config('app.NETSUITE_PRODUCT_MAX_LENGTH'); ?>
       <?php if($NETSUITE_PRODUCT_MAX_LENGTH !=''){ ?>
-        if(types_counter >= Number(<?php echo $NETSUITE_PRODUCT_MAX_LENGTH; ?>)){
+        if(Number(document.getElementsByClassName('product_types').length) >= Number(<?php echo $NETSUITE_PRODUCT_MAX_LENGTH; ?>)){
             $(this).hide();
         }
         <?php } ?>
