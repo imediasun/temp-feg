@@ -229,36 +229,43 @@ $(document).ready(function() {
 
 	$(".download-drfile").click(function(e){
 		e.preventDefault();
-		var downloadFileIdsArray = '';
-		$.each($(".ids:checkbox:checked"), function(){
-			if(downloadFileIdsArray.length > 0) {
-				downloadFileIdsArray +=','+ $(this).val();
-			}else{
-				downloadFileIdsArray = $(this).val();
-			}
-
-		});
-//    	window.location.href = '/googledriveearningreport/download-drive-file/'+downloadFileIdsArray;
-		window.open('/googledriveearningreport/download-drive-file/'+downloadFileIdsArray,'_self')
-
+		var val = $('input[name="ids[]"]:checked').length;
+		if(val>0) {
+			var downloadFileIdsArray = '';
+			$.each($(".ids:checkbox:checked"), function () {
+				downloadFileIdsArray += ',' + $(this).val();
+			});
+			$('.ids').prop('checked', false);
+			$('.ids').change();
+			window.open('/googledriveearningreport/download-drive-file/' + downloadFileIdsArray, '_self')
+		}
+		else{
+			notyMessageError("Please select any file to download");
+		}
 	});
+
 
 	$('.view-file').click(function (e) {
 		e.preventDefault();
+		linkValue='';
 		var val = $('input[name="ids[]"]:checked').length;
 		var linkValue = $('.ids:checkbox:checked').attr('weblink');
+		console.log(linkValue);
+		console.log(val);
 		if (linkValue) {
 			if (val > 1) {
-				notyMessageError('Please select ony single Item');
+				val=0;
+				linkValue='';
+				notyMessageError('Please select any single Item');
 				$('.ids').prop('checked', false);
-				$('.icheckbox_square-blue').removeClass('checked');
-				//$('icheckbox_square-blue').removeAttr('checked');
-				linkValue = '';
+				$('.ids').change();
 			}
 			else
 			{
-				window.open(linkValue);
+				$('.icheckbox_square-blue').removeClass('checked');
 				$('.ids').prop('checked', false);
+				$('.ids').change();
+				  window.open(linkValue);
 			}
 		}else{
 			notyMessageError("Please select Item to Preview");
