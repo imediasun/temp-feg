@@ -1,6 +1,6 @@
 <style>
 	.datepicker{
-		z-index: 90000000;
+		z-index: 90000000 !important;
 	}
 </style>
 <?php
