@@ -338,9 +338,9 @@ class LocationgroupsController extends Controller {
 	}
     public function getExcludedDataInline($groupId = 0){
 
-        $savedLocations = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, location::class, 0, true)->lists('location_id')->toArray();
-        $alreadyExcludedProductTypes = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, Ordertyperestrictions::class, 1, true)->lists('ordertyperestrictions_id')->toArray();
-        $alreadyExcludedProducts = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, product::class, 1, true)->lists('product_id')->toArray();
+        $savedLocations = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, location::class, 0, true, false)->lists('location_id')->toArray();
+        $alreadyExcludedProductTypes = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, Ordertyperestrictions::class, 1, true, false)->lists('ordertyperestrictions_id')->toArray();
+        $alreadyExcludedProducts = FEGDBRelationHelpers::getCustomRelationRecords($groupId, Locationgroups::class, product::class, 1, true, false)->lists('product_id')->toArray();
 
         $products = product::select('id','vendor_description')->orderBy('vendor_description')->groupBy('variation_id')->groupBy('vendor_description')->get();
         $productType = Ordertyperestrictions::select('id','order_type as product_type')->where('can_request', 1)->orderBy('order_type','asc')->get();
@@ -355,12 +355,12 @@ class LocationgroupsController extends Controller {
             'locations'=>$locationData,
             'productTypes'=>$productTypeData,
             'products'=>$productData,
-        'selectedData' =>[
-            'locations'=>$savedLocations,
-            'productTypes'=>$alreadyExcludedProductTypes,
-            'products'=>$alreadyExcludedProducts,
-        ]
-            ];
+            'selectedData' =>[
+                'locations'=>$savedLocations,
+                'productTypes'=>$alreadyExcludedProductTypes,
+                'products'=>$alreadyExcludedProducts,
+            ]
+        ];
         return response()->json($data);
     }
 
