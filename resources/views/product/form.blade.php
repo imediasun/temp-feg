@@ -995,7 +995,7 @@
     $("#add_more_types").click(function () {
         var totalBox = document.getElementsByClassName('product_types').length + 1;
         if(types_counter < totalBox){
-            types_counter = totalBox;
+            types_counter = totalBox+1;
         }else{
             types_counter++;
         }
