@@ -1890,7 +1890,7 @@ function omittItem(){
             itemIds += 'ids[]='+$(this).val()+"&";
         });
         App.notyConfirm({
-            message: "Are you sure you want to omit selected product (s)?<br><br>Note : Omitted  product(s) will not be shown in future reports as well.",
+            message: "Are you sure you want to exclude selected product (s)?<br><br>Note : Excluded  product(s) will not be shown in future reports as well.",
             confirmButtonText: 'Yes',
             confirm: function () {
                 $('.ajaxLoading').show();
@@ -1939,7 +1939,7 @@ function unomittItem(Object,selectedList){
             });
             itemIds += '&selectedList=' + selectedList;
             App.notyConfirm({
-                message: "Are you sure you want to add omitted product(s) back to vendor list?",
+                message: "Are you sure you want to add excluded product(s) back to vendor list?",
                 confirmButtonText: 'Yes',
                 confirm: function () {
                     $('.ajaxLoading').show();
@@ -1993,10 +1993,10 @@ function showVendorOmittedItems(element,Object){
     reloadData('#product',loadUrl);
 
     if(omittedItemsStatus > 0){
-        btnOption.val('Show Omitted Items');
+        btnOption.val('Show Excluded Items');
         btnOption.attr('data-hide-same-item',0);
     }else{
-        btnOption.val('Hide Omitted Items');
+        btnOption.val('Hide Excluded Items');
         btnOption.attr('data-hide-same-item',1);
     }
 }

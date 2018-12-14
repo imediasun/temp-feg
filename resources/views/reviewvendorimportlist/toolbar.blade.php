@@ -17,15 +17,15 @@
 </div>
 <div class="row c-margin">
 	<div class="col-md-9">
-        <input type="button" value="Omit Item(s)" onclick="omittItem();"  class="btn btn-primary">
+        <input type="button" value="Exclude Item(s)" onclick="omittItem();"  class="btn btn-primary">
 
-        <input type="button" value="Remove from omitted filter" onclick="unomittItem($('#selected_vendor'));"  class="btn btn-primary">
+        <input type="button" value="Remove from excluded filter" onclick="unomittItem($('#selected_vendor'));"  class="btn btn-primary">
 
 
             @if($hideOmittedItems == 0)
-                <input type="button" id="omittedItemsShowHide" value="Hide Omitted Items" data-hide-same-item="1"  onclick="showVendorOmittedItems(this,$('#selected_vendor'))"   class="btn btn-primary">
+                <input type="button" id="omittedItemsShowHide" value="Hide Excluded Items" data-hide-same-item="1"  onclick="showVendorOmittedItems(this,$('#selected_vendor'))"   class="btn btn-primary">
             @else
-                <input type="button" id="omittedItemsShowHide" value="Show Omitted Items" data-hide-same-item="0"  onclick="showVendorOmittedItems(this,$('#selected_vendor'))"   class="btn btn-primary">
+                <input type="button" id="omittedItemsShowHide" value="Show Excluded Items" data-hide-same-item="0"  onclick="showVendorOmittedItems(this,$('#selected_vendor'))"   class="btn btn-primary">
             @endif
             @if($hideUnchanged == 0)
                 <input type="button" id="unchangedItemsShowHide" value="Hide Unchanged Items" data-hide-same-item="1" onclick="hideUnchanged(this,$('#selected_vendor'));"   class="btn btn-primary">

@@ -313,6 +313,18 @@ GROUP BY mapped_expense_category");
         return $vendor->count();
     }
 
+    /**
+     * @param $fromEmail
+     * @return mixed
+     */
+    public function getVendorByEmail($fromEmail){
+        $vendor = vendor::select("*")->where(function ($query) use($fromEmail){
+            $query->where('email',$fromEmail);
+            $query->orWhere('email_2',$fromEmail);
+        })->get();
+        return $vendor;
+    }
+
     public function getVendorById($vendorId){
         $vendor = vendor::find($vendorId);
         return $vendor;

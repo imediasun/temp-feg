@@ -359,7 +359,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Is Omitted', (isset($fields['is_omitted']['language'])? $fields['is_omitted']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Is Excluded', (isset($fields['is_omitted']['language'])? $fields['is_omitted']['language'] : array())) }}
 						</td>
 						<td>{{ $row->is_omitted }} </td>
 						

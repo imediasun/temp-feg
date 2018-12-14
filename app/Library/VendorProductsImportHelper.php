@@ -23,6 +23,7 @@ class VendorProductsImportHelper
 
         $vendor = vendor::find($vendorId);//get vendor detail.
 
+
         $product = new Product();
         $products = $product->where(['vendor_id' => $vendorId, 'exclude_export' => 0])->groupBy('variation_id')->orderBy('id','asc')->get();
         if(!$products){
@@ -115,35 +116,80 @@ class VendorProductsImportHelper
 
         /* current user */
         $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
+        $isSent = 0;
+        // Old email configuration name "Send Product Export To Vendor"
+        //Merchandise Vendor Email Configuration name "Send Product Export To Merchandise Vendor"
+        //Check if vendor ismerch = yes
+        if ($vendor->ismerch == 1){
+            $configName = 'Send Product Export To Merchandise Vendor';
+            $recipients =  FEGSystemHelper::getSystemEmailRecipients($configName);
+            if(!empty($to)){
+                $recipients['to'].= ','.$to;
+            }
 
-        $configName = 'Send Product Export To Vendor';
-        $recipients =  FEGSystemHelper::getSystemEmailRecipients($configName);
-        if(!empty($to)){
-            $recipients['to'].= ','.$to;
-        }
-
-        if($recipients['to']!='') {
-            $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
-                'subject' => $subject,
-                'message' => $message,
-                'preferGoogleOAuthMail' => false,
-                'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-                'configName' => $configName,
-                'from' => $from,
-                'replyTo' => $from,
-                'attach' => $file_to_save,
-                'filename' => $fileName,
-                'encoding' => 'base64',
-                'type' => 'text/csv',
-            )), $sendEmailFromMerchandise, $sendEmailFromVendorAccount = true);
-            if (!$sent) {
-                return 3;
-            } else {
+            if($recipients['to']!='') {
+                $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                    'subject' => $subject,
+                    'message' => $message,
+                    'preferGoogleOAuthMail' => false,
+                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                    'configName' => $configName,
+                    'from' => $from,
+                    'replyTo' => $from,
+                    'attach' => $file_to_save,
+                    'filename' => $fileName,
+                    'encoding' => 'base64',
+                    'type' => 'text/csv',
+                )), $sendEmailFromMerchandise, $sendEmailFromVendorAccount = true);
+            if (!$sent){
+                $isSent = 3;
+            }else {
                 // Delete temporary file
-                unlink(storage_path("/app/vendor-products/" . $fileName));
-                return 1;
+                $isSent = 1;
+            }
+
             }
         }
+
+
+        // Game Related Vendor Email Configuration name "Send Product Export To Game Vendor"
+        //Check if vendor isgame = yes
+        if ($vendor->isgame == 1){
+            $configName = 'Send Product Export To Game Vendor';
+            $recipients =  FEGSystemHelper::getSystemEmailRecipients($configName);
+            if(!empty($to)){
+                $recipients['to'].= ','.$to;
+            }
+
+            if($recipients['to']!='') {
+                $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                    'subject' => $subject,
+                    'message' => $message,
+                    'preferGoogleOAuthMail' => false,
+                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                    'configName' => $configName,
+                    'from' => $from,
+                    'replyTo' => $from,
+                    'attach' => $file_to_save,
+                    'filename' => $fileName,
+                    'encoding' => 'base64',
+                    'type' => 'text/csv',
+                )), $sendEmailFromMerchandise, $sendEmailFromVendorAccount = true);
+
+                if (!$sent){
+                    $isSent = 3;
+                }else {
+                    // Delete temporary file
+                    $isSent = 1;
+                }
+
+            }
+        }
+
+        if($isSent == 1){
+            unlink(storage_path("/app/vendor-products/" . $fileName));
+        }
+        return $isSent;
 
     }
 

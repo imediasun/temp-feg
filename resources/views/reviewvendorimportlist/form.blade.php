@@ -512,8 +512,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Is Omitted" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Is Omitted', (isset($fields['is_omitted']['language'])? $fields['is_omitted']['language'] : array())) !!}
+					<label for="Is Excluded" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Is Excluded', (isset($fields['is_omitted']['language'])? $fields['is_omitted']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('is_omitted', $row['is_omitted'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}

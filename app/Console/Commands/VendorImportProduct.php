@@ -107,13 +107,14 @@ class VendorImportProduct extends Command
                     $vendorCount = $reviewVendorImportList->isVendorExist($fromEmail);
 
                     if($vendorCount > 0) {
+                        $vendorInformation = $reviewVendorImportList->getVendorByEmail($fromEmail);
 
                         foreach ($attachments['attachments'] as $attachment) {
                             $fileData = \SiteHelpers::getVendorFileImportData($attachment);
                             $duplicateItems = $this->checkDuplicateItems($fileData);
                             if($duplicateItems['status'] == true){
                                 $subject = '[System Error] Unable to import products';
-                                $this->sendVendorEmailNotification($subject,$duplicateItems['message'],$fromEmail);
+                                $this->sendVendorEmailNotification($subject,$duplicateItems['message'],$fromEmail,$vendorInformation);
                                 $L->log('[System Error] Duplicate Items found. Unable to import products.');
                                 echo " [System Error] Unable to import products Notification has been sent at".$fromEmail." ";
                                 return true;
@@ -333,29 +334,80 @@ class VendorImportProduct extends Command
      * @param $subject
      * @param $message
      * @param $to
+     * @param null $vendor
      */
-    public function sendVendorEmailNotification($subject,$message,$to)
+    public function sendVendorEmailNotification($subject,$message,$to,$vendor = null)
     {
 
         $from = 'vendor.products@fegllc.com';
         $sendEmailFromMerchandise = false;
         $sendEmailFromVendorAccount = true;
-        $configName = 'Send Product Export To Vendor';
-        $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
-        if (!empty($to)) {
-            $recipients['to'] .= ',' . $to;
-        }
+        // Old email configuration name "Send Product Export To Vendor"
+        if ($vendor != null) {
+            //Merchandise Vendor Email Configuration name "Send Product Export To Merchandise Vendor"
+            //Check if vendor ismerch = yes
+            if ($vendor->ismerch == 1) {
 
-        if ($recipients['to'] != '') {
-            $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
-                'subject' => $subject,
-                'message' => $message,
-                'preferGoogleOAuthMail' => false,
-                'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-                'configName' => $configName,
-                'from' => $from,
-                'replyTo' => $from,
-            )), $sendEmailFromMerchandise,$sendEmailFromVendorAccount);
+                $configName = 'Send Product Export To Merchandise Vendor';
+                $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
+                if (!empty($to)) {
+                    $recipients['to'] .= ',' . $to;
+                }
+
+                if ($recipients['to'] != '') {
+                    $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                        'subject' => $subject,
+                        'message' => $message,
+                        'preferGoogleOAuthMail' => false,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'configName' => $configName,
+                        'from' => $from,
+                        'replyTo' => $from,
+                    )), $sendEmailFromMerchandise, $sendEmailFromVendorAccount);
+                }
+            }
+
+            // Game Related Vendor Email Configuration name "Send Product Export To Game Vendor"
+            //Check if vendor isgame = yes
+            if ($vendor->isgame == 1) {
+
+                $configName = 'Send Product Export To Game Vendor';
+                $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
+                if (!empty($to)) {
+                    $recipients['to'] .= ',' . $to;
+                }
+
+                if ($recipients['to'] != '') {
+                    $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                        'subject' => $subject,
+                        'message' => $message,
+                        'preferGoogleOAuthMail' => false,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'configName' => $configName,
+                        'from' => $from,
+                        'replyTo' => $from,
+                    )), $sendEmailFromMerchandise, $sendEmailFromVendorAccount);
+                }
+            }
+        } else {
+
+            $configName = 'Send Product Export To Merchandise Vendor';
+            $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
+            if (!empty($to)) {
+                $recipients['to'] .= ',' . $to;
+            }
+
+            if ($recipients['to'] != '') {
+                $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                    'subject' => $subject,
+                    'message' => $message,
+                    'preferGoogleOAuthMail' => false,
+                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                    'configName' => $configName,
+                    'from' => $from,
+                    'replyTo' => $from,
+                )), $sendEmailFromMerchandise, $sendEmailFromVendorAccount);
+            }
         }
     }
 }
