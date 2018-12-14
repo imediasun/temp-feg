@@ -3,7 +3,7 @@
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
 
         <a href="#" class="btn btn-sm btn-white view-file"><i class="fa fa-eye"></i>View File</a>
-        <a href="#" class="btn btn-sm btn-white"><i class="fa fa-file"></i>Rename File</a>
+        <a href="#" class="btn btn-sm btn-white rename-file"><i class="fa fa-file"></i>Rename File</a>
         <a href="#" class="btn btn-sm btn-white download-drfile"><i class="fa fa-download"></i>Download Files</a>
         <a href="#" class="btn btn-sm btn-white"><i class="fa fa-arrow-right"></i>Move Files</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
@@ -52,6 +52,30 @@
 		@endif
 	</div>
 </div>
+
+{{--modal to edit file--}}
+<div class="modal fade" id="exampleModal" tabindex="-1"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Rename Google Drive File</h5>
+            </div>
+            <div class="modal-body">
+                Update  File name
+
+                <div class="form-group">
+                    <input type="text" id="refile" value="" class="form-control">
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="close-mdl">Close</button>
+                <button type="button" class="btn btn-primary" id="rename-btn">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function(){
         var config_id=$("#col-config").val();

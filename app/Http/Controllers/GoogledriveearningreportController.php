@@ -279,4 +279,32 @@ class GoogledriveearningreportController extends Controller {
         return Response::download($zip_file, rand(9999,99999999)."_driverfiles.zip", $headers)->deleteFileAfterSend(true);
     }
 
+    function postChangeFilename(Request $request){
+
+        try {
+            $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->first();
+            $client = new \Google_Client();
+            $client->setAccessToken($user->oauth_token);
+            $service = new \Google_Service_Drive($client);
+            $file = new \Google_Service_Drive_DriveFile();
+            $fileId = $request->id;
+            $fileName = $request->file;
+            $file->setName($fileName);
+            $updatedFile = $service->files->update($fileId, $file);
+            $res = Googledriveearningreport::where('google_file_id', $fileId)
+                ->update(['file_name' => $fileName]);
+            if ($res){
+                return response()->json([
+                    'name' => $updatedFile['name'],
+                    'status' => '200'
+                ]);
+            }
+            else{
+                return response()->json(['status'=>'0']);
+            }
+        } catch (Exception $e) {
+            print "An error occurred: " . $e->getMessage();
+        }
+    }
+
 }
