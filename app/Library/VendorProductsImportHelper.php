@@ -25,7 +25,7 @@ class VendorProductsImportHelper
 
 
         $product = new Product();
-        $products = $product->where(['vendor_id' => $vendorId, 'exclude_export' => 0])->groupBy('variation_id')->orderBy('id','asc')->get();
+        $products = $product->where(['vendor_id' => $vendorId, 'exclude_export' => 0])->groupBy('vendor_description')->groupBy('sku')->groupBy('case_price')->orderBy('id','asc')->get();
         if(!$products){
             return false;
         }

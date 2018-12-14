@@ -12,14 +12,14 @@
 			@endif 	
 			@endif
             <!-- Schedule All Product Export -->
-            <a href="{{ URL::to('vendor/schedule-list/0')}}" onclick="ajaxViewDetail('#vendor',this.href); return false; " class="btn btn-sm btn-white alignment-left-fixed" title="Schedule List">
+           <!-- <a href="{{ URL::to('vendor/schedule-list/0')}}" onclick="ajaxViewDetail('#vendor',this.href); return false; " class="btn btn-sm btn-white alignment-left-fixed" title="Schedule List">
                 <i class="fa fa-calendar" aria-hidden="true"></i>Schedule All Product Exports
-            </a>
+            </a> -->
 
             <!-- Clear All Product Export Schedules -->
-            <a class="btn btn-sm btn-white alignment-left-fixed" href="javascript://ajax" onclick="ajaxClearSchedule('{{ URL::to('vendor/clear-all-schedules-list/')}}');">
+           <!-- <a class="btn btn-sm btn-white alignment-left-fixed" href="javascript://ajax" onclick="ajaxClearSchedule('{{ URL::to('vendor/clear-all-schedules-list/')}}');">
                 <i class="fa fa-eraser "></i> Clear Export Schedules
-            </a>
+            </a> -->
 
 			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
                 @if(SiteHelpers::isModuleEnabled($pageModule))

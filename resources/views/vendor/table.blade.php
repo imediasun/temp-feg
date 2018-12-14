@@ -149,9 +149,9 @@
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                             <!--Send vendor list button-->
                       @if(($row->email != '' || $row->email_2 != '') && ($viewProductListExportOption || $row->ismerch == 1))
-                        <!-- <a href="javascript://ajax" onclick="ajaxSendProductList('{{ URL::to('vendor/send-list/'.$row->id)}}');" class="tips btn btn-xs btn-white" title="Send List">
+                         <a href="javascript://ajax" onclick="ajaxSendProductList('{{ URL::to('vendor/send-list/'.$row->id)}}');" class="tips btn btn-xs btn-white" title="Send List">
                              <i class="fa fa-envelope" aria-hidden="true"></i>
-                         </a> -->
+                         </a>
                          <!--Schedule vendor list button-->
                          <!--<a href="{{ URL::to('vendor/schedule-list/'.$row->id)}}" onclick="ajaxViewDetail('#vendor',this.href); return false; " class="tips btn btn-xs btn-white" title="Schedule List">
                              <i class="fa fa-calendar" aria-hidden="true"></i>
