@@ -1279,7 +1279,7 @@
                 if($('#item_name').val()) {
                     $('#submit_btn').attr('disabled','disabled');
                     App.notyConfirm({
-                        message: "Are you sure you want to change Vendor <br> <b>***WARNING***</b><br>if you change vendor all of your items will be removed and you will have to add them again",
+                        message: "Are you sure you want to change Vendor <br> <b>***WARNING***</b><br>if you change vendor all of your items will be removed and you will have to add them again. Freight Type will be updated as well",
                         confirmButtonText: 'Yes',
                         confirm: function () {
                             $('#submit_btn').removeAttr('disabled');
@@ -1293,6 +1293,7 @@
                                 success: function (data) {
                                     if(data.length>0){
                                         $('#bil_ac_num').val(data[0].bill_account_num);
+                                        updateShippingMethod(data[0].freight_id,true);
                                     }
                                 }
                             });
@@ -1334,6 +1335,7 @@
                         success: function (data) {
                             if(data.length>0){
                                 $('#bil_ac_num').val(data[0].bill_account_num);
+                                updateShippingMethod(data[0].freight_id,true);
                             }
                         }
                     });
@@ -1348,6 +1350,7 @@
                     success: function (data) {
                         if(data.length>0){
                             $('#bil_ac_num').val(data[0].bill_account_num);
+                            updateShippingMethod(data[0].freight_id);
                         }
                     }
                 });
@@ -1361,6 +1364,7 @@
                     success: function (data) {
                         if(data.length>0){
                             $('#bil_ac_num').val(data[0].bill_account_num);
+                            updateShippingMethod(data[0].freight_id);
                         }
                     }
                 });
@@ -1456,9 +1460,6 @@
                         }
 
                         $("#fedex_number").val(!isCheckedAltShippingAddress ? msg.fedex_number: 'No data');
-                        var freightId = $("#freight_type_id");
-                        freightId.val(msg.freight_id);
-                        freightId.change();
 
                         if(!isCheckedAltShippingAddress)
                             $("#po_1").val(location_id);
@@ -2228,6 +2229,15 @@ $(function(){
             $(this).val('');
         }
     });
+        function updateShippingMethod(Id,override){
+           var frieghtTypeId =  $("#freight_type_id");
+            var savedFrieghtId = '{{ is_object($row) ? $row->order_freight_id:'' }}';
+            if(($.trim(savedFrieghtId)).length == 0 || override) {
+                frieghtTypeId.val(Id);
+                frieghtTypeId.change();
+            }
+        }
+
 
 </script>
 

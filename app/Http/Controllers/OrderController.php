@@ -491,28 +491,42 @@ class OrderController extends Controller
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
         $row = null;
+        $vendorRow = null;
         if(substr($mode, 0, 3) == 'SID'){
             $manageFegRequestStore = new managefegrequeststore();
             $row = $manageFegRequestStore->with([
                 'location' => function($query){
-                    return $query->select('id', 'fedex_number','freight_id as location_freight_id');
+                    return $query->select('id', 'fedex_number');
+                },
+                'vendor' => function($query){
+                    return $query->select('freight_id as vendor_freight_id');
                 }
             ])->whereIn("id",$requestId)->first();
+
         }else{
             $row = $this->model->with([
                 'location' => function($query){
-                    return $query->select('id', 'fedex_number','freight_id as location_freight_id');
+                    return $query->select('id', 'fedex_number');
+                },
+                'vendor' => function($query){
+                    return $query->select('id','freight_id as vendor_freight_id');
                 }
             ])->find($id);
+
         }
 
         if ($row) {
             $row->fedex_number =  $row->location ? $row->location->fedex_number ? $row->location->fedex_number : 'No Data' : 'No Data';
+
             if($row->freight_id) {
-                $row->order_freight_id = $row->freight_id ? $row->freight_id : '';
-            }else{
-                $row->order_freight_id = $row->location->location_freight_id ? $row->location->location_freight_id : '';
-            }
+               $row->order_freight_id = $row->freight_id ? $row->freight_id : '';
+           }else{
+               if($vendorRow){
+                   $row->order_freight_id = $row->vendor->vendor_freight_id ? $vendorRow->vendor->vendor_freight_id : '';
+               }else{
+                   $row->order_freight_id = "";
+               }
+           }
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
@@ -1890,10 +1904,10 @@ class OrderController extends Controller
                         'bcc' => $bcc,
                         'subject' => $subject,
                         'message' => $message,
-                        'preferGoogleOAuthMail' => (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) ? true : false,
+                        'preferGoogleOAuthMail' => false,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                         'configName' => $configName,
-                        'from' => (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) ? $google_acc->email : $from,
+                        'from' => $from,
                         'replyTo' => $from,
                         'attach' => $file_to_save,
                         'filename' => $filename,
@@ -2438,7 +2452,7 @@ if($mode !='clone') {
         if (empty($vendor_id)) {
             $vendor_id = 0;
         }
-        return \DB::table('vendor')->select('bill_account_num')->where('id', $vendor_id)->get();
+        return \DB::table('vendor')->select('bill_account_num',"freight_id")->where('id', $vendor_id)->get();
     }
 
     function getComboselect(Request $request)
@@ -3378,8 +3392,8 @@ ORDER BY aa_id");
 
         $pass = $this->pass;
         $order_types = '';
-        if(!empty($pass['calculate price according to case price'])) {
-            $order_types = $pass['calculate price according to case price']->data_options;
+        if(!empty($pass['merchandise type for inquire about orders email'])) {
+            $order_types = $pass['merchandise type for inquire about orders email']->data_options;
         }
 
         $configName = 'Non-Merchandise-Related Order Inquires';
