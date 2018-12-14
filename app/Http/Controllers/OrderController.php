@@ -20,6 +20,7 @@ use App\Models\Ordertyperestrictions;
 use App\Models\OrderContent;
 use App\Models\product;
 use App\Models\OrderSendDetails;
+use App\Models\productlog;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
 use App\User;
@@ -3448,9 +3449,52 @@ ORDER BY aa_id");
 
     }
 
-    public function postProductform(Request $request,$id = 0){
-        $this->data['row'] = $this->model->getColumnTable('products');
+    public function postProductform(Request $request){
+
+        $productController = new ProductController();
+
+        $productModel = new product();
+        $this->info = $this->model->makeInfo($productController->module);
+        $this->access = $this->model->validAccess($productController->info['id']);
+        $this->data['access'] = $this->access;
         return view('order.freehand-product-form',$this->data);
+        $id = 7;
+        $variations = [];
+        $row = $productModel->find($id);
+        if ($row) {
+            $this->data['row'] = $row;
+            $columns = ['id','prod_type_id','prod_sub_type_id','retail_price','ticket_value','expense_category','is_default_expense_category'];
+
+            if (empty($row->variation_id)){
+                $variations = [];
+            }else {
+                $variations = $productModel->select($columns)->where('variation_id', $row->variation_id)->get()->toArray();
+            }
+
+        } else {
+            $this->data['row'] = $productModel->getColumnTable('products');
+        }
+        if($id == null || $id == '' || $id == 0){
+            $this->data['actionUrl'] = 'product/save/'.$row['id'];
+        }else{
+            $this->data['actionUrl'] = 'product/saveupdated';
+        }
+        $this->data['variations'] = $variations;
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+
+        $this->data['id'] = $id;
+        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
+        $this->data['excludedProductTypes'] = implode(',', $excludedOrderTypesArray);
+        $productTypes = Ordertyperestrictions::where('can_request',1);
+        if(!empty($excludedOrderTypesArray)){
+            $productTypes->whereNotIn('id',$excludedOrderTypesArray);
+        }
+        $this->data['productTypes'] = $productTypes->orderBy('order_type','asc')->get()->toArray();
+        $this->data['access'] = $this->access;
+        return view('product.form', $this->data);
+        return view('order.freehand-product-form',$this->data);
+
     }
 
 
