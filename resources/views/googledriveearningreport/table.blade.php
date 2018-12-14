@@ -109,7 +109,7 @@
 					<td class="number"> <?php echo ++$i;?>  </td>
                     @endif
                     @if($setting['disableactioncheckbox']=='false')
-					<td ><input type="checkbox" webLink="{{$row->web_view_link}}" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+					<td ><input type="checkbox" FileId="{{$row->google_file_id}}" webLink="{{$row->web_view_link}}" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                     @endif
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('googledriveearningreport/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
@@ -271,9 +271,66 @@ $(document).ready(function() {
 			notyMessageError("Please select Item to Preview");
 		}
 		});
+	var FilerowValue ='';
+  $('.rename-file').click(function () {
+	  var val = $('input[name="ids[]"]:checked');
+	  if(val.length == 1){
+		  var id = val.val();
+		   FilerowValue = $("#form-"+id);
+		  var fileName = FilerowValue.children('td[data-field="file_name"]');
+		  $('#refile').val($.trim(fileName.text()));
+		  $('#exampleModal').modal('show');
+	  }
+	  else{
+		  $('#exampleModal').modal({'show': false});
+		  $('.icheckbox_square-blue').removeClass('checked');
+		  $('.ids').prop('checked', false);
+		  $('.ids').change();
+		  notyMessageError("Select only one item");
+	  }
+  });
+	$('#rename-btn').click(function () {
+		var fileId = $('.ids:checkbox:checked').attr('FileId');
+		var renameFileValue = $('#refile').val();
+		if(renameFileValue!=''){
+			$.ajax({
+				type: "POST",
+				url:"/googledriveearningreport/change-filename",
+				data: {
+					'file':renameFileValue,
+					'id':fileId
+				},
+				success: function(data)
+				{
+					if(data.status=='200') {
+						$('.icheckbox_square-blue').removeClass('checked');
+						$('.ids').prop('checked', false);
+						$('.ids').change();
+						FilerowValue.children('td[data-field="file_name"]').text(data.name);
+						$('#exampleModal').modal('toggle');
+					}
+					else{
+						$('.icheckbox_square-blue').removeClass('checked');
+						$('.ids').prop('checked', false);
+						$('.ids').change();
+						notyMessageError("File Name not changed");
+						$('#exampleModal').modal('toggle');
 
-
-    
+					}
+					}
+			});
+		}
+		else{
+			$('#refile').focus();
+		}
+	});
+	$('#close-mdl').click(function () {
+		$('#refile').val('');
+		$('.icheckbox_square-blue').removeClass('checked');
+		$('.ids').prop('checked', false);
+		$('.ids').change();
+		$('#exampleModal').modal('toggle');
+	});
     // Configure data grid columns for sorting 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
