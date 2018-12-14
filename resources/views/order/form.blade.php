@@ -2267,11 +2267,14 @@ $(function(){
             $('.addToProductList').click(function(){
                 $('.ajaxLoading').show();
                 var ordersubmitFormAjax = $("#ordersubmitFormAjax");
-                var url = '/order/productform/' + '{{ $id }}';
-               // $('#orderView').hide('slow');
+                var url = '/order/productform';
                 var rowId = $(this).parent().parent();
                 var rowData = $('#'+rowId.attr('id')+" input");
+                var OrderTypeId = $('#order_type_id').val();
+                var vendorId = $('#vendor_id').val();
                 var dataRow = {};
+                dataRow['vendor_id'] = vendorId;
+                dataRow['prod_type_id'] = OrderTypeId;
                 rowData.each(function(){
                     var name = ($(this).attr('name')) ? ($(this).attr('name')).replace('[]',''):undefined;
                     if ($(this).attr('type') == 'checkbox' || $(this).attr('type') == 'radio' || $(this).attr('name') == undefined){
@@ -2290,8 +2293,8 @@ $(function(){
                     success:function(response){
                         $('.ajaxLoading').hide();
                         $('#orderView').hide('slow');
-                        $('#orderViewItemForm').html(response);
-                        $('#orderViewItemForm').show('slow');
+                        $('#orderItemFormView').html(response);
+                        $('#orderItemFormView').show('slow');
                     }
                 })
             });
