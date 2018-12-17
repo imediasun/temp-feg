@@ -38,6 +38,7 @@
          */
         var duplicateVariationProducts = [];
         function findDuplicateVariationsInCart(rowData){
+            duplicateVariationProducts = []
             var variationIds = [];
             $(rowData).each(function(index,value){
                 if(value.variation_id != null && value.variation_id != ""){
@@ -52,11 +53,10 @@
                     }
                 });
             });
-            return duplicateVariationProducts;
         }
 
         App.autoCallbacks.registerCallback('reloaddata', function (params) {
-            duplicateVariationProducts = findDuplicateVariationsInCart(rowData);
+            findDuplicateVariationsInCart(rowData);
         });
         $(document).ready(function () {
             var id ={{$id}}
