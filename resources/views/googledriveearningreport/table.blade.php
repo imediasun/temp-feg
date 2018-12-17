@@ -139,7 +139,9 @@
                   @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('googledriveearningreport',$access,$id ,$setting) !!}
-                 </td>
+					 <a href="" class="btn btn-xs btn-white tips" link-field="{{$row->web_view_link}}" id="copyBoard"  title="Copy to Clipboard"><i class="fa fa-copy"></i></a>
+
+				 </td>
                 @endif
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -330,6 +332,21 @@ $(document).ready(function() {
 		$('.ids').prop('checked', false);
 		$('.ids').change();
 		$('#exampleModal').modal('toggle');
+	});
+
+	$(document).off('click').on('click','#copyBoard',function (e) {
+		e.preventDefault();
+		var temp = '<textarea type="hidden" style="opacity: 0;" id="copyTxt"></textarea>';
+		$("body").append(temp);
+		var copyTxtField = document.getElementById('copyTxt');
+		$(copyTxtField).text($(this).attr('link-field'));
+		$(copyTxtField).focus();
+		$(copyTxtField).select();
+		document.execCommand("copy");
+		$(copyTxtField).remove();
+		notyMessage("link coppied to clipboard");
+
+
 	});
     // Configure data grid columns for sorting 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
