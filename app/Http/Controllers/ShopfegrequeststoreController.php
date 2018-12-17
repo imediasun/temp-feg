@@ -229,7 +229,7 @@ class ShopfegrequeststoreController extends Controller
         $extraSorts = $sort != 'id' ? [] : [
             'is_new' => 'DESC',
             'hot_item'=>'DESC',
-            'is_backinstock' =>'DESC',
+//            'is_backinstock' =>'DESC',
         ];
 
 
