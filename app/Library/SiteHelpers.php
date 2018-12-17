@@ -262,7 +262,11 @@ class SiteHelpers
   public static function getExtensionName($val,$defaultValue = 'No Data'){
      if($val=='application/pdf'){
          return 'PDF Document';
-     }else{
+     }
+     elseif ($val=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+         return 'Word Document';
+     }
+     else{
          return $defaultValue;
      }
   }

@@ -4,8 +4,8 @@
 
         <a href="#" class="btn btn-sm btn-white view-file"><i class="fa fa-eye"></i>View File</a>
         <a href="#" class="btn btn-sm btn-white rename-file"><i class="fa fa-file"></i>Rename File</a>
-        <a href="#" class="btn btn-sm btn-white download-drfile"><i class="fa fa-download"></i>Download Files</a>
-        <a href="#" class="btn btn-sm btn-white"><i class="fa fa-arrow-right"></i>Move Files</a>
+        <a href="#" class="btn btn-sm btn-white download-drfile"><i class="fa fa-download"></i>Download Files(s)</a>
+        <a href="#" class="btn btn-sm btn-white"><i class="fa fa-arrow-right"></i>Move Files(s)</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
         <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
         @if(!empty($colconfigs))
