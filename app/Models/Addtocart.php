@@ -395,9 +395,9 @@ FROM requests
                 ->where("requests.product_id", $productId);
 
             if($checkSingle)
-                $requestss = $requestss->whereIn("requests.status_id", [1,4]);
+                $requestss = $requestss->whereIn("requests.status_id", [4]);
             else
-                $requestss = $requestss->whereIn("requests.status_id", [1]);
+                $requestss = $requestss->whereIn("requests.status_id", [1,4]);
 
             $requestss = $requestss->where("requests.location_id", \Session::get('selected_location'))
                 ->where('products.allow_negative_reserve_qty', '=', 0)
