@@ -379,13 +379,15 @@ FROM requests
         $requestsArray = [];
 
         foreach($productIdsWithRequestedQuantitiesList as $productId=>$requestedQTY){
+            $alreadyRequestedQuantity = \DB::table('requests')->where('product_id', $productId)->where('qty', '!=', $requestedQTY)->where('status_id', 1)->sum('qty');
+            $reservedQty = \DB::table('products')->where('id', $productId)->pluck('reserved_qty');
             $column = [
                 'requests.id',
                 'requests.product_id',
                 'products.vendor_description',
-                \DB::raw('CONVERT((products.reserved_qty - requests.qty), SIGNED INTEGER) as remainingQTY'),
-                \DB::raw('products.reserved_qty  as productQty'),
-                $checkSingle ? \DB::raw('requests.qty as alreadyRequestedQTY') : \DB::raw('CONVERT(SUM(requests.qty), SIGNED INTEGER)  as alreadyRequestedQTY'),
+                \DB::raw('products.reserved_qty as productQty'),
+                \DB::raw($alreadyRequestedQuantity.' as alreadyRequestedQTY'),
+                \DB::raw(($reservedQty - $alreadyRequestedQuantity).' as remainingQTY'),
                 'requests.request_user_id',
                 'requests.location_id'
             ];
@@ -403,16 +405,16 @@ FROM requests
                 ->where('products.allow_negative_reserve_qty', '=', 0)
                 ->where('products.is_reserved', '=', 1);
 
-            if($checkSingle)
-                $requestss = $requestss->having('productQty', '<', $requestedQTY);
-            else
+//            if($checkSingle)
+//                $requestss = $requestss->having('productQty', '<', $requestedQTY);
+//            else
                 $requestss = $requestss->having('remainingQTY', '<', $requestedQTY);
 
             if($requestss->first()){
                 $requestsArray[] = $requestss->first();
             }
         }
-
+//        dd($requestsArray);
         $requestsArray = collect($requestsArray);
         return $requestsArray;
     }
