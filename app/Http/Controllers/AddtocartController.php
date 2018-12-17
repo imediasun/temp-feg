@@ -394,7 +394,7 @@ class AddtocartController extends Controller
             if ($requestQtyCheck->count() > 0) {
                 $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
                 foreach ($requestQtyCheck as $request) {
-                    $productsNames .= "<li>" . addslashes($request->vendor_description) . " | Reserve Qty = ".$request->productQty." | Already Requested Qty = ".$request->alreadyRequestedQTY." | Remaining Qty = ".$request->remainingQTY."</li>";
+                    $productsNames .= "<li>" . addslashes($request->vendor_description) . " | Reserve Qty = ".$request->productQty." | Already Requested Qty = ". ($request->productQty - $request->remainingQTY) ." | Remaining Qty = ".$request->remainingQTY."</li>";
                 }
                 $productsNames .= "</ul>";
                 $qtyCheckMessage = [
