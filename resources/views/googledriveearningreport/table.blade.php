@@ -239,6 +239,7 @@ $(document).ready(function() {
 			});
 			$('.ids').prop('checked', false);
 			$('.ids').change();
+			$('.icheckbox_square-blue').removeClass('checked');
 			window.open('/googledriveearningreport/download-drive-file/' + downloadFileIdsArray, '_self')
 		}
 		else{
