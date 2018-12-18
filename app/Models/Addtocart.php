@@ -368,7 +368,7 @@ FROM requests
             ->where("location_id",\Session::get('selected_location'));
     }
 
-    public function requestQtyFilterCheck($productIds, $checkSingle = true)
+    public function requestQtyFilterCheck($productIds)
     {
         if(!is_array($productIds)){
             $productIds = [$productIds];
@@ -435,25 +435,19 @@ FROM requests
                 ->groupBy("requests.product_id")
                 ->where("requests.product_id", $productId);
 
-            if($checkSingle)
-                $requestss = $requestss->whereIn("requests.status_id", [4]);
-            else
-                $requestss = $requestss->whereIn("requests.status_id", [1,4]);
+            $requestss = $requestss->whereIn("requests.status_id", [1,4]);
 
             $requestss = $requestss->where("requests.location_id", \Session::get('selected_location'))
                 ->where('products.allow_negative_reserve_qty', '=', 0)
                 ->where('products.is_reserved', '=', 1);
 
-//            if($checkSingle)
-//                $requestss = $requestss->having('productQty', '<', $requestedQTY);
-//            else
-                $requestss = $requestss->having('remainingQTY', '<', $requestedQTY);
+            $requestss = $requestss->having('remainingQTY', '<', $requestedQTY);
 
             if($requestss->first()){
                 $requestsArray[] = $requestss->first();
             }
         }
-//        dd($requestsArray);
+
         $requestsArray = collect($requestsArray);
         return $requestsArray;
     }
