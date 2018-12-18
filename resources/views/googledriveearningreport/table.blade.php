@@ -139,7 +139,7 @@
                   @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('googledriveearningreport',$access,$id ,$setting) !!}
-					 <a href="" class="btn btn-xs btn-white tips" link-field="{{$row->web_view_link}}" id="copyBoard"  title="Copy to Clipboard"><i class="fa fa-copy"></i></a>
+					 <a href="javascript:void(0)" class="btn btn-xs btn-white tips" link-field="{{$row->web_view_link}}" id="copyBoard"  title="Copy to Clipboard"><i class="fa fa-copy"></i></a>
 
 				 </td>
                 @endif
@@ -216,13 +216,13 @@ $(document).ready(function() {
         initiateSearchFormFields(simpleSearch);
         simpleSearch.find('.doSimpleSearch').click(function(event){
             performSimpleSearch.call($(this), {
-                moduleID: '#{{ $pageModule }}', 
-                url: "{{ $pageUrl }}", 
+                moduleID: '#{{ $pageModule }}',
+                url: "{{ $pageUrl }}",
                 event: event,
                 ajaxSearch: true,
                 container: simpleSearch
             });
-        });        
+        });
     }
 	var arr = [];
 	$('.ads_Checkbox:checked').each(function () {
@@ -335,7 +335,7 @@ $(document).ready(function() {
 		$('#exampleModal').modal('toggle');
 	});
 
-	$(document).off('click').on('click','#copyBoard',function (e) {
+	$(document).off('click','#copyBoard').on('click','#copyBoard',function (e) {
 		e.preventDefault();
 		var temp = '<textarea type="hidden" style="opacity: 0;" id="copyTxt"></textarea>';
 		$("body").append(temp);
@@ -346,19 +346,20 @@ $(document).ready(function() {
 		document.execCommand("copy");
 		$(copyTxtField).remove();
 		notyMessage("link coppied to clipboard");
-
+		return false;
 
 	});
-    // Configure data grid columns for sorting 
+    // Configure data grid columns for sorting
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
-
+/*
 App.autoCallbacks.registerCallback('reloaddata', function () {
 	var excludedLocations = {!! json_encode($excludedUserLocations) !!}
 	$("select[name='loc_id']").jCombo("{{ URL::to('googledriveearningreport/comboselect?filter=location:id:id|location_name') }}", {
 		excludeItems: excludedLocations
 	});
 });
+*/
 </script>
 <style>
 .table th.right { text-align:right !important;}
