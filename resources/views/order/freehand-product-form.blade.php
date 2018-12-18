@@ -55,7 +55,7 @@
 
         <div class="sbox-content">
             @endif
-            @include('product.form.form',['actionUrl' => $actionUrl, 'fields' => $fields, 'row' => $row, 'variations' => $variations, 'productTypes' => $productTypes, 'id' => $id,'pageModule' => $pageModule, 'fromOrder' => $fromOrder ])
+            @include('product.form.form',['actionUrl' => $actionUrl, 'fields' => $fields, 'row' => $row, 'variations' => $variations, 'productTypes' => $productTypes, 'id' => $id,'pageModule' => $pageModule, 'fromOrder' => $fromOrder, 'rowId' => $rowId ])
             @if($setting['form-method'] =='native')
         </div>
     </div>
