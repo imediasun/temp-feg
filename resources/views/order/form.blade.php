@@ -2266,7 +2266,7 @@ $(function(){
             });
             reInitParcley();
 
-            $('.addToProductList').click(function(){
+            $(document).on('click','.addToProductList',function(){
                 $('.ajaxLoading').show();
                 var ordersubmitFormAjax = $("#ordersubmitFormAjax");
                 var url = '/order/productform';
