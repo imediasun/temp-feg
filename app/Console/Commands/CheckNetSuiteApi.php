@@ -285,7 +285,7 @@ class CheckNetSuiteApi extends Command
         {
             $subject = 'Netsuite API Error';
             Log::info("NetSuite Api:".$subject." : ".$errorMsg);
-            FEGSystemHelper::sendEmail($to, $subject, $errorMsg);
+            //FEGSystemHelper::sendEmail($to, $subject, $errorMsg);
             Log::info("NetSuite Api:".$subject." : Notification sent to :".$to);
         }
 
