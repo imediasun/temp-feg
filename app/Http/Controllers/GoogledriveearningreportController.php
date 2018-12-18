@@ -83,8 +83,9 @@ class GoogledriveearningreportController extends Controller {
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
 		// Get Query
-		$results = $this->model->getRows( $params );
-		// Build pagination setting
+//		$results  = $this->model->getRows( $params );
+		$results = googledriveearningreport::getRows($params);
+        // Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'], 
