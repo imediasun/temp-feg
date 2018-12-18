@@ -687,7 +687,7 @@
             $itemFormView = $itemForm;
         }
         ?>
-        <button type="button" onclick="ajaxViewClose('#{{ $pageModule.$itemFormView }}'); " class="btn btn-success btn-sm">
+        <button type="button" onclick="ajaxViewClose('#{{ $pageModule.$itemFormView }}'); " class="btn btn-success btn-sm cancelOrderProduct">
             <i class="fa  fa-arrow-circle-left "></i> {{ Lang::get('core.sb_cancel') }} </button>
     </div>
 </div>
