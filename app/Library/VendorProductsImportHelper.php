@@ -57,14 +57,14 @@ class VendorProductsImportHelper
 //            dd($product);
             $start++;
             $data[$start] = [
-                                $product->id,
-                                $product->vendor_description,
-                                $product->sku,
-                                $product->upc_barcode,
-                                $product->num_items,
-                                $product->case_price,
-                                $product->unit_price,
-                                $product->reserved_qty
+                                is_string($product->id) ? "=\"$product->id\"" : $product->id,
+                                is_string($product->vendor_description) ? "=\"$product->vendor_description\"" : $product->vendor_description,
+                                is_string($product->sku) ? "=\"$product->sku\"" : $product->sku,
+                                is_string($product->upc_barcode) ? "=\"$product->upc_barcode\"" : $product->upc_barcode,
+                                is_string($product->num_items) ? "=\"$product->num_items\"" : $product->num_items,
+                                is_string($product->case_price) ? "=\"$product->case_price\"" : $product->case_price,
+                                is_string($product->unit_price) ? "=\"$product->unit_price\"" : $product->unit_price,
+                                is_string($product->reserved_qty) ? "=\"$product->reserved_qty\"" : $product->reserved_qty
                             ];
         }
         $data[] = [];
