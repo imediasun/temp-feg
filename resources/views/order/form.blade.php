@@ -404,7 +404,7 @@
                                onclick="removeRow(this.id);"
                                class="remove btn btn-xs btn-danger hide-button">-
                             </p>
-                            <p id="hide-button" style="display: none;" data-id=""
+                            <p id="hide-button" @if($row['is_freehand'] == 1) freehandorder="1" @else style="display: none;" @endif data-id=""
                                class="addToProductList btn btn-xs btn-danger hide-button tips" title="Add product to the Product List">+
                             </p>
                             <input type="hidden" name="counter[]">
@@ -1630,6 +1630,7 @@
                     confirm: function (){
                         $(document).scrollTop(0);
                         clearTimeout(showFirstPopup);
+                        ajaxViewClose('#orderItemForm');
                         reloadOrder();
                     },
                     cancel:function () {
@@ -2242,6 +2243,7 @@ $(function(){
 </script>
 
     <script>
+
         $(document).ready(function () {
             $(document).ajaxComplete(function (event, xhr, settings) {
                 if (xhr.status == 200 && settings.url == "{{ action('OrderController@postSave') }}") {
@@ -2269,10 +2271,11 @@ $(function(){
                 var ordersubmitFormAjax = $("#ordersubmitFormAjax");
                 var url = '/order/productform';
                 var rowId = $(this).parent().parent();
-                var rowData = $('#'+rowId.attr('id')+" input");
+                var rowData = $('#'+rowId.attr('id')+" input, #"+rowId.attr('id')+" textarea");
                 var OrderTypeId = $('#order_type_id').val();
                 var vendorId = $('#vendor_id').val();
                 var dataRow = {};
+                dataRow['rowId'] = rowId.attr('id');
                 dataRow['vendor_id'] = vendorId;
                 dataRow['prod_type_id'] = OrderTypeId;
                 rowData.each(function(){
@@ -2285,7 +2288,7 @@ $(function(){
                         dataRow[name] = $(this).val();
                     }
                 });
-                clearTimeout(settimeout);
+                //clearTimeout(settimeout);
                 $.ajax({
                     type:"POST",
                     url:url,

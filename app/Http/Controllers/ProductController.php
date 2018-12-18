@@ -998,7 +998,8 @@ class ProductController extends Controller
 
             return response()->json(array(
                 'status' => 'success',
-                'message' => \Lang::get('core.note_success')
+                'message' => \Lang::get('core.note_success'),
+                'productData' => $request->all()
             ));
 
         } else {
@@ -1798,7 +1799,8 @@ if(!empty($removedItemIds)) {
 
             return response()->json(array(
                 'status' => 'success',
-                'message' => \Lang::get('core.note_success')
+                'message' => \Lang::get('core.note_success'),
+                'productData' => $request->all()
             ));
 
         }else{
