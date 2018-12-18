@@ -35,6 +35,9 @@ foreach ($rows as $row)
             //$content[] = SiteHelpers::gridDisplay($row->$f['field'],$f['field'],$conn);
 		endif;
 	}
+	foreach ($content as $key=>$field){
+        $content[$key] = is_string($field) ? "=\"$field\"" : $field;
+    }
 	fputcsv($fp, $content);
 
 }
