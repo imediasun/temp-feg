@@ -489,6 +489,12 @@
         }
 
     }
+    $(function(){
+        $(document).on('click','.cancelOrderProduct',function(){
+            ajaxViewClose('#{{ $pageModule.'ItemForm' }}');
+            $('#orderView').show('slow');
+        });
+    });
 </script>
 <style>
 
