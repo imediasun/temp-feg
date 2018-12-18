@@ -298,17 +298,21 @@
             //$('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
             //  ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
             notyMessage(data.message);
-            $('#orderView').show('slow');
-            ajaxViewClose('#{{ $pageModule.'ItemForm' }}');
-            var productData = data.productData;
-            var orderContentRow = $(document.getElementById(productData.rowId));
-            var price = orderContentRow.children('td').children('input[name="price[]"]');
-            var casePrice = orderContentRow.children('td').children('input[name="case_price[]"]');
-            price.val(productData.unit_price);
-            price.val(price.fixDecimal());
-            casePrice.val(productData.case_price);
-            casePrice.val(casePrice.fixDecimal());
-            orderContentRow.children('td').children('input.case_per_quantity').val(productData.num_items);
+            if (productData.rowId != undefined) {
+                $('#orderView').show('slow');
+                ajaxViewClose('#{{ $pageModule.'ItemForm' }}');
+                var productData = data.productData;
+                var orderContentRow = $(document.getElementById(productData.rowId));
+                var price = orderContentRow.children('td').children('input[name="price[]"]');
+                var casePrice = orderContentRow.children('td').children('input[name="case_price[]"]');
+                price.val(productData.unit_price);
+                price.val(price.fixDecimal());
+                casePrice.val(productData.case_price);
+                casePrice.val(casePrice.fixDecimal());
+                orderContentRow.children('td').children('input.case_per_quantity').val(productData.num_items);
+            }else{
+                ajaxViewClose('#{{ $pageModule }}');
+            }
             $('.ajaxLoading').hide();
         } else {
             notyMessageError(data.message);
