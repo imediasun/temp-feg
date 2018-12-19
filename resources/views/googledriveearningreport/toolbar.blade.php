@@ -96,4 +96,37 @@
     $("#col-config").on('change',function(){
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val() + getFooterFilters());
     });
+    $('#delete-cols').click(function(){
+        if(confirm('Are you sure, You want to delete this columns arrangement?')) {
+            showRequest();
+            var module = "{{ $pageModule }}";
+            var config_id = $("#col-config").val();
+            $.ajax(
+                    {
+                        method: 'get',
+                        data: {module: module, config_id: config_id},
+                        url: '{{ url() }}/tablecols/delete-config',
+                        success: function (data) {
+                            showResponse(data);
+                        }
+                    }
+            );
+        }
+    });
+    function showRequest() {
+        $('.ajaxLoading').show();
+    }
+    function showResponse(data) {
+
+        if (data.status == 'success') {
+            ajaxViewClose('#{{ $pageModule }}');
+            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+            notyMessage(data.message);
+            $('#sximo-modal').modal('hide');
+        } else {
+            notyMessageError(data.message);
+            $('.ajaxLoading').hide();
+            return false;
+        }
+    }
 </script>
