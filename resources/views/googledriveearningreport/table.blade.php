@@ -275,13 +275,15 @@ $(document).ready(function() {
 		}
 		});
 	var FilerowValue ='';
+	var FileExt='';
   $('.rename-file').click(function () {
 	  var val = $('input[name="ids[]"]:checked');
 	  if(val.length == 1){
 		  var id = val.val();
 		   FilerowValue = $("#form-"+id);
 		  var fileName = FilerowValue.children('td[data-field="file_name"]');
-		  $('#refile').val($.trim(fileName.text()));
+		  FileExt = $.trim(fileName.text()).split('.').pop();
+		  $('#refile').val($.trim(fileName.text()).substr(0, $.trim(fileName.text()).indexOf('.')));
 		  $('#exampleModal').modal('show');
 	  }
 	  else{
@@ -295,6 +297,8 @@ $(document).ready(function() {
 	$('#rename-btn').click(function () {
 		var fileId = $('.ids:checkbox:checked').attr('FileId');
 		var renameFileValue = $('#refile').val();
+		renameFileValue= renameFileValue+'.'+FileExt;
+
 		if(renameFileValue!=''){
 			$.ajax({
 				type: "POST",
@@ -332,6 +336,7 @@ $(document).ready(function() {
 		$('.icheckbox_square-blue').removeClass('checked');
 		$('.ids').prop('checked', false);
 		$('.ids').change();
+		FileExt='';
 		$('#exampleModal').modal('toggle');
 	});
 
