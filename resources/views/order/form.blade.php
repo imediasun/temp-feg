@@ -1494,6 +1494,7 @@
                             confirmButtonText: 'Yes',
                             confirm: function () {
                                 $('#can-freehand').hide();
+                                $('.addToProductList').hide();
                                 $('#is_freehand').val(0);
                                 $('#can_select_product_list').val(1);
                                 $('.itemstable .clonedInput:not(:first-child)').remove();
@@ -1518,12 +1519,14 @@
                     else
                     {
                         $('#can-freehand').hide();
+                        $('.addToProductList').hide();
                     }
                 }
             }
             else
             {
                 $('#can-freehand').hide();
+                $('.addToProductList').hide();
             }
             gameShowHide();
             calculateSum();
