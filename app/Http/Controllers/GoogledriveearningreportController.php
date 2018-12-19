@@ -255,30 +255,55 @@ class GoogledriveearningreportController extends Controller {
 		}
 
 	}
-	public function getDownloadDriveFile($filesIds){
-        $filesIds = !is_array($filesIds) ? explode(',',$filesIds):$filesIds;
-        $path= public_path('upload/googledrive/'.Session::get('uid'));
+	public function getDownloadDriveFile($filesIds, $length){
+        $path = public_path('upload/googledrive/' . Session::get('uid'));
         \File::makeDirectory($path, $mode = 0777, true, true);
-        $data =  Googledriveearningreport::select('*')->whereIn('id', $filesIds)->get();
-        $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->first();
-        $client = new \Google_Client();
-        $client->setAccessToken($user->oauth_token);
-        $drive = new \Google_Service_Drive($client);
-        $cf_zip = new \ZipHelpers;
-        foreach ($data as $files){
-            $response = $drive->files->get($files['google_file_id'], array(
-                'alt' => 'media'));
-            $content = $response->getBody()->getContents();
-            $cf_zip->add_data($files['file_name'],$content);
-        }
-        $zip_file = $path."/drivefiles.zip";
-        $_zip = $cf_zip->archive($zip_file);
-        $cf_zip->clear_data();
-        $headers = array(
-            'Content-type: application/octet-stream',
-        );
-        return Response::download($zip_file, rand(9999,99999999)."_driverfiles.zip", $headers)->deleteFileAfterSend(true);
-    }
+        if($length>1) {
+                $filesIds = !is_array($filesIds) ? explode(',', $filesIds) : $filesIds;
+                $data = Googledriveearningreport::select('*')->whereIn('id', $filesIds)->get();
+                $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
+                $client = new \Google_Client();
+                $client->setAccessToken($user->oauth_token);
+                $drive = new \Google_Service_Drive($client);
+                $cf_zip = new \ZipHelpers;
+                foreach ($data as $files) {
+                    $response = $drive->files->get($files['google_file_id'], array(
+                        'alt' => 'media'));
+                    $content = $response->getBody()->getContents();
+                    $cf_zip->add_data($files['file_name'], $content);
+                }
+                $zip_file = $path . "/drivefiles.zip";
+                $_zip = $cf_zip->archive($zip_file);
+                $cf_zip->clear_data();
+                $headers = array(
+                    'Content-type: application/octet-stream',
+                );
+                return Response::download($zip_file, rand(9999, 99999999) . "_driverfiles.zip", $headers)->deleteFileAfterSend(true);
+            }
+            elseif ($length==1){
+                $data = Googledriveearningreport::select('*')->where('id', $filesIds)->first();
+                $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
+                $client = new \Google_Client();
+                $client->setAccessToken($user->oauth_token);
+                $drive = new \Google_Service_Drive($client);
+                $response = $drive->files->get($data['google_file_id'], array(
+                    'alt' => 'media'));
+                $content = $response->getBody()->getContents();
+                if($data['mime_type']=='application/pdf'){
+                    $content_type = 'application/pdf';
+                }
+                elseif ($data['mime_type']=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+                    $content_type = 'application/docx';
+                }
+                $response =  Response::make($content, 200, [
+                    'Content-Type' => $content_type,
+                    'Content-Disposition' => 'attachment; filename="'.$data['file_name'].'"',
+
+                ]);
+                return $response;
+
+            }
+	   }
 
     function postChangeFilename(Request $request){
 
