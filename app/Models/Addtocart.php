@@ -418,7 +418,17 @@ FROM requests
         $requestsArray = [];
 
         foreach($productIdsWithRequestedQuantitiesList as $productId=>$requestedQTY){
-            $alreadyRequestedQuantity = \DB::table('requests')->where('product_id', $productId)->where('qty', '!=', $requestedQTY)->where('status_id', 1)->sum('qty');
+            $product = product::find($productId);
+            $productIds = [];
+            if($product){
+                $products = $product->getProductVariations();
+                foreach ($products as $product){
+                    $productIds[] = $product->id;
+                }
+            }else{
+                $productIds[] = $productId;
+            }
+            $alreadyRequestedQuantity = \DB::table('requests')->whereIn('product_id', $productIds)->where('qty', '!=', $requestedQTY)->where('status_id', 1)->sum('qty');
             $reservedQty = \DB::table('products')->where('id', $productId)->pluck('reserved_qty');
             $column = [
                 'requests.id',
