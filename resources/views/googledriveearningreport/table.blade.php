@@ -347,7 +347,7 @@ $(document).ready(function() {
 		$("body").append(temp);
 		var copyTxtField = document.getElementById('copyTxt');
 		$(copyTxtField).text($(this).attr('link-field'));
-		$(copyTxtField).focus();
+		$(this).focus();
 		$(copyTxtField).select();
 		document.execCommand("copy");
 		$(copyTxtField).remove();
