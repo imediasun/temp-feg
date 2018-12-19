@@ -235,12 +235,13 @@ $(document).ready(function() {
 		if(val>0) {
 			var downloadFileIdsArray = '';
 			$.each($(".ids:checkbox:checked"), function () {
-				downloadFileIdsArray += ',' + $(this).val();
+				downloadFileIdsArray += $(this).val()+','  ;
 			});
+			downloadFileIdsArray = downloadFileIdsArray.replace(/,\s*$/, "");
 			$('.ids').prop('checked', false);
 			$('.ids').change();
 			$('.icheckbox_square-blue').removeClass('checked');
-			window.open('/googledriveearningreport/download-drive-file/' + downloadFileIdsArray, '_self')
+			window.open('/googledriveearningreport/download-drive-file/' + downloadFileIdsArray+'/'+val, '_self')
 		}
 		else{
 			notyMessageError("Please select any file to download");
