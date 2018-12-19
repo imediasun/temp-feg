@@ -3020,7 +3020,7 @@ class SiteHelpers
      * @return array
      */
     public static function getVendorFileImportData($fileWithPath = ''){
-        try {
+       /* try {
             //$inputFileName = 'uploads/vendors-attachments/2018-11-08/1-vendor-21-product-list-11062018074059.csv';
             //$inputFileName = 'uploads/vendors-attachments/2018-11-08/1-vendor-21-product-list-11062018074059.xlsx';
 
@@ -3055,7 +3055,9 @@ class SiteHelpers
                 false,false);
             $rows[] = array_combine($tableHeadings[0], $rowData[0]);
 
-        }
+        }*/
+
+        $rows = \SiteHelpers::getCSVFileData($fileWithPath);
         $dataRows = [];
         foreach ($rows as $row){
             $internalRow = [];
@@ -3080,5 +3082,84 @@ class SiteHelpers
             $dataRows[] = $internalRow;
         }
         return $dataRows;
+    }
+
+    /**
+     * @param $filePath
+     * @return array
+     */
+    public static function getCSVFileData($filePath){
+        $file = fopen($filePath,"r");
+        $fileArray = [];
+        while(! feof($file))
+        {
+            $fileArray[] = fgetcsv($file);
+        }
+
+        fclose($file);
+        $fileArray = self::stipTagsFromArray($fileArray,'="','"');
+        $fileArray = self::makeAssociatedAarry($fileArray);
+        return $fileArray;
+    }
+
+    /**
+     * @param array $data
+     * @param string $tagBefore
+     * @param string $tagAfter
+     * @return array
+     */
+    public static function stipTagsFromArray($data = [],$tagBefore = '="',$tagAfter = '"'){
+        $dataMatched = [];
+        foreach ($data as $item){
+            $itemValue = [];
+            if(is_array($item)) {
+                foreach ($item as $value) {
+                    $itemValue[] = \SiteHelpers::getTextBetweenTags($value, $tagBefore, $tagAfter);
+                }
+            }
+            if(count($itemValue) > 3) {
+                $dataMatched[] = $itemValue;
+            }
+        }
+        return $dataMatched;
+    }
+    /**
+     * @param array $data
+     * @return array
+     */
+    public static function makeAssociatedAarry($data = []){
+
+        $tableHeadings = [];
+        if(!empty($data[0])) {
+            foreach ($data[0] as $heading) {
+                //"=\"61605 Party Supplies\""
+
+                $tableHeadings[0][] = strtolower(str_replace(array('/','\\',' '),'_',$heading));
+            }
+        }
+
+        for ($row = 1; $row <= count($data)-1; $row++){
+            //  Read a row of data into an array
+            $rows[] = array_combine($tableHeadings[0], $data[$row]);
+
+        }
+        return $rows;
+    }
+
+    /**
+     * @param $string
+     * @param $tagBefore
+     * @param $tagAfter
+     * @return mixed
+     */
+    public static function getTextBetweenTags($string, $tagBefore,$tagAfter) {
+        $pattern = "/$tagBefore(.*)$tagAfter/";
+        preg_match($pattern, $string, $matches);
+       if(!empty($matches)){
+           return $matches[1];
+       }else{
+           return $string;
+       }
+
     }
 }
