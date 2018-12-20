@@ -317,8 +317,11 @@ class GoogledriveearningreportController extends Controller {
             $fileName = $request->file;
             $file->setName($fileName);
             $updatedFile = $service->files->update($fileId, $file);
+            $update_details = array(
+                'file_name' => $fileName,
+                 'modified_time'=> date("Y-m-d H:i:s"));
             $res = Googledriveearningreport::where('google_file_id', $fileId)
-                ->update(['file_name' => $fileName]);
+                ->update($update_details);
             if ($res){
                 return response()->json([
                     'name' => $updatedFile['name'],
