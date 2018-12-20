@@ -139,8 +139,8 @@
                   @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('googledriveearningreport',$access,$id ,$setting) !!}
-					 <a href="#" class="btn btn-xs btn-white tips view-file" title="view file"><i class="fa fa-search"></i></a>
-					 <a href="#" class="btn btn-xs btn-white tips rename-file" title="rename file"><i class="fa fa-pencil"></i></a>
+					 <a href="#" class="btn btn-xs btn-white tips view-file" webLink="{{$row->web_view_link}}" title="view file"><i class="fa fa-search"></i></a>
+					 <a href="#" class="btn btn-xs btn-white tips rename-file" fileId="{{$row->google_file_id}}"  title="rename file"><i class="fa fa-pencil"></i></a>
 					 <a href="javascript:void(0)" class="btn btn-xs btn-white tips" link-field="{{$row->web_view_link}}" id="copyBoard"  title="Copy to Clipboard"><i class="fa fa-copy"></i></a>
 
 				 </td>
@@ -253,56 +253,31 @@ $(document).ready(function() {
 
 	$('.view-file').click(function (e) {
 		e.preventDefault();
-		linkValue='';
-		var val = $('input[name="ids[]"]:checked').length;
-		var linkValue = $('.ids:checkbox:checked').attr('weblink');
-		console.log(linkValue);
-		console.log(val);
+		var current = $(this);
+		var linkValue = current.attr('webLink');
 		if (linkValue) {
-			if (val > 1) {
-				val=0;
-				linkValue='';
-				notyMessageError('Please select any single Item');
-				$('.ids').prop('checked', false);
-				$('.ids').change();
+			  window.open(linkValue);
 			}
-			else
-			{
-				$('.icheckbox_square-blue').removeClass('checked');
-				$('.ids').prop('checked', false);
-				$('.ids').change();
-				  window.open(linkValue);
-			}
-		}else{
-			notyMessageError("Please select Item to Preview");
-		}
+
 		});
 	var FilerowValue ='';
 	var FileExt='';
+	var fileId ='';
+
   $('.rename-file').click(function () {
-	  var val = $('input[name="ids[]"]:checked');
-	  if(val.length == 1){
-		  var id = val.val();
-		   FilerowValue = $("#form-"+id);
-		  var fileName = FilerowValue.children('td[data-field="file_name"]');
-		  FileExt = $.trim(fileName.text()).split('.').pop();
-		  $('#refile').val($.trim(fileName.text()).substr(0, $.trim(fileName.text()).indexOf('.')));
+	  var current = $(this);
+	  	  var fileName = $(this).closest('tr').children('td[data-field="file_name"]').text();
+	   fileId  = current.attr('fileid');
+	  FileExt = $.trim(fileName).split('.').pop();
+		  $('#refile').val($.trim(fileName).substr(0, $.trim(fileName).indexOf('.')));
 		  $('#exampleModal').modal('show');
-	  }
-	  else{
-		  $('#exampleModal').modal({'show': false});
-		  $('.icheckbox_square-blue').removeClass('checked');
-		  $('.ids').prop('checked', false);
-		  $('.ids').change();
-		  notyMessageError("Select only one item");
-	  }
+
   });
 	$('#rename-btn').click(function () {
-		var fileId = $('.ids:checkbox:checked').attr('FileId');
 		var renameFileValue = $('#refile').val();
 		renameFileValue= renameFileValue+'.'+FileExt;
-
 		if(renameFileValue!=''){
+			$('.ajaxLoading').show();
 			$.ajax({
 				type: "POST",
 				url:"/googledriveearningreport/change-filename",
@@ -313,10 +288,11 @@ $(document).ready(function() {
 				success: function(data)
 				{
 					if(data.status=='200') {
-						$('.icheckbox_square-blue').removeClass('checked');
-						$('.ids').prop('checked', false);
-						$('.ids').change();
-						FilerowValue.children('td[data-field="file_name"]').text(data.name);
+						$('.btn-search[data-original-title="Reload Data"]').trigger('click');
+//						$('.icheckbox_square-blue').removeClass('checked');
+//						$('.ids').prop('checked', false);
+//						$('.ids').change();
+//						FilerowValue.children('td[data-field="file_name"]').text(data.name);
 						$('#exampleModal').modal('toggle');
 					}
 					else{
@@ -325,7 +301,7 @@ $(document).ready(function() {
 						$('.ids').change();
 						notyMessageError("File Name not changed");
 						$('#exampleModal').modal('toggle');
-
+						$('.ajaxLoading').hide();
 					}
 					}
 			});
