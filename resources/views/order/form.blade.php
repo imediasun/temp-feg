@@ -333,7 +333,7 @@
                         <th class="game" style="display:none" width="200">Game</th>
                         <th width="90">Total ( $ )</th>
                         @if(is_object($row))  @if($fromStore != 1 && $mode == "edit")  <th width="90">Broken Case</th> @endif @endif
-                        <th width="80" align="center"><span id="remove-col">Remove </span></th>
+                        <th width="80" align="center"><span id="remove-col">Actions </span></th>
                     </tr>
 
                     </thead>
@@ -402,7 +402,7 @@
 
                             <p id="hide-button" data-id=""
                                onclick="removeRow(this.id);"
-                               class="remove btn btn-xs btn-danger hide-button">-
+                               class="remove btn btn-xs btn-danger hide-button tips" title="Remove Item">-
                             </p>
                             <p id="hide-button" @if($row['is_freehand'] == 1) freehandorder="1" @else style="display: none;" @endif data-id=""
                                class="addToProductList btn btn-xs btn-danger hide-button tips" title="Add product to the Product List">+
