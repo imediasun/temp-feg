@@ -404,8 +404,8 @@
                                onclick="removeRow(this.id);"
                                class="remove btn btn-xs btn-danger hide-button tips" title="Remove Item">-
                             </p>
-                            <p id="hide-button" @if($row['is_freehand'] == 1) freehandorder="1" @else style="display: none;" @endif data-id=""
-                               class="addToProductList btn btn-xs btn-danger hide-button tips" title="Add product to the Product List">+
+                            <p id="add-items-button" @if($row['is_freehand'] == 1) freehandorder="1" @else style="display: none;" @endif data-id=""
+                               class="addToProductList btn btn-xs btn-danger add-items-button tips" title="Add product to the Product List">+
                             </p>
                             <input type="hidden" name="counter[]">
                         </td>
@@ -1556,8 +1556,10 @@
             $(clone).find('input:text, input[type=number], textarea').each(function(){
                 $(this).val("");
             });
-            $(clone).find('.hide-button').prop('id', 'hide-button' + productRows);
-
+            $(clone).find('.hide-button').attr({'id':'hide-button' + productRows,'title':"Remove Item"});
+            $(clone).find('.hide-button').tooltip();
+            $(clone).find('.add-items-button').attr({'id': 'add-items-button' + productRows,'title':'Add product to the Product List'});
+            $(clone).find('.add-items-button').tooltip();
             $(clone).find('input:checkbox').prop('checked', false);
             $(clone).find('input[name="item_received[]"]').val(0);
             $(clone).find('input[name="order_content_id[]"]').val(0);
