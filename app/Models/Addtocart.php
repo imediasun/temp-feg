@@ -408,7 +408,7 @@ FROM requests
 
             $requestss = $requestss->whereIn("requests.status_id", [1,4]);
 
-            $requestss = $requestss->where("requests.location_id", \Session::get('selected_location'))
+            $requestss = $requestss//->where("requests.location_id", \Session::get('selected_location'))
                 ->where('products.allow_negative_reserve_qty', '=', 0)
                 ->where('products.is_reserved', '=', 1);
 
