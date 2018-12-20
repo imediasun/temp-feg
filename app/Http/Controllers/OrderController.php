@@ -2305,20 +2305,39 @@ class OrderController extends Controller
         if (!empty($vendorId)) {
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
         }
+
         $whereNotInProductIdsCondition = '';
         $restrictedProductTypeIdsArray = [];
-if($mode !='clone') {
-    $restrictedProductsAndTypesIdsArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true, true, false);
-    $restrictedProductTypeIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_type_ids'];
-    $restrictedProductIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_ids'];
 
-    $restrictedProductIds = implode(',', $restrictedProductIdsArray);
+        if($mode !='clone') {
+            $restrictedProductsAndTypesIdsArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds($locationId, true, true);
+            $restrictedProductTypeIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_type_ids'];
+            $restrictedProductIdsArray = $restrictedProductsAndTypesIdsArray['excluded_product_ids'];
 
-    if (!empty($restrictedProductIds)) {
-        $whereNotInProductIdsCondition = " AND products.id NOT IN ($restrictedProductIds) ";
-    }
+            if(
+                in_array($orderTypeId, [
+                    Order::ORDER_TYPE_REDEMPTION,
+                    Order::ORDER_TYPE_INSTANT_WIN_PRIZE
+                ])
+            ){
+                $productIds = product::whereIn('id', $restrictedProductIdsArray)->whereIn('prod_type_id', [Order::ORDER_TYPE_REDEMPTION, Order::ORDER_TYPE_INSTANT_WIN_PRIZE])->lists('id')->toArray();
+                $restrictedProductIdsArray = array_diff($restrictedProductIdsArray, $productIds);
+            }
 
-}
+            $restrictedProductIds = implode(',', $restrictedProductIdsArray);
+
+            if (!empty($restrictedProductIds)) {
+                $whereNotInProductIdsCondition = " AND products.id NOT IN ($restrictedProductIds) ";
+            }
+
+//            if(in_array($orderTypeId, $restrictedOrderTypes)){
+//                if(!in_array($orderTypeId, $restrictedProductTypeIdsArray)){
+//                    $restrictedProductTypeIdsArray = array_diff($restrictedProductTypeIdsArray, [$orderTypeId]);
+//                }
+//            }
+            $restrictedProductTypeIdsArray = array_diff($restrictedProductTypeIdsArray, $restrictedOrderTypes);
+        }
+//dd($restrictedProductTypeIdsArray);
         $whereOrderTypeCondition = " AND products.prod_type_id in(".$orderTypeId.")";
         // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
         if (
@@ -2361,6 +2380,7 @@ if($mode !='clone') {
                                 GROUP BY vendor_description
                                 ORDER BY pos, vendor_description
                                  Limit 0,10";
+//        dd($sql);
         $queries = \DB::select($sql);
         if (count($queries) != 0) {
             foreach ($queries as $query) {
