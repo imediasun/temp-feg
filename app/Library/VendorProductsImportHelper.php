@@ -96,9 +96,9 @@ class VendorProductsImportHelper
         $message .= '<p>Attached you will find the most up-to-date pricing and product information we have for your products. Please download and review this file, making any necessary product updates. Please do not make any changes to the file\'s name. Any new products you have may be added to this file. If you no longer offer a product contained in this file, please delete the row.</p>';
         $message .= '<p>Do not make any changes to the ID field (Column A), except as noted below:</p>';
         $message .= '<ul>';
-        $message .= '<ol>Newly added products do not need an ID# added to the file.</ol>';
-        $message .= '<ol>If a product needs to be removed, you may remove the entire row, including the ID.</ol>';
-        $message .= '<ol>Make no changes to the ID number.</ol></ul>';
+        $message .= '<ol>1. Newly added products do not need an ID# added to the file.</ol>';
+        $message .= '<ol>2. If a product needs to be removed, you may remove the entire row, including the ID.</ol>';
+        $message .= '<ol>3. Make no changes to the ID number.</ol></ul>';
         $message .= '<p>SKUs and Barcodes/UPC codes need to have a =" added to the front of them and a " added to the end.</p>';
         $message .= '<p>EXAMPLE 1: ="barcode12345"</p>';
         $message .= '<p>When you have finished making updates, please save the file and attach it to your REPLY ALL to this email.</p>';
