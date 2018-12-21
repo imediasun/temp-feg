@@ -209,4 +209,51 @@ class googledriveearningreport extends Sximo  {
         return $results = array('rows' => $result, 'total' => $total);
     }
 
+    public static function getSearchFilterWithDate($searchQuery){
+        $dateStart = '';
+        $dateEnd = '';
+
+        if(!empty($searchQuery['date_start'])){
+            $dateStart = $searchQuery['date_start']['value'];
+        }
+        if(!empty($searchQuery['date_end'])){
+            $dateEnd = $searchQuery['date_end']['value'];
+        }
+        $mergeFilters = [];
+
+
+        if (!empty($dateStart) && empty($dateEnd)){
+            $mergeFilters = [
+                "modified_time" => [
+                    "fieldName" => "modified_time",
+                    "operator" => "bigger_equal",
+                    "value" => $dateStart
+                ]
+            ];
+        }
+
+        if (!empty($dateEnd) && empty($dateStart)){
+            $mergeFilters = [
+                "modified_time" => [
+                    "fieldName" => "modified_time",
+                    "operator" => "smaller_equal",
+                    "value" => $dateEnd,
+                ]
+            ];
+
+        }
+
+        if (!empty($dateStart) && !empty($dateEnd)){
+            $mergeFilters = [
+                "modified_time" => [
+                    "fieldName" => "modified_time",
+                    "operator" => "between",
+                    "value" => $dateStart,
+                    "value2" => $dateEnd,
+                ]
+            ];
+        }
+        return $mergeFilters;
+    }
+
 }
