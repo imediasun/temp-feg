@@ -2330,14 +2330,10 @@ class OrderController extends Controller
                 $whereNotInProductIdsCondition = " AND products.id NOT IN ($restrictedProductIds) ";
             }
 
-//            if(in_array($orderTypeId, $restrictedOrderTypes)){
-//                if(!in_array($orderTypeId, $restrictedProductTypeIdsArray)){
-//                    $restrictedProductTypeIdsArray = array_diff($restrictedProductTypeIdsArray, [$orderTypeId]);
-//                }
-//            }
-            $restrictedProductTypeIdsArray = array_diff($restrictedProductTypeIdsArray, $restrictedOrderTypes);
+            $notRestrictedProductTypesFromInstOrRedemption = array_diff($restrictedOrderTypes, $restrictedProductTypeIdsArray);
+            $restrictedProductTypeIdsArray = array_diff($restrictedProductTypeIdsArray, $notRestrictedProductTypesFromInstOrRedemption);
         }
-//dd($restrictedProductTypeIdsArray);
+
         $whereOrderTypeCondition = " AND products.prod_type_id in(".$orderTypeId.")";
         // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
         if (
