@@ -389,7 +389,9 @@ FROM requests
             }else{
                 $productIds[] = $productId;
             }
-            $alreadyRequestedQuantity = \DB::table('requests')->whereIn('product_id', $productIds)->where('qty', '!=', $requestedQTY)->where('status_id', 1)->sum('qty');
+            $alreadyRequestedQuantity = \DB::table('requests')->whereIn('product_id', $productIds)
+                //->where('qty', '!=', $requestedQTY)
+                ->where('status_id', 1)->sum('qty');
             $reservedQty = \DB::table('products')->where('id', $productId)->pluck('reserved_qty');
             $column = [
                 'requests.id',
