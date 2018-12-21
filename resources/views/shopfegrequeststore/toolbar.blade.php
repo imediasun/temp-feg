@@ -71,16 +71,14 @@
     $(document).ready(function () {
 
 
+        App.autoCallbacks.registerCallback('reloaddata', function(){
+            var excluded = '{{implode(',', $typeRestricted['excluded'])}}';
+            $("#order_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=order_type:id:order_type:can_request:1') }}",
+                {excludeItems: excluded, isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'],selected_value: '{{ $order_type }}', initial_text: 'Select Order Type'});
 
-        /*    $("#locations").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=location:id:id|location_name') }}",
-         {selected_value: '{{ \Session::get('selected_location') }}', initial_text: 'Select Location'});*/
+        });
 
-        $("#order_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=order_type:id:order_type:can_request:1') }}",
-                {isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'],selected_value: '{{ $order_type }}', initial_text: 'Select Order Type'});
-
-
-
-            $("#order_type").change(function(){
+        $("#order_type").change(function(){
                 var order_type = $("#order_type").val();
                     $("#product_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id:" +order_type,
                             {
