@@ -68,5 +68,6 @@ Route::controller('productlog', 'ProductlogController');
 Route::controller('gallery', 'GalleryController');
 Route::controller('qatestordersdelete', 'QatestordersdeleteController');
 Route::controller('locationgroups', 'LocationgroupsController');
+Route::controller('googledriveearningreport', 'GoogledriveearningreportController');
 Route::controller('new-location-setup', 'NewlocationsetupController');
 ?>
