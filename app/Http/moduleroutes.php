@@ -72,4 +72,5 @@ Route::controller('reviewvendorimportlist', 'ReviewvendorimportlistController');
 Route::controller('envconfiguration', 'EnvconfigurationController');
 Route::controller('googledriveearningreport', 'GoogledriveearningreportController');
 Route::controller('productsubtype', 'ProductsubtypeController');
+Route::controller('new-location-setup', 'NewlocationsetupController');
 ?>

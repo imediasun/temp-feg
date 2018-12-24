@@ -3172,4 +3172,26 @@ class SiteHelpers
        }
 
     }
+
+    /**
+     * @param $string
+     * @param string $password
+     * @description encryptStringOPENSSL($string,$password="") is used to encrypt a string you can use decryptStringOPENSSL($string,$password="") to decrypt the string again. $password is optional
+     * @return string
+     */
+    public static function encryptStringOPENSSL($string,$password="FEGPASSWORD"){
+        $string = base64_encode($string);
+        return openssl_encrypt($string,"AES-128-ECB",$password);
+    }
+
+    /**
+     * @param $string
+     * @param string $password
+     * @description decryptStringOPENSSL($string,$password="") is used to decrypt a string that has been encrypted by encryptStringOPENSSL($string,$password=""). $password is optional
+     * @return string
+     */
+    public static function decryptStringOPENSSL($string,$password="FEGPASSWORD"){
+        $string = openssl_decrypt($string,"AES-128-ECB",$password);
+        return base64_decode($string);;
+    }
 }
