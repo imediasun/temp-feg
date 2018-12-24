@@ -298,7 +298,8 @@ class ShopfegrequeststoreController extends Controller
         $this->data['isTypeRestricted'] = $this->model->isTypeRestricted();
         $this->data['displayTypesOnly'] = $this->model->getAllowedTypes();
         $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
-
+        $this->data['typeRestricted']['isTypeRestrictedExclude'] =false;
+        $this->data['typeRestricted']['excluded']  = [];
         if(count($productTypeExcludedbyLocation) > 0){
             $this->data['typeRestricted']['isTypeRestrictedExclude'] =true;
             $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
