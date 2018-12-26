@@ -200,8 +200,10 @@
                     $('input[name="rdp_computer_password"]').prop('disabled', false);
                 }
             });
-            $("#location_id").jCombo("{{ URL::to('location/comboselect?filter=location:id:id|location_name ') }}",
+            $("#location_id").jCombo(
+                    "{{ URL::to('location/comboselect?filter=location:id:id|location_name ') }}",
                     {
+                        excludeItems: {{ json_encode($excludedUserLocations) }},
                         selected_value: "{{ $row["location_id"]}}",
                         initial_text: '-------- Select Location --------'
                     });
