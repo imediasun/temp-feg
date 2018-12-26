@@ -180,7 +180,7 @@ class googledriveearningreport extends Sximo  {
         if(!empty($active)){//added for location
             $select .= " AND location.active='$active'";
         }
-        $select.='AND '.$table.'.loc_id IN ('.\SiteHelpers::getCurrentUserLocationsFromSession().')';
+        $select.=' AND '.$table.'.loc_id IN ('.\SiteHelpers::getCurrentUserLocationsFromSession().')';
         \Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $total= count($counter_select);
