@@ -72,9 +72,9 @@ class ReadComment extends Command
         
         /* connect to gmail */
         $hostname = '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX';
-        $emailConfigurations = TicketMailer::getTicketEmailByENV();
         $username = "tickets@tickets.fegllc.com";
         $password = "MdkHly2Ub5";
+        $emailConfigurations = TicketMailer::getTicketEmailByENV();
         if(!empty($emailConfigurations)) {
             $username = $emailConfigurations['username'];
             $password = $emailConfigurations['password'];
