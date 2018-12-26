@@ -72,8 +72,13 @@ class ReadComment extends Command
         
         /* connect to gmail */
         $hostname = '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX';
+        $emailConfigurations = TicketMailer::getTicketEmailByENV();
         $username = "tickets@tickets.fegllc.com";
         $password = "MdkHly2Ub5";
+        if(!empty($emailConfigurations)) {
+            $username = $emailConfigurations['username'];
+            $password = $emailConfigurations['password'];
+        }
 
         $L->log("Connecting...");
         /* try to connect */
@@ -481,5 +486,4 @@ class ReadComment extends Command
         return $ticketAttachments;
     }
 
-    
 }

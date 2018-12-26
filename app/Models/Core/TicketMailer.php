@@ -55,7 +55,8 @@ class TicketMailer
         $users['bcc'][] = "element5@fegllc.com"; 
         $to         = implode(',', $users['to']);
         $bcc         = implode(',', $users['bcc']);
-        $reply_to   ='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
+        $replyToEmailDomain = self::getReplyToEmailDomain();
+        $reply_to   ='ticket-reply-'.$ticketId.$replyToEmailDomain;
         /* FEG-2003 Comment out Priority field from Service Requests */
        /* $subject    = "$locationName, $title, [".(strtolower($priority)=="urgent" ? strtoupper($priority):$priority)."][Service Request #{$ticketId}] $createdOn" ;*/
         $subject    = "$locationName,$gameRelatedSubject $title, [Service Request #{$ticketId}] $createdOn" ;
@@ -129,7 +130,8 @@ class TicketMailer
         $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $departmentId . "");
         $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
         $subject = "<Location Name>, <Title>, [Service Request #{$ticketId}] <Date Created>" ;
-        $reply_to='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
+        $replyToEmailDomain = self::getReplyToEmailDomain();
+        $reply_to='ticket-reply-'.$ticketId.$replyToEmailDomain;
         //$headers = 'MIME-Version: 1.0' . "\r\n";
         //$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
         //$headers .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
@@ -158,5 +160,48 @@ class TicketMailer
             }
         }
     }
-           
+
+    /**
+     * @return string
+     */
+    public static function getReplyToEmailDomain(){
+        $replyToEmailDomain = 'tickets.fegllc.com';
+        //APP_ENV
+        $appEnvironment = env('APP_ENV','development');
+        if ($appEnvironment == 'demo'){
+            $replyToEmailDomain = '@demo.tickets.fegllc.com';
+        }elseif($appEnvironment == 'development'){
+            $replyToEmailDomain = '@dev.tickets.fegllc.com';
+        }elseif($appEnvironment=='production'){
+            $replyToEmailDomain = '@tickets.fegllc.com';
+        }else{
+            $replyToEmailDomain = '@dev.tickets.fegllc.com';
+        }
+        return $replyToEmailDomain;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getTicketEmailByENV(){
+
+        $username =  env('DEV_SERVICE_REQUEST_EMAIL','tickets@dev.tickets.fegllc.com');
+        $password = env('DEOMO_SERVICE_REQUEST_PASSWORD','4rgXB56JC');
+
+        $appEnvironment = env('APP_ENV','development');
+        if ($appEnvironment == 'demo'){
+            $username =  env('DEOMO_SERVICE_REQUEST_EMAIL','tickets@demo.tickets.fegllc.com');
+            $password = env('DEOMO_SERVICE_REQUEST_PASSWORD','5rgXB56JC');
+        }elseif($appEnvironment == 'development'){
+            $username =  env('DEV_SERVICE_REQUEST_EMAIL','tickets@dev.tickets.fegllc.com');
+            $password = env('DEOMO_SERVICE_REQUEST_PASSWORD','4rgXB56JC');
+        }elseif($appEnvironment=='production'){
+            $username =  env('DEOMO_SERVICE_REQUEST_EMAIL','tickets@tickets.fegllc.com');
+            $password = env('DEOMO_SERVICE_REQUEST_PASSWORD','MdkHly2Ub5');
+        }else{
+            $username =  env('DEV_SERVICE_REQUEST_EMAIL','tickets@dev.tickets.fegllc.com');
+            $password = env('DEOMO_SERVICE_REQUEST_PASSWORD','4rgXB56JC');
+        }
+        return ['username'=>$username,'password'=>$password];
+    }
 }
