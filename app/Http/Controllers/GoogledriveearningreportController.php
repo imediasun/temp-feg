@@ -6,11 +6,14 @@ use App\Models\Core\Users;
 use App\Models\excludedreaders;
 use App\Models\Googledriveearningreport;
 use App\Models\GoogleDriveAuthToken;
+use App\Models\location;
+use App\Models\newlocationsetup;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect ;
 use Illuminate\Support\Facades\Response;
+
 
 class GoogledriveearningreportController extends Controller {
 
@@ -346,4 +349,41 @@ class GoogledriveearningreportController extends Controller {
         }
     }
 
+    public function getCreateLocationDirectoryOnGoogleDrive(){
+
+        if (env('DONT_CREATE_GOOGLE_DRIVE_LOCATION_SETUPS_FOLDERS', false)) {
+            return;
+        }
+        $parent=  env('LOCATION_DEBIT_CARD_FOLDER_ID');
+        $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->first();
+        $client = new \Google_Client();
+        $client->setAccessToken($user->oauth_token);
+        $service = new \Google_Service_Drive($client);
+        $data = \DB::table('new_location_setups')
+                ->join('location','new_location_setups.location_id', '=', 'location.id')
+                    ->select('location.*')
+                    ->where('new_location_setups.is_location_synced', '=', 0)->get();
+        foreach ($data as $item){
+            $location_name = $item->id.'-'.$item->location_name;
+            $foldersArray = ['13Weeks'.'-'.$item->id , 'Monthly'.'-'.$item->id ,'Weekly'.'-'.$item->id ,
+                'Daily'.'-'.$item->id];
+            $parent = $this->createFoldersWithSpecifiedDuration($service,$parent, $location_name);
+            foreach ($foldersArray as $location){
+                $this->createFoldersWithSpecifiedDuration($service,$parent,$location);
+            }
+            \DB::table('new_location_setups')
+                ->where('new_location_setups.location_id', $item->id)
+                ->update(['new_location_setups.is_location_synced'=>1]);
+        }
+    }
+    function createFoldersWithSpecifiedDuration($service,$parent,$location){
+        $fileMetadata = new \Google_Service_Drive_DriveFile(array(
+                'name' => $location,
+                'parents' => array($parent),
+                'mimeType' => 'application/vnd.google-apps.folder')
+        );
+        $file = $service->files->create($fileMetadata, array(
+            'fields' => 'id'));
+           return $file->id;
+    }
 }
