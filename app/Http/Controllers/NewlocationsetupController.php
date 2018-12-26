@@ -142,6 +142,7 @@ class NewlocationsetupController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
+        $this->data['excludedUserLocations']		= $this->getUsersExcludedLocations();
 
         return view('new-location-setup.form', $this->data);
     }
