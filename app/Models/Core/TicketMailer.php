@@ -194,13 +194,13 @@ class TicketMailer
             $password = env('DEOMO_SERVICE_REQUEST_PASSWORD','5rgXB56JC');
         }elseif($appEnvironment == 'development'){
             $username =  env('DEV_SERVICE_REQUEST_EMAIL','tickets@dev.tickets.fegllc.com');
-            $password = env('DEOMO_SERVICE_REQUEST_PASSWORD','4rgXB56JC');
+            $password = env('DEV_SERVICE_REQUEST_PASSWORD','4rgXB56JC');
         }elseif($appEnvironment=='production'){
-            $username =  env('DEOMO_SERVICE_REQUEST_EMAIL','tickets@tickets.fegllc.com');
-            $password = env('DEOMO_SERVICE_REQUEST_PASSWORD','MdkHly2Ub5');
+            $username =  env('LIVE_SERVICE_REQUEST_EMAIL','tickets@tickets.fegllc.com');
+            $password = env('LIVE_SERVICE_REQUEST_PASSWORD','MdkHly2Ub5');
         }else{
             $username =  env('DEV_SERVICE_REQUEST_EMAIL','tickets@dev.tickets.fegllc.com');
-            $password = env('DEOMO_SERVICE_REQUEST_PASSWORD','4rgXB56JC');
+            $password = env('DEV_SERVICE_REQUEST_PASSWORD','4rgXB56JC');
         }
         return ['username'=>$username,'password'=>$password];
     }
