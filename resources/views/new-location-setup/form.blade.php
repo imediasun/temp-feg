@@ -27,6 +27,15 @@
 
                         </div>
                     </div>
+                    <div class="form-group clearfix">
+                        <label for="vendor_id" class="control-label col-md-4 text-left">
+                            Vendor </label>
+
+                        <div class="col-md-6">
+                            <select name='vendor_id' data-seprate='true' id='vendor_id' class='select2' required></select>
+                        </div>
+                        <div class="col-md-2"></div>
+                    </div>
                     <div class="form-group  ">
                         <label for="Debit Type" class=" control-label col-md-4 text-left">
                             Debit Type
@@ -38,6 +47,32 @@
                                     -
                                 </div>
                             </b>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Should server be locked?" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Location Status', (isset($fields['location_status']['language'])? $fields['location_status']['language'] : array())) !!}
+                        </label>
+                        <div class="col-md-6">
+                            <input type="checkbox" name="location_status" data-size="mini" data-name="location_status"
+                                   checked data-handle-width="40px" data-on-text="YES" data-off-text="NO"
+                                   id="toggle_trigger_3" onswitchchange="trigger()">
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Should server be locked?" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Use Tv', (isset($fields['use_tv']['language'])? $fields['location_status']['language'] : array())) !!}
+                        </label>
+                        <div class="col-md-6">
+                            <input type="checkbox" name="use_tv" data-size="mini" data-name="use_tv"
+                                   checked data-handle-width="40px" data-on-text="YES" data-off-text="NO"
+                                   id="toggle_trigger_4" onswitchchange="trigger()">
                         </div>
                         <div class="col-md-2">
 
@@ -147,7 +182,6 @@
 
                         </div>
                     </div>
-
                 </fieldset>
             </div>
 
@@ -177,6 +211,9 @@
         $(document).ready(function () {
             $("[id='toggle_trigger_1']").bootstrapSwitch({onColor: 'primary', offColor: 'default'});
             $("[id='toggle_trigger_2']").bootstrapSwitch({onColor: 'primary', offColor: 'default'});
+            $("[id='toggle_trigger_3']").bootstrapSwitch({onColor: 'primary', offColor: 'default'});
+            $("[id='toggle_trigger_4']").bootstrapSwitch({onColor: 'primary', offColor: 'default'});
+
 
             $("[id='toggle_trigger_1']").on('switchChange.bootstrapSwitch', function (event, state) {
 
@@ -200,6 +237,22 @@
                     $('input[name="rdp_computer_password"]').prop('disabled', false);
                 }
             });
+
+
+            $("[id='toggle_trigger_3']").on('switchChange.bootstrapSwitch', function (event, state) {
+                if (state == false) {
+                    $('input[name="location_status"]').prop('disabled', true);
+                } else {
+                    $('input[name="location_status"]').prop('disabled', false);
+                }
+            });
+            $("[id='toggle_trigger_4']").on('switchChange.bootstrapSwitch', function (event, state) {
+                if (state == false) {
+                    $('input[name="use_tv"]').prop('disabled', true);
+                } else {
+                    $('input[name="use_tv"]').prop('disabled', false);
+                }
+            });
             $("#location_id").jCombo(
                     "{{ URL::to('location/comboselect?filter=location:id:id|location_name ') }}",
                     {
@@ -207,6 +260,11 @@
                         selected_value: "{{ $row["location_id"]}}",
                         initial_text: '-------- Select Location --------'
                     });
+            $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
+                    {selected_value: '{{ $row["vendor_id"] }}' ,
+                        <?php $row["vendor_id"] == '' ? '': print_r("onLoad:addInactiveItem('#vendor_id[data-seprate=true]', ".$row['vendor_id']." , 'Vendor', 'status' , 'vendor_name')") ?>
+                    });
+
             $(document).on('change', "#location_id", function () {
                 var location_id = $(this).val();
                 $.ajax({
