@@ -192,7 +192,6 @@ class NewlocationsetupController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
