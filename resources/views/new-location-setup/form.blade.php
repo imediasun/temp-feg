@@ -49,7 +49,7 @@
                             {!! SiteHelpers::activeLang('Use Tv', (isset($fields['use_tv']['language'])? $fields['use_tv']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <input type="checkbox" name="use_tv" data-size="mini" data-name="use_tv"
+                            <input type="checkbox" @if(in_array(strtolower(['use_tv']),  ['yes',1])) checked="" @endif name="use_tv" data-size="mini" data-name="use_tv"
                                    checked data-handle-width="40px" data-on-text="YES" data-off-text="NO"
                                    id="toggle_trigger_4" onswitchchange="trigger()">
                         </div>
