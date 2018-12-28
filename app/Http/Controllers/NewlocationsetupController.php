@@ -197,6 +197,24 @@ class NewlocationsetupController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('new_location_setups');
 
+            if ($data["is_server_locked"] == "on") {
+                $data["is_server_locked"] = 1;
+            } else {
+                $data["is_server_locked"] = 0;
+            }
+
+            if ($data["is_remote_desktop"] == "on") {
+                $data["is_remote_desktop"] = 1;
+            } else {
+                $data["is_remote_desktop"] = 0;
+            }
+
+            if ($data["use_tv"] == "on") {
+                $data["use_tv"] = 1;
+            } else {
+                $data["use_tv"] = 0;
+            }
+
             $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(
