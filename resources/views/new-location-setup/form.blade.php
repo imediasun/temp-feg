@@ -251,8 +251,8 @@
                     $('input[name="teamviewer_id"]').prop('disabled', true);
                     $('input[name="teamviewer_passowrd"]').prop('disabled', true);
                 } else {
-                    $('input[name="teamviewer_id"]').prop('disabled', true);
-                    $('input[name="teamviewer_passowrd"]').prop('disabled', true);
+                    $('input[name="teamviewer_id"]').prop('disabled', false);
+                    $('input[name="teamviewer_passowrd"]').prop('disabled', false);
 
                 }
             });
