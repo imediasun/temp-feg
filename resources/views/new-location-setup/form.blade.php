@@ -248,9 +248,12 @@
             });
             $("[id='toggle_trigger_4']").on('switchChange.bootstrapSwitch', function (event, state) {
                 if (state == false) {
-                    $('input[name="use_tv"]').prop('disabled', true);
+                    $('input[name="teamviewer_id"]').prop('disabled', true);
+                    $('input[name="teamviewer_passowrd"]').prop('disabled', true);
                 } else {
-                    $('input[name="use_tv"]').prop('disabled', false);
+                    $('input[name="teamviewer_id"]').prop('disabled', true);
+                    $('input[name="teamviewer_passowrd"]').prop('disabled', true);
+
                 }
             });
             $("#location_id").jCombo(
