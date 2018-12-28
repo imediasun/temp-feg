@@ -27,15 +27,6 @@
 
                         </div>
                     </div>
-                    <div class="form-group clearfix">
-                        <label for="vendor_id" class="control-label col-md-4 text-left">
-                            Vendor </label>
-
-                        <div class="col-md-6">
-                            <select name='vendor_id' data-seprate='true' id='vendor_id' class='select2' required></select>
-                        </div>
-                        <div class="col-md-2"></div>
-                    </div>
                     <div class="form-group  ">
                         <label for="Debit Type" class=" control-label col-md-4 text-left">
                             Debit Type
@@ -52,22 +43,10 @@
 
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="Should server be locked?" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Location Status', (isset($fields['location_status']['language'])? $fields['location_status']['language'] : array())) !!}
-                        </label>
-                        <div class="col-md-6">
-                            <input type="checkbox" name="location_status" data-size="mini" data-name="location_status"
-                                   checked data-handle-width="40px" data-on-text="YES" data-off-text="NO"
-                                   id="toggle_trigger_3" onswitchchange="trigger()">
-                        </div>
-                        <div class="col-md-2">
 
-                        </div>
-                    </div>
                     <div class="form-group">
                         <label for="Should server be locked?" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Use Tv', (isset($fields['use_tv']['language'])? $fields['location_status']['language'] : array())) !!}
+                            {!! SiteHelpers::activeLang('Use Tv', (isset($fields['use_tv']['language'])? $fields['use_tv']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
                             <input type="checkbox" name="use_tv" data-size="mini" data-name="use_tv"
@@ -83,7 +62,7 @@
                             {!! SiteHelpers::activeLang('Teamviewer ID', (isset($fields['teamviewer_id']['language'])? $fields['teamviewer_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('teamviewer_id', $row['teamviewer_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                            {!! Form::text('teamviewer_id', $row['teamviewer_id'],array('class'=>'form-control', 'placeholder'=>'','required' =>''   )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -94,7 +73,7 @@
                             {!! SiteHelpers::activeLang('Teamviewer Passowrd', (isset($fields['teamviewer_passowrd']['language'])? $fields['teamviewer_passowrd']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('teamviewer_passowrd', $row['teamviewer_passowrd'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                            {!! Form::text('teamviewer_passowrd', $row['teamviewer_passowrd'],array('class'=>'form-control', 'placeholder'=>'','required' =>''   )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -118,7 +97,7 @@
                             {!! SiteHelpers::activeLang('Windows User', (isset($fields['windows_user']['language'])? $fields['windows_user']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('windows_user', $row['windows_user'],array('class'=>'form-control', 'placeholder'=>'',    )) !!}
+                            {!! Form::text('windows_user', $row['windows_user'],array('class'=>'form-control', 'placeholder'=>'','required' =>''    )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -129,7 +108,7 @@
                             {!! SiteHelpers::activeLang('Windows User Password', (isset($fields['windows_user_password']['language'])? $fields['windows_user_password']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('windows_user_password', $row['windows_user_password'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                            {!! Form::text('windows_user_password', $row['windows_user_password'],array('class'=>'form-control', 'placeholder'=>'','required' =>''   )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -154,7 +133,7 @@
                             {!! SiteHelpers::activeLang('RDP Computer Name', (isset($fields['rdp_computer_name']['language'])? $fields['rdp_computer_name']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('rdp_computer_name', $row['rdp_computer_name'],array('class'=>'form-control', 'placeholder'=>'', 'disabled' => 'disabled'   )) !!}
+                            {!! Form::text('rdp_computer_name', $row['rdp_computer_name'],array('class'=>'form-control', 'placeholder'=>'', 'disabled' => 'disabled','required' =>''   )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -165,7 +144,7 @@
                             {!! SiteHelpers::activeLang('RDP Computer User', (isset($fields['rdp_computer_user']['language'])? $fields['rdp_computer_user']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('rdp_computer_user', $row['rdp_computer_user'],array('class'=>'form-control', 'placeholder'=>'', 'disabled' => 'disabled'  )) !!}
+                            {!! Form::text('rdp_computer_user', $row['rdp_computer_user'],array('class'=>'form-control', 'placeholder'=>'', 'disabled' => 'disabled','required' =>''  )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -176,7 +155,7 @@
                             {!! SiteHelpers::activeLang('RDP Computer Passowrd', (isset($fields['rdp_computer_password']['language'])? $fields['rdp_computer_password']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('rdp_computer_password', $row['rdp_computer_password'],array('class'=>'form-control', 'placeholder'=>'', 'disabled' => 'disabled'  )) !!}
+                            {!! Form::text('rdp_computer_password', $row['rdp_computer_password'],array('class'=>'form-control', 'placeholder'=>'', 'disabled' => 'disabled','required' =>''  )) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -216,26 +195,47 @@
 
 
             $("[id='toggle_trigger_1']").on('switchChange.bootstrapSwitch', function (event, state) {
-
+                var windows_user = $('input[name="windows_user"]');
+                var windows_user_password = $('input[name="windows_user_password"]');
                 if (state == false) {
-                    $('input[name="windows_user"]').prop('disabled', true);
-                    $('input[name="windows_user_password"]').prop('disabled', true);
+                    windows_user.prop('disabled', true);
+                    windows_user_password.prop('disabled', true);
+
+                    windows_user.removeAttr('required');
+                    windows_user_password.removeAttr('required');
                 } else {
-                    $('input[name="windows_user"]').prop('disabled', false);
-                    $('input[name="windows_user_password"]').prop('disabled', false);
+                    windows_user.prop('disabled', false);
+                    windows_user_password.prop('disabled', false);
+
+                    windows_user.attr('required','required');
+                    windows_user_password.attr('required','required');
                 }
+                reInitParsley();
             });
             $("[id='toggle_trigger_2']").on('switchChange.bootstrapSwitch', function (event, state) {
-
+               var rdp_computer_name =  $('input[name="rdp_computer_name"]');
+               var rdp_computer_user =  $('input[name="rdp_computer_user"]');
+               var rdp_computer_password = $('input[name="rdp_computer_password"]')
                 if (state == false) {
-                    $('input[name="rdp_computer_name"]').prop('disabled', true);
-                    $('input[name="rdp_computer_user"]').prop('disabled', true);
-                    $('input[name="rdp_computer_password"]').prop('disabled', true);
+                    rdp_computer_name.prop('disabled', true);
+                    rdp_computer_user.prop('disabled', true);
+                    rdp_computer_password.prop('disabled', true);
+
+                    rdp_computer_name.removeAttr('required');
+                    rdp_computer_user.removeAttr('required');
+                    rdp_computer_password.removeAttr('required');
                 } else {
-                    $('input[name="rdp_computer_name"]').prop('disabled', false);
-                    $('input[name="rdp_computer_user"]').prop('disabled', false);
-                    $('input[name="rdp_computer_password"]').prop('disabled', false);
+                    rdp_computer_name.prop('disabled', false);
+                    rdp_computer_user.prop('disabled', false);
+                    rdp_computer_password.prop('disabled', false);
+
+
+
+                    rdp_computer_name.attr('required','required');
+                    rdp_computer_user.attr('required','required');
+                    rdp_computer_password.attr('required','required');
                 }
+                reInitParsley();
             });
 
 
@@ -245,16 +245,25 @@
                 } else {
                     $('input[name="location_status"]').prop('disabled', false);
                 }
+                reInitParsley();
             });
             $("[id='toggle_trigger_4']").on('switchChange.bootstrapSwitch', function (event, state) {
+                var teamviewer_id = $('input[name="teamviewer_id"]');
+                var teamviewer_passowrd = $('input[name="teamviewer_passowrd"]');
                 if (state == false) {
-                    $('input[name="teamviewer_id"]').prop('disabled', true);
-                    $('input[name="teamviewer_passowrd"]').prop('disabled', true);
-                } else {
-                    $('input[name="teamviewer_id"]').prop('disabled', false);
-                    $('input[name="teamviewer_passowrd"]').prop('disabled', false);
+                    teamviewer_id.prop('disabled', true);
+                    teamviewer_passowrd.prop('disabled', true);
 
+                    teamviewer_id.removeAttr('required');
+                    teamviewer_passowrd.removeAttr('required');
+                } else {
+                    teamviewer_id.prop('disabled', false);
+                    teamviewer_passowrd.prop('disabled', false);
+
+                    teamviewer_id.attr('required','required');
+                    teamviewer_passowrd.attr('required','required');
                 }
+                reInitParsley();
             });
             $("#location_id").jCombo(
                     "{{ URL::to('location/comboselect?filter=location:id:id|location_name ') }}",
@@ -332,6 +341,12 @@
                 $('.ajaxLoading').hide();
                 return false;
             }
+        }
+
+        function reInitParsley(){
+            var form = $('#newlocationsetupFormAjax');
+            form.parsley().destroy();
+            form.parsley();
         }
 
     </script>

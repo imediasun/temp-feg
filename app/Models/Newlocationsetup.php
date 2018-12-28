@@ -15,7 +15,13 @@ class newlocationsetup extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT new_location_setups.* FROM new_location_setups  ";
+		return "  SELECT
+  new_location_setups.*,
+  location.id            AS FEG_ID,
+  IF(location.active = 0,'Closed','Open') AS locationStatus
+FROM new_location_setups
+  INNER JOIN location
+    ON location.id = new_location_setups.location_id  ";
 	}	
 
 	public static function queryWhere(  ){
