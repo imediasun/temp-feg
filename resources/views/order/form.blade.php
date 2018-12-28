@@ -515,6 +515,7 @@
         case_price_categories = case_price_categories.split(",").map(Number);
 
         var show_freehand = <?php echo $show_freehand  ; ?>;
+        var isFreeHand = '<?php echo $isFreeHand; ?>';
         var mode = "{{ $data['prefill_type'] }}";
         var forceRemoveOrderContentIds = [];
         $(document).ready(function () {
@@ -1526,7 +1527,9 @@
             else
             {
                 $('#can-freehand').hide();
-                $('.addToProductList').hide();
+                if(Number(isFreeHand) != 1) {
+                    $('.addToProductList').hide();
+                }
             }
             gameShowHide();
             calculateSum();
