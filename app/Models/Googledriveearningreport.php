@@ -38,8 +38,8 @@ class googledriveearningreport extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "SELECT google_drive_earning_reports.*, modified_time as date_start, modified_time as date_end,
-      google_drive_earning_reports.loc_id as location_parent_folder_name FROM google_drive_earning_reports";
+		return "SELECT google_drive_earning_reports.* ,  google_drive_earning_reports.modified_time AS date_start,  google_drive_earning_reports.modified_time AS date_end,  location.gd_parent_folder_name 
+FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_reports.loc_id = location.id";
 	}	
 
 	public static function queryWhere(  ){
