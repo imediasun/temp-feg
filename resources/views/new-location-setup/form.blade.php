@@ -133,7 +133,13 @@
                             {!! SiteHelpers::activeLang('RDP Computer Name', (isset($fields['rdp_computer_name']['language'])? $fields['rdp_computer_name']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('rdp_computer_name', $row['rdp_computer_name'],array('class'=>'form-control', 'placeholder'=>'', 'disabled' => 'disabled','required' =>''   )) !!}
+                            <?php
+                                $parems = array('class'=>'form-control', 'placeholder'=>'', 'required' =>''   );
+                            if(!in_array(strtolower($row['is_remote_desktop']),  ['yes',1])){
+                                $parems['disabled'] = 'disabled';
+                            }
+                            ?>
+                            {!! Form::text('rdp_computer_name', $row['rdp_computer_name'],$parems) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -144,7 +150,13 @@
                             {!! SiteHelpers::activeLang('RDP Computer User', (isset($fields['rdp_computer_user']['language'])? $fields['rdp_computer_user']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('rdp_computer_user', $row['rdp_computer_user'],array('class'=>'form-control', 'placeholder'=>'', 'disabled' => 'disabled','required' =>''  )) !!}
+                            <?php
+                            $parems = array('class'=>'form-control', 'placeholder'=>'', 'required' =>''   );
+                            if(!in_array(strtolower($row['is_remote_desktop']),  ['yes',1])){
+                                $parems['disabled'] = 'disabled';
+                            }
+                            ?>
+                            {!! Form::text('rdp_computer_user', $row['rdp_computer_user'],$parems) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -155,7 +167,13 @@
                             {!! SiteHelpers::activeLang('RDP Computer Passowrd', (isset($fields['rdp_computer_password']['language'])? $fields['rdp_computer_password']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('rdp_computer_password', $row['rdp_computer_password'],array('class'=>'form-control', 'placeholder'=>'', 'disabled' => 'disabled','required' =>''  )) !!}
+                            <?php
+                            $parems = array('class'=>'form-control', 'placeholder'=>'', 'required' =>''   );
+                            if(!in_array(strtolower($row['is_remote_desktop']),  ['yes',1])){
+                                $parems['disabled'] = 'disabled';
+                            }
+                            ?>
+                            {!! Form::text('rdp_computer_password', $row['rdp_computer_password'],$parems) !!}
                         </div>
                         <div class="col-md-2">
 

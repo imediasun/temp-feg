@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Library\FEG\System\FEGSystemHelper;
 
 class newlocationsetup extends Sximo  {
 	
@@ -170,6 +171,104 @@ FROM new_location_setups
         }
 
         return $results = array('rows' => $result, 'total' => $total);
+    }
+
+    /**
+     * @param int $locationSetupId
+     * @param array $message[element5DigitalMessage,sacoa,embed,internal_team]
+     */
+    public function sendNotificationByEmail($locationSetupId = 0, $message =[])
+    {
+        $newLocationSetup = self::find($locationSetupId);
+        if ($newLocationSetup) {
+            $location = location::select('*')
+                ->where('location.id', $newLocationSetup->location_id)
+                ->join('report_locations', 'report_locations.location_id', '=', 'location.id')->orderBy('date_last_played', 'desc')->first();
+            if ($location) {
+
+                $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
+                $from = \Session::get('eid');
+
+                $this->sendNotificationToElement5Digital($newLocationSetup->location_id,$message['element5Digital'],$from,$isTest);
+                $this->sendNotificationInternalTeam($newLocationSetup->location_id,$message['internal_team'],$from,$isTest);
+
+                if($location->debit_type_id >= 1){
+                    $locationType = self::getLocationType($location->debit_type_id);
+                    $this->sendNotificationByLocationType($newLocationSetup->location_id,$locationType,$message[$locationType],$from,$isTest);
+
+                }
+
+            }
+        }
+    }
+
+    /**
+     * @param $locationId
+     * @param $message
+     * @param $from
+     * @param $isTest
+     */
+    public function sendNotificationToElement5Digital($locationId,$message,$from,$isTest){
+        $configName = 'Notify to install the sync application on new server [Element5Digital]';
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName, null, $isTest);
+
+        $subject = 'Notify to install the sync application on new server [Location# '.$locationId.'] ';
+
+        if (!empty($receipts)) {
+            FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
+                'subject' => $subject,
+                'message' => $message,
+                'isTest' => $isTest,
+                'configName' => $configName,
+                'from' => $from,
+                'replyTo' => $from,
+            )));
+        }
+    }
+
+    public function sendNotificationByLocationType($locationId,$locationType, $message,$from,$isTest){
+
+        $configName = 'Notify to install the sync application on new server ['.$locationType.']';
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName, null, $isTest);
+
+        $subject = 'Notify to install the sync application on new server [Location# '.$locationId.'] '.ucfirst($locationType);
+
+        if (!empty($receipts)) {
+            FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
+                'subject' => $subject,
+                'message' => $message,
+                'isTest' => $isTest,
+                'configName' => $configName,
+                'from' => $from,
+                'replyTo' => $from,
+            )));
+        }
+
+    }
+
+    public function sendNotificationInternalTeam($locationId, $message,$from,$isTest){
+
+        $configName = 'Notify to install the sync application on new server [Internal Team]';
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName, null, $isTest);
+
+        $subject = 'Notify to install the sync application on new server [Location# '.$locationId.'] ';
+
+        if (!empty($receipts)) {
+            FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
+                'subject' => $subject,
+                'message' => $message,
+                'isTest' => $isTest,
+                'configName' => $configName,
+                'from' => $from,
+                'replyTo' => $from,
+            )));
+        }
+
+    }
+
+    public static function getLocationType($debitTypeId){
+         $debitTypes = array("1" => "sacoa", "2" => "embed");
+        return isset($debitTypes[$debitTypeId]) ? $debitTypes[$debitTypeId] : null;
     }
 
 }
