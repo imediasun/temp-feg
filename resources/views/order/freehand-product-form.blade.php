@@ -63,7 +63,7 @@
 
 <script type="text/javascript">
     $(function () {
-        showRequest();
+        showProductRequest();
         $('select[name="excluded_locations_and_groups[]"]').attr('multiple', 'multiple');
         $('select[name="excluded_locations_and_groups[]"]').change();
 
@@ -179,8 +179,8 @@
                 console.log("debug here");
                 var options = {
                     dataType: 'json',
-                    beforeSubmit: showRequest,
-                    success: showResponse
+                    beforeSubmit: showProductRequest,
+                    success: showProductResponse
                 }
                 $(this).ajaxSubmit(options);
                 return false;
@@ -289,10 +289,11 @@
         $("[id^='toggle_trigger_']").bootstrapSwitch({onColor: 'default', offColor: 'primary'});
     });
 
-    function showRequest() {
+    function showProductRequest() {
         $('.ajaxLoading').show();
     }
-    function showResponse(data) {
+    function showProductResponse(data) {
+
 
         if (data.status == 'success') {
             //$('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
