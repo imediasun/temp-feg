@@ -197,6 +197,10 @@ class NewlocationsetupController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('new_location_setups');
 
+            $data["is_server_locked"] = isset($data["is_server_locked"])?$data["is_server_locked"]:0;
+            $data["is_remote_desktop"] = isset($data["is_remote_desktop"])?$data["is_remote_desktop"]:0;
+            $data["use_tv"] = isset($data["use_tv"])?$data["use_tv"]:0;
+
             if ($data["is_server_locked"] == "on") {
                 $data["is_server_locked"] = 1;
             } else {
@@ -216,7 +220,19 @@ class NewlocationsetupController extends Controller
             }
 
             $id = $this->model->insertRow($data, $id);
+            /**
+             * sending Notification on Create a new Location Setup
+             */
+            $locationSetup = $this->model->find($id)->toArray();
+            $location = location::find($locationSetup['location_id']);
+            $locationSetup['location_name'] = $location->location_name;
 
+            $notificationContent['element5Digital']= view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'element5Digital'])->render();
+            $notificationContent['embed'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'embed'])->render();
+            $notificationContent['sacoa'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'sacoa'])->render();
+            $notificationContent['internal_team'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'internal_team'])->render();
+
+            $this->model->sendNotificationByEmail($id,$notificationContent);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
