@@ -49,7 +49,7 @@
                             {!! SiteHelpers::activeLang('Use Tv', (isset($fields['use_tv']['language'])? $fields['use_tv']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <input type="checkbox" @if(in_array(strtolower(['use_tv']),  ['yes',1])) checked="" @endif name="use_tv" data-size="mini" data-name="use_tv"
+                            <input type="checkbox" @if(in_array(strtolower($row['use_tv']),  ['yes',1])) checked="" @endif name="use_tv" data-size="mini" data-name="use_tv"
                                    checked data-handle-width="40px" data-on-text="YES" data-off-text="NO"
                                    id="toggle_trigger_4" onswitchchange="trigger()">
                         </div>
@@ -84,7 +84,7 @@
                             {!! SiteHelpers::activeLang('Should server be locked?', (isset($fields['is_server_locked']['language'])? $fields['is_server_locked']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <input type="checkbox" name="is_server_locked" data-size="mini" data-name="is_server_locked"
+                            <input type="checkbox" @if(in_array(strtolower($row['is_server_locked']),  ['yes',1])) checked="" @endif name="is_server_locked" data-size="mini" data-name="is_server_locked"
                                    checked data-handle-width="40px" data-on-text="YES" data-off-text="NO"
                                    id="toggle_trigger_1" onswitchchange="trigger()">
                         </div>
@@ -120,7 +120,7 @@
                         </label>
                         <div class="col-md-6">
 
-                            <input type="checkbox" name="is_remote_desktop" data-name="is_remote_desktop"
+                            <input type="checkbox" @if(in_array(strtolower($row['is_remote_desktop']),  ['yes',1])) checked="" @endif name="is_remote_desktop" data-name="is_remote_desktop"
                                    data-size="mini" data-handle-width="40px" data-on-text="YES" data-off-text="NO"
                                    id="toggle_trigger_2" onswitchchange="trigger()">
                         </div>
