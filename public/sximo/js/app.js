@@ -216,11 +216,13 @@ App.autoCallbacks.registerCallback('reloaddata', function(params){
 });
 
 App.autoCallbacks.registerCallback('advancedsearch', function(params){
+    getExcludedProductTypesAndProductIds();
     excludeProductsAndProductTypes();
 });
 
 App.autoCallbacks.registerCallback('ajaxViewOpened', function(params){
     setTimeout(function () {
+        getExcludedProductTypesAndProductIds();
         excludeProductsAndProductTypes();
     }, 1000);
 });
@@ -232,6 +234,7 @@ App.autoCallbacks.registerCallback('inline.row.config.after', function(params){
 App.autoCallbacks.registerCallback('inline.row.config.after', function(params){
     if(pageModule == 'shopfegrequeststore' || pageModule == 'order' || pageModule == 'product' || pageModule == 'location' || pageModule == 'locationgroups' || pageModule == 'managefegrequeststore') {
         setTimeout(function () {
+            getExcludedProductTypesAndProductIds();
             excludeProductsAndProductTypes();
         }, 1000);
     }
@@ -399,7 +402,7 @@ function initDataGrid(module, url, options) {
 
 
     });
-    console.log($('ul.pagination li').length);
+
     $('ul.pagination li.active')
         .prev().addClass('show-mobile')
         .prev().addClass('show-mobile');
@@ -1430,7 +1433,6 @@ function populateProductSubTypeSelect(subTypeSelectBox, result, selectBox, selec
 
             var selectedOrNot = (selectedSubtypes.length > 0 && selectedSubtypes.indexOf(item.id) != -1) ? 'selected' : '';
 
-            console.log(item.id, item.type_description);
             subTypeSelectBox.append('<option '+selectedOrNot+' value="'+item.id+'">'+item.type_description+'</option>');
         });
 
@@ -1652,7 +1654,7 @@ function updateDropdowns(dropdownName){
             var dropdownValues = [];
 
             options.each(function () {
-                console.log(this.value);
+
                 if (this.value != 'select_all'){
                     dropdownValues.push(Number(this.value));
                 }else {

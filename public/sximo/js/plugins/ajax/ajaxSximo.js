@@ -359,8 +359,11 @@ function ajaxGameDispose( id, url )
     }
 }
 
-function ajaxViewDetail( id , url )
+function ajaxViewDetail( id , url, closeLoadingAfterComplete )
 {
+    if(closeLoadingAfterComplete === undefined){
+        closeLoadingAfterComplete = false;
+    }
     var beforeSximoEvent = 'ajaxview.before',
         beforeSximoEventModule = 'ajaxview.before.'+id,
         showView = function () {
@@ -380,7 +383,9 @@ function ajaxViewDetail( id , url )
                 });
 
                 App.autoCallbacks.runCallback.call(window, 'ajaxViewOpened',eventData);
-                $('.ajaxLoading').hide();
+                if(!closeLoadingAfterComplete) {
+                    $('.ajaxLoading').hide();
+                }
             });
         },
         eventData = {url:url, id:id, callback: showView};

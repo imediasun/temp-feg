@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Http\Requests\Request;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Library\FEGDBRelationHelpers;
 use Illuminate\Auth\Authenticatable;
@@ -709,5 +710,115 @@ WHERE orders.is_api_visible = 1
         $productSubQuery = ' (SELECT COUNT(*) FROM products NP WHERE DATE(NP.created_at) >= (CURRENT_DATE - INTERVAL '.$productLabelNewDays->option_value.' DAY) AND NP.id = products.id) as is_new, ';
         $productSubQuery .= ' (SELECT COUNT(*) FROM products NP1 WHERE DATE(NP1.activated_at) >= (CURRENT_DATE - INTERVAL '.$productLabelBackinstockDays->option_value.' DAY) AND NP1.id = products.id) as is_backinstock ';
         return $productSubQuery;
+    }
+
+    /**
+     * @param $request
+     * @param $id
+     * @return array
+     */
+    public function checkDuplicateProductTypes($request,$id){
+        if(is_array($request->prod_sub_type_id))
+        {
+
+            if(count(array_unique($request->prod_sub_type_id))<count($request->prod_sub_type_id))
+            {
+                // Array has duplicates
+                return [
+                    'message' => "Please Select Unique Combinations of Product Type & Sub Type",
+                    'status' => 'error'
+                ];
+            }
+            $ItemIds = [];
+            foreach($request->itemId as $item){
+                if(!empty($item) && $item > 0){
+                    $ItemIds[] =  $item;
+                }
+            }
+            $type = [];
+            foreach($request->prod_type_id as $item){
+                if(!empty($item) && $item > 0){
+                    $type[] =  $item;
+                }
+            }
+            $subtype = [];
+            foreach($request->prod_sub_type_id as $item){
+                if(!empty($item) && $item > 0){
+                    $subtype[] =  $item;
+                }
+            }
+
+            $productName = $request->vendor_description;
+
+            $duplicate = Product::
+            whereIn('prod_type_id',$type)
+                ->whereIn('prod_sub_type_id',$subtype)
+                ->where('sku',$request->sku)
+                ->whereNotIn('id',$ItemIds)
+                ->where('vendor_description',$productName)
+                ->first();
+            if(!empty($duplicate))
+            {
+                return [
+                    'message' => "A product with same Product Type & Sub Type already exist",
+                    'status' => 'error'
+                ];
+            }
+
+            $productName = Product::find($id)->vendor_description;
+
+
+            $duplicate = Product::
+            whereIn('prod_type_id', $type)
+                ->whereIn('prod_sub_type_id', $subtype)
+                ->where('sku', $request->sku)
+                ->whereNotIn('id',$ItemIds)
+                ->where('vendor_description', $productName)
+                ->first();
+
+            if (!empty($duplicate)) {
+                return [
+                    'message' => "A product with same Product Type & Sub Type already exist",
+                    'status' => 'error'
+                ];
+            }
+
+        }
+    }
+
+    /**
+     * @param $request
+     * @param $id
+     * @param $userId
+     */
+    public function updateReservedQty($request , $id,$userId){
+
+        $product = self::find($id);
+        $NewReservedQty = $request->input('reserved_qty');
+        if ($product->reserved_qty != $NewReservedQty && $NewReservedQty != '') {
+            $type = "negative";
+            if ($NewReservedQty > $product->reserved_qty) {
+                $type = "positive";
+                if($product->reserved_qty_limit < $NewReservedQty) {
+                    $product->updateProduct(['send_email_alert' => 0]);
+                    $product->save();
+                }
+            } else if ($NewReservedQty < $product->reserved_qty) {
+                $type = "negative";
+            }
+            $NewReservedQty = $NewReservedQty - $product->reserved_qty;
+            if($NewReservedQty < 0 ){
+                $NewReservedQty = $NewReservedQty * -1;
+            }
+            $ReservedQtyLog = new ReservedQtyLog();
+            $reservedLogData = [
+                "product_id" => $id,
+                "adjustment_amount" => $NewReservedQty,
+                "adjustment_type" => $type,
+                "variation_id" => !empty($product->variation_id) ? $product->variation_id:null,
+                "adjusted_by" => $userId,
+            ];
+            $ReservedQtyLog->insertRow($reservedLogData, 0);
+        }
     }
 }
