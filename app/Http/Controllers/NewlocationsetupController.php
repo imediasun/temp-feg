@@ -218,6 +218,15 @@ class NewlocationsetupController extends Controller
             } else {
                 $data["use_tv"] = 0;
             }
+            if(isset($data['teamviewer_passowrd']) && $data['use_tv']==1){
+                $data['teamviewer_passowrd'] = \SiteHelpers::encryptStringOPENSSL($data['teamviewer_passowrd']);
+            }
+            if(isset($data['windows_user_password'])&& $data['is_server_locked']){
+                $data['windows_user_password'] = \SiteHelpers::encryptStringOPENSSL($data['windows_user_password']);
+            }
+            if(isset($data['rdp_computer_password'])&& $data['is_remote_desktop']==1){
+                $data['rdp_computer_password'] = \SiteHelpers::encryptStringOPENSSL($data['rdp_computer_password']);
+            }
 
             $id = $this->model->insertRow($data, $id);
             /**
