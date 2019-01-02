@@ -215,7 +215,13 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
 										 <input type='checkbox' name="mycheckbox" @if(strtolower($value) == 'yes') checked  @endif data-field="exclude_export"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}" id="exclude_export_{{$row->id}}" onSwitchChange="trigger()" />
                                 @elseif($field['field']=='hot_item')
 										 <input type='checkbox' name="mycheckbox" @if(strtolower($value) == 'yes' || $value == 'YES' || $value == 'Yes') checked  @endif data-field="hot_item"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}" id="hot_item_{{$row->id}}" onSwitchChange="trigger()" />
-                                @else
+                                @elseif($field['field']=='reserved_qty_cases')
+                                    @if($value > 0)
+                                        {!! CurrencyHelpers::formatPrice($value,5,false) !!}
+                                        @else
+                                        0
+                                        @endif
+                                    @else
                                     {!! $value !!}
                                 @endif
 

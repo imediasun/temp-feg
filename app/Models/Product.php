@@ -68,6 +68,7 @@ class product extends Sximo  {
   T.type_description AS prod_sub_type_id,
   '' as excluded_locations_and_groups,
   '' as product_type_excluded_data,
+  (reserved_qty/num_items) as reserved_qty_cases,
   $supQuries
 FROM `products`
   LEFT JOIN vendor

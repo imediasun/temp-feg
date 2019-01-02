@@ -500,7 +500,7 @@
                         <?php $is_reserved = explode(",", $row['is_reserved']); ?>
                         <label class='checked checkbox-inline'>
                             <input type="hidden" name="is_reserved" value="0"/>
-                            <input type='checkbox' name='is_reserved' value='1' class=''
+                            <input type='checkbox' name='is_reserved' value='1' class='isReservedChk'
                                    @if(in_array('1',$is_reserved))checked @endif
                             /> </label>
                     </div>
@@ -508,7 +508,9 @@
 
                     </div>
                 </div>
-                <div class="form-group">
+
+                <span style="background: #dfdfdf;">
+                <div @if(!in_array('1',$is_reserved)) style="display: none;" @endif class="form-group reservedQtySection">
                     <label for="Reserved Qty" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Reserved Quantity', (isset($fields['reserved_qty']['language'])?
                         $fields['reserved_qty']['language'] : array())) !!}
@@ -522,10 +524,10 @@
 
                     </div>
                 </div>
-                <div class="form-group">
+                <div @if(!in_array('1',$is_reserved)) style="display: none;" @endif class="form-group reservedQtySection">
                     <label for="allow_negative_reserve_qty" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Allow Negative Reserved Qty', (isset($fields['allow_negative_reserve_qty']['language'])?
-                        $fields['is_reserved']['language'] : array())) !!}
+                        $fields['allow_negative_reserve_qty']['language'] : array())) !!}
                     </label>
 
                     <div class="col-md-6 check-no">
@@ -540,11 +542,7 @@
 
                     </div>
                 </div>
-
-
-
-
-                <div class="form-group">
+                <div @if(!in_array('1',$is_reserved)) style="display: none;" @endif class="form-group reservedQtySection">
                     <label for="Reserved Qty Limit" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Reserved Quantity Par Amount', (isset($fields['reserved_qty_limit']['language'])?
                         $fields['reserved_qty_limit']['language'] : array())) !!}
@@ -558,6 +556,8 @@
 
                     </div>
                 </div>
+</span>
+
                 <div class="form-group">
                     <label for="Excluded Locations and Groups" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Excluded Locations and Groups', (isset($fields['excluded_locations_and_groups']['language'])?
@@ -692,3 +692,20 @@
     </div>
 </div>
 {!! Form::close() !!}
+
+<script>
+    $(function () {
+        $('.isReservedChk').on('ifChanged', function (event) {
+            var checkbox = $('.reservedQtySection input[name="allow_negative_reserve_qty"]');
+        if($(event.target).is(":checked")){
+            $('.reservedQtySection input[type="text"]').val('');
+            checkbox.iCheck('uncheck');
+            checkbox.change();
+            $(".reservedQtySection").slideDown('slow');
+        }else{
+            $(".reservedQtySection").slideUp('slow');
+        }
+
+        });
+    })
+</script>
