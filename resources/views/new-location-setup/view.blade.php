@@ -8,7 +8,9 @@
 	 </div>
 
 	<div class="sbox-content"> 
-@endif	
+@endif
+
+
 
 		<table class="table table-striped table-bordered" >
 			<tbody>	
@@ -20,7 +22,7 @@
 						<td>{{ $row->id }} </td>
 						
 					</tr>
-				
+
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Location Id', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
@@ -36,7 +38,7 @@
 						<td>{{ $row->vendor_id }} </td>
 						
 					</tr>
-				
+
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Teamviewer Id', (isset($fields['teamviewer_id']['language'])? $fields['teamviewer_id']['language'] : array())) }}
@@ -68,7 +70,7 @@
 						<td>{{ $row->windows_user }} </td>
 						
 					</tr>
-				
+
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Windows User Password', (isset($fields['windows_user_password']['language'])? $fields['windows_user_password']['language'] : array())) }}
@@ -100,15 +102,14 @@
 						<td>{{ $row->rdp_computer_user }} </td>
 						
 					</tr>
-				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Rdp Computer Passowrd', (isset($fields['rdp_computer_passowrd']['language'])? $fields['rdp_computer_passowrd']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Rdp Computer Passowrd', (isset($fields['rdp_computer_password']['language'])? $fields['rdp_computer_password']['language'] : array())) }}
 						</td>
-						<td>{{ $row->rdp_computer_passowrd }} </td>
-						
+						<td>{{ $row->rdp_computer_password }} </td>
+
 					</tr>
-				
+
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Created At', (isset($fields['created_at']['language'])? $fields['created_at']['language'] : array())) }}
@@ -124,7 +125,7 @@
 						<td>{{ $row->updated_at }} </td>
 						
 					</tr>
-				
+
 			</tbody>	
 		</table>  
 			
