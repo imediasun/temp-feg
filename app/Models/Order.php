@@ -1411,4 +1411,15 @@ class order extends Sximo
         return $redemptionPrizeProducts;
     }
 
+    /**
+     * @return array
+     */
+    public static function getMerchandiseTypes(){
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $order_types = $pass['calculate price according to case price']->data_options;
+        $order_types = explode(",", $order_types);
+        return !empty($order_types) ? $order_types:[];
+    }
+
 }

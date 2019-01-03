@@ -44,8 +44,17 @@ class orderEventsHandler
 
             if ($product->allow_negative_reserve_qty == 0 && $adjustmentAmount > $product->reserved_qty) {
                 $error = true;
-                $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $product->reserved_qty";
-                $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $product->reserved_qty + $product->prev_qty : $product->reserved_qty;
+                $reservedQty = $product->reserved_qty;
+                if($event->isMerch){
+                    $reservedQty = $product->reserved_qty/$product->num_items;
+                    if($reservedQty < 1){
+                        $reservedQty = 0;
+                    }else {
+                        $reservedQty = gettype($reservedQty) == 'double' ? (int)floor($reservedQty) : $reservedQty;
+                    }
+                }
+                $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
+                $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty + $product->prev_qty : $reservedQty;
             }
         }
 
@@ -56,10 +65,18 @@ class orderEventsHandler
         $adjustmentAmount = 0;
         if($product->product_is_broken_case == 1 && $isMerch == 0){
             if ($ReservedProductQtyLogObj and $product->prev_qty) {
-                $adjustmentAmount = ceil($product->qty/ $product->num_items) - $product->prev_qty;
+                $adjustmentAmount = $product->qty - $product->prev_qty;
             } else {
-                $adjustmentAmount = ceil($product->qty/$product->num_items);
+                $adjustmentAmount = $product->qty;
             }
+        }elseif($product->product_is_broken_case == 0 && $isMerch == 1){
+
+            if ($ReservedProductQtyLogObj and $product->prev_qty) {
+                $adjustmentAmount = ($product->qty*$product->num_items) - ($product->prev_qty*$product->num_items);
+            } else {
+                $adjustmentAmount = ($product->qty*$product->num_items);
+            }
+
         }else{
             if ($ReservedProductQtyLogObj and $product->prev_qty) {
                 $adjustmentAmount = $product->qty - $product->prev_qty;
