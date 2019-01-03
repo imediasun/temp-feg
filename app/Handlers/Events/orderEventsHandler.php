@@ -52,9 +52,11 @@ class orderEventsHandler
                     }else {
                         $reservedQty = gettype($reservedQty) == 'double' ? (int)floor($reservedQty) : $reservedQty;
                     }
+                }else{
+                    $reservedQty = $reservedQty + $product->prev_qty;
                 }
                 $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
-                $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty + $product->prev_qty : $reservedQty;
+                $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
             }
         }
 

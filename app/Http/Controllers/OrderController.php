@@ -710,6 +710,7 @@ class OrderController extends Controller
             'date_ordered' => 'required',
             //   'po_3' => 'required'
         );
+
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
         $order_contents = array();
@@ -724,7 +725,10 @@ class OrderController extends Controller
             $case_price_if_no_unit_categories = explode(',', $this->data['pass']['use case price if unit price is 0.00']->data_options);
         }
         if ($validator->passes()) {
+
             $order_id = ($request->get('editmode') == "clone") ? 0:$request->get('order_id');
+            $prevOrderTypeObj = ($order_id > 0) ? $this->model->select('order_type_id')->where('id',$order_id)->first():0;
+            $prevOrderTypeId = !empty($prevOrderTypeObj->order_type_id) ? $prevOrderTypeObj->order_type_id:0;
             $editmode = $request->get('editmode');
             $where_in = $request->get('where_in_expression');
             //$where_in = implode(',',$query);
@@ -1013,9 +1017,21 @@ class OrderController extends Controller
                         }
                     }
                 }
-                $orderTypeIdsArray = (!empty($this->data['pass']['calculate price according to case price']->data_options)) ? explode(",",$this->data['pass']['calculate price according to case price']->data_options):'';
-                $orderTypeIdsArray = is_array($orderTypeIdsArray) ? $orderTypeIdsArray:[$orderTypeIdsArray];
-                if(!in_array($order_type,$orderTypeIdsArray)){
+                $isMerch = 0;
+                $isPrevMerch = 0;
+                $merchandiseTypes = Order::getMerchandiseTypes();
+                if(in_array($order_type,$merchandiseTypes)){
+                    $isMerch = 1;
+                }
+
+
+                if(in_array($prevOrderTypeId,$merchandiseTypes)){
+                    $isPrevMerch = 1;
+                }
+                $contentsData['isPreMerchandise'] = $isPrevMerch;
+                $contentsData['isMerchandise'] = $isMerch;
+
+                if($isMerch == 1){
                     $contentsData['pre_is_broken_case'] = 0;
                     $contentsData['is_broken_case'] = 0;
                 }
