@@ -1269,11 +1269,9 @@
         $("#vendor_id").on('change', function() {
             oldLocationId = $('#location_id').val();
             oldAltShipToVal = $('#alt_ship_to').is(':checked');
-
+            vendor = $(this);
             if ($('#is_freehand').val() == 0){
 
-
-            vendor = $(this);
             if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
             {
 
