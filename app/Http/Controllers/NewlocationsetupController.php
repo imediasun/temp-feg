@@ -138,6 +138,17 @@ class NewlocationsetupController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('new_location_setups');
         }
+
+        if(!empty($this->data['row']['teamviewer_passowrd']) && $this->data['row']['use_tv']==1){
+            $this->data['row']['teamviewer_passowrd'] = \SiteHelpers::decryptStringOPENSSL($this->data['row']['teamviewer_passowrd']);
+        }
+        if(!empty($this->data['row']['windows_user_password'])&& $this->data['row']['is_server_locked']){
+            $this->data['row']['windows_user_password'] = \SiteHelpers::decryptStringOPENSSL($this->data['row']['windows_user_password']);
+        }
+        if(!empty($this->data['row']['rdp_computer_password'])&& $this->data['row']['is_remote_desktop']==1){
+            $this->data['row']['rdp_computer_password'] = \SiteHelpers::decryptStringOPENSSL($this->data['row']['rdp_computer_password']);
+        }
+
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
@@ -235,11 +246,11 @@ class NewlocationsetupController extends Controller
             $locationSetup = $this->model->find($id)->toArray();
             $location = location::find($locationSetup['location_id']);
             $locationSetup['location_name'] = $location->location_name;
-
-            $notificationContent['element5Digital']= view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'element5Digital'])->render();
-            $notificationContent['embed'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'embed'])->render();
-            $notificationContent['sacoa'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'sacoa'])->render();
-            $notificationContent['internal_team'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'internal_team'])->render();
+            $url = url(). "/".$this->data['pageModule']."/?view=".\SiteHelpers::encryptID($id);
+            $notificationContent['element5Digital']= view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'element5Digital','url'=>$url])->render();
+            $notificationContent['embed'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'embed','url'=>$url])->render();
+            $notificationContent['sacoa'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'sacoa','url'=>$url])->render();
+            $notificationContent['internal_team'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'internal_team','url'=>$url])->render();
 
             $this->model->sendNotificationByEmail($id,$notificationContent);
             return response()->json(array(

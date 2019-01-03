@@ -90,3 +90,9 @@ Location Name: {{ $row['location_name'] }}<br>
         RDP Password: {{ $row['rdp_computer_password'] }}<br>
     @endif
 @endif
+<br>
+<p>
+   <b>All passwords are in encrypted format. To view the original passwords please click the link given below:</b>
+    <br>
+    <a href="{{ $url }}" target="_blank">{{ $url }}</a>
+</p>

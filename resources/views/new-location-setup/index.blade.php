@@ -23,8 +23,24 @@
 	<!-- End Content -->  
 </div>	
 <script>
+/*
+** Orignal Code
 $(document).ready(function(){
-	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
-});	
+
+	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
+
+});*/
+var pageModule = '{{$pageModule}}',
+        pageUrl = '{{$pageUrl}}',
+        viewNewLocationSetupId = @if(empty(@$_GET['view'])) "" @else "{{ \SiteHelpers::encryptID($_GET['view'], true) }}" @endif,
+        hasViewNewLocationSetup = viewNewLocationSetupId && viewNewLocationSetupId != 0;
+
+$(document).ready(function(){
+
+    if(hasViewNewLocationSetup){
+        ajaxViewDetail('#'+pageModule, pageUrl + "/show/"+viewNewLocationSetupId);
+    }
+    reloadData('#{{ $pageModule }}','{{ $pageModule }}/data', UNFN, { isBackground: hasViewNewLocationSetup});
+});
 </script>	
 @endsection
