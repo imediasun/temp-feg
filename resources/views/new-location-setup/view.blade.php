@@ -111,22 +111,6 @@
 
 					</tr>
 
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Created At', (isset($fields['created_at']['language'])? $fields['created_at']['language'] : array())) }}
-						</td>
-						<td>{{ $row->created_at }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Updated At', (isset($fields['updated_at']['language'])? $fields['updated_at']['language'] : array())) }}
-						</td>
-						<td>{{ $row->updated_at }} </td>
-						
-					</tr>
-
 			</tbody>	
 		</table>  
 			
