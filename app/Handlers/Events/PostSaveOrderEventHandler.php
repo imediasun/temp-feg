@@ -48,16 +48,30 @@ class PostSaveOrderEventHandler
                 ->orderBy('id', 'DESC')
                 ->first();
             if($item->is_broken_case == 1){
-                $item->qty = ceil($item->qty/$item->qty_per_case);
+//                $item->qty = ceil($item->qty/$item->qty_per_case);
+                $item->qty = $item->qty;
             }
 
             if($item->pre_is_broken_case == 1){
-                $item->prev_qty = ceil($item->prev_qty/$item->qty_per_case);
+//                $item->prev_qty = ceil($item->prev_qty/$item->qty_per_case);
+                $item->prev_qty = $item->prev_qty;
             }
 
+            if($item->is_broken_case == 0 && $item->isMerchandise == 1){
+                $item->qty = $item->qty * $item->qty_per_case;
+            }
+
+            if($item->pre_is_broken_case == 0 && $item->isPreMerchandise == 1){
+                $item->prev_qty = $item->prev_qty * $item->qty_per_case;
+            }
 
             if ($ReservedProductQtyLogObj and $item->prev_qty) {
                 $adjustmentAmount = ($product->reserved_qty + $item->prev_qty) - $item->qty;
+                if($item->is_broken_case == 0 && $item->isMerchandise == 1) {
+
+                    $adjustmentAmount = ($product->reserved_qty + $item->prev_qty) - $item->qty;
+
+                }
                 if($item->prev_qty > $item->qty){
                     $qty = ($item->qty - $item->prev_qty) < 0 ? ( ($item->qty - $item->prev_qty) * -1 ):($item->qty - $item->prev_qty);
                     if($item->prev_qty != $item->qty) {
