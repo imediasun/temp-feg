@@ -63,6 +63,8 @@
 
 <script type="text/javascript">
     $(function () {
+        $(document).scrollTop(0);
+
         showProductRequest();
         $('select[name="excluded_locations_and_groups[]"]').attr('multiple', 'multiple');
         $('select[name="excluded_locations_and_groups[]"]').change();
