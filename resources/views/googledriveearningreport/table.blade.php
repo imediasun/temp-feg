@@ -139,8 +139,8 @@
                   @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('googledriveearningreport',$access,$id ,$setting) !!}
-					 <a href="#" class="btn btn-xs btn-white tips view-file" webLink="{{$row->web_view_link}}" title="view file"><i class="fa fa-search"></i></a>
-					 <a href="#" class="btn btn-xs btn-white tips rename-file" fileId="{{$row->google_file_id}}"  title="rename file"><i class="fa fa-pencil"></i></a>
+					 <a href="#" class="btn btn-xs btn-white tips view-file" webLink="{{$row->web_view_link}}" title="View File"><i class="fa fa-search"></i></a>
+					 <a href="#" class="btn btn-xs btn-white tips rename-file" fileId="{{$row->google_file_id}}"  title="Rename File"><i class="fa fa-pencil"></i></a>
 					 <a href="javascript:void(0)" class="btn btn-xs btn-white tips" link-field="{{$row->web_view_link}}" id="copyBoard"  title="Copy to Clipboard"><i class="fa fa-copy"></i></a>
 
 				 </td>
