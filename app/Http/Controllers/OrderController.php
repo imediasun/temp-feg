@@ -864,13 +864,33 @@ class OrderController extends Controller
                     $product = product::find($removedProduct->product_id);
                     if($product->is_reserved == 1) {
                         $productVariations = $product->getProductVariations();
+
+                        $isPrevMerch = 0;
+                        $merchandiseTypes = Order::getMerchandiseTypes();
+
+                        if(in_array($prevOrderTypeId,$merchandiseTypes)){
+                            $isPrevMerch = 1;
+                        }
+                        if($removedProduct->is_broken_case == 0 && $isPrevMerch == 1){
+                            $product->reserved_qty += $removedProduct->qty * $product->num_items;
+                        }else{
+                            $product->reserved_qty += $removedProduct->qty;
+                        }
                         $product->reserved_qty += $removedProduct->qty;
                         $product->updateProduct(['reserved_qty' => $product->reserved_qty]);
                         $product->save();
+                        $QtyForLog = $removedProduct->qty;
+                        if($removedProduct->is_broken_case == 0 && $isPrevMerch == 1){
+                            $QtyForLog = $removedProduct->qty * $product->num_items;
+                        }else{
+                            $QtyForLog = $removedProduct->qty;
+                        }
+
                         $reservedLogData = [
                             "product_id" => $product->id,
                             "order_id" => $last_insert_id,
-                            "adjustment_amount" => ($removedProduct->is_broken_case == 1 && !in_array($orderData['order_type_id'],$case_price_categories)) ? $removedProduct->qty/$removedProduct->qty_per_case:$removedProduct->qty,
+//                            "adjustment_amount" => ($removedProduct->is_broken_case == 1 && !in_array($orderData['order_type_id'],$case_price_categories)) ? $removedProduct->qty/$removedProduct->qty_per_case:$removedProduct->qty, "adjustment_amount" => ($removedProduct->is_broken_case == 1 && !in_array($orderData['order_type_id'],$case_price_categories)) ? $removedProduct->qty/$removedProduct->qty_per_case:$removedProduct->qty,
+                            "adjustment_amount" => $QtyForLog,
                             "adjustment_type" => 'positive',
                             "variation_id" => $product->variation_id,
                             "adjusted_by" => \AUTH::user()->id,
