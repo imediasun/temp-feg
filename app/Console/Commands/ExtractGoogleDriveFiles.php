@@ -31,6 +31,8 @@ class ExtractGoogleDriveFiles extends Command
     protected $path = '';
     protected $period = '';
     protected $refreshDriveObjectAt = '';
+    protected $refreshInterval = 3500;// in seconds
+    protected $drive;
     /**
      * Create a new command instance.
      *
@@ -54,6 +56,7 @@ class ExtractGoogleDriveFiles extends Command
         if (env('DONT_GET_GOOGLE_DRIVE_FILES', false)) {
             return;
         }
+        \Artisan::call('refresh:googledriveaccesstoken');
         $this->L->log('------------Command Started.-------------');
 
         $this->info('Command Executed.');
@@ -62,13 +65,14 @@ class ExtractGoogleDriveFiles extends Command
 
         $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->first();
 
-        $drive = $this->getGoogleDriveObject($user);
+        $this->drive = $this->getGoogleDriveObject($user);
 
         $currentTime = time();
-        $this->refreshDriveObjectAt = $currentTime+3500;
-        $this->info('Current Time : '.$currentTime);
-        $this->info('Drive object will refresh at : '.$this->refreshDriveObjectAt);
-        $this->L->log('Drive object will refresh at : '.$this->refreshDriveObjectAt);
+        //testing short time
+        $this->refreshDriveObjectAt = $currentTime + $this->refreshInterval;
+        $this->info('Current Time : '.date('Y-m-d H:i:s',$currentTime));
+        $this->info('Drive object will refresh at : '.date('Y-m-d H:i:s',$this->refreshDriveObjectAt));
+        $this->L->log('Drive object will refresh at : '.date('Y-m-d H:i:s',$this->refreshDriveObjectAt));
 
         $locations = null;
         if($this->period == 'Daily' || $this->period == 'daily'){
@@ -90,8 +94,9 @@ class ExtractGoogleDriveFiles extends Command
 
         foreach ($locations as $location){
             $this->path = $this->period.'-'.$location->id;
-
-            $this->getFilesFromLocationFolder($drive,$location->parent_id, $location);
+            $this->L->log("Starting {$this->period} Extraction for  {$location->id} - {$location->location_name_short} at ".date('Y-m-d H:i:s'));
+            $this->getFilesFromLocationFolder($location->parent_id, $location);
+            $this->L->log("Completing {$this->period} Extraction for  {$location->id} - {$location->location_name_short} at ".date('Y-m-d H:i:s'));
         }
 
 
@@ -101,28 +106,28 @@ class ExtractGoogleDriveFiles extends Command
     function getGoogleDriveObject($user){
         $client = new \Google_Client();
         $client->setAccessToken($user->oauth_token);
-
-
         $this->L->log('Google Client', $client->getAccessToken());
-
         return new \Google_Service_Drive($client);
-
     }
 
 
-    function getFilesFromLocationFolder(\Google_Service_Drive $drive, $parentId, $location){
+    function getFilesFromLocationFolder($parentId, $location){
 
-        $files = $this->getFiles($drive, $parentId);//get file from drive
+        $files = $this->getFiles($parentId);//get file from drive
 
         foreach ($files as $file){
-
             if($file->mimeType == 'application/vnd.google-apps.folder'){
                 $this->path .= '/'.$file->name;
                 if(time() > $this->refreshDriveObjectAt){
+                    $this->L->log('Going to refresh access token');
+                    //expecting here that command to refresh would be executed already ....
+                    \Artisan::call('refresh:googledriveaccesstoken');
                     $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->first();//Refresh google auth token
-                    $drive = $this->getGoogleDriveObject($user);//reset google drive object
+                    $this->drive = $this->getGoogleDriveObject($user);//reset google drive object
+                    //add next more X seconds to keep script running
+                    $this->refreshDriveObjectAt = $this->refreshDriveObjectAt + $this->refreshInterval;
                 }
-                $this->getFilesFromLocationFolder($drive, $file->id, $location);
+                $this->getFilesFromLocationFolder($file->id, $location);
             }else {
 
                 $this->L->log('--------------  File Detail ----------------');
@@ -145,18 +150,37 @@ class ExtractGoogleDriveFiles extends Command
     }
 
 
-    function getFiles(\Google_Service_Drive $drive, $parentId){
+    function getFiles($parentId){
+        $this->L->log('Extracting files for =>'.$parentId);
+        //'q' => "trashed = false and '$parentId' in parents and modifiedTime >= '2019-01-04'",
         $parameters = [
             'q' => "trashed = false and '$parentId' in parents",
             'pageSize' => 1000,0,
             'fields' => 'nextPageToken, files(id, name, fileExtension, fullFileExtension, kind, mimeType, createdTime, modifiedTime, iconLink, webViewLink, webContentLink, parents)',
         ];
+        //$result = $this->drive->files->listFiles($parameters);
 
-        $result = $drive->files->listFiles($parameters);
-        if($result){
-            $files = $result->files;
-        }
+        $files = $this->getAllFilesFromGooglePagination($parameters);
+
         return $files;
+    }
+    protected function getAllFilesFromGooglePagination($parameters){
+        $result = array();
+        $pageToken = NULL;
+        do {
+            try {
+                if($pageToken) {
+                    $parameters['pageToken'] = $pageToken;
+                }
+                $files = $this->drive->files->listFiles($parameters);
+                $result = array_merge($result, $files->getFiles());
+                $pageToken = $files->getNextPageToken();
+            } catch (Exception $e) {
+                print "An error occurred: " . $e->getMessage();
+                $pageToken = NULL;
+            }
+        } while ($pageToken);
+        return $result;
     }
 
 
