@@ -3448,5 +3448,17 @@ ORDER BY aa_id");
 
     }
 
+    public function getDownloaddpl(){
+        $locationId = 2031;
+        $productTypeId = 7;
+        $query = $this->model->getManualGenerateDplQuery($locationId,$productTypeId);
+        $items = \DB::select(\DB::raw($query));
+        $fileName = 'manual_dpl_file_generated_'.time().'.dpl';
+        $dplFile = $this->model->saveItemsInDplFile($items,$productTypeId,$locationId,'00000000001','uploads/manual-dpl/',$fileName);
+        $headers = array(
+            'Content-type: '.mime_content_type($dplFile['file_path']),
+        );
+        return Response::download($dplFile['file_path'],$dplFile['file_name'],$headers);
+    }
 
 }
