@@ -7,10 +7,10 @@
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
-
         <div class="sbox-content">
             @endif
             {!! Form::open(array('url'=>'new-location-setup/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'newlocationsetupFormAjax')) !!}
+
             <div class="col-md-12">
                 <fieldset>
                     <legend> New Location Setup</legend>
@@ -49,8 +49,8 @@
                             {!! SiteHelpers::activeLang('Use Tv', (isset($fields['use_tv']['language'])? $fields['use_tv']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <input type="checkbox" @if(in_array(strtolower($row['use_tv']),  ['yes',1])) checked="" @endif name="use_tv" data-size="mini" data-name="use_tv"
-                                   checked data-handle-width="40px" data-on-text="YES" data-off-text="NO"
+                            <input type="checkbox" {{ $row['use_tv'] == 1 ? "checked":""}}  name="use_tv" data-size="mini" data-name="use_tv"
+                                    data-handle-width="40px" data-on-text="YES" data-off-text="NO"
                                    id="toggle_trigger_4" onswitchchange="trigger()">
                         </div>
                         <div class="col-md-2">
@@ -62,7 +62,13 @@
                             {!! SiteHelpers::activeLang('Teamviewer ID', (isset($fields['teamviewer_id']['language'])? $fields['teamviewer_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('teamviewer_id', $row['teamviewer_id'],array('class'=>'form-control', 'placeholder'=>'','required' =>''   )) !!}
+                            <?php
+                            $parems = array('class'=>'form-control', 'placeholder'=>'','required' =>''   );
+                                if($row['use_tv'] == 0 || $row['use_tv'] == ''){
+                                    $parems['disabled']='disabled';
+                                }
+                            ?>
+                            {!! Form::text('teamviewer_id', $row['teamviewer_id'],$parems) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -73,7 +79,13 @@
                             {!! SiteHelpers::activeLang('Teamviewer Passowrd', (isset($fields['teamviewer_passowrd']['language'])? $fields['teamviewer_passowrd']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('teamviewer_passowrd', $row['teamviewer_passowrd'],array('class'=>'form-control', 'placeholder'=>'','required' =>''   )) !!}
+                            <?php
+                            $parems = array('class'=>'form-control', 'placeholder'=>'','required' =>''   );
+                            if($row['use_tv'] == 0 || $row['use_tv'] == ''){
+                                $parems['disabled']='disabled';
+                            }
+                            ?>
+                            {!! Form::text('teamviewer_passowrd', $row['teamviewer_passowrd'],$parems) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -84,8 +96,8 @@
                             {!! SiteHelpers::activeLang('Should server be locked?', (isset($fields['is_server_locked']['language'])? $fields['is_server_locked']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <input type="checkbox" @if(in_array(strtolower($row['is_server_locked']),  ['yes',1])) checked="" @endif name="is_server_locked" data-size="mini" data-name="is_server_locked"
-                                   checked data-handle-width="40px" data-on-text="YES" data-off-text="NO"
+                            <input type="checkbox"  {{$row['is_server_locked']==1? "checked":""}}  name="is_server_locked" data-size="mini" data-name="is_server_locked"
+                                    data-handle-width="40px" data-on-text="YES" data-off-text="NO"
                                    id="toggle_trigger_1" onswitchchange="trigger()">
                         </div>
                         <div class="col-md-2">
@@ -97,7 +109,13 @@
                             {!! SiteHelpers::activeLang('Windows User', (isset($fields['windows_user']['language'])? $fields['windows_user']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('windows_user', $row['windows_user'],array('class'=>'form-control', 'placeholder'=>'','required' =>''    )) !!}
+                            <?php
+                            $parems = array('class'=>'form-control', 'placeholder'=>'','required' =>''   );
+                            if($row['is_server_locked'] == 0 || $row['is_server_locked'] == ''){
+                                $parems['disabled']='disabled';
+                            }
+                            ?>
+                            {!! Form::text('windows_user', $row['windows_user'],$parems )!!}
                         </div>
                         <div class="col-md-2">
 
@@ -108,7 +126,13 @@
                             {!! SiteHelpers::activeLang('Windows User Password', (isset($fields['windows_user_password']['language'])? $fields['windows_user_password']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('windows_user_password', $row['windows_user_password'],array('class'=>'form-control', 'placeholder'=>'','required' =>''   )) !!}
+                            <?php
+                            $parems = array('class'=>'form-control', 'placeholder'=>'','required' =>''   );
+                            if($row['is_server_locked'] == 0 || $row['is_server_locked'] == ''){
+                                $parems['disabled']='disabled';
+                            }
+                            ?>
+                            {!! Form::text('windows_user_password', $row['windows_user_password'],$parems) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -119,8 +143,7 @@
                             {!! SiteHelpers::activeLang('Remote Desktop Needed?', (isset($fields['is_remote_desktop']['language'])? $fields['is_remote_desktop']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-
-                            <input type="checkbox" @if(in_array(strtolower($row['is_remote_desktop']),  ['yes',1])) checked="" @endif name="is_remote_desktop" data-name="is_remote_desktop"
+                            <input type="checkbox"  {{$row['is_remote_desktop']==1? "checked":""}}  name="is_remote_desktop" data-name="is_remote_desktop"
                                    data-size="mini" data-handle-width="40px" data-on-text="YES" data-off-text="NO"
                                    id="toggle_trigger_2" onswitchchange="trigger()">
                         </div>
@@ -216,9 +239,10 @@
                 var windows_user = $('input[name="windows_user"]');
                 var windows_user_password = $('input[name="windows_user_password"]');
                 if (state == false) {
+                    windows_user.val('');
+                    windows_user_password.val('');
                     windows_user.prop('disabled', true);
                     windows_user_password.prop('disabled', true);
-
                     windows_user.removeAttr('required');
                     windows_user_password.removeAttr('required');
                 } else {
@@ -238,7 +262,9 @@
                     rdp_computer_name.prop('disabled', true);
                     rdp_computer_user.prop('disabled', true);
                     rdp_computer_password.prop('disabled', true);
-
+                    rdp_computer_name.val('');
+                    rdp_computer_password.val('');
+                    rdp_computer_user.val('');
                     rdp_computer_name.removeAttr('required');
                     rdp_computer_user.removeAttr('required');
                     rdp_computer_password.removeAttr('required');
@@ -271,7 +297,8 @@
                 if (state == false) {
                     teamviewer_id.prop('disabled', true);
                     teamviewer_passowrd.prop('disabled', true);
-
+                    teamviewer_id.val('');
+                    teamviewer_passowrd.val('');
                     teamviewer_id.removeAttr('required');
                     teamviewer_passowrd.removeAttr('required');
                 } else {
