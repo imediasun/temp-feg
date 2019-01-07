@@ -64,7 +64,7 @@ class PostSaveOrderEventHandler
             if($item->pre_is_broken_case == 0 && $item->isPreMerchandise == 1){
                 $item->prev_qty = $item->prev_qty * $item->qty_per_case;
             }
-
+//dd($item->qty,$item->prev_qty);
             if ($ReservedProductQtyLogObj and $item->prev_qty) {
                 $adjustmentAmount = ($product->reserved_qty + $item->prev_qty) - $item->qty;
                 if($item->is_broken_case == 0 && $item->isMerchandise == 1) {
