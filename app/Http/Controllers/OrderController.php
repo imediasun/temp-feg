@@ -1052,10 +1052,10 @@ class OrderController extends Controller
                 $contentsData['isPreMerchandise'] = $isPrevMerch;
                 $contentsData['isMerchandise'] = $isMerch;
 
-                if($isMerch == 1){
+              /*  if($isMerch == 1){
                     $contentsData['pre_is_broken_case'] = 0;
                     $contentsData['is_broken_case'] = 0;
-                }
+                }*/
 
                 if ($is_freehand == 0) {
                     event(new PostSaveOrderEvent($contentsData));
