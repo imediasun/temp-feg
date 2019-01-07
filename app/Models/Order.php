@@ -1435,7 +1435,8 @@ class order extends Sximo
                   OC.upc_barcode,
                   OC.case_price,
                   OC.price,
-                  P.ticket_value
+                  P.ticket_value,
+                  P.upc_barcode as product_upc_barcode
                 FROM orders O
                   INNER JOIN order_contents OC
                     ON OC.order_id = O.id
@@ -1472,7 +1473,8 @@ class order extends Sximo
                 $i++;
                 $newLine = $i < $total ? $newLine:'';
                 //$fileContent .= $item->vendor_name . '-' . $item->item_name . '-'.$item->sku.$newLine;
-                $itemId = $item->upc_barcode;
+              //  $itemId = $item->upc_barcode;
+                $itemId = $item->product_upc_barcode;
                 $itemName = $this->cleanAndTruncateString($item->item_name);
                 $sku = $item->sku;
                 $this->order_type_id = $orderTypeId;
