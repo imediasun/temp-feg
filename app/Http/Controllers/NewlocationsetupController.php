@@ -139,6 +139,8 @@ class NewlocationsetupController extends Controller
             $this->data['row'] = $this->model->getColumnTable('new_location_setups');
         }
 
+
+
         if(!empty($this->data['row']['teamviewer_passowrd']) && $this->data['row']['use_tv']==1){
             $this->data['row']['teamviewer_passowrd'] = \SiteHelpers::decryptStringOPENSSL($this->data['row']['teamviewer_passowrd']);
         }
@@ -154,7 +156,6 @@ class NewlocationsetupController extends Controller
 
         $this->data['id'] = $id;
         $this->data['excludedUserLocations']		= $this->getUsersExcludedLocations();
-
         return view('new-location-setup.form', $this->data);
     }
 
@@ -208,37 +209,36 @@ class NewlocationsetupController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('new_location_setups');
 
-            $data["is_server_locked"] = isset($data["is_server_locked"])?$data["is_server_locked"]:0;
-            $data["is_remote_desktop"] = isset($data["is_remote_desktop"])?$data["is_remote_desktop"]:0;
-            $data["use_tv"] = isset($data["use_tv"])?$data["use_tv"]:0;
+//            $data["is_server_locked"] = isset($data["is_server_locked"])?$data["is_server_locked"]:0;
+//            $data["is_remote_desktop"] = isset($data["is_remote_desktop"])?$data["is_remote_desktop"]:0;
+//            $data["use_tv"] = isset($data["use_tv"])?$data["use_tv"]:0;
 
-            if ($data["is_server_locked"] == "on") {
+            if (isset($data["is_server_locked"]) && $data["is_server_locked"] == "on"){
                 $data["is_server_locked"] = 1;
-            } else {
+            }
+            else{
                 $data["is_server_locked"] = 0;
             }
-
-            if ($data["is_remote_desktop"] == "on") {
+            if (isset($data["is_remote_desktop"])&& $data["is_remote_desktop"] == "on" ) {
                 $data["is_remote_desktop"] = 1;
             } else {
                 $data["is_remote_desktop"] = 0;
             }
-
-            if ($data["use_tv"] == "on") {
+            if (isset($data["use_tv"]) && $data["use_tv"] == "on") {
                 $data["use_tv"] = 1;
             } else {
                 $data["use_tv"] = 0;
             }
-            if(isset($data['teamviewer_passowrd']) && $data['use_tv']==1){
+
+            if(!empty($data['teamviewer_passowrd']) && $data['use_tv']==1){
                 $data['teamviewer_passowrd'] = \SiteHelpers::encryptStringOPENSSL($data['teamviewer_passowrd']);
             }
-            if(isset($data['windows_user_password'])&& $data['is_server_locked']){
+            if(!empty($data['windows_user_password'])&& $data['is_server_locked']==1){
                 $data['windows_user_password'] = \SiteHelpers::encryptStringOPENSSL($data['windows_user_password']);
             }
-            if(isset($data['rdp_computer_password'])&& $data['is_remote_desktop']==1){
+            if(!empty(['rdp_computer_password'])&& $data['is_remote_desktop']==1){
                 $data['rdp_computer_password'] = \SiteHelpers::encryptStringOPENSSL($data['rdp_computer_password']);
             }
-
             $id = $this->model->insertRow($data, $id);
             /**
              * sending Notification on Create a new Location Setup

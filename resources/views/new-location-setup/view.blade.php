@@ -60,7 +60,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Is Server Locked', (isset($fields['is_server_locked']['language'])? $fields['is_server_locked']['language'] : array())) }}
 						</td>
-						<td>{{ $row->is_server_locked }} </td>
+						<td>{{ $row->is_server_locked ==1?'Yes':'No' }} </td>
 						
 					</tr>
 				
@@ -84,7 +84,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Is Remote Desktop', (isset($fields['is_remote_desktop']['language'])? $fields['is_remote_desktop']['language'] : array())) }}
 						</td>
-						<td>{{ $row->is_remote_desktop }} </td>
+						<td>{{ $row->is_remote_desktop == 1 ? 'Yes' :'No' }} </td>
 						
 					</tr>
 				
