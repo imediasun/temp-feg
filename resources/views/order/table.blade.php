@@ -283,8 +283,9 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 </a>
                             @endif
 
-                            <a href="{{ $pageModule }}/inquire/{{$row->id}}/order"
+                            <a href="javascript:void(0)"
                                data-id="{{$eid}}"
+                               id="{{$row->id}}"
                                class="tips btn btn-xs btn-white inquireOrderAction"
                                title="{{ Lang::get('core.order_inquiry_button_title') }}">
                                 <i class="fa fa-question" aria-hidden="true"></i>
@@ -377,6 +378,26 @@ usort($tableGrid, "SiteHelpers::_sort");
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue'
 	});
+
+    $('.inquireOrderAction').on('click', function () {
+        var rowId = this.id;
+        $.ajax({
+            url: "{{ $pageModule }}/inquire/"+rowId+"/order",
+            method: "GET",
+            beforeSend: function(){
+                $('.ajaxLoading').css('display', 'block');
+            },
+            success: function(response){
+                if(response.status == 'error')
+                    notyMessageError(response.message, {"positionClass": "toast-top-right"});
+                else
+                    notyMessage(response.message, {"positionClass": "toast-top-right"});
+
+                $('.ajaxLoading').css('display', 'none');
+            }
+        });
+    });
+
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
 	});

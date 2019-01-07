@@ -3409,8 +3409,7 @@ ORDER BY aa_id");
 
         if(!$order)
         {
-            return \Redirect::to('order')
-                ->with('messagetext', \Lang::get('core.note_order_not_found'))->with('msgstatus', 'error');
+            return Response::json(['status'=>'error', 'message'=> \Lang::get('core.note_order_not_found')]);
         }
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
         $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($configName, null, $isTest);
@@ -3443,8 +3442,7 @@ ORDER BY aa_id");
             $sendEmailFromMerchandiseOrNot
         );
 
-        return \Redirect::to('order')
-            ->with('messagetext', 'Inquire order email sent successfully!')->with('msgstatus', 'success');
+        return Response::json(['status'=>'success', 'message'=>'Inquire order email sent successfully!']);
 
     }
 
