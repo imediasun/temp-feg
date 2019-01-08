@@ -77,7 +77,7 @@ class RefreshOAuthToken extends Command
                    $options = array();
                    $humanDateRange = FEGSystemHelper::getHumanDate(date('y-m-d'));
                    $environment = env('APP_ENV');
-                   $teamSubject = "[Error][$environment] Failed attempt to update auth $humanDateRange";
+                   $teamSubject = "[Error][$environment] Failed attempt to update auth token from console $humanDateRange";
                    $recipients["to"] = env('LARAVEL_DEV_TEAM_EMAILS','stanlymarian@gmail.com');
                    $message = view("emails.notifications.dev-team.failed-oauth-email", compact('user','e'))->render();//load view from emails.notification.dev-team.,...
                    FEGSystemHelper::sendNotificationToDevTeam($teamSubject, $message, $options);
