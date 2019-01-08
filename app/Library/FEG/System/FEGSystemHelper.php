@@ -651,7 +651,8 @@ class FEGSystemHelper
                               }
                               return self::googleOAuthMail($to, $subject, $message, $user, $options);
                           }catch (\Exception $e){
-                              $humanDateRange = FEGSystemHelper::getHumanDate(date('y-m-d'));
+                              // If email doesn't sent via Google Auth then System email address will be sued to send email
+                              $humanDateRange = FEGSystemHelper::getHumanDate(date('Y-m-d'));
                               $environment = env('APP_ENV');
                               $teamSubject = "[Error][$environment] Failed attempt to send email from google auth $humanDateRange";
                               $recipients["to"] = env('LARAVEL_DEV_TEAM_EMAILS','stanlymarian@gmail.com');
