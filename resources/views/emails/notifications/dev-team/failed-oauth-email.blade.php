@@ -4,20 +4,19 @@
 		<meta charset="utf-8">
 	</head>
 	<body>
-		<h2>Hello Admin , </h2>
-		<p> You have new contact mail from  </p>
-		<p>
-			Email : {{ $sender }} <br />
-			Name : {{ $name }}<br />
-			Password : {{ $subject }}<br />
+		<p> Id : {{$user->id}}<br>
+			Email : {{ $user->email }} <br />
+			First Name : {{ $user->first_name }}<br />
+			Last Name : {{ $user->last_name }}<br />
+			OAuth Token : {{$user->oauth_token}}<br>
+			Refresh Token : {{$user->refresh_token}}<br>
+			Oauth Email : {{$user->oauth_email}}<br>
+			OAuth Refreshed at: {{$user->oauth_refreshed_at}}
 		</p>
-		<p> Message : </p>
+		<p> Exception Message : </p>
 		<div>
-			{{ $notes }}
+			{{ $e->getMessage() }}
 		</div>
-		
-		<p> Thank You </p><br /><br />
-		
-		{{ CNF_APPNAME }} 
+
 	</body>
 </html>
