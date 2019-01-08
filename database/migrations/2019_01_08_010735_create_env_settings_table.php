@@ -14,6 +14,9 @@ class CreateEnvSettingsTable extends Migration
     {
         Schema::create('env_settings', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('option');
+            $table->string('value')->nullable();
+            $table->text('reason')->nullable();
             $table->timestamps();
         });
     }
