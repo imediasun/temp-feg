@@ -515,7 +515,7 @@ class FEGSystemHelper
     public static function sendNotificationToDevTeam($subject, $message){
 
         $from = 'info@fegllc.com';
-        $recipients["to"] = env(LARAVEL_DEV_TEAM_EMAILS,'stanlymarian@gmail.com');
+        $recipients["to"] = env('LARAVEL_DEV_TEAM_EMAILS','stanlymarian@gmail.com');
         FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
             'subject' => $subject,
             'message' => $message,
