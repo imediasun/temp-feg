@@ -512,17 +512,10 @@ class FEGSystemHelper
         }
     }
 
-    public static function sendNotificationToDevTeam($subject, $message){
-
+    public static function sendNotificationToDevTeam($subject, $message, $options = []){
         $from = 'info@fegllc.com';
         $recipients["to"] = env('LARAVEL_DEV_TEAM_EMAILS','stanlymarian@gmail.com');
-        FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
-            'subject' => $subject,
-            'message' => $message,
-            'isTest' => false,
-            'from' => $from,
-        )));
-
+        return self::laravelMail($recipients["to"], $subject, $message, $from, $options);
     }
 
     public static function configLaravelMail($mail, $options)
@@ -658,9 +651,12 @@ class FEGSystemHelper
                               }
                               return self::googleOAuthMail($to, $subject, $message, $user, $options);
                           }catch (\Exception $e){
-                               $message = view("");//load view from emails.notification.dev-team.,...
-                              sendNotificationToDevTeam($subject, $message);
-
+                              $humanDateRange = FEGSystemHelper::getHumanDate(date('y-m-d'));
+                              $environment = env('APP_ENV');
+                              $teamSubject = "[Error][$environment] Failed attempt to send email from google auth $humanDateRange";
+                              $recipients["to"] = env('LARAVEL_DEV_TEAM_EMAILS','stanlymarian@gmail.com');
+                              $message = view("emails.notifications.dev-team.failed-oauth-email", compact('user','e'))->render();//load view from emails.notification.dev-team.,...
+                              self::sendNotificationToDevTeam($teamSubject, $message);
                               return self::laravelMail($to, $subject, $message, $from, $options);
                           }
                       }
@@ -1003,7 +999,7 @@ class FEGSystemHelper
         }
         return $emails;
     }
-    
+
     public static function getLocationContactsEmails($fields = '', $location = null, $skipIfNoGroup = false)
     {
         $emails = [];
