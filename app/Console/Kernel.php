@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\CheckStuff::class,
         \App\Console\Commands\CheckNetSuiteApi::class,
         \App\Console\Commands\InjectFieldToModule::class,
+        \App\Console\Commands\CheckEnvConfiguration::class,
     ];
 
     /**
@@ -53,6 +54,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('cleanproductmeta')->hourly();
         $schedule->command('checkapi')->hourly();
+
+        $schedule->command('env:checkenv')->daily();
 
     }
 }
