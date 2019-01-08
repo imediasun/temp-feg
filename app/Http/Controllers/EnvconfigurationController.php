@@ -253,21 +253,15 @@ class EnvconfigurationController extends Controller {
 	public function getInsertenvdataintodatabase($runScript = 0){
 
 	    if($runScript == 1) {
-	        self::getEnvVarsOnly();
-	        exit;
             $data = [];
             foreach ($_ENV as $key => $value) {
-                $data = ['option' => $key, 'value' => $value,];
-                $this->model->insertRow($data, 0);
+                if(Envconfiguration::isExtraVariable($key)) {
+                    $data = ['option' => $key, 'value' => $value,];
+                    $this->model->insertRow($data, 0);
+                }
             }
         }
     }
 
-    public static function getEnvVarsOnly(){
-        $envVars = $_ENV;
-        $serverVars = $_SERVER;
-        $diff = array_diff($serverVars,$envVars);
-        dd($envVars,$diff);
-    }
 
 }

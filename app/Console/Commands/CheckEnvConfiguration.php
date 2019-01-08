@@ -79,6 +79,13 @@ class CheckEnvConfiguration extends Command
     {
         global $__logger;
         $__logger->log('Comparing ENV file with database.');
+        $excludedExtraVariables = [];
+        foreach ($envConfigs as $envConfig=>$value){
+            if(Envconfiguration::isExtraVariable($envConfig)){
+                $excludedExtraVariables[$envConfig] = (string) $value;
+            }
+        }
+        $envConfigs = $excludedExtraVariables;
         $compareResult = [];
         foreach ($dbenvConfigs as $dbEnvConfig) {
             $data = [];
@@ -111,6 +118,12 @@ class CheckEnvConfiguration extends Command
     {
         global $__logger;
         $__logger->log('getting ENV updated configurations.');
+        $excludedExtraVariables = [];
+        foreach ($envConfigs as $envConfig=>$value){
+            if(Envconfiguration::isExtraVariable($envConfig)){
+                $excludedExtraVariables[$envConfig] = (string) $value;
+            }
+        }
         $dbenvConfigKeys = [];
         $envConfigKeys = array_keys($envConfigs);
         foreach ($dbenvConfigs as $dbenvConfig) {
