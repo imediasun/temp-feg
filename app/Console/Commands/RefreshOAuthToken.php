@@ -44,7 +44,7 @@ class RefreshOAuthToken extends Command
     {
         if (env('DONT_REFRESH_OAUTH_TOKEN', false) === true) {
             return;
-          }
+        }
 
         $L = $this->L = FEGSystemHelper::setLogger($this->L, "refresh-oauth-token.log", "FEGOAuthTokenCron1/RefreshOAuthToken1", "REFRESH_OAUTH");
         $L->log('Start Refreshing Oauth Tokens');
@@ -62,7 +62,6 @@ class RefreshOAuthToken extends Command
            }
            $now = new \DateTime();
            $now = $now->getTimestamp();
-
            if($now >= $nextRefreshTime || !Users::verifyOAuthTokenIsValid($user->oauth_token)){
                try{
 
@@ -74,17 +73,18 @@ class RefreshOAuthToken extends Command
                }
                catch (ClientException $e)
                {
-                   $options = array();
+
                    $humanDateRange = FEGSystemHelper::getHumanDate(date('y-m-d'));
                    $environment = env('APP_ENV');
                    $teamSubject = "[Error][$environment] Failed attempt to update auth token from console $humanDateRange";
                    $recipients["to"] = env('LARAVEL_DEV_TEAM_EMAILS','stanlymarian@gmail.com');
                    $message = view("emails.notifications.dev-team.failed-oauth-email", compact('user','e'))->render();//load view from emails.notification.dev-team.,...
-                   FEGSystemHelper::sendNotificationToDevTeam($teamSubject, $message, $options);
+                   FEGSystemHelper::sendNotificationToDevTeam($teamSubject, $message);
                    $user->oAuth_attempted_at = date('y-m-d H:i:s');
                    $user->oAuth_exception = $e->getMessage();
                    $user->oauth_token = null;
                    $user->refresh_token = null;
+                   $user->oauth_email = null;
                    $user->save();
                    echo 'User ID '.$user->id . ' token could not be updated..';
                    $count--;

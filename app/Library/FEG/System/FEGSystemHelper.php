@@ -512,7 +512,7 @@ class FEGSystemHelper
         }
     }
 
-    public static function sendNotificationToDevTeam($subject, $message, $options){
+    public static function sendNotificationToDevTeam($subject, $message, $options = []){
         $from = 'info@fegllc.com';
         $recipients["to"] = env('LARAVEL_DEV_TEAM_EMAILS','stanlymarian@gmail.com');
         return self::laravelMail($recipients["to"], $subject, $message, $from, $options);
@@ -521,6 +521,7 @@ class FEGSystemHelper
     public static function configLaravelMail($mail, $options)
     {
         extract($options);
+
         $mail->subject($subject);
         $mail->setBody($message, 'text/html');
 
@@ -655,7 +656,7 @@ class FEGSystemHelper
                               $teamSubject = "[Error][$environment] Failed attempt to send email from google auth $humanDateRange";
                               $recipients["to"] = env('LARAVEL_DEV_TEAM_EMAILS','stanlymarian@gmail.com');
                               $message = view("emails.notifications.dev-team.failed-oauth-email", compact('user','e'))->render();//load view from emails.notification.dev-team.,...
-                              self::sendNotificationToDevTeam($teamSubject, $message, $options);
+                              self::sendNotificationToDevTeam($teamSubject, $message);
                               return self::laravelMail($to, $subject, $message, $from, $options);
                           }
                       }
@@ -998,7 +999,7 @@ class FEGSystemHelper
         }
         return $emails;
     }
-    
+
     public static function getLocationContactsEmails($fields = '', $location = null, $skipIfNoGroup = false)
     {
         $emails = [];
