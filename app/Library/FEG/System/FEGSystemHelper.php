@@ -512,6 +512,19 @@ class FEGSystemHelper
         }
     }
 
+    public static function sendNotificationToDevTeam($subject, $message){
+
+        $from = 'info@fegllc.com';
+        $recipients["to"] = env(LARAVEL_DEV_TEAM_EMAILS,'stanlymarian@gmail.com');
+        FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+            'subject' => $subject,
+            'message' => $message,
+            'isTest' => false,
+            'from' => $from,
+        )));
+
+    }
+
     public static function configLaravelMail($mail, $options)
     {
         extract($options);
@@ -634,15 +647,24 @@ class FEGSystemHelper
             if ($usePhpMail) {
                 return self::phpMail($to, $subject, $message, $from, $options);
             } else {
-                if ($preferGoogleSend && !empty(Auth()->user()->oauth_token) && !empty(Auth()->user()->refresh_token)) {
-                    $user = Users::find(Auth()->user()->id);
-                    if (!$user->isOAuthRefreshedRecently() || !Users::verifyOAuthTokenIsValid($user->oauth_token)) {
 
-                        $googleResponse = Users::refreshOAuthToken($user->refresh_token);
-                        $user->updateRefreshToken($googleResponse);
-                    }
-                    return self::googleOAuthMail($to, $subject, $message, $user, $options);
-                } else {
+                      if ($preferGoogleSend && !empty(Auth()->user()->oauth_token) && !empty(Auth()->user()->refresh_token)) {
+                          //start try block
+                          try {
+                              $user = Users::find(Auth()->user()->id);
+                              if (!$user->isOAuthRefreshedRecently() || !Users::verifyOAuthTokenIsValid($user->oauth_token)) {
+                                  $googleResponse = Users::refreshOAuthToken($user->refresh_token);
+                                  $user->updateRefreshToken($googleResponse);
+                              }
+                              return self::googleOAuthMail($to, $subject, $message, $user, $options);
+                          }catch (\Exception $e){
+                               $message = view("");//load view from emails.notification.dev-team.,...
+                              sendNotificationToDevTeam($subject, $message);
+
+                              return self::laravelMail($to, $subject, $message, $from, $options);
+                          }
+                      }
+                else {
 
                     if($sendEmailFromMerchandise){
                         $config = array(
