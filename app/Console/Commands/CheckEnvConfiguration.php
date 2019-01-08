@@ -134,7 +134,9 @@ class CheckEnvConfiguration extends Command
         $__logger->log('New Configurations found in ENV:', $diff);
         $data = [];
         foreach ($diff as $item) {
-            $data[] = ['option' => $item, 'value' => $envConfigs[$item], 'status' => 'New'];
+            if(Envconfiguration::isExtraVariable($item)) {
+                $data[] = ['option' => $item, 'value' => $envConfigs[$item], 'status' => 'New'];
+            }
         }
         return $data;
     }
