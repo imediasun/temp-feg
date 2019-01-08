@@ -73,7 +73,6 @@ class RefreshOAuthToken extends Command
                }
                catch (ClientException $e)
                {
-
                    $humanDateRange = FEGSystemHelper::getHumanDate(date('y-m-d'));
                    $environment = env('APP_ENV');
                    $teamSubject = "[Error][$environment] Failed attempt to update auth token from console $humanDateRange";
