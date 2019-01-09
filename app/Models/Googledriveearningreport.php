@@ -190,8 +190,7 @@ FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_
         \Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
 
         $counter_select = \DB::select(self::getRowsCount());
-        $counter_select = $counter_select[0]->totalCount;
-        $total= count($counter_select);
+        $total = $counter_select[0]->totalCount;
         if($table=="img_uploads")
         {
             $total="";
