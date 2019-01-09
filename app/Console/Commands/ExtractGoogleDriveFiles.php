@@ -56,49 +56,50 @@ class ExtractGoogleDriveFiles extends Command
         if (env('DONT_GET_GOOGLE_DRIVE_FILES', false)) {
             return;
         }
-        \Artisan::call('refresh:googledriveaccesstoken');
-        $this->L->log('------------Command Started.-------------');
+        try {
+            \Artisan::call('refresh:googledriveaccesstoken');
+            $this->L->log('------------Command Started.-------------');
 
-        $this->info('Command Executed.');
-        $this->period = $this->argument('period');
-        $this->info('Period: '.$this->period);
+            $this->info('Command Executed.');
+            $this->period = $this->argument('period');
+            $this->info('Period: ' . $this->period);
 
-        $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->first();
+            $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
 
-        $this->drive = $this->getGoogleDriveObject($user);
+            $this->drive = $this->getGoogleDriveObject($user);
 
-        $currentTime = time();
-        //testing short time
-        $this->refreshDriveObjectAt = $currentTime + $this->refreshInterval;
-        $this->info('Current Time : '.date('Y-m-d H:i:s',$currentTime));
-        $this->info('Drive object will refresh at : '.date('Y-m-d H:i:s',$this->refreshDriveObjectAt));
-        $this->L->log('Drive object will refresh at : '.date('Y-m-d H:i:s',$this->refreshDriveObjectAt));
+            $currentTime = time();
+            //testing short time
+            $this->refreshDriveObjectAt = $currentTime + $this->refreshInterval;
+            $this->info('Current Time : ' . date('Y-m-d H:i:s', $currentTime));
+            $this->info('Drive object will refresh at : ' . date('Y-m-d H:i:s', $this->refreshDriveObjectAt));
+            $this->L->log('Drive object will refresh at : ' . date('Y-m-d H:i:s', $this->refreshDriveObjectAt));
 
-        $locations = null;
-        if($this->period == 'Daily' || $this->period == 'daily'){
-            $locations = location::select('id','location_name_short','daily_folder_id As parent_id')->where('daily_folder_id', '!=', '')->get();
-            $this->L->log('Daily Folders ID: ' . $locations);
+            $locations = null;
+            if ($this->period == 'Daily' || $this->period == 'daily') {
+                $locations = location::select('id', 'location_name_short', 'daily_folder_id As parent_id')->where('daily_folder_id', '!=', '')->get();
+                $this->L->log('Daily Folders ID: ' . $locations);
+            } elseif ($this->period == 'Weekly' || $this->period == 'weekly') {
+                $locations = location::select('id', 'location_name_short', 'weekly_folder_id As parent_id')->where('weekly_folder_id', '!=', '')->get();
+                $this->L->log('Weekly Folders ID: ' . $locations);
+            } elseif ($this->period == 'Monthly' || $this->period == 'monthly') {
+                $locations = location::select('id', 'location_name_short', 'monthly_folder_id As parent_id')->where('monthly_folder_id', '!=', '')->get();
+                $this->L->log('Monthly Folders ID: ' . $locations);
+            } elseif ($this->period == '13Weeks' || $this->period == '13weeks') {
+                $locations = location::select('id', 'location_name_short', 'thirteen_weeks_folder_id As parent_id')->where('thirteen_weeks_folder_id', '!=', '')->get();
+                $this->L->log('13Weeks Folders ID: ' . $locations);
+            }
+
+            foreach ($locations as $location) {
+                $this->path = $this->period . '-' . $location->id;
+                $this->L->log("Starting {$this->period} Extraction for  {$location->id} - {$location->location_name_short} at " . date('Y-m-d H:i:s'));
+                $this->getFilesFromLocationFolder($location->parent_id, $location);
+                $this->L->log("Completing {$this->period} Extraction for  {$location->id} - {$location->location_name_short} at " . date('Y-m-d H:i:s'));
+            }
+        }catch (\Exception $e){
+            print_r($e->getMessage());
+            $this->L->log($e->getMessage());
         }
-        elseif($this->period == 'Weekly' || $this->period == 'weekly'){
-            $locations = location::select('id','location_name_short','weekly_folder_id As parent_id')->where('weekly_folder_id', '!=', '')->get();
-            $this->L->log('Weekly Folders ID: ' . $locations);
-        }
-        elseif($this->period == 'Monthly' || $this->period == 'monthly'){
-            $locations = location::select('id','location_name_short','monthly_folder_id As parent_id')->where('monthly_folder_id', '!=', '')->get();
-            $this->L->log('Monthly Folders ID: ' . $locations);
-        }
-        elseif($this->period == '13Weeks' || $this->period == '13weeks'){
-            $locations = location::select('id','location_name_short','thirteen_weeks_folder_id As parent_id')->where('thirteen_weeks_folder_id', '!=', '')->get();
-            $this->L->log('13Weeks Folders ID: ' . $locations);
-        }
-
-        foreach ($locations as $location){
-            $this->path = $this->period.'-'.$location->id;
-            $this->L->log("Starting {$this->period} Extraction for  {$location->id} - {$location->location_name_short} at ".date('Y-m-d H:i:s'));
-            $this->getFilesFromLocationFolder($location->parent_id, $location);
-            $this->L->log("Completing {$this->period} Extraction for  {$location->id} - {$location->location_name_short} at ".date('Y-m-d H:i:s'));
-        }
-
 
     }
 
