@@ -114,6 +114,7 @@ class Envconfiguration extends Sximo  {
             "HISTTIMEFORMAT",
             "_",
             "HTTP_HOST",
+            "SCRIPT_FILENAME",
         ];
 
         return !in_array($key,$extraVariables);
