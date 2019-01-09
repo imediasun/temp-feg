@@ -44,7 +44,7 @@ class RefreshOAuthToken extends Command
     {
         if (env('DONT_REFRESH_OAUTH_TOKEN', false) === true) {
             return;
-        }
+          }
 
         $L = $this->L = FEGSystemHelper::setLogger($this->L, "refresh-oauth-token.log", "FEGOAuthTokenCron1/RefreshOAuthToken1", "REFRESH_OAUTH");
         $L->log('Start Refreshing Oauth Tokens');
@@ -62,6 +62,7 @@ class RefreshOAuthToken extends Command
            }
            $now = new \DateTime();
            $now = $now->getTimestamp();
+
            if($now >= $nextRefreshTime || !Users::verifyOAuthTokenIsValid($user->oauth_token)){
                try{
 

@@ -521,7 +521,6 @@ class FEGSystemHelper
     public static function configLaravelMail($mail, $options)
     {
         extract($options);
-
         $mail->subject($subject);
         $mail->setBody($message, 'text/html');
 
