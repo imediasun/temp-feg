@@ -633,7 +633,7 @@ class servicerequestsController extends Controller
         $this->data['fid'] = \Session::get('fid');
         $this->data['creator'] = $creator = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
         $this->data['following'] = Ticketfollowers::isFollowing($id, $userId,'',$ticketType);
-        $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
+        $this->data['followers'] = Ticketfollowers::getAllFollowers($id, null, false, $ticketType);
         $this->data['setting'] = $this->info['setting'];
         $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
