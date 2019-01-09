@@ -720,15 +720,14 @@ WHERE orders.is_api_visible = 1
     public function checkDuplicateProductTypes($request,$id){
         if(is_array($request->prod_sub_type_id))
         {
-
-            if(count(array_unique($request->prod_sub_type_id))<count($request->prod_sub_type_id))
-            {
+            if (FEGSystemHelper::isArrayCombinationUnique($request->prod_type_id,$request->prod_sub_type_id)){
                 // Array has duplicates
                 return [
                     'message' => "Please Select Unique Combinations of Product Type & Sub Type",
                     'status' => 'error'
                 ];
             }
+
             $ItemIds = [];
             foreach($request->itemId as $item){
                 if(!empty($item) && $item > 0){
