@@ -38,7 +38,6 @@ class Sximo extends Model {
     }
     public static function insertLog($module, $task ,$note = '', $conditions = '',$params = null)
     {
-        Log::info("starting in insert Log");
         $table = 'tb_logs';
         $user = (is_object(\Auth::user()) ? \Auth::user()->id : 'User Not Logged In');
         $impersonatedUserIdPath = Session::has('return_id') ? Session::get('return_id') : [];
