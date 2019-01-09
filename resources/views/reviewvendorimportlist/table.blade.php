@@ -105,7 +105,7 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" @if(!empty($row->textColor)) style="color: {{ $row->textColor }} !important;" @endif data-variantId="{{ $row->variation_id  }}">
+                <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}" @if(!empty($row->textColor)) style="color: {{ $row->textColor }} !important;" @endif data-variantId="{{ $row->variation_id  }}" data-variantidcombination="{{  $row->vendor_description."|".$row->sku."|".$row->case_price  }}" data-itemname="{{ $row->vendor_description  }}" data-sku="{{ $row->sku  }}" data-caseprice="{{ $row->case_price  }}">
 
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td class="number" > <?php echo ++$i;?>  </td>
