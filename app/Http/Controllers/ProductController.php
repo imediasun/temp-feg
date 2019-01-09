@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEG\System\FEGSystemHelper;
 use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
 use App\Models\Ordertyperestrictions;
@@ -713,11 +714,12 @@ class ProductController extends Controller
                 'status' => 'error'
             ));
         }*/
-        if(is_array($request->prod_sub_type_id) && $id == 0)
+
+
+
+        if(is_array($request->prod_type_id) && $id == 0)
         {
-            if(count(array_unique($request->prod_sub_type_id))<count($request->prod_sub_type_id))
-            {
-                // Array has duplicates
+            if (FEGSystemHelper::isArrayCombinationUnique($request->prod_type_id,$request->prod_sub_type_id)){
                 return response()->json(array(
                     'message' => "Please Select Unique Combinations of Product Type & Sub Type",
                     'status' => 'error'
