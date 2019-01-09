@@ -93,22 +93,37 @@ class VendorProductsImportHelper
         $from = 'vendor.products@fegllc.com';
 
         $message = '<p>Hello '.$vendor->vendor_name.',</p>';
-        $message .= '<p>Attached you will find the most up-to-date pricing and product information we have for your products. Please download and review this file, making any necessary product updates. Please do not make any changes to the file\'s name. Any new products you have may be added to this file. If you no longer offer a product contained in this file, please delete the row.</p>';
-        $message .= '<p>Do not make any changes to the ID field (Column A), except as noted below:</p>';
-        $message .= '<ul>';
-        $message .= '<ol>1. Newly added products do not need an ID# added to the file.</ol>';
-        $message .= '<ol>2. If a product needs to be removed, you may remove the entire row, including the ID.</ol>';
-        $message .= '<ol>3. Make no changes to the ID number.</ol></ul>';
-        $message .= '<p>SKUs and Barcodes/UPC codes need to have a =" added to the front of them and a " added to the end.</p>';
-        $message .= '<p>EXAMPLE 1: ="barcode12345"</p>';
-        $message .= '<p>When you have finished making updates, please save the file and attach it to your REPLY ALL to this email.</p>';
-        $message .= '<p>Should you have any questions, please REPLY ALL to this email and we\'ll get back to you as soon as possible.</p>';
-        $message .= '<p>Best regards,</p>';
-        $message .= '<p>The Merchandise Team</p>';
-        $message .= '<p>Family Entertainment Group</p>';
-        $message .= '<p><a href="https://fegllc.com/">https://fegllc.com/</a></p>';
-        $message .= '<p>Phone: (847) 842-6310</p>';
-        $message .= '<p>Email: merch.office@fegllc.com</p>';
+
+        $message .='<p>Attached you will find the most up-to-date pricing and product information we have for your products. Please download and review this file, making any necessary product updates. Any new products you have may be added to this file. If you no longer offer a product contained in this file, please delete the row containing that product\'s information.</p>';
+        $message .='<p>SKU AND BARCODE/UPC FORMATTING:</p>';
+        $message .='<ol>';
+        $message .='<li>Left-click or use the arrow buttons on your keyboard to get to the cell you wish to add the SKU (Column C) or UPC/Barcode (Column D).</li>';
+        $message .='<li>Type the equal symbol followed by a quotation mark before typing your SKU and/or Barcode.</li>';
+        $message .='<li>Add another quotation mark to the end of your SKU and/or Barcode. EXAMPLE: ="skubarcodeupc" or ="barcode12345"</li>';
+        $message .='</ol>';
+        $message .='<p>HOW TO ADD A NEW PRODUCT TO THE FILE:</p>';
+        $message .='<ol>';
+        $message .='<li>Left-click the row number under the last.</li>';
+        $message .='<li>When the row is selected, right-click on it and select Insert from the context menu.</li>';
+        $message .='<li>Add the Item Name, SKU, UPC/Barcode, Items per Case, Case Price, Unit Price and, if applicable, the Reserved Qty.</li>';
+        $message .='<li>Do not add anything to column A, it should be blank.</li>';
+        $message .='</ol>';
+        $message .='<p>HOW TO REMOVE A PRODUCT FROM THE FILE:</p>';
+        $message .='<ol>';
+        $message .='<li>Left-click the row number you wish to remove.</li>';
+        $message .='<li>Right-click on that row and select Delete from the context menu.</li>';
+        $message .='<li>A dialog box may open, presenting you with several options. If so, select entire row and click OK.</li>';
+        $message .='</ol>';
+        $message .='<p>IMPORTANT:</p>';
+        $message .='<p>Do not make any changes to the ID field (Column A), unless an error response from our list-upload tool tells you to.</p>';
+        $message .='<p>When you have finished making updates to the CSV file, please save it (remember where you saved it!) and attach it to your email response. To ensure that your product updates are received correctly, please REPLY ALL to this email.</p>';
+        $message .='<p>Should you have any questions, please REPLY ALL to this email and we\'ll get back to you as soon as possible.</p>';
+        $message .='<p>Best regards,</p>';
+        $message .='<p>The Merchandise Team</p>';
+        $message .='<p>Family Entertainment Group</p>';
+        $message .="<p>https://fegllc.com</p>";
+        $message .='<p>Phone: (847) 842-6310</p>';
+        $message .='<p>Email: merch.office@fegllc.com</p>';
 
         /* current user */
         $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
