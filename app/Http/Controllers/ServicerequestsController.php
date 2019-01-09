@@ -138,7 +138,14 @@ class servicerequestsController extends Controller
         $info['config']['grid'] = $this->model->displayFieldsByType($info['config']['grid'],$ticketType);
 
         $fields = $info['config']['grid'];
+
         $rows = $results['rows'];
+        $rows = array_map(function($row){
+            if($row->Status == 'inqueue'){
+                $row->Status = 'pending';
+            }
+            return $row;
+        },$rows);
         //print_r($fields[0]);die;
         $extra = array(
             'field' => '',
