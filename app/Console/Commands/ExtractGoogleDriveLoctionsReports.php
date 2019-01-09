@@ -50,90 +50,88 @@ class ExtractGoogleDriveLoctionsReports extends Command
         if (env('DONT_GET_GOOGLE_DRIVE_FILES', false)) {
             return;
         }
-
-        $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->first();
-
-        $this->L->log('------------Command Started.-------------');
-
-        $this->info('Command Executed.');
-
-        $client = new \Google_Client();
-        $client->setAccessToken($user->oauth_token);
-
-        $parentId = env('LOCATION_DEBIT_CARD_FOLDER_ID'); //Location Debit Card Reports folder
-
-        $this->L->log('Google Client', $client);
-
         try {
-            $drive = new \Google_Service_Drive($client);
-        } catch (Exception $e) {
-            print "An error occurred: " . $e->getMessage();
-        }
+            $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
 
-        $this->L->log('Google Drive', $drive);
-//        print_r($drive);
-//        exit();
+            $this->L->log('------------Command Started.-------------');
 
-        $files = $this->getAllLocationFoldersFromDrive($drive, $parentId);
+            $this->info('Command Executed.');
 
-        if($files){
-            $this->L->log('Google Drive Files: ', $files);
-        }
+            $client = new \Google_Client();
+            $client->setAccessToken($user->oauth_token);
 
-        $locations = [];
-        foreach ($files as $file){
-            if($file->mimeType == 'application/vnd.google-apps.folder'){
+            $parentId = env('LOCATION_DEBIT_CARD_FOLDER_ID'); //Location Debit Card Reports folder
 
-                $locationObj = new \stdClass();
-                $locationObj->locationFolderId = $file->id;
-                $locationObj->locationFolderName = $file->name;
+            $this->L->log('Google Client', $client);
 
-                $this->L->log('--------------  File Detail ----------------');
-                $this->L->log('File Id: '.$file->id);
-                $this->L->log('File Name: '.$file->name);
-                $this->info('Getting Files from '.$file->name);
-
-                $locations[] = $locationObj;
+            try {
+                $drive = new \Google_Service_Drive($client);
+            } catch (Exception $e) {
+                print "An error occurred: " . $e->getMessage();
             }
-        }
 
-        foreach ($locations as $location){
-            $this->path = $location->locationFolderName;
+            $this->L->log('Google Drive', $drive);
 
-            $this->L->log('Extracting Files From: '. $location->locationFolderName);
+            $files = $this->getAllLocationFoldersFromDrive($drive, $parentId);
 
-            $files = $this->getFilesFromLocationFolder($drive,$location->locationFolderId, $location);
-            foreach ($files as $file){
+            if ($files) {
+                $this->L->log('Google Drive Files: ', $files);
+            }
 
-                if($file->mimeType == 'application/vnd.google-apps.folder'){
+            $locations = [];
+            foreach ($files as $file) {
+                if ($file->mimeType == 'application/vnd.google-apps.folder') {
+
+                    $locationObj = new \stdClass();
+                    $locationObj->locationFolderId = $file->id;
+                    $locationObj->locationFolderName = $file->name;
+
                     $this->L->log('--------------  File Detail ----------------');
                     $this->L->log('File Id: ' . $file->id);
                     $this->L->log('File Name: ' . $file->name);
-                    $this->L->log('File Parent ID: ' . $file->parents[0]);
-                    $this->path .= '/'.$file->name;
+                    $this->info('Getting Files from ' . $file->name);
 
-                    $loc = explode('-', $file->name);
-                    if($loc[0] == 'Daily'){
-                        location::where('id', $loc[1])->update(['daily_folder_id'=> $file->id]);
-                    }
-                    elseif($loc[0] == 'Weekly'){
-                        location::where('id', $loc[1])->update(['weekly_folder_id'=> $file->id]);
-                    }
-                    elseif($loc[0] == 'Monthly'){
-                        location::where('id', $loc[1])->update(['monthly_folder_id'=> $file->id]);
-                    }
-                    elseif($loc[0] == '13Weeks'){
-                        location::where('id', $loc[1])->update(['thirteen_weeks_folder_id'=> $file->id]);
-                    }
-
+                    $locations[] = $locationObj;
                 }
             }
-        }
 
+            foreach ($locations as $location) {
+                $this->path = $location->locationFolderName;
+
+                $this->L->log('Extracting Files From: ' . $location->locationFolderName);
+
+                $files = $this->getFilesFromLocationFolder($drive, $location->locationFolderId, $location);
+                foreach ($files as $file) {
+
+                    if ($file->mimeType == 'application/vnd.google-apps.folder') {
+                        $this->L->log('--------------  File Detail ----------------');
+                        $this->L->log('File Id: ' . $file->id);
+                        $this->L->log('File Name: ' . $file->name);
+                        $this->L->log('File Parent ID: ' . $file->parents[0]);
+                        $this->path .= '/' . $file->name;
+
+                        $loc = explode('-', $file->name);
+                        if ($loc[0] == 'Daily') {
+                            location::where('id', $loc[1])->update(['daily_folder_id' => $file->id]);
+                        } elseif ($loc[0] == 'Weekly') {
+                            location::where('id', $loc[1])->update(['weekly_folder_id' => $file->id]);
+                        } elseif ($loc[0] == 'Monthly') {
+                            location::where('id', $loc[1])->update(['monthly_folder_id' => $file->id]);
+                        } elseif ($loc[0] == '13Weeks') {
+                            location::where('id', $loc[1])->update(['thirteen_weeks_folder_id' => $file->id]);
+                        }
+
+                    }
+                }
+            }
+        }catch (\Exception $e){
+            print_r($e->getMessage());
+            $this->L->log($e->getMessage());
+        }
 
     }
 
-    function getAllLocationFoldersFromDrive(\Google_Service_Drive $drive, $parentId = '1lgiyuKBI1BczHh2RMGPIFxyUGKAjy_td'){
+    function getAllLocationFoldersFromDrive(\Google_Service_Drive $drive, $parentId){
         $files = $this->getFiles($drive, $parentId);//get file from drive
 
         return $files;
