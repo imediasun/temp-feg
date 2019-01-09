@@ -40,7 +40,12 @@ class googledriveearningreport extends Sximo  {
 		
 		return "SELECT google_drive_earning_reports.* ,  google_drive_earning_reports.modified_time AS date_start,  google_drive_earning_reports.modified_time AS date_end,  location.gd_parent_folder_name 
 FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_reports.loc_id = location.id";
-	}	
+	}
+
+	 public static function getRowsCount(){
+	     return "SELECT COUNT(google_drive_earning_reports.id) as totalCount FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_reports.loc_id = location.id";
+     }
+
 
 	public static function queryWhere(  ){
 		
@@ -183,7 +188,9 @@ FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_
         }
         $select.='AND '.$table.'.loc_id IN ('.\SiteHelpers::getCurrentUserLocationsFromSession().')';
         \Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
+
+        $counter_select = \DB::select(self::getRowsCount());
+        $counter_select = $counter_select[0]->totalCount;
         $total= count($counter_select);
         if($table=="img_uploads")
         {
