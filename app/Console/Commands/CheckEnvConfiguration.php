@@ -58,7 +58,7 @@ class CheckEnvConfiguration extends Command
             $data = ['existigConfigurations'=>$existingConfigurations,'newConfigurationsEnv'=>$newConfigurations];
 
             $message =  view('emails.notifications.dev-team.env-configuration-email',$data)->render();
-            $humanDate = FEGSystemHelper::getHumanDate(date('d/m/Y'));
+            $humanDate = FEGSystemHelper::getHumanDate(date('Y-m-d'));
             //[FEG Verification][ENV File] [Dev/Demo/Live] Configurations
             $appENV = Envconfiguration::where('option','=','APP_ENV')->first();
             $appEnv = ($appENV) ? $appENV->value:"APP_ENV not defined in database";
