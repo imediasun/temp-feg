@@ -83,7 +83,7 @@ class VendorProductsImportHelper
         fclose($file);
 
         //Sending mail with Excel file attachment
-        $subject = "Products List - [Vendor Product List #$vendorId] ". date('m/d/Y');
+        $subject = "Products List - [Vendor Product List #$vendorId] ". FEGSystemHelper::getHumanDate(date('Y-m-d'));;
         $file_to_save = storage_path().'/app/vendor-products/' . $fileName;
 
         

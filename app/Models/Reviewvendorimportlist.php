@@ -355,7 +355,7 @@ GROUP BY mapped_expense_category");
                     if ($vendorListStatus['status'] == true) {
                         $isInvalidId = true;
                         //Sending mail with Excel file attachment
-                        $subject = "[System Error] Products List - [Vendor Product List #$vendor->id] " . date('m/d/Y');
+                        $subject = "[System Error] Products List - [Vendor Product List #$vendor->id] " . FEGSystemHelper::getHumanDate(date('Y-m-d'));
                         $this->replyToVendor($vendor, $subject, $vendorListStatus['message'], $attachment);
                     }
                 }
