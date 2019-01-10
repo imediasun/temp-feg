@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Library\FEG\System\FEGSystemHelper;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Session;
@@ -335,7 +336,7 @@ GROUP BY mapped_expense_category");
         $vendor = '';
         //if email id exist against single vendor
         if($vendorCount == 1){
-            $vendor = vendor::select("id")->where(function ($query) use($fromEmail){
+            $vendor = vendor::select("id",'vendor_name','email','email_2','ismerch','isgame')->where(function ($query) use($fromEmail){
                 $query->where('email',$fromEmail);
                 $query->orWhere('email_2',$fromEmail);
             })->first();
@@ -345,6 +346,25 @@ GROUP BY mapped_expense_category");
         }
       
         if($vendor) {
+            $isInvalidId = false;
+            foreach ($dataArray['attachments'] as $attachment) {
+                $testFileData = \SiteHelpers::getVendorFileImportData($attachment);
+                if (!empty($testFileData)) {
+                    $vendorListStatus = $this->notifyVendorIfProductIdInvalid($testFileData, $vendor->id);
+
+                    if ($vendorListStatus['status'] == true) {
+                        $isInvalidId = true;
+                        //Sending mail with Excel file attachment
+                        $subject = "[System Error] Products List - [Vendor Product List #$vendor->id] " . date('m/d/Y');
+                        $this->replyToVendor($vendor, $subject, $vendorListStatus['message'], $attachment);
+                    }
+                }
+            }
+
+            if ($isInvalidId == true) {
+                return false;
+            }
+
             $data = [
                 'vendor_id' => $vendor->id, 'email_recieved_at' => date('Y-m-d H:i:s', strtotime($dataArray['email_received_at'])), 'created_at' => date('Y-m-d H:i:s'),
             ];
@@ -468,5 +488,123 @@ GROUP BY mapped_expense_category");
             return [$row];
         }
     }
+    /**
+     * @param $items
+     * @param $vendorId
+     * @return array
+     */
+    public function notifyVendorIfProductIdInvalid($items,$vendorId){
 
+        $itemNotify = ['status' => false ,'message' => ''];
+        $message = '<p>There is a product ID error on row(s)';
+        $itemsIndex = '';
+        $i = 1;
+        foreach ($items as $listItem){
+            $i++;
+            if($listItem['product_id'] > 0) {
+                $vendorProduct =  product::where('id', $listItem['product_id'])->where('vendor_id',$vendorId)->get();
+                if ($vendorProduct->count() < 1){
+                    $itemsIndex .= empty($itemsIndex) ? $i: ','.$i;
+                    $itemNotify['status'] = true;
+                }
+            }
+        }
+        $message .= ' '.$itemsIndex.'.</p>';
+        $message .= '<p>To correct this error:</p>';
+        $message .='<ol>';
+        $message .='<li>Open the attached file.</li>';
+        $message .='<li>Go to the row(s) indicated above.</li>';
+        $message .='<li>Delete the entry in column A for the row(s) indicated above.</li>';
+        $message .='<li>Save the file to your computer. Remember where you saved it.</li>';
+        $message .='<li>REPLY ALL to this email and attach your updated file.</li>';
+        $message .='<li>Send the email with the updated attachment back to us.</li>';
+        $message .= '</ol>';
+
+        $itemNotify['message'] = $message;
+        return $itemNotify;
+
+    }
+
+    /**
+     * @param $vendor
+     * @param $subject
+     * @param $message
+     * @param $file_to_save
+     */
+    public function replyToVendor($vendor,$subject,$message,$file_to_save){
+
+        $sendEmailFromMerchandise = false;
+        $from = 'vendor.products@fegllc.com';
+        $to = $vendor->email ? $vendor->email:$vendor->email_2;
+
+        $basename = basename($file_to_save);
+        $fileName = $basename;
+
+        //Check if vendor ismerch = yes
+        if ($vendor->ismerch == 1){
+            $configName = 'Send Product Export To Merchandise Vendor';
+            $recipients =  FEGSystemHelper::getSystemEmailRecipients($configName);
+            if(!empty($to)){
+                $recipients['to'].= ','.$to;
+            }
+
+            if($recipients['to']!='') {
+                $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                    'subject' => $subject,
+                    'message' => $message,
+                    'preferGoogleOAuthMail' => false,
+                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                    'configName' => $configName,
+                    'from' => $from,
+                    'replyTo' => $from,
+                    'attach' => $file_to_save,
+                    'filename' => $fileName,
+                    'encoding' => 'base64',
+                    'type' => 'text/csv',
+                )), $sendEmailFromMerchandise, $sendEmailFromVendorAccount = true);
+                if (!$sent){
+                    $isSent = 3;
+                }else {
+                    // Delete temporary file
+                    $isSent = 1;
+                }
+
+            }
+        }
+
+
+        // Game Related Vendor Email Configuration name "Send Product Export To Game Vendor"
+        //Check if vendor isgame = yes
+        if ($vendor->isgame == 1){
+            $configName = 'Send Product Export To Game Vendor';
+            $recipients =  FEGSystemHelper::getSystemEmailRecipients($configName);
+            if(!empty($to)){
+                $recipients['to'].= ','.$to;
+            }
+
+            if($recipients['to']!='') {
+                $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                    'subject' => $subject,
+                    'message' => $message,
+                    'preferGoogleOAuthMail' => false,
+                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                    'configName' => $configName,
+                    'from' => $from,
+                    'replyTo' => $from,
+                    'attach' => $file_to_save,
+                    'filename' => $fileName,
+                    'encoding' => 'base64',
+                    'type' => 'text/csv',
+                )), $sendEmailFromMerchandise, $sendEmailFromVendorAccount = true);
+
+                if (!$sent){
+                    $isSent = 3;
+                }else {
+                    // Delete temporary file
+                    $isSent = 1;
+                }
+
+            }
+        }
+    }
 }
