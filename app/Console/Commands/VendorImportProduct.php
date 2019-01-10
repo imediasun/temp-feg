@@ -67,7 +67,7 @@ class VendorImportProduct extends Command
 
             if (empty($inbox)) {
                 $L->log("IMAP Error:" . imap_last_error());
-                throw new Expection('');
+                throw new Exception("IMAP Error:" . imap_last_error());
             }
 
             $L->log("connection established");
@@ -113,7 +113,6 @@ class VendorImportProduct extends Command
                                     $this->sendVendorEmailNotification($subject,$duplicateItems['message'],$fromEmail,$vendorInformation);
                                     $L->log('[System Error] Duplicate Items found. Unable to import products.');
                                     echo " [System Error] Unable to import products Notification has been sent at".$fromEmail." ";
-                                    //return true;
                                 }
                             }
                             //if email id exist against single vendor
@@ -163,10 +162,15 @@ class VendorImportProduct extends Command
             }
             /* close the connection */
             imap_close($inbox);
+
             $L->log('-------------End Fetching Emails-----------------------------');
 
         } catch (Exception $ex) {
             $L->log("Error connecting to IMAP:" . $ex->getMessage());
+            $subject = '[Error] ['.env('APP_ENV').'] Vendor Product Import Cron Job '. FEGSystemHelper::getHumanDate(date('Y-m-d'));
+            $message = '<h1>Vendor Product Import Cron Job has an issue</h1>';
+            $message .= '<br />'.$ex->getMessage();
+            FEGSystemHelper::sendNotificationToDevTeam($subject, $message);
             return;
         }
 
