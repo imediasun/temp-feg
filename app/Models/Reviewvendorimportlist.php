@@ -499,14 +499,22 @@ GROUP BY mapped_expense_category");
         $message = '<p>There is a product ID error on row(s)';
         $itemsIndex = '';
         $i = 1;
+
         foreach ($items as $listItem){
             $i++;
-            if($listItem['product_id'] > 0) {
-                $vendorProduct =  product::where('id', $listItem['product_id'])->where('vendor_id',$vendorId)->get();
+
+            if(preg_match('^[0-9]+$',$listItem['product_id'])) {
+                $productId = (int) $listItem['product_id'];
+                $vendorProduct =  product::where('id', $productId)->where('vendor_id',$vendorId)->get();
                 if ($vendorProduct->count() < 1){
                     $itemsIndex .= empty($itemsIndex) ? $i: ','.$i;
                     $itemNotify['status'] = true;
                 }
+            }elseif ($listItem['product_id'] !=''){
+                $itemsIndex .= empty($itemsIndex) ? $i: ','.$i;
+                $itemNotify['status'] = true;
+            }else{
+
             }
         }
         $message .= ' '.$itemsIndex.'.</p>';
