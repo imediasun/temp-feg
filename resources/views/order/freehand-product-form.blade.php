@@ -318,6 +318,9 @@
                 casePrice.val(productData.case_price);
                 casePrice.val(casePrice.fixDecimal());
                 orderContentRow.children('td').children('input.case_per_quantity').val(productData.num_items);
+
+                var orderForm = document.getElementById('ordersubmitFormAjax');
+                reInitFormValidatorParsley(orderForm);
             }else {
                 ajaxViewClose('#{{ $pageModule }}');
             }
@@ -504,6 +507,8 @@
         $(document).on('click','.cancelOrderProduct',function(){
             ajaxViewClose('#{{ $pageModule.'ItemForm' }}');
             $('#orderView').show('slow');
+            var orderForm = document.getElementById('ordersubmitFormAjax');
+            reInitFormValidatorParsley(orderForm);
         });
     });
 </script>
