@@ -65,111 +65,112 @@ class VendorImportProduct extends Command
             $inbox = imap_open($hostname, $username, $password,NULL, 1,
                 array('DISABLE_AUTHENTICATOR' => 'PLAIN'));
 
+            if (empty($inbox)) {
+                $L->log("IMAP Error:" . imap_last_error());
+                throw new Expection('');
+            }
+
+            $L->log("connection established");
+            echo "connection established";
+            /* grab emails */
+            $emails = imap_search($inbox, 'UNSEEN');
+            /* if emails are returned, cycle through each... */
+            if ($emails) {
+                /* begin output var */
+                $output = '';
+
+                /* put the newest emails on top */
+                rsort($emails);
+
+                /* for every email... */
+                foreach ($emails as $email_number) {
+
+                    /* get information specific to this email */
+                    $meta = $this->getMessageDetails($inbox, $email_number);
+                    $attachments = $this->saveAttachments($inbox,$email_number);
+                    if ($attachments['is_available']) {
+                        $L->log('Attachment Found: [total:'.count($attachments['attachments']).", attachments".json_encode($attachments['attachments']));
+                        $L->log("Message Details: ", $meta);
+                        $fromDetails = $this->getSenderDetails($meta);
+                        $emailReceivedAt = $this->getDate($meta);
+                        $fromEmail = @$fromDetails['email'];
+                        $data = [
+                            'email_received_at' => $emailReceivedAt,
+                            'from_email'=>$fromEmail,
+                            'attachments' =>$attachments['attachments'],
+                        ];
+                        $reviewVendorImportList = new reviewvendorimportlist();
+                        $vendorCount = $reviewVendorImportList->isVendorExist($fromEmail);
+
+                        if($vendorCount > 0) {
+                            $vendorInformation = $reviewVendorImportList->getVendorByEmail($fromEmail);
+
+                            foreach ($attachments['attachments'] as $attachment) {
+                                $fileData = \SiteHelpers::getVendorFileImportData($attachment);
+                                $duplicateItems = $this->checkDuplicateItems($fileData);
+                                if($duplicateItems['status'] == true){
+                                    $subject = '[System Error] Unable to import products';
+                                    $this->sendVendorEmailNotification($subject,$duplicateItems['message'],$fromEmail,$vendorInformation);
+                                    $L->log('[System Error] Duplicate Items found. Unable to import products.');
+                                    echo " [System Error] Unable to import products Notification has been sent at".$fromEmail." ";
+                                    //return true;
+                                }
+                            }
+                            //if email id exist against single vendor
+                            if($vendorCount == 1){
+                                $reviewVendorImportList->importExlAttachment($data, $vendorCount);
+
+                            }else{//If multiple vendors exist with same email id.
+
+                                /* get information specific to this email */
+                                $overview = imap_fetch_overview($inbox, $email_number, 0);
+
+                                //Parse subject to find vendor id
+                                $subject = $overview[0]->subject;
+                                $vendorId = str_replace("]","",substr($subject, strpos($subject, "#") + 1));
+                                $vendor = $reviewVendorImportList->getVendorById($vendorId);
+                                if(!$vendor){
+                                    $L->log(' Vendor Id does not exist.');
+                                    $subject = '[System Error] Email subject does not contain vendor ID.';
+                                    $message = 'We found that your email is associated with multiple vendors. To correctly associate list with vendor, you must provide vendor ID in email subject like [Vendor Product List #xxxx] (replace xxxx with vendor ID). If you do not know what your Vendor ID is, please contact the Merchandise team at merch.office@fegllc.com.';
+                                    $this->sendVendorEmailNotification($subject,$message,$fromEmail);
+                                }else{
+                                    $L->log(' Vendor Id: '.$vendorId);
+                                    $data['vendor_id'] =  $vendorId;
+                                    $reviewVendorImportList->importExlAttachment($data, $vendorCount);
+                                }
+                            }
+
+                        }
+
+                    }else{
+                        $L->log('No Attachment Found.');
+                    }
+                    if(!env('DONT_DELETE_VENDOR_EMAIL', true))
+                    {
+                        //commented for testing on dev
+                        //$L->log('Delete email');
+                        // imap_delete($inbox, $email_number); // uncomment if needed
+                    }
+
+
+                    $L->log('---------------------------------------------');
+                }
+            }
+            else {
+                echo " no emails found....";
+                $L->log(' No emails found');
+            }
+            /* close the connection */
+            imap_close($inbox);
+            $L->log('-------------End Fetching Emails-----------------------------');
+
         } catch (Exception $ex) {
             $L->log("Error connecting to IMAP:" . $ex->getMessage());
             return;
         }
 
-        if (empty($inbox)) {
-            $L->log("IMAP Error:" . imap_last_error());
-            return;
-        }
-        $L->log("connection established");
-        echo "connection established";
-        /* grab emails */
-        $emails = imap_search($inbox, 'UNSEEN');
-        /* if emails are returned, cycle through each... */
-        if ($emails) {
-            /* begin output var */
-            $output = '';
 
-            /* put the newest emails on top */
-            rsort($emails);
-
-            /* for every email... */
-            foreach ($emails as $email_number) {
-
-                /* get information specific to this email */
-                $meta = $this->getMessageDetails($inbox, $email_number);
-               $attachments = $this->saveAttachments($inbox,$email_number);
-                if ($attachments['is_available']) {
-                    $L->log('Attachment Found: [total:'.count($attachments['attachments']).", attachments".json_encode($attachments['attachments']));
-                    $L->log("Message Details: ", $meta);
-                    $fromDetails = $this->getSenderDetails($meta);
-                    $emailReceivedAt = $this->getDate($meta);
-                    $fromEmail = @$fromDetails['email'];
-                    $data = [
-                        'email_received_at' => $emailReceivedAt,
-                        'from_email'=>$fromEmail,
-                        'attachments' =>$attachments['attachments'],
-                    ];
-                    $reviewVendorImportList = new reviewvendorimportlist();
-                    $vendorCount = $reviewVendorImportList->isVendorExist($fromEmail);
-
-                    if($vendorCount > 0) {
-                        $vendorInformation = $reviewVendorImportList->getVendorByEmail($fromEmail);
-
-                        foreach ($attachments['attachments'] as $attachment) {
-                            $fileData = \SiteHelpers::getVendorFileImportData($attachment);
-                            $duplicateItems = $this->checkDuplicateItems($fileData);
-                            if($duplicateItems['status'] == true){
-                                $subject = '[System Error] Unable to import products';
-                                $this->sendVendorEmailNotification($subject,$duplicateItems['message'],$fromEmail,$vendorInformation);
-                                $L->log('[System Error] Duplicate Items found. Unable to import products.');
-                                echo " [System Error] Unable to import products Notification has been sent at".$fromEmail." ";
-                                return true;
-                            }
-                        }
-                        //if email id exist against single vendor
-                        if($vendorCount == 1){
-                            $reviewVendorImportList->importExlAttachment($data, $vendorCount);
-
-                        }else{//If multiple vendors exist with same email id.
-
-                            /* get information specific to this email */
-                            $overview = imap_fetch_overview($inbox, $email_number, 0);
-
-                            //Parse subject to find vendor id
-                            $subject = $overview[0]->subject;
-                            $vendorId = str_replace("]","",substr($subject, strpos($subject, "#") + 1));
-                            $vendor = $reviewVendorImportList->getVendorById($vendorId);
-                            if(!$vendor){
-                                $L->log(' Vendor Id does not exist.');
-                                $subject = '[System Error] Email subject does not contain vendor ID.';
-                                $message = 'We found that your email is associated with multiple vendors. To correctly associate list with vendor, you must provide vendor ID in email subject like [Vendor Product List #xxxx] (replace xxxx with vendor ID). If you do not know what your Vendor ID is, please contact the Merchandise team at merch.office@fegllc.com.';
-                                $this->sendVendorEmailNotification($subject,$message,$fromEmail);
-                            }else{
-                                $L->log(' Vendor Id: '.$vendorId);
-                                $data['vendor_id'] =  $vendorId;
-                                $reviewVendorImportList->importExlAttachment($data, $vendorCount);
-                            }
-                        }
-
-                    }else{
-
-                    }
-
-                }else{
-                    $L->log('No Attachment Found.');
-                }
-                if(!env('DONT_DELETE_VENDOR_EMAIL', true))
-                {
-                    //commented for testing on dev
-                    //$L->log('Delete email');
-                   // imap_delete($inbox, $email_number); // uncomment if needed
-                }
-
-
-                $L->log('---------------------------------------------');
-            }
-        }
-        else {
-            echo " no emails found....";
-            $L->log(' No emails found');
-        }
-        /* close the connection */
-        imap_close($inbox);
-        $L->log('-------------End Fetching Emails-----------------------------');
     }
 
     public function getMessageDetails($inbox, $email_number) {
