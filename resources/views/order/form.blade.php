@@ -2301,9 +2301,15 @@ $(function(){
                     data:dataRow,
                     success:function(response){
                         $('.ajaxLoading').hide();
-                        $('#orderView').hide('slow');
-                        $('#orderItemFormView').html(response);
-                        $('#orderItemFormView').show('slow');
+                        if(response.status != undefined){
+                            if(response.status = 'error' ){
+                                notyMessageError(response.message);
+                            }
+                        }else {
+                            $('#orderView').hide('slow');
+                            $('#orderItemFormView').html(response);
+                            $('#orderItemFormView').show('slow');
+                        }
                     }
                 })
             });
