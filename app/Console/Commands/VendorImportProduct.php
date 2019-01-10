@@ -60,6 +60,7 @@ class VendorImportProduct extends Command
         $password = "%Am=%5JK";
 
         $L->log("Connecting...");
+        $inbox = "";
         /* try to connect */
         try {
             $inbox = imap_open($hostname, $username, $password,NULL, 1,
@@ -148,8 +149,8 @@ class VendorImportProduct extends Command
                     if(!env('DONT_DELETE_VENDOR_EMAIL', true))
                     {
                         //commented for testing on dev
-                        //$L->log('Delete email');
-                        // imap_delete($inbox, $email_number); // uncomment if needed
+                        $L->log('Delete email');
+                         imap_delete($inbox, $email_number); // uncomment if needed
                     }
 
 
@@ -171,6 +172,8 @@ class VendorImportProduct extends Command
             $message = '<h1>Vendor Product Import Cron Job has an issue</h1>';
             $message .= '<br />'.$ex->getMessage();
             FEGSystemHelper::sendNotificationToDevTeam($subject, $message);
+            /* close the connection */
+            imap_close($inbox);
             return;
         }
 
