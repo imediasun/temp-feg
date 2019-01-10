@@ -65,12 +65,12 @@
                                     $colClass = $colIsSortable ? ' dgcsortable' : '';
                                     $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
                                     $extaColumn = ($colField == 'img') ? '<th width="80"></th>':'';
-                                    $th = $extaColumn.'<th'.
+                                    $th = '<th'.
                                             ' class="'.$colClass.'"'.
                                             ' data-field="'.$colField.'"'.
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
-                                            ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                            ' data-sortedOrder="'.(($colField == 'is_favorite' && !$colIsSorted) ? 'asc' : $orderBy).'"'.
                                             ' style=text-align:'.$t['align'].
                                             ' width="'.$t['width'].'"';
                                     $th .= '>';
@@ -140,13 +140,13 @@
                             ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                                @if($field['field']=='img')
-                                    <td align="center">
-                        <span   style="color:#d5e20a; font-size: 22px; cursor: pointer;"  @if($row->is_favorite == 0) title="Add to Favorite" @else title="Remove from Favorite" @endif>
-                            <i id="{{ $row->id }}"  @if($row->is_favorite == 0) isfavorite="0" @else isfavorite="1" @endif  class="favoriteItem fa @if($row->is_favorite == 0) fa-star-o @else fa-star @endif"></i>
-                        </span>
-                                    </td>
-                                @endif
+                            @if($field['field']=='is_favorite')
+                                <td align="center">
+                                    <span   style="color:#d5e20a; font-size: 22px; cursor: pointer;"  @if($row->is_favorite == 0) title="Add to Favorite" @else title="Remove from Favorite" @endif>
+                                        <i id="{{ $row->id }}"  @if($row->is_favorite == 0) isfavorite="0" @else isfavorite="1" @endif  class="favoriteItem fa @if($row->is_favorite == 0) fa-star-o @else fa-star @endif"></i>
+                                    </span>
+                                </td>
+                            @else
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                 @if($field['field']=='img')
@@ -178,6 +178,7 @@
                                         @endif
                                 @endif
                             </td>
+                                    @endif
                         @endif
                         <?php
                         endif;

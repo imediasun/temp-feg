@@ -3416,7 +3416,7 @@ ORDER BY aa_id");
         $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($configName, null, $isTest);
 
         $message = $this->getShow($orderId, 'emails.inquireOrder');
-        $subject = 'Inquire order';
+        $subject = 'INQUIRE ORDER '.$order->po_number;
         if(!empty($systemEmailRecipients['to'])){
             $systemEmailRecipients['to'] .= ','.Session::get('eid');
         }else{
@@ -3448,5 +3448,17 @@ ORDER BY aa_id");
 
     }
 
+    public function getDownloaddpl(){
+        $locationId = 2031;
+        $productTypeId = 7;
+        $query = $this->model->getManualGenerateDplQuery($locationId,$productTypeId);
+        $items = \DB::select(\DB::raw($query));
+        $fileName = 'FEG-2424-location-'.$locationId.'-Redemption-Prize-dpl-file-'.time().'.dpl';
+        $dplFile = $this->model->saveItemsInDplFile($items,$productTypeId,$locationId,'00000000001','uploads/manual-dpl/',$fileName);
+        $headers = array(
+            'Content-type: '.mime_content_type($dplFile['file_path']),
+        );
+        return Response::download($dplFile['file_path'],$dplFile['file_name'],$headers);
+    }
 
 }

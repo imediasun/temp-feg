@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Log;
+use Illuminate\Support\Facades\File;
 
 class order extends Sximo
 {
@@ -1411,4 +1412,100 @@ class order extends Sximo
         return $redemptionPrizeProducts;
     }
 
+    /**
+     * @param $locationId
+     * @param $productTypeId
+     * @return string
+     */
+    public function getManualGenerateDplQuery($locationId, $productTypeId)
+    {
+        $sql = 'SELECT
+                  O.id            AS Order_id,
+                  OC.id            AS Order_Content_id,
+                  OC.product_id            AS Product_id,
+                  V.vendor_name,
+                  OC.item_name,
+                  OC.sku,
+                  OC.is_broken_case,
+                  OC.prod_type_id,
+                  OC.qty_per_case,
+                  PT.order_type,
+                  OC.qty,
+                  OC.item_received,
+                  OC.upc_barcode,
+                  OC.case_price,
+                  OC.price,
+                  P.ticket_value,
+                  P.upc_barcode as product_upc_barcode
+                FROM orders O
+                  INNER JOIN order_contents OC
+                    ON OC.order_id = O.id
+                  INNER JOIN order_type PT
+                    ON PT.id = OC.prod_type_id
+                  INNER JOIN products P
+                    ON P.id = OC.product_id
+                  INNER JOIN vendor V
+                    ON V.id = P.vendor_id
+                WHERE O.location_id = ' . $locationId . '
+                    AND OC.prod_type_id = ' . $productTypeId . '
+                    AND OC.item_received > 0 
+                GROUP BY OC.item_name,OC.sku,OC.case_price';
+        return $sql;
+    }
+
+    /**
+     * @param $items
+     * @param $locationId
+     * @param $poNumber
+     * @param string $saveFilePath
+     * @param string $dplFileName
+     * @return array
+     */
+    public function saveItemsInDplFile($items,$orderTypeId, $locationId, $poNumber, $saveFilePath = '/', $dplFileName = 'manual_dpl_file_generated.dpl')
+    {
+        $newLine = "\r\n";
+        $fileContent = $locationId . " " . $poNumber;
+        if (!empty($items)) {
+            $fileContent .= $newLine;
+            $i = 0;
+            $total = count($items);
+            foreach ($items as $item) {
+                $i++;
+                $newLine = $i < $total ? $newLine:'';
+                //$fileContent .= $item->vendor_name . '-' . $item->item_name . '-'.$item->sku.$newLine;
+              //  $itemId = $item->upc_barcode;
+                $itemId = $item->product_upc_barcode;
+                $itemName = $this->cleanAndTruncateString($item->item_name);
+                $sku = $item->sku;
+                $this->order_type_id = $orderTypeId;
+                $unitTypeUOM = $this->getUnitOfMeasurementForOrderType();
+                $price =($unitTypeUOM == "CASE") ? $price = \CurrencyHelpers::formatPrice($item->case_price/$item->qty_per_case, $decimalPlaces = 5,  false,  '', $dec_point = '.',  false) : $item->price;
+
+                $tickets = $item->ticket_value;
+                $qtyPerCase = $item->qty_per_case;
+
+                $orderTypes = [
+                    Order::ORDER_TYPE_OFFICE_SUPPLIES => 'OffSuppl',
+                    Order::ORDER_TYPE_REDEMPTION => 'RedPrize',
+                    Order::ORDER_TYPE_INSTANT_WIN_PRIZE => 'InstWin',
+                    Order::ORDER_TYPE_PARTY_SUPPLIES => 'PartySup',
+                    Order::ORDER_TYPE_UNIFORM => 'Uniforms'
+                ];
+                $itemName = \SiteHelpers::removeSpecialCharacters($itemName);
+                $productType = isset($orderTypes[$item->prod_type_id]) ? $orderTypes[$item->prod_type_id]:$item->prod_type_id;
+                $unitTypeUOMUpdated = ((strtolower($unitTypeUOM) == 'case') ? ($item->is_broken_case == 0) ? 'EACH':'EACH':'EACH');
+                $quantityReceived = ((strtolower($unitTypeUOM) == 'case') ? ($item->is_broken_case == 0) ? ($item->item_received * $qtyPerCase): $item->item_received : $item->item_received);
+                $fileContent .= implode(",",[$itemId, $sku,$tickets, $itemName, $productType, '', '', $price, '','', $quantityReceived]) . $newLine;
+            }
+        }
+
+        File::put(public_path($saveFilePath) . $dplFileName, $fileContent);
+        return ['file_path'=>public_path($saveFilePath) . $dplFileName,'file_name'=>$dplFileName];
+    }
+
+    public function cleanAndTruncateString($string, $length = 50)
+    {
+        $string = str_replace(["&",",",'"'],"",$string);
+        return $string; //$this->truncateString($string, $length);
+    }
 }

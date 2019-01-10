@@ -512,10 +512,15 @@ class FEGSystemHelper
         }
     }
 
+    public static function sendNotificationToDevTeam($subject, $message, $options = []){
+        $from = 'info@fegllc.com';
+        $recipients["to"] = env('LARAVEL_DEV_TEAM_EMAILS','stanlymarian@gmail.com');
+        return self::laravelMail($recipients["to"], $subject, $message, $from, $options);
+    }
+
     public static function configLaravelMail($mail, $options)
     {
         extract($options);
-
         $mail->subject($subject);
         $mail->setBody($message, 'text/html');
 
@@ -634,15 +639,28 @@ class FEGSystemHelper
             if ($usePhpMail) {
                 return self::phpMail($to, $subject, $message, $from, $options);
             } else {
-                if ($preferGoogleSend && !empty(Auth()->user()->oauth_token) && !empty(Auth()->user()->refresh_token)) {
-                    $user = Users::find(Auth()->user()->id);
-                    if (!$user->isOAuthRefreshedRecently() || !Users::verifyOAuthTokenIsValid($user->oauth_token)) {
 
-                        $googleResponse = Users::refreshOAuthToken($user->refresh_token);
-                        $user->updateRefreshToken($googleResponse);
-                    }
-                    return self::googleOAuthMail($to, $subject, $message, $user, $options);
-                } else {
+                      if ($preferGoogleSend && !empty(Auth()->user()->oauth_token) && !empty(Auth()->user()->refresh_token)) {
+                          //start try block
+                          try {
+                              $user = Users::find(Auth()->user()->id);
+                              if (!$user->isOAuthRefreshedRecently() || !Users::verifyOAuthTokenIsValid($user->oauth_token)) {
+                                  $googleResponse = Users::refreshOAuthToken($user->refresh_token);
+                                  $user->updateRefreshToken($googleResponse);
+                              }
+                              return self::googleOAuthMail($to, $subject, $message, $user, $options);
+                          }catch (\Exception $e){
+                              // If email doesn't sent via Google Auth then System email address will be sued to send email
+                              $humanDateRange = FEGSystemHelper::getHumanDate(date('Y-m-d'));
+                              $environment = env('APP_ENV');
+                              $teamSubject = "[Error][$environment] Failed attempt to send email from google auth $humanDateRange";
+                              $recipients["to"] = env('LARAVEL_DEV_TEAM_EMAILS','stanlymarian@gmail.com');
+                              $message = view("emails.notifications.dev-team.failed-oauth-email", compact('user','e'))->render();//load view from emails.notification.dev-team.,...
+                              self::sendNotificationToDevTeam($teamSubject, $message);
+                              return self::laravelMail($to, $subject, $message, $from, $options);
+                          }
+                      }
+                else {
 
                     if($sendEmailFromMerchandise){
                         $config = array(
@@ -999,7 +1017,7 @@ class FEGSystemHelper
         }
         return $emails;
     }
-    
+
     public static function getLocationContactsEmails($fields = '', $location = null, $skipIfNoGroup = false)
     {
         $emails = [];

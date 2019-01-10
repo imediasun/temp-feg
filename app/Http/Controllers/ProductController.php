@@ -1551,4 +1551,32 @@ GROUP BY mapped_expense_category");
 
         }
     }
+    public function postHotitemstatus(Request $request){
+
+        $itemStatus = $request->get('itemStatus');
+        $productId = $request->get('productId');
+        $relatedProducts = $this->model->checkProducts($productId);
+        $ids = array_map(function($row){return $row->id;}, $relatedProducts);
+$message = '';
+        if ($itemStatus == "true") {
+            $update = \DB::update('update products set hot_item = 1 where id IN(' . implode(',', $ids) . ')');
+            $message = 'Item has been marked as hot item successfully';
+        }
+        else
+        {
+            $update = \DB::update('update products set hot_item = 0 where id IN(' . implode(',', $ids) . ')');
+            $message = 'Hot item has been unmarked successfully';
+        }
+        if ($update) {
+            return response()->json(array(
+                'status' => 'success',
+                 'message' => $message
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred while updating item status'
+            ));
+        }
+    }
 }

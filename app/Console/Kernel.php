@@ -31,6 +31,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\InjectFieldToModule::class,
         \App\Console\Commands\VendorImportProduct::class,
         \App\Console\Commands\SendVendorScheduleEmails::class,
+        \App\Console\Commands\CheckEnvConfiguration::class,
     ];
 
     /**
@@ -59,6 +60,8 @@ class Kernel extends ConsoleKernel
         //export product list to their respective vendors
         $schedule->command('email:sendvendorschedule')->daily();
         $schedule->command('vendorproduct:import')->withoutOverlapping(2);
+
+        $schedule->command('env:checkenv')->daily();
 
     }
 }
