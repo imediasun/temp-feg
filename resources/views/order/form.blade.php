@@ -2309,6 +2309,10 @@ $(function(){
                             $('#orderView').hide('slow');
                             $('#orderItemFormView').html(response);
                             $('#orderItemFormView').show('slow');
+                            var orderForm = document.getElementById('ordersubmitFormAjax');
+                            var productForm = document.getElementById('productFormAjax');
+                            reInitFormValidatorParsley($(orderForm));
+                            reInitFormValidatorParsley($(productForm));
                         }
                     }
                 })

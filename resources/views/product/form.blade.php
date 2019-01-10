@@ -286,6 +286,8 @@
             count = "#remove_me_"+count;
             $("#add_more_types").show();
             $(count).remove();
+            var productForm = document.getElementById('productFormAjax');
+            reInitFormValidatorParsley(productForm);
         });
         $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
     });
@@ -393,8 +395,9 @@
             $(this).hide();
         }
         <?php } ?>
-        console.log('debug');
-        console.log(types_counter);
+
+        var productForm = document.getElementById('productFormAjax');
+        reInitFormValidatorParsley(productForm);
     });
     $(".fixDecimal").blur(function () {
         $(this).val($(this).fixDecimal());
