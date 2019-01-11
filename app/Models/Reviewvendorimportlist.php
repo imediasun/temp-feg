@@ -503,8 +503,8 @@ GROUP BY mapped_expense_category");
         foreach ($items as $listItem){
             $i++;
             if(!empty($listItem['item_name'])) {
-                $listItem['product_id'] = trim($listItem['product_id']);
-                if ($listItem['product_id'] == 0 || !empty($listItem['product_id'])) {
+                $productId = trim($listItem['product_id']);
+                if ($productId == 0 || !empty($productId)) {
                     //Generating Error Messages if user has entered an invalid product ID
                     $productId = (int)$listItem['product_id'];
                     $vendorProduct = product::where('id', $productId)->where('vendor_id', $vendorId)->get();
