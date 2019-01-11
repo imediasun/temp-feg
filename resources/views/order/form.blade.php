@@ -2271,8 +2271,8 @@ $(function(){
                 }
             });
             reInitParcley();
-
-            $(document).on('click','.addToProductList',function(){
+var onlyOnceTimeTrigger = true;
+            $(document).off('click').on('click','.addToProductList',function(){
                 $('.ajaxLoading').show();
                 var ordersubmitFormAjax = $("#ordersubmitFormAjax");
                 var url = '/order/productform';
@@ -2295,27 +2295,31 @@ $(function(){
                     }
                 });
                 //clearTimeout(settimeout);
-                $.ajax({
-                    type:"POST",
-                    url:url,
-                    data:dataRow,
-                    success:function(response){
-                        $('.ajaxLoading').hide();
-                        if(response.status != undefined){
-                            if(response.status = 'error' ){
-                                notyMessageError(response.message);
+                if(onlyOnceTimeTrigger == true) {
+                    onlyOnceTimeTrigger = false;
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: dataRow,
+                        success: function (response) {
+                            $('.ajaxLoading').hide();
+                            if (response.status != undefined) {
+                                if (response.status = 'error') {
+                                    notyMessageError(response.message);
+                                }
+                            } else {
+                                $('#orderView').hide('slow');
+                                $('#orderItemFormView').html(response);
+                                $('#orderItemFormView').show('slow');
+                                var orderForm = document.getElementById('ordersubmitFormAjax');
+                                var productForm = document.getElementById('productFormAjax');
+                                reInitFormValidatorParsley($(orderForm));
+                                reInitFormValidatorParsley($(productForm));
                             }
-                        }else {
-                            $('#orderView').hide('slow');
-                            $('#orderItemFormView').html(response);
-                            $('#orderItemFormView').show('slow');
-                            var orderForm = document.getElementById('ordersubmitFormAjax');
-                            var productForm = document.getElementById('productFormAjax');
-                            reInitFormValidatorParsley($(orderForm));
-                            reInitFormValidatorParsley($(productForm));
+                            onlyOnceTimeTrigger = true;
                         }
-                    }
-                })
+                    });
+                }
             });
         });
     </script>
