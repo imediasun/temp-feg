@@ -511,6 +511,7 @@ GROUP BY mapped_expense_category");
                     if ($vendorProduct->count() < 1) {
                         $itemsIndex .= empty($itemsIndex) ? $i : ',' . $i;
                         $itemNotify['status'] = true; // If itemNotify['statuus'] is equal to true then an email notification will be sent to the user along attachment
+                    \Illuminate\Support\Facades\Log::info("Cron Job Line No.".$i." Product ID:".trim($listItem['product_id'])."--testing");
                     }
                 }
             }
