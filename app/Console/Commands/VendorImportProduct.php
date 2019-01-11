@@ -115,6 +115,7 @@ class VendorImportProduct extends Command
                                     $this->sendVendorEmailNotification($subject,$duplicateItems['message'],$fromEmail,$vendorInformation);
                                     $L->log('[System Error] Duplicate Items found. Unable to import products.');
                                     echo " [System Error] Unable to import products Notification has been sent at".$fromEmail." ";
+                                    return true;
                                 }
                             }
                             if($isDuplicateFound == true){
