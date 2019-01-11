@@ -510,11 +510,6 @@ GROUP BY mapped_expense_category");
                     $itemsIndex .= empty($itemsIndex) ? $i: ','.$i;
                     $itemNotify['status'] = true;
                 }
-            }elseif ($listItem['product_id'] !=''){
-                $itemsIndex .= empty($itemsIndex) ? $i: ','.$i;
-                $itemNotify['status'] = true;
-            }else{
-
             }
         }
         $message .= ' '.$itemsIndex.'.</p>';

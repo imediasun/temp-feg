@@ -99,7 +99,7 @@ class VendorProductsImportHelper
         $message .='<ol>';
         $message .='<li>Left-click or use the arrow buttons on your keyboard to get to the cell you wish to add the SKU (Column C) or UPC/Barcode (Column D).</li>';
         $message .='<li>Type the equal symbol followed by a quotation mark before typing your SKU and/or Barcode.</li>';
-        $message .='<li>Add another quotation mark to the end of your SKU and/or Barcode. EXAMPLE: ="skubarcodeupc" or ="barcode12345"</li>';
+        $message .='<li>Add another quotation mark to the end of your SKU and/or Barcode.<br />EXAMPLE: ="skubarcodeupc" or ="barcode12345"</li>';
         $message .='</ol>';
         $message .='<p><u>HOW TO ADD A NEW PRODUCT TO THE FILE:</u></p>';
         $message .='<ol>';
@@ -119,11 +119,11 @@ class VendorProductsImportHelper
         $message .='<p>When you have finished making updates to the CSV file, please save it (remember where you saved it!) and attach it to your email response. <b><i>To ensure that your product updates are received correctly, please REPLY ALL to this email.</i></b></p>';
         $message .='<p>Should you have any questions, please REPLY ALL to this email and we\'ll get back to you as soon as possible.</p>';
         $message .='<p>Best regards,</p>';
-        $message .='<p>The Merchandise Team</p>';
-        $message .='<p>Family Entertainment Group</p>';
-        $message .="<p>https://fegllc.com</p>";
-        $message .='<p>Phone: (847) 842-6310</p>';
-        $message .='<p>Email: merch.office@fegllc.com</p>';
+        $message .='<p>The Merchandise Team<br />';
+        $message .='Family Entertainment Group<br />';
+        $message .="https://fegllc.com<br />";
+        $message .='Phone: (847) 842-6310<br />';
+        $message .='Email: merch.office@fegllc.com</p>';
 
         /* current user */
         $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
