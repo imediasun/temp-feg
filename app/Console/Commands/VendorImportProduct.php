@@ -105,16 +105,20 @@ class VendorImportProduct extends Command
 
                         if($vendorCount > 0) {
                             $vendorInformation = $reviewVendorImportList->getVendorByEmail($fromEmail);
-
+                            $isDuplicateFound = false;
                             foreach ($attachments['attachments'] as $attachment) {
                                 $fileData = \SiteHelpers::getVendorFileImportData($attachment);
                                 $duplicateItems = $this->checkDuplicateItems($fileData);
                                 if($duplicateItems['status'] == true){
                                     $subject = '[System Error] Unable to import products';
+                                    $isDuplicateFound = true;
                                     $this->sendVendorEmailNotification($subject,$duplicateItems['message'],$fromEmail,$vendorInformation);
                                     $L->log('[System Error] Duplicate Items found. Unable to import products.');
                                     echo " [System Error] Unable to import products Notification has been sent at".$fromEmail." ";
                                 }
+                            }
+                            if($isDuplicateFound == true){
+                                return false;
                             }
                             //if email id exist against single vendor
                             if($vendorCount == 1){
