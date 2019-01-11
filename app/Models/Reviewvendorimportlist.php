@@ -307,7 +307,7 @@ GROUP BY mapped_expense_category");
 
     }
     public function isVendorExist($fromEmail){
-        $vendor = vendor::select("id")->where(function ($query) use($fromEmail){
+        $vendor = vendor::select("*")->where(function ($query) use($fromEmail){
             $query->where('email',$fromEmail);
             $query->orWhere('email_2',$fromEmail);
         })->get();
@@ -322,7 +322,7 @@ GROUP BY mapped_expense_category");
         $vendor = vendor::select("*")->where(function ($query) use($fromEmail){
             $query->where('email',$fromEmail);
             $query->orWhere('email_2',$fromEmail);
-        })->get();
+        })->first();
         return $vendor;
     }
 
@@ -376,7 +376,7 @@ GROUP BY mapped_expense_category");
 
                 if (!empty($fileData)) {
                     foreach ($fileData as $item) {
-                        $item['id'] = $item['product_id'];
+                        $item['id'] = (int) $item['product_id'];
                         unset($item['product_id']);
                         if ($item['id'] > 0 && !empty($item['id'])) {
                             $productRows = $this->findProducts($item['id'], $item, $vendorListId);
@@ -502,13 +502,15 @@ GROUP BY mapped_expense_category");
 
         foreach ($items as $listItem){
             $i++;
-
-            if(preg_match('^[0-9]+$',$listItem['product_id'])) {
-                $productId = (int) $listItem['product_id'];
-                $vendorProduct =  product::where('id', $productId)->where('vendor_id',$vendorId)->get();
-                if ($vendorProduct->count() < 1){
-                    $itemsIndex .= empty($itemsIndex) ? $i: ','.$i;
-                    $itemNotify['status'] = true;
+            if(!empty($listItem['item_name'])) {
+                if ($listItem['product_id'] == 0 || !empty($listItem['product_id'])) {
+                    //Generating Error Messages if user has entered an invalid product ID
+                    $productId = (int)$listItem['product_id'];
+                    $vendorProduct = product::where('id', $productId)->where('vendor_id', $vendorId)->get();
+                    if ($vendorProduct->count() < 1) {
+                        $itemsIndex .= empty($itemsIndex) ? $i : ',' . $i;
+                        $itemNotify['status'] = true; // If itemNotify['statuus'] is equal to true then an email notification will be sent to the user along attachment
+                    }
                 }
             }
         }

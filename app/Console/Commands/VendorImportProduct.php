@@ -132,8 +132,8 @@ class VendorImportProduct extends Command
                                 if(!$vendor){
                                     $L->log(' Vendor Id does not exist.');
                                     $subject = '[System Error] Email subject does not contain vendor ID.';
-                                    $message = 'We found that your email is associated with multiple vendors. To correctly associate list with vendor, you must provide vendor ID in email subject like [Vendor Product List #xxxx] (replace xxxx with vendor ID). If you do not know what your Vendor ID is, please contact the Merchandise team at merch.office@fegllc.com.';
-                                    $this->sendVendorEmailNotification($subject,$message,$fromEmail);
+                                  echo  $message = 'We found that your email is associated with multiple vendors. To correctly associate list with vendor, you must provide vendor ID in email subject like [Vendor Product List #xxxx] (replace xxxx with vendor ID). If you do not know what your Vendor ID is, please contact the Merchandise team at merch.office@fegllc.com.';
+                                    $this->sendVendorEmailNotification($subject,$message,$fromEmail,$vendor);
                                 }else{
                                     $L->log(' Vendor Id: '.$vendorId);
                                     $data['vendor_id'] =  $vendorId;
@@ -350,6 +350,7 @@ class VendorImportProduct extends Command
         $from = 'vendor.products@fegllc.com';
         $sendEmailFromMerchandise = false;
         $sendEmailFromVendorAccount = true;
+
         // Old email configuration name "Send Product Export To Vendor"
         if ($vendor != null) {
             //Merchandise Vendor Email Configuration name "Send Product Export To Merchandise Vendor"
