@@ -119,7 +119,7 @@ class VendorImportProduct extends Command
                                 }
                             }
                             if($isDuplicateFound == true){
-                                return false;
+                                return true;
                             }
                             //if email id exist against single vendor
                             if($vendorCount == 1){
