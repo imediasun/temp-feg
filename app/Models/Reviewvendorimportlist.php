@@ -502,16 +502,14 @@ GROUP BY mapped_expense_category");
 
         foreach ($items as $listItem){
             $i++;
-            if(!empty($listItem['item_name'])) {
-                $productId = trim($listItem['product_id']);
+            if(trim($listItem['item_name']) != '') {
                 if (trim($listItem['product_id']) != '') {
                     //Generating Error Messages if user has entered an invalid product ID
                     $productId = (int)$listItem['product_id'];
                     $vendorProduct = product::where('id', $productId)->where('vendor_id', $vendorId)->get();
                     if ($vendorProduct->count() < 1) {
                         $itemsIndex .= empty($itemsIndex) ? $i : ',' . $i;
-                        $itemNotify['status'] = true; // If itemNotify['statuus'] is equal to true then an email notification will be sent to the user along attachment
-                    \Illuminate\Support\Facades\Log::info("Cron Job Line No.".$i." Product ID:".trim($listItem['product_id'])."--testing");
+                        $itemNotify['status'] = true; // If itemNotify['status'] is equal to true then an email notification will be sent to the user along attachment
                     }
                 }
             }
