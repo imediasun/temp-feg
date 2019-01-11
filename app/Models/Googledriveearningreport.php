@@ -4,6 +4,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\location;
+use Carbon\Carbon;
 
 class googledriveearningreport extends Sximo  {
 	
@@ -34,6 +35,9 @@ class googledriveearningreport extends Sximo  {
                         'location_name',
                         'loc_id',
                         'path',
+                        'type',
+                        'created_at',
+                        'updated_at'
                     ];
 
 	public static function querySelect(  ){
@@ -58,7 +62,6 @@ FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_
 
 	public function createOrUpdateFile($file, location $location, $path)
     {
-
         $saved = $this->updateOrcreate(['google_file_id' => $file->id],
             [
                 'google_file_id' => $file->id,
@@ -71,8 +74,18 @@ FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_
                 'parent_id' =>$file->parents[0],
                 'location_name' => $location->location_name_short,
                 'loc_id' => $location->id,
+                'type' => $file->period,
                 'path'=>$path,
             ]);
+        if($saved->wasRecentlyCreated){
+            $saved->created_at = Carbon::now();
+            $saved->updated_at = Carbon::now();
+        }
+        else
+        {
+            $saved->updated_at = Carbon::now();
+        }
+        $saved->save();
         return $saved;
     }
 
