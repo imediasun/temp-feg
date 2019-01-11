@@ -3477,40 +3477,30 @@ ORDER BY aa_id");
         $itemDescription = $request->input('item', null);
         $this->data['rowId'] = $request->input('rowId', null);
         $sku = $request->input('sku', null);
-
+        $errorMessage = "";
         if (!$productTypeId) {
-            return response()->json(array(
-                'message' => 'Please select an Order Type',
-                'status' => 'error'
-            ));
+            $errorMessage = '<li>Order Type is required</li>';
         }
 
         if (!$vendorId) {
-            return response()->json(array(
-                'message' => 'Please select a Vendor',
-                'status' => 'error'
-            ));
+            $errorMessage .= '<li>Vendor is required</li>';
         }
 
         if ($sku == null || $sku == '') {
-            return response()->json(array(
-                'message' => 'SKU is required',
-                'status' => 'error'
-            ));
+            $errorMessage .= '<li>SKU is required</li>';
         }
         if ($itemName == null || $itemName == '') {
-            return response()->json(array(
-                'message' => 'Item name is required',
-                'status' => 'error'
-            ));
+            $errorMessage .= '<li>Item name is required</li>';
         }
         if (in_array($casePrice ,[null,'', '0','0.00',0])) {
-            return response()->json(array(
-                'message' => 'Case Price required',
-                'status' => 'error'
-            ));
+            $errorMessage .= '<li>Case Price is required</li>';
         }
-
+        if (!empty($errorMessage)){
+             return response()->json(array(
+                        'message' => '<ul>'.$errorMessage."</li>",
+                        'status' => 'error'
+                    ));
+        }
         $productController = new ProductController();
         $this->info = $this->model->makeInfo($productController->module);
         $this->access = $this->model->validAccess($productController->info['id']);
