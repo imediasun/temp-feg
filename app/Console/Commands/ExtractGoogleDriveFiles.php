@@ -77,7 +77,6 @@ class ExtractGoogleDriveFiles extends Command
             $this->L->log('Drive object will refresh at : ' . date('Y-m-d H:i:s', $this->refreshDriveObjectAt));
             $locations = null;
             if ($this->period == 'Daily' || $this->period == 'daily') {
-
                 $locations = location::select('id', 'location_name_short','daily_script_time' ,'daily_folder_id As parent_id')->where('daily_folder_id', '!=', '')->get();
                 $this->L->log('Daily Folders ID: ' . $locations);
             } elseif ($this->period == 'Weekly' || $this->period == 'weekly') {
@@ -141,6 +140,7 @@ class ExtractGoogleDriveFiles extends Command
                             \Artisan::call('refresh:googledriveaccesstoken');
                             $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();//Refresh google auth token
                             $this->drive = $this->getGoogleDriveObject($user);//reset google drive object
+
                             //add next more X seconds to keep script running
                             $this->refreshDriveObjectAt = $this->refreshDriveObjectAt + $this->refreshInterval;
                         }
@@ -171,12 +171,22 @@ class ExtractGoogleDriveFiles extends Command
         return $files;
     }
 
-    function createPublicPermission($file , $permissions){
+    function createPublicPermission($file , $publicPermissions){
         try {
-            $userPermission = new \Google_Service_Drive_Permission($permissions);
-            $request = $this->drive->permissions->create($file->id, $userPermission, array('fields' => 'id'));
+            $checkType = false;
+            $permissions = $this->drive->permissions->listPermissions($file->id);
+            foreach ($permissions->getPermissions() as $permission){
+                if($permission['type'] == "anyone"){
+                    $checkType = true;
+                }
+            }
+            if($checkType == false){
+                $userPerm = new \Google_Service_Drive_Permission($publicPermissions);
+                $request = $this->drive->permissions->create($file->id, $userPerm, array('fields' => 'id'));
+                $this->L->log("permission granted  for file :". $file->id);
+                }
         }catch (\Exception $e){
-            $this->L->log("Exception occured while creating the permission". $e->getMessage());
+            $this->L->log("Error occured while creating permission".$e->getMessage());
         }
     }
 
