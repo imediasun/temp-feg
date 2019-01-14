@@ -2271,8 +2271,8 @@ $(function(){
                 }
             });
             reInitParcley();
-var onlyOnceTimeTrigger = true;
-            $(document).off('click').on('click','.addToProductList',function(){
+
+            $(document).on('click','.addToProductList',function(){
                 $('.ajaxLoading').show();
                 var ordersubmitFormAjax = $("#ordersubmitFormAjax");
                 var url = '/order/productform';
@@ -2316,7 +2316,7 @@ var onlyOnceTimeTrigger = true;
                                 reInitFormValidatorParsley($(orderForm));
                                 reInitFormValidatorParsley($(productForm));
                             }
-                            onlyOnceTimeTrigger = true;
+                            setTimeout(function(){ onlyOnceTimeTrigger = true; },500);
                         }
                     });
                 }
