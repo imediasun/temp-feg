@@ -1102,56 +1102,63 @@
             changeLocation();
         });
 
-        $('#orderView .iCheck-helper').on('click', function () {
-
-            if(mode == 'edit'){
-                if($('#alt_ship_to').is(':checked')){
-                    $('#ship_address').css('display', 'block');
-                }else{
-                    $('#ship_address').css('display', 'none');
-                }
-            }else{
-
-                if($('#alt_ship_to').is(':checked')){
-                    var selectedLocationId          = $("#user_locations").val();
-                    var isCheckedAltShippingAddress = true;
-                }else{
-                    var selectedLocationId          =  $("#location_id").val() != '' ? $("#location_id").val() : 0;
-                    var isCheckedAltShippingAddress = false;
-                }
-                @if($mode != 'clone')
-                        if($('#vendor_id').val() == '') {
-                     onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId);
-                 }else {
-                     confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId);
-                 }
-                 @else
-                 if($('#alt_ship_to').is(':checked')){
-                     $('#ship_address').css('display', 'block');
-                 }else{
-                     $('#ship_address').css('display', 'none');
-                 }
-                @endif
-            }
-
+        $(document).on('ifChecked','#alt_ship_to',function(){
+            $(this).trigger('change');
+        });
+        $(document).on('ifUnchecked','#alt_ship_to',function(){
+            $(this).trigger('change');
         });
 
-        function  onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId){
-            $('.ajaxLoading').css('display', 'block');
+        $(document).on('change', '#alt_ship_to', function () {
+                if (mode == 'edit') {
+                    if ($('#alt_ship_to').is(':checked')) {
+                        $('#ship_address').css('display', 'block');
+                    } else {
+                        $('#ship_address').css('display', 'none');
+                    }
+                } else {
+
+                    if ($('#alt_ship_to').is(':checked')) {
+                        var selectedLocationId = $("#user_locations").val();
+                        var isCheckedAltShippingAddress = true;
+                    } else {
+                        var selectedLocationId = $("#location_id").val() != '' ? $("#location_id").val() : 0;
+                        var isCheckedAltShippingAddress = false;
+                    }
+                    @if($mode != 'clone')
+                    if ($('#vendor_id').val() == '') {
+                        onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId);
+                    } else {
+                        confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId);
+                    }
+                    @else
+                    if ($('#alt_ship_to').is(':checked')) {
+                        $('#ship_address').css('display', 'block');
+                    } else {
+                        $('#ship_address').css('display', 'none');
+                    }
+                    @endif
+                }
+        });
+
+        function  onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId) {
+            $('.ajaxLoading').show();
+
             $.ajax({
                 url: '/order/update',
                 method: 'GET',
-                success:function (resultHTML) {
+                success: function (resultHTML) {
+                    setTimeout(function (){ onlyOnceTimeTrigger=false; $('.ajaxLoading').hide(); },500);
                     $('#orderView').html(resultHTML);
                     $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
-                        {
-                            selected_value: isCheckedAltShippingAddress ? '' : selectedLocationId,
-                            initial_text: '-------- Select Location --------',
-                            <?php $data["order_loc_id"] == '' ? '' : print_r("onLoad:addInactiveItem('#location_id', ".$data['order_loc_id']." , 'Location', 'active' , 'id|location_name' )") ?>
-                        });
+                            {
+                                selected_value: isCheckedAltShippingAddress ? '' : selectedLocationId,
+                                initial_text: '-------- Select Location --------',
+                                <?php $data["order_loc_id"] == '' ? '' : print_r("onLoad:addInactiveItem('#location_id', " . $data['order_loc_id'] . " , 'Location', 'active' , 'id|location_name' )") ?>
+                            });
 
                     $("#po_1").val(0);
-                    if(isCheckedAltShippingAddress){
+                    if (isCheckedAltShippingAddress) {
                         $('#ship_address').css('display', 'block');
                         $('#alt_ship_to').attr('checked', true);
                         $('#alt_ship_to').parent().addClass('icheckbox_square-blue checked');
@@ -1173,10 +1180,14 @@
                         }
                     });
 
-                    if(oldLocationId != selectedLocationId)
+                    if (oldLocationId != selectedLocationId) {
                         oldLocationId = selectedLocationId;
+                    }
+
                 }
             });
+
+
         }
 
         function confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId){
@@ -1212,6 +1223,7 @@
 
                 },
                 cancel:function(){
+                    $('.ajaxLoading').hide();
                     @if($mode == 'clone')
                     oldLocationId = {{ $data['order_loc_id'] }}
                     @endif
