@@ -160,6 +160,7 @@ class order extends Sximo
                         "adjustment_amount" => $orderContent->qty,
                         "variation_id"=>$orderedProduct->variation_id,
                         "adjustment_type" => "negative",
+                        "reserved_qty_reason" => 'Order restored',
                         "adjusted_by" => \AUTH::user()->id,
                     ];
 
@@ -196,6 +197,7 @@ class order extends Sximo
                         "adjustment_amount" => $orderContent->qty,
                         "variation_id"=>$orderedProduct->variation_id,
                         "adjustment_type" => "positive",
+                        "reserved_qty_reason" => "Order removed",
                         "adjusted_by" => \AUTH::user()->id,
                     ];
 
