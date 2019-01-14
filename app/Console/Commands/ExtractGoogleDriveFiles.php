@@ -35,6 +35,7 @@ class ExtractGoogleDriveFiles extends Command
     protected $drive;
     protected $selectedTime = '';
     protected $timestamps = true;
+    protected $publicPermission = ['type' => 'anyone','role' => 'reader'];
     /**
      * Create a new command instance.
      *
@@ -158,6 +159,7 @@ class ExtractGoogleDriveFiles extends Command
                         $this->path .= '/' . $file->name;
                         //experiment
                         $file->period = $this->period;
+                        $this->createPublicPermission($file, $this->publicPermission);
                         $storeFileObject = new googledriveearningreport();
                         $storeFileObject->createOrUpdateFile($file, $location, $this->path);
                         $this->path = $this->period . '-' . $location->id;
@@ -167,6 +169,15 @@ class ExtractGoogleDriveFiles extends Command
                 }
             }
         return $files;
+    }
+
+    function createPublicPermission($file , $permissions){
+        try {
+            $userPermission = new \Google_Service_Drive_Permission($permissions);
+            $request = $this->drive->permissions->create($file->id, $userPermission, array('fields' => 'id'));
+        }catch (\Exception $e){
+            $this->L->log("Exception occured while creating the permission". $e->getMessage());
+        }
     }
 
     function getFiles($parentId, $timePeriod){
