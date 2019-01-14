@@ -2137,3 +2137,4 @@ function reInitFormValidatorParsley(form){
         $(form).parsley();
     }
 }
+var onlyOnceTimeTrigger = true;
