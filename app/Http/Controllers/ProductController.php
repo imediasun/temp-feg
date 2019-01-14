@@ -666,6 +666,7 @@ class ProductController extends Controller
                 $Product = product::find($id);
                 $NewReservedQty = $request->input('reserved_qty');
                 if ($Product->reserved_qty != $NewReservedQty && $NewReservedQty != '') {
+                    $reason = "Manual adjustment";
                     $type = "negative";
                     if ($NewReservedQty > $Product->reserved_qty) {
                         $type = "positive";
@@ -685,6 +686,7 @@ class ProductController extends Controller
                         "product_id" => $id,
                         "adjustment_amount" => $NewReservedQty,
                         "adjustment_type" => $type,
+                        "reaserved_qty_reason" => $reason,
                         "variation_id" => !empty($Product->variation_id) ? $Product->variation_id:null,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
@@ -922,6 +924,7 @@ class ProductController extends Controller
                 }
                 if (isset($ids) && count($ids) > 0) {
                     $Product = product::find($ids[0]);
+                    $reason = "Manual adjustment";
                     $type = "negative";
                     if ($Product->reserved_qty > 0) {
                         $type = "positive";
@@ -933,6 +936,7 @@ class ProductController extends Controller
                         "product_id" => $Product->id,
                         "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1):$Product->reserved_qty),
                         "adjustment_type" => $type,
+                        "reserved_qty_reason" => $reason,
                         "variation_id" => $Product->variation_id,
                         "adjusted_by" => \AUTH::user()->id,
                     ];

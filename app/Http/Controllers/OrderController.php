@@ -892,6 +892,7 @@ class OrderController extends Controller
 //                            "adjustment_amount" => ($removedProduct->is_broken_case == 1 && !in_array($orderData['order_type_id'],$case_price_categories)) ? $removedProduct->qty/$removedProduct->qty_per_case:$removedProduct->qty, "adjustment_amount" => ($removedProduct->is_broken_case == 1 && !in_array($orderData['order_type_id'],$case_price_categories)) ? $removedProduct->qty/$removedProduct->qty_per_case:$removedProduct->qty,
                             "adjustment_amount" => $QtyForLog,
                             "adjustment_type" => 'positive',
+                            "reserved_qty_reason"=>'Quantity ordered decreased',
                             "variation_id" => $product->variation_id,
                             "adjusted_by" => \AUTH::user()->id,
                         ];
