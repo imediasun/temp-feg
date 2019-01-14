@@ -204,7 +204,7 @@
                             {{--<input class="form-control" placeholder="" parsley-type="number" required="required" id="expense_category_1" name="expense_category[1]" type="text" value="{{$row['expense_category']}}">--}}
                         </div>
                         <div class="col-md-2">
-                            @if(!empty($variation['id']))
+                           {{-- @if(!empty($variation['id']))--}}
                                 <?php
                                 $disabledcheckbox = '';
                                 if ($variation['is_default_expense_category']) {
@@ -218,7 +218,7 @@
                                            value='1' name="isdefault[]" class='isDefaultExpenseCategoryElm'
                                            id="isDefaultExpenseCategoryElm_{{ $variationCount }}"
                                            @if($variation['is_default_expense_category']==1) checked @endif /> Make Default</label>
-                            @endif
+                           {{-- @endif--}}
                         </div>
                     </div>
                     <div class="form-group" id="retail_price_{{ $variationCount }}" style="display: none;">
@@ -303,7 +303,7 @@
                 </div>
                     <div class="col-md-2">
 
-                         @if(!empty($variation['id']))
+                        {{-- @if(!empty($variation['id']))--}}
                             <?php
 
                             $disabledcheckbox = '';
@@ -320,7 +320,7 @@
                                            value='1' name="isdefault[]"
                                            id="isDefaultExpenseCategoryElm_{{ $variationCount }}"
                                            @if($variation['is_default_expense_category']==1) checked @endif /> Make Default</label>
-                        @endif
+                        {{--@endif--}}
 
                     </div>
                 </div>
