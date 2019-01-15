@@ -1102,10 +1102,10 @@
             changeLocation();
         });
 
-        $(document).on('ifChecked','#alt_ship_to',function(){
+        $('#alt_ship_to').on('ifChecked',function(){
             $(this).trigger('change');
         });
-        $(document).on('ifUnchecked','#alt_ship_to',function(){
+        $('#alt_ship_to').on('ifUnchecked',function(){
             $(this).trigger('change');
         });
 
