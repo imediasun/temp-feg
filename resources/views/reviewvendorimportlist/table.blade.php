@@ -61,6 +61,7 @@
                             $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
 							$th = '<th'.
                                     ' class="'.$colClass.'"'.
+                                    ' productimportvendorid="'.$product_import_vendor_id.'"'.
                                     ' data-field="'.$colField.'"'.
                                     ' data-sortable="'.$colIsSortable.'"'.
                                     ' data-sorted="'.($colIsSorted?1:0).'"'.
@@ -321,6 +322,7 @@ $(document).ready(function() {
     // Configure data grid columns for sorting 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
+<?php $pageModule = 'product'; ?>
 </script>
 <style>
 .table th.right { text-align:right !important;}

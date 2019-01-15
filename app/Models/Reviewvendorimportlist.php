@@ -64,7 +64,7 @@ FROM vendor_import_products  ";
         ), $args));
 
 
-        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY newItem DESC , updatedItem DESC , is_omitted ASC ,  {$sort} {$order} " : ' ORDER BY is_new DESC , is_updated DESC , is_omitted DESC   ';
+        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY  {$sort} {$order}  " : ' ORDER BY is_new DESC , is_updated DESC ,  is_omitted ASC   ';
         if (!empty($extraSorts)) {
             if (empty($orderConditional)) {
                 $orderConditional = " ORDER BY ";
@@ -515,8 +515,8 @@ GROUP BY mapped_expense_category");
             }
         }
         $message .= ' '.$itemsIndex.'.</p>';
-        $message .= '<p>To correct this error:</p>';
-        $message .='<ol>';
+        $message .= '<p style="margin-bottom: 0px;">To correct this error:</p>';
+        $message .='<ol style="margin-top: 0px;">';
         $message .='<li>Open the attached file.</li>';
         $message .='<li>Go to the row(s) indicated above.</li>';
         $message .='<li>Delete the entry in column A for the row(s) indicated above.</li>';

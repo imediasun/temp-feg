@@ -219,8 +219,12 @@ function ajaxInlineEdit(id,url,reloadurl)
 }
 
 
-function ajaxFilter( id ,url,opt,column)
+function ajaxFilter( id ,url,opt,column,idExt)
 {
+    var id2 = id;
+    if(idExt !=undefined){
+        id = idExt;
+    }
     var attr = '', elm, val;
         $(id + 'Filter :input').each(function () {
 			elm = $(this);
@@ -247,7 +251,7 @@ function ajaxFilter( id ,url,opt,column)
     if(opt  !== undefined) {
         attr += opt;
     }
-
+    id = id2;
 
 reloadData(id, url+"?"+attr);
 }

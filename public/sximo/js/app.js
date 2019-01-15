@@ -386,9 +386,15 @@ function initDataGrid(module, url, options) {
             sorted = elm.attr('data-sorted'),
             sortedOrder = elm.attr('data-sortedOrder') || '',
             nextOrder = sortedOrder == 'asc' ? 'desc' : 'asc',
+            productimportvendorid = elm.attr('productimportvendorid'),
             attr = getFooterFilters({'sort': true, 'order': true}),
             allAttr = attr + ('&sort=' + field + '&order=' + nextOrder);
-
+        if(productimportvendorid != undefined){
+            allAttr +='&product_import_vendor_id='+productimportvendorid;
+            module = "product";
+        }
+        //?product_import_vendor_id=3023&search=import_vendor_id:equal:5
+        //&page=1&search=import_vendor_id:equal:5&rows=0&undefined=Update Product List Module&sort=vendor_description&order=asc
 
         if (useAjax) {
             reloadData('#'+module, url+'/data?colheadersort=1' + allAttr);

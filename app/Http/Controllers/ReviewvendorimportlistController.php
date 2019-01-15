@@ -208,8 +208,10 @@ class ReviewvendorimportlistController extends Controller
         if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
         }
-        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
-        $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+      /*  $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
+        $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);*/
+        $sort =  $request->input('sort',''); //$this->info['setting']['orderby']);
+        $order =  $request->input('order',''); //$this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
