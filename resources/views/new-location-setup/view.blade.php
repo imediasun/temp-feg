@@ -114,20 +114,7 @@
 @endif	
 
 <script>
-	var passwords  = {
-		rdp:{
-			encrypted:'{{ $row->rdp_computer_password }}',
-			decrypted:'{{ SiteHelpers::decryptStringOPENSSL($row->rdp_computer_password) }}',
-		},
-		tmv:{
-			encrypted:'{{ $row->teamviewer_passowrd }}',
-			decrypted:'{{ SiteHelpers::decryptStringOPENSSL($row->teamviewer_passowrd )}}',
-		},
-		wndows:{
-			encrypted:'{{ $row->windows_user_password }}',
-			decrypted:'{{ SiteHelpers::decryptStringOPENSSL($row->windows_user_password) }}',
-		}
-	};
+	var passwords  = {!! $passwords !!};
 
 	 $(document).on('click','#tpass',(function () {
 	 $('#tmpass').text(passwords.tmv.decrypted);
