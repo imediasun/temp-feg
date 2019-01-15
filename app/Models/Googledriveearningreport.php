@@ -43,17 +43,25 @@ class googledriveearningreport extends Sximo  {
 	public static function querySelect(  ){
 		
 		return "SELECT google_drive_earning_reports.* ,  google_drive_earning_reports.modified_time AS date_start,  google_drive_earning_reports.modified_time AS date_end,  location.gd_parent_folder_name 
-FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_reports.loc_id = location.id";
+                FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_reports.loc_id = location.id";
 	}
 
-	 public static function getRowsCount(){
+    public static function queryCountSelect(  ){
+
+        return "SELECT COUNT(google_drive_earning_reports.id) as totalCount,google_drive_earning_reports.id 
+                FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_reports.loc_id = location.id";
+    }
+    /*
+    public static function getRowsCount(){
 	     return "SELECT COUNT(google_drive_earning_reports.id) as totalCount FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_reports.loc_id = location.id";
      }
+    */
 
 
 	public static function queryWhere(  ){
-		
-		return "  WHERE google_drive_earning_reports.id IS NOT NULL ";
+        $currentLocationIds = \SiteHelpers::getCurrentUserLocationsFromSession();
+		return "  WHERE google_drive_earning_reports.id IS NOT NULL AND loc_id IN ('$currentLocationIds')";
+
 	}
 	
 	public static function queryGroup(){
@@ -104,6 +112,7 @@ FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_
             'global' => 1
         ), $args));
         $orderConditional1 = '';
+        /*
         if (!empty($customSorts)) {
             $customOrderConditionals = [];
             foreach($customSorts as $customSort => $customSortType) {
@@ -113,8 +122,10 @@ FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_
             $orderConditional1 = implode(', ', $customOrderConditionals);
             $orderConditional1 = !empty($orderConditional1) ? $orderConditional1.", ":$orderConditional1;
         }
+        */
 
         $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$orderConditional1} {$sort} {$order} " : '';
+        /*
         if (!empty($extraSorts)) {
             if (empty($orderConditional)) {
                 $orderConditional = " ORDER BY ";
@@ -128,7 +139,7 @@ FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_
                 $extraOrderConditionals[] = implode(' ', $extraSortItem);
             }
             $orderConditional .= implode(', ', $extraOrderConditionals);
-        }
+        }*/
 
 
 
@@ -140,85 +151,34 @@ FROM google_drive_earning_reports   LEFT JOIN location  ON google_drive_earning_
 
         $rows = array();
         $select = self::querySelect();
-
         /*
 
         */
-        $createdFlag = false;
+        //$createdFlag = false;
 
         if ($cond != null) {
-            $select .= self::queryWhere($cond);
+            $orderConditional = self::queryWhere($cond);
         }
         else {
-            $select .= self::queryWhere();
+            $orderConditional = self::queryWhere();
         }
-
-        if(!empty($createdFrom)){
-            if($cond != 'only_api_visible')
-            {
-                $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
-            }
-            else
-            {
-                $select .= " AND api_created_at BETWEEN '$createdFrom' AND '$createdTo'";
-            }
-            $createdFlag = true;
-        }
-
-        if(!empty($updatedFrom)){
-
-            if($createdFlag){
-                if($cond != 'only_api_visible')
-                {
-                    $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-                else
-                {
-                    $select .= " OR api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-            }
-            else{
-                if($cond != 'only_api_visible')
-                {
-                    $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-                else
-                {
-                    $select .= " AND api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-            }
-
-        }
-
-        if(!empty($order_type_id)){
-            $select .= " AND order_type_id in($order_type_id)";
-        }
-        if(!empty($status_id)){
-            $select .= " AND status_id='$status_id'";
-        }
-        if(!empty($active)){//added for location
-            $select .= " AND location.active='$active'";
-        }
-        $select.='AND '.$table.'.loc_id IN ('.\SiteHelpers::getCurrentUserLocationsFromSession().')';
-        \Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-
-        $counter_select = \DB::select(self::getRowsCount());
+        $countSelect = self::queryCountSelect();
+        $countQuery = $countSelect . " {$orderConditional} {$params} " . self::queryGroup();
+        $counter_select =\DB::select($countQuery);
+        \Log::info("Total Query : $countQuery");
         $total = $counter_select[0]->totalCount;
-        if($table=="img_uploads")
-        {
-            $total="";
-        }
         $offset = ($page - 1) * $limit;
         if ($offset >= $total && $total != 0 && $limit != 0) {
             $page = ceil($total/$limit);
             $offset = ($page-1) * $limit ;
         }
 
+
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
-        // echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
-        \Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
-        self::$getRowsQuery = $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
-        $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
+
+        $selectQuery = "$select $orderConditional $params ".self::queryGroup()." $limitConditional";
+        \Log::info("Query :  $selectQuery");
+        $result = \DB::select($selectQuery);
 
         if ($key == '') {
             $key = '*';
