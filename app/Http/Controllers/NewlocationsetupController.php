@@ -173,6 +173,22 @@ class NewlocationsetupController extends Controller
             $this->data['row'] = $this->model->getColumnTable('new_location_setups');
         }
 
+        $passwords = [
+            'rdp' => [
+                'encrypted' => $row->rdp_computer_password,
+                'decrypted' => \SiteHelpers::decryptStringOPENSSL($row->rdp_computer_password),
+            ],
+            'tmv' => [
+                'encrypted' => $row->teamviewer_passowrd,
+                'decrypted' => \SiteHelpers::decryptStringOPENSSL($row->teamviewer_passowrd),
+            ],
+            'wndows' => [
+                'encrypted' => $row->windows_user_password,
+                'decrypted' => \SiteHelpers::decryptStringOPENSSL($row->windows_user_password),
+            ]
+        ];
+        $this->data['passwords'] = json_encode($passwords);
+
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
@@ -236,7 +252,6 @@ class NewlocationsetupController extends Controller
                 $data["teamviewer_id"] = '';
                 $data["teamviewer_passowrd"] = '';
             }
-
             if(!empty($data['teamviewer_passowrd']) && $data['use_tv']==1){
                 $data['teamviewer_passowrd'] = \SiteHelpers::encryptStringOPENSSL($data['teamviewer_passowrd']);
             }
