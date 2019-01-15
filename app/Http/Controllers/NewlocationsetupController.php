@@ -204,6 +204,10 @@ class NewlocationsetupController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        $sendEmail = false;
+        if ($id==0){
+            $sendEmail = true;
+        }
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
@@ -247,10 +251,11 @@ class NewlocationsetupController extends Controller
             /**
              * sending Notification on Create a new Location Setup
              */
+
             $locationSetup = $this->model->find($id)->toArray();
             $location = location::find($locationSetup['location_id']);
             $locationSetup['location_name'] = $location->location_name;
-            if(empty($id)){
+            if($sendEmail==true){
                 $url = url() . "/" . $this->data['pageModule'] . "/?view=" . \SiteHelpers::encryptID($id);
                 $notificationContent['element5Digital'] = view('new-location-setup.email.newlocationsetupemail', ['row' => $locationSetup, 'type' => 'element5Digital', 'url' => $url])->render();
                 $notificationContent['embed'] = view('new-location-setup.email.newlocationsetupemail', ['row' => $locationSetup, 'type' => 'embed', 'url' => $url])->render();
