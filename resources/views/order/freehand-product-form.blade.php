@@ -375,9 +375,7 @@
         var isDefaultExpenseCategoryInput = ' <label class="checked checkbox-inline">';
         isDefaultExpenseCategoryInput += '<input type="hidden" id="isDefaultExpenseCategory_' + types_counter + '"   name="is_default_expense_category[]" value="0"/>';
         isDefaultExpenseCategoryInput += '<input type="checkbox"  name="isdefault[]" class="isDefaultExpenseCategoryElm" id="isDefaultExpenseCategoryElm_' + types_counter + '" ' + events + '  value="1"  /> Make Default</label>';
-        @if(empty($row['id']))
-                isDefaultExpenseCategoryInput = '';
-                @endif
+
         var more_types_html = '<span class="product_types productTypeBox" id="remove_me_' + types_counter + '"><div class="form-group  "> <input type="hidden" name="itemId[]" value="0">' +
                         '<label for="Prod Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Type", (isset($fields["prod_type_id"]["language"])? $fields["prod_type_id"]["language"] : array())) !!}</label> ' +
                         '<div class="col-md-6"> <select data-previous="0" name="prod_type_id[]" rows="5" data-counter="' + types_counter + '" id="prod_type_id_' + types_counter + '" class="prod_type select2 "required="required"></select>' +
@@ -417,8 +415,7 @@
             $(this).hide();
         }
         <?php } ?>
-        console.log('debug');
-        console.log(types_counter);
+
         var orderForm = document.getElementById('ordersubmitFormAjax');
         var productForm = document.getElementById('productFormAjax');
         reInitFormValidatorParsley($(orderForm));

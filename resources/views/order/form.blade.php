@@ -1102,14 +1102,21 @@
             changeLocation();
         });
 
-        $('#alt_ship_to').on('ifChecked',function(){
+        $(document).on('ifChecked','#alt_ship_to',function(){
             $(this).trigger('change');
         });
-        $('#alt_ship_to').on('ifUnchecked',function(){
+        $(document).on('ifUnchecked','#alt_ship_to',function(){
             $(this).trigger('change');
         });
 
         $(document).on('change', '#alt_ship_to', function () {
+            if (onlyOnceTimeTrigger == true) {
+                onlyOnceTimeTrigger = false;
+                setTimeout(function () {
+                    onlyOnceTimeTrigger = true;
+                }, 1000);
+
+
                 if (mode == 'edit') {
                     if ($('#alt_ship_to').is(':checked')) {
                         $('#ship_address').css('display', 'block');
@@ -1125,13 +1132,14 @@
                         var selectedLocationId = $("#location_id").val() != '' ? $("#location_id").val() : 0;
                         var isCheckedAltShippingAddress = false;
                     }
-                    @if($mode != 'clone')
+                    @if ($mode != 'clone')
                     if ($('#vendor_id').val() == '') {
                         onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId);
                     } else {
                         confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId);
                     }
                     @else
+
                     if ($('#alt_ship_to').is(':checked')) {
                         $('#ship_address').css('display', 'block');
                     } else {
@@ -1139,6 +1147,9 @@
                     }
                     @endif
                 }
+            } else {
+                return false;
+            }
         });
 
         function  onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId) {
@@ -1148,7 +1159,6 @@
                 url: '/order/update',
                 method: 'GET',
                 success: function (resultHTML) {
-                    setTimeout(function (){ onlyOnceTimeTrigger=false; $('.ajaxLoading').hide(); },500);
                     $('#orderView').html(resultHTML);
                     $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                             {
