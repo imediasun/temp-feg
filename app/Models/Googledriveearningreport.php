@@ -60,7 +60,7 @@ class googledriveearningreport extends Sximo  {
 
 	public static function queryWhere(  ){
         $currentLocationIds = \SiteHelpers::getCurrentUserLocationsFromSession();
-		return "  WHERE google_drive_earning_reports.id IS NOT NULL AND loc_id IN ('$currentLocationIds')";
+		return "  WHERE google_drive_earning_reports.id IS NOT NULL AND loc_id IN ($currentLocationIds)";
 
 	}
 	
