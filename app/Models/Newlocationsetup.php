@@ -177,7 +177,7 @@ FROM new_location_setups
      * @param int $locationSetupId
      * @param array $message[element5DigitalMessage,sacoa,embed,internal_team]
      */
-    public function sendNotificationByEmail($locationSetupId = 0, $message =[])
+    public function sendNotificationByEmail($locationSetupId = 0, $message =[], $locname)
     {
         $newLocationSetup = self::find($locationSetupId);
         if ($newLocationSetup) {
@@ -189,8 +189,8 @@ FROM new_location_setups
                 $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
                 $from = \Session::get('eid');
 
-                $this->sendNotificationToElement5Digital($newLocationSetup->location_id,$message['element5Digital'],$from,$isTest);
-                $this->sendNotificationInternalTeam($newLocationSetup->location_id,$message['internal_team'],$from,$isTest);
+                $this->sendNotificationToElement5Digital($newLocationSetup->location_id,$message['element5Digital'],$from,$isTest, $locname);
+                $this->sendNotificationInternalTeam($newLocationSetup->location_id,$message['internal_team'],$from,$isTest, $locname);
 
                 if($location->debit_type_id >= 1){
                     $locationType = self::getLocationType($location->debit_type_id);
@@ -208,11 +208,11 @@ FROM new_location_setups
      * @param $from
      * @param $isTest
      */
-    public function sendNotificationToElement5Digital($locationId,$message,$from,$isTest){
+    public function sendNotificationToElement5Digital($locationId,$message,$from,$isTest, $locname){
         $configName = 'Notify to install the sync application on new server [Element5Digital]';
         $receipts = FEGSystemHelper::getSystemEmailRecipients($configName, null, $isTest);
 
-        $subject = 'New Location Server [Location# '.$locationId.'] ';
+        $subject = "New Location Server Location# .$locationId  $locname";
 
         if (!empty($receipts)) {
             FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
@@ -246,12 +246,11 @@ FROM new_location_setups
 
     }
 
-    public function sendNotificationInternalTeam($locationId, $message,$from,$isTest){
+    public function sendNotificationInternalTeam($locationId, $message,$from,$isTest, $locname){
 
         $configName = 'Notify to install the sync application on new server [Internal Team]';
         $receipts = FEGSystemHelper::getSystemEmailRecipients($configName, null, $isTest);
-
-        $subject = 'Notify to install the sync application on new server [Location# '.$locationId.'] ';
+        $subject = "New Location Server Location# .$locationId  $locname";
 
         if (!empty($receipts)) {
             FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
