@@ -209,25 +209,28 @@ class NewlocationsetupController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('new_location_setups');
 
-//            $data["is_server_locked"] = isset($data["is_server_locked"])?$data["is_server_locked"]:0;
-//            $data["is_remote_desktop"] = isset($data["is_remote_desktop"])?$data["is_remote_desktop"]:0;
-//            $data["use_tv"] = isset($data["use_tv"])?$data["use_tv"]:0;
-
             if (isset($data["is_server_locked"]) && $data["is_server_locked"] == "on"){
                 $data["is_server_locked"] = 1;
             }
             else{
                 $data["is_server_locked"] = 0;
+                $data["windows_user"] = '';
+                $data["windows_user_password"] = '';
             }
             if (isset($data["is_remote_desktop"])&& $data["is_remote_desktop"] == "on" ) {
                 $data["is_remote_desktop"] = 1;
             } else {
                 $data["is_remote_desktop"] = 0;
+                $data["rdp_computer_name"] = '';
+                $data["rdp_computer_password"] ='';
+                $data["rdp_computer_user"] = '';
             }
             if (isset($data["use_tv"]) && $data["use_tv"] == "on") {
                 $data["use_tv"] = 1;
             } else {
                 $data["use_tv"] = 0;
+                $data["teamviewer_id"] = '';
+                $data["teamviewer_passowrd"] = '';
             }
 
             if(!empty($data['teamviewer_passowrd']) && $data['use_tv']==1){
