@@ -242,6 +242,7 @@ class NewlocationsetupController extends Controller
             if(!empty(['rdp_computer_password'])&& $data['is_remote_desktop']==1){
                 $data['rdp_computer_password'] = \SiteHelpers::encryptStringOPENSSL($data['rdp_computer_password']);
             }
+
             $id = $this->model->insertRow($data, $id);
             /**
              * sending Notification on Create a new Location Setup
@@ -255,7 +256,7 @@ class NewlocationsetupController extends Controller
             $notificationContent['sacoa'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'sacoa','url'=>$url])->render();
             $notificationContent['internal_team'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'internal_team','url'=>$url])->render();
 
-            $this->model->sendNotificationByEmail($id,$notificationContent);
+            $this->model->sendNotificationByEmail($id,$notificationContent, $location->location_name );
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
