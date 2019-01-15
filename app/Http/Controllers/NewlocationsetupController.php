@@ -250,14 +250,15 @@ class NewlocationsetupController extends Controller
             $locationSetup = $this->model->find($id)->toArray();
             $location = location::find($locationSetup['location_id']);
             $locationSetup['location_name'] = $location->location_name;
-            $url = url(). "/".$this->data['pageModule']."/?view=".\SiteHelpers::encryptID($id);
-            $notificationContent['element5Digital']= view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'element5Digital','url'=>$url])->render();
-            $notificationContent['embed'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'embed','url'=>$url])->render();
-            $notificationContent['sacoa'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'sacoa','url'=>$url])->render();
-            $notificationContent['internal_team'] = view('new-location-setup.email.newlocationsetupemail',['row'=>$locationSetup,'type'=>'internal_team','url'=>$url])->render();
-
-            $this->model->sendNotificationByEmail($id,$notificationContent, $location->location_name );
-            return response()->json(array(
+            if(empty($id)){
+                $url = url() . "/" . $this->data['pageModule'] . "/?view=" . \SiteHelpers::encryptID($id);
+                $notificationContent['element5Digital'] = view('new-location-setup.email.newlocationsetupemail', ['row' => $locationSetup, 'type' => 'element5Digital', 'url' => $url])->render();
+                $notificationContent['embed'] = view('new-location-setup.email.newlocationsetupemail', ['row' => $locationSetup, 'type' => 'embed', 'url' => $url])->render();
+                $notificationContent['sacoa'] = view('new-location-setup.email.newlocationsetupemail', ['row' => $locationSetup, 'type' => 'sacoa', 'url' => $url])->render();
+                $notificationContent['internal_team'] = view('new-location-setup.email.newlocationsetupemail', ['row' => $locationSetup, 'type' => 'internal_team', 'url' => $url])->render();
+                $this->model->sendNotificationByEmail($id, $notificationContent, $location->location_name);
+            }
+                return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
             ));
