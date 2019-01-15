@@ -240,13 +240,15 @@
                 var windows_user = $('input[name="windows_user"]');
                 var windows_user_password = $('input[name="windows_user_password"]');
                 if (state == false) {
-                    windows_user.val('');
-                    windows_user_password.val('');
+                    windows_user.prop('readonly', true);
+                    windows_user_password.prop('readonly', true);
                     windows_user.prop('disabled', true);
                     windows_user_password.prop('disabled', true);
                     windows_user.removeAttr('required');
                     windows_user_password.removeAttr('required');
                 } else {
+                    windows_user.prop('readonly', false);
+                    windows_user_password.prop('readonly', false);
                     windows_user.val(userValue);
                     windows_user_password.val(userPassValue);
                     windows_user.prop('disabled', false);
@@ -265,25 +267,25 @@
                var rdp_computer_user =  $('input[name="rdp_computer_user"]');
                var rdp_computer_password = $('input[name="rdp_computer_password"]');
                 if (state == false) {
+                    rdp_computer_name.prop('readonly', true);
+                    rdp_computer_user.prop('readonly', true);
+                    rdp_computer_password.prop('readonly', true);
                     rdp_computer_name.prop('disabled', true);
                     rdp_computer_user.prop('disabled', true);
                     rdp_computer_password.prop('disabled', true);
-                    rdp_computer_name.val('');
-                    rdp_computer_password.val('');
-                    rdp_computer_user.val('');
                     rdp_computer_name.removeAttr('required');
                     rdp_computer_user.removeAttr('required');
                     rdp_computer_password.removeAttr('required');
                 } else {
+                    rdp_computer_name.prop('readonly', false);
+                    rdp_computer_password.prop('readonly', false);
+                    rdp_computer_user.prop('readonly', false);
                     rdp_computer_name.val(rdpnamevale);
                     rdp_computer_user.val(rdpcmpuser);
                     rdp_computer_password.val(rdpcmpass);
                     rdp_computer_name.prop('disabled', false);
                     rdp_computer_user.prop('disabled', false);
                     rdp_computer_password.prop('disabled', false);
-
-
-
                     rdp_computer_name.attr('required','required');
                     rdp_computer_user.attr('required','required');
                     rdp_computer_password.attr('required','required');
@@ -308,8 +310,6 @@
                 if (state == false) {
                     teamviewer_id.prop('disabled', true);
                     teamviewer_passowrd.prop('disabled', true);
-                    teamviewer_id.val('');
-                    teamviewer_passowrd.val('');
                     teamviewer_id.removeAttr('required');
                     teamviewer_passowrd.removeAttr('required');
                 } else {
