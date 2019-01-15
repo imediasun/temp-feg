@@ -234,8 +234,7 @@
             $("[id='toggle_trigger_3']").bootstrapSwitch({onColor: 'primary', offColor: 'default'});
             $("[id='toggle_trigger_4']").bootstrapSwitch({onColor: 'primary', offColor: 'default'});
 
-            var userValue = $('input[name="windows_user"]').val();
-            var userPassValue =  $('input[name="windows_user_password"]').val();
+
             $("[id='toggle_trigger_1']").on('switchChange.bootstrapSwitch', function (event, state) {
                 var windows_user = $('input[name="windows_user"]');
                 var windows_user_password = $('input[name="windows_user_password"]');
@@ -249,8 +248,6 @@
                 } else {
                     windows_user.prop('readonly', false);
                     windows_user_password.prop('readonly', false);
-                    windows_user.val(userValue);
-                    windows_user_password.val(userPassValue);
                     windows_user.prop('disabled', false);
                     windows_user_password.prop('disabled', false);
 
@@ -259,9 +256,7 @@
                 }
                 reInitParsley();
             });
-            var rdpnamevale = $('input[name="rdp_computer_name"]').val();
-            var rdpcmpuser = $('input[name="rdp_computer_user"]').val();
-            var rdpcmpass  = $('input[name="rdp_computer_password"]').val();
+
             $("[id='toggle_trigger_2']").on('switchChange.bootstrapSwitch', function (event, state) {
                var rdp_computer_name =  $('input[name="rdp_computer_name"]');
                var rdp_computer_user =  $('input[name="rdp_computer_user"]');
@@ -280,9 +275,6 @@
                     rdp_computer_name.prop('readonly', false);
                     rdp_computer_password.prop('readonly', false);
                     rdp_computer_user.prop('readonly', false);
-                    rdp_computer_name.val(rdpnamevale);
-                    rdp_computer_user.val(rdpcmpuser);
-                    rdp_computer_password.val(rdpcmpass);
                     rdp_computer_name.prop('disabled', false);
                     rdp_computer_user.prop('disabled', false);
                     rdp_computer_password.prop('disabled', false);
@@ -302,19 +294,20 @@
                 }
                 reInitParsley();
             });
-            var tmId = $('input[name="teamviewer_id"]').val();
-            var tmvpass = $('input[name="teamviewer_passowrd"]').val();
+
             $("[id='toggle_trigger_4']").on('switchChange.bootstrapSwitch', function (event, state) {
                 var teamviewer_id = $('input[name="teamviewer_id"]');
                 var teamviewer_passowrd = $('input[name="teamviewer_passowrd"]');
                 if (state == false) {
+                    teamviewer_id.prop('readonly', true);
+                    teamviewer_passowrd.prop('readonly', true);
                     teamviewer_id.prop('disabled', true);
                     teamviewer_passowrd.prop('disabled', true);
                     teamviewer_id.removeAttr('required');
                     teamviewer_passowrd.removeAttr('required');
                 } else {
-                    teamviewer_id.val(tmId);
-                    teamviewer_passowrd.val(tmvpass);
+                    teamviewer_id.prop('readonly', false);
+                    teamviewer_passowrd.prop('readonly', false);
                     teamviewer_id.prop('disabled', false);
                     teamviewer_passowrd.prop('disabled', false);
 
