@@ -159,10 +159,10 @@ class googledriveearningreport extends Sximo  {
         //$createdFlag = false;
 
         if ($cond != null) {
-            $orderConditional = self::queryWhere($cond).$orderConditions;
+            $orderConditional = self::queryWhere($cond);
         }
         else {
-            $orderConditional = self::queryWhere().$orderConditions;
+            $orderConditional = self::queryWhere();
         }
 
         $countSelect = self::queryCountSelect();
@@ -179,7 +179,7 @@ class googledriveearningreport extends Sximo  {
 
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
 
-        $selectQuery = "$select $orderConditional $params ".self::queryGroup()." $limitConditional";
+        $selectQuery = "$select $orderConditional $params ".self::queryGroup()." $orderConditions $limitConditional";
         \Log::info("Query :  $selectQuery");
         $result = \DB::select($selectQuery);
 
