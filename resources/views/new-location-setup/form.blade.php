@@ -20,7 +20,12 @@
                             {!! SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <select name="location_id" id="location_id" required class="select2 location_id"></select>
+                            <select name="location_id" id="location_id" required class="select2 location_id">
+                                <option value="">----select location----</option>
+                                @foreach($locations as $location)
+                                    <option @if($row['location_id'] == $location->id) selected @endif value="{{ $location->id }}">{{ $location->id." - ".$location->location_name }}</option>
+                                    @endforeach
+                            </select>
                             <div class="clear"></div>
                         </div>
                         <div class="col-md-2">
@@ -316,13 +321,7 @@
                 }
                 reInitParsley();
             });
-            $("#location_id").jCombo(
-                    "{{ URL::to('location/comboselect?filter=location:id:id|location_name ') }}",
-                    {
-                        excludeItems: {{ json_encode($excludedUserLocations) }},
-                        selected_value: "{{ $row["location_id"]}}",
-                        initial_text: '-------- Select Location --------'
-                    });
+
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                     {selected_value: '{{ $row["vendor_id"] }}' ,
                         <?php $row["vendor_id"] == '' ? '': print_r("onLoad:addInactiveItem('#vendor_id[data-seprate=true]', ".$row['vendor_id']." , 'Vendor', 'status' , 'vendor_name')") ?>
