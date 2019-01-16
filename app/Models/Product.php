@@ -41,6 +41,10 @@ class product extends Sximo  {
         static::saved(function(product $model){
             FEGSystemHelper::updateProductMeta($model);
         });
+
+        static::deleted(function ($model){
+            VendorProductTrack::where(['product_id'=>$model->id,'vendor_id'=>$model->vendor_id])->delete();
+        });
     }
 
     function orderedProduct()

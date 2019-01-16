@@ -2,6 +2,7 @@
 namespace App\Library;
 use App\Models\Product;
 use App\Models\vendor;
+use App\Models\VendorProductTrack;
 use PHPExcel_Reader_HTML;
 use PHPExcel_IOFactory;
 use App\Library\FEG\System\FEGSystemHelper;
@@ -54,7 +55,13 @@ class VendorProductsImportHelper
 
         foreach ($products as $product)
         {
-//            dd($product);
+            $productTrack = VendorProductTrack::where(['product_id'=>$product->id,'vendor_id' => $vendorId])->get();
+
+            if($productTrack->count() == 0){
+                VendorProductTrack::create(['product_id'=>$product->id,'vendor_id' => $vendorId]);
+            }
+
+
             $start++;
             $data[$start] = [
                                 is_string($product->id) ? "=\"$product->id\"" : $product->id,
