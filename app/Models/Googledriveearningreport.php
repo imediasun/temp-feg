@@ -176,9 +176,7 @@ class googledriveearningreport extends Sximo  {
             $offset = ($page-1) * $limit ;
         }
 
-
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
-
         $selectQuery = "$select $orderConditional $params ".self::queryGroup()." $orderConditions $limitConditional";
         \Log::info("Query :  $selectQuery");
         $result = \DB::select($selectQuery);
