@@ -156,6 +156,7 @@ class NewlocationsetupController extends Controller
 
         $this->data['id'] = $id;
         $this->data['excludedUserLocations']		= $this->getUsersExcludedLocations();
+        $this->data['locations'] = location::all();
         return view('new-location-setup.form', $this->data);
     }
 
