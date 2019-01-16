@@ -18,7 +18,7 @@ class newlocationsetup extends Sximo  {
 		
 		return "  SELECT
   new_location_setups.*,
-  location.id            AS FEG_ID,
+  location.id            AS FEG_ID,location.store_id,
   IF(location.active = 0,'Closed','Open') AS locationStatus
 FROM new_location_setups
   INNER JOIN location
