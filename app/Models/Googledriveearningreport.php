@@ -112,7 +112,7 @@ class googledriveearningreport extends Sximo  {
             'global' => 1
         ), $args));
         $orderConditional1 = '';
-        /*
+
         if (!empty($customSorts)) {
             $customOrderConditionals = [];
             foreach($customSorts as $customSort => $customSortType) {
@@ -122,10 +122,10 @@ class googledriveearningreport extends Sximo  {
             $orderConditional1 = implode(', ', $customOrderConditionals);
             $orderConditional1 = !empty($orderConditional1) ? $orderConditional1.", ":$orderConditional1;
         }
-        */
+
 
         $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$orderConditional1} {$sort} {$order} " : '';
-        /*
+
         if (!empty($extraSorts)) {
             if (empty($orderConditional)) {
                 $orderConditional = " ORDER BY ";
@@ -139,7 +139,9 @@ class googledriveearningreport extends Sximo  {
                 $extraOrderConditionals[] = implode(' ', $extraSortItem);
             }
             $orderConditional .= implode(', ', $extraOrderConditionals);
-        }*/
+        }
+
+         $orderConditions = $orderConditional;
 
 
 
@@ -157,11 +159,12 @@ class googledriveearningreport extends Sximo  {
         //$createdFlag = false;
 
         if ($cond != null) {
-            $orderConditional = self::queryWhere($cond);
+            $orderConditional = self::queryWhere($cond).$orderConditions;
         }
         else {
-            $orderConditional = self::queryWhere();
+            $orderConditional = self::queryWhere().$orderConditions;
         }
+
         $countSelect = self::queryCountSelect();
         $countQuery = $countSelect . " {$orderConditional} {$params} " . self::queryGroup();
         $counter_select =\DB::select($countQuery);
