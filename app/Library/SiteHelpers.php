@@ -2390,7 +2390,7 @@ class SiteHelpers
      * @param number $id User ID
      * @return array
      */
-    static function getLocationDetails($id,$canSeeAllLocations = false, $extra = [])
+    static function getLocationDetails($id,$canSeeAllLocations = false, $extra = [], $canSeeActiveInactiveLocation =false)
     {
     	if($canSeeAllLocations)
 	    {
@@ -2407,7 +2407,11 @@ class SiteHelpers
                     'location.state',
                     'location.city',
                     'location.zip'])))
-                ->where('location.active', 1)
+                ->where(function ($query) use ($canSeeActiveInactiveLocation){
+                    if (!$canSeeActiveInactiveLocation){
+                        $query->where('location.active', 1);
+                    }
+                })
                 ->orderBy('id', 'asc')
                 ->get();
 	    }

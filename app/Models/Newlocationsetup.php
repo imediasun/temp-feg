@@ -269,5 +269,9 @@ FROM new_location_setups
          $debitTypes = array("1" => "sacoa", "2" => "embed");
         return isset($debitTypes[$debitTypeId]) ? $debitTypes[$debitTypeId] : null;
     }
+    public static function getUserAssignedLocation($extra = []){
+        $locations = \SiteHelpers::getLocationDetails(\Session::get('uid'), false, $extra, true);
+        return $locations;
+    }
 
 }
