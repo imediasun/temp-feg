@@ -23,7 +23,7 @@
                     @foreach ($simpleSearchForm as $t)
                         <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
                             {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
-                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm, false, '', array(),true) !!}
                         </div>
                     @endforeach
                     {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
@@ -98,7 +98,7 @@
                                     @if(SiteHelpers::filterColumn($limited ))
                                         <td data-form="{{ $t['field'] }}"
                                             data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-                                            {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+                                            {!! SiteHelpers::transForm($t['field'] , $tableForm, false, '', array(),true) !!}
                                         </td>
                                     @endif
                                 @endif
@@ -190,8 +190,10 @@
     @endforeach
 @endif
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
+
 <script>
     $(document).ready(function () {
+
         $('.tips').tooltip();
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-blue',

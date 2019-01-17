@@ -802,7 +802,7 @@ class SiteHelpers
         return $f;
     }
 
-    public static function transForm($field, $forms = array(), $bulk = false, $value = '', $typeRestricted = [],$isSubtypeDeleted = false)
+    public static function transForm($field, $forms = array(), $bulk = false, $value = '', $typeRestricted = [], $showAllLocations =false,$isSubtypeDeleted = false)
     {
         $value = !empty($value) ? urldecode($value) : "";
         $type = '';
@@ -983,7 +983,6 @@ class SiteHelpers
 
             case 'select';
                 if ($option['opt_type'] == 'external') {
-
                     $opts = '';
                     if ($option['lookup_table'] == 'location') {
                         $lookupParts = explode('|', $option['lookup_value']);
@@ -991,11 +990,9 @@ class SiteHelpers
                         if (is_array($lookupParts) && !empty($lookupParts)) {
                             $option['lookup_value'] = $lookupParts[0];
                         }
-                        $selected = '';
-                        $current_user_id = Auth::id();
-                        $user_ids = DB::table('user_locations')->leftjoin('location as l', 'user_locations.location_id', '=', 'l.id')->where('user_locations.user_id', $current_user_id)->orderby('l.' . $option['lookup_value'])->get();
-                        foreach ($user_ids as $user_id) {
-                            $locations = DB::table($option['lookup_table'])->where('id', $user_id->location_id)->orderby($option['lookup_value'])->get();
+
+                        if ($showAllLocations){
+                            $locations = DB::table($option['lookup_table'])->orderby($option['lookup_value'])->get();
                             foreach ($locations as $location) {
                                 $value1 = "";
                                 foreach ($lookupParts as $lookup) {
@@ -1008,6 +1005,26 @@ class SiteHelpers
                                     $selected = "";
                                 }
                                 $opts .= "<option  $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value1 . " </option> ";
+                            }
+                        }else {
+                            $selected = '';
+                            $current_user_id = Auth::id();
+                            $user_ids = DB::table('user_locations')->leftjoin('location as l', 'user_locations.location_id', '=', 'l.id')->where('user_locations.user_id', $current_user_id)->orderby('l.' . $option['lookup_value'])->get();
+                            foreach ($user_ids as $user_id) {
+                                $locations = DB::table($option['lookup_table'])->where('id', $user_id->location_id)->orderby($option['lookup_value'])->get();
+                                foreach ($locations as $location) {
+                                    $value1 = "";
+                                    foreach ($lookupParts as $lookup) {
+                                        $value1 .= $location->$lookup . " - ";
+                                    }
+                                    $value1 = trim($value1, ' - ');
+                                    if ($value == $location->id) {
+                                        $selected = 'selected="selected"';
+                                    } else {
+                                        $selected = "";
+                                    }
+                                    $opts .= "<option  $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value1 . " </option> ";
+                                }
                             }
                         }
                     } else {
