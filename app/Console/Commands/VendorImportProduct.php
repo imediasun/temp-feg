@@ -118,9 +118,7 @@ class VendorImportProduct extends Command
                                     return true;
                                 }
                             }
-                            if($isDuplicateFound == true){
-                                return true;
-                            }
+
                             //if email id exist against single vendor
                             if($vendorCount == 1){
                                 $reviewVendorImportList->importExlAttachment($data, $vendorCount);
