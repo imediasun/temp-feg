@@ -3020,42 +3020,6 @@ class SiteHelpers
      * @return array
      */
     public static function getVendorFileImportData($fileWithPath = ''){
-       /* try {
-            //$inputFileName = 'uploads/vendors-attachments/2018-11-08/1-vendor-21-product-list-11062018074059.csv';
-            //$inputFileName = 'uploads/vendors-attachments/2018-11-08/1-vendor-21-product-list-11062018074059.xlsx';
-
-            $inputFileType = \PHPExcel_IOFactory::identify($fileWithPath);
-            $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
-            $objPHPExcel = $objReader->load($fileWithPath);
-        } catch(Exception $e) {
-            die('Error loading file "'.pathinfo($fileWithPath,PATHINFO_BASENAME).'": '.$e->getMessage());
-        }
-
-        $sheet = $objPHPExcel->getSheet(0);
-        $highestRow = $sheet->getHighestRow();
-        $highestColumn = $sheet->getHighestColumn();
-        $rows = [];
-        $headings = $sheet->rangeToArray('A1:' . $highestColumn . 1,
-            null,
-            true,
-            false,false);
-        $tableHeadings = [];
-        if(!empty($headings[0])) {
-            foreach ($headings[0] as $heading) {
-                $tableHeadings[0][] = strtolower(str_replace(array('/','\\',' '),'_',$heading));
-            }
-        }
-
-
-        for ($row = 2; $row <= $highestRow; $row++){
-            //  Read a row of data into an array
-            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row,
-                null,
-                true,
-                false,false);
-            $rows[] = array_combine($tableHeadings[0], $rowData[0]);
-
-        }*/
 
         $rows = \SiteHelpers::getCSVFileData($fileWithPath);
         $dataRows = [];
