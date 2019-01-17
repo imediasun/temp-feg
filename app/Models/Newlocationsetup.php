@@ -144,7 +144,7 @@ FROM new_location_setups
         if(!empty($active)){//added for location
             $select .= " AND location.active='$active'";
         }
-        $select.=' AND '.$table.'.location_id IN ('.\SiteHelpers::getCurrentUserLocationsFromSession().')';
+        //$select.=' AND '.$table.'.location_id IN ('.\SiteHelpers::getCurrentUserLocationsFromSession().')';
         \Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $total= count($counter_select);
@@ -159,7 +159,7 @@ FROM new_location_setups
         }
 
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
-        // echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
+
         \Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         self::$getRowsQuery = $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
