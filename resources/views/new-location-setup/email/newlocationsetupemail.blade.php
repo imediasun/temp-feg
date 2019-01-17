@@ -97,6 +97,6 @@
 {{--</p>--}}
 <p>Please direct any questions relating to these server credentials to {{\Session::get('ufname') .' '. \Session::get('ulname')}}</p>
 <p>An FEG Admin Automated Message<br>
-<a href="https://www.fegllc.com">https://www.fegllc.com</a>
+<a href="https://www.fegllc.com" style="text-decoration: none">https://www.fegllc.com</a>
 <br>
 Phone: (847) 842-6310</p>
