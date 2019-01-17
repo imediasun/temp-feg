@@ -95,7 +95,7 @@
     {{--<br>--}}
     <a href="{{ $url }}" target="_blank">{{ $url }}</a>
 {{--</p>--}}
-<p>Please direct any questions relating to these server credentials to {{\Session::get('ufname') .' '. \Session::get('ulname')}}</p>
+<p>Please direct any questions relating to these server credentials to {{\Session::get('ufname') .' '. \Session::get('ulname')}} or Silvia Linter</p>
 <p>An FEG Admin Automated Message<br>
 <a href="https://www.fegllc.com" style="text-decoration: none">https://www.fegllc.com</a>
 <br>

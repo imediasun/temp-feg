@@ -91,7 +91,7 @@ class NewlocationsetupController extends Controller
         $this->data['topMessage'] = @$results['topMessage'];
         $this->data['message'] = @$results['message'];
         $this->data['bottomMessage'] = @$results['bottomMessage'];
-        $this->data['excludedUserLocations']		= $this->getUsersExcludedLocations();
+       // $this->data['excludedUserLocations']		= $this->getUsersExcludedLocations();
         $this->data['rowData'] = $results['rows'];
         // Build Pagination
         $this->data['pagination'] = $pagination;
