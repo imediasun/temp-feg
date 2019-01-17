@@ -90,7 +90,6 @@
         {{--RDP Password: {{ $row['rdp_computer_password'] }}<br>--}}
     {{--@endif--}}
 {{--@endif--}}
-<br>
 {{--<p>--}}
    {{--<b>Please follow the link below for access credentials.:</b>--}}
     {{--<br>--}}
