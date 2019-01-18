@@ -928,6 +928,9 @@ class ProductController extends Controller
                 if (isset($ids) && count($ids) > 0) {
                     $Product = product::find($ids[0]);
                     $reason = "Manual adjustment";
+                    if(!empty($request->input('reserved_qty_reason'))){
+                        $reason .='<br>'.$request->input('reserved_qty_reason');
+                    }
                     $type = "negative";
                     if ($Product->reserved_qty > 0) {
                         $type = "positive";
