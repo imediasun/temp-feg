@@ -58,6 +58,7 @@ class addtocart extends Sximo
   (products.reserved_qty - requests.qty) AS reserved_difference,
   products.prod_type_id,
   products.prod_sub_type_id,
+  products.variation_id,
   $subQueries
 FROM requests
   LEFT JOIN users u1
