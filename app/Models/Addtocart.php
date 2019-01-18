@@ -369,10 +369,6 @@ FROM requests
             ->where("location_id",\Session::get('selected_location'));
     }
 
-    private function getProducts($productIds){
-        return product::whereIn('id', $productIds)->get();
-    }
-
     public function requestQtyFilterCheck($productIds)
     {
         if(!is_array($productIds)){
@@ -381,67 +377,47 @@ FROM requests
         sort($productIds);
         $productIds = array_values($productIds);
 
-        $products = $this->getProducts($productIds);
-
         $productIdsWithRequestedQuantitiesList = $this->getRequestObjects($productIds)->toArray();
-//dd($productIdsWithRequestedQuantitiesList);
-        $variants = $this->returnVariantsAgainstRequestedProductIds(array_keys($productIdsWithRequestedQuantitiesList));
-
-//        dd($productIdsWithRequestedQuantitiesList);
-
-        foreach ($variants as $variantItemsArray){
-            if(count($variantItemsArray) > 1){
-                $product = $products->filter(function($item) use ($variantItemsArray) {
-                    return in_array($item->id, $variantItemsArray);
-                })->first();
-                $reservedQty = $product->reserved_qty;
-
-                $totalRequestedQTYForVariants = 0;
-                foreach ($variantItemsArray as $productIds){
-                    $totalRequestedQTYForVariants += $productIdsWithRequestedQuantitiesList[$productIds];
-                }
-
-                $productsForError = collect([]);
-                if($totalRequestedQTYForVariants > $reservedQty){
-                    $productsForError = $products->filter(function($item) use ($variantItemsArray) {
-                        return in_array($item->id, $variantItemsArray);
-                    });
-                }
-                $errorString = '';
-                if($productsForError->count() > 0){
-                    dd($productsForError);
-                    $errorString .= $this->makeErrorStringForVariants($productsForError);
-                    dd($errorString);
-                    return $errorString;
-                }else{
-                    return '';
-                }
-//                $productsForError =
-            }
-        }
 
         $requestsArray = [];
 
         foreach($productIdsWithRequestedQuantitiesList as $productId=>$requestedQTY){
+            $product = product::find($productId);
+            $productIds = [];
+            if($product){
+                $products = $product->getProductVariations();
+                foreach ($products as $product){
+                    $productIds[] = $product->id;
+                }
+            }else{
+                $productIds[] = $productId;
+            }
+            $alreadyRequestedQuantity = \DB::table('requests')->whereIn('product_id', $productIds)
+                //->where('qty', '!=', $requestedQTY)
+                ->where('status_id', 1)->sum('qty');
+            $reservedQty = \DB::table('products')->where('id', $productId)->pluck('reserved_qty');
             $column = [
                 'requests.id',
                 'requests.product_id',
                 'products.vendor_description',
-                \DB::raw('CONVERT((products.reserved_qty - requests.qty), SIGNED INTEGER) as remainingQTY'),
-                \DB::raw('products.reserved_qty  as productQty'),
-                \DB::raw('requests.qty as alreadyRequestedQTY'),
+                \DB::raw('products.reserved_qty as productQty'),
+                \DB::raw($alreadyRequestedQuantity.' as alreadyRequestedQTY'),
+                \DB::raw(($reservedQty - $alreadyRequestedQuantity).' as remainingQTY'),
                 'requests.request_user_id',
                 'requests.location_id'
             ];
             $requestss = $this->select($column)->
             join('products', 'products.id', '=', 'requests.product_id')
                 ->groupBy("requests.product_id")
-                ->where("requests.product_id", $productId)
-                ->where("requests.status_id", 1)
-                ->where("requests.location_id", \Session::get('selected_location'))
+                ->where("requests.product_id", $productId);
+
+            $requestss = $requestss->whereIn("requests.status_id", [1,4]);
+
+            $requestss = $requestss//->where("requests.location_id", \Session::get('selected_location'))
                 ->where('products.allow_negative_reserve_qty', '=', 0)
-                ->where('products.is_reserved', '=', 1)
-                ->having('remainingQTY', '<', $requestedQTY);
+                ->where('products.is_reserved', '=', 1);
+
+            $requestss = $requestss->having('remainingQTY', '<', $requestedQTY);
 
             if($requestss->first()){
                 $requestsArray[] = $requestss->first();
@@ -450,19 +426,6 @@ FROM requests
 
         $requestsArray = collect($requestsArray);
         return $requestsArray;
-    }
-
-    private function makeErrorStringForVariants($products){
-        $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
-        foreach ($products as $request) {
-            $productsNames .= "<li>" . addslashes($product->vendor_description) . " | Reserve Qty = ".$product->productQty." | Already Requested Qty = ".$request->alreadyRequestedQTY." | Remaining Qty = ".$request->remainingQTY."</li>";
-        }
-        $productsNames .= "</ul>";
-        //return redirect('/addtocart')->with('messagetext', "You are unable to submit request as following product(s) doesn't allow the negative reserved quantity: $productsNames Please remove product(s) or adjust quantity before submitting the request.")->with('msgstatus', 'error');
-        return $qtyCheckMessage = [
-            'messagetext' => "Your request cannot be submitted because there is not enough reserve qty to allow the purchase.<br /><br /> $productsNames <br />Please reduce the amount requested for purchase below or contact the Merchandise Team.",
-            'showError' => $requestQtyCheck->count() > 0,
-        ];
     }
 
     /**
@@ -487,21 +450,4 @@ FROM requests
             ->lists('requestedQTY', "requests.product_id");
         return $requests;
     }
-
-    private function returnVariantsAgainstRequestedProductIds($productIds){
-        $productObj = new product();
-        $variants = [];
-        $tempArray = [];
-        foreach ($productIds as $productId){
-            $productIdsArray = collect($productObj->checkProducts($productId))->pluck('id')->toArray();
-            if(!in_array($productId, $tempArray))
-                $variants[]     = $productIdsArray;
-
-            $tempArray    = array_merge($tempArray, $productIdsArray);
-        }
-        return $variants;
-    }
-
-
-
 }
