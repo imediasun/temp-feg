@@ -799,6 +799,9 @@ WHERE orders.is_api_visible = 1
         if ($product->reserved_qty != $NewReservedQty && $NewReservedQty != '') {
             $type = "negative";
             $reason = "Manual adjustment";
+            if(!empty($request->input('reserved_qty_reason'))){
+                $reason .='<br>'.$request->input('reserved_qty_reason');
+            }
             if ($NewReservedQty > $product->reserved_qty) {
                 $type = "positive";
                 if($product->reserved_qty_limit < $NewReservedQty) {

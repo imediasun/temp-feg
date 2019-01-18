@@ -667,6 +667,9 @@ class ProductController extends Controller
                 $NewReservedQty = $request->input('reserved_qty');
                 if ($Product->reserved_qty != $NewReservedQty && $NewReservedQty != '') {
                     $reason = "Manual adjustment";
+                    if(!empty($request->input('reserved_qty_reason'))){
+                        $reason .='<br>'.$request->input('reserved_qty_reason');
+                    }
                     $type = "negative";
                     if ($NewReservedQty > $Product->reserved_qty) {
                         $type = "positive";
