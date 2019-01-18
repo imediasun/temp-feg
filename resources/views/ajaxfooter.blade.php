@@ -59,7 +59,7 @@ $orders = array('asc','desc');
         @endif
 
         @if(!isset($setting['disablesort']) || $setting['disablesort'] == 'false')
-		<select name="sort" class="select-alt" style="width:100px;float:left;" >
+		<select name="sort" class="select-alt footer-button-sort" style="" >
 		  <option value=""><?php echo Lang::get('core.grid_sort');?></option>
 		  @foreach($tableGrid as $field)
 		   @if($field['view'] =='1' && $field['sortable'] =='1')

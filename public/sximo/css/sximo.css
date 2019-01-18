@@ -3861,6 +3861,9 @@ label.radio.radio-inline ul.parsley-error-list {
 	width: auto !important;
 	min-width: 70px;
 }
+.table-footer .table-actions .footer-button-sort{
+  width: 70px !important;
+}
 /* Responsive Video tag css */
 .video-container {
   position:relative;
