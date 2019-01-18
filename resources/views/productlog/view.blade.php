@@ -119,7 +119,7 @@
                                 <td>{{ (!empty($logContent->order_id) || $logContent->order_id=0) ? $logContent->order_id:"No Data" }}</td>
                                 <td>{{ $logContent->adjustment_type =='negative' ? ($logContent->adjustment_amount<0) ? $logContent->adjustment_amount:$logContent->adjustment_amount * -1:$logContent->adjustment_amount }}</td>
                                 <td>{{$logContent->reservedQuantity}}</td>
-                                <td>{{ $logContent->reserved_qty_reason }}</td>
+                                <td>{!!   $logContent->reserved_qty_reason !!}</td>
                                 <td>{{ $logContent->adjusted_by }}</td>
                                 <td>{{ $logContent->created_at }}</td>
                             </tr>

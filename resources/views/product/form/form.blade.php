@@ -524,6 +524,20 @@
 
                     </div>
                 </div>
+                     <div @if(!in_array('1',$is_reserved)) style="display: none;" @endif class="form-group reservedQtySection">
+                    <label for="Reserved Qty Reason" class=" control-label col-md-4 text-left">
+                        {!! SiteHelpers::activeLang('Reserved Qty Reason', (isset($fields['reserved_qty_reason']['language'])?
+                        $fields['reserved_qty']['language'] : array())) !!}
+                    </label>
+
+                    <div class="col-md-6">
+                        {!! Form::textarea('reserved_qty_reason', $row['reserved_qty_reason'],array('class'=>'form-control',
+                        'placeholder'=>'','rows' => 5,)) !!}
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+                </div>
                 <div @if(!in_array('1',$is_reserved)) style="display: none;" @endif class="form-group reservedQtySection">
                     <label for="allow_negative_reserve_qty" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Allow Negative Reserved Qty', (isset($fields['allow_negative_reserve_qty']['language'])?
