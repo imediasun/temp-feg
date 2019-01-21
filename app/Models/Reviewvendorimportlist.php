@@ -47,7 +47,8 @@ FROM vendor_import_products  ";
 		return "  ";
 	}
 
-    public static function getRows($args, $cond = null) {
+    public static function getRows($args, $cond = null)
+    {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         $hideUnchanged = $hideOmittedItems = 0;
@@ -57,7 +58,7 @@ FROM vendor_import_products  ";
             'sort' => '',
             'extraSorts' => [],
             'order' => '',
-            'hideUnchanged'=>0,
+            'hideUnchanged' => 0,
             'hideOmittedItems' => 0,
             'params' => '',
             'global' => 1
@@ -68,13 +69,12 @@ FROM vendor_import_products  ";
         if (!empty($extraSorts)) {
             if (empty($orderConditional)) {
                 $orderConditional = " ORDER BY ";
-            }
-            else {
+            } else {
                 $orderConditional .= ", ";
             }
             $extraOrderConditionals = [];
-            foreach($extraSorts as $extraSortItem) {
-                $extraSortItem[0] = '`'.$extraSortItem[0].'`';
+            foreach ($extraSorts as $extraSortItem) {
+                $extraSortItem[0] = '`' . $extraSortItem[0] . '`';
                 $extraOrderConditionals[] = implode(' ', $extraSortItem);
             }
             $orderConditional .= implode(', ', $extraOrderConditionals);
@@ -97,83 +97,71 @@ FROM vendor_import_products  ";
 
         if ($cond != null) {
             $select .= self::queryWhere($cond);
-        }
-        else {
+        } else {
             $select .= self::queryWhere();
         }
 
-        if(!empty($createdFrom)){
-            if($cond != 'only_api_visible')
-            {
+        if (!empty($createdFrom)) {
+            if ($cond != 'only_api_visible') {
                 $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
-            }
-            else
-            {
+            } else {
                 $select .= " AND api_created_at BETWEEN '$createdFrom' AND '$createdTo'";
             }
             $createdFlag = true;
         }
 
-        if(!empty($updatedFrom)){
+        if (!empty($updatedFrom)) {
 
-            if($createdFlag){
-                if($cond != 'only_api_visible')
-                {
+            if ($createdFlag) {
+                if ($cond != 'only_api_visible') {
                     $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-                else
-                {
+                } else {
                     $select .= " OR api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
                 }
-            }
-            else{
-                if($cond != 'only_api_visible')
-                {
+            } else {
+                if ($cond != 'only_api_visible') {
                     $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-                else
-                {
+                } else {
                     $select .= " AND api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
                 }
             }
 
         }
 
-        if(!empty($order_type_id)){
+        if (!empty($order_type_id)) {
             $select .= " AND order_type_id in($order_type_id)";
         }
-        if(!empty($status_id)){
+        if (!empty($status_id)) {
             $select .= " AND status_id='$status_id'";
         }
-        if(!empty($active)){//added for location
+        if (!empty($active)) {//added for location
             $select .= " AND location.active='$active'";
         }
 
-        if($hideUnchanged == 1){
+        if ($hideUnchanged == 1) {
             $select .= ' AND (is_new = 1 OR is_updated = 1 OR is_omitted = 1) ';
         }
-        if($hideOmittedItems == 1){
+        if ($hideOmittedItems == 1) {
 
             $select .= ' AND is_omitted = 0 ';
         }
 
-        Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $total= count($counter_select);
-        if($table=="img_uploads")
-        {
-            $total="";
+        Log::info("Total Query : " . $select . " {$params} " . self::queryGroup() . " {$orderConditional}");
+        $counter_select = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
+        $total = count($counter_select);
+        if ($table == "img_uploads") {
+            $total = "";
         }
 
         $offset = ($page - 1) * $limit;
         if ($offset >= $total && $total != 0 && $limit != 0) {
-            $page = ceil($total/$limit);
-            $offset = ($page-1) * $limit ;
+            $page = ceil($total / $limit);
+            $offset = ($page - 1) * $limit;
         }
 
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
         // echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
-        Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
+        Log::info("Query : " . $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         self::$getRowsQuery = $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
@@ -182,10 +170,11 @@ FROM vendor_import_products  ";
         } else {
             $key = $table . "." . $key;
         }
-        usort($result, function($a, $b)
-        {
-            return $a->is_omitted > $b->is_omitted;
-        });
+        if ($sort == '' && $order == '') {
+            usort($result, function ($a, $b) {
+                return $a->is_omitted > $b->is_omitted;
+            });
+        }
         return $results = array('rows' => $result, 'total' => $total);
     }
 
