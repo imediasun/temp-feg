@@ -172,6 +172,12 @@ FROM vendor_import_products  ";
         }
         if ($sort == '' && $order == '') {
             usort($result, function ($a, $b) {
+                return $a->is_new > $b->is_new;
+            });
+            usort($result, function ($a, $b) {
+                return $a->is_updated > $b->is_updated;
+            });
+            usort($result, function ($a, $b) {
                 return $a->is_omitted > $b->is_omitted;
             });
         }
