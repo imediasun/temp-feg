@@ -178,7 +178,7 @@ FROM vendor_import_products  ";
                     return true;
                 } elseif (($a->is_updated == 0 && $b->is_updated == 0) && ($a->is_omitted == 0 && $b->is_omitted == 0) && ($a->is_new == 0 && $b->is_new == 0)) {
                     return true;
-                } else if (($a->is_updated == 1 || $b->is_updated == 0) && ($a->is_omitted == 1 && $b->is_omitted == 1) && ($a->is_new == 1 || $b->is_new == 0)){
+                }else{ // else if (($a->is_updated == 1 || $b->is_updated == 0) && ($a->is_omitted == 1 && $b->is_omitted == 1) && ($a->is_new == 1 || $b->is_new == 0)){
                     return true;
                 }
 
