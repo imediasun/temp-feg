@@ -277,6 +277,7 @@ GROUP BY mapped_expense_category");
                 unset($item['is_new']);
                 unset($item['is_updated']);
                 unset($item['is_deleted']);
+                unset($item['previous_status']);
                 if($isOmitted == 0){
                     $product->insertRow($item, $productId);
                 }

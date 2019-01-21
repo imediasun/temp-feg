@@ -9,7 +9,7 @@ $pageModule = !empty($product_import_vendor_id) ? 'product' : $pageModule;
 ?>
 	<div class="table-footer">
 	<div class="row">
-	 <div class="col-md-5 col-sm-12 col-xs-12">
+	 <div class="col-md-5 col-md-5 col-sm-12 col-xs-12">
 	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule; ?>Filter">
   			<input type="hidden" name="page" value="{{ isset($param['page'])?$param['page']:""}}" />
 			<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
@@ -93,6 +93,7 @@ $pageModule = !empty($product_import_vendor_id) ? 'product' : $pageModule;
         @endif
 	  </div>
 	  </div>
+        @if(!empty($showImportVendorButton))
 		<div class="col-md-3 col-sm-12 col-xs-12">
 			<div class="table-actions" style=" padding: 10px 0">
 			@if(!empty($showImportVendorButton))
@@ -102,9 +103,10 @@ $pageModule = !empty($product_import_vendor_id) ? 'product' : $pageModule;
 				@endif
 			</div>
 		</div>
+        @endif
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
 			<?php $pageModule = $pageModuleExt;  ?>
-		<div class="col-md-4 col-sm-12 col-xs-12" id="<?php echo $pageModule;?>Paginate">
+		<div class="@if(!empty($showImportVendorButton)) col-md-4 @else col-md-7 @endif col-sm-12 col-xs-12" id="<?php echo $pageModule;?>Paginate">
             {!! urldecode($pagination->appends($pager)->render()) !!}
         </div>
         @endif
