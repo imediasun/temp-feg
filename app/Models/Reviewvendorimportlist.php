@@ -172,7 +172,7 @@ FROM vendor_import_products  ";
         }
         if ($sort == '' && $order == '') {
             usort($result, function ($a, $b) {
-                if ($a->is_new > $b->is_new && ($a->is_updated == 0 && $b->is_updated == 0) && ($b->is_omitted && $a->is_omitted)) {
+                /*if ($a->is_new > $b->is_new && ($a->is_updated == 0 && $b->is_updated == 0) && ($b->is_omitted && $a->is_omitted)) {
                     return true;
                 } elseif ($a->is_updated > $b->is_updated && ($a->is_omitted == 0 && $b->is_omitted == 0) && ($a->is_new == 0 && $b->is_new == 0)) {
                     return true;
@@ -180,8 +180,8 @@ FROM vendor_import_products  ";
                     return true;
                 }else{ // else if (($a->is_updated == 1 || $b->is_updated == 0) && ($a->is_omitted == 1 && $b->is_omitted == 1) && ($a->is_new == 1 || $b->is_new == 0)){
                     return true;
-                }
-
+                }*/
+                return ($a->is_omitted > $b->is_omitted) ? true:true;
             });
         }
         return $results = array('rows' => $result, 'total' => $total);
