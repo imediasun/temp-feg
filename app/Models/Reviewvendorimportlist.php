@@ -172,13 +172,16 @@ FROM vendor_import_products  ";
         }
         if ($sort == '' && $order == '') {
             usort($result, function ($a, $b) {
-                return $a->is_new > $b->is_new;
-            });
-            usort($result, function ($a, $b) {
-                return $a->is_updated > $b->is_updated;
-            });
-            usort($result, function ($a, $b) {
-                return $a->is_omitted > $b->is_omitted;
+                if ($a->is_new > $b->is_new && ($a->is_updated == 0 && $b->is_updated == 0) && ($b->is_omitted && $a->is_omitted)) {
+                    return true;
+                } elseif ($a->is_updated > $b->is_updated && ($a->is_omitted == 0 && $b->is_omitted == 0) && ($a->is_new == 0 && $b->is_new == 0)) {
+                    return true;
+                } elseif (($a->is_updated == 0 && $b->is_updated == 0) && ($a->is_omitted == 0 && $b->is_omitted == 0) && ($a->is_new == 0 && $b->is_new == 0)) {
+                    return true;
+                } else {
+                    return $a->is_omitted > $b->is_omitted;
+                }
+
             });
         }
         return $results = array('rows' => $result, 'total' => $total);
