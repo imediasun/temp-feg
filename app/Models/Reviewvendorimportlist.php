@@ -404,6 +404,8 @@ GROUP BY mapped_expense_category");
 
                 if ($updateItems) {
                     $row['is_omitted'] = 1;
+                    $row['is_updated'] = 0;
+                    $row['is_new'] = 0;
                 }else{
                     $row['is_omitted'] = 0;
                 }
