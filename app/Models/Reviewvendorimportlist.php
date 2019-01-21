@@ -182,6 +182,10 @@ FROM vendor_import_products  ";
         } else {
             $key = $table . "." . $key;
         }
+        usort($result, function($a, $b)
+        {
+            return $a->is_omitted > $b->is_omitted;
+        });
         return $results = array('rows' => $result, 'total' => $total);
     }
 
