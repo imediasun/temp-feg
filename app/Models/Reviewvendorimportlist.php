@@ -170,9 +170,7 @@ FROM vendor_import_products  ";
         } else {
             $key = $table . "." . $key;
         }
-        if ($sort == '' && $order == '') {
 
-        }
         return $results = array('rows' => $result, 'total' => $total);
     }
 

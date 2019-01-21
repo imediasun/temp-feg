@@ -545,23 +545,31 @@ class ReviewvendorimportlistController extends Controller
         return response()->json($types);
     }
 
-    public function postOmit(Request $request){
+    public function postOmit(Request $request)
+    {
         $importItemIds = $request->input('ids');
-       $itemRows = $this->model->select('vendor_description','sku','case_price')->whereIn('id',$importItemIds)->get();
+        $itemRows = $this->model->select('vendor_description', 'sku', 'case_price')->whereIn('id', $importItemIds)->get();
 
-foreach($itemRows as $itemRow){
-    $items = $this->model->where([
-        'vendor_description'=>$itemRow->vendor_description,
-        'sku' => $itemRow->sku,
-        'case_price' => $itemRow->case_price,
-    ])->get();
+        foreach ($itemRows as $itemRow) {
+            $items = $this->model->where([
+                'vendor_description' => $itemRow->vendor_description,
+                'sku' => $itemRow->sku,
+                'case_price' => $itemRow->case_price,
+            ])->get();
 
-    foreach ($items as $item){
-        $itemToUpdate = $this->model->find($item->id);
-        $itemToUpdate->is_omitted=1;
-        $itemToUpdate->save();
-    }
-}
+            foreach ($items as $item) {
+                $itemToUpdate = $this->model->find($item->id);
+                $itemToUpdate->is_omitted = 1;
+                if($itemToUpdate->is_new){
+                    $itemToUpdate->previous_status = 'new';
+                    $itemToUpdate->is_new = 0;
+                }elseif($itemToUpdate->is_updated){
+                    $itemToUpdate->previous_status = 'updated';
+                    $itemToUpdate->is_updated = 0;
+                }
+                $itemToUpdate->save();
+            }
+        }
 
 
         return response()->json(array(
@@ -584,6 +592,12 @@ foreach($itemRows as $itemRow){
 
             foreach ($items as $item){
                 $itemToUpdate = $this->model->find($item->id);
+                if($itemToUpdate->previous_status == 'new'){
+                    $itemToUpdate->previous_status = 'new';
+                    $itemToUpdate->is_new = 1;
+                }elseif($itemToUpdate->previous_status == 'updated' ){
+                    $itemToUpdate->is_updated = 1;
+                }
                 $itemToUpdate->is_omitted = 0;
                 $itemToUpdate->save();
             }
