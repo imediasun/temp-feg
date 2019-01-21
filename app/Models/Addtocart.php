@@ -3,6 +3,7 @@
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopfegrequeststoreController;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Core\Groups;
 use Illuminate\Support\Facades\Session;
@@ -57,6 +58,7 @@ class addtocart extends Sximo
   (products.reserved_qty - requests.qty) AS reserved_difference,
   products.prod_type_id,
   products.prod_sub_type_id,
+  products.variation_id,
   $subQueries
 FROM requests
   LEFT JOIN users u1
@@ -365,5 +367,87 @@ FROM requests
             ->where("request_user_id",\Session::get('uid'))
             ->where("status_id",4)
             ->where("location_id",\Session::get('selected_location'));
+    }
+
+    public function requestQtyFilterCheck($productIds)
+    {
+        if(!is_array($productIds)){
+            $productIds = [$productIds];
+        }
+        sort($productIds);
+        $productIds = array_values($productIds);
+
+        $productIdsWithRequestedQuantitiesList = $this->getRequestObjects($productIds)->toArray();
+
+        $requestsArray = [];
+
+        foreach($productIdsWithRequestedQuantitiesList as $productId=>$requestedQTY){
+            $product = product::find($productId);
+            $productIds = [];
+            if($product){
+                $products = $product->getProductVariations();
+                foreach ($products as $product){
+                    $productIds[] = $product->id;
+                }
+            }else{
+                $productIds[] = $productId;
+            }
+            $alreadyRequestedQuantity = \DB::table('requests')->whereIn('product_id', $productIds)
+                //->where('qty', '!=', $requestedQTY)
+                ->where('status_id', 1)->sum('qty');
+            $reservedQty = \DB::table('products')->where('id', $productId)->pluck('reserved_qty');
+            $column = [
+                'requests.id',
+                'requests.product_id',
+                'products.vendor_description',
+                \DB::raw('products.reserved_qty as productQty'),
+                \DB::raw($alreadyRequestedQuantity.' as alreadyRequestedQTY'),
+                \DB::raw(($reservedQty - $alreadyRequestedQuantity).' as remainingQTY'),
+                'requests.request_user_id',
+                'requests.location_id'
+            ];
+            $requestss = $this->select($column)->
+            join('products', 'products.id', '=', 'requests.product_id')
+                ->groupBy("requests.product_id")
+                ->where("requests.product_id", $productId);
+
+            $requestss = $requestss->whereIn("requests.status_id", [1,4]);
+
+            $requestss = $requestss//->where("requests.location_id", \Session::get('selected_location'))
+                ->where('products.allow_negative_reserve_qty', '=', 0)
+                ->where('products.is_reserved', '=', 1);
+
+            $requestss = $requestss->having('remainingQTY', '<', $requestedQTY);
+
+            if($requestss->first()){
+                $requestsArray[] = $requestss->first();
+            }
+        }
+
+        $requestsArray = collect($requestsArray);
+        return $requestsArray;
+    }
+
+    /**
+     * calculates products total according to product type defined in configuration
+     * @param array $productIds
+     * @return Collection
+     * */
+    private function getRequestObjects($productIds){
+        $column = [
+            'requests.product_id',
+            \DB::raw('requests.qty as requestedQTY'),
+        ];
+        $requests = $this->select($column)->
+        join('products', 'products.id', '=', 'requests.product_id')
+            ->groupBy("requests.product_id")
+            ->whereIn("requests.product_id", $productIds)
+            ->whereIn("requests.status_id", [4])
+            ->where("requests.request_user_id", \Session::get('uid'))
+            ->where("requests.location_id", \Session::get('selected_location'))
+            ->where('products.allow_negative_reserve_qty', '=', 0)
+            ->where('products.is_reserved', '=', 1)
+            ->lists('requestedQTY', "requests.product_id");
+        return $requests;
     }
 }
