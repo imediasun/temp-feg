@@ -585,6 +585,9 @@ class ShopfegrequeststoreController extends Controller
                 $items[] = array($row->$param['1'], $value);
 
             }
+            /**
+             *  Showing only Redemption Prizes option on the shopfegrequeststore if user belongs to great wolf lodge
+             */
             if(auth()->user()->group_id == 16)
             {
                 $items = [];
