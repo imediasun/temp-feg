@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    <link rel="stylesheet" href="{{asset('sximo/css/jquery.timepicker.css')}}">
 <div class="page-content row">
   <!-- Begin Header & Breadcrumb -->
     <div class="page-header">
