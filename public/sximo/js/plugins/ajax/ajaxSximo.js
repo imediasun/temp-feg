@@ -219,8 +219,12 @@ function ajaxInlineEdit(id,url,reloadurl)
 }
 
 
-function ajaxFilter( id ,url,opt,column)
+function ajaxFilter( id ,url,opt,column,idExt)
 {
+    var id2 = id;
+    if(idExt !=undefined){
+        id = idExt;
+    }
     var attr = '', elm, val;
         $(id + 'Filter :input').each(function () {
 			elm = $(this);
@@ -247,7 +251,7 @@ function ajaxFilter( id ,url,opt,column)
     if(opt  !== undefined) {
         attr += opt;
     }
-
+    id = id2;
 
 reloadData(id, url+"?"+attr);
 }
@@ -304,6 +308,53 @@ function ajaxRemove( id, url )
         notyMessageError("Please select one or more rows.");
     }
 }
+
+//Clear all vendors mail schedule
+function ajaxClearSchedule( url )
+{
+    if(confirm('Are you sure you want to clear all vendors schedule.')) {
+        $('.ajaxLoading').show();
+        $.post( url+'/delete',function( data ) {
+
+            if(data.status =='success')
+            {
+                console.log("called succes");
+                notyMessage(data.message);
+            } else {
+                console.log("called error");
+                notyMessageError(data.message);
+            }
+            $('.ajaxLoading').hide();
+        });
+
+    }
+    
+}
+
+
+//This function is used to send product list to respective vendor.
+function ajaxSendProductList( url )
+{
+    $('.ajaxLoading').show();
+
+    $.post( url,function( data ) {
+
+
+        if(data.status =='success')
+        {
+            console.log("called succes");
+            notyMessage(data.message);
+        } else {
+            console.log("called error");
+            notyMessageError(data.message);
+        }
+        $('.ajaxLoading').hide();
+    });
+
+
+}
+
+
 function ajaxRemoveProduct(id, url) {
     var datas = $(id + 'Table :input').serialize();
     if ($(".ids:checked").length > 0) {

@@ -44,6 +44,12 @@ FROM vendor
 		return "  ";
 	}
 
+    /**
+     * @param $json
+     * @param null $param
+     * @return array
+     */
+
 	public static function processApiData($json,$param=null)
     {
         //loop over all records and check if website is not empty then add http:// prefix for it

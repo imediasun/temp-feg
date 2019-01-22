@@ -2,11 +2,15 @@
 <?php
 $pages = array(10,20,30,50,100);
 $orders = array('asc','desc');
+
+$extraVars =  !empty($product_import_vendor_id) ? '&product_import_vendor_id=' . $product_import_vendor_id : '';
+$pageModuleExt = !empty($product_import_vendor_id) ? $pageModule : $pageModule;
+$pageModule = !empty($product_import_vendor_id) ? 'product' : $pageModule;
 ?>
 	<div class="table-footer">
 	<div class="row">
-	 <div class="col-md-6 col-sm-12 col-xs-12">
-	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule;?>Filter">
+	 <div class="col-md-5 col-md-5 col-sm-12 col-xs-12">
+	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule; ?>Filter">
   			<input type="hidden" name="page" value="{{ isset($param['page'])?$param['page']:""}}" />
 			<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
            @if(isset($TID) && !is_null($TID))
@@ -85,13 +89,24 @@ $orders = array('asc','desc');
         @endif
 
         @if((!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false') || (!isset($setting['disablesort']) || $setting['disablesort'] == 'false'))
-		<button type="button" class="btn  btn-primary btn-sm" onclick="ajaxFilter('#<?php echo $pageModule;?>','{{ $pageUrl }}/data')" style="float:left;"><i class="fa  fa-search"></i> GO</button>
+		<button type="button" class="btn  btn-primary btn-sm" onclick="ajaxFilter('#<?php echo $pageModule;?>','{{ $pageUrl }}/data','{{ $extraVars }}')" style="float:left;"><i class="fa  fa-search"></i> GO</button>
         @endif
 	  </div>
 	  </div>
-
+        @if(!empty($showImportVendorButton))
+		<div class="col-md-3 col-sm-12 col-xs-12">
+			<div class="table-actions" style=" padding: 10px 0">
+			@if(!empty($showImportVendorButton))
+					@if(empty($resetOmit))
+					<input type="button" value="Update Product List Module" onclick="importVendorProductList($('#selected_vendor'));" class="btn btn-primary importVendorProductList">
+				@endif
+				@endif
+			</div>
+		</div>
+        @endif
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
-		<div class="col-md-6 col-sm-12 col-xs-12" id="<?php echo $pageModule;?>Paginate">
+			<?php $pageModule = $pageModuleExt;  ?>
+		<div class="@if(!empty($showImportVendorButton)) col-md-4 @else col-md-7 @endif col-sm-12 col-xs-12" id="<?php echo $pageModule;?>Paginate">
             {!! urldecode($pagination->appends($pager)->render()) !!}
         </div>
         @endif

@@ -29,6 +29,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\CheckStuff::class,
         \App\Console\Commands\CheckNetSuiteApi::class,
         \App\Console\Commands\InjectFieldToModule::class,
+        \App\Console\Commands\VendorImportProduct::class,
+        \App\Console\Commands\SendVendorScheduleEmails::class,
         \App\Console\Commands\CheckEnvConfiguration::class,
     ];
 
@@ -54,6 +56,10 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('cleanproductmeta')->hourly();
         $schedule->command('checkapi')->hourly();
+
+        //export product list to their respective vendors
+        $schedule->command('email:sendvendorschedule')->daily();
+        $schedule->command('vendorproduct:import')->withoutOverlapping(2);
 
         $schedule->command('env:checkenv')->daily();
 

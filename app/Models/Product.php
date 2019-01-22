@@ -41,6 +41,10 @@ class product extends Sximo  {
         static::saved(function(product $model){
             FEGSystemHelper::updateProductMeta($model);
         });
+
+        static::deleted(function ($model){
+            VendorProductTrack::where(['product_id'=>$model->id,'vendor_id'=>$model->vendor_id])->delete();
+        });
     }
 
     function orderedProduct()
@@ -709,5 +713,22 @@ WHERE orders.is_api_visible = 1
         $productSubQuery = ' (SELECT COUNT(*) FROM products NP WHERE DATE(NP.created_at) >= (CURRENT_DATE - INTERVAL '.$productLabelNewDays->option_value.' DAY) AND NP.id = products.id) as is_new, ';
         $productSubQuery .= ' (SELECT COUNT(*) FROM products NP1 WHERE DATE(NP1.activated_at) >= (CURRENT_DATE - INTERVAL '.$productLabelBackinstockDays->option_value.' DAY) AND NP1.id = products.id) as is_backinstock ';
         return $productSubQuery;
+    }
+
+
+    public function getImportVendors(){
+
+        $fields = [
+            'import_vendors.id',
+            'import_vendors.vendor_id',
+            'vendor.vendor_name',
+            'import_vendors.email_recieved_at'
+        ];
+        $vendors = vendor::select($fields)
+            ->join('import_vendors','import_vendors.vendor_id','=','vendor.id')
+            ->orderBy('vendor.vendor_name','asc')
+            ->where('import_vendors.is_imported','=','0')->groupBy('import_vendors.vendor_id')->get();
+
+        return $vendors;
     }
 }

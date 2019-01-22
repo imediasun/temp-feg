@@ -3,24 +3,47 @@
     
     <div class="row c-margin">
         
-            <div class="col-md-3 sm13" style="display: none;">
-        <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
-width: 75%">
-            <option value="select" data-active="0" selected>------------ Select Type --------------</option>
-            <option value="graphics" data-active="0">Graphics</option>
-            <option value="instant" data-active="0">Instant Win Prizes</option>
-            <option value="officesupplies" data-active="0">Office Supplies - Products List</option>
-            <option value="parts" data-active="0">Parts - Products List</option>
-            <option value="party" data-active="0">Party Supplies</option>
-            <option value="redemption" data-active="0">Redemption Prizes</option>
-            <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
-            <option value="productsindevelopment" data-active="0">Products In Development</option>
-        </select>
-    </div>
-    
-    <div class="col-md-3" style="display: none;">
-       <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'>  </select>
-    </div>
+        <div class="col-md-3 sm13" style="display: none;">
+            <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
+    width: 75%">
+                <option value="select" data-active="0" selected>------------ Select Type --------------</option>
+                <option value="graphics" data-active="0">Graphics</option>
+                <option value="instant" data-active="0">Instant Win Prizes</option>
+                <option value="officesupplies" data-active="0">Office Supplies - Products List</option>
+                <option value="parts" data-active="0">Parts - Products List</option>
+                <option value="party" data-active="0">Party Supplies</option>
+                <option value="redemption" data-active="0">Redemption Prizes</option>
+                <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
+                <option value="productsindevelopment" data-active="0">Products In Development</option>
+            </select>
+        </div>
+
+        <div class="col-md-3" style="display: none;">
+           <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'>  </select>
+        </div>
+
+        <!-- Import Vendor products list -->
+        <div class="col-md-6">
+            {{--{!! Form::open(array('url'=> url().'/listImportVendors', 'class'=>'form-horizontal','files' => true, 'method' => 'post')) !!}--}}
+
+            <div class="col-md-2 col-sm-1 col-xs-3"><h3> Import </h3></div>
+
+            <div class="col-md-6 sm13  col-sm-6 col-xs-9">
+                <input name="exportID" value="{{ uniqid('vendorFromProducts', true) }}" type="hidden"/>
+                <select name='vendor_id' id="vendor_import_list" rows='5' class='select3'>
+                    <option value="" selected >--- Select Vendor ---</option>
+                    @foreach($vendorsList as $vendor)
+                        <option value="{{ $vendor->vendor_id }}" >{{ $vendor->vendor_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2 col-sm-2 col-xs-12">
+                <button disabled id="get_vendor_import_list" type="submit" class="btn btn-primary" onclick="getImportedProductsVendorList($('#vendor_import_list').val())">Review Products</button>
+            </div>
+
+            {{--{!! Form::close() !!}--}}
+        </div>
+        <!-- End -->
     
         
         <div class="col-md-6">
@@ -229,9 +252,23 @@ width: 75%">
             }
         });
 
+        $('#vendor_import_list').change(function(){
+            if($(this).val() != '')
+            {
+                $('#get_vendor_import_list').enable();
+            }
+            else{
+                $('#get_vendor_import_list').prop('disabled', true);;
+            }
+        });
+
+
+
         $('#submit-btn').on('click', function (){
             setAndProbeExportFormSessionTimeout($(this).closest('form'));
         });
+
+
 
         $('#delete-cols').click(function(){
             if(confirm('Are you sure, You want to delete this columns arrangement?')) {
@@ -264,6 +301,15 @@ width: 75%">
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
                 return false;
+            }
+        }
+
+        function getImportedProductsVendorList(vendorId) {
+            if($('#vendor_import_list').val() == '0'){
+                notyMessageError('Please select a vendor.');
+            }else {
+               // window.location = '/get-vendor-import-list/'+vendorId;
+                reloadData('#product', 'reviewvendorimportlist/data?setRecent=1&product_import_vendor_id=' + vendorId+"&search=import_vendor_id:equal:0|is_omitted:equal:0")
             }
         }
 

@@ -1,11 +1,16 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\Sximo\Module;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect;
 use DB;
+use App\Models\VendorImportSchedule;
+use Illuminate\Support\Facades\Auth;
+use App\Library\VendorProductsImportHelper;
 
 class VendorController extends Controller
 {
@@ -24,6 +29,8 @@ class VendorController extends Controller
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
 
         $this->data = array(
             'pageTitle' => $this->info['title'],
@@ -112,6 +119,7 @@ class VendorController extends Controller
 
     public function getIndex()
     {
+
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $this->data['access'] = $this->access;
@@ -218,6 +226,15 @@ class VendorController extends Controller
         }
         // Render into template
         //  return response()->json($this->data);
+
+        $this->data['viewProductListExportOption'] = false;
+        if (!empty($this->pass['display options to export vendor products'])) {
+            $userGroups = !empty($this->pass['display options to export vendor products']->group_ids) ? explode(",", $this->pass['display options to export vendor products']->group_ids) : [];
+            $users = !empty($this->pass['display options to export vendor products']->user_ids) ? explode(",", $this->pass['display options to export vendor products']->user_ids) : [];
+
+            $this->data['viewProductListExportOption'] = (in_array(Session::get('uid'), $users)
+                || in_array(Session::get('gid'), $userGroups));
+        }
         return view('vendor.table', $this->data);
 
     }
@@ -479,5 +496,103 @@ class VendorController extends Controller
             ));
         }
     }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    function postSendList($id)
+    {
+        $row = $this->getVendor($id);
+        
+        if($row->email == '' && $row->email_2 == ''){
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Vendor Email does not exist.'
+            ));
+        }
+
+        $vendorEmail = empty($row->email) ? $row->email_2: $row->email;//get vendor mail address
+        
+        
+        $response = VendorProductsImportHelper::exportExcel($id, $vendorEmail);
+        if($response){
+//            dd($response);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => 'Mail sent successfully.'
+            ));
+        }else{
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Mail sending failed.'
+            ));
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param null $id
+     * @return mixed
+     */
+    function getScheduleList(Request $request, $id = null)
+    {
+
+        $this->data['row'] = $this->model->getColumnTable('vendor_import_schedules');
+
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+
+        $this->data['vendorId'] = $id;
+
+        $schedule = VendorImportSchedule::where('vendor_id', $id)->first();
+        $this->data['schedule'] = $schedule;
+        return view('vendor.import_list_schedule', $this->data);
+    }
+
+
+    /**
+     * @param Request $request
+     * @param null $id
+     * @return mixed
+     */
+    function postVendorImportSchedule(Request $request, $id = null)
+    {
+//        dd($request->all());
+        $schedule = new VendorImportSchedule();
+        $response = $schedule->createOrUpdateSchedule($id, Auth::user()->id, $request->all());
+        if ($response) {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => 'Record updated successfully.'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in updating record.'
+            ));
+        }
+
+    }
+
+    /**
+     * @return mixed
+     */
+    function postClearAllSchedulesList(){
+        $schedule = new VendorImportSchedule();
+        $clear = $schedule->truncate();
+        if ($clear) {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => 'All vendors schedule cleared successfully.'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in updating record.'
+            ));
+        }
+    }
+
 
 }

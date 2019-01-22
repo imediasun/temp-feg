@@ -622,7 +622,7 @@ class FEGSystemHelper
      * @param string $from
      * @param type $options
      */
-    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array(), $sendEmailFromMerchandise = false)
+    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array(), $sendEmailFromMerchandise = false, $sendEmailFromVendorAccount = false)
     {
         //support@fegllc.com
         if (empty($from)) {
@@ -676,10 +676,28 @@ class FEGSystemHelper
                         );
                         \Config::set('mail', $config);
                         $from = env('MAIL_MERCH_FROM_EMAIL');
+                        
+                    }else if ($sendEmailFromVendorAccount) {
+                        
+                        $config = array(
+                            'username' => env('MAIL_VENDOR_USERNAME'),
+                            'password' => env('MAIL_VENDOR_PASSWORD'),
+                            'driver' => env('MAIL_DRIVER'),
+                            'host' => env('MAIL_HOST'),
+                            'port' => env('MAIL_PORT'),
+                            'from' => array('address' => env('MAIL_VENDOR_USERNAME'), 'name' => env('MAIL_NAME')),
+                            'encryption' => env('MAIL_ENCRYPTION'),
+                            'sendmail' => '/usr/sbin/sendmail -bs',
+                            'pretend' => false,
+                        );
+                        \Config::set('mail', $config);
+                        $from = env('MAIL_VENDOR_USERNAME');
                     }
+                    
 
                     return self::laravelMail($to, $subject, $message, $from, $options);
                 }
+                
             }
         } else {
             return 'Email Could not be sent because prevented';
@@ -1214,7 +1232,7 @@ class FEGSystemHelper
      *
      *
      */
-    public static function sendSystemEmail($options, $sendEmailFromMerch = false)
+    public static function sendSystemEmail($options, $sendEmailFromMerch = false, $sendEmailFromVendorAccount = false)
     {
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
@@ -1318,7 +1336,7 @@ $message" .
 
         self::logit("Sending Email", $lf, $lp);
         self::logit($options, $lf, $lp);
-        $status = self::sendEmail($to, $subject, $message, $from, $options, $sendEmailFromMerch);
+        $status = self::sendEmail($to, $subject, $message, $from, $options, $sendEmailFromMerch, $sendEmailFromVendorAccount);
         self::logit("Email sent Status = " . $status, $lf, $lp);
         self::logit("Email sent", $lf, $lp);
         return $status;
