@@ -23,7 +23,7 @@ class productsubtype extends Sximo  {
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE product_type.id IS NOT NULL ";
+		return "  WHERE product_type.id IS NOT NULL AND product_type.deleted_at IS NULL ";
 	}
 	
 	public static function queryGroup(){
