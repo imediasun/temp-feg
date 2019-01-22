@@ -114,8 +114,9 @@ return array(
 	"sb_submit"					=> "Submit",
 	"sb_cancel"					=> "Cancel",
     "sb_close"					=> "Close",
-    "sb_save_send"               => "Save & Send",
-	
+    "sb_save_send"              => "Save & Send",
+    "sb_remove_product_subtype" => "Remove",
+
 /* button */
 	"btn_back"						=> "Back",	
 	"btn_action"					=> "Action",	
