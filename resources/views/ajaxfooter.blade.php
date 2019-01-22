@@ -48,7 +48,7 @@ $pageModule = !empty($product_import_vendor_id) ? 'product' : $pageModule;
           @endif
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
         <?php $setRows = isset($pager['rows']) ? $pager['rows'] : $setting['perpage']; ?>
-		<select name="rows" class="select-alt" style="width:70px; float:left;"
+		<select  @if(!empty($showImportVendorButton)) disabled @endif name="rows" class="select-alt " style="width:70px; float:left; @if(!empty($showImportVendorButton)) background: #ececec; @endif"
                 data-setvalue="{{ $setRows }}" >
 
             @foreach($pages as $p)
