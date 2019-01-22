@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Addtocart;
+use App\Models\order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Mockery\CountValidator\Exception;
@@ -340,7 +341,18 @@ class AddtocartController extends Controller
             $notes = \request()->get('notes');
 
         try {
-            $data = array('qty' => $qty, 'notes' => $notes);
+            $cart = \DB::table('requests')->select('products.num_items','products.prod_type_id')->join('products','products.id','=','requests.product_id')->where('requests.id','=',$id)->first();
+          $unitQty = 0 ;
+            if($cart){
+                    $merchandiseTypes = order::getMerchandiseTypes();
+                    if(in_array($cart->prod_type_id,$merchandiseTypes)){
+                        $unitQty = $qty * $cart->num_items;
+                    }else {
+                        $unitQty = $qty;
+                    }
+            }
+
+            $data = array('unit_qty'=>$unitQty,'qty' => $qty, 'notes' => $notes);
             \DB::table('requests')->where('id', $id)->update($data);
            // $vendor_name = str_replace('_', ' ', $vendor_name);
             // Bug found while regression testing.If products have vendor name e5_Test_Vendor on updating qty of product in cart it shows error popup
