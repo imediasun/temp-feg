@@ -205,8 +205,8 @@ class googledriveearningreport extends Sximo  {
 
         if (!empty($dateStart) && empty($dateEnd)){
             $mergeFilters = [
-                "modified_time" => [
-                    "fieldName" => "modified_time",
+                "created_time" => [
+                    "fieldName" => "created_time",
                     "operator" => "bigger_equal",
                     "value" => $dateStart
                 ]
@@ -215,8 +215,8 @@ class googledriveearningreport extends Sximo  {
 
         if (!empty($dateEnd) && empty($dateStart)){
             $mergeFilters = [
-                "modified_time" => [
-                    "fieldName" => "modified_time",
+                "created_time" => [
+                    "fieldName" => "created_time",
                     "operator" => "smaller_equal",
                     "value" => $dateEnd,
                 ]
@@ -226,8 +226,8 @@ class googledriveearningreport extends Sximo  {
 
         if (!empty($dateStart) && !empty($dateEnd)){
             $mergeFilters = [
-                "modified_time" => [
-                    "fieldName" => "modified_time",
+                "created_time" => [
+                    "fieldName" => "created_time",
                     "operator" => "between",
                     "value" => $dateStart,
                     "value2" => $dateEnd,
