@@ -69,4 +69,5 @@ Route::controller('gallery', 'GalleryController');
 Route::controller('qatestordersdelete', 'QatestordersdeleteController');
 Route::controller('locationgroups', 'LocationgroupsController');
 Route::controller('envconfiguration', 'EnvconfigurationController');
+Route::controller('productsubtype', 'ProductsubtypeController');
 ?>
