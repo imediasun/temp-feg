@@ -107,7 +107,6 @@ class NewlocationsetupController extends Controller
         $this->data['access'] = $this->access;
         // Detail from master if any
         $this->data['setting'] = $this->info['setting'];
-
         // Master detail link if any
         $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {
@@ -121,7 +120,10 @@ class NewlocationsetupController extends Controller
 
     function getUpdate(Request $request, $id = null)
     {
-
+        $this->data['editState'] = 0;
+        if ($id){
+            $this->data['editState'] = 1;
+        }
         if ($id == '') {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -133,14 +135,17 @@ class NewlocationsetupController extends Controller
         }
 
         $row = $this->model->find($id);
+
+
         if ($row) {
             $this->data['row'] = $row;
+            if ($this->data['row']->sync_install==null){
+                $sync_install = location::where('id', $this->data['row']->location_id)->select('reporting')->first();
+                $this->data['row']->sync_install = $sync_install->reporting ;
+            }
         } else {
             $this->data['row'] = $this->model->getColumnTable('new_location_setups');
         }
-
-
-
         if(!empty($this->data['row']['teamviewer_passowrd']) && $this->data['row']['use_tv']==1){
             $this->data['row']['teamviewer_passowrd'] = \SiteHelpers::decryptStringOPENSSL($this->data['row']['teamviewer_passowrd']);
         }
@@ -150,10 +155,8 @@ class NewlocationsetupController extends Controller
         if(!empty($this->data['row']['rdp_computer_password'])&& $this->data['row']['is_remote_desktop']==1){
             $this->data['row']['rdp_computer_password'] = \SiteHelpers::decryptStringOPENSSL($this->data['row']['rdp_computer_password']);
         }
-
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-
         $this->data['id'] = $id;
         $this->data['excludedUserLocations']		= $this->getUsersExcludedLocations();
         $this->data['locations'] = location::all();
@@ -221,6 +224,7 @@ class NewlocationsetupController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
         $sendEmail = false;
         if ($id==0){
             $sendEmail = true;
@@ -246,14 +250,15 @@ class NewlocationsetupController extends Controller
                 $data["rdp_computer_password"] ='';
                 $data["rdp_computer_user"] = '';
             }
-            if (isset($data["use_tv"]) && $data["use_tv"] == "on") {
-                $data["use_tv"] = 1;
-            } else {
-                $data["use_tv"] = 0;
-                $data["teamviewer_id"] = '';
-                $data["teamviewer_passowrd"] = '';
-            }
-            if(!empty($data['teamviewer_passowrd']) && $data['use_tv']==1){
+
+//            if (isset($data["use_tv"]) && $data["use_tv"] == "on") {
+//                $data["use_tv"] = 1;
+//            } else {
+//                $data["use_tv"] = 0;
+//                $data["teamviewer_id"] = '';
+//                $data["teamviewer_passowrd"] = '';
+//            }
+            if(!empty($data['teamviewer_passowrd'])){
                 $data['teamviewer_passowrd'] = \SiteHelpers::encryptStringOPENSSL($data['teamviewer_passowrd']);
             }
             if(!empty($data['windows_user_password'])&& $data['is_server_locked']==1){

@@ -55,7 +55,7 @@
 						<td>{{ $row->is_server_locked ==1?'Yes':'No' }} </td>
 						
 					</tr>
-				
+					<?php if($row->is_server_locked ==1){?>
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Windows User', (isset($fields['windows_user']['language'])? $fields['windows_user']['language'] : array())) }}
@@ -63,7 +63,6 @@
 						<td>{{ $row->windows_user }} </td>
 						
 					</tr>
-
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Windows User Password', (isset($fields['windows_user_password']['language'])? $fields['windows_user_password']['language'] : array())) }}
@@ -71,7 +70,7 @@
 						<td><span id="wpass">{{$row->windows_user_password }}</span><a href="javascript:void(0);" id="wpbtn" style="float: right" class="btn btn-sm btn-primary">Show Password </a> </td>
 						
 					</tr>
-				
+				<?php }?>
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Is Remote Desktop', (isset($fields['is_remote_desktop']['language'])? $fields['is_remote_desktop']['language'] : array())) }}
@@ -79,7 +78,7 @@
 						<td>{{ $row->is_remote_desktop == 1 ? 'Yes' :'No' }} </td>
 						
 					</tr>
-				
+			<?php if($row->is_remote_desktop == 1){?>
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('RDP Computer Name', (isset($fields['rdp_computer_name']['language'])? $fields['rdp_computer_name']['language'] : array())) }}
@@ -102,6 +101,48 @@
 						<td ><span id="rdpass">{{ $row->rdp_computer_password }}</span> <a href="javascript:void(0);" id="rpbtn" style="float: right" class="btn btn-sm btn-primary">Show Password </a></td>
 
 					</tr>
+			<?php } ?>
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('VM URL', (isset($fields['vm_url']['language'])? $fields['vm_url']['language'] : array())) }}
+						</td>
+						<td>{{ $row->vm_url }}</td>
+
+					</tr>
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('VM User', (isset($fields['vm_user']['language'])? $fields['vm_user']['language'] : array())) }}
+						</td>
+						<td>{{ $row->vm_user }}</td>
+
+					</tr>
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('VM Password', (isset($fields['vm_password']['language'])? $fields['vm_password']['language'] : array())) }}
+						</td>
+						<td>{{ $row->vm_password }}</td>
+
+					</tr>
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sync Install', (isset($fields['sync_install']['language'])? $fields['sync_install']['language'] : array())) }}
+						</td>
+						<td>{{ $row->sync_install==1? 'Yes' : 'No' }}</td>
+
+					</tr>
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sync Time', (isset($fields['sync_time']['language'])? $fields['sync_time']['language'] : array())) }}
+						</td>
+						<td>{{ $row->sync_time }} {{ $row->sync_time_zone }}</td>
+
+					</tr><tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sync Difference', (isset($fields['sync_difference']['language'])? $fields['sync_difference']['language'] : array())) }}
+						</td>
+						<td>{{ $row->sync_difference }}</td>
+
+					</tr>
 
 			</tbody>	
 		</table>  
@@ -114,6 +155,7 @@
 @endif	
 
 <script>
+	var settimeout =  showPopups();
 	var passwords  = {!! $passwords !!};
 
 	 $(document).on('click','#tpass',(function () {
@@ -159,5 +201,33 @@
 
 	})
 	);
+	function showPopups()
+	{
+		var totalTime = {{env('NOTIFICATION_POPUP_SHOW_TIMEOUT_PASSWORD_VAULT',1)}} * 60000;
 
+		showFirstPopup = setTimeout(function () {
+			App.notyConfirm({
+				message: "Do you need more time to view or you want to cancel",
+				confirmButtonText: 'Yes',
+				cancelButtonText: 'No',
+				timeout:6000,
+				confirm: function (){
+					clearTimeout(hidePopup);
+					reloadPage();
+				},
+				cancel:function () {
+					totalTime += 120000;
+					showFirstPopup =  showPopups();
+				}
+			});
+			hidePopup = setTimeout(function () {
+				reloadPage();
+			},({{env('NOTIFICATION_POPUP_CLOSE_TIMEOUT_PASSWORD_VAULT')}} * 60000))
+
+		}, totalTime);
+		return showFirstPopup;
+	}
+	function reloadPage() {
+		window.location.reload();
+	}
 </script>	

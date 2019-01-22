@@ -301,6 +301,13 @@ class SiteHelpers
 
   }
 
+  public static function formatEmptyColumn($val){
+      if (empty($val)){
+          return "-";
+      }
+      return $val;
+  }
+
     public static function toForm($forms, $layout)
     {
         $f = '';
