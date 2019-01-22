@@ -591,7 +591,7 @@ class ShopfegrequeststoreController extends Controller
             if(auth()->user()->group_id == 16)
             {
                 $items = [];
-                $items[] = [7,'Redemption Prize'];
+                $items[] = [7,'Redemption Prizes'];
             }
             return json_encode($items);
         } else {
