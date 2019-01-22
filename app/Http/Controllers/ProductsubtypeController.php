@@ -157,9 +157,10 @@ class ProductsubtypeController extends Controller
     }
 
 
-    function postRemovalrequest(Request $request)
+    function postRemoval(Request $request, $productSubtypeId)
     {
 
+        return [$request->all(),$productSubtypeId];
         $configName = 'Order Request removal';
         $po_number = $request->get('po_number');
         $explanation = $request->get('explaination');

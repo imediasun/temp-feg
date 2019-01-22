@@ -146,7 +146,7 @@
                         @if($setting['disablerowactions']=='false')
                             <td data-values="action" data-key="<?php echo $row->id;?>">
                                 {!! AjaxHelpers::buttonAction('productsubtype',$access,$id ,$setting) !!}
-                                <a  onclick="deleteProductSubtype('{{ URL::to('productsubtype/removalrequest/'.$row->id)}}', '{{$row->type_description}}')"
+                                <a  onclick="deleteProductSubtype('{{ URL::to('productsubtype/removal/'.$row->id)}}', '{{$row->type_description}}')"
                                     data-id="{{$row->id}}"
                                     data-action="removal"
                                     class="tips btn btn-xs btn-white productsubtypeRemovalRequestAction"
@@ -207,14 +207,22 @@
                 ','id'=>'removeProductSubtypeFormAjax')) !!}
                 <div class="form-group">
                     <div class="col-md-12">
-                        <h2>Do you want &nbsp;&nbsp;&nbsp;<b><span id="thisProductSubtype">this Product Sub type</span></b>&nbsp;&nbsp;&nbsp; to be removed?
-                        </br></br>If yes please select another Sub Type to change the Category of associated Products.
+                        <p style="font-size: 140%">Do you want &nbsp;&nbsp;&nbsp;<b><span id="thisProductSubtype">this Product Sub type</span></b>&nbsp;&nbsp;&nbsp; to be removed?</p>
+                        {{--<p style="font-size: 120%">If yes please select another Sub Type to change the Category of associated Products.</p>--}}
+                        <p style="font-size: 120%">Following products are related to this sub type.</p>
+                        <ul>
+                            <li>Product 1</li>
+                            <li>Product 2</li>
+                            <li>Product 3</li>
+                            <li>Product 4</li>
+                        </ul>
+                        <p style="font-size: 120%">If yes please select another Sub Type to change the Category of associated Products.</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="message">New Product Subtype</label>
                     <div class="col-md-8">
-                        <select class="form-control" cols="5" rows="6" name="message" id="newProductSubtype"/>
+                        <select class="form-control" cols="5" rows="6" name="newProductSubtype" id="newProductSubtype"/>
                         </select>
                     </div>
                 </div>
