@@ -550,4 +550,50 @@ class ShopfegrequeststoreController extends Controller
             return $fileName;
         }
     }
+
+
+    function getComboselect(Request $request)
+    {
+
+        if ($request->ajax() == true && \Auth::check() == true) {
+            $param = explode(':', $request->input('filter'));
+            $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
+
+            $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
+            $delimiter = empty($request->input('delimiter')) ? ' ' : $request->input('delimiter');
+            $assignedLocation = $param[0] == 'location' && strtolower(''. @$request->input('assigned')) == 'me';
+
+            if ($assignedLocation) {
+                $rows = $this->model->getUserAssignedLocation();
+            }
+            else {
+                $rows = $this->model->getComboselect($param, $limit, $parent);
+            }
+
+            $items = array();
+
+            $fields = explode("|", $param[2]);
+            foreach ($rows as $row) {
+                $value = "";
+                $values = array();
+                foreach ($fields as $item => $val) {
+                    if ($val != "") {
+                        $values[] = $row->$val;
+                    }
+                    $value = implode($delimiter, $values);
+                }
+                $items[] = array($row->$param['1'], $value);
+
+            }
+            if(auth()->user()->group_id == 16)
+            {
+                $items = [];
+                $items[] = [7,'Redemption Prize'];
+            }
+            return json_encode($items);
+        } else {
+            return json_encode(array('OMG' => " Ops .. Cant access the page !"));
+        }
+    }
+
 }
