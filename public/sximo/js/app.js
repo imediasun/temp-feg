@@ -1722,6 +1722,26 @@ function updateDropdownsGroups(dropdownName){
         }
     });
 }
+
+function serverRequestTabsSelect(tabElement,tabClass,contentClass,contentId,loadContent){
+    var tab = $(tabElement);
+    if(tab.attr('is-active') == 1){
+        return false;
+    }
+    clearFields(true);
+    $('.'+tabClass).removeClass('setting-tab-active');
+    $('.'+tabClass).attr('is-active',0);
+    tab.addClass('setting-tab-active');
+    tab.attr('is-active',1);
+    if(loadContent == true){
+        var type = tab.data('type');
+        reloadData('#servicerequests','servicerequests/data?return=&sort=Created&order=desc&rows=20&ticket_type='+type,'',{},undefined,true);
+    }else {
+        $('.' + contentClass).slideUp('medium');
+        $("#" + contentId).slideDown('medium');
+    }
+    return true;
+}
 /**
  *
  * @param object
@@ -2143,7 +2163,16 @@ function checkVariationExistWithType(object){
 }
 
 
-
+function clearFields(doSearch) {
+    $('input[name="search_all_fields"]').val('');
+    $('select[name="ticket_custom_type"]').val('').change();
+    $('select[name="Status"]').val('').change();
+    $('#showAll').prop('checked',false);
+    $('#showAll').change();
+    if(doSearch === undefined) {
+        $('.doSimpleSearch').trigger('click');
+    }
+}
 
 /**
  * return back all duplicate values in array
@@ -2167,3 +2196,15 @@ function findDuplicatesInArray(arra1) {
     }
     return result;
 }
+
+/**
+ * @description You need to pass an form object
+ * @param form
+ */
+function reInitFormValidatorParsley(form){
+    if(form) {
+        $(form).parsley().destroy();
+        $(form).parsley();
+    }
+}
+var onlyOnceTimeTrigger = true;
