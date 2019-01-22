@@ -306,6 +306,7 @@ class AddtocartController extends Controller
             }
         }
 
+
         $newRequests = $this->model->getNewRequests($products)->get();
         if($newRequests->count()>0){
             foreach($newRequests as $newRequest){
@@ -369,10 +370,30 @@ class AddtocartController extends Controller
         $addToCart = new Addtocart();
         $inputs = $request->all();
         // if user/user group has ability to request a product that already been requested by another user from same location
-            return response()->json([
-                'hasPermission'=>$addToCart->hasPermission(),
-                'exceptionMessage' =>$addToCart->getsubmittedRequests($inputs['products']),
-            ]);
+
+        $qtyCheckMessage = [
+            'messagetext' => "",
+            'showError' => false,
+        ];
+
+        $requestQtyCheck = $this->model->requestQtyFilterCheck($inputs['products']);
+        if ($requestQtyCheck->count() > 0) {
+            $productsNames = "<ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
+            foreach ($requestQtyCheck as $request) {
+                $productsNames .= "<li>" . addslashes($request->vendor_description) . " | Reserve Qty = ".$request->productQty." | Already Requested Qty = ". ($request->alreadyRequestedQTY) ." | Remaining Qty = ".$request->remainingQTY."</li>";
+            }
+            $productsNames .= "</ul>";
+            $qtyCheckMessage = [
+                'messagetext' => "Your request cannot be submitted because there is not enough reserve qty to allow the purchase.<br /><br /> $productsNames <br />Please reduce the amount requested for purchase below or contact the Merchandise Team.",
+                'showError' => $requestQtyCheck->count() > 0,
+            ];
+        }
+
+        return response()->json([
+            'hasPermission'=>$addToCart->hasPermission(),
+            'exceptionMessage' =>$addToCart->getsubmittedRequests($inputs['products']),
+            'qtyErrorMessage' =>$qtyCheckMessage
+        ]);
     }
 
 }
