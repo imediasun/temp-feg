@@ -588,7 +588,7 @@ class ShopfegrequeststoreController extends Controller
             /**
              *  Showing only Redemption Prizes option on the shopfegrequeststore if user belongs to great wolf lodge
              */
-            if(auth()->user()->group_id == 16)
+            if(auth()->user()->group_id == 16 && $param[0] == 'order_type')
             {
                 $items = [];
                 $items[] = [7,'Redemption Prizes'];
