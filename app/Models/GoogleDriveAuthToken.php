@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException as GuzzleHttpClientException;
 
 class GoogleDriveAuthToken extends Model
 {
@@ -30,7 +31,7 @@ class GoogleDriveAuthToken extends Model
             $result = $res->getBody();
             $result = json_decode($result, true);
         }
-        catch (ClientException $e)
+        catch (GuzzleHttpClientException $e)
         {
             $result['error'] = true;
         }

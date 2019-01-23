@@ -260,18 +260,31 @@ class SiteHelpers
         return $out;
     }
   public static function getExtensionName($val,$defaultValue = '-'){
-     if($val=='application/pdf'){
-         return 'PDF Document';
-     }
-     elseif ($val=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
-         return 'Word Document';
-     }
-     elseif ($val=='application/vnd.ms-excel'){
-         return 'Excel Document';
-     }
-     else{
-         return $defaultValue;
-     }
+      $mime_types = array(
+          "application/pdf" => "PDF Document",
+          "application/octet-stream" => "exe",
+          "application/zip" => "Zip Document",
+          "application/msword" => "Word Document",
+          "application/msword" => "Word Document",
+          "application/vnd.ms-excel" => "Excel Document",
+          "application/vnd.ms-powerpoint" => "Powerpoint Document",
+          "image/gif" => "Gif",
+          "image/png" => "PND",
+          "image/jpeg" => "JPEG",
+          "image/jpg" => "JPG Image",
+          "text/html" => "Html File"
+      );
+      if(in_array($val,array_keys($mime_types))){
+         return $mime_types[$val];
+      }
+    else{
+        return "-";
+    }
+
+
+
+
+
   }
 
     public static function toForm($forms, $layout)
