@@ -259,18 +259,23 @@ class GoogledriveearningreportController extends Controller {
 
 	}
 	public function getDownloadDriveFile($filesIds, $length){
+        $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
+        $obj = new ExtractGoogleDriveFiles();
+        $this->drive = $obj->getGoogleDriveObject($user);
+        if(!GoogleDriveAuthToken::verifyOAuthTokenIsValid($user->oauth_token)){
+            $tokenArray = GoogleDriveAuthToken::refreshOAuthToken($user->refresh_token);
+            $user->updateRefreshToken($tokenArray);
+            $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
+            $this->drive = $obj->getGoogleDriveObject($user);
+        }
         $path = public_path('upload/googledrive/' . Session::get('uid'));
         \File::makeDirectory($path, $mode = 0777, true, true);
         if($length>1) {
                 $filesIds = !is_array($filesIds) ? explode(',', $filesIds) : $filesIds;
                 $data = Googledriveearningreport::select('*')->whereIn('id', $filesIds)->get();
-                $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
-                $client = new \Google_Client();
-                $client->setAccessToken($user->oauth_token);
-                $drive = new \Google_Service_Drive($client);
                 $cf_zip = new \ZipHelpers;
                 foreach ($data as $files) {
-                    $response = $drive->files->get($files['google_file_id'], array(
+                    $response = $this->drive->files->get($files['google_file_id'], array(
                         'alt' => 'media'));
                     $content = $response->getBody()->getContents();
                     $cf_zip->add_data($files['file_name'], $content);
@@ -285,9 +290,6 @@ class GoogledriveearningreportController extends Controller {
             }
             elseif ($length==1){
                 $data = Googledriveearningreport::select('*')->where('id', $filesIds)->first();
-                $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
-               $obj = new ExtractGoogleDriveFiles();
-                $this->drive = $obj->getGoogleDriveObject($user);
                 $response = $this->drive->files->get($data['google_file_id'], array(
                     'alt' => 'media'));
                 $content = $response->getBody()->getContents();
@@ -300,25 +302,28 @@ class GoogledriveearningreportController extends Controller {
                 $response =  Response::make($content, 200, [
                     'Content-Type' => $content_type,
                     'Content-Disposition' => 'attachment; filename="'.$data['file_name'].'"',
-
                 ]);
                 return $response;
-
             }
 	   }
 
     function postChangeFilename(Request $request){
 
         try {
-            $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->first();
-            $client = new \Google_Client();
-            $client->setAccessToken($user->oauth_token);
-            $service = new \Google_Service_Drive($client);
+            $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
+            $obj = new ExtractGoogleDriveFiles();
+            $this->drive = $obj->getGoogleDriveObject($user);
+            if(!GoogleDriveAuthToken::verifyOAuthTokenIsValid($user->oauth_token)){
+                $tokenArray = GoogleDriveAuthToken::refreshOAuthToken($user->refresh_token);
+                $user->updateRefreshToken($tokenArray);
+                $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
+                $this->drive = $obj->getGoogleDriveObject($user);
+            }
             $file = new \Google_Service_Drive_DriveFile();
             $fileId = $request->id;
             $fileName = $request->file;
             $file->setName($fileName);
-            $updatedFile = $service->files->update($fileId, $file);
+            $updatedFile = $this->drive->files->update($fileId, $file);
             $update_details = array(
                 'file_name' => $fileName,
                  'modified_time'=> date("Y-m-d H:i:s"));
