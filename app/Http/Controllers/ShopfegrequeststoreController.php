@@ -8,6 +8,7 @@ use App\Models\Sximo;
 use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\DB;
 use Validator, Input, Redirect, URL;
 use App\Models\Ordersetting;
 
@@ -20,6 +21,7 @@ class ShopfegrequeststoreController extends Controller
     protected $sortUnMapping = [];
     public $module = 'shopfegrequeststore';
     static $per_page = '10';
+    const GREAT_WOLF_LODGE_GROUP = 16;
 
     public function __construct()
     {
@@ -305,11 +307,15 @@ class ShopfegrequeststoreController extends Controller
         $productTypeExcludedbyLocation = FEGDBRelationHelpers::getExcludedProductTypesOnly();
         $this->data['typeRestricted']['isTypeRestrictedExclude'] =false;
         $this->data['typeRestricted']['excluded']  = [];
+        $this->data['isGreatWolfLodge'] = false;
+        if(auth()->user()->group_id == self::GREAT_WOLF_LODGE_GROUP)
+            $this->data['isGreatWolfLodge'] = true;
+
         if(count($productTypeExcludedbyLocation) > 0){
             $this->data['typeRestricted']['isTypeRestrictedExclude'] =true;
             $this->data['typeRestricted']['excluded'] = $productTypeExcludedbyLocation;
         }
-// Render into template
+        // Render into template
         return view('shopfegrequeststore.table', $this->data);
 
     }
@@ -550,53 +556,4 @@ class ShopfegrequeststoreController extends Controller
             return $fileName;
         }
     }
-
-
-    function getComboselect(Request $request)
-    {
-
-        if ($request->ajax() == true && \Auth::check() == true) {
-            $param = explode(':', $request->input('filter'));
-            $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
-
-            $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
-            $delimiter = empty($request->input('delimiter')) ? ' ' : $request->input('delimiter');
-            $assignedLocation = $param[0] == 'location' && strtolower(''. @$request->input('assigned')) == 'me';
-
-            if ($assignedLocation) {
-                $rows = $this->model->getUserAssignedLocation();
-            }
-            else {
-                $rows = $this->model->getComboselect($param, $limit, $parent);
-            }
-
-            $items = array();
-
-            $fields = explode("|", $param[2]);
-            foreach ($rows as $row) {
-                $value = "";
-                $values = array();
-                foreach ($fields as $item => $val) {
-                    if ($val != "") {
-                        $values[] = $row->$val;
-                    }
-                    $value = implode($delimiter, $values);
-                }
-                $items[] = array($row->$param['1'], $value);
-
-            }
-            /**
-             *  Showing only Redemption Prizes option on the shopfegrequeststore if user belongs to great wolf lodge
-             */
-            if(auth()->user()->group_id == 16 && $param[0] == 'order_type')
-            {
-                $items = [];
-                $items[] = [7,'Redemption Prizes'];
-            }
-            return json_encode($items);
-        } else {
-            return json_encode(array('OMG' => " Ops .. Cant access the page !"));
-        }
-    }
-
 }
