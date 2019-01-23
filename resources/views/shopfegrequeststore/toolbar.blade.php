@@ -70,11 +70,9 @@
 
 
         App.autoCallbacks.registerCallback('reloaddata', function(){
-            //var excluded = '{{implode(',', $typeRestricted['excluded'])}}';
-            var excluded = {{ json_encode($typeRestricted['excluded']) }};
+            var excluded = '{{ $isGreatWolfLodge ? '' : json_encode($typeRestricted['excluded']) }}';
             $("#order_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=order_type:id:order_type:can_request:1') }}",
                 {excludeItems: excluded, isTypeRestricted:'{{ $isTypeRestricted }}', displayonly:['{{ $displayTypesOnly }}'],selected_value: '{{ $order_type }}', initial_text: 'Select Order Type'});
-
         });
 
         $("#order_type").change(function(){
