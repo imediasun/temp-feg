@@ -1,4 +1,12 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<style>
+    ul.list-group.list-group-striped li:nth-of-type(even){
+        background: white !important;
+    }
+    ul.list-group.list-group-striped li:nth-of-type(odd){
+        background: lightgray !important;
+    }
+</style>
 <div class="sbox" xmlns="http://www.w3.org/1999/html">
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>
@@ -146,7 +154,7 @@
                         @if($setting['disablerowactions']=='false')
                             <td data-values="action" data-key="<?php echo $row->id;?>">
                                 {!! AjaxHelpers::buttonAction('productsubtype',$access,$id ,$setting) !!}
-                                <a  onclick="deleteProductSubtype('{{ URL::to('productsubtype/removal/'.$row->id)}}', '{{$row->type_description}}')"
+                                <a  onclick="deleteProductSubtype('{{ URL::to('productsubtype/removal/'.$row->id)}}', '{{$row->type_description}}', '{{$row->id}}')"
                                     data-id="{{$row->id}}"
                                     data-action="removal"
                                     class="tips btn btn-xs btn-white productsubtypeRemovalRequestAction"
@@ -209,8 +217,8 @@
                     <div class="col-md-12">
                         <p style="font-size: 140%">Do you want &nbsp;&nbsp;&nbsp;<b><span id="thisProductSubtype">this Product Sub type</span></b>&nbsp;&nbsp;&nbsp; to be removed?</p>
                         {{--<p style="font-size: 120%">If yes please select another Sub Type to change the Category of associated Products.</p>--}}
-                        <p style="font-size: 120%">Following products are related to this sub type.</p>
-                        <ul>
+                        <p style="font-size: 120%">Following are some of the products related to this sub type.</p>
+                        <ul id="listOfProducts" class="list-group list-group-striped">
                             <li>Product 1</li>
                             <li>Product 2</li>
                             <li>Product 3</li>
@@ -302,10 +310,29 @@
 
     });
 
-    function deleteProductSubtype(url, name) {
-        $('#removeProductSubtypeModal').modal('show');
-        $('#removeProductSubtypeFormAjax').attr('action', url);
-        $('#thisProductSubtype').html(name)
+    function deleteProductSubtype(url, name, id) {
+
+        $.ajax({
+            url: "{{ URL::to('product/first-ten-products-by-sub-type') }}/"+id,
+            method: "GET",
+            beforeSend: function(){
+                $('.ajaxLoading').show();
+            },
+            success: function (data) {
+                $('.ajaxLoading').hide();
+                $('#listOfProducts').html('');
+                $.each(data, function (key, val) {
+                    $('#listOfProducts').append('<li>'+val+'</li>');
+                });
+                $('#removeProductSubtypeModal').modal('show');
+                $('#removeProductSubtypeFormAjax').attr('action', url);
+                $('#thisProductSubtype').html(name);
+            },
+            error: function (exception) {
+                console.log(exception);
+            }
+        });
+
     }
 
     App.autoCallbacks.registerCallback('advancedsearch', function(){
