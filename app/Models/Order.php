@@ -1519,8 +1519,10 @@ class order extends Sximo
 
                     $itemName = $this->cleanAndTruncateString($item->item_name);
                     $itemName = \SiteHelpers::removeSpecialCharacters($itemName);
+                    $itemName = preg_replace('/[^a-zA-Z0-9\.]/','',$itemName);
                     $sku = $item->sku;
                     $vendorName = $item->vendor_name;
+                    $vendorName = preg_replace('/[^a-zA-Z0-9\.]/','',$vendorName);
                     $fileName = $item->img;
                     $extension = mb_substr($fileName, mb_strpos($fileName, '.') + 1, mb_strlen($fileName));
                     $fileNewName = implode('-',[
