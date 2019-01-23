@@ -1436,7 +1436,8 @@ class order extends Sximo
                   OC.case_price,
                   OC.price,
                   P.ticket_value,
-                  P.upc_barcode as product_upc_barcode
+                  P.upc_barcode as product_upc_barcode,
+                  P.img
                 FROM orders O
                   INNER JOIN order_contents OC
                     ON OC.order_id = O.id
@@ -1507,5 +1508,29 @@ class order extends Sximo
     {
         $string = str_replace(["&",",",'"'],"",$string);
         return $string; //$this->truncateString($string, $length);
+    }
+
+    public function saveItemImagesFromDPL($items,$filePath,$saveToPath)
+    {
+        foreach ($items as $item){
+            if(!empty($item->img)) {
+
+                if (file_exists($filePath . '/' . $item->img)) {
+
+                    $itemName = $this->cleanAndTruncateString($item->item_name);
+                    $itemName = \SiteHelpers::removeSpecialCharacters($itemName);
+                    $sku = $item->sku;
+                    $vendorName = $item->vendor_name;
+                    $fileName = $item->img;
+                    $extension = mb_substr($fileName, mb_strpos($fileName, '.') + 1, mb_strlen($fileName));
+                    $fileNewName = implode('-',[
+                        str_replace(' ', '_', $itemName),
+                        str_replace(' ', '_', $sku),
+                        str_replace(' ', '_', $vendorName)
+                    ]).'.'.$extension;
+                    \File::copy($filePath . '/' . $fileName, $saveToPath . '/' . $fileNewName);
+                }
+            }
+        }
     }
 }

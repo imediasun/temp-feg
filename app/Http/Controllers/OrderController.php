@@ -3475,5 +3475,19 @@ ORDER BY aa_id");
         );
         return Response::download($dplFile['file_path'],$dplFile['file_name'],$headers);
     }
+    public function getDownloaddplimages(){
+        $locationId = 2031;
+        $productTypeId = 7;
+        $query = $this->model->getManualGenerateDplQuery($locationId,$productTypeId);
+        $items = \DB::select(\DB::raw($query));
+        $filePath = public_path('uploads/products');
+        $filePathTo = public_path('uploads/products/dpl');
+        if(!file_exists($filePathTo)){
+            mkdir($filePathTo, 777, false);
+        }
+
+        $this->model->saveItemImagesFromDPL($items,$filePath,$filePathTo);
+        exit;
+    }
 
 }
