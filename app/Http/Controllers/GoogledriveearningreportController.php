@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Console\Commands\ExtractGoogleDriveFiles;
 use App\Http\Controllers\controller;
 use App\Models\Core\Users;
 use App\Models\excludedreaders;
@@ -14,7 +15,8 @@ use Illuminate\Support\Facades\Response;
 class GoogledriveearningreportController extends Controller {
 
 	protected $layout = "layouts.main";
-	protected $data = array();	
+	protected $data = array();
+    protected $drive;
 	public $module = 'googledriveearningreport';
 	static $per_page	= '10';
 	
@@ -284,10 +286,9 @@ class GoogledriveearningreportController extends Controller {
             elseif ($length==1){
                 $data = Googledriveearningreport::select('*')->where('id', $filesIds)->first();
                 $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
-                $client = new \Google_Client();
-                $client->setAccessToken($user->oauth_token);
-                $drive = new \Google_Service_Drive($client);
-                $response = $drive->files->get($data['google_file_id'], array(
+               $obj = new ExtractGoogleDriveFiles();
+                $this->drive = $obj->getGoogleDriveObject($user);
+                $response = $this->drive->files->get($data['google_file_id'], array(
                     'alt' => 'media'));
                 $content = $response->getBody()->getContents();
                 if($data['mime_type']=='application/pdf'){
