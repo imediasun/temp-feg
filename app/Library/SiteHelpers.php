@@ -266,6 +266,9 @@ class SiteHelpers
      elseif ($val=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
          return 'Word Document';
      }
+     elseif ($val=='application/vnd.ms-excel'){
+         return 'Excel Document';
+     }
      else{
          return $defaultValue;
      }
