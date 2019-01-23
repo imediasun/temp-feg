@@ -14,6 +14,7 @@ class AddSoftDeletesToProductTypeTable extends Migration
     {
         Schema::table('product_type', function (Blueprint $table) {
             $table->softDeletes();
+            $table->timestamps();
         });
     }
 
@@ -25,7 +26,8 @@ class AddSoftDeletesToProductTypeTable extends Migration
     public function down()
     {
         Schema::table('product_type', function (Blueprint $table) {
-            $table->removeColumn('deleted_at');
+            $table->dropSoftDeletes();
+            $table->dropTimestamps();
         });
     }
 }

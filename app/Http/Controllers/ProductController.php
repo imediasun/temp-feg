@@ -1577,4 +1577,8 @@ $message = '';
             ));
         }
     }
+
+    public function getFirstTenProductsBySubType($id){
+        return $this->model->where('prod_sub_type_id', $id)->take(10)->lists('item_description', 'id');
+    }
 }

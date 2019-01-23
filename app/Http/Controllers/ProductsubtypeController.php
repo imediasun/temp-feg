@@ -1,9 +1,11 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\product;
 use App\Models\Productsubtype;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\DB;
 use Validator, Input, Redirect;
 
 class ProductsubtypeController extends Controller
@@ -159,42 +161,12 @@ class ProductsubtypeController extends Controller
 
     function postRemoval(Request $request, $productSubtypeId)
     {
-
-        return [$request->all(),$productSubtypeId];
-        $configName = 'Order Request removal';
-        $po_number = $request->get('po_number');
-        $explanation = $request->get('explaination');
-        $user = \Session::get('uid');
-        $userName = \FEGFormat::userToName($user);
-        $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
-        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName, null, $isTest);
-
-        $messageData = [
-            'userName' => $userName,
-            'poNumber' => $po_number,
-            'url' => url() . '/order/removeorder/' . $po_number,
-            'reason' => $explanation,
-        ];
-        $message = view('order.email.removal-request', $messageData)->render();
-        $from = \Session::get('eid');
-        $subject = 'Order Removal Request';
-        $message = $message;
-
-        FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
-            'subject' => $subject,
-            'message' => $message,
-//            'preferGoogleOAuthMail' => true,
-            'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-            'configName' => $configName,
-            'from' => $from,
-            'replyTo' => $from,
-
-        )));
-
-        return response()->json(array(
-            'status' => 'success',
-            'message' => \Lang::get('core.request_sent_success')
-        ));
+        $newProductSubtype = $request->get('newProductSubtype');
+        DB::transaction(function() use ($productSubtypeId, $newProductSubtype){
+            product::where('prod_sub_type_id', $productSubtypeId)->update(['prod_sub_type_id'=>$newProductSubtype]);
+            productsubtype::where('id', $productSubtypeId)->delete();
+        });
+        return redirect()->back();
     }
 
 
