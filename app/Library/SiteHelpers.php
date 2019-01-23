@@ -278,7 +278,7 @@ class SiteHelpers
          return $mime_types[$val];
       }
     else{
-        return "-";
+        return $defaultValue;
     }
 
 

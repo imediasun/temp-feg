@@ -296,8 +296,11 @@ class GoogledriveearningreportController extends Controller {
                 if($data['mime_type']=='application/pdf'){
                     $content_type = 'application/pdf';
                 }
-                elseif ($data['mime_type']=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
-                    $content_type = 'application/docx';
+//                elseif ($data['mime_type']=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+//                    $content_type = 'application/docx';
+//                }
+                else{
+                    $content_type = $data['mime_type'];
                 }
                 $response =  Response::make($content, 200, [
                     'Content-Type' => $content_type,
