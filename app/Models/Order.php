@@ -1524,9 +1524,9 @@ class order extends Sximo
                     $fileName = $item->img;
                     $extension = mb_substr($fileName, mb_strpos($fileName, '.') + 1, mb_strlen($fileName));
                     $fileNewName = implode('-',[
-                        str_replace(' ', '_', $itemName),
-                        str_replace(' ', '_', $sku),
-                        str_replace(' ', '_', $vendorName)
+                        str_replace(' ', '_', str_replace('/','',trim($itemName))),
+                        str_replace(' ', '_', str_replace('/','',trim($sku))),
+                        str_replace(' ', '_', str_replace('/','',trim($vendorName)))
                     ]).'.'.$extension;
                     \File::copy($filePath . '/' . $fileName, $saveToPath . '/' . $fileNewName);
                 }
