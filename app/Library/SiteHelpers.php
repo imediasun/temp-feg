@@ -259,7 +259,7 @@ class SiteHelpers
 
         return $out;
     }
-  public static function getExtensionName($val,$defaultValue = 'No Data'){
+  public static function getExtensionName($val,$defaultValue = '-'){
      if($val=='application/pdf'){
          return 'PDF Document';
      }
