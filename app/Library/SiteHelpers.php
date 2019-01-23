@@ -272,7 +272,7 @@ class SiteHelpers
   }
 
   public static function formatEmptyColumn($val){
-      if (empty($val)){
+      if (empty($val) || $val==null){
           return "-";
       }
       return $val;
