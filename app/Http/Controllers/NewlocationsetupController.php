@@ -146,13 +146,13 @@ class NewlocationsetupController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('new_location_setups');
         }
-        if(!empty($this->data['row']['teamviewer_passowrd']) && $this->data['row']['use_tv']==1){
+        if($this->data['row']['teamviewer_passowrd']){
             $this->data['row']['teamviewer_passowrd'] = \SiteHelpers::decryptStringOPENSSL($this->data['row']['teamviewer_passowrd']);
         }
-        if(!empty($this->data['row']['windows_user_password'])&& $this->data['row']['is_server_locked']){
+        if($this->data['row']['windows_user_password']){
             $this->data['row']['windows_user_password'] = \SiteHelpers::decryptStringOPENSSL($this->data['row']['windows_user_password']);
         }
-        if(!empty($this->data['row']['rdp_computer_password'])&& $this->data['row']['is_remote_desktop']==1){
+        if($this->data['row']['rdp_computer_password']){
             $this->data['row']['rdp_computer_password'] = \SiteHelpers::decryptStringOPENSSL($this->data['row']['rdp_computer_password']);
         }
         $this->data['setting'] = $this->info['setting'];
@@ -173,8 +173,10 @@ class NewlocationsetupController extends Controller
         $row = $this->model->getRow($id);
         if ($row) {
             $this->data['row'] = $row;
-            $location_name = location::where('id', $this->data['row']->location_id)->select('location_name')->first();
+            $location_name = location::where('id', $this->data['row']->location_id)->select('location_name','store_id')->first();
+
             $this->data['row']->location_name = $location_name->location_name;
+            $this->data['row']->store_id = $location_name->store_id;
             if ($this->data['row']->sync_install==null){
                 $sync_install = location::where('id', $this->data['row']->location_id)->select('reporting')->first();
                 $this->data['row']->sync_install = $sync_install->reporting ;

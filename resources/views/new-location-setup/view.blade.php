@@ -27,6 +27,12 @@
 						</td>
 						<td>{{ $row->location_id }} </td>
 						
+					</tr><tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Store ID', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
+						</td>
+						<td>{{ $row->store_id }} </td>
+
 					</tr>
 
 					<tr>
