@@ -173,6 +173,10 @@ class NewlocationsetupController extends Controller
         $row = $this->model->getRow($id);
         if ($row) {
             $this->data['row'] = $row;
+            if ($this->data['row']->sync_install==null){
+                $sync_install = location::where('id', $this->data['row']->location_id)->select('reporting')->first();
+                $this->data['row']->sync_install = $sync_install->reporting ;
+            }
         } else {
             $this->data['row'] = $this->model->getColumnTable('new_location_setups');
         }
