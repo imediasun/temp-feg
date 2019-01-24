@@ -284,7 +284,7 @@ class SiteHelpers
           "video/x-msvideo" =>  "avi",
           "video/3gpp" =>    "3gp",
           "text/css" =>"css",
-          "text/x-url" => "Url File",
+          "text/x-url" => "URL",
           "text/x-sql" => "Sql File",
           "application/javascript" =>"js"
       );
