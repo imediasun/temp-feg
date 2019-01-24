@@ -1,4 +1,4 @@
-<p>The FEG team has brought a new location's server online for location  {{ $row['location_id'].' '.$row['location_name'] }}.Please follow the link below for access credentials.</p>
+<p>The FEG team has brought a new location's server online for location  {{ $row['location_id'].' '.$row['location_name'] }}. Please follow the link below for access credentials.</p>
 
 {{--@if($type == 'element5Digital')--}}
 {{--Location: {{ $row['location_id'] }}<br>--}}
