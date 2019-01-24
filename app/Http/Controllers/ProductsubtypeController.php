@@ -161,10 +161,22 @@ class ProductsubtypeController extends Controller
 
     function postRemoval(Request $request, $productSubtypeId)
     {
+        /**
+         *  All the three commented lines in this method should be un-commented if client says
+         *  to show all the sub-types in the sub-type removal modal and update
+         *  both the sub-type and product type for the products.
+         */
         $newProductSubtype = $request->get('newProductSubtype');
-        $productSubtype = productsubtype::find($newProductSubtype);
-        DB::transaction(function() use ($productSubtypeId, $newProductSubtype, $productSubtype){
-            product::where('prod_sub_type_id', $productSubtypeId)->update(['prod_sub_type_id'=>$newProductSubtype, 'prod_type_id'=>$productSubtype->request_type_id]);
+        //$productSubtype = productsubtype::find($newProductSubtype);
+        DB::transaction(function() use (
+            $productSubtypeId, $newProductSubtype
+            //,$productSubtype
+        ){
+            product::where('prod_sub_type_id', $productSubtypeId)
+                ->update([
+                    'prod_sub_type_id'=>$newProductSubtype
+                    //,'prod_type_id'=>$productSubtype->request_type_id
+                ]);
             productsubtype::where('id', $productSubtypeId)->delete();
         });
         return redirect()->back();
