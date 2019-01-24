@@ -271,6 +271,7 @@ class SiteHelpers
           "application/vnd.ms-powerpoint" => "Powerpoint Document",
           "application/vnd.google-apps.spreadsheet" => "Excel Document",
           "application/vnd.google-apps.document"=>'PDF Dcocument',
+          "text/csv" => "Excel Document",
           "image/gif" => "Gif",
           "image/png" => "PNG",
           "image/jpeg" => "JPEG",
@@ -283,6 +284,8 @@ class SiteHelpers
           "video/x-msvideo" =>  "avi",
           "video/3gpp" =>    "3gp",
           "text/css" =>"css",
+          "text/x-url" => "Url File",
+          "text/x-sql" => "Sql File",
           "application/javascript" =>"js"
       );
       if(in_array($val,array_keys($mime_types))){
