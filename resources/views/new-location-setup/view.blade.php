@@ -2,7 +2,7 @@
 <div class="sbox">
 	<div class="sbox-title">  
 		<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
-			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
+			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger empty-popup-time" onclick="beforepopupClose(); ajaxViewClose('#{{ $pageModule }}');">
 			<i class="fa fa fa-times"></i></a>
 		</h4>
 	 </div>
@@ -13,19 +13,17 @@
 
 
 		<table class="table table-striped table-bordered" >
-			<tbody>	
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}
-						</td>
-						<td>{{ $row->id }} </td>
-						
-					</tr>
+			<tbody>
+			<tr>
+				<td width='30%' class='label-view text-right'>
+					{{ SiteHelpers::activeLang('Location Name', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
+				</td>
+				<td>{{ $row->location_name }} </td>
 
+			</tr>
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Location Id', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Location ID', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
 						</td>
 						<td>{{ $row->location_id }} </td>
 						
@@ -33,7 +31,7 @@
 
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Teamviewer Id', (isset($fields['teamviewer_id']['language'])? $fields['teamviewer_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('TeamViewer ID', (isset($fields['teamviewer_id']['language'])? $fields['teamviewer_id']['language'] : array())) }}
 						</td>
 						<td>{{ $row->teamviewer_id }} </td>
 						
@@ -50,7 +48,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Is Server Locked', (isset($fields['is_server_locked']['language'])? $fields['is_server_locked']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Lock Server?', (isset($fields['is_server_locked']['language'])? $fields['is_server_locked']['language'] : array())) }}
 						</td>
 						<td>{{ $row->is_server_locked ==1?'Yes':'No' }} </td>
 						
@@ -65,7 +63,7 @@
 					</tr>
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Windows User Password', (isset($fields['windows_user_password']['language'])? $fields['windows_user_password']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Windows Password', (isset($fields['windows_user_password']['language'])? $fields['windows_user_password']['language'] : array())) }}
 						</td>
 						<td><span id="wpass">{{$row->windows_user_password }}</span><a href="javascript:void(0);" id="wpbtn" style="float: right" class="btn btn-sm btn-primary">Show Password </a> </td>
 						
@@ -73,7 +71,7 @@
 				<?php }?>
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Is Remote Desktop', (isset($fields['is_remote_desktop']['language'])? $fields['is_remote_desktop']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Remote Desktop Needed?', (isset($fields['is_remote_desktop']['language'])? $fields['is_remote_desktop']['language'] : array())) }}
 						</td>
 						<td>{{ $row->is_remote_desktop == 1 ? 'Yes' :'No' }} </td>
 						
@@ -81,7 +79,7 @@
 			<?php if($row->is_remote_desktop == 1){?>
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('RDP Computer Name', (isset($fields['rdp_computer_name']['language'])? $fields['rdp_computer_name']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Computer Name', (isset($fields['rdp_computer_name']['language'])? $fields['rdp_computer_name']['language'] : array())) }}
 						</td>
 						<td>{{ $row->rdp_computer_name }} </td>
 						
@@ -89,14 +87,14 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('RDP Computer User', (isset($fields['rdp_computer_user']['language'])? $fields['rdp_computer_user']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('User', (isset($fields['rdp_computer_user']['language'])? $fields['rdp_computer_user']['language'] : array())) }}
 						</td>
 						<td>{{ $row->rdp_computer_user }} </td>
 						
 					</tr>
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('RDP Computer Passowrd', (isset($fields['rdp_computer_password']['language'])? $fields['rdp_computer_password']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Passowrd', (isset($fields['rdp_computer_password']['language'])? $fields['rdp_computer_password']['language'] : array())) }}
 						</td>
 						<td ><span id="rdpass">{{ $row->rdp_computer_password }}</span> <a href="javascript:void(0);" id="rpbtn" style="float: right" class="btn btn-sm btn-primary">Show Password </a></td>
 
@@ -155,8 +153,14 @@
 @endif	
 
 <script>
+
+	var  totalTime = '';
+	var timetoclose='';
 	var settimeout =  showPopups();
 	var passwords  = {!! $passwords !!};
+
+
+
 
 	 $(document).on('click','#tpass',(function () {
 	 $('#tmpass').text(passwords.tmv.decrypted);
@@ -203,31 +207,47 @@
 	);
 	function showPopups()
 	{
-		var totalTime = {{env('NOTIFICATION_POPUP_SHOW_TIMEOUT_PASSWORD_VAULT',1)}} * 60000;
 
+		totalTime = {{env('NOTIFICATION_POPUP_SHOW_TIMEOUT_PASSWORD_VAULT',1)}} * 60000;
+		timetoclose = {{env('NOTIFICATION_POPUP_CLOSE_TIMEOUT_PASSWORD_VAULT')}} * 60000;
 		showFirstPopup = setTimeout(function () {
 			App.notyConfirm({
 				message: "Do you need more time to view or you want to cancel",
 				confirmButtonText: 'Yes',
 				cancelButtonText: 'No',
-				timeout:6000,
+				timeout:500,
+				close:function(){
+					beforepopupClose();
+					clearTimeout(hidePopup);
+					clearTimeout(showFirstPopup);
+					ajaxViewClose('#{{ $pageModule }}');
+				},
 				confirm: function (){
+					clearTimeout(showFirstPopup);
 					clearTimeout(hidePopup);
 					reloadPage();
 				},
 				cancel:function () {
-					totalTime += 120000;
-					showFirstPopup =  showPopups();
+					clearTimeout(showFirstPopup);
+					clearTimeout(hidePopup);
+					  showPopups();
 				}
 			});
 			hidePopup = setTimeout(function () {
+				console.log("from hide popup");
 				reloadPage();
-			},({{env('NOTIFICATION_POPUP_CLOSE_TIMEOUT_PASSWORD_VAULT')}} * 60000))
+			},timetoclose);
 
 		}, totalTime);
-		return showFirstPopup;
+
 	}
 	function reloadPage() {
-		window.location.reload();
+		var alertpopup = document.getElementById('noty_topCenter_layout_container');
+		$(alertpopup).remove();
+		beforepopupClose();
+		clearTimeout(hidePopup);
+		clearTimeout(showFirstPopup);
+		ajaxViewClose('#{{ $pageModule }}');
+		//$('.btn-search[data-original-title="Reload Data"]').trigger('click');
 	}
 </script>	
