@@ -269,9 +269,9 @@
                             {!! SiteHelpers::activeLang('Sync Install', (isset($fields['sync_install']['language'])? $fields['sync_install']['language'] : array())) !!}
                             </label>
                             <div class="col-md-6">
-                            <input type="radio" {{ $row['sync_install'] == 1 ? "checked":""}}  name="sync_install" data-size="mini" data-name="sync_install"
+                            <input type="radio" @if($row['sync_install'] == 1) checked @endif  name="sync_install" data-size="mini" data-name="sync_install"
                                 data-handle-width="40px" value="1"> Yes
-                                <input type="radio" {{ $row['sync_install'] == 0 ? "checked":""}}  name="sync_install" data-size="mini" data-name="sync_install"
+                                <input type="radio" @if($row['sync_install'] == 0) checked @endif  name="sync_install" data-size="mini" data-name="sync_install"
                                 data-handle-width="40px" value="0"> No
                             </div>
                             <div class="col-md-2"></div>
