@@ -345,4 +345,48 @@ class NewlocationsetupController extends Controller
         }
     }
 
+    public function postUpdateServerlocked(Request $request){
+
+        try {
+            if ($request->state == "false") {
+                $update = 0;
+            } elseif ($request->state = "true") {
+                $update = 1;
+            }
+            $res = newlocationsetup::where('id', $request->id)
+                ->update(['is_server_locked' => $update]);
+
+            return response()->json([
+                'status' => '200',
+            ]);
+        }
+        catch (\Exception $e){
+            return response()->json([
+                'status' => $e->getCode(),
+            ]);
+        }
+
+    }
+    public function postUpdateRemotedesktop(Request $request){
+
+        try {
+            if ($request->state == "false") {
+                $update = 0;
+            } elseif ($request->state = "true") {
+                $update = 1;
+            }
+            $res = newlocationsetup::where('id', $request->id)
+                ->update(['is_remote_desktop' => $update]);
+            return response()->json([
+                'status' => '200',
+            ]);
+        }
+        catch (\Exception $e){
+            return response()->json([
+                'status' => $e->getCode(),
+            ]);
+        }
+    }
+
+
 }
