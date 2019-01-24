@@ -5,6 +5,7 @@ use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
 use App\Models\Ordertyperestrictions;
 use App\Models\Product;
+use App\Models\productsubtype;
 use App\Models\ProductType;
 use App\Models\UserFavoriteProduct;
 use Illuminate\Database\Eloquent\Collection;
@@ -1579,6 +1580,7 @@ $message = '';
     }
 
     public function getFirstTenProductsBySubType($id){
-        return $this->model->where('prod_sub_type_id', $id)->take(10)->lists('item_description', 'id');
+        $productSubType = productsubtype::find($id);
+        return ['product_type_id'=>$productSubType->request_type_id, 'products'=>$this->model->where('prod_sub_type_id', $id)->take(10)->lists('item_description', 'id')];
     }
 }
