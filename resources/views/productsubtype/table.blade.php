@@ -261,9 +261,6 @@
 <script>
     $(document).ready(function () {
 
-        $('#newProductSubtype').jCombo("{{ URL::to('productsubtype/comboselect?filter=product_type:id:type_description ') }}",
-            {selected_value: ''});
-
         $('.tips').tooltip();
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-blue',
@@ -321,12 +318,13 @@
             success: function (data) {
                 $('.ajaxLoading').hide();
                 $('#listOfProducts').html('');
-                $.each(data, function (key, val) {
+                $.each(data.products, function (key, val) {
                     $('#listOfProducts').append('<li>'+val+'</li>');
                 });
                 $('#removeProductSubtypeModal').modal('show');
                 $('#removeProductSubtypeFormAjax').attr('action', url);
                 $('#thisProductSubtype').html(name);
+                $('#newProductSubtype').jCombo("{{ URL::to('productsubtype/comboselect?filter=product_type:id:type_description') }}"+"&parent=request_type_id:"+data.product_type_id, {selected_value: ''});
             },
             error: function (exception) {
                 console.log(exception);
