@@ -208,8 +208,8 @@
 	function showPopups()
 	{
 
-		totalTime = {{env('NOTIFICATION_POPUP_SHOW_TIMEOUT_PASSWORD_VAULT',1)}} * 60000;
-		timetoclose = {{env('NOTIFICATION_POPUP_CLOSE_TIMEOUT_PASSWORD_VAULT')}} * 60000;
+		totalTime = Number('{{env('NOTIFICATION_POPUP_SHOW_TIMEOUT_PASSWORD_VAULT',1)}}') * 60000;
+		timetoclose = Number('{{env('NOTIFICATION_POPUP_CLOSE_TIMEOUT_PASSWORD_VAULT')}}') * 60000;
 		showFirstPopup = setTimeout(function () {
 			App.notyConfirm({
 				message: "Do you need more time to view or you want to cancel",
