@@ -148,7 +148,10 @@
                                            data-on-text="On" data-name="{{ in_array(strtolower($value),[1,'yes'])? '1':'0' }}" data-off-text="Off"
                                            data-handle-width="55px" class="toggle" data-id="{{$row->id}}"
                                            id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+                                @elseif($field['field']=='store_id')
+                                   {!! empty($row->store_id) || trim($row->store_id) == '' || $row->store_id == 'null' || $row->store_id == null ? '-':$value !!}
                                 @else
+
                                 {!! $value !!}
                                 @endif
                             </td>

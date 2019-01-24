@@ -2278,3 +2278,17 @@ $(function () {
         });
 
 })
+var showFirstPopup;
+var hidePopup;
+function beforepopupClose() {
+    var alertpopup = document.getElementById('noty_topCenter_layout_container');
+   if(alertpopup) {
+       $(alertpopup).remove();
+   }
+    if(hidePopup) {
+        clearTimeout(hidePopup);
+    }
+    if(showFirstPopup) {
+        clearTimeout(showFirstPopup);
+    }
+}
