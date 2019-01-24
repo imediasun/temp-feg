@@ -265,14 +265,21 @@ class SiteHelpers
           "application/octet-stream" => "exe",
           "application/zip" => "Zip Document",
           "application/msword" => "Word Document",
-          "application/msword" => "Word Document",
           "application/vnd.ms-excel" => "Excel Document",
           "application/vnd.ms-powerpoint" => "Powerpoint Document",
           "image/gif" => "Gif",
-          "image/png" => "PND",
+          "image/png" => "PNG",
           "image/jpeg" => "JPEG",
           "image/jpg" => "JPG Image",
-          "text/html" => "Html File"
+          "text/html" => "Html File",
+          "audio/mpeg" => "mp3",
+          "audio/x-wav"=>   "wav",
+          "video/mpeg"=>    "mpeg",
+          "video/quicktime" =>   "mov",
+          "video/x-msvideo" =>  "avi",
+          "video/3gpp" =>    "3gp",
+          "text/css" =>"css",
+          "application/javascript" =>"js"
       );
       if(in_array($val,array_keys($mime_types))){
          return $mime_types[$val];
