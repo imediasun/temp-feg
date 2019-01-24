@@ -228,7 +228,7 @@
                             </label>
                             <div class="col-md-6">
                                 <?php
-                                $parems = array('class'=>'form-control', 'placeholder'=>'','required' =>''   );
+                                $parems = array('class'=>'form-control', 'placeholder'=>''   );
                                 ?>
                                 {!! Form::text('vm_url', $row['vm_url'],$parems )!!}
                             </div>
@@ -242,7 +242,7 @@
                             </label>
                             <div class="col-md-6">
                                 <?php
-                                $parems = array('class'=>'form-control', 'placeholder'=>'','required' =>''   );
+                                $parems = array('class'=>'form-control', 'placeholder'=>'');
                                 ?>
                                 {!! Form::text('vm_user', $row['vm_user'],$parems )!!}
                             </div>
@@ -256,7 +256,7 @@
                             </label>
                             <div class="col-md-6">
                                 <?php
-                                $parems = array('class'=>'form-control', 'placeholder'=>'','required' =>''   );
+                                $parems = array('class'=>'form-control', 'placeholder'=>''   );
                                 ?>
                                 {!! Form::text('vm_password', $row['vm_password'],$parems )!!}
                             </div>
@@ -283,7 +283,7 @@
                             </label>
                             <div class="col-md-4">
                                 <?php
-                                $parems = array('id'=>'synctime', 'class'=>'form-control', 'placeholder'=>'','required' =>''   );
+                                $parems = array('id'=>'synctime', 'class'=>'form-control', 'placeholder'=>'');
                                 ?>
                                 {!! Form::text('sync_time', $row['sync_time'],$parems )!!}
                             </div>
@@ -310,7 +310,7 @@
                             </label>
                             <div class="col-md-6">
                                 <?php
-                                $parems = array('id'=>'syncdiff','class'=>'form-control timepicker', 'placeholder'=>'','required' =>''   );
+                                $parems = array('id'=>'syncdiff','class'=>'form-control timepicker', 'placeholder'=>'');
                                 ?>
                                 {!! Form::text('sync_difference', $row['sync_difference'],$parems )!!}
                             </div>
