@@ -137,13 +137,13 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Sync Time', (isset($fields['sync_time']['language'])? $fields['sync_time']['language'] : array())) }}
 						</td>
-						<td>{{ $row->sync_time }} {{ $row->sync_time_zone }}</td>
+						<td>{{ $row->sync_time=='00:00:00' ? '-' :$row->sync_time }} {{ $row->sync_time_zone }}</td>
 
 					</tr><tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Sync Difference', (isset($fields['sync_difference']['language'])? $fields['sync_difference']['language'] : array())) }}
 						</td>
-						<td>{{ $row->sync_difference }}</td>
+						<td>{{ $row->sync_difference=='00:00:00'? '-' :$row->sync_difference }}</td>
 
 					</tr>
 
