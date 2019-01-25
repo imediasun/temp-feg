@@ -215,7 +215,7 @@
 	{
 
 		totalTime = Number('{{env('NOTIFICATION_POPUP_SHOW_TIMEOUT_PASSWORD_VAULT',1)}}') * 60000;
-		timetoclose = Number('{{env('NOTIFICATION_POPUP_CLOSE_TIMEOUT_PASSWORD_VAULT')}}') * 60000;
+		timetoclose = Number('{{env('NOTIFICATION_POPUP_CLOSE_TIMEOUT_PASSWORD_VAULT', 3)}}') * 60000;
 		showFirstPopup = setTimeout(function () {
 			App.notyConfirm({
 				message: "Screen Timed Out! <br>Do you want to stay on this screen? <br> Note : After 3 minutes if no further action is performed screen will automatically get closed",
