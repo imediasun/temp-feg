@@ -304,4 +304,17 @@
             $("#multi-btn").attr('disabled',false);
         }
     }
+
+    {{--App.autoCallbacks.registerCallback('advancedsearch', function(){--}}
+        {{--removeDeletedProductSubType();--}}
+    {{--});--}}
+
+    {{--function removeDeletedProductSubType(){--}}
+        {{--$('select[name="prod_sub_type_id"]').jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:id:product_type') }}&limit=WHERE:deleted_at:is:NULL",--}}
+            {{--{--}}
+                {{--initial_text: 'Select Product Type'--}}
+            {{--});--}}
+    {{--}--}}
+
+    {{--removeDeletedProductSubType();--}}
 </script>

@@ -335,7 +335,17 @@
 
     App.autoCallbacks.registerCallback('advancedsearch', function(){
         $('select[name="product_type"],[name="type_description"],[name="operate"]').removeAttr('disabled');
+        removeDeletedProductSubType();
     });
+
+    function removeDeletedProductSubType(){
+        $('select[name="product_type"]').jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:id:product_type') }}&limit=WHERE:deleted_at:is:NULL",
+            {
+                initial_text: 'Select Product Type'
+            });
+    }
+
+    removeDeletedProductSubType();
 
 </script>
 <style>

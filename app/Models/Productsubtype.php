@@ -2,14 +2,11 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class productsubtype extends Sximo  {
 	
 	protected $table = 'product_type';
 	protected $primaryKey = 'id';
-	use SoftDeletes;
-    protected $dates = ['deleted_at'];
 
 	public function __construct() {
 		parent::__construct();
@@ -30,4 +27,10 @@ class productsubtype extends Sximo  {
 		return "  ";
 	}
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function subType(){
+        return $this->belongsTo(self::class, 'request_type_id', 'id');
+    }
 }

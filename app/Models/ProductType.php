@@ -5,16 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ProductType extends Sximo
+class ProductType extends productsubtype
 {
-    protected $table = 'product_type';
     use SoftDeletes;
-
+    protected $dates = ['deleted_at'];
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     *  If you want to change anything in this class please change in its parent
+     *  App\Models\productsubtype
      */
-    public function subType(){
-        return $this->belongsTo(self::class, 'request_type_id', 'id');
-    }
-    //
 }
