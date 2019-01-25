@@ -229,14 +229,15 @@
 					ajaxViewClose('#{{ $pageModule }}');
 				},
 				confirm: function (){
-					clearTimeout(showFirstPopup);
-					clearTimeout(hidePopup);
-					reloadPage();
+                    clearTimeout(showFirstPopup);
+                    clearTimeout(hidePopup);
+                    showPopups();
 				},
 				cancel:function () {
-					clearTimeout(showFirstPopup);
-					clearTimeout(hidePopup);
-					  showPopups();
+                    clearTimeout(showFirstPopup);
+                    clearTimeout(hidePopup);
+                    reloadPage();
+
 				}
 			});
 			hidePopup = setTimeout(function () {
