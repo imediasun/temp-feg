@@ -194,7 +194,7 @@ FROM new_location_setups
 
                 if($location->debit_type_id >= 1){
                     $locationType = self::getLocationType($location->debit_type_id);
-                    $this->sendNotificationByLocationType($newLocationSetup->location_id,$locationType,$message[$locationType],$from,$isTest);
+                    $this->sendNotificationByLocationType($newLocationSetup->location_id,$locationType,$message[$locationType],$from,$isTest,$locname);
 
                 }
 
@@ -226,12 +226,12 @@ FROM new_location_setups
         }
     }
 
-    public function sendNotificationByLocationType($locationId,$locationType, $message,$from,$isTest){
+    public function sendNotificationByLocationType($locationId,$locationType, $message,$from,$isTest, $locname){
 
         $configName = 'Notify to install the sync application on new server ['.$locationType.']';
         $receipts = FEGSystemHelper::getSystemEmailRecipients($configName, null, $isTest);
 
-        $subject = 'New Location Server ['.$locationId.'] '.ucfirst($locationType);
+        $subject = 'New Location Server ('.$locationId.'. '.$locname.') '.ucfirst($locationType);
 
         if (!empty($receipts)) {
             FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
