@@ -140,12 +140,12 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                 @if($field['field']=='is_server_locked')
                                     <input type='checkbox' name="is_server_locked" @if(in_array(strtolower($value),[1,'yes'])) checked @endif data-field="inactive" data-size="mini" data-animate="true"
-                                           data-on-text="On" data-name="{{ in_array(strtolower($value),[1,'yes'])? '1':'0' }}" data-off-text="Off"
+                                           data-on-text="Yes" data-name="{{ in_array(strtolower($value),[1,'yes'])? '1':'0' }}" data-off-text="No"
                                            data-handle-width="55px" class="toggle" data-id="{{$row->id}}"
                                            id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
                                 @elseif($field['field']=='is_remote_desktop')
                                     <input type='checkbox' name="is_remote_desktop" @if(in_array(strtolower($value),[1,'yes'])) checked @endif data-field="inactive" data-size="mini" data-animate="true"
-                                           data-on-text="On" data-name="{{ in_array(strtolower($value),[1,'yes'])? '1':'0' }}" data-off-text="Off"
+                                           data-on-text="Yes" data-name="{{ in_array(strtolower($value),[1,'yes'])? '1':'0' }}" data-off-text="No"
                                            data-handle-width="55px" class="toggle" data-id="{{$row->id}}"
                                            id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
                                 @elseif($field['field']=='store_id')
