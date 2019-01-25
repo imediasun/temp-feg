@@ -352,6 +352,21 @@ class NewlocationsetupController extends Controller
             return response()->json($locationType);
         }
     }
+    public function getFetchStore(Request $request){
+
+        try {
+            $store_id = location::where('id', $request->location_id)
+                ->select('store_id')->first();
+            return response()->json([
+                'status' => 200,
+                'store_id' => $store_id->store_id
+            ]);
+        }catch (\Exception $e){
+            return response()->json([
+                'status' => $e->getCode()
+            ]);
+        }
+    }
 
     public function postUpdateServerlocked(Request $request){
 

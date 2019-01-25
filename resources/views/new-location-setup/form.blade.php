@@ -60,6 +60,19 @@
 
                         </div>
                     </div>
+                    <div class="form-group  ">
+                        <label for="Store ID" class=" control-label col-md-4 text-left">
+                            Store ID
+                        </label>
+                        <div class="col-md-6">
+                            <b>
+                                <div id="store_id"></div>
+                            </b>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
 
                     {{--<div class="form-group">--}}
                         {{--<label for="Should server be locked?" class=" control-label col-md-4 text-left">--}}
@@ -471,15 +484,24 @@
             $(document).on('change', "#location_id", function () {
                 var location_id = $(this).val();
                 $('#debit_type').text(location_id);
-                {{--$.ajax({--}}
-                    {{--type: "GET",--}}
-                    {{--url: "{{ $pageModule }}/location-info",--}}
-                    {{--data: {location_id: location_id},--}}
-                    {{--success: function (response) {--}}
-                        {{--$('#debit_type').text(response.debit_type);--}}
-                    {{--}--}}
-                {{--});--}}
+                $.ajax({
+                    type: "GET",
+                    url: "{{ $pageModule }}/fetch-store",
+                    data: {location_id: location_id},
+                    success: function (response) {
+
+                        if(response.status==200){
+                            if(response.store_id !=null) {
+                                $('#store_id').text(response.store_id);
+                            }else{
+                                $('#store_id').text('');
+                            }
+                        }
+                    }
+                });
             });
+
+
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
