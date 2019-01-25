@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\SyncHelpers;
+use App\Models\employee;
 use App\Models\location;
 use App\Models\Newlocationsetup;
 use Illuminate\Http\Request;
@@ -15,6 +16,8 @@ class NewlocationsetupController extends Controller
     protected $data = array();
     public $module = 'new-location-setup';
     static $per_page = '10';
+    protected $sortMapping = [];
+    protected $sortUnMapping = [];
 
     public function __construct()
     {
@@ -31,6 +34,8 @@ class NewlocationsetupController extends Controller
             'pageUrl' => url('new-location-setup'),
             'return' => self::returnUrl()
         );
+        $this->sortMapping = ['location_id' => 'location.location_name'];
+        $this->sortUnMapping = ['location.location_name' => 'location_id'];
 
 
     }
@@ -68,6 +73,7 @@ class NewlocationsetupController extends Controller
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
         $params = array(
@@ -87,6 +93,8 @@ class NewlocationsetupController extends Controller
             (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('new-location-setup/data');
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         $this->data['param'] = $params;
         $this->data['topMessage'] = @$results['topMessage'];
         $this->data['message'] = @$results['message'];
@@ -139,6 +147,9 @@ class NewlocationsetupController extends Controller
 
         if ($row) {
             $this->data['row'] = $row;
+            if($this->data['row']['vm_password']){
+                $this->data['row']['vm_password'] = \SiteHelpers::decryptStringOPENSSL($this->data['row']['vm_password']);
+            }
             if ($this->data['row']->sync_install==null){
                 $sync_install = location::where('id', $this->data['row']->location_id)->select('reporting')->first();
                 $this->data['row']->sync_install = $sync_install->reporting ;
@@ -258,14 +269,12 @@ class NewlocationsetupController extends Controller
                 $data["rdp_computer_password"] ='';
                 $data["rdp_computer_user"] = '';
             }
+            if ($id){
+                if (!empty($data['vm_password'])|| $data['vm_password']!=null){
+                    $data['vm_password'] = \SiteHelpers::encryptStringOPENSSL($data['vm_password']);
+                }
+            }
 
-//            if (isset($data["use_tv"]) && $data["use_tv"] == "on") {
-//                $data["use_tv"] = 1;
-//            } else {
-//                $data["use_tv"] = 0;
-//                $data["teamviewer_id"] = '';
-//                $data["teamviewer_passowrd"] = '';
-//            }
             if(!empty($data['teamviewer_passowrd'])){
                 $data['teamviewer_passowrd'] = \SiteHelpers::encryptStringOPENSSL($data['teamviewer_passowrd']);
             }
@@ -275,6 +284,7 @@ class NewlocationsetupController extends Controller
             if(!empty(['rdp_computer_password'])&& $data['is_remote_desktop']==1){
                 $data['rdp_computer_password'] = \SiteHelpers::encryptStringOPENSSL($data['rdp_computer_password']);
             }
+
 
             $id = $this->model->insertRow($data, $id);
             /**
