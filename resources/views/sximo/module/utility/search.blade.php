@@ -57,7 +57,7 @@
 </form>
 </div>
 <script>
-
+	var timeout;
 jQuery(function(){
 
     initiateSearchFormFields($('#{{$pageModule}}Search'));
@@ -88,6 +88,20 @@ if('{{ $pageModule }}' == 'merchandisebudget'){
     $('#advance-search > select[name="location_id"]').jCombo("{{ URL::to('merchandisebudget/comboselect?filter=location:id:id|location_name:active:1') }}",
         {excludeItems: excludedLocations});
 
+}
+if('{{ $pageModule }}' == 'new-location-setup'){
+		$('.ajaxLoading').show();
+	$('#new-location-setupSearch select[name="location_id"]').jCombo(
+			"{{ URL::to('new-location-setup/comboselect?filter=location:id:location_name ') }}",
+			{
+				initial_text: '-------- Select  Location --------'
+			});
+	 timeout = setTimeout(function () {
+		$('.ajaxLoading').hide();
+		if(timeout){
+			clearTimeout(timeout);
+		}
+	},4000);
 }
 
 </script>
