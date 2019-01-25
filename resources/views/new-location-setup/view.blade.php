@@ -45,7 +45,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Teamviewer Passowrd', (isset($fields['teamviewer_passowrd']['language'])? $fields['teamviewer_passowrd']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Teamviewer Password', (isset($fields['teamviewer_passowrd']['language'])? $fields['teamviewer_passowrd']['language'] : array())) }}
 						</td>
 						<td><span id="tmpass">{{$row->teamviewer_passowrd }}</span><a href="javascript:void(0);" id="tpass" style="float: right" class="btn btn-sm btn-primary">Show Password </a></td>
 
@@ -100,7 +100,7 @@
 					</tr>
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Passowrd', (isset($fields['rdp_computer_password']['language'])? $fields['rdp_computer_password']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Password', (isset($fields['rdp_computer_password']['language'])? $fields['rdp_computer_password']['language'] : array())) }}
 						</td>
 						<td ><span id="rdpass">{{ $row->rdp_computer_password }}</span> <a href="javascript:void(0);" id="rpbtn" style="float: right" class="btn btn-sm btn-primary">Show Password </a></td>
 
