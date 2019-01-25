@@ -213,11 +213,11 @@
                                 ?>
                                 <label class='checked checkbox-inline'>
                                     <input type="hidden" id="isDefaultExpenseCategory_{{ $variationCount }}"
-                                           name="is_default_expense_category[]" value="0">
+                                           name="is_default_expense_category[]" value="{{ (count($variations) <= 1) ? '1':'0' }}">
                                     <input type='checkbox' data-count="{{ $variationCount }}"
                                            value='1' name="isdefault[]" class='isDefaultExpenseCategoryElm'
                                            id="isDefaultExpenseCategoryElm_{{ $variationCount }}"
-                                           @if($variation['is_default_expense_category']==1) checked @endif /> Make Default</label>
+                                           @if($variation['is_default_expense_category']==1 || count($variations) <= 1) checked @endif /> Make Default</label>
                            {{-- @endif--}}
                         </div>
                     </div>
@@ -426,11 +426,11 @@
                                 <label class='checked checkbox-inline'>
                                     <input type="hidden" id="isDefaultExpenseCategory_1"
                                            name="is_default_expense_category[]"
-                                           value="0"/>
+                                           value="{!! (count($variations) <= 1) ? '1':'0' !!}"/>
                                     <input type='checkbox' name="isdefault[]" class="isDefaultExpenseCategoryElm"
                                            id="isDefaultExpenseCategoryElm_1"
                                            value='1' data-count="1"
-                                           @if($row['is_default_expense_category']==1) checked @endif /> Make Default</label>
+                                           @if($row['is_default_expense_category']==1 || count($variations) <= 1) checked @endif /> Make Default</label>
                             @endif
                         </div>
                     </div>

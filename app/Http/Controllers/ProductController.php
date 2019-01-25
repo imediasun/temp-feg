@@ -1601,7 +1601,7 @@ if(!empty($removedItemIds)) {
 
             if(count($defaultExpenseCategoryValidator) <> 1){
                 return response()->json(array(
-                    'message' => 'Expense category need to be checked.',
+                    'message' => 'Default Expense category need to be checked.',
                     'status' => 'error'
                 ));
             }
