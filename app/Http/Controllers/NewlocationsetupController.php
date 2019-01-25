@@ -208,6 +208,10 @@ class NewlocationsetupController extends Controller
             'wndows' => [
                 'encrypted' => $row->windows_user_password,
                 'decrypted' => \SiteHelpers::decryptStringOPENSSL($row->windows_user_password),
+            ],
+            'vmpass'=>[
+                'encrypted' => $row->vm_password,
+                'decrypted' => \SiteHelpers::decryptStringOPENSSL($row->vm_password),
             ]
         ];
         $this->data['passwords'] = json_encode($passwords);

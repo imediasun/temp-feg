@@ -47,7 +47,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Teamviewer Password', (isset($fields['teamviewer_passowrd']['language'])? $fields['teamviewer_passowrd']['language'] : array())) }}
 						</td>
-						<td><span id="tmpass">{{$row->teamviewer_passowrd }}</span><a href="javascript:void(0);" id="tpass" style="float: right" class="btn btn-sm btn-primary">Show Password </a></td>
+						<td><span id="tmpass">{{$row->teamviewer_passowrd }}</span><a href="javascript:void(0);" onclick="togglePasswords(this,'tmpass',false,'tmv')" style="float: right" class="btn btn-sm btn-primary">Show Password </a></td>
 
 						
 					</tr>
@@ -71,7 +71,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Windows Password', (isset($fields['windows_user_password']['language'])? $fields['windows_user_password']['language'] : array())) }}
 						</td>
-						<td><span id="wpass">{{$row->windows_user_password }}</span><a href="javascript:void(0);" id="wpbtn" style="float: right" class="btn btn-sm btn-primary">Show Password </a> </td>
+						<td><span id="wpass">{{$row->windows_user_password }}</span><a href="javascript:void(0);" onclick="togglePasswords(this,'wpass',false,'wndows')" style="float: right" class="btn btn-sm btn-primary">Show Password </a> </td>
 						
 					</tr>
 				<?php }?>
@@ -102,7 +102,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Password', (isset($fields['rdp_computer_password']['language'])? $fields['rdp_computer_password']['language'] : array())) }}
 						</td>
-						<td ><span id="rdpass">{{ $row->rdp_computer_password }}</span> <a href="javascript:void(0);" id="rpbtn" style="float: right" class="btn btn-sm btn-primary">Show Password </a></td>
+						<td ><span id="rdpass">{{ $row->rdp_computer_password }}</span> <a href="javascript:void(0);" onclick="togglePasswords(this,'rdpass',false,'rdp')" style="float: right" class="btn btn-sm btn-primary">Show Password </a></td>
 
 					</tr>
 			<?php } ?>
@@ -124,8 +124,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('VM Password', (isset($fields['vm_password']['language'])? $fields['vm_password']['language'] : array())) }}
 						</td>
-						<td>{{ $row->vm_password }}</td>
-
+						<td ><span id="vmpass">{{ $row->vm_password }}</span> <a href="javascript:void(0);" onclick="togglePasswords(this,'vmpass',false,'vmpass')"style="float: right" class="btn btn-sm btn-primary">Show Password </a></td>
 					</tr>
 					<tr>
 						<td width='30%' class='label-view text-right'>
@@ -166,51 +165,22 @@
 	var passwords  = {!! $passwords !!};
 
 
-
-
-	 $(document).on('click','#tpass',(function () {
-	 $('#tmpass').text(passwords.tmv.decrypted);
-	 $(this).text('Hide Password');
-	 $(this).attr("id", "hideid");
-
-		 }
-	 ));
-	$(document).on('click','#hideid',(function () {
-				$('#tmpass').text(passwords.tmv.encrypted);
-				$(this).text('Show Password');
-				$(this).attr("id", "tpass");
-
-	}));
-
-
-	$(document).on('click','#wpbtn',(function () {
-	 $('#wpass').text(passwords.wndows.decrypted);
-	 $(this).text('Hide Password');
-	 $(this).attr("id", "hidewpid");
-
-		 }
-	 ));
-	$(document).on('click','#hidewpid',(function () {
-				$('#wpass').text(passwords.wndows.encrypted);
-				$(this).text('Show Password');
-				$(this).attr("id", "wpbtn");
-
-	})
-	)
-	$(document).on('click','#rpbtn',(function () {
-	 $('#rdpass').text(passwords.rdp.decrypted);
-	 $(this).text('Hide Password');
-	 $(this).attr("id", "hiderd");
-
-		 }
-	 ));
-	$(document).on('click','#hiderd',(function () {
-				$('#rdpass').text(passwords.rdp.encrypted);
-				$(this).text('Show Password');
-				$(this).attr("id", "rpbtn");
-
-	})
-	);
+	function togglePasswords(obj,span,isEncrypted,field){
+		var password = '';
+		if(($.trim(passwords[field].encrypted)).length < 1){
+			return false;
+		}
+		if(isEncrypted == true){
+			password = passwords[field].encrypted;
+			$(obj).text('Show Password');
+			$(obj).attr('onclick','togglePasswords(this,"'+span+'",false,"'+field+'")');
+		}else{
+			password = passwords[field].decrypted;
+			$(obj).text('Hide Password');
+			$(obj).attr('onclick','togglePasswords(this,"'+span+'",true,"'+field+'")');
+		}
+		$('#'+span).text(password);
+	}
 	function showPopups()
 	{
 
