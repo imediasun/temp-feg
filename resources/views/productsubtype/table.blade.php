@@ -106,7 +106,9 @@
                                     @if(SiteHelpers::filterColumn($limited ))
                                         <td data-form="{{ $t['field'] }}"
                                             data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-                                            <input class="form-control" name="{{$t['field']}}">
+                                            <input class="form-control" name="{{$t['field']}}"
+                                                    {{$t['field'] == 'id' ? 'readonly': ''}}
+                                            >
                                             {{--{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}--}}
                                         </td>
                                     @endif
