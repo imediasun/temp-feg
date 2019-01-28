@@ -150,7 +150,8 @@ class NewlocationsetupController extends Controller
             if($this->data['row']['vm_password']){
                 $this->data['row']['vm_password'] = \SiteHelpers::decryptStringOPENSSL($this->data['row']['vm_password']);
             }
-            if ($this->data['row']->sync_install==null){
+
+            if ($this->data['row']->sync_install == null && $this->data['row']->sync_install!=0){
                 $sync_install = location::where('id', $this->data['row']->location_id)->select('reporting')->first();
                 $this->data['row']->sync_install = $sync_install->reporting ;
             }
