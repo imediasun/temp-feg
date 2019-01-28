@@ -277,7 +277,7 @@ FROM new_location_setups
         $configName = 'Notify to install the sync application on new server ['.$locationType.']';
         $receipts = FEGSystemHelper::getSystemEmailRecipients($configName, null, $isTest);
 
-        $subject = 'New Location Server ('.$locationId.'. '.$locname.') '.ucfirst($locationType);
+        $subject = 'New Location Server ('.$locationId.' '.$locname.') '.ucfirst($locationType);
 
         if (!empty($receipts)) {
             FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
