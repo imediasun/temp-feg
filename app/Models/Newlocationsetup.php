@@ -33,7 +33,53 @@ FROM new_location_setups
 	public static function queryGroup(){
 		return "  ";
 	}
+    public  function insertRow($data, $id = null) {
 
+        $data = $this->cleanData($data);
+
+        $timestampTables = array('vendor','products','orders', 'departments', 'system_email_report_manager');
+        $table = with(new static)->table;
+        $key = with(new static)->primaryKey;
+        if ($id == NULL) {
+            // Insert Here
+
+            if(in_array($table,$timestampTables)){
+                $data['created_at'] = date('Y-m-d H:i:s');
+            }
+            if (isset($data['createdOn']))
+                $data['createdOn'] = date("Y-m-d H:i:s");
+            if (isset($data['updatedOn']))
+                $data['updatedOn'] = date("Y-m-d H:i:s");
+
+            if(empty($data['sync_time'])){
+                $data['sync_time'] = null;
+            }
+            if(empty($data['sync_difference'])){
+                $data['sync_difference'] = null;
+            }
+            $id = @\DB::table($table)->insertGetId($data);
+        } else {
+            // Update here
+            // update created field if any
+            if(in_array($table,$timestampTables)){
+                $data['updated_at'] = date('Y-m-d H:i:s');
+            }
+            if (isset($data['created_at']))
+                unset($data['created_at']);
+            if (isset($data['createdOn']))
+                unset($data['createdOn']);
+            if (isset($data['updatedOn']))
+                $data['updatedOn'] = date("Y-m-d H:i:s");
+            if(empty($data['sync_time'])){
+                $data['sync_time'] = null;
+            }
+            if(empty($data['sync_difference'])){
+                $data['sync_difference'] = null;
+            }
+            @\DB::table($table)->where($key, $id)->update($data);
+        }
+        return $id;
+    }
     public static function getRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
