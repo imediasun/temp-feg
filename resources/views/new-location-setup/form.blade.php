@@ -359,8 +359,8 @@
     <script src="{{asset('sximo/js/jquery.timepicker.js')}}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#syncdiff').timepicker({ 'timeFormat': 'H:i:s', allowEmpty: true }).val('');
-            $('#synctime').timepicker({ 'timeFormat': 'H:i:s', allowEmpty: true }).val('');
+            $('#syncdiff').timepicker({ 'timeFormat': 'H:i:s', allowEmpty: true });
+            $('#synctime').timepicker({ 'timeFormat': 'H:i:s', allowEmpty: true });
 
             @if($row['is_remote_desktop']==1)
             $('#wraprdpfields').css("display", "block");
