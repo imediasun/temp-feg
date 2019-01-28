@@ -20,10 +20,10 @@
 				  </div>
 				  <div class="form-group  " >
 					<label for="Product Type" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Type', (isset($fields['product_type']['language'])? $fields['product_type']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('Product Sub Type', (isset($fields['product_type']['language'])? $fields['product_type']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('product_type', $row['product_type'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('product_type', $row['product_type'],array('class'=>'form-control', 'placeholder'=>'Product Sub Type',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -34,19 +34,19 @@
 					{!! SiteHelpers::activeLang('Type Description', (isset($fields['type_description']['language'])? $fields['type_description']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('type_description', $row['type_description'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('type_description', $row['type_description'],array('class'=>'form-control', 'placeholder'=>'Type Description',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
+				  </div>
 				  <div class="form-group  " >
-					<label for="Request Type Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Request Type Id', (isset($fields['request_type_id']['language'])? $fields['request_type_id']['language'] : array())) !!}
+					<label for="Order Type" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Order Type', (isset($fields['request_type_id']['language'])? $fields['request_type_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::select('request_type_id', \Illuminate\Support\Facades\DB::table('order_type')->where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type','id'), $row['request_type_id'],array('class'=>'form-control', 'placeholder'=>'Select Order Type',   )) !!}
-					 </div> 
+					  {!! Form::select('request_type_id', \Illuminate\Support\Facades\DB::table('order_type')->where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type','id'), $row['request_type_id'],array('class'=>'select2', ($_SERVER['REQUEST_URI'] != '/productsubtype/update' ? 'disabled': ''), 'placeholder'=>'Select Order Type',   )) !!}
+					</div>
 					 <div class="col-md-2">
 					 	
 					 </div>

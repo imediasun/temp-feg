@@ -106,7 +106,8 @@
                                     @if(SiteHelpers::filterColumn($limited ))
                                         <td data-form="{{ $t['field'] }}"
                                             data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-                                            {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+                                            <input class="form-control" name="{{$t['field']}}">
+                                            {{--{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}--}}
                                         </td>
                                     @endif
                                 @endif
@@ -349,7 +350,7 @@
     function removeDeletedProductSubType(){
         $('select[name="product_type"]').jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:product_type:product_type') }}&limit=WHERE:deleted_at:is:NULL",
             {
-                initial_text: 'Select Product Type'
+                initial_text: ' -- Select Product Sub Type --'
             });
     }
 
