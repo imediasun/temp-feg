@@ -357,7 +357,9 @@
     }
 
     removeDeletedProductSubType();
-
+    App.autoCallbacks.registerCallback('inline.row.save.after', function (params) {
+        reloadData('#productsubtype','productsubtype/data?search=')
+    });
 </script>
 <style>
     .table th.right {
