@@ -254,6 +254,7 @@ class NewlocationsetupController extends Controller
         }
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
+
         if ($validator->passes()) {
             $data = $this->validatePost('new_location_setups');
 
@@ -289,6 +290,12 @@ class NewlocationsetupController extends Controller
                 $data['rdp_computer_password'] = \SiteHelpers::encryptStringOPENSSL($data['rdp_computer_password']);
             }
 
+            if(!isset($request->sync_time)){
+                $data['sync_time'] = null;
+            }
+            if(!isset($request->sync_difference)){
+                $data['sync_difference'] = null;
+            }
 
             $id = $this->model->insertRow($data, $id);
             /**

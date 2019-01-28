@@ -302,6 +302,7 @@
                             </div>
                             <div class="col-md-2 form-group">
                                 <select name="sync_time_zone" id="time-zons" class="form-control">
+                                    <option value="">Select Time Zone</option>
                                     <option value="PST">PST</option>
                                     <option value="PDT">PDT</option>
                                     <option value="MST">MST</option>
@@ -323,7 +324,7 @@
                             </label>
                             <div class="col-md-6">
                                 <?php
-                                $parems = array('id'=>'syncdiff','class'=>'form-control timepicker', 'placeholder'=>'');
+                                $parems = array('id'=>'syncdiff','class'=>'form-control timepicker', 'placeholder'=>'','autocomplete'=>'off');
                                 ?>
                                 {!! Form::text('sync_difference', $row['sync_difference'],$parems )!!}
                             </div>
@@ -358,8 +359,8 @@
     <script src="{{asset('sximo/js/jquery.timepicker.js')}}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#syncdiff').timepicker({ 'timeFormat': 'H:i:s' });
-            $('#synctime').timepicker({ 'timeFormat': 'H:i:s' });
+            $('#syncdiff').timepicker({ 'timeFormat': 'H:i:s', allowEmpty: true }).val('');
+            $('#synctime').timepicker({ 'timeFormat': 'H:i:s', allowEmpty: true }).val('');
 
             @if($row['is_remote_desktop']==1)
             $('#wraprdpfields').css("display", "block");
@@ -390,18 +391,10 @@
                 var windows_user_password = $('input[name="windows_user_password"]');
                 if (state == false) {
                     $('#wrapremotedesktop').css("display", "none");
-//                    windows_user.prop('readonly', true);
-//                    windows_user_password.prop('readonly', true);
-//                    windows_user.prop('disabled', true);
-//                    windows_user_password.prop('disabled', true);
                     windows_user.removeAttr('required');
                     windows_user_password.removeAttr('required');
                 } else {
                     $('#wrapremotedesktop').css("display", "block");
-//                    windows_user.prop('readonly', false);
-//                    windows_user_password.prop('readonly', false);
-//                    windows_user.prop('disabled', false);
-//                    windows_user_password.prop('disabled', false);
                     windows_user.attr('required','required');
                     windows_user_password.attr('required','required');
                 }
@@ -414,23 +407,11 @@
                var rdp_computer_password = $('input[name="rdp_computer_password"]');
                 if (state == false) {
                     $('#wraprdpfields').css("display", "none");
-//                    rdp_computer_name.prop('readonly', true);
-//                    rdp_computer_user.prop('readonly', true);
-//                    rdp_computer_password.prop('readonly', true);
-//                    rdp_computer_name.prop('disabled', true);
-//                    rdp_computer_user.prop('disabled', true);
-//                    rdp_computer_password.prop('disabled', true);
                     rdp_computer_name.removeAttr('required');
                     rdp_computer_user.removeAttr('required');
                     rdp_computer_password.removeAttr('required');
                 } else {
                     $('#wraprdpfields').css("display", "block");
-//                    rdp_computer_name.prop('readonly', false);
-//                    rdp_computer_password.prop('readonly', false);
-//                    rdp_computer_user.prop('readonly', false);
-//                    rdp_computer_name.prop('disabled', false);
-//                    rdp_computer_user.prop('disabled', false);
-//                    rdp_computer_password.prop('disabled', false);
                     rdp_computer_name.attr('required','required');
                     rdp_computer_user.attr('required','required');
                     rdp_computer_password.attr('required','required');
@@ -448,27 +429,7 @@
                 reInitParsley();
             });
 
-//            $("[id='toggle_trigger_4']").on('switchChange.bootstrapSwitch', function (event, state) {
-//                var teamviewer_id = $('input[name="teamviewer_id"]');
-//                var teamviewer_passowrd = $('input[name="teamviewer_passowrd"]');
-//                if (state == false) {
-//                    teamviewer_id.prop('readonly', true);
-//                    teamviewer_passowrd.prop('readonly', true);
-//                    teamviewer_id.prop('disabled', true);
-//                    teamviewer_passowrd.prop('disabled', true);
-//                    teamviewer_id.removeAttr('required');
-//                    teamviewer_passowrd.removeAttr('required');
-//                } else {
-//                    teamviewer_id.prop('readonly', false);
-//                    teamviewer_passowrd.prop('readonly', false);
-//                    teamviewer_id.prop('disabled', false);
-//                    teamviewer_passowrd.prop('disabled', false);
-//
-//                    teamviewer_id.attr('required','required');
-//                    teamviewer_passowrd.attr('required','required');
-//                }
-//                reInitParsley();
-//            });
+
             $("#location_id").jCombo(
                     "{{ URL::to('new-location-setup/comboselect?filter=location:id:location_name ') }}",
                     {

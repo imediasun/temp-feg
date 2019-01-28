@@ -10,10 +10,12 @@
 	outline: none;
 	z-index: 10052;
 	margin: 0;
+	width: 300px;
 }
 
 .ui-timepicker-wrapper.ui-timepicker-with-duration {
 	width: 13em;
+	width: 300px;
 }
 
 .ui-timepicker-wrapper.ui-timepicker-with-duration.ui-timepicker-step-30,
