@@ -9,21 +9,15 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'productsubtype/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'productsubtypeFormAjax')) !!}
+			{!! Form::open(array('url'=>'productsubtype/save/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'productsubtypeFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> Product Subtype</legend>
-				
+
 				  <div class="form-group  " >
-					<label for="Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}
-					</label>
 					<div class="col-md-6">
-					  {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
+					  {!! Form::text('id', $row['id'],array('class'=>'form-control hidden', 'placeholder'=>'',   )) !!}
 					 </div>
-				  </div> 
+				  </div>
 				  <div class="form-group  " >
 					<label for="Product Type" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Product Type', (isset($fields['product_type']['language'])? $fields['product_type']['language'] : array())) !!}
@@ -51,7 +45,7 @@
 					{!! SiteHelpers::activeLang('Request Type Id', (isset($fields['request_type_id']['language'])? $fields['request_type_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('request_type_id', $row['request_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::select('request_type_id', \Illuminate\Support\Facades\DB::table('order_type')->where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type','id'), $row['request_type_id'],array('class'=>'form-control', 'placeholder'=>'Select Order Type',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -140,6 +134,6 @@ function showResponse(data)  {
 		$('.ajaxLoading').hide();
 		return false;
 	}	
-}			 
+}
 
 </script>		 

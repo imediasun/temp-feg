@@ -217,17 +217,19 @@
                     <div class="col-md-12">
                         <p style="font-size: 140%">Do you want &nbsp;&nbsp;&nbsp;<b><span id="thisProductSubtype">this Product Sub type</span></b>&nbsp;&nbsp;&nbsp; to be removed?</p>
                         {{--<p style="font-size: 120%">If yes please select another Sub Type to change the Category of associated Products.</p>--}}
-                        <p style="font-size: 120%">Following are some of the products related to this sub type.</p>
-                        <ul id="listOfProducts" class="list-group list-group-striped">
-                            <li>Product 1</li>
-                            <li>Product 2</li>
-                            <li>Product 3</li>
-                            <li>Product 4</li>
-                        </ul>
-                        <p style="font-size: 120%">If yes please select another Sub Type to change the Category of associated Products.</p>
+                        <div class="showIfSubTypeHasAnyProductsAssociated">
+                            <p style="font-size: 120%">Following are some of the products related to this sub type.</p>
+                            <ul id="listOfProducts" class="list-group list-group-striped">
+                                <li>Product 1</li>
+                                <li>Product 2</li>
+                                <li>Product 3</li>
+                                <li>Product 4</li>
+                            </ul>
+                            <p style="font-size: 120%">If yes please select another Sub Type to change the Category of associated Products.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group showIfSubTypeHasAnyProductsAssociated">
                     <label class="control-label col-md-4" for="message">New Product Subtype</label>
                     <div class="col-md-8">
                         <select class="form-control" cols="5" rows="6" name="newProductSubtype" id="newProductSubtype"/>
@@ -318,6 +320,12 @@
             success: function (data) {
                 $('.ajaxLoading').hide();
                 $('#listOfProducts').html('');
+
+                if(Object.values(data.products).length >= 1)
+                    $('.showIfSubTypeHasAnyProductsAssociated').show();
+                else
+                    $('.showIfSubTypeHasAnyProductsAssociated').hide();
+
                 $.each(data.products, function (key, val) {
                     $('#listOfProducts').append('<li>'+val+'</li>');
                 });
@@ -339,7 +347,7 @@
     });
 
     function removeDeletedProductSubType(){
-        $('select[name="product_type"]').jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:id:product_type') }}&limit=WHERE:deleted_at:is:NULL",
+        $('select[name="product_type"]').jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:product_type:product_type') }}&limit=WHERE:deleted_at:is:NULL",
             {
                 initial_text: 'Select Product Type'
             });
