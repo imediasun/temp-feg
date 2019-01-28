@@ -71,7 +71,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Windows Password', (isset($fields['windows_user_password']['language'])? $fields['windows_user_password']['language'] : array())) }}
 						</td>
-						<td><span id="wpass">{{$row->windows_user_password }}</span><a href="javascript:void(0);" onclick="togglePasswords(this,'wpass',false,'wndows')" style="float: right" class="btn btn-sm btn-primary">Show Password </a> </td>
+						<td><span id="wpass">{{$row->windows_user_password }}</span>@if($row->windows_user_password)<a href="javascript:void(0);" onclick="togglePasswords(this,'wpass',false,'wndows')" style="float: right" class="btn btn-sm btn-primary">Show Password </a>@endif</td>
 						
 					</tr>
 				<?php }?>
@@ -102,7 +102,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Password', (isset($fields['rdp_computer_password']['language'])? $fields['rdp_computer_password']['language'] : array())) }}
 						</td>
-						<td ><span id="rdpass">{{ $row->rdp_computer_password }}</span> <a href="javascript:void(0);" onclick="togglePasswords(this,'rdpass',false,'rdp')" style="float: right" class="btn btn-sm btn-primary">Show Password </a></td>
+						<td ><span id="rdpass">{{ $row->rdp_computer_password }}</span>@if($row->rdp_computer_password) <a href="javascript:void(0);" onclick="togglePasswords(this,'rdpass',false,'rdp')" style="float: right" class="btn btn-sm btn-primary">Show Password </a>@endif</td>
 
 					</tr>
 			<?php } ?>
@@ -124,7 +124,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('VM Password', (isset($fields['vm_password']['language'])? $fields['vm_password']['language'] : array())) }}
 						</td>
-						<td ><span id="vmpass">{{ $row->vm_password }}</span> <a href="javascript:void(0);" onclick="togglePasswords(this,'vmpass',false,'vmpass')"style="float: right" class="btn btn-sm btn-primary">Show Password </a></td>
+						<td ><span id="vmpass">{{ $row->vm_password }}</span> @if($row->vm_password) <a href="javascript:void(0);" onclick="togglePasswords(this,'vmpass',false,'vmpass')"style="float: right" class="btn btn-sm btn-primary">Show Password </a>@endif</td>
 					</tr>
 					<tr>
 						<td width='30%' class='label-view text-right'>
@@ -137,13 +137,13 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Sync Time', (isset($fields['sync_time']['language'])? $fields['sync_time']['language'] : array())) }}
 						</td>
-						<td>{{ $row->sync_time=='00:00:00' ? '-' :$row->sync_time }} {{ $row->sync_time_zone }}</td>
+						<td>{{ $row->sync_time==null ? '-' :$row->sync_time }} {{ $row->sync_time_zone }}</td>
 
 					</tr><tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Sync Difference', (isset($fields['sync_difference']['language'])? $fields['sync_difference']['language'] : array())) }}
 						</td>
-						<td>{{ $row->sync_difference=='00:00:00'? '-' :$row->sync_difference }}</td>
+						<td>{{ $row->sync_difference==null? '-' :$row->sync_difference }}</td>
 
 					</tr>
 
@@ -167,6 +167,7 @@
 
 	function togglePasswords(obj,span,isEncrypted,field){
 		var password = '';
+
 		if(($.trim(passwords[field].encrypted)).length < 1){
 			return false;
 		}
