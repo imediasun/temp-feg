@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\ExtractGoogleDriveFiles;
 use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -32,6 +33,9 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\VendorImportProduct::class,
         \App\Console\Commands\SendVendorScheduleEmails::class,
         \App\Console\Commands\CheckEnvConfiguration::class,
+        \App\Console\Commands\ExtractGoogleDriveFiles::class,
+        \App\Console\Commands\ExtractGoogleDriveLoctionsReports::class,
+        \App\Console\Commands\RefreshGoogleDriveAccessToken::class
     ];
 
     /**
@@ -63,5 +67,12 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('env:checkenv')->daily();
 
+//        $schedule->command('extract:googledrivefiles Daily')->daily();//Get Daily google drive files
+//        $schedule->command('extract:googledrivefiles Weekly')->weekly();//Get Daily google drive files
+//        $schedule->command('extract:googledrivefiles Monthly')->monthly();//Get Daily google drive files
+//        $schedule->command('extract:googledrivefiles 13Weeks')->weekly();//Get Daily google drive files
+//
+//        $schedule->command('extract:googledrivelocations')->weekly();//Get the google drive location files ID (Daily, weekly, monthly, 13 weeks)
+        //$schedule->command('refresh:googledriveaccesstoken')->cron('*/55 * * * *');//Refresh Google drive access token.
     }
 }

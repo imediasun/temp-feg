@@ -20,6 +20,7 @@ use App\Models\Ordertyperestrictions;
 use App\Models\OrderContent;
 use App\Models\product;
 use App\Models\OrderSendDetails;
+use App\Models\productlog;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
 use App\User;
@@ -3460,6 +3461,107 @@ ORDER BY aa_id");
         );
 
         return Response::json(['status'=>'success', 'message'=>'Inquire order email sent successfully!']);
+
+    }
+
+    public function postProductform(Request $request)
+    {
+
+        $vendorId = $request->input('vendor_id', 0);
+        $productTypeId = $request->input('prod_type_id', 0);
+        $itemName = $request->input('item_name', null);
+        $unitPrice = $request->input('unit_price', null);
+        $unitPrice = \CurrencyHelpers::formatPrice($unitPrice, 5, false);
+        $casePrice = $request->input('case_price', null);
+        $casePrice = \CurrencyHelpers::formatPrice($casePrice, 5, false);
+        $itemDescription = $request->input('item', null);
+        $this->data['rowId'] = $request->input('rowId', null);
+        $sku = $request->input('sku', null);
+        $errorMessage = "";
+        if (!$productTypeId) {
+            $errorMessage = '<li>Order Type is required</li>';
+        }
+
+        if (!$vendorId) {
+            $errorMessage .= '<li>Vendor is required</li>';
+        }
+
+        if ($sku == null || $sku == '') {
+            $errorMessage .= '<li>SKU is required</li>';
+        }
+        if ($itemName == null || $itemName == '') {
+            $errorMessage .= '<li>Item name is required</li>';
+        }
+        if (in_array($casePrice ,[null,'', '0','0.00',0])) {
+            $errorMessage .= '<li>Case Price is required</li>';
+        }
+        if (!empty($errorMessage)){
+             return response()->json(array(
+                        'message' => '<ul>'.$errorMessage."</li>",
+                        'status' => 'error'
+                    ));
+        }
+        $productController = new ProductController();
+        $this->info = $this->model->makeInfo($productController->module);
+        $this->access = $this->model->validAccess($productController->info['id']);
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $this->data['access'] = $this->access;
+        $this->data['fromOrder'] = 1;
+        $productModel = new product();
+
+
+        $id = 0;
+        $variations = [];
+        $row = $productModel->where('vendor_description', $itemName)->where('vendor_id', $vendorId)->where('sku', $sku)->first();
+        if ($row) {
+            $this->data['row'] = $row;
+            $columns = ['id', 'prod_type_id', 'prod_sub_type_id', 'retail_price', 'ticket_value', 'expense_category', 'is_default_expense_category'];
+
+            if (empty($row->variation_id)) {
+                $variations = [];
+            } else {
+                $variations = $productModel->select($columns)->where('variation_id', $row->variation_id)->get()->toArray();
+            }
+
+        } else {
+            $this->data['row'] = $productModel->getColumnTable('products');
+        }
+
+        if (empty($variations)) {
+            $variations[] = ['id' => 0, 'prod_type_id' => $productTypeId, 'prod_sub_type_id' => '', 'retail_price' => '', 'ticket_value' => '', 'expense_category' => '', 'is_default_expense_category' => 1];
+            $this->data['row']['vendor_description'] = $itemName;
+            $this->data['row']['vendor_id'] = $vendorId;
+            $this->data['row']['prod_type_id'] = $productTypeId;
+            $this->data['row']['sku'] = $sku;
+            $this->data['row']['num_items'] = 1;
+            $this->data['row']['unit_price'] = $casePrice;
+            $this->data['row']['case_price'] = $casePrice;
+            $this->data['row']['item_description'] = $itemDescription;
+            $this->data['actionUrl'] = 'product/save/' . $row['id'];
+        } else {
+            $itemMatch = $productModel->where('vendor_description', $itemName)->where('vendor_id', $vendorId)->where('prod_type_id', $productTypeId)->first();
+            if (!$itemMatch) {
+                $variations[] = ['id' => 0, 'prod_type_id' => $productTypeId, 'prod_sub_type_id' => '', 'retail_price' => '', 'ticket_value' => '', 'expense_category' => '', 'is_default_expense_category' => 0];
+            }
+            $this->data['actionUrl'] = 'product/saveupdated';
+        }
+        $this->data['variations'] = $variations;
+
+        $this->data['row']['case_price'] = \CurrencyHelpers::formatPrice($this->data['row']['case_price'], 5, false);
+        $this->data['row']['unit_price'] = \CurrencyHelpers::formatPrice($this->data['row']['unit_price'], 5, false);
+
+        $this->data['id'] = $id;
+        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
+        $this->data['excludedProductTypes'] = implode(',', $excludedOrderTypesArray);
+        $productTypes = Ordertyperestrictions::where('can_request', 1);
+        if (!empty($excludedOrderTypesArray)) {
+            $productTypes->whereNotIn('id', $excludedOrderTypesArray);
+        }
+        $this->data['productTypes'] = $productTypes->orderBy('order_type', 'asc')->get()->toArray();
+        $this->data['access'] = $this->access;
+
+        return view('order.freehand-product-form', $this->data);
 
     }
 
