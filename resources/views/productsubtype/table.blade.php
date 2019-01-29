@@ -147,7 +147,7 @@
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                {!! $value !!}
+                                {!! str_replace("\'", "'",$value) !!}
                             </td>
                         @endif
                         <?php
@@ -157,7 +157,7 @@
                         @if($setting['disablerowactions']=='false')
                             <td data-values="action" data-key="<?php echo $row->id;?>">
                                 {!! AjaxHelpers::buttonAction('productsubtype',$access,$id ,$setting) !!}
-                                <a  onclick="deleteProductSubtype('{{ URL::to('productsubtype/removal/'.$row->id)}}', '{{$row->type_description}}', '{{$row->id}}')"
+                                <a  onclick='deleteProductSubtype("{{ URL::to('productsubtype/removal/'.$row->id)}}", "{{$row->type_description}}", "{{$row->id}}")'
                                     data-id="{{$row->id}}"
                                     data-action="removal"
                                     class="tips btn btn-xs btn-white productsubtypeRemovalRequestAction"
@@ -323,6 +323,7 @@
             success: function (data) {
                 $('.ajaxLoading').hide();
                 $('#listOfProducts').html('');
+                var newProductSubtype = $("select[name='newProductSubtype']");
 
                 if(Object.values(data.products).length >= 1)
                     $('.showIfSubTypeHasAnyProductsAssociated').show();
@@ -335,7 +336,9 @@
                 $('#removeProductSubtypeModal').modal('show');
                 $('#removeProductSubtypeFormAjax').attr('action', url);
                 $('#thisProductSubtype').html(name);
-                $('#newProductSubtype').jCombo("{{ URL::to('productsubtype/comboselect?filter=product_type:id:type_description') }}"+"&parent=request_type_id:"+data.product_type_id, {selected_value: ''});
+                newProductSubtype.jCombo("{{ URL::to('productsubtype/comboselect?filter=product_type:id:type_description') }}"
+                    +"&parent=request_type_id:"+data.product_type_id, {selected_value: '', excludeItems: [id]});
+                newProductSubtype.select2();
             },
             error: function (exception) {
                 console.log(exception);

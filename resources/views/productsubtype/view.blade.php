@@ -41,7 +41,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Request Type Id', (isset($fields['request_type_id']['language'])? $fields['request_type_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row->request_type_id }} </td>
+						<td>{{ \App\Models\Ordertyperestrictions::find($row->request_type_id) ? \App\Models\Ordertyperestrictions::find($row->request_type_id)->order_type : "No Data" }} </td>
 						
 					</tr>
 				

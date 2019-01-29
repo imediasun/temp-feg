@@ -308,4 +308,45 @@ class ProductsubtypeController extends Controller
 
     }
 
+    public function postProductsubtypesAlreadyDeleted(Request $request){
+        $productsubtype = $request->input('productsubtype');
+        $ordertype = $request->input('ordertype');
+
+        $productsubtypeNotDeleted = $this->model->where('product_type', $productsubtype)->where('request_type_id', $ordertype)->first();
+
+        if($productsubtypeNotDeleted){
+            return [
+                'status'=>'error',
+                'message'=>'Product SubType Already exists'
+            ];
+        }
+
+        $query = $this->model->onlyTrashed()->where('product_type', $productsubtype)->where('request_type_id', $ordertype);
+        $alreadyDeletedRecord = $query->first();
+
+        return [
+            'status'=>'success',
+            'count'=>$query->count(),
+            'alreadyDeletedRecord'=>$alreadyDeletedRecord
+        ];
+    }
+
+    public function postReactivateProductSubtype(Request $request, $id){
+        $productSubType = productsubtype::onlyTrashed()->where('id', $id)->first();
+
+        $isRestored = 'error';
+        $message = \Lang::get('core.reactivation_failure');
+        if($productSubType){
+            $productSubType->restore();
+
+            $isRestored = 'success';
+            $message = \Lang::get('core.reactivation_success');
+        }
+
+        return response()->json(array(
+            'status' => $isRestored,
+            'message' => $message
+        ));
+    }
+
 }

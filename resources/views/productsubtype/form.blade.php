@@ -61,7 +61,7 @@
 			<div class="form-group">
 				<label class="col-sm-4 text-right">&nbsp;</label>
 				<div class="col-sm-8">	
-					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
+					<button type="button" class="btn btn-primary btn-sm " id="submitForm"><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			
 			</div> 		 
@@ -71,11 +71,41 @@
 @if($setting['form-method'] =='native')
 	</div>	
 </div>	
-@endif	
+@endif
 
-	
-</div>	
-			 
+<div class="modal" id="reactivateDeletedSubTypeModal" role="dialog">
+	<div class="modal-dialog" style="width: 650px">
+		<!-- Modal content-->
+		<div id="mycontent" class="modal-content">
+			<div id="myheader" class="modal-header">
+				<button type="button " class="btn-xs collapse-close btn btn-danger pull-right"
+						data-dismiss="modal" aria-hidden="true"><i class="fa fa fa-times"></i>
+				</button>
+				<h4>Re-activate Product Subtype</h4>
+			</div>
+			<div class="modal-body col-md-12">
+				{!! Form::open(array('url'=>'','class'=>'form-horizontal',
+				'parsley-validate'=>'','novalidate'=>'', 'id'=>'reactivateProductSubtypeFormAjax')) !!}
+					<div class="col-md-12">
+						{{csrf_field()}}
+						<p style="font-size: 140%">Do you want &nbsp;&nbsp;&nbsp;<b><span id="thisProductSubtype">this Product Sub type</span></b>&nbsp;&nbsp;&nbsp; to be re-activated?</p>
+						<div class="form-group" style="margin-top:10px;">
+							<button type="button" onclick="reactivateTheDeletedProductSubtype()" name="submit"  style="float: right" class=" btn  btn-lg btn-success" title="REACTIVATE PRODUCT SUBTYPE" id="reactivate_product_subtype">
+								<i class="fa  fa-trash" aria-hidden="true"></i>
+								&nbsp {{ Lang::get('core.sb_reactivate_product_subtype') }}
+							</button>
+						</div>
+					</div>
+				{!! Form::close() !!}
+			</div>
+			<div class="clearfix"></div>
+
+		</div>
+
+	</div>
+</div>
+</div>
+
 <script type="text/javascript">
 $(document).ready(function() { 
 	 
@@ -136,4 +166,58 @@ function showResponse(data)  {
 	}	
 }
 
+$('#submitForm').on('click', function(){
+    var productSubtypeName = $('input[name="product_type"]').val();
+    var orderType = $('select[name="request_type_id"]').val();
+    $.ajax({
+        url: "{{ URL::to('productsubtype/productsubtypes-already-deleted') }}",
+        type: "POST",
+		data: {
+          	'productsubtype': productSubtypeName,
+			'ordertype':orderType
+		},
+        beforeSend: function(){
+            $('.ajaxLoading').show();
+        },
+        success: function (data) {
+            $('.ajaxLoading').hide();
+            if(data.status == 'success'){
+                if(data.count >= 1){
+                    populateTheAlreadyDeletedSubTypeModal(data.alreadyDeletedRecord, '#reactivateDeletedSubTypeModal');
+                }else{
+                    $('#productsubtypeFormAjax').submit();
+                }
+			}else{
+                notyMessage(data.message, [], data.status);
+			}
+		},
+        error: function (exception) {
+            $('.ajaxLoading').hide();
+            console.log(exception);
+        }
+    });
+});
+
+function populateTheAlreadyDeletedSubTypeModal(alreadyDeletedRecord, modalId){
+	$('#thisProductSubtype').html(alreadyDeletedRecord.type_description);
+	$('#reactivateProductSubtypeFormAjax').attr('action', '{{ URL::to('productsubtype/reactivate-product-subtype') }}/'+alreadyDeletedRecord.id);
+	$(modalId).modal('show');
+}
+function reactivateTheDeletedProductSubtype(){
+    var url = $('#reactivateProductSubtypeFormAjax').attr('action');
+    $.ajax({
+		url: url,
+		type: "POST",
+		success: function (data) {
+            notyMessage(data.message, [], data.status);
+            $('#reactivateDeletedSubTypeModal').modal('hide');
+			console.log(data);
+        },
+		error: function (exception) {
+            $('.ajaxLoading').hide();
+            $('#reactivateDeletedSubTypeModal').modal('hide');
+            console.log(exception);
+        }
+	})
+}
 </script>		 
