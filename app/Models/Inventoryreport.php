@@ -176,7 +176,7 @@ class inventoryreport extends Sximo  {
             Case_Price,
             IF(prod_type_id IN (".$casePriceCats."),IF(is_broken_case,SUM(FORMAT(Unit_Price_ORIGNAL* qty,10)),SUM(Case_Price_ORIGNAL * qty)),SUM(Unit_Price_ORIGNAL*qty)) AS Total_Spent,
             start_date,end_date
-            ,qty_per_case,prod_type_id,prod_sub_type_id,
+            ,qty_per_case,prod_type_id,prod_sub_type_id,updated_prod_sub_type_id,
             IF(is_broken_case=0 OR is_broken_case IS NULL,'NO','YES') AS is_broken_case
              FROM ( 
                     SELECT P.id , O.id as orderId,
@@ -204,7 +204,8 @@ class inventoryreport extends Sximo  {
                     O.location_id,
                     L.location_name,
                     O.created_at AS start_date,
-                    O.created_at AS end_date
+                    O.created_at AS end_date,
+                    OC.updated_prod_sub_type_id
                         ";
             $mainQueryEnd  = " ) AS t ";
             //$orderBy = " ORDER BY P.id ASC LIMIT 0 , 20000000000000";
@@ -313,7 +314,18 @@ class inventoryreport extends Sximo  {
         $subTypes = explode(',',$prod_sub_type_ids);
         $rowCollection = collect($rows);
         $rowCollection = $rowCollection->keyBy('unique_column');
+
         if (!empty($prod_sub_type_ids) && !empty($prod_type_ids)) {
+
+            foreach ($rowCollection as $row)
+            {
+                if(!in_array($row->prod_sub_type_id,$subTypes) && !in_array($row->updated_prod_sub_type_id,$subTypes)){
+                    $rowCollection->forget($row->unique_column);
+                }
+            }
+            /*
+            this code has been refactored by above loop. 1/29/2019 complex logic was written to exclude all items
+            which do not belongs to submitted sub type
             foreach ($types as $prodType)
             {
                 $haveSubTypes = \DB::table('product_type')->where('request_type_id',$prodType)->whereIn('id',$subTypes)->lists('id');
@@ -324,6 +336,8 @@ class inventoryreport extends Sximo  {
                     {
                         if($row->prod_type_id == $prodType)
                         {
+                            var_dump(in_array($row->prod_sub_type_id,$prodSubTypes));
+                            var_dump(!in_array($row->prod_sub_type_id,$subTypes));
                             if(in_array($row->prod_sub_type_id,$prodSubTypes) || empty($row->prod_sub_type_id) || !in_array($row->prod_sub_type_id,$subTypes))
                             {
                                 $rowCollection->forget($row->unique_column);
@@ -333,6 +347,7 @@ class inventoryreport extends Sximo  {
                     }
                 }
             }
+            */
         }
         $results = $rowCollection->toArray();
         return $results;
