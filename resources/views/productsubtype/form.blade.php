@@ -169,12 +169,14 @@ function showResponse(data)  {
 $('#submitForm').on('click', function(){
     var productSubtypeName = $('input[name="product_type"]').val();
     var orderType = $('select[name="request_type_id"]').val();
+    var id = $('input[name="id"]').val();
     $.ajax({
         url: "{{ URL::to('productsubtype/productsubtypes-already-deleted') }}",
         type: "POST",
 		data: {
           	'productsubtype': productSubtypeName,
-			'ordertype':orderType
+			'ordertype':orderType,
+			'id':id
 		},
         beforeSend: function(){
             $('.ajaxLoading').show();

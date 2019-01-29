@@ -311,8 +311,12 @@ class ProductsubtypeController extends Controller
     public function postProductsubtypesAlreadyDeleted(Request $request){
         $productsubtype = $request->input('productsubtype');
         $ordertype = $request->input('ordertype');
+        $id = $request->input('id');
 
-        $productsubtypeNotDeleted = $this->model->where('product_type', $productsubtype)->where('request_type_id', $ordertype)->first();
+        $productsubtypeNotDeleted = $this->model->where('id', '!=', $id)
+            ->where('product_type', 'LIKE', "%".$productsubtype."%")
+            ->where('request_type_id', $ordertype)
+            ->first();
 
         if($productsubtypeNotDeleted){
             return [
@@ -321,7 +325,10 @@ class ProductsubtypeController extends Controller
             ];
         }
 
-        $query = $this->model->onlyTrashed()->where('product_type', $productsubtype)->where('request_type_id', $ordertype);
+        $query = $this->model->onlyTrashed()
+            ->where('product_type', 'LIKE', "%".$productsubtype."%")
+            ->where('request_type_id', $ordertype);
+
         $alreadyDeletedRecord = $query->first();
 
         return [
