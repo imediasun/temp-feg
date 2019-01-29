@@ -689,7 +689,7 @@ class ProductController extends Controller
                         "product_id" => $id,
                         "adjustment_amount" => $NewReservedQty,
                         "adjustment_type" => $type,
-                        "reaserved_qty_reason" => $reason,
+                        "reserved_qty_reason" => $reason,
                         "variation_id" => !empty($Product->variation_id) ? $Product->variation_id:null,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
