@@ -175,7 +175,12 @@ class ProductsubtypeController extends Controller
             product::where('prod_sub_type_id', $productSubtypeId)
                 ->update([
                     'prod_sub_type_id'=>$newProductSubtype
-                    //,'prod_type_id'=>$productSubtype->request_type_id
+                ]);
+            DB::table('order_contents')
+                ->where('prod_sub_type_id', $productSubtypeId)
+                ->orWhere('updated_prod_sub_type_id', $productSubtypeId)
+                ->update([
+                    'updated_prod_sub_type_id'=>$newProductSubtype
                 ]);
             productsubtype::where('id', $productSubtypeId)->delete();
         });
