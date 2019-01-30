@@ -1845,6 +1845,6 @@ if(!empty($removedItemIds)) {
 
     public function getFirstTenProductsBySubType($id){
         $productSubType = productsubtype::find($id);
-        return ['product_type_id'=>$productSubType->request_type_id, 'products'=>$this->model->where('prod_sub_type_id', $id)->take(10)->lists('item_description', 'id')];
+        return ['product_type_id'=>$productSubType->request_type_id, 'products'=>$this->model->where('prod_sub_type_id', $id)->take(10)->lists('vendor_description', 'id')];
     }
 }
