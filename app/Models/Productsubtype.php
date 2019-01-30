@@ -4,7 +4,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class productsubtype extends Sximo  {
+class Productsubtype extends Sximo  {
 	
 	protected $table = 'product_type';
 	protected $primaryKey = 'id';

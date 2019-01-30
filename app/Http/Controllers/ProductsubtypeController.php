@@ -167,7 +167,7 @@ class ProductsubtypeController extends Controller
          *  both the sub-type and product type for the products.
          */
         $newProductSubtype = $request->get('newProductSubtype');
-        //$productSubtype = productsubtype::find($newProductSubtype);
+        //$productSubtype = Productsubtype::find($newProductSubtype);
         DB::transaction(function() use (
             $productSubtypeId, $newProductSubtype
             //,$productSubtype
@@ -182,7 +182,7 @@ class ProductsubtypeController extends Controller
                 ->update([
                     'updated_prod_sub_type_id'=>$newProductSubtype
                 ]);
-            productsubtype::where('id', $productSubtypeId)->delete();
+            Productsubtype::where('id', $productSubtypeId)->delete();
         });
         return redirect()->back();
     }
@@ -344,7 +344,7 @@ class ProductsubtypeController extends Controller
     }
 
     public function postReactivateProductSubtype(Request $request, $id){
-        $productSubType = productsubtype::onlyTrashed()->where('id', $id)->first();
+        $productSubType = Productsubtype::onlyTrashed()->where('id', $id)->first();
 
         $isRestored = 'error';
         $message = \Lang::get('core.reactivation_failure');

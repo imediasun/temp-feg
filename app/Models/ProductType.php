@@ -15,6 +15,6 @@ class ProductType extends Sximo
     protected $dates = ['deleted_at'];
     /**
      *  If you want to change anything in this class please change in its parent
-     *  App\Models\productsubtype
+     *  App\Models\Productsubtype
      */
 }
