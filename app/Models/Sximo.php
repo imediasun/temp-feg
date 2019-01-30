@@ -448,20 +448,61 @@ class Sximo extends Model {
 
     function validAccess($id) {
 
+
         $row = \DB::table('tb_groups_access')->where('module_id', '=', $id)
-                ->where('group_id', '=', \Session::get('gid'))
-                ->get();
+            ->where('group_id', '=', \Session::get('gid'))
+            ->get();
+        $userRow = \DB::table('tb_users_access')->where('module_id', '=', $id)
+            ->where('user_id', '=', \Session::get('uid'))
+            ->first();
+        $groupAccessData = array();
+        $userAccessData = array();
+        $noGRoupAcces = false;
+        $noUserAccess = false;
+
+        if(count($userRow) >= 1){
+            if ($userRow->user_access_data != '') {
+                $userAccessData = json_decode($userRow->user_access_data, true);
+            } else {
+                $userAccessData = array();
+            }
+        }
+        else
+        {
+            $noUserAccess = true;
+        }
 
         if (count($row) >= 1) {
             $row = $row[0];
             if ($row->access_data != '') {
-                $data = json_decode($row->access_data, true);
+                $groupAccessData = json_decode($row->access_data, true);
             } else {
-                $data = array();
+                $groupAccessData = array();
             }
-            return $data;
         } else {
+
+            $noGRoupAcces = true;
+        }
+
+        if($noGRoupAcces && $noUserAccess){
             return false;
+        }
+        else
+        {
+            $result = [];
+            foreach($groupAccessData as $key => $value){
+                if(isset($groupAccessData[$key]) && isset($userAccessData[$key])){
+                    $result[$key] = $groupAccessData[$key] || $userAccessData[$key];
+                    $result[$key] = empty($result[$key]) ? 0 : $result[$key];
+                }
+                else
+                {
+                    //in case no permission does not exists for group or user then make that permission 0
+                    //@todo need to recheck this code again
+                    $result[$key] = 0;
+                }
+            }
+            return array_merge($userAccessData,$groupAccessData);
         }
     }
 

@@ -6,6 +6,7 @@ use App\Models\Sximo\Module;
 use App\Library\ZipHelpers as helper;
 use App\Library\SximoHelpers;
 use App\Http\Controllers\controller;
+use App\User;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect, Exception;
 
@@ -737,7 +738,7 @@ class ModuleController extends Controller
 
         $this->data['tables'] = Module::getTableList($this->db);
         $this->data['f'] = $f;
-        $this->data['module_id'] = $id;
+        $this->data ['module_id'] = $id;
 
         $this->data['module'] = 'module';
         $this->data['module_name'] = $row->module_name;
@@ -990,7 +991,17 @@ class ModuleController extends Controller
         }
         $this->data['tasks'] = $tasks;
         $this->data['groups'] = \DB::table('tb_groups')->get();
+        $usersAccessData = \DB::table('tb_users_access')->where('module_id', $row->module_id)->get();
+        $users = array();
+        foreach ($usersAccessData as $key=> $data){
+            $users[$key]['user_id'] = $data->user_id;
+            $name = User::select(\DB::raw('CONCAT(first_name," ",last_name) as name'))
+                ->where('id', $data->user_id)->first();
+            $users[$key]['user_name'] = $name['name'];
+            $users[$key]['access_data'] = (isset($data->user_access_data) ? json_decode($data->user_access_data, true) : array());
+        }
 
+        $this->data['users'] = $users;
         $access = array();
         foreach ($this->data['groups'] as $r) {
             //    $GA = $this->model->gAccessss($this->uri->rsegment(3),$row['group_id']);
@@ -1012,9 +1023,8 @@ class ModuleController extends Controller
                 }
             }
             $access[$r->name] = $rows;
-
-
         }
+
         $this->data['access'] = $access;
         $this->data['groups_access'] = \DB::select("select * from tb_groups_access where module_id ='" . $row->module_id . "'");
 
@@ -1077,6 +1087,8 @@ class ModuleController extends Controller
                 $arr[$t] = (isset($_POST[$t][$id]) ? "1" : "0");
 
             }
+//
+
             $mapPermissions[$group_id] = $arr['is_view'];
             $permissions = json_encode($arr);
 
@@ -1087,6 +1099,34 @@ class ModuleController extends Controller
                 "group_id" => $groupID[$i],
             );
             \DB::table('tb_groups_access')->insert($data);
+        }
+        //custom code starts here
+
+        $groupID = $request->input('user_ids');
+
+        for ($i = 0; $i < count($groupID); $i++) {
+            // remove current group_access
+            $group_id = $groupID[$i];
+            \DB::table('tb_users_access')
+                ->where('module_id', '=', $request->input('module_id'))
+                ->where('user_id', '=', $group_id)
+                ->delete();
+
+            $arr = array();
+            $id = $groupID[$i];
+            foreach ($tasks as $t => $v) {
+                $arr[$t] = (isset($_POST[$t]["user"][$id]) ? "1" : "0");
+            }
+            $mapPermissions[$group_id] = $arr['is_view'];
+            $permissions = json_encode($arr);
+
+            $data = array
+            (
+                "user_access_data" => $permissions,
+                "module_id" => $request->input('module_id'),
+                "user_id" => $groupID[$i], //change
+            );
+            \DB::table('tb_users_access')->insert($data);
         }
 
         $moduleName = Module::where('module_id',$moduleId)
@@ -2260,7 +2300,18 @@ class ModuleController extends Controller
 //        }
         
     }
-    
+    public function postDeletePermission(Request $request){
+        try{
+            $record =  \DB::table('tb_users_access')
+                ->where('user_id', $request->id)
+                ->delete();
+            return response()->json(
+                ['status'=>200]
+            );
+        }catch (\Exception $e){
+            return response()->json(['status'], $e->getCode());
+        }
+    }
     function postDeleteSpecialPermissions(Request $request, $moduleName) {
         if ($request->has('deletedIds')) {
             $ids = $request->get('deletedIds');
