@@ -1545,4 +1545,23 @@ class order extends Sximo
         $string = str_replace(["&",",",'"'],"",$string);
         return $string; //$this->truncateString($string, $length);
     }
+
+    /**
+     * @param $items
+     * @param $productId
+     * @return int
+     */
+    public function getMatchedElement($items, $productId)
+    {
+        if ($items) {
+            foreach ($items as $item) {
+                if ($item['product_id'] == $productId) {
+                    return $item['is_broken_case'];
+                }
+            }
+        } else {
+            return 0;
+        }
+        return 0;
+    }
 }

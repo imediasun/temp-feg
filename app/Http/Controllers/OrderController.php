@@ -811,7 +811,6 @@ class OrderController extends Controller
             $po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
             $isOrderContentPreBroken = OrderContent::where('order_id',$order_id)->whereIn('product_id', is_array($productIdArray)? $productIdArray:[$productIdArray])->select('product_id','is_broken_case')->get()->toArray();
-
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
 
@@ -830,7 +829,7 @@ class OrderController extends Controller
                     $itemsPriceArray[$i] . ' ea. (SKU: ' . $skuNumArray[$i] . ')';
             }
             if ($is_freehand == 0) {
-                $validationResponse = $this->validateProductForReserveQty($request);
+                $validationResponse = $this->validateProductForReserveQty($request,$isOrderContentPreBroken);
 
                 if (!empty($validationResponse) && $validationResponse['error'] == true) {
                     return response()->json(array(
@@ -1179,7 +1178,7 @@ class OrderController extends Controller
 
     }
 
-    public function validateProductForReserveQty($request)
+    public function validateProductForReserveQty($request,$isOrderContentPreBroken)
     {
         $item_names = $request->input('item_name');
         $productInformation = [];
@@ -1190,6 +1189,7 @@ class OrderController extends Controller
                 $product->qty = $request->input('qty')[$i];
                 $product->prev_qty = $request->input('prev_qty')[$i];
                 $product->product_is_broken_case = $request->input('is_broken_case')[$i];
+                $product->isPreIsBrokenCase = $this->model->getMatchedElement($isOrderContentPreBroken,$request->input('product_id')[$i]);
                 $product->order_product_id = ($request->input('product_id')[$i] == $product->id) ? $request->input('product_id')[$i] : 0;
                 $productInformation[] = $product;
             }
