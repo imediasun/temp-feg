@@ -300,6 +300,7 @@ GROUP BY mapped_expense_category");
         $vendor = vendor::select("*")->where(function ($query) use($fromEmail){
             $query->where('email',$fromEmail);
             $query->orWhere('email_2',$fromEmail);
+            $query->orWhere('games_contact_email',$fromEmail);
         })->get();
         return $vendor->count();
     }
@@ -312,6 +313,7 @@ GROUP BY mapped_expense_category");
         $vendor = vendor::select("*")->where(function ($query) use($fromEmail){
             $query->where('email',$fromEmail);
             $query->orWhere('email_2',$fromEmail);
+            $query->orWhere('games_contact_email',$fromEmail);
         })->first();
         return $vendor;
     }
@@ -326,9 +328,10 @@ GROUP BY mapped_expense_category");
         $vendor = '';
         //if email id exist against single vendor
         if($vendorCount == 1){
-            $vendor = vendor::select("id",'vendor_name','email','email_2','ismerch','isgame')->where(function ($query) use($fromEmail){
+            $vendor = vendor::select("id",'vendor_name','email','email_2','games_contact_email','ismerch','isgame')->where(function ($query) use($fromEmail){
                 $query->where('email',$fromEmail);
                 $query->orWhere('email_2',$fromEmail);
+                $query->orWhere('games_contact_email',$fromEmail);
             })->first();
         }else{//If multiple vendors exist with same email id.
             $vendorId = $dataArray['vendor_id'];
@@ -533,7 +536,20 @@ GROUP BY mapped_expense_category");
         $sendEmailFromMerchandise = false;
         $from = 'vendor.products@fegllc.com';
         $to = $vendor->email ? $vendor->email:$vendor->email_2;
-
+//        games_contact_email
+        $vendorEmail = '';
+        if(!empty($vendor->email) && $vendor->email !='') {
+            $to[] = $vendor->email; //get vendor mail address one
+        }
+        if(!empty($vendor->email_2) && $vendor->email_2 !='') {
+            $to[] = $vendor->email_2; //get vendor mail address one
+        }
+        if(!empty($to)) {
+            if (count($to) > 1) {
+                $to = array_unique($to);
+            }
+        }
+        $to = !empty($to) ? implode(',',$to):$to;
         $basename = basename($file_to_save);
         $fileName = $basename;
 
@@ -575,6 +591,7 @@ GROUP BY mapped_expense_category");
         if ($vendor->isgame == 1){
             $configName = 'Send Product Export To Game Vendor';
             $recipients =  FEGSystemHelper::getSystemEmailRecipients($configName);
+            $to = $vendor->games_contact_email;
             if(!empty($to)){
                 $recipients['to'].= ','.$to;
             }
