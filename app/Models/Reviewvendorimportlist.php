@@ -535,7 +535,7 @@ GROUP BY mapped_expense_category");
 
         $sendEmailFromMerchandise = false;
         $from = 'vendor.products@fegllc.com';
-        $to = $vendor->email ? $vendor->email:$vendor->email_2;
+        $to = ''; //$vendor->email ? $vendor->email:$vendor->email_2;
 //        games_contact_email
         $vendorEmail = '';
         if(!empty($vendor->email) && $vendor->email !='') {
