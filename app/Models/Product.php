@@ -898,6 +898,16 @@ WHERE orders.is_api_visible = 1
             $ReservedQtyLog = new ReservedQtyLog();
             $reservedLogData = [
                 "product_id" => $item->id,
+                "adjustment_amount" => $item->reserved_qty/$item->num_items,
+                "adjustment_type" => 'negative',
+                "reserved_qty_reason" => '---System Generated Log--- <br> Remove all reserved Qty before converting reserved Qty from Cases to Units.',
+                "variation_id" => !empty($item->variation_id) ? $item->variation_id:null,
+                "adjusted_by" => Session::get('uid'),
+            ];
+            $ReservedQtyLog->insertRow($reservedLogData, 0);
+
+            $reservedLogData = [
+                "product_id" => $item->id,
                 "adjustment_amount" => $item->reserved_qty,
                 "adjustment_type" => 'positive',
                 "reserved_qty_reason" => '---System Generated Log--- <br> Reserved Product Qty was converted from Case Qty to Unit Qty.',
