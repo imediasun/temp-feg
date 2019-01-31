@@ -872,8 +872,10 @@ WHERE orders.is_api_visible = 1
      * @param $items
      */
     public function convertReservedQty($items){
+        $prevQty = [];
         if($items->count() > 0){
             foreach($items as $item){
+                $prevQty[$item->id] = $item->reserved_qty;
                 $product  = self::where([
                     'vendor_description' => $item->vendor_description,
                     'sku' => $item->sku,
@@ -884,21 +886,21 @@ WHERE orders.is_api_visible = 1
                     'is_converted' => 1,
                 ]);
             }
-            $this->insertItemLog();
+            $this->insertItemLog($prevQty);
         }
     }
 
     /**
      * @description insertItemLog() method was written only for qty conversion script
      */
-    public function insertItemLog(){
+    public function insertItemLog($prevQty = []){
         $items = $this->getMerchandiseItems(1,false);
         foreach ($items as $item){
 
             $ReservedQtyLog = new ReservedQtyLog();
             $reservedLogData = [
                 "product_id" => $item->id,
-                "adjustment_amount" => $item->reserved_qty/$item->num_items,
+                "adjustment_amount" => isset($prevQty[$item->id])?$prevQty[$item->id]:0,
                 "adjustment_type" => 'negative',
                 "reserved_qty_reason" => '---System Generated Log--- <br> Remove all reserved Qty before converting reserved Qty from Cases to Units.',
                 "variation_id" => !empty($item->variation_id) ? $item->variation_id:null,
