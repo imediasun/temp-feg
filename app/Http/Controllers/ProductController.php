@@ -1851,8 +1851,12 @@ if(!empty($removedItemIds)) {
 
     }
 
-    public function getConvertitemreservedqty(){
-        $items = $this->model->getMerchandiseItems();
-        dd($items);
+    public function getConvertitemreservedqty($executeScript = 0){
+        if($executeScript) {
+            $items = $this->model->getMerchandiseItems();
+            $this->model->convertReservedQty($items);
+            die('Converted');
+        }
+        exit;
     }
 }

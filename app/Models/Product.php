@@ -846,32 +846,66 @@ WHERE orders.is_api_visible = 1
     }
 
     /**
+     * @param int $isConverted
+     * @param bool $isGroupBy
      * @return mixed
      */
-    public function getMerchandiseItems()
+    public function getMerchandiseItems($isConverted = 0,$isGroupBy = false)
     {
         $columns = [
-            'products.id',
-            'products.num_items',
-            'products.is_reserved',
-            'products.reserved_qty',
+            'products.*',
         ];
         $items = self::select($columns)->join('order_type','order_type.id','=','products.prod_type_id')
-            ->where('products.is_reserved','=',1)->where('products.is_converted','=',0)->whereIn('products.prod_type_id',[7,8,6,21,22,24])->get();
+            ->where('products.is_reserved','=',1)->where('products.is_converted','=',$isConverted)
+            ->whereIn('products.prod_type_id',[7,8,6,21,22,24]);
+        if($isGroupBy){
+            $items->groupby('products.vendor_description');
+            $items->groupby('products.sku');
+            $items->groupby('products.case_price');
+        }
+       $itemsQuery =  $items->get();
 
-        return $items;
+        return $itemsQuery;
     }
 
+    /**
+     * @param $items
+     */
     public function convertReservedQty($items){
         if($items->count() > 0){
             foreach($items as $item){
-                $product  = self::find($item->id);
-
-                $product->reserved_qty = $product->reserved_qty * $product->num_items;
-                $product->is_converted = 1;
-
-                $product->save();
+                $product  = self::where([
+                    'vendor_description' => $item->vendor_description,
+                    'sku' => $item->sku,
+                    'case_price' => $item->case_price,
+                    'is_converted' => 0,
+                ])->update([
+                    'reserved_qty' => ($item->reserved_qty * $item->num_items),
+                    'is_converted' => 1,
+                ]);
             }
+            $this->insertItemLog();
+        }
+    }
+
+    /**
+     * @description insertItemLog() method was written only for qty conversion script
+     */
+    public function insertItemLog(){
+        $items = $this->getMerchandiseItems(1,false);
+        foreach ($items as $item){
+
+            $ReservedQtyLog = new ReservedQtyLog();
+            $reservedLogData = [
+                "product_id" => $item->id,
+                "adjustment_amount" => ($item->reserved_qty/$item->num_items - $item->reserved_qty),
+                "adjustment_type" => 'positive',
+                "reserved_qty_reason" => '---System Generated Log--- <br> Reserved Product Qty was converted from Case Qty to Unit Qty.',
+                "variation_id" => !empty($item->variation_id) ? $item->variation_id:null,
+                "adjusted_by" => Session::get('uid'),
+            ];
+            $ReservedQtyLog->insertRow($reservedLogData, 0);
+
         }
     }
 }
