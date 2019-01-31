@@ -41,7 +41,7 @@
 </thead>  
 <tbody class="no-border-x no-border-y">	
   <?php $i=0; foreach($access as $gp) {?>	
-  	<tr>
+  	<tr class="tr-of-roles">
 		<td  width="20"><?php echo ++$i;?>
 		<input type="hidden" name="group_id[]" value="<?php echo $gp['group_id'];?>" /></td>
 		<td ><?php echo $gp['group_name'];?> </td>
@@ -115,7 +115,7 @@
 		var fieldCount = 2;
 
 		$("#user_ids_1").jCombo("{{URL::to('new-location-setup/comboselect?filter=users:id:username')}}");
-		var counter =17;
+		var counter = $('.tr-of-roles').last().children().first().html().slice(0, 2);
 	function fieldTemplate(index, counter){
 		var template = '<tr class="append-user" id="append-user-'+index+'"><td width="20">'+counter+'</td>' +
 				'<td><select name="user_ids[]" required id="user_ids_'+index+'"  class="select2 userdropdown"></select></td>' +
