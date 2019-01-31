@@ -1850,4 +1850,9 @@ if(!empty($removedItemIds)) {
         }
 
     }
+
+    public function getConvertitemreservedqty(){
+        $items = $this->model->getMerchandiseItems();
+        dd($items);
+    }
 }

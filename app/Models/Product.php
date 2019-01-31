@@ -827,4 +827,51 @@ WHERE orders.is_api_visible = 1
             $ReservedQtyLog->insertRow($reservedLogData, 0);
         }
     }
+
+
+    public function getImportVendors(){
+
+        $fields = [
+            'import_vendors.id',
+            'import_vendors.vendor_id',
+            'vendor.vendor_name',
+            'import_vendors.email_recieved_at'
+        ];
+        $vendors = vendor::select($fields)
+            ->join('import_vendors','import_vendors.vendor_id','=','vendor.id')
+            ->orderBy('vendor.vendor_name','asc')
+            ->where('import_vendors.is_imported','=','0')->groupBy('import_vendors.vendor_id')->get();
+
+        return $vendors;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMerchandiseItems()
+    {
+        $columns = [
+            'products.id',
+            'products.num_items',
+            'products.is_reserved',
+            'products.reserved_qty',
+        ];
+        $items = self::select($columns)->join('order_type','order_type.id','=','products.prod_type_id')
+            ->where('products.is_reserved','=',1)->where('products.is_converted','=',0)->whereIn('products.prod_type_id',[7,8,6,21,22,24])->get();
+
+        return $items;
+    }
+
+    public function convertReservedQty($items){
+        if($items->count() > 0){
+            foreach($items as $item){
+                $product  = self::find($item->id);
+
+                $product->reserved_qty = $product->reserved_qty * $product->num_items;
+                $product->is_converted = 1;
+
+                $product->save();
+            }
+        }
+    }
 }
