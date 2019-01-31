@@ -511,9 +511,19 @@ class VendorController extends Controller
                 'message' => 'Vendor Email does not exist.'
             ));
         }
-
-        $vendorEmail = empty($row->email) ? $row->email_2: $row->email;//get vendor mail address
-        
+        $vendorEmail = '';
+        if(!empty($row->email) && $row->email !='') {
+            $vendorEmail[] = $row->email; //get vendor mail address one
+        }
+        if(!empty($row->email_2) && $row->email_2 !='') {
+            $vendorEmail[] = $row->email_2; //get vendor mail address one
+        }
+        if(!empty($vendorEmail)) {
+            if (count($vendorEmail) > 1) {
+                $vendorEmail = array_unique($vendorEmail);
+            }
+        }
+        $vendorEmail = !empty($vendorEmail) ? implode(',',$vendorEmail):$vendorEmail;
         
         $response = VendorProductsImportHelper::exportExcel($id, $vendorEmail);
         if($response){
