@@ -457,8 +457,9 @@ class Sximo extends Model {
             ->first();
         $groupAccessData = array();
         $userAccessData = array();
-        $noGRoupAcces = false;
-        $noUserAccess = false;
+
+        $hasGroupAccess = true;
+        $hasUserAccess = true;
 
         if(count($userRow) >= 1){
             if ($userRow->user_access_data != '') {
@@ -469,7 +470,7 @@ class Sximo extends Model {
         }
         else
         {
-            $noUserAccess = true;
+            $hasUserAccess = false;
         }
 
         if (count($row) >= 1) {
@@ -481,13 +482,18 @@ class Sximo extends Model {
             }
         } else {
 
-            $noGRoupAcces = true;
+            $hasGroupAccess = false;
         }
-
-        if($noGRoupAcces && $noUserAccess){
+        if($hasGroupAccess == false && $hasUserAccess == false){//when group permission and user permission is empty
             return false;
         }
-        else
+        else if ($hasGroupAccess == false && $hasUserAccess == true){ //when group permission is empty
+            return $userAccessData;
+        }
+        else if($hasGroupAccess == true && $hasUserAccess == false){ //when user permission is empty
+            return $groupAccessData;
+        }
+        else////when group user permission is present
         {
             $result = [];
             foreach($groupAccessData as $key => $value){
@@ -502,7 +508,7 @@ class Sximo extends Model {
                     $result[$key] = 0;
                 }
             }
-            return array_merge($userAccessData,$groupAccessData);
+            return $result;
         }
     }
 
