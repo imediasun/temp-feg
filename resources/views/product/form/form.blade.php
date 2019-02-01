@@ -205,6 +205,7 @@
                         </div>
                         <div class="col-md-2">
                            {{-- @if(!empty($variation['id']))--}}
+                            @if($showDefaultExpenseCategoryChk)
                                 <?php
                                 $disabledcheckbox = '';
                                 if ($variation['is_default_expense_category']) {
@@ -218,7 +219,8 @@
                                            value='1' name="isdefault[]" class='isDefaultExpenseCategoryElm'
                                            id="isDefaultExpenseCategoryElm_{{ $variationCount }}"
                                            @if($variation['is_default_expense_category']==1 || count($variations) <= 1) checked @endif /> Make Default</label>
-                           {{-- @endif--}}
+                           @endif
+                                    {{-- @endif--}}
                         </div>
                     </div>
                     <div class="form-group" id="retail_price_{{ $variationCount }}" style="display: none;">
@@ -304,6 +306,7 @@
                     <div class="col-md-2">
 
                         {{-- @if(!empty($variation['id']))--}}
+                        @if($showDefaultExpenseCategoryChk)
                             <?php
 
                             $disabledcheckbox = '';
@@ -320,6 +323,7 @@
                                            value='1' name="isdefault[]"
                                            id="isDefaultExpenseCategoryElm_{{ $variationCount }}"
                                            @if($variation['is_default_expense_category']==1) checked @endif /> Make Default</label>
+                       @endif
                         {{--@endif--}}
 
                     </div>
@@ -414,6 +418,7 @@
                                     required></select>
                         </div>
                         <div class="col-md-2">
+                             @if($showDefaultExpenseCategoryChk)
                             @if(!empty($id))
                                 <?php
                                 $product = new \App\Models\product();
@@ -432,6 +437,7 @@
                                            value='1' data-count="1"
                                            @if($row['is_default_expense_category']==1 || count($variations) <= 1) checked @endif /> Make Default</label>
                             @endif
+                                 @endif
                         </div>
                     </div>
                     <div class="form-group" id="retail_price_1">

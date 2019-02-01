@@ -542,8 +542,10 @@ class ProductController extends Controller
         }
         if($id == null || $id == '' || $id == 0){
             $this->data['actionUrl'] = 'product/save/'.$row['id'];
+            $this->data['showDefaultExpenseCategoryChk'] = false;
         }else{
             $this->data['actionUrl'] = 'product/saveupdated';
+            $this->data['showDefaultExpenseCategoryChk'] = true;
         }
         $this->data['variations'] = $variations;
         $this->data['setting'] = $this->info['setting'];
