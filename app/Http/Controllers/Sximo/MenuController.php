@@ -19,6 +19,7 @@ class MenuController extends Controller
         $this->access = $this->model->validAccess($this->info['id']);
         $this->data['pageTitle'] = "Menu Management";
         $this->data['groups'] = \DB::select(" SELECT * FROM tb_groups ");
+        $this->data['users_access'] = \DB::table('tb_users_access')->join('users', 'tb_users_access.user_id', '=','users.id')->select('tb_users_access.user_id', \DB::raw('CONCAT(users.first_name, " ", users.last_name) AS full_name'))->get();
     }
 
 
@@ -178,7 +179,6 @@ class MenuController extends Controller
 
     public function postViewPermission(Request $request)
     {
-
         $module_name = $request->input('module_name');
         $sximo = new Sximo();
         $info = Sximo::makeInfo($module_name);
@@ -221,7 +221,7 @@ class MenuController extends Controller
                         $permission[] = $key;
                     }
                 }
-                }
+            }
 
             foreach ($this->data['groups'] as $group) {
                 $checked = '';
@@ -241,6 +241,36 @@ class MenuController extends Controller
                 }
             }
 
+        }
+
+        if (count($this->data['users_access']) > 0 && isset($info['id'])) {
+            $html .= '<hr><label>Users Permissions:</label>';
+            $userInfo = Sximo::makeUserInfo($info['id']);
+            if (count($userInfo)) {
+                foreach ($this->data['users_access'] as $key => $users) {
+                    $checked = '';
+                    if(isset($userInfo[$key])) {
+                        if ($users->user_id == $userInfo[$key]) {
+                            $checked = ' checked="checked"';
+                            $html .= '<label class="checkbox">
+                           <input  type="checkbox"   value="' . $users->user_id . '" ' . $checked . ' >
+                            ' . $users->full_name . '
+                        </label>';
+                        } else {
+                            $html .= '<label class="checkbox">
+                           <input  type="checkbox"   value="' . $users->user_id . '" ' . $checked . ' >
+                            ' . $users->full_name . '
+                        </label>';
+
+                        }
+                    }else{
+                        $html .= '<label class="checkbox">
+                           <input  type="checkbox"   value="' . $users->user_id . '" ' . $checked . ' >
+                            ' . $users->full_name . '
+                        </label>';
+                    }
+                }
+            }
         }
         return $html;
     }

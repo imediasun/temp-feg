@@ -387,6 +387,24 @@ class Sximo extends Model {
         }
         return $data;
     }
+    static function makeUserInfo($id){
+        $row =  \DB::table('tb_users_access')->where('module_id', $id)->get();
+        $Permissions = array_map(function ($row) {
+            $AccessData = (array)\GuzzleHttp\json_decode($row->user_access_data);
+            if ($AccessData['is_view'] == 1) {
+                return $row->user_id;
+            }
+        }, $row);
+
+        $Permissions = array_filter($Permissions, function ($var) {
+            return !is_null($var);
+        });
+        if (is_array($Permissions)) {
+            return $Permissions;
+        } else {
+            return [$Permissions];
+        }
+    }
 
     static function getComboselect($params, $limit = null, $parent = null) {
 
@@ -503,8 +521,6 @@ class Sximo extends Model {
                 }
                 else
                 {
-                    //in case no permission does not exists for group or user then make that permission 0
-                    //@todo need to recheck this code again
                     $result[$key] = 0;
                 }
             }
