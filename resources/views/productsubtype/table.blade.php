@@ -242,9 +242,12 @@
                 <div class="col-md-offset-6 col-md-6">
                     <div class="form-group" style="margin-top:10px;">
                         <div class="form-group" style="margin-top:10px;">
-                            <button type="submit" name="submit"  style="float: right" class=" btn  btn-lg btn-success" title="REMOVE PRODUCT SUBTYPE" id="remove_product_subtype">
+                            <button type="button" name="submit"  style="float: right" onclick="checkTheFormForValueAndSubmit(true)" class=" btn  btn-lg btn-success" title="REMOVE PRODUCT SUBTYPE" id="remove_product_subtype">
                                 <i class="fa  fa-trash" aria-hidden="true"></i>
                                 &nbsp {{ Lang::get('core.sb_remove_product_subtype') }}
+                            </button>
+                            <button type="submit" name="submit" hidden id="removing_product_subtype">
+                                {{ Lang::get('core.sb_remove_product_subtype') }}
                             </button>
                         </div>
                     </div>
@@ -264,6 +267,19 @@
 @endif
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
+
+    function checkTheFormForValueAndSubmit(checkForValue){
+        if(checkForValue){
+            if($('#newProductSubtype').val() == ''){
+                notyMessage('New Product Subtype required', [], 'error', 'Error!');
+            }else{
+                $('#removing_product_subtype').trigger('click');
+            }
+        }else{
+            $('#removing_product_subtype').trigger('click');
+        }
+    }
+
     $(document).ready(function () {
 
         $('.tips').tooltip();
@@ -340,7 +356,7 @@
                 {
                     $('#removeProductSubtypeFormAjax').attr('action', url);
                     setTimeout(function () {
-                        $('#remove_product_subtype').trigger('click');
+                        checkTheFormForValueAndSubmit(false);
                     }, 1000);
                 }
             },
