@@ -393,12 +393,15 @@ GROUP BY mapped_expense_category");
     public function saveProductList($rows,$vendorId,$isNew = false){
         foreach ($rows as $row) {
             unset($row['item_name']);
-
+            if(isset($row['is_converted'])) {
+                unset($row['is_converted']);
+            }
+        sleep(2);
             if (!empty($row['vendor_description'])) {
                 if ($isNew) {
                     $row['is_updated'] = 0;
                     $row['is_new'] = 1;
-                    $UniqueID = (!empty($row['variation_id'])) ? $row['variation_id']:substr(md5(microtime(true)."-".md5(microtime(true))),0,10);
+                    $UniqueID = (!empty($row['variation_id'])) ? $row['variation_id']:substr(md5(microtime(true)."-".md5($row['vendor_description'].$row['sku'].$row['case_price'])),0,10);
                     $row['variation_id'] = $UniqueID;
                 }
                 $updateItems = self::select('id')->where('vendor_id', $vendorId)->where('vendor_description', $row['vendor_description'])
@@ -437,6 +440,9 @@ GROUP BY mapped_expense_category");
             foreach ($rows as $row) {
                 $row->product_id = $row->id;
                 unset($row->id);
+                if(isset($row->is_converted)) {
+                    unset($row->is_converted);
+                }
 //                $row->is_reserved = !empty($row->is_reserved) ? $row->is_reserved:0;
 
                 $row->is_updated = (
@@ -460,7 +466,6 @@ GROUP BY mapped_expense_category");
                 $row->is_reserved = ($updatedFields['reserved_qty'] > 0) ? 1 : 0;
 //                $row->ticket_value = $updatedFields['ticket_value'];
                 $row->reserved_qty = $updatedFields['reserved_qty'];
-                $row->inactive = 0;
 
             }
             return $rows->toArray();

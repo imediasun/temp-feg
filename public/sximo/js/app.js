@@ -2129,10 +2129,10 @@ function setValuesToVariations(object){
     var field = $(object);
     var fieldName = field.attr('name');
     var $row = field.closest("tr");
-    var $variationId = $row.attr("data-variantidcombination");
-    if($variationId != ''){
-        var selectFeild = $('tr[data-variantidcombination="'+$variationId+'"] td select[name="'+fieldName+'"]');
-        var inputFeild = $('tr[data-variantidcombination="'+$variationId+'"] td input[name="'+fieldName+'"]');
+    var $dataVariantidcombination = $row.attr("data-variantidcombination");
+    if($dataVariantidcombination != ''){
+        var selectFeild = $('tr[data-variantidcombination="'+$dataVariantidcombination+'"] td select[name="'+fieldName+'"]');
+        var inputFeild = $('tr[data-variantidcombination="'+$dataVariantidcombination+'"] td input[name="'+fieldName+'"]');
 
         if(selectFeild.length >0) {
             selectFeild.select2('val', field.val());
@@ -2147,14 +2147,18 @@ function checkVariationExistWithType(object){
     var field = $(object);
     var fieldName = field.attr('name');
     var $row = field.closest("tr");
-    var $variationId = $row.attr("data-variantId");
-    if($variationId != ''){
-        selectFeild = $('tr[data-variantId="'+$variationId+'"] td select[name="'+fieldName+'"]');
+    var $dataVariantidcombination = $row.attr("data-variantidcombination");
+    var rowId = $row.attr("id");
+    if($dataVariantidcombination != ''){
+        selectFeild = $('tr[data-variantidcombination="'+$dataVariantidcombination+'"] td select[name="'+fieldName+'"]');
+        selectsubtypesFeild = $('tr[data-variantidcombination="'+$dataVariantidcombination+'"] td select[name="prod_sub_type_id[]"]');
+        selectselectedsubtypeFeild = $('tr[id="'+rowId+'"] td select[name="prod_sub_type_id[]"]');
         var ignore  = selectFeild.index(object);
         var validate = true;
         selectFeild.each(function(i){
+
            if(i != ignore){
-            if($(this).val() == field.val()){
+            if($(this).val() == field.val() && selectselectedsubtypeFeild.val() == selectsubtypesFeild.eq(i).val()){
                 validate = false;
                 return validate;
             }
