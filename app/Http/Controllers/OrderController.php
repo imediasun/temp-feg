@@ -3539,12 +3539,14 @@ ORDER BY aa_id");
             $this->data['row']['case_price'] = $casePrice;
             $this->data['row']['item_description'] = $itemDescription;
             $this->data['actionUrl'] = 'product/save/' . $row['id'];
+            $this->data['showDefaultExpenseCategoryChk'] = false;
         } else {
             $itemMatch = $productModel->where('vendor_description', $itemName)->where('vendor_id', $vendorId)->where('prod_type_id', $productTypeId)->first();
             if (!$itemMatch) {
                 $variations[] = ['id' => 0, 'prod_type_id' => $productTypeId, 'prod_sub_type_id' => '', 'retail_price' => '', 'ticket_value' => '', 'expense_category' => '', 'is_default_expense_category' => 0];
             }
             $this->data['actionUrl'] = 'product/saveupdated';
+            $this->data['showDefaultExpenseCategoryChk'] = true;
         }
         $this->data['variations'] = $variations;
 
