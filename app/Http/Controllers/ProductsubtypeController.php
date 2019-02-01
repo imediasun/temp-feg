@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\product;
 use App\Models\Productsubtype;
 use Illuminate\Http\Request;
@@ -15,6 +16,7 @@ class ProductsubtypeController extends Controller
     protected $data = array();
     public $module = 'productsubtype';
     static $per_page = '10';
+    protected $L = null;
 
     public function __construct()
     {
@@ -168,9 +170,13 @@ class ProductsubtypeController extends Controller
          */
         $newProductSubtype = $request->get('newProductSubtype');
         //$productSubtype = Productsubtype::find($newProductSubtype);
+        $deletingProductSubTypeObj = $this->model->find($productSubtypeId);
+        $replacingProductSubTypeObj = $this->model->find($newProductSubtype);
         DB::transaction(function() use (
-            $productSubtypeId, $newProductSubtype
-            //,$productSubtype
+            $productSubtypeId,
+            $newProductSubtype,
+            $deletingProductSubTypeObj,
+            $replacingProductSubTypeObj
         ){
             product::where('prod_sub_type_id', $productSubtypeId)
                 ->update([
@@ -183,7 +189,24 @@ class ProductsubtypeController extends Controller
                     'updated_prod_sub_type_id'=>$newProductSubtype
                 ]);
             Productsubtype::where('id', $productSubtypeId)->delete();
+
+            $L = FEGSystemHelper::setLogger($this->L, "product-subtype-remove.log", "FEGProductSubTypeChange/RemoveLog", "ProductSubTypeChange");
+            $L->log('---------------- Start Product Subtype Remove Log ----------------');
+            $L->log('User ID: '.auth()->user()->id);
+            $L->log('Removed Product SubType: '.$productSubtypeId."  SubType Name: (".$deletingProductSubTypeObj->product_type.")");
+            $L->log('Removed Product SubType: '.$productSubtypeId."  SubType Name: (".$deletingProductSubTypeObj->product_type.")");
+            $L->log(
+            $newProductSubtype
+                    ?
+                'Replacing Product SubType: '.$newProductSubtype."  SubType Name: (".$replacingProductSubTypeObj->product_type.")"
+                    :
+                'No Product Subtype Replaced the deleting one, as no products were assigned to it.'
+            );
+            $L->log('================ End Product Subtype Remove Log ==================');
+            $L->log('                                                                  ');
         });
+
+
         return redirect()->back()->withInput()->with('messagetext', "Product Subtype removed successfully!")->with('msgstatus', 'success');
     }
 
@@ -267,7 +290,20 @@ class ProductsubtypeController extends Controller
             $data = $this->validatePost('product_type');
 
             $id = $this->model->insertRow($data, $request->input('id'));
+            if($id){
+                if($data['id'] == ''){
+                    $expenseCategoryMappingObject = DB::table('expense_category_mapping')->where('order_type', $data['request_type_id'])->first();
+                    if($expenseCategoryMappingObject)
+                    {
+                        DB::table('expense_category_mapping')->insert([
+                            'order_type'                =>  $data['request_type_id'],
+                            'mapped_expense_category'   =>  $expenseCategoryMappingObject->mapped_expense_category,
+                            'product_type'              =>  $id,
+                        ]);
+                    }
 
+                }
+            }
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
