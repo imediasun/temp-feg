@@ -90,9 +90,12 @@
 						{{csrf_field()}}
 						<p style="font-size: 140%">Do you want &nbsp;&nbsp;&nbsp;<b><span id="thisProductSubtype">this Product Sub type</span></b>&nbsp;&nbsp;&nbsp; to be re-activated?</p>
 						<div class="form-group" style="margin-top:10px;">
-							<button type="button" onclick="reactivateTheDeletedProductSubtype()" name="submit"  style="float: right" class=" btn  btn-lg btn-success" title="REACTIVATE PRODUCT SUBTYPE" id="reactivate_product_subtype">
-								<i class="fa  fa-trash" aria-hidden="true"></i>
-								&nbsp {{ Lang::get('core.sb_reactivate_product_subtype') }}
+							<button type="button" style="float: right" class=" btn  btn-lg btn-default" onclick="$('#reactivateDeletedSubTypeModal').modal('hide')" title="DONT REACTIVATE PRODUCT SUBTYPE" id="dont_reactivate_product_subtype">
+								{{ Lang::get('core.sb_dont_reactivate_product_subtype') }}
+							</button>
+							&nbsp;
+							<button type="button" onclick="reactivateTheDeletedProductSubtype()" name="submit"  style="margin-right: 10px; float: right" class=" btn  btn-lg btn-success" title="REACTIVATE PRODUCT SUBTYPE" id="reactivate_product_subtype">
+								{{ Lang::get('core.sb_reactivate_product_subtype') }}
 							</button>
 						</div>
 					</div>
@@ -168,36 +171,65 @@ function showResponse(data)  {
 
 $('#submitForm').on('click', function(){
     var productSubtypeName = $('input[name="product_type"]').val();
+    var typeDescription = $('input[name="type_description"]').val();
     var orderType = $('select[name="request_type_id"]').val();
-    var id = $('input[name="id"]').val();
-    $.ajax({
-        url: "{{ URL::to('productsubtype/productsubtypes-already-deleted') }}",
-        type: "POST",
-		data: {
-          	'productsubtype': productSubtypeName,
-			'ordertype':orderType,
-			'id':id
+
+    var inputs = [
+        {
+            'title':'Product Subtype',
+			'value':productSubtypeName
 		},
-        beforeSend: function(){
-            $('.ajaxLoading').show();
-        },
-        success: function (data) {
-            $('.ajaxLoading').hide();
-            if(data.status == 'success'){
-                if(data.count >= 1){
-                    populateTheAlreadyDeletedSubTypeModal(data.alreadyDeletedRecord, '#reactivateDeletedSubTypeModal');
-                }else{
-                    $('#productsubtypeFormAjax').submit();
-                }
-			}else{
-                notyMessage(data.message, [], data.status);
+		{
+		    'title':'Type Description',
+			'value':typeDescription
+		},
+		{
+		    'title':'Order Type',
+			'value':orderType
+		}
+	];
+
+    if(!productSubtypeName || !typeDescription || !orderType){
+        $.each(inputs, function (key, val) {
+            if(!val.value)
+			{
+			    setTimeout(function () {
+                    notyMessage(val.title+' Required', [], 'error', 'Error');
+                }, 200*(key+1));
 			}
-		},
-        error: function (exception) {
-            $('.ajaxLoading').hide();
-            console.log(exception);
-        }
-    });
+        });
+	}
+	else{
+        var id = $('input[name="id"]').val();
+        $.ajax({
+            url: "{{ URL::to('productsubtype/productsubtypes-already-deleted') }}",
+            type: "POST",
+            data: {
+                'productsubtype': productSubtypeName,
+                'ordertype':orderType,
+                'id':id
+            },
+            beforeSend: function(){
+                $('.ajaxLoading').show();
+            },
+            success: function (data) {
+                $('.ajaxLoading').hide();
+                if(data.status == 'success'){
+                    if(data.count >= 1){
+                        populateTheAlreadyDeletedSubTypeModal(data.alreadyDeletedRecord, '#reactivateDeletedSubTypeModal');
+                    }else{
+                        $('#productsubtypeFormAjax').submit();
+                    }
+                }else{
+                    notyMessage(data.message, [], data.status);
+                }
+            },
+            error: function (exception) {
+                $('.ajaxLoading').hide();
+                console.log(exception);
+            }
+        });
+	}
 });
 
 function populateTheAlreadyDeletedSubTypeModal(alreadyDeletedRecord, modalId){
@@ -213,7 +245,7 @@ function reactivateTheDeletedProductSubtype(){
 		success: function (data) {
             notyMessage(data.message, [], data.status);
             $('#reactivateDeletedSubTypeModal').modal('hide');
-			console.log(data);
+			window.location = "{{\Illuminate\Support\Facades\URL::to('productsubtype')}}";
         },
 		error: function (exception) {
             $('.ajaxLoading').hide();

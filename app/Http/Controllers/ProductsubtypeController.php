@@ -184,7 +184,7 @@ class ProductsubtypeController extends Controller
                 ]);
             Productsubtype::where('id', $productSubtypeId)->delete();
         });
-        return redirect()->back();
+        return redirect()->back()->withInput()->with('messagetext', "Product Subtype removed successfully!")->with('msgstatus', 'success');
     }
 
 

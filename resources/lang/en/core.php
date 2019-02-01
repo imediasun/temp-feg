@@ -117,7 +117,8 @@ return array(
     "sb_close"					=> "Close",
     "sb_save_send"              => "Save & Send",
     "sb_remove_product_subtype" => "Remove",
-    "sb_reactivate_product_subtype" => "Re-activate",
+    "sb_reactivate_product_subtype" => "Yes",
+    "sb_dont_reactivate_product_subtype" => "No",
 
 /* button */
 	"btn_back"						=> "Back",	

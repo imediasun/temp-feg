@@ -850,7 +850,7 @@
 
                 console.log('Sub Type Id:'+productSubTypeId);
 
-                    $(docElm).jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:" + selectedType + "",
+                    $(docElm).jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:" + selectedType + "&limit=WHERE:deleted_at:is:NULL",
                             {selected_value: productSubTypeId});
 
 

@@ -235,7 +235,7 @@
                 <div class="form-group showIfSubTypeHasAnyProductsAssociated">
                     <label class="control-label col-md-4" for="message">New Product Subtype</label>
                     <div class="col-md-8">
-                        <select class="form-control" cols="5" rows="6" name="newProductSubtype" id="newProductSubtype"/>
+                        <select class="form-control" cols="5" rows="6" name="newProductSubtype" id="newProductSubtype" required/>
                         </select>
                     </div>
                 </div>
@@ -325,20 +325,24 @@
                 $('#listOfProducts').html('');
                 var newProductSubtype = $("select[name='newProductSubtype']");
 
-                if(Object.values(data.products).length >= 1)
-                    $('.showIfSubTypeHasAnyProductsAssociated').show();
+                if(Object.values(data.products).length >= 1){
+                    $.each(data.products, function (key, val) {
+                        $('#listOfProducts').append('<li>'+val+'</li>');
+                    });
+                    $('#removeProductSubtypeModal').modal('show');
+                    $('#removeProductSubtypeFormAjax').attr('action', url);
+                    $('#thisProductSubtype').html(name);
+                    newProductSubtype.jCombo("{{ URL::to('productsubtype/comboselect?filter=product_type:id:type_description') }}"
+                        +"&parent=request_type_id:"+data.product_type_id, {selected_value: '', excludeItems: [id]});
+                    newProductSubtype.select2();
+                }
                 else
-                    $('.showIfSubTypeHasAnyProductsAssociated').hide();
-
-                $.each(data.products, function (key, val) {
-                    $('#listOfProducts').append('<li>'+val+'</li>');
-                });
-                $('#removeProductSubtypeModal').modal('show');
-                $('#removeProductSubtypeFormAjax').attr('action', url);
-                $('#thisProductSubtype').html(name);
-                newProductSubtype.jCombo("{{ URL::to('productsubtype/comboselect?filter=product_type:id:type_description') }}"
-                    +"&parent=request_type_id:"+data.product_type_id, {selected_value: '', excludeItems: [id]});
-                newProductSubtype.select2();
+                {
+                    $('#removeProductSubtypeFormAjax').attr('action', url);
+                    setTimeout(function () {
+                        $('#remove_product_subtype').trigger('click');
+                    }, 1000);
+                }
             },
             error: function (exception) {
                 console.log(exception);
@@ -355,7 +359,7 @@
     function removeDeletedProductSubType(){
         $('select[name="product_type"]').jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:product_type:product_type') }}&limit=WHERE:deleted_at:is:NULL",
             {
-                initial_text: ' -- Select Product Sub Type --'
+                initial_text: ' -- Select --'
             });
     }
 

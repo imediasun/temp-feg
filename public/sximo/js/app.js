@@ -266,7 +266,7 @@ function excludeProductsAndProductTypes(){
                 }
             })
          }
-    }, 1000);
+    }, 2000);
 }
 App.autoCallbacks.registerCallback('columnselector', function(params){
 
