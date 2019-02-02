@@ -68,10 +68,9 @@
   <tr><td class="emptyRow">&nbsp;</td><td class="emptyRow"><h3><b>Users Permissions</b></h3></td></tr>
   @foreach($users as $user)
 	  <tr class="append-user tr-of-roles" id="append-user-1">
-		  <input type="hidden" name="user_ids[]" value="{{$user['user_id']}}">
 		  <td width="20">{{++$i}}</td>
-		  <td><select name="user_ids[]" id="" readonly=""   class="select2 userdropdown">
-				  <option value="{{$user['user_id']}}">{{$user['user_name']}}</option></select></td>
+		  <input type="hidden" name="user_ids[]" value="{{$user['user_id']}}">
+		  <td>{{$user['user_name']}}</td>
           @foreach($tasks as $item=>$val)
 		  <td  class="">
 			  <label>
