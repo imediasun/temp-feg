@@ -249,20 +249,14 @@ class MenuController extends Controller
             if (count($userInfo)>0 || count($this->data['users_access'])>0) {
                 foreach ($this->data['users_access'] as $key => $users) {
                     $checked = '';
-                    if(isset($userInfo[$key])) {
-                        if ($users->user_id == $userInfo[$key]) {
+                    if(in_array($users->user_id,$userInfo)) {
+
                             $checked = ' checked="checked"';
                             $html .= '<label class="checkbox">
                            <input  type="checkbox"   value="' . $users->user_id . '" ' . $checked . ' >
-                            ' . $users->full_name . '
-                        </label>';
-                        } else {
-                            $html .= '<label class="checkbox">
-                           <input  type="checkbox"   value="' . $users->user_id . '" ' . $checked . ' >
-                            ' . $users->full_name . '
+                            ' . $users->full_name .' 
                         </label>';
 
-                        }
                     }else{
                         $html .= '<label class="checkbox">
                            <input  type="checkbox"   value="' . $users->user_id . '" ' . $checked . ' >
