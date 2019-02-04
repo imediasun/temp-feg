@@ -196,7 +196,7 @@ class ProductsubtypeController extends Controller
             $L->log('Removed Product SubType: '.$productSubtypeId."  SubType Name: (".$deletingProductSubTypeObj->product_type.")");
             $L->log('Removed Product SubType: '.$productSubtypeId."  SubType Name: (".$deletingProductSubTypeObj->product_type.")");
             $L->log(
-                ($newProductSubtype != 'null')
+                ($replacingProductSubTypeObj)
                     ?
                 'Replacing Product SubType: '.$newProductSubtype."  SubType Name: (".$replacingProductSubTypeObj->product_type.")"
                     :
