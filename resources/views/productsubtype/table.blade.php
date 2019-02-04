@@ -157,7 +157,7 @@
                         @if($setting['disablerowactions']=='false')
                             <td data-values="action" data-key="<?php echo $row->id;?>">
                                 {!! AjaxHelpers::buttonAction('productsubtype',$access,$id ,$setting) !!}
-                                <a  onclick='deleteProductSubtype("{{ URL::to('productsubtype/removal/'.$row->id)}}", "{{$row->type_description}}", "{{$row->id}}")'
+                                <a  onclick='deleteProductSubtype("{{ URL::to('productsubtype/removal/'.$row->id)}}", "{{$row->type_description}}", "{{$row->id}}", this)'
                                     data-id="{{$row->id}}"
                                     data-action="removal"
                                     class="tips btn btn-xs btn-white productsubtypeRemovalRequestAction"
@@ -268,16 +268,46 @@
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
 
+    var productSubtypeRowToBeDeleted = null;
     function checkTheFormForValueAndSubmit(checkForValue){
         if(checkForValue){
             if($('#newProductSubtype').val() == ''){
                 notyMessage('New Product Subtype required', [], 'error', 'Error!');
             }else{
-                $('#removing_product_subtype').trigger('click');
+                removeTheSubtypeAjaxCall();
+                // $('#removing_product_subtype').trigger('click');
             }
         }else{
-            $('#removing_product_subtype').trigger('click');
+            removeTheSubtypeAjaxCall();
+            // $('#removing_product_subtype').trigger('click');
         }
+    }
+    function removeTheSubtypeAjaxCall(){
+        var url                 = $('#removeProductSubtypeFormAjax').attr('action');
+        var newProductSubtype   = $('#newProductSubtype').val();
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                newProductSubtype: newProductSubtype
+            },
+            beforeSend: function(){
+                $('.ajaxLoading').show();
+            },
+            success: function (data){
+                $('.ajaxLoading').hide();
+                notyMessage(data.message, [], data.status, data.status.replace(/^\w/, c => c.toUpperCase())+'!');
+                if(data.status == 'success'){
+                    productSubtypeRowToBeDeleted.remove();
+                }
+                $('#removeProductSubtypeModal').modal('hide');
+            },
+            error: function (exception) {
+                $('.ajaxLoading').hide();
+                $('#removeProductSubtypeModal').modal('hide');
+                console.log(exception);
+            }
+        });
     }
 
     $(document).ready(function () {
@@ -328,8 +358,9 @@
 
     });
 
-    function deleteProductSubtype(url, name, id) {
+    function deleteProductSubtype(url, name, id, thisRow) {
 
+        productSubtypeRowToBeDeleted = $(thisRow).closest('tr');
         $.ajax({
             url: "{{ URL::to('product/first-ten-products-by-sub-type') }}/"+id,
             method: "GET",
@@ -337,11 +368,12 @@
                 $('.ajaxLoading').show();
             },
             success: function (data) {
-                $('.ajaxLoading').hide();
+
                 $('#listOfProducts').html('');
                 var newProductSubtype = $("select[name='newProductSubtype']");
 
                 if(Object.values(data.products).length >= 1){
+                    $('.ajaxLoading').hide();
                     $.each(data.products, function (key, val) {
                         $('#listOfProducts').append('<li>'+val+'</li>');
                     });
@@ -349,7 +381,7 @@
                     $('#removeProductSubtypeFormAjax').attr('action', url);
                     $('#thisProductSubtype').html(name);
                     newProductSubtype.jCombo("{{ URL::to('productsubtype/comboselect?filter=product_type:id:type_description') }}"
-                        +"&parent=request_type_id:"+data.product_type_id, {selected_value: '', excludeItems: [id]});
+                        +"&parent=request_type_id:"+data.product_type_id+"&limit=WHERE:deleted_at:is:NULL", {selected_value: '', excludeItems: [id]});
                     newProductSubtype.select2();
                 }
                 else

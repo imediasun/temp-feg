@@ -196,7 +196,7 @@ class ProductsubtypeController extends Controller
             $L->log('Removed Product SubType: '.$productSubtypeId."  SubType Name: (".$deletingProductSubTypeObj->product_type.")");
             $L->log('Removed Product SubType: '.$productSubtypeId."  SubType Name: (".$deletingProductSubTypeObj->product_type.")");
             $L->log(
-            $newProductSubtype
+                ($newProductSubtype != 'null')
                     ?
                 'Replacing Product SubType: '.$newProductSubtype."  SubType Name: (".$replacingProductSubTypeObj->product_type.")"
                     :
@@ -207,7 +207,10 @@ class ProductsubtypeController extends Controller
         });
 
 
-        return redirect()->back()->withInput()->with('messagetext', "Product Subtype removed successfully!")->with('msgstatus', 'success');
+        return response()->json([
+            'message'   =>  "Product Subtype removed successfully!",
+            'status'    =>  'success'
+        ]);
     }
 
 
