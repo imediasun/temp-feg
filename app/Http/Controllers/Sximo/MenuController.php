@@ -246,7 +246,7 @@ class MenuController extends Controller
         if (count($this->data['users_access']) > 0 && isset($info['id'])) {
             $html .= '<hr><label>Users Permissions:</label>';
             $userInfo = Sximo::makeUserInfo($info['id']);
-            if (count($userInfo)) {
+            if (count($userInfo)>0 || count($this->data['users_access'])>0) {
                 foreach ($this->data['users_access'] as $key => $users) {
                     $checked = '';
                     if(isset($userInfo[$key])) {
