@@ -55,8 +55,14 @@ class orderEventsHandler
                 }else{
                     $reservedQty = $reservedQty + $product->prev_qty;
                 }
-                $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
-                $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
+                $errorData = $product->reserved_qty;
+                if($event->isMerch){
+                    $errorData = $reservedQty * $product->num_items;
+                }
+                if($errorData < $adjustmentAmount) {
+                    $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
+                    $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
+                }
             }else if ($product->allow_negative_reserve_qty == 0 && $adjustmentAmount < 1){
 
                 $error = true;
@@ -71,8 +77,14 @@ class orderEventsHandler
                 }else{
                     $reservedQty = $reservedQty + $product->prev_qty;
                 }
-                $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
-                $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
+                $errorData = $product->reserved_qty;
+                if($event->isMerch){
+                    $errorData = $reservedQty * $product->num_items;
+                }
+                if($errorData < $adjustmentAmount) {
+                    $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
+                    $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
+                }
 
             }else {
 
@@ -91,8 +103,14 @@ class orderEventsHandler
                         } else {
                             $reservedQty = $reservedQty + $product->prev_qty;
                         }
-                        $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
-                        $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
+                        $errorData = $product->reserved_qty;
+                        if($event->isMerch){
+                            $errorData = $reservedQty * $product->num_items;
+                        }
+                        if($errorData < $adjustmentAmount) {
+                            $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
+                            $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
+                        }
                     }
                 }else{
                     if ($adjustmentAmount > $product->reserved_qty) {
