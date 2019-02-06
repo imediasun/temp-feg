@@ -307,7 +307,7 @@ class Sximo extends Model {
 
         $data = $this->cleanData($data);
 
-        $timestampTables = array('vendor','products','orders', 'departments', 'system_email_report_manager');
+        $timestampTables = array('vendor','products','orders', 'departments', 'system_email_report_manager', 'product_type');
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         if ($id == NULL) {
