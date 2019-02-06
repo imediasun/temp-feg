@@ -286,12 +286,11 @@ class ProductsubtypeController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
+        $request->merge(['type_description' => $request->input('product_type')]);
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('product_type');
-
             $id = $this->model->insertRow($data, $request->input('id'));
             if($id){
                 if($data['id'] == ''){

@@ -29,17 +29,17 @@
 					 	
 					 </div>
 				  </div> 
-				  <div class="form-group  " >
-					<label for="Type Description" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Type Description', (isset($fields['type_description']['language'])? $fields['type_description']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('type_description', $row['type_description'],array('class'=>'form-control', 'placeholder'=>'Type Description',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div>
+				  {{--<div class="form-group  " >--}}
+					{{--<label for="Type Description" class=" control-label col-md-4 text-left">--}}
+					{{--{!! SiteHelpers::activeLang('Type Description', (isset($fields['type_description']['language'])? $fields['type_description']['language'] : array())) !!}--}}
+					{{--</label>--}}
+					{{--<div class="col-md-6">--}}
+					  {{--{!! Form::text('type_description', $row['type_description'],array('class'=>'form-control', 'placeholder'=>'Type Description',   )) !!}--}}
+					 {{--</div> --}}
+					 {{--<div class="col-md-2">--}}
+					 	{{----}}
+					 {{--</div>--}}
+				  {{--</div>--}}
 				  <div class="form-group  " >
 					<label for="Order Type" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Order Type', (isset($fields['request_type_id']['language'])? $fields['request_type_id']['language'] : array())) !!}
@@ -189,7 +189,7 @@ $('#submitForm').on('click', function(){
 		}
 	];
 
-    if(!productSubtypeName || !typeDescription || !orderType){
+    if(!productSubtypeName || !orderType){
         $.each(inputs, function (key, val) {
             if(!val.value)
 			{
