@@ -74,6 +74,45 @@ class orderEventsHandler
                 $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
                 $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
 
+            }else {
+
+                if ($event->isMerch) {
+                    if ($adjustmentAmount * $product->num_items > $product->reserved_qty) {
+
+                        $error = true;
+                        $reservedQty = $product->reserved_qty;
+                        if ($event->isMerch) {
+                            $reservedQty = $product->reserved_qty / $product->num_items;
+                            if ($reservedQty < 1) {
+                                $reservedQty = 0;
+                            } else {
+                                $reservedQty = gettype($reservedQty) == 'double' ? (int)floor($reservedQty) : $reservedQty;
+                            }
+                        } else {
+                            $reservedQty = $reservedQty + $product->prev_qty;
+                        }
+                        $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
+                        $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
+                    }
+                }else{
+                    if ($adjustmentAmount > $product->reserved_qty) {
+
+                        $error = true;
+                        $reservedQty = $product->reserved_qty;
+                        if ($event->isMerch) {
+                            $reservedQty = $product->reserved_qty / $product->num_items;
+                            if ($reservedQty < 1) {
+                                $reservedQty = 0;
+                            } else {
+                                $reservedQty = gettype($reservedQty) == 'double' ? (int)floor($reservedQty) : $reservedQty;
+                            }
+                        } else {
+                            $reservedQty = $reservedQty + $product->prev_qty;
+                        }
+                        $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
+                        $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
+                    }
+                }
             }
         }
 
