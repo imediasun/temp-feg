@@ -23,7 +23,7 @@
 					{!! SiteHelpers::activeLang('Product Sub Type', (isset($fields['product_type']['language'])? $fields['product_type']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('product_type', $row['product_type'],array('class'=>'form-control', 'placeholder'=>'Product Sub Type',   )) !!}
+					  {!! Form::text('product_type', $row['product_type'],array('class'=>'form-control', 'placeholder'=>'Product Sub Type', 'maxlength'=>"22" )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
