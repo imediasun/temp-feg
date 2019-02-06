@@ -171,17 +171,12 @@ function showResponse(data)  {
 
 $('#submitForm').on('click', function(){
     var productSubtypeName = $('input[name="product_type"]').val();
-    var typeDescription = $('input[name="type_description"]').val();
     var orderType = $('select[name="request_type_id"]').val();
 
     var inputs = [
         {
             'title':'Product Subtype',
 			'value':productSubtypeName
-		},
-		{
-		    'title':'Type Description',
-			'value':typeDescription
 		},
 		{
 		    'title':'Order Type',
