@@ -104,7 +104,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="250"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="280"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
@@ -301,6 +301,15 @@ usort($tableGrid, "SiteHelpers::_sort");
                             </a>
                         @endif
 
+                        <a href="javascript:void(0)"
+                           data-id="{{$eid}}"
+                           id="{{$row->id}}"
+                           class="tips btn btn-xs btn-white requestInvoiceAction"
+                           title="{{ Lang::get('core.request_invoice_button_title') }}"
+                           style="vertical-align: middle"
+                        >
+                            <img src="/invoice.png"  style="vertical-align: middle; color: grey" width="15">
+                        </a>
 
                         @if($row->isFullyReceived)
                             <a href="/order/dpl-file/{{ $row->id }}" class="tips btn btn-xs btn-white" title="Download Full DPL"><i class="fa fa-download"></i></a>
@@ -394,6 +403,27 @@ usort($tableGrid, "SiteHelpers::_sort");
                     notyMessage(response.message, {"positionClass": "toast-top-right"});
 
                 $('.ajaxLoading').css('display', 'none');
+            }
+        });
+    });
+
+    $('.requestInvoiceAction').on('click', function () {
+        var rowId = this.id;
+        $.ajax({
+            url: "{{ $pageModule }}/request-invoice/"+rowId+"/order",
+            method: "GET",
+            beforeSend: function(){
+                $('.ajaxLoading').show();
+            },
+            success: function(response){
+                $('.ajaxLoading').hide();
+                console.log(response);
+                // if(response.status == 'error')
+                //     notyMessageError(response.message, {"positionClass": "toast-top-right"});
+                // else
+                //     notyMessage(response.message, {"positionClass": "toast-top-right"});
+                //
+                // $('.ajaxLoading').css('display', 'none');
             }
         });
     });

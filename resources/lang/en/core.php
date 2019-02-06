@@ -212,6 +212,7 @@ return array(
     "note_success_denied"  => "Request denied successfully",
 
     /* Orders */
+    "request_invoice_button_title" => "Request Invoice about this order",
     "order_inquiry_button_title" => "Inquire about this order",
     "order_api_expose_button_label"  => "Post to Netsuite",
     "order_api_exposed_label"  => "Posted to Netsuite",

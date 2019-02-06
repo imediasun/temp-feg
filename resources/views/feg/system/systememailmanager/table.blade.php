@@ -47,7 +47,7 @@
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
                 @endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif
-                <th width="200">Info</th>
+                <th width="400">Info</th>
                 <th>TO</th>
                 <th>CC</th>
                 <th>BCC</th>
@@ -146,7 +146,20 @@
                     endforeach;
                 ?>
                 
-                    <h4><strong>{{ $vrow->report_name }}</strong></h4>
+                    <h4>
+                        <strong>
+                            @if(strpos($vrow->report_name, '- Merchandise') !== false)
+                                <i style="background-color: green; color: white">&nbsp;&nbsp;>&nbsp;&nbsp;</i>
+                            @elseif(strpos($vrow->report_name, '- Games') !== false)
+                                <i style="background-color: red; color: white">&nbsp;&nbsp;>&nbsp;&nbsp;</i>
+                            @elseif(strpos($vrow->report_name, '- Debit Card') !== false)
+                                <i style="background-color: blue; color: white">&nbsp;&nbsp;>&nbsp;&nbsp;</i>
+                            @elseif(strpos($vrow->report_name, '- Graphics') !== false)
+                                <i style="background-color: gold; color: white">&nbsp;&nbsp;>&nbsp;&nbsp;</i>
+                            @endif
+                            {{ $vrow->report_name }}
+                        </strong>
+                    </h4>
                     <strong>ID:</strong> {{ $vrow->id }}<br/><br/>
                     <strong>Is Active?:</strong> {{ $vrow->is_active }}<br/><br/>
                     <strong>Locationwise filter?:</strong> {{ $vrow->has_locationwise_filter }}<br/><br/>
