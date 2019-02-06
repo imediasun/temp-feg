@@ -173,25 +173,33 @@ class ProductlogController extends Controller {
         $productLogContentData = ['reducedByOrder'=>[],'addedFromProductList'=>[]];
 		if(!empty($row->variation_id)) {
             $productLogContent = ReservedQtyLog::where("variation_id", "=", $row->variation_id);
-            $Contents = $productLogContent->orderBy('id', 'DESC')->get()->filter(function ($item) {
-            $userData = User::find($item->adjusted_by);
-                return $item->adjusted_by = $userData->first_name." ".$userData->last_name;
-            });
-            $productLogContentData['Contents'] = $Contents;
-            $totalRecords = $productLogContentData['Contents']->count();
-            $initialAmount = $productLogContentData['Contents'][$totalRecords-1]->adjustment_amount;
-            if($productLogContentData['Contents'][$totalRecords-1]->adjustment_type == 'negative'){
-                $initialAmount = $initialAmount * -1;
-            }
-            $productLogContentData['Contents'][$totalRecords-1]->reservedQty = $initialAmount;
-            $productLogContentData['Contents'][$totalRecords-1]->reservedQuantity = $initialAmount;
-            for($i = ($totalRecords-2); $i>=0; $i--){
-                if($productLogContentData['Contents'][$i]->adjustment_type == 'negative'){
-                    $productLogContentData['Contents'][$totalRecords-1]->reservedQty -= $productLogContentData['Contents'][$i]->adjustment_amount;
-                }else{
-                    $productLogContentData['Contents'][$totalRecords-1]->reservedQty += $productLogContentData['Contents'][$i]->adjustment_amount;
+            $pLogs = $productLogContent->orderBy('id', 'DESC')->get();
+            if ($pLogs) {
+                $Contents = $pLogs->filter(function ($item) {
+                    $userData = User::find($item->adjusted_by);
+                    if($userData) {
+                        return $item->adjusted_by = $userData->first_name . " " . $userData->last_name;
+                    }else{
+                        return "No Data";
+                    }
+                });
+
+                $productLogContentData['Contents'] = $Contents;
+                $totalRecords = $productLogContentData['Contents']->count();
+                $initialAmount = $productLogContentData['Contents'][$totalRecords - 1]->adjustment_amount;
+                if ($productLogContentData['Contents'][$totalRecords - 1]->adjustment_type == 'negative') {
+                    $initialAmount = $initialAmount * -1;
                 }
-                $productLogContentData['Contents'][$i]->reservedQuantity = $productLogContentData['Contents'][$totalRecords-1]->reservedQty;
+                $productLogContentData['Contents'][$totalRecords - 1]->reservedQty = $initialAmount;
+                $productLogContentData['Contents'][$totalRecords - 1]->reservedQuantity = $initialAmount;
+                for ($i = ($totalRecords - 2); $i >= 0; $i--) {
+                    if ($productLogContentData['Contents'][$i]->adjustment_type == 'negative') {
+                        $productLogContentData['Contents'][$totalRecords - 1]->reservedQty -= $productLogContentData['Contents'][$i]->adjustment_amount;
+                    } else {
+                        $productLogContentData['Contents'][$totalRecords - 1]->reservedQty += $productLogContentData['Contents'][$i]->adjustment_amount;
+                    }
+                    $productLogContentData['Contents'][$i]->reservedQuantity = $productLogContentData['Contents'][$totalRecords - 1]->reservedQty;
+                }
             }
         }
 
