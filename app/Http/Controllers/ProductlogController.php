@@ -180,7 +180,7 @@ class ProductlogController extends Controller {
                     if($userData) {
                         return $item->adjusted_by = $userData->first_name . " " . $userData->last_name;
                     }else{
-                        return "No Data";
+                        return $item->adjusted_by = "No Data";
                     }
                 });
 
