@@ -3777,24 +3777,35 @@ ORDER BY aa_id");
 
         $requestInvoicePONumber = $order->po_number;
 
-        $subject = 'INQUIRE ORDER '.$requestInvoicePONumber;
-
-        $vendorApContact = '';
+        $subject = 'REQUEST INVOICE '.$requestInvoicePONumber;
 
         $arrayOfFromUserConfig = [
-            'username', 'password', 'driver', 'host',
-            'port', 'from', 'name', 'encryption',
-            'sendmail', 'pretend'
+            'encryption',
+            'sendmail',
+            'username',
+            'password',
+            'pretend',
+            'driver',
+            'host',
+            'port',
+            'from',
+            'name'
         ];
 
         $fromUserConfig = DB::table('email_sender_credentials')->where('username', $systemEmailConfiguration['from'])->first();
 
-        foreach ($arrayOfFromUserConfig as $config){
+        $config = [];
 
+        foreach ($arrayOfFromUserConfig as $configKey){
+            $config[$configKey] = $fromUserConfig->{$configKey};
         }
 
+        \Config::set('mail', $config);
+
+        $vendorApContact = '';
+
         $message = $this->getShow($orderId, 'emails.inquireOrder');
-        $message = view('emails.requestInvoice', compact('message', 'requestInvoicePONumber'));
+        $message = view('emails.requestInvoice', compact('message', 'requestInvoicePONumber', 'vendorApContact'));
 
 
         if(!empty($systemEmailRecipients['to'])){
@@ -3811,8 +3822,8 @@ ORDER BY aa_id");
         $options['preferGoogleOAuthMail']   = false;
 
         $options['to']                      = $systemEmailRecipients['to'];
-        $options['configName']              = $systemEmailRecipients;
-        $options['from']                    = $fromEmail;
+        $options['configName']              = $systemEmailConfiguration['config_name'];
+        $options['from']                    = $fromUserConfig->from;
         $options['isTest']                  = $isTest;
 
         $options['overrideToEmail'] =
