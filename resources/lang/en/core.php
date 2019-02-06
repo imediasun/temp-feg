@@ -221,6 +221,7 @@ return array(
 In order to purchase this product, it will need to be added to a Freehand order or added to the Product list before this order can be modified. Please either remove the product or add it to the Product List</div>",
 
     /* Orders */
+    "request_invoice_button_title" => "Request Invoice about this order",
     "order_inquiry_button_title" => "Inquire about this order",
     "order_api_expose_button_label"  => "Post to Netsuite",
     "order_api_exposed_label"  => "Posted to Netsuite",
