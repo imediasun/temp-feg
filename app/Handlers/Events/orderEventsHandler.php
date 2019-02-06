@@ -100,7 +100,7 @@ class orderEventsHandler
                         $error = true;
                         $reservedQty = $product->reserved_qty;
                         if ($event->isMerch) {
-                            $reservedQty = $product->reserved_qty / $product->num_items;
+                            $reservedQty = ($product->reserved_qty+($product->prev_qty*$product->num_items)) / $product->num_items;
                             if ($reservedQty < 1) {
                                 $reservedQty = 0;
                             } else {
