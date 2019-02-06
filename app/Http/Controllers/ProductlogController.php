@@ -381,7 +381,11 @@ class ProductlogController extends Controller {
             $productLogContent = ReservedQtyLog::where("variation_id", "=", $row->variation_id);
             $Contents = $productLogContent->orderBy('id', 'DESC')->get()->filter(function ($item) {
                 $userData = User::find($item->adjusted_by);
-                return $item->adjusted_by = $userData->first_name . " " . $userData->last_name;
+                if($userData) {
+                    return $item->adjusted_by = $userData->first_name . " " . $userData->last_name;
+                }else{
+                    return $item->adjusted_by = "No Data";
+                }
             });
 
             $totalRecords = $Contents->count();
