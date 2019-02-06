@@ -138,7 +138,7 @@ class orderEventsHandler
                 }
             }else {
                 if ($ReservedProductQtyLogObj and $product->prev_qty) {
-                    $adjustmentAmount = $product->qty;
+                    $adjustmentAmount = $product->qty  - ($product->prev_qty - $product->num_items);
                 } else {
                     $adjustmentAmount = $product->qty;
 
