@@ -418,12 +418,7 @@ usort($tableGrid, "SiteHelpers::_sort");
             success: function(response){
                 $('.ajaxLoading').hide();
                 console.log(response);
-                // if(response.status == 'error')
-                //     notyMessageError(response.message, {"positionClass": "toast-top-right"});
-                // else
-                //     notyMessage(response.message, {"positionClass": "toast-top-right"});
-                //
-                // $('.ajaxLoading').css('display', 'none');
+                notyMessage(response.message, {"positionClass": "toast-top-right"}, response.status, response.status.replace(/^\w/, c => c.toUpperCase())+'!');
             }
         });
     });

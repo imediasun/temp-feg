@@ -3651,6 +3651,10 @@ ORDER BY aa_id");
 
         $config = [];
 
+        if(!$fromUserConfig){
+            return Response::json(['status'=>'error', 'message'=>"Oops! Something went wrong. Please contact to the administrator."]);
+        }
+
         foreach ($arrayOfFromUserConfig as $configKey){
             $config[$configKey] = $fromUserConfig->{$configKey};
         }
