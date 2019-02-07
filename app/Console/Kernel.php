@@ -48,12 +48,12 @@ class Kernel extends ConsoleKernel
     {
         //giving error
         //$schedule->command('refresh:token')->cron('*/50 * * * * *')->withoutOverlapping();;
-        $schedule->command('refresh:token')->cron('*/50 * * * * *');
+        $schedule->command('refresh:token')->cron('*/50 * * * *');
         $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->everyMinute();
         //turning off to allow client to test and avoid from varying counts
-        $schedule->command('create:dummy_order')->cron('*/30 * * * * *')->withoutOverlapping();;
+        $schedule->command('create:dummy_order')->cron('*/30 * * * *')->withoutOverlapping();;
         $schedule->command('elm5taskmanager')->everyMinute();
         $schedule->command('enable:blocked_order_items')->everyMinute();
         $schedule->command('restore:po')->everyMinute();
@@ -76,10 +76,10 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('extract:googledrivelocations')->weekly();//Get the google drive location files ID (Daily, weekly, monthly, 13 weeks)
         //$schedule->command('refresh:googledriveaccesstoken')->cron('*/55 * * * *');//Refresh Google drive access token.
 
-        $schedule->command('extract:googledrivefiles Daily')->cron('0 */8 * * *');
-        $schedule->command('extract:googledrivefiles Weekly')->cron('0 */2 * * *');
-        $schedule->command('extract:googledrivefiles Monthly')->cron('0 */2 * * *');
-        $schedule->command('extract:googledrivefiles 13Weeks')->cron('0 */2 * * *');
+        $schedule->command('extract:googledrivefiles Daily')->cron('0 20 * * *');
+        $schedule->command('extract:googledrivefiles Weekly')->cron('0 4 * * *');
+        $schedule->command('extract:googledrivefiles Monthly')->cron('0 6 * * *');
+        $schedule->command('extract:googledrivefiles 13Weeks')->cron('0 8 * * *');
 
 
     }
