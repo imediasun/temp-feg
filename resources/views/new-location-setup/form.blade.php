@@ -278,14 +278,14 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="Sync Install" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Sync Install', (isset($fields['sync_install']['language'])? $fields['sync_install']['language'] : array())) !!}
+                            <label for="Sync Installed" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Sync Installed', (isset($fields['sync_install']['language'])? $fields['sync_install']['language'] : array())) !!}
                             </label>
                             <div class="col-md-6">
-                            <input type="radio" @if($row['sync_install'] == 1) checked @endif  name="sync_install" data-size="mini" data-name="sync_install"
-                                data-handle-width="40px" value="1"> Yes
-                                <input type="radio" @if($row['sync_install'] == 0) checked @endif  name="sync_install" data-size="mini" data-name="sync_install"
-                                data-handle-width="40px" value="0"> No
+                            <input class="form-control" type="radio" @if($row['sync_install'] == 1) checked @endif  name="sync_install" data-size="mini" data-name="sync_install"
+                                data-handle-width="40px" value="1"><h6>Yes</h6>
+                            <input class="form-control" type="radio" @if($row['sync_install'] == 0) checked @endif  name="sync_install" data-size="mini" data-name="sync_install"
+                                data-handle-width="40px" value="0"><h6 style="">No</h6>
                             </div>
                             <div class="col-md-2"></div>
                         </div>
