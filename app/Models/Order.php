@@ -1417,8 +1417,14 @@ class order extends Sximo
      * @param $productTypeId
      * @return string
      */
-    public function getManualGenerateDplQuery($locationId, $productTypeId)
+    public function getManualGenerateDplQuery($locationId, $productTypeId,$isActiveItems = false)
     {
+        $groupBy = " GROUP BY OC.item_name,OC.sku,OC.case_price ";
+        $onlyActiveItems = "";
+        if($isActiveItems){
+            $groupBy = " GROUP BY P.vendor_description,P.sku,P.case_price ";
+            $onlyActiveItems = " AND (P.inactive = 0 OR P.inactive = '' OR P.inactive IS NULL) ";
+        }
         $sql = 'SELECT
                   O.id            AS Order_id,
                   OC.id            AS Order_Content_id,
@@ -1450,7 +1456,7 @@ class order extends Sximo
                 WHERE O.location_id = ' . $locationId . '
                     AND OC.prod_type_id = ' . $productTypeId . '
                     AND OC.item_received > 0 
-                GROUP BY OC.item_name,OC.sku,OC.case_price';
+                '.$onlyActiveItems.$groupBy;
         return $sql;
     }
 
