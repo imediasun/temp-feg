@@ -11,17 +11,17 @@ class SiteHelpers
         if ($showAll) {
             $active = "all";
         }
+
         $data = array();
         $menu = self::nestedMenu(0, $position, $active);
         foreach ($menu as $row) {
             $child_level = array();
             $p = json_decode($row->access_data, true);
-
-
+            $access = json_decode($row->user_access_data, true);
             if ($row->allow_guest == 1 || $showAll) {
                 $is_allow = 1;
             } else {
-                $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
+                $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] || isset($access[Session::get('uid')]) && $access[Session::get('uid')] == 1   ? 1 : 0);
             }
             if ($is_allow == 1) {
 
@@ -30,10 +30,11 @@ class SiteHelpers
                     $level2 = array();
                     foreach ($menus2 as $row2) {
                         $p = json_decode($row2->access_data, true);
+                        $access = json_decode($row2->user_access_data, true);
                         if ($row2->allow_guest == 1) {
                             $is_allow = 1;
                         } else {
-                            $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
+                            $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] || isset($access[Session::get('uid')]) && $access[Session::get('uid')] == 1 ? 1 : 0);
                         }
 
                         if ($is_allow == 1) {
@@ -55,10 +56,11 @@ class SiteHelpers
                                 $child_level_3 = array();
                                 foreach ($menus3 as $row3) {
                                     $p = json_decode($row3->access_data, true);
+                                    $access = json_decode($row3->user_access_data, true);
                                     if ($row3->allow_guest == 1) {
                                         $is_allow = 1;
                                     } else {
-                                        $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
+                                        $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] || isset($access[Session::get('uid')]) &&  $access[Session::get('uid')] == 1 ? 1 : 0);
                                     }
                                     if ($is_allow == 1) {
                                         $menu3 = array(
