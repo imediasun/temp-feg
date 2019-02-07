@@ -1070,6 +1070,7 @@ class ModuleController extends Controller
 
         $permission = array();
         $mapPermissions = array();
+        $mapUserPermissions = array();
         $groupID = $request->input('group_id');
         $moduleId = $request->input('module_id');
 
@@ -1090,8 +1091,8 @@ class ModuleController extends Controller
 //
 
             $mapPermissions[$group_id] = $arr['is_view'];
-            $permissions = json_encode($arr);
 
+            $permissions = json_encode($arr);
             $data = array
             (
                 "access_data" => $permissions,
@@ -1117,8 +1118,8 @@ class ModuleController extends Controller
             foreach ($tasks as $t => $v) {
                 $arr[$t] = (isset($_POST[$t]["user"][$id]) ? "1" : "0");
             }
-            $mapPermissions[$group_id] = $arr['is_view'];
             $permissions = json_encode($arr);
+            $mapUserPermissions[$group_id] = $arr['is_view'];
 
             $data = array
             (
@@ -1129,12 +1130,16 @@ class ModuleController extends Controller
             \DB::table('tb_users_access')->insert($data);
         }
 
+        $mapUserPermissions = json_encode($mapUserPermissions);
         $moduleName = Module::where('module_id',$moduleId)
             ->select('module_name')->first()->module_name;
         $mapPermissions = json_encode($mapPermissions);
 
         Menu::where('module', $moduleName)
-            ->update(['access_data' => $mapPermissions]);
+            ->update(
+                ['access_data' => $mapPermissions,
+                 'user_access_data' => $mapUserPermissions
+                ]);
         
         return Redirect::to('feg/module/permission/' . $row->module_name)
             ->with('messagetext', 'Permission updated successfully.')->with('msgstatus', 'success');
