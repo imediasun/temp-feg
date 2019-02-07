@@ -59,7 +59,7 @@ foreach ($cellIterator as $cell) {
         $serialColumn = $cell->getColumn();
         //$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
         $serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
-        $colString = ($serialCol->getColumnIndex() . '1:' . $serialCol->getColumnIndex() . (count($d) + 2));
+        $colString = ($serialCol->getColumnIndex() . '1:' . $serialCol->getColumnIndex() . (count($fields) + 2));
 
         $objPHPExcel->getActiveSheet()->getStyle($colString)
             ->getNumberFormat()
