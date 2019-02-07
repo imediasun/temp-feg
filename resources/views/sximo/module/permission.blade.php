@@ -77,7 +77,7 @@
 				  <input name="{{$item}}[user][{{$user['user_id']}}]" @if($user['access_data'][$item]==1)  checked @endif class="c{{$user['user_id']}}" type="checkbox"  value="{{$user['access_data'][$item]}}">
 			  </label>
 			  @if($item=='is_word')
-				  <span onclick="deleteRow({{$user['user_id']}}, this)" style="margin-left: 10px">x</span>
+				  <span onclick="deleteRow({{$user['user_id']}}, this)" style="margin-left: 10px ;cursor: pointer">x</span>
 				  @endif
 
 		  </td>

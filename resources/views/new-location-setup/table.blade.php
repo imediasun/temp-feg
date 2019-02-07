@@ -139,12 +139,12 @@
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                 @if($field['field']=='is_server_locked')
-                                    <input type='checkbox' name="is_server_locked" @if(in_array(strtolower($value),[1,'yes'])) checked @endif data-field="inactive" data-size="mini" data-animate="true"
+                                    <input type='checkbox' readonly name="is_server_locked" @if(in_array(strtolower($value),[1,'yes'])) checked @endif data-field="inactive" data-size="mini" data-animate="true"
                                            data-on-text="Yes" data-name="{{ in_array(strtolower($value),[1,'yes'])? '1':'0' }}" data-off-text="No"
                                            data-handle-width="55px" class="toggle" data-id="{{$row->id}}"
                                            id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
                                 @elseif($field['field']=='is_remote_desktop')
-                                    <input type='checkbox' name="is_remote_desktop" @if(in_array(strtolower($value),[1,'yes'])) checked @endif data-field="inactive" data-size="mini" data-animate="true"
+                                    <input type='checkbox' readonly name="is_remote_desktop" @if(in_array(strtolower($value),[1,'yes'])) checked @endif data-field="inactive" data-size="mini" data-animate="true"
                                            data-on-text="Yes" data-name="{{ in_array(strtolower($value),[1,'yes'])? '1':'0' }}" data-off-text="No"
                                            data-handle-width="55px" class="toggle" data-id="{{$row->id}}"
                                            id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
@@ -218,34 +218,34 @@
             radioClass: 'iradio_square-blue'
         });
 
-        $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
-            var id = $(this).data('id');
-            var attr = $(this).attr('name');
-            var url='';
-            console.log(attr);
-            if(attr =='is_server_locked'){
-                url = "new-location-setup/update-serverlocked";
-            }
-            else if(attr=='is_remote_desktop'){
-                url = "new-location-setup/update-remotedesktop";
-            }
-            $.ajax(
-                    {
-                        type:'POST',
-                        url:url,
-                        data:{
-                            state:state,
-                            id:id
-                        },
-                        success:function(data){
-                            console.log(data);
-                            if(data.status=="200"){
-                              $('a.btn-search[data-original-title="Reload Data"]').trigger('click');
-                            }
-                        }
-                    }
-            );
-        });
+//        $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
+//            var id = $(this).data('id');
+//            var attr = $(this).attr('name');
+//            var url='';
+//            console.log(attr);
+//            if(attr =='is_server_locked'){
+//                url = "new-location-setup/update-serverlocked";
+//            }
+//            else if(attr=='is_remote_desktop'){
+//                url = "new-location-setup/update-remotedesktop";
+//            }
+//            $.ajax(
+//                    {
+//                        type:'POST',
+//                        url:url,
+//                        data:{
+//                            state:state,
+//                            id:id
+//                        },
+//                        success:function(data){
+//                            console.log(data);
+//                            if(data.status=="200"){
+//                              $('a.btn-search[data-original-title="Reload Data"]').trigger('click');
+//                            }
+//                        }
+//                    }
+//            );
+//        });
 
         $('#{{ $pageModule }}Table .checkall').on('ifChecked', function () {
             $('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
