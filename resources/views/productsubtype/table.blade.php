@@ -31,7 +31,7 @@
                     @foreach ($simpleSearchForm as $t)
                         <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
                             {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
-                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm,false,'',[],true) !!}
                         </div>
                     @endforeach
                     {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
@@ -272,7 +272,7 @@
     function checkTheFormForValueAndSubmit(checkForValue){
         if(checkForValue){
             if($('#newProductSubtype').val() == ''){
-                notyMessage('New Product Subtype required', [], 'error', 'Error!');
+                notyMessage('Please Select New Product Sub Type!', [], 'error', 'Error!');
             }else{
                 removeTheSubtypeAjaxCall();
                 // $('#removing_product_subtype').trigger('click');
@@ -353,9 +353,6 @@
         // Configure data grid columns for sorting
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 
-
-        $('select[name="product_type"],[name="type_description"],[name="operate"]').removeAttr('disabled');
-
     });
 
     function deleteProductSubtype(url, name, id, thisRow) {
@@ -399,21 +396,8 @@
 
     }
 
-    App.autoCallbacks.registerCallback('advancedsearch', function(){
-        $('select[name="product_type"],[name="type_description"],[name="operate"]').removeAttr('disabled');
-        removeDeletedProductSubType();
-    });
-
-    function removeDeletedProductSubType(){
-        $('select[name="product_type"]').jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:product_type:product_type') }}&limit=WHERE:deleted_at:is:NULL",
-            {
-                initial_text: ' -- Select --'
-            });
-    }
-
-    removeDeletedProductSubType();
     App.autoCallbacks.registerCallback('inline.row.save.after', function (params) {
-        reloadData('#productsubtype','productsubtype/data?search=')
+       reloadData('#productsubtype','productsubtype/data?search=')
     });
 </script>
 <style>

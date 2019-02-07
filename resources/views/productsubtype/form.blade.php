@@ -23,8 +23,8 @@
 					{!! SiteHelpers::activeLang('Product Sub Type', (isset($fields['product_type']['language'])? $fields['product_type']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('product_type', $row['product_type'],array('class'=>'form-control', 'placeholder'=>'Product Sub Type', 'maxlength'=>"22" )) !!}
-					 </div> 
+					  {!! Form::text('product_type', $row['product_type'],array('class'=>'form-control','required'=>'', 'placeholder'=>'Product Sub Type', 'maxlength'=>"22" )) !!}
+					 </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -45,7 +45,7 @@
 					{!! SiteHelpers::activeLang('Order Type', (isset($fields['request_type_id']['language'])? $fields['request_type_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::select('request_type_id', \Illuminate\Support\Facades\DB::table('order_type')->where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type','id'), $row['request_type_id'],array('class'=>'select2', ($_SERVER['REQUEST_URI'] != '/productsubtype/update' ? 'disabled': ''), 'placeholder'=>'Select Order Type',   )) !!}
+					  {!! Form::select('request_type_id', \Illuminate\Support\Facades\DB::table('order_type')->where('can_request', 1)->orderBy('order_type', 'asc')->lists('order_type','id'), $row['request_type_id'],array('class'=>'select2', 'required'=>'required', ($_SERVER['REQUEST_URI'] != '/productsubtype/update' ? 'disabled': ''), 'placeholder'=>'Select Order Type',   )) !!}
 					</div>
 					 <div class="col-md-2">
 					 	
@@ -61,7 +61,7 @@
 			<div class="form-group">
 				<label class="col-sm-4 text-right">&nbsp;</label>
 				<div class="col-sm-8">	
-					<button type="button" class="btn btn-primary btn-sm " id="submitForm"><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
+					<button type="submit" class="btn btn-primary btn-sm " id="submitForm"><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			
 			</div> 		 
@@ -169,32 +169,13 @@ function showResponse(data)  {
 	}	
 }
 
-$('#submitForm').on('click', function(){
+$('#submitForm').on('click', function(event){
+
     var productSubtypeName = $('input[name="product_type"]').val();
     var orderType = $('select[name="request_type_id"]').val();
 
-    var inputs = [
-        {
-            'title':'Product Subtype',
-			'value':productSubtypeName
-		},
-		{
-		    'title':'Order Type',
-			'value':orderType
-		}
-	];
-
-    if(!productSubtypeName || !orderType){
-        $.each(inputs, function (key, val) {
-            if(!val.value)
-			{
-			    setTimeout(function () {
-                    notyMessage(val.title+' Required', [], 'error', 'Error');
-                }, 200*(key+1));
-			}
-        });
-	}
-	else{
+    if(productSubtypeName && orderType){
+        event.preventDefault();
         var id = $('input[name="id"]').val();
         $.ajax({
             url: "{{ URL::to('productsubtype/productsubtypes-already-deleted') }}",
@@ -233,6 +214,7 @@ function populateTheAlreadyDeletedSubTypeModal(alreadyDeletedRecord, modalId){
 	$(modalId).modal('show');
 }
 function reactivateTheDeletedProductSubtype(){
+    $('.ajaxLoading').show();
     var url = $('#reactivateProductSubtypeFormAjax').attr('action');
     $.ajax({
 		url: url,

@@ -194,7 +194,6 @@ class ProductsubtypeController extends Controller
             $L->log('---------------- Start Product Subtype Remove Log ----------------');
             $L->log('User ID: '.auth()->user()->id);
             $L->log('Removed Product SubType: '.$productSubtypeId."  SubType Name: (".$deletingProductSubTypeObj->product_type.")");
-            $L->log('Removed Product SubType: '.$productSubtypeId."  SubType Name: (".$deletingProductSubTypeObj->product_type.")");
             $L->log(
                 ($replacingProductSubTypeObj)
                     ?
@@ -208,7 +207,7 @@ class ProductsubtypeController extends Controller
 
 
         return response()->json([
-            'message'   =>  "Product Subtype removed successfully!",
+            'message'   =>  "Product Sub Type removed successfully!",
             'status'    =>  'success'
         ]);
     }
@@ -291,25 +290,48 @@ class ProductsubtypeController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('product_type');
-            $id = $this->model->insertRow($data, $request->input('id'));
-            if($id){
-                if($data['id'] == ''){
-                    $expenseCategoryMappingObject = DB::table('expense_category_mapping')->where('order_type', $data['request_type_id'])->first();
-                    if($expenseCategoryMappingObject)
-                    {
-                        DB::table('expense_category_mapping')->insert([
-                            'order_type'                =>  $data['request_type_id'],
-                            'mapped_expense_category'   =>  $expenseCategoryMappingObject->mapped_expense_category,
-                            'product_type'              =>  $id,
-                        ]);
-                    }
+            $exceptionCustomMessages = [
+                'SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry'=>'Product Sub Type already exists!'
+            ];
+            try{
+                $id = $this->model->insertRow($data, $request->input('id'));
 
+                if($id){
+                    if($data['id'] == ''){
+                        $expenseCategoryMappingObject = DB::table('expense_category_mapping')->where('order_type', $data['request_type_id'])->first();
+                        if($expenseCategoryMappingObject)
+                        {
+                            DB::table('expense_category_mapping')->insert([
+                                'order_type'                =>  $data['request_type_id'],
+                                'mapped_expense_category'   =>  $expenseCategoryMappingObject->mapped_expense_category,
+                                'product_type'              =>  $id,
+                            ]);
+                        }
+
+                    }
                 }
+
+                return response()->json(array(
+                    'status' => 'success',
+                    'message' => \Lang::get('core.note_success')
+                ));
+
+            } catch (\Exception $exception) {
+
+                $errorMessage = '';
+
+                foreach ($exceptionCustomMessages as $key=>$message){
+                   if (str_contains($exception->getMessage(), $key)) {
+                       $errorMessage = $exceptionCustomMessages[$key];
+                   }
+                }
+
+                return response()->json(array(
+                    'status'    => 'error',
+                    'message'   => $errorMessage
+                ));
             }
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success')
-            ));
+
 
         } else {
 
