@@ -33,136 +33,73 @@ class orderEventsHandler
         $adjustQty = [];
         foreach ($event->products as $product) {
 
-            $ReservedProductQtyLogObj = ReservedQtyLog::where('order_id', $event->order_id)
-                ->where('product_id', $product->id)
-                ->orderBy('id', 'DESC')
-                ->first();
+            if ($product->allow_negative_reserve_qty == 0) {
+
+                $product->prev_qty = is_null($product->prev_qty) ||  $product->prev_qty == '' ? 0: $product->prev_qty;
 
 
-                $adjustmentAmount = $this->validateMerchandiseQty($product , $ReservedProductQtyLogObj,$event->isMerch);
+                if ($event->isMerch) { // If Order is Merchandise
+                    if ($product->product_is_broken_case &&  !($product->isPreIsBrokenCase)) {
+                        // If Ordered Product Qty as Broken Case and Product Qty was not Broken Case Previously
+                        $reservedQty = $product->reserved_qty + ($product->prev_qty * $product->num_items);
+                        $remainingQty = $reservedQty - $product->qty;
 
-
-            if ($product->allow_negative_reserve_qty == 0 && $adjustmentAmount > $product->reserved_qty) {
-                $error = true;
-                $reservedQty = $product->reserved_qty;
-                if($event->isMerch){
-                    $reservedQty = ($product->reserved_qty+($product->prev_qty*$product->num_items))/$product->num_items;
-                    if($reservedQty < 1){
-                        $reservedQty = 0;
-                    }else {
-                        $reservedQty = gettype($reservedQty) == 'double' ? (int)floor($reservedQty) : $reservedQty;
-                    }
-                }else{
-                    $reservedQty = $reservedQty + $product->prev_qty;
-                }
-
-                    $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
-                    $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
-
-            }else if ($product->allow_negative_reserve_qty == 0 && $adjustmentAmount < 1){
-
-                $error = true;
-                $reservedQty = $product->reserved_qty;
-                if($event->isMerch){
-                    $reservedQty = ($product->reserved_qty+($product->prev_qty*$product->num_items))/$product->num_items;
-                    if($reservedQty < 1){
-                        $reservedQty = 0;
-                    }else {
-                        $reservedQty = gettype($reservedQty) == 'double' ? (int)floor($reservedQty) : $reservedQty;
-                    }
-                }else{
-                    $reservedQty = $reservedQty + $product->prev_qty;
-                }
-
-                    $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
-                    $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
-
-
-            }else {
-
-                if ($event->isMerch) {
-                    if ($adjustmentAmount * $product->num_items > $product->reserved_qty) {
-
-                        $error = true;
-                        $reservedQty = $product->reserved_qty;
-                        if ($event->isMerch) {
-                            $reservedQty = ($product->reserved_qty+($product->prev_qty*$product->num_items)) / $product->num_items;
-                            if ($reservedQty < 1) {
-                                $reservedQty = 0;
-                            } else {
-                                $reservedQty = gettype($reservedQty) == 'double' ? (int)floor($reservedQty) : $reservedQty;
-                            }
-                        } else {
-                            $reservedQty = $reservedQty + $product->prev_qty;
+                        if ($remainingQty < 0) {
+                            $error = true;
+                            $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
+                            $adjustQty[$product->id] =  $reservedQty;
                         }
 
+                    }elseif ($product->product_is_broken_case &&  ($product->isPreIsBrokenCase)) {
+                        // If Product Qty is Broken Case and it was broken case previously
+                        $reservedQty = $product->reserved_qty + $product->prev_qty;
+                        $remainingQty = $reservedQty - $product->qty;
+
+                        if ($remainingQty < 0) {
+                            $error = true;
                             $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
-                            $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
-
-                    }
-                }else{
-                    if ($adjustmentAmount > $product->reserved_qty) {
-
-                        $error = true;
-                        $reservedQty = $product->reserved_qty;
-                        if ($event->isMerch) {
-                            $reservedQty = ($product->reserved_qty+($product->prev_qty*$product->num_items)) / $product->num_items;
-                            if ($reservedQty < 1) {
-                                $reservedQty = 0;
-                            } else {
-                                $reservedQty = gettype($reservedQty) == 'double' ? (int)floor($reservedQty) : $reservedQty;
-                            }
-                        } else {
-                            $reservedQty = $reservedQty + $product->prev_qty;
+                            $adjustQty[$product->id] = $reservedQty;
                         }
 
-                            $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
-                            $adjustQty[$product->id] = $ReservedProductQtyLogObj ? $reservedQty : $reservedQty;
+                    } elseif (!($product->product_is_broken_case) && $product->isPreIsBrokenCase) {
+                    //If product is not Broken case but it was broken case previously
+                        $reservedQty = $product->reserved_qty + $product->prev_qty ;
+                        $remainingQty = $reservedQty - ($product->qty * $product->num_items);
 
+                        if ($remainingQty < 0) {
+                            $reservedQty = in_array(gettype(($reservedQty / $product->num_items)),['double','float' ]) ? (int) floor($reservedQty / $product->num_items):$reservedQty / $product->num_items;
+                            $error = true;
+                            $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
+                            $adjustQty[$product->id] =  $reservedQty;
+                        }
+
+                    } else {
+                        //If Order is a Merchandise order and product qty is not as broken case
+                        $reservedQty = $product->reserved_qty + ($product->prev_qty * $product->num_items);
+                        $orderedQty = $product->qty * $product->num_items;
+
+                        if ($reservedQty < $orderedQty) {
+                            $reservedQty = in_array(gettype(($reservedQty / $product->num_items)),['double','float' ]) ? (int) floor($reservedQty / $product->num_items):$reservedQty / $product->num_items;
+                            $error = true;
+                            $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
+                            $adjustQty[$product->id] = $reservedQty;
+                        }
+                    }
+
+                } else {
+                    // If order is a non merchandise order
+                    $reservedQty = $product->reserved_qty + $product->prev_qty;
+
+                    if ($reservedQty < $product->qty) {
+                        $error = true;
+                        $message .= "<br>* $product->item_name, SKU: $product->sku, Quantity: $reservedQty";
+                        $adjustQty[$product->id] =  $reservedQty;
                     }
                 }
             }
         }
-
-        return array_merge($ProductResponse, ['error' => $error, "message" => $message, "adjustQty" => $adjustQty]);
-    }
-
-    public function validateMerchandiseQty($product , $ReservedProductQtyLogObj, $isMerch){
-        $adjustmentAmount = 0;
-        if($product->product_is_broken_case == 1 && $isMerch == 0){
-            if ($ReservedProductQtyLogObj and $product->prev_qty) {
-                $adjustmentAmount = $product->qty - $product->prev_qty;
-            } else {
-                $adjustmentAmount = $product->qty;
-            }
-        }elseif($product->product_is_broken_case == 0 && $isMerch == 1){
-
-            if($product->isPreIsBrokenCase == 1){
-
-                if ($ReservedProductQtyLogObj and $product->prev_qty) {
-                    $adjustmentAmount = ($product->qty * $product->num_items) - ($product->prev_qty );
-                } else {
-                    $adjustmentAmount = ($product->qty * $product->num_items);
-                }
-            }else {
-                if ($ReservedProductQtyLogObj and $product->prev_qty) {
-                    $adjustmentAmount = $product->qty  - ($product->prev_qty * $product->num_items);
-                } else {
-                    $adjustmentAmount = $product->qty;
-
-                }
-            }
-
-        }else{
-            if ($ReservedProductQtyLogObj and $product->prev_qty) {
-                $adjustmentAmount = $product->qty - $product->prev_qty;
-            } else {
-                $adjustmentAmount = $product->qty;
-            }
-        }
-
-
-        return $adjustmentAmount;
+            return array_merge($ProductResponse, ['error' => $error, "message" => $message, "adjustQty" => $adjustQty]);
 
     }
+
 }
