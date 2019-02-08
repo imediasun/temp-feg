@@ -123,6 +123,14 @@
 						<td>{{ $row->isgame }} </td>
 						
 					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Export Product in Development', (isset($fields['is_export_product_in_development']['language'])? $fields['is_export_product_in_development']['language'] : array())) }}
+						</td>
+						<td>{{ ($row->is_export_product_in_development == 1) ? 'Yes':'No' }}</td>
+
+					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>

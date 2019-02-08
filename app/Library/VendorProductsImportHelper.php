@@ -26,7 +26,12 @@ class VendorProductsImportHelper
 
 
         $product = new Product();
-        $products = $product->where(['vendor_id' => $vendorId, 'exclude_export' => 0])->groupBy('vendor_description')->groupBy('sku')->groupBy('case_price')->orderBy('id', 'asc')->get();
+        $productList = $product->where(['vendor_id' => $vendorId, 'exclude_export' => 0]);
+        if ($vendor->is_export_product_in_development == 1){
+            $productList->where(['in_development'=>0]);
+        }
+        $products = $productList->groupBy('vendor_description')
+            ->groupBy('sku')->groupBy('case_price')->orderBy('id', 'asc')->get();
         if (!$products) {
             return false;
         }
