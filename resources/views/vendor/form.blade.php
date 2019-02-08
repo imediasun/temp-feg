@@ -301,7 +301,7 @@
 								</div>
 							</div>
 							<div class="form-group  " >
-								<input type='hidden' value='0' name='status'>
+								<input type='hidden' value='0' name='is_export_product_in_development'>
 								<label for="Active" class=" control-label col-md-4 text-left">
 									{!! SiteHelpers::activeLang('Active', (isset($fields['status']['language'])? $fields['status']['language'] : array())) !!}
 								</label>
