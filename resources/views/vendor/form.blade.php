@@ -320,7 +320,7 @@
 									{!! SiteHelpers::activeLang('Export Product in Development', (isset($fields['is_export_product_in_development']['language'])? $fields['is_export_product_in_development']['language'] : array())) !!}
 								</label>
 								<div class="col-md-6 check-no">
-									<?php echo $is_export_product_in_development = $row['is_export_product_in_development']; ?>
+									<?php  $is_export_product_in_development = $row['is_export_product_in_development']; ?>
 									<label class='checked checkbox-inline'>
 										<input type='checkbox' name='is_export_product_in_development' value ='1'   class=''
 											   @if($is_export_product_in_development == 1 )checked @endif
