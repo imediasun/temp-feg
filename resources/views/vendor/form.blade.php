@@ -332,6 +332,22 @@
 
 								</div>
 							</div>
+							<div class="form-group  " >
+								<input type='hidden' value='0' name='status'>
+								<label for="Active" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Active', (isset($fields['status']['language'])? $fields['status']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6 check-no">
+									<?php $is_export_product_in_development = explode(",",$row['is_export_product_in_development']); ?>
+									<label class='checked checkbox-inline'>
+										<input type='checkbox' name='is_export_product_in_development' value ='1'   class=''
+											   @if($is_export_product_in_development == 1 || $is_export_product_in_development == 'Yes' || $is_export_product_in_development == 'yes' || $is_export_product_in_development == 'YES')checked @endif
+										/>  </label>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
 						</fieldset>
 			</div>
 			
