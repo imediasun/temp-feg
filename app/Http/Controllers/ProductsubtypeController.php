@@ -207,7 +207,7 @@ class ProductsubtypeController extends Controller
 
 
         return response()->json([
-            'message'   =>  "Product Sub Type removed successfully!",
+            'message'   =>  \Lang::get('core.note_success_delete'),
             'status'    =>  'success'
         ]);
     }
@@ -379,7 +379,7 @@ class ProductsubtypeController extends Controller
         $id = $request->input('id');
 
         $productsubtypeNotDeleted = $this->model->where('id', '!=', $id)
-            ->where('product_type', 'LIKE', "%".$productsubtype."%")
+            ->where('product_type', $productsubtype)
             ->where('request_type_id', $ordertype)
             ->first();
 
@@ -391,7 +391,7 @@ class ProductsubtypeController extends Controller
         }
 
         $query = $this->model->onlyTrashed()
-            ->where('product_type', 'LIKE', "%".$productsubtype."%")
+            ->where('product_type', $productsubtype)
             ->where('request_type_id', $ordertype);
 
         $alreadyDeletedRecord = $query->first();
