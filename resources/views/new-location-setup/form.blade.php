@@ -302,21 +302,21 @@
                             </div>
                             <div class="col-md-2 form-group">
                                 <select name="sync_time_zone" id="time-zons" class="form-control">
-                                    <option value="">Select Time Zone</option>
-                                    <option value="PST">PST</option>
-                                    <option value="PDT">PDT</option>
-                                    <option value="MST">MST</option>
-                                    <option value="MDT">MDT</option>
-                                    <option value="MDT">CST</option>
-                                    <option value="MDT">CDT</option>
-                                    <option value="MDT">EST</option>
-                                    <option value="MDT">EST</option>
+                                    @if($row['sync_time_zone'])
+                                        <option value="">Select Time Zone</option>
+                                        <option value="P" @if($row['sync_time_zone'][0]=='P') selected @endif>Pacific</option>
+                                        <option value="M" @if($row['sync_time_zone'][0]=='M')selected @endif>Mountain</option>
+                                        <option value="C" @if($row['sync_time_zone'][0]=='C')selected @endif>Central</option>
+                                        <option value="E" @if($row['sync_time_zone'][0]=='E')selected @endif>Eastern</option>
+                                    @else
+                                        <option value="">Select Time Zone</option>
+                                        <option value="P">Pacific</option>
+                                        <option value="M">Mountain</option>
+                                        <option value="C">Central</option>
+                                        <option value="E">Eastern</option>
+                                    @endif
                                 </select>
                             </div>
-                            <script>
-                                var timeZones =  document.getElementById('time-zons');
-                               timeZones.value = '{{ $row['sync_time_zone'] }}';
-                            </script>
                         </div>
                         <div class="form-group">
                             <label for="Windows User" class=" control-label col-md-4 text-left">

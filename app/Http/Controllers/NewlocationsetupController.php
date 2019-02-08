@@ -290,8 +290,21 @@ class NewlocationsetupController extends Controller
             if(!empty(['rdp_computer_password'])&& $data['is_remote_desktop']==1){
                 $data['rdp_computer_password'] = \SiteHelpers::encryptStringOPENSSL($data['rdp_computer_password']);
             }
+            if (isset($data['sync_time_zone']) && !empty($data['sync_time_zone'])){
 
+                if (date('I', time()))
+                {
+                    $val = $data['sync_time_zone'];
+                    $data['sync_time_zone'] = $val."DT";
+                }
+                else
+                {
+                    $val = $data['sync_time_zone'];
+                    $data['sync_time_zone'] = $val."ST";
 
+                }
+
+            }
 
             $id = $this->model->insertRow($data, $id);
             /**
