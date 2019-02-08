@@ -133,7 +133,7 @@ class order extends Sximo
 
             $orderedProduct = $orderContent->product;
 
-            if ($orderedProduct->is_reserved == 1) {
+            if ($orderedProduct && $orderedProduct->is_reserved == 1) {
 
                 if ($reduceQuantity) {
                     Log::info("claiming qty from product because order is restoring");

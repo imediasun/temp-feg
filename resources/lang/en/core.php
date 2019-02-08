@@ -210,6 +210,10 @@ return array(
     "gmail_smtp_connect_failed" => 'To allow system to send emails using your Gmail account, you must turn on less secure apps by clicking <a target="_blank" href="https://www.google.com/settings/u/6/security/lesssecureapps?pageId=none">Here</a>',
     "error_sending_mail"        => "An error occurred in sending email.",
     "note_success_denied"  => "Request denied successfully",
+    "item_already_deleted"  => "The following product no longer exists in the Product List module.
+<br>
+{products} 
+In order to purchase this product, it will need to be added to a Freehand order or added to the Product List before this order can be modified. Please either remove the product or add it to the Product List",
 
     /* Orders */
     "order_inquiry_button_title" => "Inquire about this order",

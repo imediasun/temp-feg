@@ -1997,7 +1997,9 @@ $message" .
             $contents = $order->orderedContent;
             foreach($contents as $item) {
                 $product = $item->product;
-                $meta = self::updateProductMeta($product, $data, $options);
+                if($product){
+                    $meta = self::updateProductMeta($product, $data, $options);
+                }
             }
         }
     }
