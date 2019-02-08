@@ -19,14 +19,42 @@ function reloadData( id,url,callback, options)
         $('.ajaxLoading').show();
     }
 	$.post( encodeURI(url) ,function( data ) {
+
 		$( id +'Grid' ).html( data );
 		typeof callback === 'function' && callback(data);
         App.autoCallbacks.runCallback.call($( id +'Grid' ), 'reloaddata', 
             {id:id, url:url, data:data, isClear: isClearSearch});
         if (!isBackground) {
-            $(document).scrollTop(0);
-            $( id +'Grid' ).show();
-            $('.ajaxLoading').hide();
+            if(pageModule=='order' || pageModule == 'managefegrequeststore'){
+                console.log('debug me');
+                var left = localStorage.getItem('scrollLeft');
+                var top = localStorage.getItem('scrollTop');
+                $(id + 'Grid').show();
+                $('.ajaxLoading').hide();
+                if(left!=0 && top !=0) {
+                   var total = $('.datagrid').width()+$('.sideMenuNav').width() + 100;
+                   left = Math.floor(total);
+                   top = Math.floor(top);
+                    var values = [left,top];
+                    setTimeout(function (data) {
+                        $(window).scrollTop(data[1]);
+                        $('.table-responsive').animate(
+                            {   scrollLeft: data[0]
+                            },0);
+                        left = 0;
+                        top = 0;
+                        localStorage.setItem('scrollTop', 0);
+                        localStorage.setItem('scrollLeft', 0);
+                    },0,values);
+
+
+               }
+
+            }else{
+                $(document).scrollTop(0);
+                $( id +'Grid' ).show();
+                $('.ajaxLoading').hide();
+            }
         }
         
 	});

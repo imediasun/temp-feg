@@ -222,7 +222,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                             <a href="{{ URL::to('order/po/'.$row->id)}}"
                                 data-id="{{$eid}}"
                                 data-action="po"
-                               class="tips btn btn-xs btn-white orderGenPOAction"
+                               class="tips btn btn-xs btn-white orderGenPOAction keepScroll"
                                title="Generate PO">
                                 <i class="fa fa-cogs" aria-hidden="true"></i>
                             </a>
@@ -230,7 +230,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 onclick="ajaxViewDetail('#order',this.href); return false; "
                                 data-id="{{$eid}}"
                                 data-action="clone"
-                               class="tips btn btn-xs btn-white orderCloneAction"
+                               class="tips btn btn-xs btn-white orderCloneAction keepScroll"
                                title="Clone Order">
                                 <i class=" fa fa-random" aria-hidden="true"></i>
                             </a>
@@ -245,7 +245,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
                                    data-id="{{$eid}}"
                                    data-action="receipt"
-                                   class="tips btn btn-xs btn-white orderReceiptAction"
+                                   class="tips btn btn-xs btn-white orderReceiptAction keepScroll"
                                    title="Receive Order">
                                     <i class="fa fa fa-truck" aria-hidden="true"></i>
                                 </a>
@@ -256,7 +256,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
                                    data-id="{{$eid}}"
                                    data-action="removal"
-                                   class="tips btn btn-xs btn-white orderRemovalRequestAction"
+                                   class="tips btn btn-xs btn-white orderRemovalRequestAction keepScroll"
                                    title="Request Removal">
                                     <i class="fa fa-trash-o " aria-hidden="true"></i>
                                 </a>
@@ -267,7 +267,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <a href="javascript:void(0)"
                                    data-id="{{$eid}}"
                                    data-action="post"
-                                   class="tips btn btn-xs btn-white postToNetSuitAction"
+                                   class="tips btn btn-xs btn-white postToNetSuitAction keepScroll"
                                    title="{{ Lang::get('core.order_api_expose_button_label') }}">
                                     <i class="fa fa-paper-plane" aria-hidden="true"></i>
                                 </a>
@@ -277,7 +277,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <a href="javascript:void(0)"
                                    data-id="{{$eid}}"
                                    data-action="post"
-                                   class="tips btn btn-xs btn-white verifyInvoiceAction"
+                                   class="tips btn btn-xs btn-white verifyInvoiceAction keepScroll"
                                    title="{{ Lang::get('core.order_invoice_verify_btn_title') }}">
                                     <i class="fa fa-check-square-o" aria-hidden="true"></i>
                                 </a>
@@ -285,7 +285,7 @@ usort($tableGrid, "SiteHelpers::_sort");
 
                             <a href="{{ $pageModule }}/inquire/{{$row->id}}/order"
                                data-id="{{$eid}}"
-                               class="tips btn btn-xs btn-white inquireOrderAction"
+                               class="tips btn btn-xs btn-white inquireOrderAction keepScroll"
                                title="{{ Lang::get('core.order_inquiry_button_title') }}">
                                 <i class="fa fa-question" aria-hidden="true"></i>
                             </a>
@@ -294,7 +294,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                             <a href="{{ URL::to('order/restoreorder/'.$row->id)}}"
                                data-id="{{$eid}}"
                                data-action="removal"
-                               class="tips btn btn-xs btn-white orderRemovalRequestAction"
+                               class="tips btn btn-xs btn-white orderRemovalRequestAction keepScroll"
                                title="Restore Order">
                                 <i class="fa fa-refresh " aria-hidden="true"></i>
                             </a>
@@ -369,6 +369,14 @@ usort($tableGrid, "SiteHelpers::_sort");
                     <?php //} ?>
             }
             }
+        });
+        $('.keepScroll').click(function () {
+            scrollOrder_restbl = $('.table-responsive').offset();
+             scrollTop = $(window).scrollTop();
+            scrollLeft = scrollOrder_restbl.left;
+            localStorage.setItem('scrollTop',  scrollTop);
+            localStorage.setItem('scrollLeft', scrollLeft);
+
         });
     $('.tips').tooltip();
         $('select[name="status_id"] option:first-child').text('All');
