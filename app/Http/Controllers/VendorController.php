@@ -614,12 +614,13 @@ class VendorController extends Controller
             if ($state == 1) {
                 return response()->json(array(
                     'status' => 'success',
-                    'message' => 'Product(s) in developement has been excluded from vendor product list.'
+                    'message' => 'Now product(s) has become part of vendor product list too,which are in development.'
+
                 ));
             } else {
                 return response()->json(array(
                     'status' => 'success',
-                    'message' => 'Now product(s) has become part of vendor product list too,which are in development.'
+                    'message' => 'Product(s) in developement has been excluded from vendor product list.'
                 ));
             }
         }else{
