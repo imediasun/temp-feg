@@ -272,7 +272,7 @@
     function checkTheFormForValueAndSubmit(checkForValue){
         if(checkForValue){
             if($('#newProductSubtype').val() == ''){
-                notyMessage('Please Select New Product Sub Type!', [], 'error', 'Error!');
+                notyMessage('Please Select New Product Sub Type!', [], 'error');
             }else{
                 removeTheSubtypeAjaxCall();
                 // $('#removing_product_subtype').trigger('click');
@@ -296,7 +296,7 @@
             },
             success: function (data){
                 $('.ajaxLoading').hide();
-                notyMessage(data.message, [], data.status, data.status.replace(/^\w/, c => c.toUpperCase())+'!');
+                notyMessage(data.message, [], data.status);
                 if(data.status == 'success'){
                     productSubtypeRowToBeDeleted.remove();
                 }
