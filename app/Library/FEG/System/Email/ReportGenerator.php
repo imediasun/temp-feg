@@ -501,6 +501,13 @@ class ReportGenerator
                         style="color:red">' . $reportUnknownAssetIds . ' </b> <br>';
                 $hasReport = true;
             }
+
+
+            $readersNotPlayed = self::getReaderNotPlayedReport($params);
+            if(!empty($readersNotPlayed)){
+                $hasReport = true;
+                $report[] = $readersNotPlayed;
+            }
             /*if(isset($report2))
             {
                 self::sendEmailReport( array(
