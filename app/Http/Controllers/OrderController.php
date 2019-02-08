@@ -957,6 +957,17 @@ class OrderController extends Controller
                         $prodTicketValue = $prodData[0]->ticket_value;
                         $prodVendorId = $prodData[0]->vendor_id;
                         $upc_barcode = ($prodData[0]->upc_barcode == 'null' || empty($prodData[0]->upc_barcode)) ? '':$prodData[0]->upc_barcode;
+                    }else{
+                        $order_contents = \DB::table('order_contents')->where('order_id', request()->input('order_id'))->get();
+                        $names = '=============================<br>';
+                        foreach ($order_contents as $key=>$content){
+                            $names .= ++$key.'. '.$content->item_name.'<br>';
+                        }
+                        $names .= '=============================<br>';
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => str_replace('{products}', $names, \Lang::get('core.item_already_deleted')),
+                        ]);
                     }
                 } else {
                     $prodType = $order_type;
