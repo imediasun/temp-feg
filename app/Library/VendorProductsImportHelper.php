@@ -27,7 +27,7 @@ class VendorProductsImportHelper
 
         $product = new Product();
         $productList = $product->where(['vendor_id' => $vendorId, 'exclude_export' => 0]);
-        if ($vendor->is_export_product_in_development == 1){
+        if ($vendor->is_export_product_in_development == 0){
             $productList->where(['in_development'=>0]);
         }
         $products = $productList->groupBy('vendor_description')
