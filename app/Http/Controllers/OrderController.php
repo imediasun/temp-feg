@@ -694,6 +694,22 @@ class OrderController extends Controller
     {
         $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
 
+
+        $productIds = \DB::table('order_contents')->where('order_id', request()->input('order_id'))->lists('product_id');
+        $existingProductIds = \DB::table('products')->whereIn('id', $productIds)->lists('id');
+        $deletedProductsIds = array_diff($productIds, $existingProductIds);
+        if(count($deletedProductsIds) > 0){
+            $deletedOrderContents = \DB::table('order_contents')->where('order_id', request()->input('order_id'))->whereIn('product_id', $deletedProductsIds)->get();
+            $names = '=============================<br>';
+            foreach ($deletedOrderContents as $key=>$content){
+                $names .= ++$key.'. '.$content->item_name.'<br>';
+            }
+            $names .= '=============================<br>';
+            return response()->json([
+                'status' => 'error',
+                'message' => str_replace('{products}', $names, \Lang::get('core.item_already_deleted')),
+            ]);
+        }
         /*$productIdArray = $request->get('product_id');
         $query = \DB::select('select id from requests where location_id = "' . (int)$request->location_id . '" AND status_id = 1 AND product_id IN ('.implode(',',$productIdArray).')');
 */
@@ -957,17 +973,6 @@ class OrderController extends Controller
                         $prodTicketValue = $prodData[0]->ticket_value;
                         $prodVendorId = $prodData[0]->vendor_id;
                         $upc_barcode = ($prodData[0]->upc_barcode == 'null' || empty($prodData[0]->upc_barcode)) ? '':$prodData[0]->upc_barcode;
-                    }else{
-                        $order_contents = \DB::table('order_contents')->where('order_id', request()->input('order_id'))->get();
-                        $names = '=============================<br>';
-                        foreach ($order_contents as $key=>$content){
-                            $names .= ++$key.'. '.$content->item_name.'<br>';
-                        }
-                        $names .= '=============================<br>';
-                        return response()->json([
-                            'status' => 'error',
-                            'message' => str_replace('{products}', $names, \Lang::get('core.item_already_deleted')),
-                        ]);
                     }
                 } else {
                     $prodType = $order_type;
