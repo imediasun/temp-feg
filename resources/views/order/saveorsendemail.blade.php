@@ -6,8 +6,8 @@
         <div class="sbox-title">
             <h3> Save/Download PO
             </h3>
-         {{--   <button style="visibility: hidden" type="button " class="btn-xs collapse-close btn btn-danger pull-right"><i
-                        class="fa fa fa-times"></i></button> --}}
+         {{--   <button style="visibility: hidden" type="button " class="btn-xs collapse-close btn btn-danger pull-right"><i--}}
+                        {{--class="fa fa fa-times"></i></button> --}}
             <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" id="close"
                onclick="reloadOrder();"
                     ><i class="fa fa fa-times"></i></a>
@@ -57,11 +57,11 @@
                             </div>
                             
                             @if($order_id && Order::isApiable($order_id) && !Order::isApified($order_id))
-                            {{--<div class="form-group" style="margin-top:10px;">
-                                <button type="button" class="btn btn-info btn-lg exposeAPIFromSaveOrSend"
-                                        style="width:33%">
-                                {{ Lang::get('core.order_api_expose_button_label') }} </button>
-                            </div>--}}
+                            {{--<div class="form-group" style="margin-top:10px;">--}}
+                                {{--<button type="button" class="btn btn-info btn-lg exposeAPIFromSaveOrSend"--}}
+                                        {{--style="width:33%">--}}
+                                {{--{{ Lang::get('core.order_api_expose_button_label') }} </button>--}}
+                            {{--</div>--}}
                             {!! Form::close() !!}
                             @endif
                         </div>

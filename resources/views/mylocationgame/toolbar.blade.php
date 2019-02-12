@@ -59,10 +59,10 @@
             {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
         @endif
         @if($setting['disableactioncheckbox']=='false')
-            {{--@if($access['is_add'] ==1)
-                <a href="javascript://ajax" class="btn btn-sm btn-white"
-                   onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
-            @endif--}}
+            {{--@if($access['is_add'] ==1)--}}
+                {{--<a href="javascript://ajax" class="btn btn-sm btn-white"--}}
+                   {{--onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>--}}
+            {{--@endif--}}
             @if($access['is_remove'] ==1)
                 <a href="javascript://ajax"
                    class="btn btn-sm btn-white"
