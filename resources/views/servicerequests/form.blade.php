@@ -51,11 +51,11 @@
 					</label>
 					<div class="col-md-6">
                         <select name='Priority' required class='select2 ' data-current-date='{{ date('Y-m-d') }}'>
-                           {{-- @foreach($priorityOptions as $key => $val)
-                                <option  value ='{{ $key }}' 
-                                    @if($priority == $key) selected='selected' @endif
-                                >{{ $val }}</option>
-                            @endforeach--}}
+                           {{-- @foreach($priorityOptions as $key => $val)--}}
+                                {{--<option  value ='{{ $key }}' --}}
+                                    {{--@if($priority == $key) selected='selected' @endif--}}
+                                {{-->{{ $val }}</option>--}}
+                            {{--@endforeach--}}
                         </select>
 					 </div> 
 					 <div class="col-md-2"></div>
@@ -207,7 +207,7 @@
 			 
 <script type="text/javascript">
 $(document).ready(function() { 
-	
+
     $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
         {  selected_value : '{{ $locationId }}','initial-text': "Select Location" ,
             <?php $locationId == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$locationId." , 'Location', 'active' , 'id|location_name' )") ?>
