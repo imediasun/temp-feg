@@ -700,13 +700,13 @@ class OrderController extends Controller
         $deletedProductsIds = array_diff($productIds, $existingProductIds);
         if(count($deletedProductsIds) > 0){
             $deletedOrderContents = \DB::table('order_contents')->where('order_id', request()->input('order_id'))->whereIn('product_id', $deletedProductsIds)->get();
-            $names = '=============================<br>';
-            foreach ($deletedOrderContents as $key=>$content){
-                $names .= ++$key.'. '.$content->item_name.'<br>';
+            $names = "<br><ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
+            foreach ($deletedOrderContents as $content){
+                $names .= '<li>'.$content->item_name.'</li>';
             }
-            $names .= '=============================<br>';
+            $names .= "</ul><br>";
             return response()->json([
-                'status' => 'error',
+                'status' => 'deleted_product_error',
                 'message' => str_replace('{products}', $names, \Lang::get('core.item_already_deleted')),
             ]);
         }

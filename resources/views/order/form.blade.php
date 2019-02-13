@@ -1090,7 +1090,26 @@
              window.setTimeout(function() { $("#ordersubmitFormAjax").submit(); }, 5000);
              }*/
             else {
-                notyMessageError(data.message);
+                if(data.status == 'deleted_product_error' ){
+                    App.notyConfirm({
+                        type:'alert',
+                        buttons:false,
+                        container: '.custom-container',
+                        message: data.message,
+                        afterShow: function(){
+                            $('#button-0').remove();
+                        },
+                        cancel: function () {
+                            $('.custom_overlay').slideUp(500);
+                        }
+                    });
+
+                    setTimeout(function () {
+                        $('#button-1').remove();
+                    }, 100);
+                }else{
+                    notyMessageError(data.message);
+                }
                 return false;
             }
         }
