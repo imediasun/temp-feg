@@ -48,7 +48,9 @@ class Kernel extends ConsoleKernel
     {
         //giving error
         //$schedule->command('refresh:token')->cron('*/50 * * * * *')->withoutOverlapping();;
-        $schedule->command('refresh:token')->cron('*/50 * * * *');
+        //this command was not executing properly from this file. under FEG-2855 this command moved to FEG tasks in admin panel
+        //to run after every 50 minutes
+        //$schedule->command('refresh:token')->cron('*/50 * * * *');
         $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->everyMinute();

@@ -100,7 +100,7 @@ class RefreshOAuthToken extends Command
         }
         $L->log($count .' users of '. count($users). ' Users refresh token updated');
         $L->log('Cron job refresh token End');
-        echo $count .' users of '. count($users). ' Users refresh token updated';
+        $L->log( $count .' users of '. count($users). ' Users refresh token updated');
         return true;
     }
 }
