@@ -58,7 +58,8 @@ class RefreshOAuthToken extends Command
            $nextRefreshTime = 0;
            if(!empty($user->oauth_refreshed_at)){
                $refreshedAt = \DateTime::createFromFormat("Y-m-d H:i:s",$user->oauth_refreshed_at)->getTimestamp();
-               $nextRefreshTime = $refreshedAt + (55*60.00);//add 55 minutes to last refresh time
+               //attempting to run cron job after every 30 minutes
+               $nextRefreshTime = $refreshedAt + (29*60.00);//add 29 minutes to last refresh time
            }
            $now = new \DateTime();
            $now = $now->getTimestamp();
@@ -70,7 +71,6 @@ class RefreshOAuthToken extends Command
                    $user->updateRefreshToken($array);
                    $L->log('ID '.$user->id.' User oauth token updated');
                    $L->log('Google Api (Refresh token) response for user id '.$user->id.' '.json_encode($array));
-                   print_r($array);
                }
                catch (ClientException $e)
                {
