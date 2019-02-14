@@ -15,6 +15,12 @@ class FEGJobs
     private static $L;
     private static $possibleAdjustments;
     private static $limit = 1000;
+
+
+    public static function executeRefreshOAuthCommand(){
+        $command = new \App\Console\Commands\RefreshOAuthToken();
+        $command->handle();
+    }
     
     public static function cleanSummaryReports($params = array()) {
         global $__logger;
