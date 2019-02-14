@@ -3569,14 +3569,15 @@ ORDER BY aa_id");
 
     public function getDownloaddpl($isActive = 0){
         $isActiveOnly = false;
-
+        $onlyActiveItemQuery = "";
         if($isActive == 1){
             $isActiveOnly = true;
+            $onlyActiveItemQuery = " AND P.upc_barcode IS NOT NULL ";
         }
 
         $locationId = 2031;
         $productTypeId = 7;
-        $query = $this->model->getManualGenerateDplQuery($locationId,$productTypeId,$isActiveOnly);
+        $query = $this->model->getManualGenerateDplQuery($locationId,$productTypeId,$isActiveOnly,$onlyActiveItemQuery);
         $items = \DB::select(\DB::raw($query));
         $fileName = 'FEG-2424-location-'.$locationId.'-Redemption-Prize-dpl-file-'.time().'.dpl';
         $dplFile = $this->model->saveItemsInDplFile($items,$productTypeId,$locationId,'00000000001','uploads/manual-dpl/',$fileName);

@@ -1415,15 +1415,17 @@ class order extends Sximo
     /**
      * @param $locationId
      * @param $productTypeId
+     * @param bool $isActiveItemsOnly
+     * @param string $onlyActiveItemQuery
      * @return string
      */
-    public function getManualGenerateDplQuery($locationId, $productTypeId,$isActiveItems = false)
+    public function getManualGenerateDplQuery($locationId, $productTypeId, $isActiveItemsOnly = false, $onlyActiveItemQuery = "")
     {
         $groupBy = " GROUP BY OC.item_name,OC.sku,OC.case_price ";
-        $onlyActiveItems = "";
-        if($isActiveItems){
+
+        if($isActiveItemsOnly){
             $groupBy = " GROUP BY P.vendor_description,P.sku,P.case_price ";
-            $onlyActiveItems = " AND (P.inactive = 0 OR P.inactive = '' OR P.inactive IS NULL) ";
+            $onlyActiveItemQuery .= " AND (P.inactive = 0 OR P.inactive = '' OR P.inactive IS NULL) ";
         }
         $sql = 'SELECT
                   O.id            AS Order_id,
@@ -1456,7 +1458,7 @@ class order extends Sximo
                 WHERE O.location_id = ' . $locationId . '
                     AND OC.prod_type_id = ' . $productTypeId . '
                     AND OC.item_received > 0 
-                '.$onlyActiveItems.$groupBy;
+                '.$onlyActiveItemQuery.$groupBy;
         return $sql;
     }
 
