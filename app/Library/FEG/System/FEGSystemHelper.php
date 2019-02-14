@@ -713,6 +713,12 @@ class FEGSystemHelper
         return $hDate;
     }
 
+    public static function getHumanDateRange($dateFrom = "", $dateTo = "")
+    {
+        $hDate = date("l, F d Y", strtotime($dateFrom)) . " - " . date("l, F d Y", strtotime($dateTo));
+        return $hDate;
+    }
+
     public static function split_trim($txt, $delim = ',', $trimChar = null)
     {
         $arr = array();
@@ -1049,7 +1055,7 @@ class FEGSystemHelper
             $q .= " AND ul.group_id IN ($groups)";
         }
         if ($location) {
-            $q .= " AND UL.location_id IN ($location)";
+            $q .= " AND ul.location_id IN ($location)";
         }
 
         $data = DB::select($q);

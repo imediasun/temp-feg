@@ -42,5 +42,18 @@ class Report
         $params['_logger'] = $L;
         ReportGenerator::sendLocationWiseDailyPendingOrdersToReceiveEmailWeekly($params);
     }
-    
+
+    /**
+     * Send daily report with duplicate assets IDs handler
+     * @param $params
+     * @return boolean
+     */
+    public static function duplicateAssetIDs($params = array()) {
+        $L = isset($params['_logger']) ? $params['_logger'] :
+            new MyLog('duplicate-assets-report.log', 'FEGCronTasks/duplicate-assets-reports', 'Reports');
+        $params['_logger'] = $L;
+        ReportGenerator::sendDuplicateAssetIDReport($params);
+        return true;
+    }
+
 }

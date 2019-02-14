@@ -2494,4 +2494,204 @@ class ReportGenerator
 
         return $report;
     }
+
+
+
+    /**
+     * Send daily report with duplicate assets IDs
+     * @param $params
+     * @return boolean
+     */
+    public static function sendDuplicateAssetIDReport($params) {
+
+        /** @var $_task */
+        /** @var $_logger */
+        extract(array_merge([
+            'date_start' => date('Y-m-d', strtotime("now -1 day")),
+            'date_end' => null,
+            '_task' => [],
+            '_logger' => null,
+        ], $params));
+
+        $inputDates = ReportHelpers::dateRangeFix($date_start, $date_end);
+        $days = ReportHelpers::dateDifference($date_start, $date_end);
+
+        $humanDate = $days ?
+            FEGSystemHelper::getHumanDateRange($inputDates['start'], $inputDates['end']) :
+            FEGSystemHelper::getHumanDate($inputDates['end']);
+
+        $_logger->log("Start duplicate assets IDs Report for " . $humanDate);
+
+        /** @var $locations */
+        /** @var $dates */
+        /** @var $inputDates */
+        extract(self::getDuplicateAssetIDs($params));
+
+        if(!isset($locations)) {
+            $_logger->log("End duplicate assets IDs Report Report. Reason: location with no duplicate asset ids found. " . $humanDate);
+            return;
+        }
+
+        $task = (object)array_merge(['is_test_mode' => 0], (array)$_task);
+        $isTest = !empty($isTest) ? $isTest : $task->is_test_mode;
+
+        $query = location::where('active', '=', 1)->whereIn('id', $locations);
+        $locationsData = $query->get();
+        if(!$locationsData) {
+            $_logger->log("End duplicate assets IDs Report Report. Reason: no duplicate asset ids found. " . $humanDate);
+            return;
+        }
+
+        foreach ($locationsData as $location) {
+
+            $locationID = $location->id;
+
+            $_logger->log("    Start Report for Location $locationID for " . $humanDate);
+
+            $rowParams = compact('locationID', 'dates', 'days');
+            $reportRows = self::getLocationDuplicateAssetIDsRows($rowParams);
+
+            if(empty($reportRows)) {
+                $_logger->log("    End Report for Location $locationID for " . $humanDate . ". Reason: no games were found.");
+                continue;
+            }
+
+            $configName = 'Daily Duplicate Assets IDs Report';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $locationID);
+
+            if(empty($emailRecipients)) {
+                $_logger->log("    End Report for Location $locationID for " . $humanDate . ". Reason: no email recipients found.");
+                continue;
+            }
+
+            $messageHeader = \Lang::get('core.reports.daily_duplicate_assets_ids_report.head');
+            $messageBody = implode("<br />", $reportRows);
+            $messageFooter = \Lang::get('core.reports.daily_duplicate_assets_ids_report.foot');
+
+            $message = $messageHeader . $messageBody . $messageFooter;
+
+            $subjectLang = \Lang::get('core.reports.daily_duplicate_assets_ids_report.subject');
+            $subject = sprintf($subjectLang, "{$locationID} {$location->location_name} - {$humanDate}");
+
+
+            self::sendEmailReport(array_merge($emailRecipients, [
+                'subject' => $subject,
+                'message' => $message,
+                'isTest' => $isTest,
+                'configName' => $configName,
+                'configNameSuffix' => "{$locationID}-{$humanDate}",
+            ]));
+
+
+            $_logger->log("    End Report for Location $locationID for " . $humanDate);
+        }
+
+        $_logger->log("End duplicate assets IDs Report Report for " . $humanDate);
+        return true;
+    }
+
+
+    /**
+     * Get data for duplicate asset IDs report
+     * @param $params
+     * @return array
+     */
+    public static function getDuplicateAssetIDs($params)
+    {
+        /** @var $date_start */
+        /** @var $date_end */
+        /** @var $_task */
+        /** @var $_logger */
+        extract(array_merge([
+            'date_start' => date('Y-m-d', strtotime("now -1 day")),
+            'date_end' => null,
+            '_task' => [],
+            '_logger' => null,
+        ], $params));
+
+        $inputDates = ReportHelpers::dateRangeFix($date_start, $date_end);
+        extract($inputDates, EXTR_OVERWRITE, 'date_');
+
+        $q = "SELECT 
+              DATE(ge.date_end) as earn_date, 
+              ge.game_id, 
+              ge.loc_id,
+              IFNULL(game.game_name, ge.game_id) as game_name, 
+              IFNULL(location.location_name, ge.loc_id) as location_name
+
+            FROM `game_earnings` ge
+              LEFT JOIN `game` ON game.id = ge.game_id
+              LEFT JOIN `location` ON location.id = ge.loc_id                
+              JOIN (
+                  SELECT date_end, game_id, loc_id 
+                    FROM `game_earnings` 
+                      WHERE date_end >= '{$date_start}' 
+                        AND date_end <= '{$date_end}'
+                ) dge ON dge.game_id= ge.game_id
+
+            WHERE ge.date_end >= '{$date_start}' 
+                  AND ge.date_end <= '{$date_end}'
+                  AND DATE(dge.date_end) = DATE(ge.date_end)
+                  AND dge.loc_id != ge.loc_id
+
+            GROUP BY DATE(ge.date_end), ge.game_id, ge.loc_id
+            ORDER BY ge.date_end, ge.game_id, ge.loc_id";
+
+
+        $gamesData = DB::select($q);
+        $reportData = [];
+        if (!empty($gamesData)) {
+            $gamesData = collect($gamesData);
+            $locations = $gamesData->unique('loc_id')->pluck('loc_id')->toArray();
+            $dates = $gamesData->groupBy('earn_date')
+                ->map(function ($dateItem, $dateKey) {
+                    return $dateItem->groupBy('game_id')->map(function ($gameItem, $gameKey) {
+                        return [
+                            "locations" => $gameItem->pluck('location_name', 'loc_id')->toArray(),
+                            "game_name" => $gameItem->pluck('game_name')->first(),
+                        ];
+                    });
+                });
+            $reportData = compact('dates', 'locations', 'inputDates');
+        }
+
+        return $reportData;
+    }
+
+    /**
+     * Get email body rows for duplicate asset IDs report
+     * @param $params
+     * @return array
+     */
+    public static function getLocationDuplicateAssetIDsRows($params) {
+
+        /** @var $locationID */
+        /** @var $dates */
+        /** @var $days */
+        extract($params);
+
+        $rows = [];
+        if(!$dates) {
+            return $rows;
+        }
+
+        foreach ($dates as $date => $dateInfo) {
+            foreach ($dateInfo as $gameID => $gameData) {
+                if(isset($gameData['locations'][$locationID])) {
+                    $rowData = [];
+                    $rowData[] = ($days) ? "{$date} - {$gameID}" : $gameID;
+
+                    $locations = $gameData['locations'];
+                    foreach ($locations as $locID => $locName) {
+                        $rowData[] = $locID . " - " . $locName;
+                    }
+
+                    $rows[] = implode(', ', $rowData);
+                }
+
+            }
+        }
+
+        return $rows;
+    }
 }
