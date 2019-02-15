@@ -694,21 +694,23 @@ class OrderController extends Controller
     {
         $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
 
-
-        $productIds = \DB::table('order_contents')->where('order_id', request()->input('order_id'))->lists('product_id');
-        $existingProductIds = \DB::table('products')->whereIn('id', $productIds)->lists('id');
-        $deletedProductsIds = array_diff($productIds, $existingProductIds);
-        if(count($deletedProductsIds) > 0){
-            $deletedOrderContents = \DB::table('order_contents')->where('order_id', request()->input('order_id'))->whereIn('product_id', $deletedProductsIds)->get();
-            $names = "<br><ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
-            foreach ($deletedOrderContents as $content){
-                $names .= '<li>'.$content->item_name.'</li>';
+        $editMode = $request->get('editmode');
+        if(in_array($editMode, ['edit', 'clone'])){
+            $productIdsFromOrderContents = \DB::table('order_contents')->whereIn('id', request()->input('order_content_id'))->lists('product_id');
+            $existingProductIds = \DB::table('products')->whereIn('id', $productIdsFromOrderContents)->lists('id');
+            $deletedProductsIds = array_diff($productIdsFromOrderContents, $existingProductIds);
+            if(count($deletedProductsIds) > 0){
+                $deletedOrderContents = \DB::table('order_contents')->where('order_id', request()->input('order_id'))->whereIn('product_id', $deletedProductsIds)->get();
+                $names = "<br><ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
+                foreach ($deletedOrderContents as $content){
+                    $names .= '<li>'.$content->item_name.'</li>';
+                }
+                $names .= "</ul><br>";
+                return response()->json([
+                    'status' => 'deleted_product_error',
+                    'message' => str_replace('{products}', $names, \Lang::get('core.item_already_deleted')),
+                ]);
             }
-            $names .= "</ul><br>";
-            return response()->json([
-                'status' => 'deleted_product_error',
-                'message' => str_replace('{products}', $names, \Lang::get('core.item_already_deleted')),
-            ]);
         }
         /*$productIdArray = $request->get('product_id');
         $query = \DB::select('select id from requests where location_id = "' . (int)$request->location_id . '" AND status_id = 1 AND product_id IN ('.implode(',',$productIdArray).')');
@@ -874,7 +876,7 @@ class OrderController extends Controller
                 $removedProducts = $orderContent->orderedContent()->whereIn("product_id",$supperSetofProducts)->get();
                 foreach($removedProducts as $removedProduct){
                     $product = product::find($removedProduct->product_id);
-                    if($product->is_reserved == 1) {
+                    if($product && $product->is_reserved == 1) {
                         $productVariations = $product->getProductVariations();
                         $product->reserved_qty += $removedProduct->qty;
                         $product->updateProduct(['reserved_qty' => $product->reserved_qty]);

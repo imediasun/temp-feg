@@ -213,7 +213,7 @@ return array(
     "item_already_deleted"  => "<div style='text-align: left !important;'>The following products no longer exist in the Product List module.
 <br>
 {products} 
-In order to purchase this product, it will need to be added to a Freehand order or added to the Product list before this order can be modified. <br><br> Please either remove the product or add it to the Product List</div>",
+In order to purchase this product, it will need to be added to a Freehand order or added to the Product list before this order can be modified. Please either remove the product or add it to the Product List</div>",
 
     /* Orders */
     "order_inquiry_button_title" => "Inquire about this order",
