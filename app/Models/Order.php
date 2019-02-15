@@ -1497,7 +1497,7 @@ class order extends Sximo
                     Order::ORDER_TYPE_OFFICE_SUPPLIES => 'OffSuppl',
                     Order::ORDER_TYPE_REDEMPTION => 'RedPrize',
                     Order::ORDER_TYPE_INSTANT_WIN_PRIZE => 'InstWin',
-                    Order::ORDER_TYPE_MARKETING => 'PartySup',
+                    Order::ORDER_TYPE_MARKETING => 'Marketing',
                     Order::ORDER_TYPE_UNIFORM => 'Uniforms'
                 ];
                 $itemName = \SiteHelpers::removeSpecialCharacters($itemName);
