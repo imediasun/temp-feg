@@ -3139,7 +3139,7 @@ class SiteHelpers
         $tableHeadings = [];
         if(!empty($data[0])) {
             foreach ($data[0] as $heading) {
-                //"=\"61605 Party Supplies\""
+                //"=\"61605 Marketing\""
 
                 $tableHeadings[0][] = strtolower(str_replace(array('/','\\',' '),'_',$heading));
             }

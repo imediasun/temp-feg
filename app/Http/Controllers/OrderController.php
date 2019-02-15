@@ -2350,7 +2350,7 @@ class OrderController extends Controller
         }
 
         $whereOrderTypeCondition = " AND products.prod_type_id in(".$orderTypeId.")";
-        // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
+        // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Marketing, 22-Tickets
         if (
                 !empty($orderTypeId)
                 && in_array($orderTypeId,$restrictedOrderTypes)
