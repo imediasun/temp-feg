@@ -14,13 +14,13 @@ class inventoryreport extends Sximo  {
     protected $primaryKey = 'id';
     const INSTANT_WIN = 8;
     const OFFICE_SUPPLIES = 6;
-    const PARTY_SUPPLIES = 17;
+    const MARKETING = 17;
     const REDEMPTION_PRICES = 7;
     const ADVANCE_REPLACEMENT = 2;
     public static $orderTypesForNetSuite = [
         self::INSTANT_WIN,
         self::OFFICE_SUPPLIES,
-        self::PARTY_SUPPLIES,
+        self::MARKETING,
         self::REDEMPTION_PRICES
     ];
     public static $orderTypesForUnitPrice = [

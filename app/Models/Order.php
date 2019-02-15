@@ -28,7 +28,7 @@ class order extends Sximo
     const ORDER_TYPE_REDEMPTION = 7;
     const ORDER_TYPE_INSTANT_WIN_PRIZE = 8;
     const ORDER_TYPE_OFFICE_SUPPLIES = 6;
-    const ORDER_TYPE_PARTY_SUPPLIES = 17;
+    const ORDER_TYPE_MARKETING = 17;
     const ORDER_TYPE_UNIFORM = 24;
     const ORDER_TYPE_REPAIR_LABOUR = 3;
     const ORDER_TYPE_ADVANCED_REPLACEMENT = 2;
@@ -1497,7 +1497,7 @@ class order extends Sximo
                     Order::ORDER_TYPE_OFFICE_SUPPLIES => 'OffSuppl',
                     Order::ORDER_TYPE_REDEMPTION => 'RedPrize',
                     Order::ORDER_TYPE_INSTANT_WIN_PRIZE => 'InstWin',
-                    Order::ORDER_TYPE_PARTY_SUPPLIES => 'PartySup',
+                    Order::ORDER_TYPE_MARKETING => 'PartySup',
                     Order::ORDER_TYPE_UNIFORM => 'Uniforms'
                 ];
                 $itemName = \SiteHelpers::removeSpecialCharacters($itemName);
