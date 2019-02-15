@@ -876,6 +876,11 @@ class OrderController extends Controller
                 $removedProducts = $orderContent->orderedContent()->whereIn("product_id",$supperSetofProducts)->get();
                 foreach($removedProducts as $removedProduct){
                     $product = product::find($removedProduct->product_id);
+                    /**
+                     * As all the operations done below in the following if() block
+                     * depends on product object therefore if product object
+                     * is missing then no action should be performed.
+                     **/
                     if($product && $product->is_reserved == 1) {
                         $productVariations = $product->getProductVariations();
                         $product->reserved_qty += $removedProduct->qty;
