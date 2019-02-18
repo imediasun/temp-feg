@@ -1260,7 +1260,7 @@ class ReportGenerator
                 "days_not_played_text" => $downForText,
             );
             $notPlayedGamesFlat[] = $game;
-            if (!in_array($locationId, $locationsNotReportingIds)) {
+//            if (!in_array($locationId, $locationsNotReportingIds)) {
                 $rowIndex++;
                 if ($daysNotPlayed > 6) {
                     $notPlayedMoreThanAWeek[] = $game;
@@ -1268,7 +1268,7 @@ class ReportGenerator
                 $report[] = "$rowIndex.) <b>$gameId | $gameTitle</b>" .
                     " at <b>$locationId | $locationName</b> $downForText<br>";
                 $notPlayedGames[$locationId][] = $game;
-            }
+//            }
 
         }
                     
