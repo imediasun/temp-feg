@@ -1500,6 +1500,26 @@
         $('#order_type_id').change(function () {
             var orderType = $(this);
             var selected_type = $(this).val();
+             var  merch_val = <?php echo json_encode(explode(',', $case_price_categories)); ?>;
+            if(Number(selected_type) > 0) {
+
+                if (showFirstPopup) {
+                    clearTimeout(showFirstPopup);
+                }
+                console.log("debug me here");
+                console.log($.inArray(selected_type, merch_val) > -1);
+                if ($.inArray(selected_type, merch_val) > -1) {
+                    settimeout = showPopups({{env('NOTIFICATION_POPUP_TIME_FOR_MERCH')}});
+                } else {
+                    settimeout = showPopups({{env('NOTIFICATION_POPUP_TIME_FOR_NON_MERCH')}});
+                }
+            }else{
+                if (showFirstPopup) {
+                    clearTimeout(showFirstPopup);
+                }
+            }
+
+                 console.log(merch_val);
             if($.inArray(parseInt(selected_type),type_permissions) != -1 && show_freehand)
             {
                 $('#can-freehand').show();
@@ -1647,7 +1667,7 @@
          *
          * @returns {string}
          */
-        function showPopups()
+        function showPopups(time)
         {
             showFirstPopup = setTimeout(function () {
                 App.notyConfirm({
@@ -1668,10 +1688,15 @@
                             data:{requestIds:requestIds}
                         }).success(function (data) {
                             clearTimeout(hidePopup);
-                            showFirstPopup =  showPopups();
+                            if(showFirstPopup){
+                                clearTimeout(showFirstPopup);
+                            }
+                            showFirstPopup =  showPopups(time);
                         })
                             .error(function (data) {
-
+                                if(showFirstPopup){
+                                    clearTimeout(showFirstPopup);
+                                }
                             })
                     }
                 });
@@ -1680,7 +1705,7 @@
                         $('#noty_topCenter_layout_container').hide(200);
                         reloadOrder();
                     },60000)
-            }, ({{env('notification_popup_time_for_order',1)}} * 60000));
+            }, (time * 60000));
             return showFirstPopup;
         }
         var settimeout = undefined;
@@ -1691,7 +1716,10 @@ $(function(){
      * Order.clone -> after specific time period if system remains idle on SAVE will show message related timeout and order will be changed to its initial state
      * managefegrequeststore.create -> after specific time period if system remains idle on SAVE will show message related timeout
      */
-     settimeout =  showPopups();
+    var oType = Number($('#order_type_id').val());
+    if(oType > 0 ) {
+        settimeout = showPopups();
+    }
 });
 
     </script>
