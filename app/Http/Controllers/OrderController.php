@@ -250,6 +250,16 @@ class OrderController extends Controller
 
     public function getIndex()
     {
+        $filePath = 'D:\sites\feg-laravel\public\uploads\vendors-attachments\2019-01-11\197-vendor-10307-product-list-01082019084848.csv';
+       $data   =\SiteHelpers::getVendorFileImportData($filePath);
+        $collection = collect($data);
+       $a = $collection->pluck('product_id')->toArray();
+        $a = array_map(function($arr){
+            $productId = (int) $arr;
+                return $productId;
+        },$a);
+        dd($a);
+        exit;
 
         /*\App\Library\FEG\System\Sync::transferEarnings();
         \App\Library\FEG\System\Sync::retryTransferMissingEarnings();
