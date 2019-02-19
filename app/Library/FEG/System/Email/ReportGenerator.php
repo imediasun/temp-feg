@@ -2633,7 +2633,7 @@ class ReportGenerator
                   AND ge.date_end <= '{$date_end}'
                   AND DATE(dge.date_end) = DATE(ge.date_end)
                   AND dge.loc_id != ge.loc_id
-
+                  AND  !(ge.loc_id = 0)
             GROUP BY DATE(ge.date_end), ge.game_id, ge.loc_id
             ORDER BY ge.date_end, ge.game_id, ge.loc_id";
 
