@@ -109,7 +109,7 @@
 
 <script>
 	$(document).ready(function(){
-
+		$('#add-user').removeAttr("target");
 		$(".checkAll").click(function() {
 			var cblist = $(this).attr('rel');
 			var cblist = $(cblist);
