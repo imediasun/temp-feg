@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 require_once('setting.php');
 
 use App\Models\Reviewvendorimportlist;
+use App\Models\vendor;
 use Illuminate\Console\Command;
 use App\Library\FEG\System\FEGSystemHelper;
 use File;
@@ -100,11 +101,50 @@ class VendorImportProduct extends Command
                             'from_email'=>$fromEmail,
                             'attachments' =>$attachments['attachments'],
                         ];
-                        $reviewVendorImportList = new reviewvendorimportlist();
-                        $vendorCount = $reviewVendorImportList->isVendorExist($fromEmail);
+                        $vendor_ID = 0;
+                        //to find exact vendor
+                        $vendor = self::getVendorFromSubject($inbox,$email_number);
+                        if (!empty($vendor)){
+                            $vendor_ID = $vendor['vendor_id'];
+                        }
 
-                        if($vendorCount > 0) {
-                            $vendorInformation = $reviewVendorImportList->getVendorByEmail($fromEmail);
+                        if($vendor_ID == 0){
+                            if (count($attachments['attachments']) > 0) {
+                                $fileData = \SiteHelpers::getVendorFileImportData($attachments['attachments'][0]);
+                                $vendor = self::getVendorFromFileContent($fileData);
+                                if (!empty($vendor)){
+                                    $vendor_ID = $vendor['vendor_id'];
+                                }
+                            }
+                        }
+
+                        if($vendor_ID == 0){
+                            if (count($attachments['attachments']) > 0) {
+                                $vendor = self::getVendorFromFileTitle($attachments['attachments'][0]);
+                                if (!empty($vendor)){
+                                    $vendor_ID = $vendor['vendor_id'];
+                                }
+                            }
+                        }
+
+                        $reviewVendorImportList = new reviewvendorimportlist();
+
+                        if($vendor_ID == 0){
+                            $vendorCount = $reviewVendorImportList->isVendorExist($fromEmail);
+                            if ($vendorCount > 0) {
+                                $vendor = $reviewVendorImportList->getVendorByEmail($fromEmail);
+                                if (!empty($vendor)){
+                                    $vendor_ID = $vendor->id;
+                                }
+                            }
+                        }
+
+                        $productListVendor = vendor::find($vendor_ID);
+
+
+
+                        if($productListVendor) {
+                            $vendorInformation = $productListVendor;
                             $isDuplicateFound = false;
                             foreach ($attachments['attachments'] as $attachment) {
                                 $fileData = \SiteHelpers::getVendorFileImportData($attachment);
@@ -120,8 +160,8 @@ class VendorImportProduct extends Command
                             }
 
                             //if email id exist against single vendor
-                            if($vendorCount == 1){
-                                $reviewVendorImportList->importExlAttachment($data, $vendorCount);
+                            if($productListVendor){
+                                $reviewVendorImportList->importExlAttachment($data, $productListVendor);
 
                             }else{//If multiple vendors exist with same email id.
 
@@ -421,5 +461,46 @@ class VendorImportProduct extends Command
                 )), $sendEmailFromMerchandise, $sendEmailFromVendorAccount);
             }
         }
+    }
+
+    public static function getVendorFromFileContent($data)
+    {
+        $vendorId = [];
+        array_filter($data, function ($d) use (&$vendorId) {
+            if (preg_match("/vendor#/i", $d['product_id'])) {
+                $splitter = explode('#', $d['product_id']);
+                if (!empty($splitter[1])) {
+                    $vendorId['vendor_id'] = $splitter[1];
+                }
+                return true;
+            }
+        });
+
+        return $vendorId;
+    }
+
+    public static function getVendorFromSubject($inbox, $email_number)
+    {
+
+        /* get information specific to this email */
+        $overview = imap_fetch_overview($inbox, $email_number, 0);
+        $vendorId = [];
+        //Parse subject to find vendor id
+        $subject = $overview[0]->subject;
+        $vendor = str_replace("]", "", substr($subject, strpos($subject, "#") + 1));
+        if ($vendor) {
+            $vendorId['vendor_id'] = $vendor;
+        }
+
+        return $vendorId;
+
+    }
+
+    public static function getVendorFromFileTitle($fileName){
+        $vendorId = [];
+        if (preg_match('/vendor-(.*?)-product/', $fileName, $match) == 1) {
+            $vendorId['vendor_id'] = $match[1];
+        }
+        return $vendorId;
     }
 }

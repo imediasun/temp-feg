@@ -65,7 +65,7 @@ FROM vendor_import_products  ";
         ), $args));
 
 
-        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY  {$sort} {$order}  " : ' ORDER BY is_new DESC , is_updated DESC ,  is_omitted ASC   ';
+        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY  {$sort} {$order}  " : ' ORDER BY is_new DESC , is_updated DESC, is_missing_in_file ASC ,  is_omitted ASC    ';
         if (!empty($extraSorts)) {
             if (empty($orderConditional)) {
                 $orderConditional = " ORDER BY ";
@@ -226,11 +226,13 @@ GROUP BY mapped_expense_category");
     }
 
     public function setRowStatus($rows){
-        //Red=#fd4b4b;Green=#4fbb39;Blue=#103669;
+        //Red=#fd4b4b;Green=#4fbb39;Blue=#103669;Orange=#ff9900;
 
 
         foreach ($rows as $row){
             if($row->is_omitted == 1) {
+                $row->textColor = '#ff9900';
+            }if($row->is_missing_in_file == 1) {
                 $row->textColor = '#fd4b4b';
             }elseif($row->is_deleted == 0 && $row->is_updated == 1 && $row->is_new == 0){
                 $row->textColor = '#1c78f5';
@@ -278,6 +280,7 @@ GROUP BY mapped_expense_category");
                 unset($item['is_updated']);
                 unset($item['is_deleted']);
                 unset($item['previous_status']);
+                unset($item['is_missing_in_file']);
                 if($isOmitted == 0){
                     $product->insertRow($item, $productId);
                 }
@@ -323,21 +326,9 @@ GROUP BY mapped_expense_category");
         return $vendor;
     }
     
-    public function importExlAttachment($dataArray = [], $vendorCount){
+    public function importExlAttachment($dataArray = [], $vendor){
       $fromEmail = $dataArray['from_email'];
-        $vendor = '';
-        //if email id exist against single vendor
-        if($vendorCount == 1){
-            $vendor = vendor::select("id",'vendor_name','email','email_2','games_contact_email','ismerch','isgame')->where(function ($query) use($fromEmail){
-                $query->where('email',$fromEmail);
-                $query->orWhere('email_2',$fromEmail);
-                $query->orWhere('games_contact_email',$fromEmail);
-            })->first();
-        }else{//If multiple vendors exist with same email id.
-            $vendorId = $dataArray['vendor_id'];
-            $vendor = vendor::find($vendorId);
-        }
-      
+
         if($vendor) {
             $isInvalidId = false;
             foreach ($dataArray['attachments'] as $attachment) {
@@ -378,6 +369,11 @@ GROUP BY mapped_expense_category");
                             $productRows = $this->findProducts($item['id'], $item, $vendorListId);
                             $this->saveProductList($productRows, $vendor->id, true);
                         }
+                    }
+                    $fileItemIds = reviewvendorimportlist::getProductIdsOnly($fileData);
+                    $products = reviewvendorimportlist::getRemovedItemsByVendor($fileItemIds,$vendor->id,$vendorListId);
+                    foreach ($products as $product){
+                        $this->insertRow($product, null);
                     }
                 }
             }
@@ -540,7 +536,7 @@ GROUP BY mapped_expense_category");
 
         $sendEmailFromMerchandise = false;
         $from = 'vendor.products@fegllc.com';
-        $to = ''; //$vendor->email ? $vendor->email:$vendor->email_2;
+        $to = []; //$vendor->email ? $vendor->email:$vendor->email_2;
 //        games_contact_email
         $vendorEmail = '';
         if(!empty($vendor->email) && $vendor->email !='') {
@@ -625,5 +621,58 @@ GROUP BY mapped_expense_category");
 
             }
         }
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public static function getProductIdsOnly($data = [])
+    {
+        $collection = collect($data);
+        $dataArray = $collection->pluck('product_id')->toArray();
+        $dataArray = array_map(function ($arr) {
+            $productId = (int)$arr;
+            return $productId;
+        }, $dataArray);
+        return $dataArray;
+    }
+
+    /**
+     * @param array $productIds
+     * @param int $vendorId
+     * @param int $vendorListId
+     * @return array
+     */
+    public static function getRemovedItemsByVendor($productIds = [], $vendorId = 0, $vendorListId = 0)
+    {
+        $vendorProduct = VendorProductTrack::where(['vendor_id'=>$vendorId])->whereNotIn('product_id', $productIds)->get()->toArray();
+        $vendorProduct = self::getProductIdsOnly($vendorProduct);
+        $products = product::whereIn('id',$vendorProduct)->get();
+        $data = [];
+        if($products && count($vendorProduct) > 0) {
+
+            foreach ($products as $product) {
+                $rows = product::where('vendor_description', $product->vendor_description)
+                    ->where('sku', $product->sku)
+                    ->where('case_price', $product->case_price)->get();
+                foreach ($rows as $row) {
+                    $row->product_id = $row->id;
+                    unset($row->id);
+                    if (isset($row->is_converted)) {
+                        unset($row->is_converted);
+                    }
+                    $row->inactive = 1;
+                    $row->inactive_by = 0;
+                    $row->is_updated = 0;
+                    $row->is_new = 0;
+                    $row->is_missing_in_file = 1;
+                    $row->import_vendor_id = $vendorListId;
+                    $data[] = $row->toArray();
+                }
+            }
+
+        }
+        return $data;
     }
 }
