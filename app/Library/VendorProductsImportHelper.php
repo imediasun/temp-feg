@@ -81,6 +81,7 @@ class VendorProductsImportHelper
         $data[] = [];
         $data[] = [];
         $data[] = ["Don't update Product ID."];
+        $data[] = ["vendor#".$product->vendor_id];
 
 
         // save each row of the data
