@@ -68,7 +68,7 @@ class ReportGenerator
         $params['humanDateToday'] = $humanDateToday = FEGSystemHelper::getHumanDate($today);
         $sleepFor = intval($sleepFor);
         
-        // Transfer Basic Status
+        // Transfer Basic Statusstar
         $dailyTransferStatusReport = '';
         if (empty($location)) {
             $dailyTransferStatusReport = self::getDailyTransferStatusReport($params);
@@ -2507,15 +2507,18 @@ class ReportGenerator
         /** @var $_task */
         /** @var $_logger */
         extract(array_merge([
-            'date' => date('Y-m-d', strtotime("now -1 day")),
+            'date_start' => date('Y-m-d', strtotime("now -1 day")),
+            'date_end' => null,
             '_task' => [],
             '_logger' => null,
         ], $params));
 
+        $inputDates = ReportHelpers::dateRangeFix($date_start, $date_end);
+        $days = ReportHelpers::dateDifference($date_start, $date_end);
 
-        $days = 1;
-
-        $humanDate = FEGSystemHelper::getHumanDate($date);
+        $humanDate = $days ?
+            FEGSystemHelper::getHumanDateRange($inputDates['start'], $inputDates['end']) :
+            FEGSystemHelper::getHumanDate($inputDates['end']);
 
         $_logger->log("Start duplicate assets IDs Report for " . $humanDate);
 
@@ -2600,16 +2603,17 @@ class ReportGenerator
         /** @var $_task */
         /** @var $_logger */
         extract(array_merge([
-            'date' => date('Y-m-d', strtotime("now -1 day")),
+            'date_start' => date('Y-m-d', strtotime("now -1 day")),
+            'date_end' => null,
             '_task' => [],
             '_logger' => null,
         ], $params));
 
-       /* $inputDates = ReportHelpers::dateRangeFix($date_start, $date_end);
-        extract($inputDates, EXTR_OVERWRITE, 'date_');*/
+        $inputDates = ReportHelpers::dateRangeFix($date_start, $date_end);
+        extract($inputDates, EXTR_OVERWRITE, 'date_');
 
         $q = "SELECT 
-              DATE(ge.date_start) as earn_date, 
+              DATE(ge.date_end) as earn_date, 
               ge.game_id, 
               ge.loc_id,
               IFNULL(game.game_name, ge.game_id) as game_name, 
@@ -2621,17 +2625,17 @@ class ReportGenerator
               JOIN (
                   SELECT date_end, game_id, loc_id 
                     FROM `game_earnings` 
-                      WHERE date_start >= '{$date}' 
-                        
+                      WHERE date_end >= '{$date_start}' 
+                        AND date_end <= '{$date_end}'
                 ) dge ON dge.game_id= ge.game_id
 
-            WHERE ge.date_start >= '{$date}' 
-                  
-                  AND DATE(dge.date_start) = DATE(ge.date_start)
+            WHERE ge.date_end >= '{$date_start}' 
+                  AND ge.date_end <= '{$date_end}'
+                  AND DATE(dge.date_end) = DATE(ge.date_end)
                   AND dge.loc_id != ge.loc_id
                   AND  !(ge.loc_id = 0)
-            GROUP BY DATE(ge.date_start), ge.game_id, ge.loc_id
-            ORDER BY ge.date_start, ge.game_id, ge.loc_id";
+            GROUP BY DATE(ge.date_end), ge.game_id, ge.loc_id
+            ORDER BY ge.date_end, ge.game_id, ge.loc_id";
 
 
         $gamesData = DB::select($q);
