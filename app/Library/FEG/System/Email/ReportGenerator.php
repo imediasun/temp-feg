@@ -219,6 +219,8 @@ class ReportGenerator
         // final
         if ($noDailyGameSummary != 1) {
             $__logger->log("Start Final Games Summary Report for $date");
+            $params['addReadersNotPlayedSection']   = 1;
+            $params['readersNotPlayed']             = $readersNotPlayed;
             $finalGameSummaryReport = self::getDailyGameSummaryReport($params);
             $__logger->log("    END processing Final Games Summary Report for $date");        
             $params['finalGameSummaryReport'] = $finalGameSummaryReport;
@@ -1556,7 +1558,9 @@ class ReportGenerator
             'location' => null,
             'noDailyGameSummaryClosed' => 0,
             'noDailyGameSummaryDownGames' => 0,
-            'noDailyGameSummaryTop25' => 0,               
+            'noDailyGameSummaryTop25' => 0,
+            'addReadersNotPlayedSection'=>0,
+            'readersNotPlayed'=>'',
             '_task' => array(),
             '_logger' => null,
         ), $params)); 
@@ -1573,7 +1577,11 @@ class ReportGenerator
                     self::$reportCache['locationsNotReportingReport'] : self::getLocationsNotReportingReport($params);
             $report[] = $locationsNotReportingReport;
         }
-        
+
+        if($addReadersNotPlayedSection == 1){
+            $report[] = $readersNotPlayed;
+        }
+
         // Games Down for 7+ Days (cache)
         if ($noDailyGameSummaryDownGames != 1) {        
             $report[] = '<br><b style="text-decoration:underline">Games Down for 7+ Days:</b><br>';
