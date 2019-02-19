@@ -2281,6 +2281,7 @@ $(function () {
 var showFirstPopup;
 var hidePopup;
 function beforepopupClose() {
+    $('.btn.btn-search[data-original-title="Clear Search"]').trigger("click");
     var alertpopup = document.getElementById('noty_topCenter_layout_container');
    if(alertpopup) {
        $(alertpopup).remove();
