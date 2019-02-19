@@ -40,7 +40,7 @@ use App\Models\ReservedQtyLog;
 use Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
-
+use App\Models\Ordersetting;
 /**
  * Test comment 8
  * Class OrderController
@@ -552,6 +552,15 @@ class OrderController extends Controller
            $otherExcluded = Ordertyperestrictions::select('id')->where('can_request', 1)->whereNotIn('id',[7])->get()->pluck('id')->toArray();
            $excludedOrderTypesArray = array_merge($excludedOrderTypesArray,$otherExcluded);
        }
+
+        $MerchandiseOrderSetting  = Ordersetting::where("is_merchandiseorder", 1)->first();
+        $merch = '';
+        if ($MerchandiseOrderSetting) {
+            foreach ($MerchandiseOrderSetting->ordersettingcontent as $SettingContent) {
+                $merch  .=  $SettingContent->ordertype_id.',';
+               }
+            $this->data['merchItems'] = rtrim($merch, ',');
+        }
         $this->data['excludedOrderTypes'] = implode(',', $excludedOrderTypesArray);
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }

@@ -1500,14 +1500,13 @@
         $('#order_type_id').change(function () {
             var orderType = $(this);
             var selected_type = $(this).val();
-             var  merch_val = <?php echo json_encode(explode(',', $case_price_categories)); ?>;
+             var  merch_val = <?php echo json_encode(explode(',', $merchItems)); ?>;
+
             if(Number(selected_type) > 0) {
 
                 if (showFirstPopup) {
                     clearTimeout(showFirstPopup);
                 }
-                console.log("debug me here");
-                console.log($.inArray(selected_type, merch_val) > -1);
                 if ($.inArray(selected_type, merch_val) > -1) {
                     settimeout = showPopups({{env('NOTIFICATION_POPUP_TIME_FOR_MERCH')}});
                 } else {
