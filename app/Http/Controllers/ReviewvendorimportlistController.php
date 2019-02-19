@@ -566,6 +566,9 @@ class ReviewvendorimportlistController extends Controller
                 }elseif($itemToUpdate->is_updated){
                     $itemToUpdate->previous_status = 'updated';
                     $itemToUpdate->is_updated = 0;
+                }elseif($itemToUpdate->is_missing_in_file){
+                    $itemToUpdate->previous_status = 'missing';
+                    $itemToUpdate->is_missing_in_file = 0;
                 }
                 $itemToUpdate->save();
             }
@@ -597,6 +600,8 @@ class ReviewvendorimportlistController extends Controller
                     $itemToUpdate->is_new = 1;
                 }elseif($itemToUpdate->previous_status == 'updated' ){
                     $itemToUpdate->is_updated = 1;
+                }elseif($itemToUpdate->previous_status == 'missing' ){
+                    $itemToUpdate->is_missing_in_file = 1;
                 }
                 $itemToUpdate->is_omitted = 0;
                 $itemToUpdate->save();
