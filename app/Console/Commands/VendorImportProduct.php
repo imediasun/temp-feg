@@ -57,8 +57,8 @@ class VendorImportProduct extends Command
 
         /* connect to gmail */
         $hostname = '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX';
-        $username = "vendor.products@fegllc.com";
-        $password = "%Am=%5JK";
+        $username = env('MAIL_VENDOR_USERNAME',"vendor.products@fegllc.com");
+        $password = env('MAIL_VENDOR_PASSWORD',"%Am=%5JK");
 
         $L->log("Connecting...");
         $inbox = "";
