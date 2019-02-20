@@ -2507,12 +2507,13 @@ class ReportGenerator
         /** @var $_task */
         /** @var $_logger */
         extract(array_merge([
-            'date_start' => date('Y-m-d', strtotime("now -1 day")),
+            'date' => date('Y-m-d', strtotime("now -1 day")),
             'date_end' => null,
             '_task' => [],
             '_logger' => null,
         ], $params));
-
+        $date_start = $date;
+        $date_end =  date('Y-m-d',strtotime($date_start . '+1 days'));
         $inputDates = ReportHelpers::dateRangeFix($date_start, $date_end);
         $days = ReportHelpers::dateDifference($date_start, $date_end);
 
@@ -2603,12 +2604,12 @@ class ReportGenerator
         /** @var $_task */
         /** @var $_logger */
         extract(array_merge([
-            'date_start' => date('Y-m-d', strtotime("now -1 day")),
-            'date_end' => null,
+            'date' => date('Y-m-d', strtotime("now -1 day")),
             '_task' => [],
             '_logger' => null,
         ], $params));
-
+        $date_start = $date;
+        $date_end =  date('Y-m-d',strtotime($date_start . '+1 days'));
         $inputDates = ReportHelpers::dateRangeFix($date_start, $date_end);
         extract($inputDates, EXTR_OVERWRITE, 'date_');
 
@@ -2625,11 +2626,11 @@ class ReportGenerator
               JOIN (
                   SELECT date_end, game_id, loc_id 
                     FROM `game_earnings` 
-                      WHERE date_end >= '{$date_start}' 
+                      WHERE date_start >= '{$date_start}' 
                         AND date_end <= '{$date_end}'
                 ) dge ON dge.game_id= ge.game_id
 
-            WHERE ge.date_end >= '{$date_start}' 
+            WHERE ge.date_start >= '{$date_start}' 
                   AND ge.date_end <= '{$date_end}'
                   AND DATE(dge.date_end) = DATE(ge.date_end)
                   AND dge.loc_id != ge.loc_id
