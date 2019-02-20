@@ -19,6 +19,10 @@ class game extends Sximo  {
 	{
 		return $this->hasOne('App\Models\Gamestitle','id','game_title_id');
 	}
+	public function location()
+	{
+		return $this->belongsTo('App\Models\location','location_id');
+	}
 
 	public static function querySelect(  ){
 		
