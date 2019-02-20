@@ -4,6 +4,7 @@ namespace App\Library\FEG\System\Email;
 
 use App\Http\Controllers\OrderController;
 use App\Models\Feg\System\Options;
+use App\Models\game;
 use App\Models\Reader;
 use PDO;
 use DB;
@@ -54,7 +55,7 @@ class ReportGenerator
             '_logger' => null,
         ), $params));
 
-         
+
         $lf = "daily-transfer.log";
         $lp = "FEGCronTasks/Skim-Daily-Transfer";
         $__logger = $_logger;
@@ -67,7 +68,7 @@ class ReportGenerator
         $params['humanDate'] = $humanDate = FEGSystemHelper::getHumanDate($date);
         $params['humanDateToday'] = $humanDateToday = FEGSystemHelper::getHumanDate($today);
         $sleepFor = intval($sleepFor);
-        
+
         // Transfer Basic Status
         $dailyTransferStatusReport = '';
         if (empty($location)) {
@@ -87,7 +88,7 @@ class ReportGenerator
             }            
         }
         
-        self::getRetrySyncSuccessData($params);        
+        self::getRetrySyncSuccessData($params);
         FEGSystemHelper::logit("Retry Sync Success Data: ", $lf, $lp);
         FEGSystemHelper::logit(self::$reportCache['retrySyncSuccessData'], $lf, $lp);        
         
@@ -96,7 +97,7 @@ class ReportGenerator
             // $dailyTransferStatusReport
             // Locations Not Reporting:
         if ($noClosed != 1) {
-            $locationsNotReportingReport = self::getLocationsNotReportingReport($params);            
+            $locationsNotReportingReport = self::getLocationsNotReportingReport($params);
         }
         // Games Not Played:
         if ($noDownGames != 1) {   
@@ -1232,6 +1233,13 @@ class ReportGenerator
         //$q .= " AND E.location_id NOT IN (" . implode(',', $locationsNotReportingIds). ")";
         
         $data = DB::select($q);
+
+        $allTheGamesOfLocationsNotReporting = self::getAllTheGamesOfLocationsNotReporting($locationsNotReportingIds);
+
+        $data = array_merge($allTheGamesOfLocationsNotReporting, $data);
+
+        dd($data);
+
         $report = array();
         $notPlayedGames = array();
         $notPlayedGamesFlat = array();
@@ -1288,6 +1296,46 @@ class ReportGenerator
             $reportString = implode("", $report);
         }
         return $reportString;        
+    }
+    public static function getAllTheGamesOfLocationsNotReporting($locationIds){
+        $games = game::with([
+            'location'=>function($query){
+                $query->select('id', 'location_name');
+            },
+            'gameTitle'=>function($query){
+                $query->select('id', 'game_title');
+            }
+        ])
+        ->select(['id', 'location_id', 'game_title_id'])->whereIn('location_id', $locationIds)
+        ->where('sold', 0)
+        ->get();
+
+        foreach ($games as $key=>$game){
+
+            $resultSetOfReportGamePlays = \DB::table('report_game_plays')
+                ->select('id', 'game_id', 'game_on_test', "date_played", "date_last_played", \DB::raw('DATEDIFF(date_played,date_last_played) AS days_not_played'))
+                ->where('game_id', $game->id)
+                ->where('report_status','0')
+                ->where('record_status','1')
+                ->orderBy('date_last_played', 'desc')
+                ->first();
+
+            $games[$key]->lastGameReported = $resultSetOfReportGamePlays;
+        }
+
+        $newGamesArray = [];
+        foreach ($games as $key=>$game){
+            $newGame = new \stdClass();
+            $newGame->location_id = $game->location ? $game->location->id:'N-A';
+            $newGame->location_name = $game->location ? $game->location->location_name:'N-A';
+            $newGame->game_id = $game->lastGameReported ? $game->lastGameReported->game_id:'N-A';
+            $newGame->game_on_test = $game->lastGameReported ? $game->lastGameReported->game_on_test :'N-A';
+            $newGame->game_name = $game->gameTitle ? $game->gameTitle->game_title :'N-A';
+            $newGame->days_not_played = $game->lastGameReported ? $game->lastGameReported->days_not_played :'N-A';
+            $newGamesArray[] = $newGame;
+        }
+
+        return $newGamesArray;
     }
     public static function getReaderNotPlayedReport($params = array()){
         //Readers Not Played
