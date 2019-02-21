@@ -535,7 +535,7 @@ GROUP BY mapped_expense_category");
     public function replyToVendor($vendor,$subject,$message,$file_to_save){
 
         $sendEmailFromMerchandise = false;
-        $from = 'vendor.products@fegllc.com';
+        $from = env('MAIL_VENDOR_USERNAME',"vendor.products@fegllc.com");
         $to = []; //$vendor->email ? $vendor->email:$vendor->email_2;
 //        games_contact_email
         $vendorEmail = '';
