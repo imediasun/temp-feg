@@ -255,6 +255,22 @@
 
                         </div>
                     </div>
+                          <div class="form-group  ">
+        <label for="Exclude From Export" class=" control-label col-md-4 text-left">
+            {!! SiteHelpers::activeLang('Exclude from Export', (isset($fields['exclude_export']['language'])?
+            $fields['exclude_export']['language'] : array())) !!}
+        </label>
+        <div class="col-md-6 check-no">
+            <label class='checked checkbox-inline'>
+                <input type="hidden" name="exclude_export[{{ ($variationCount - 1) < 0 ? 0:($variationCount-1) }}]" class="excludeHidden" value="0"/>
+                <input type='checkbox' name='exclude_export[{{ ($variationCount - 1) < 0 ? 0:($variationCount-1)  }}]' value="1" class='excludeCHK'
+                       @if($variation['exclude_export'] == 1)checked @endif
+                /> </label>
+        </div>
+        <div class="col-md-2">
+
+        </div>
+    </div>
                     </span>
 
                     <span id="more_types_container">
@@ -360,6 +376,22 @@
 
                         </div>
                     </div>
+                                            <div class="form-group  ">
+        <label for="Exclude From Export" class=" control-label col-md-4 text-left">
+            {!! SiteHelpers::activeLang('Exclude from Export', (isset($fields['exclude_export']['language'])?
+            $fields['exclude_export']['language'] : array())) !!}
+        </label>
+        <div class="col-md-6 check-no">
+            <label class='checked checkbox-inline'>
+                <input type="hidden" name="exclude_export[{{ ($variationCount - 1) < 0 ? 0:($variationCount-1) }}]" class="excludeHidden" value="0"/>
+                <input type='checkbox' name='exclude_export[{{ ($variationCount - 1) < 0 ? 0:($variationCount-1) }}]' value="1" class='excludeCHK'
+                       @if($variation['exclude_export'] == 1)checked @endif
+                /> </label>
+        </div>
+        <div class="col-md-2">
+
+        </div>
+    </div>
                 </span>
                         @endif
                         <?php
@@ -472,6 +504,22 @@
 
                         </div>
                     </div>
+                                    <div class="form-group  ">
+        <label for="Exclude From Export" class=" control-label col-md-4 text-left">
+            {!! SiteHelpers::activeLang('Exclude from Export', (isset($fields['exclude_export']['language'])?
+            $fields['exclude_export']['language'] : array())) !!}
+        </label>
+        <div class="col-md-6 check-no">
+            <label class='checked checkbox-inline'>
+                <input type="hidden" name="exclude_export[0]" class="excludeHidden" value="0"/>
+                <input type='checkbox' name='exclude_export[0]' value="1" class='excludeCHK'
+                       @if($row['exclude_export'] == 1)checked @endif
+                /> </label>
+        </div>
+        <div class="col-md-2">
+
+        </div>
+    </div>
                     </span>
 
                     <span id="more_types_container"></span>
@@ -660,22 +708,7 @@
 
         </div>
     </div>
-    <div class="form-group  ">
-        <label for="Exclude From Export" class=" control-label col-md-4 text-left">
-            {!! SiteHelpers::activeLang('Exclude from Export', (isset($fields['exclude_export']['language'])?
-            $fields['exclude_export']['language'] : array())) !!}
-        </label>
-        <div class="col-md-6 check-no">
-            <label class='checked checkbox-inline'>
-                <input type="hidden" name="exclude_export" value="0"/>
-                <input type='checkbox' name='exclude_export' value="1" class=''
-                       @if($row['exclude_export'] == 1)checked @endif
-                /> </label>
-        </div>
-        <div class="col-md-2">
 
-        </div>
-    </div>
     </fieldset>
 </div>
 

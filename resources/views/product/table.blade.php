@@ -416,7 +416,7 @@ $(document).ready(function() {
 					url:'product/exclude',
 					data:{excludeExport:state,productId:productId},
 					success:function(data){
-						$('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
+					//	$('.btn.btn-search[data-original-title="Reload Data"]').trigger("click");
 						/*if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
 						{
 							//window.location.reload();
