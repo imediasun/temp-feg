@@ -502,7 +502,7 @@ GROUP BY mapped_expense_category");
                 if (trim($listItem['product_id']) != '') {
                     //Generating Error Messages if user has entered an invalid product ID
                     $productId = (int)$listItem['product_id'];
-                    $vendorProduct = VendorProductTrack::where(['vendor_id'=>$vendorId,'product_id' => $productId])->get();
+                    $vendorProduct = VendorProductTrack::where(['vendor_id'=>$vendorId,'product_id' => $productId,'is_excluded'=>0])->get();
                     if ($vendorProduct->count() < 1) {
                         $itemsIndex .= empty($itemsIndex) ? $i : ',' . $i;
                         $itemNotify['status'] = true; // If itemNotify['status'] is equal to true then an email notification will be sent to the user along attachment
