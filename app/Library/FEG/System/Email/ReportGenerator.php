@@ -102,6 +102,7 @@ class ReportGenerator
         // Games Not Played:
         if ($noDownGames != 1) {   
             $gamesNotPlayed = self::getGamesNotPlayedReport($params);
+            self::$reportCache['gamesNotPlayedForAllTheLocationsWhetherTheyAreUpOrDown'] = "<br><b><u>Games Not Played:</u></b><br>" .$gamesNotPlayed;
         }
         // Missing Readers Report:
         if ($noMissingReaders != 1) {
@@ -1237,9 +1238,7 @@ class ReportGenerator
         $allTheGamesOfLocationsNotReporting = self::getAllTheGamesOfLocationsNotReporting($locationsNotReportingIds);
 
         $data = array_merge($allTheGamesOfLocationsNotReporting, $data);
-
-        dd($data);
-
+        usort($data, array('App\Library\FEG\System\Email\ReportGenerator', 'sort_objects_by_total'));
         $report = array();
         $notPlayedGames = array();
         $notPlayedGamesFlat = array();
@@ -1297,6 +1296,10 @@ class ReportGenerator
         }
         return $reportString;        
     }
+    static function sort_objects_by_total($a, $b) {
+        if($a->days_not_played == $b->days_not_played){ return 0 ; }
+        return ($a->days_not_played < $b->days_not_played) ? 1 : -1;
+    }
     public static function getAllTheGamesOfLocationsNotReporting($locationIds){
         $games = game::with([
             'location'=>function($query){
@@ -1325,14 +1328,16 @@ class ReportGenerator
 
         $newGamesArray = [];
         foreach ($games as $key=>$game){
-            $newGame = new \stdClass();
-            $newGame->location_id = $game->location ? $game->location->id:'N-A';
-            $newGame->location_name = $game->location ? $game->location->location_name:'N-A';
-            $newGame->game_id = $game->lastGameReported ? $game->lastGameReported->game_id:'N-A';
-            $newGame->game_on_test = $game->lastGameReported ? $game->lastGameReported->game_on_test :'N-A';
-            $newGame->game_name = $game->gameTitle ? $game->gameTitle->game_title :'N-A';
-            $newGame->days_not_played = $game->lastGameReported ? $game->lastGameReported->days_not_played :'N-A';
-            $newGamesArray[] = $newGame;
+            if($game->lastGameReported){
+                $newGame = new \stdClass();
+                $newGame->location_id = $game->location ? $game->location->id:'N-A';
+                $newGame->location_name = $game->location ? $game->location->location_name:'N-A';
+                $newGame->game_id = $game->lastGameReported ? $game->lastGameReported->game_id:'N-A';
+                $newGame->game_on_test = $game->lastGameReported ? ($game->lastGameReported->game_on_test == 1 ? "Yes": 'NO') :'N-A';
+                $newGame->game_name = $game->gameTitle ? $game->gameTitle->game_title :'N-A';
+                $newGame->days_not_played = $game->lastGameReported ? $game->lastGameReported->days_not_played :'N-A';
+                $newGamesArray[] = $newGame;
+            }
         }
 
         return $newGamesArray;
@@ -1622,7 +1627,14 @@ class ReportGenerator
                     self::$reportCache['locationsNotReportingReport'] : self::getLocationsNotReportingReport($params);
             $report[] = $locationsNotReportingReport;
         }
-        
+        global $__logger;
+        $lf = 'gamesNotPlayedForAllTheLocationsWhetherTheyAreUpOrDown.log';
+        $lp = 'FEGCronTasks/Variables';
+        $L = FEGSystemHelper::setLogger($__logger, $lf, $lp, 'MissingData');
+        $L->log("Variable :<br>".self::$reportCache['gamesNotPlayedForAllTheLocationsWhetherTheyAreUpOrDown']);
+        if(self::$reportCache['gamesNotPlayedForAllTheLocationsWhetherTheyAreUpOrDown']){
+            $report[] = self::$reportCache['gamesNotPlayedForAllTheLocationsWhetherTheyAreUpOrDown'];
+        }
         // Games Down for 7+ Days (cache)
         if ($noDailyGameSummaryDownGames != 1) {        
             $report[] = '<br><b style="text-decoration:underline">Games Down for 7+ Days:</b><br>';
