@@ -646,7 +646,7 @@ GROUP BY mapped_expense_category");
      */
     public static function getRemovedItemsByVendor($productIds = [], $vendorId = 0, $vendorListId = 0)
     {
-        $vendorProduct = VendorProductTrack::where(['vendor_id'=>$vendorId])->whereNotIn('product_id', $productIds)->get()->toArray();
+        $vendorProduct = VendorProductTrack::where(['vendor_id'=>$vendorId,'is_excluded'=>0])->whereNotIn('product_id', $productIds)->get()->toArray();
         $vendorProduct = self::getProductIdsOnly($vendorProduct);
         $products = product::whereIn('id',$vendorProduct)->get();
         $data = [];
