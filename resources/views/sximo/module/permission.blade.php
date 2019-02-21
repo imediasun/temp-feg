@@ -98,7 +98,7 @@
 	<li> When you using this feature , Database table must have <strong><code>entry_by</code></strong> field </li>
 	</ol>
 </div>
-<button type="submit" class="btn btn-success"> Save Changes </button>
+<button type="button" class="btn btn-success" id="save-form"> Save Changes </button>
 
 <input name="module_id" type="hidden" id="module_id" value="<?php echo $row->module_id;?>" />
 </div>	</div>
@@ -109,6 +109,7 @@
 
 <script>
 	$(document).ready(function(){
+		is_row_added = false;
 		$('#add-user').removeAttr("target");
 		$(".checkAll").click(function() {
 			var cblist = $(this).attr('rel');
@@ -121,7 +122,6 @@
 			}
 
 		});
-        var form = $('#permissionform');
 
 
 		var fieldCount = 2;
@@ -131,7 +131,7 @@
 		var counter = 17;
 	function fieldTemplate(index, counter){
 		var template = '<tr class="append-user tr-of-roles" id="append-user-'+index+'"><td width="20">'+counter+'</td>' +
-				'<td><select name="user_ids[]" required id="user_ids_'+index+'"  class="select2 userdropdown"></select></td>' +
+				'<td><select name="user_ids[]"  id="user_ids_'+index+'"  class="select2 userdropdown"></select></td>' +
 				'<td class=""><label>' +
 				'<input  data-field="is_global[user]" name="is_global[user]"  type="checkbox" value="1" > </label></td> <td class=""><label>' +
 				'<input data-field="is_view[user]" name="is_view[user]"  type="checkbox" value="1" > ' +
@@ -144,7 +144,7 @@
 				'<td class=""><label><input data-field="is_csv[user]" name="is_csv[user]"  type="checkbox" value="1" ></div></label></td> ' +
 				'<td class=""><label><input data-field="is_print[user]" name="is_print[user]"  type="checkbox" value="1" ></ins></div></label></td>';
 		template +='<td class=""><label><input data-field="is_pdf[user]" name="is_pdf[user]"  type="checkbox" value="1" ></div></label></td>'+
-				'<td class=""><label><input data-field="is_word[user]" name="is_word[user]"  type="checkbox" value="1" ></div></label><span id="rmv-row" onclick="deleteRow(0, this, true)" style="margin-left: 10px">x</span></td>' +
+				'<td class=""><label><input data-field="is_word[user]" name="is_word[user]"  type="checkbox" value="1" ></div></label><span id="rmv-row" onclick="deleteRow(0, this, true)" style="margin-left: 10px; cursor: pointer">x</span></td>' +
 				'</tr>';
 
 	return template;
@@ -164,6 +164,7 @@ onchangeIndex = 1 ;
 			$("#user_ids_"+fieldCount).jCombo("{{URL::to('new-location-setup/comboselect?filter=users:id:first_name|last_name')}}");
 			onchangeIndex = fieldCount;
 			fieldCount++;
+			is_row_added =true;
 		});
  var changeDropdown =false;
 $(document).on('change','.userdropdown',function(){
@@ -179,9 +180,40 @@ $(document).on('change','.userdropdown',function(){
 		})
 	}
 });
-		// $(document).on('click','#rmv-row', function () {
-		// 	$(this).closest('tr').remove();
-		// })
+		var form = $('#permissionform');
+		$('#save-form').click(function () {
+			var val = $('select[name="user_ids[]"] option:selected');
+			 console.log("tbhis "+ val);
+			if(is_row_added ==true && counter == 17)
+			{
+				var val = $('select[name="user_ids[]"]').val();
+				console.log("Total Users:"+val);
+				   if(val==''|| val==undefined){
+					   notyMessageError("Select any Item first");
+					   return false;
+				   }
+				   else{
+				   	form.submit();
+				   }
+			}
+			else if(counter>17){
+				var chk =0;
+				$(val).each(function()
+				{
+					if($(this).val()==''|| $(this).val() == undefined){
+						chk = 1;
+						notyMessageError("Select any Item first");
+						return false;
+					}
+				});
+				if(chk==0) {
+					form.submit();
+				}
+			}
+			else{
+				form.submit();
+			}
+		});
 
 	});
 	function reindexing(current) {
@@ -198,7 +230,8 @@ $(document).on('change','.userdropdown',function(){
 
 		if(deleteConfirmation){
             if(removeNewlyCreatedPermissionRow == true){
-                reindexing(current);
+
+            	reindexing(current);
             }else{
                 url = "{{URL::to('feg/module/delete-permission/new-location-setup')}}";
                 $.ajax({
