@@ -189,7 +189,7 @@ $(document).on('change','.userdropdown',function(){
 				var val = $('select[name="user_ids[]"]').val();
 				console.log("Total Users:"+val);
 				   if(val==''|| val==undefined){
-					   notyMessageError("Select any Item first");
+					   notyMessageError("Select User");
 					   return false;
 				   }
 				   else{
@@ -202,7 +202,7 @@ $(document).on('change','.userdropdown',function(){
 				{
 					if($(this).val()==''|| $(this).val() == undefined){
 						chk = 1;
-						notyMessageError("Select any Item first");
+						notyMessageError("Select User");
 						return false;
 					}
 				});
