@@ -529,7 +529,7 @@ class ProductController extends Controller
         $row = $this->model->find($id);
         if ($row) {
             $this->data['row'] = $row;
-            $columns = ['id','prod_type_id','prod_sub_type_id','retail_price','ticket_value','expense_category','is_default_expense_category'];
+            $columns = ['id','prod_type_id','prod_sub_type_id','retail_price','ticket_value','expense_category','is_default_expense_category','exclude_export'];
 
             if (empty($row->variation_id)){
                 $variations = [];
@@ -878,6 +878,7 @@ class ProductController extends Controller
                         $data['expense_category'] = $data['expense_category'][1];
                         $data['retail_price'] = $data['retail_price'][1];
                         $data['ticket_value'] = $data['ticket_value'][1];
+                        $data['exclude_export'] = $data['exclude_export'][1];
                         $this->model->insertRow($data, $id);
                     }else{
 
@@ -889,6 +890,7 @@ class ProductController extends Controller
                         unset($data_attached_products['inactive']);
                         unset($data_attached_products['inactive_by']);
                         unset($data_attached_products['in_development']);
+                        unset($data_attached_products['exclude_export']);
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
@@ -916,6 +918,7 @@ class ProductController extends Controller
                     $prodData['prod_type_id'] = $category;
                     $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count])) ? $data['prod_sub_type_id'][$count] : 0;
                     $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count])) ? $data['expense_category'][$count] : 0;
+                    $prodData['exclude_export'] = (isset($data['exclude_export'][$count]) && !empty($data['exclude_export'][$count])) ? $data['exclude_export'][$count] : 0;
                     $prodData['netsuite_description'] = mb_substr(time()."-".$count."...".$data['vendor_description'],0,60);
                     $count++;
                     /*
@@ -987,6 +990,7 @@ class ProductController extends Controller
                         unset($data_attached_products['expense_category']);
                         unset($data_attached_products['retail_price']);
                         unset($data_attached_products['ticket_value']);
+                        unset($data_attached_products['exclude_export']);
 
                         $this->model->insertRow($data_attached_products,$pc->id);
                     }
@@ -1318,8 +1322,9 @@ class ProductController extends Controller
     {
         $excludeExport = $request->get('excludeExport');
         $productId = $request->get('productId');
-        $relatedProducts = $this->model->checkProducts($productId);
-        $ids = array_map(function($row){return $row->id;}, $relatedProducts);
+       // $relatedProducts = $this->model->checkProducts($productId);
+       // $ids = array_map(function($row){return $row->id;}, $relatedProducts);
+        $ids[] = $productId;
 
         if ($excludeExport == "true") {
             $update = \DB::update('update products set exclude_export = 1 where id IN(' . implode(',', $ids) . ')');
@@ -1775,6 +1780,7 @@ if(!empty($removedItemIds)) {
                     $prodData['prod_type_id'] = $category;
                     $prodData['prod_sub_type_id'] = (isset($data['prod_sub_type_id'][$count]) && !empty($data['prod_sub_type_id'][$count])) ? $data['prod_sub_type_id'][$count] : 0;
                     $prodData['expense_category'] = (isset($data['expense_category'][$count]) && !empty($data['expense_category'][$count])) ? $data['expense_category'][$count] : 0;
+                    $prodData['exclude_export'] = (isset($data['exclude_export'][$count]) && !empty($data['exclude_export'][$count])) ? $data['exclude_export'][$count] : 0;
                     $prodData['netsuite_description'] = mb_substr(time()."-".$count."...".$data['vendor_description'],0,60);
                     if(count($request->input('itemId')) == 1){
                         $prodData['is_default_expense_category'] = 1;

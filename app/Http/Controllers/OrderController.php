@@ -3516,7 +3516,7 @@ ORDER BY aa_id");
         $row = $productModel->where('vendor_description', $itemName)->where('vendor_id', $vendorId)->where('sku', $sku)->first();
         if ($row) {
             $this->data['row'] = $row;
-            $columns = ['id', 'prod_type_id', 'prod_sub_type_id', 'retail_price', 'ticket_value', 'expense_category', 'is_default_expense_category'];
+            $columns = ['id', 'prod_type_id', 'prod_sub_type_id', 'retail_price', 'ticket_value', 'expense_category', 'is_default_expense_category','exclude_export'];
 
             if (empty($row->variation_id)) {
                 $variations = [];
@@ -3529,7 +3529,7 @@ ORDER BY aa_id");
         }
 
         if (empty($variations)) {
-            $variations[] = ['id' => 0, 'prod_type_id' => $productTypeId, 'prod_sub_type_id' => '', 'retail_price' => '', 'ticket_value' => '', 'expense_category' => '', 'is_default_expense_category' => 1];
+            $variations[] = ['id' => 0, 'prod_type_id' => $productTypeId, 'prod_sub_type_id' => '', 'retail_price' => '', 'ticket_value' => '', 'expense_category' => '', 'is_default_expense_category' => 1, 'exclude_export'=> 0];
             $this->data['row']['vendor_description'] = $itemName;
             $this->data['row']['vendor_id'] = $vendorId;
             $this->data['row']['prod_type_id'] = $productTypeId;
@@ -3543,7 +3543,7 @@ ORDER BY aa_id");
         } else {
             $itemMatch = $productModel->where('vendor_description', $itemName)->where('vendor_id', $vendorId)->where('prod_type_id', $productTypeId)->first();
             if (!$itemMatch) {
-                $variations[] = ['id' => 0, 'prod_type_id' => $productTypeId, 'prod_sub_type_id' => '', 'retail_price' => '', 'ticket_value' => '', 'expense_category' => '', 'is_default_expense_category' => 0];
+                $variations[] = ['id' => 0, 'prod_type_id' => $productTypeId, 'prod_sub_type_id' => '', 'retail_price' => '', 'ticket_value' => '', 'expense_category' => '', 'is_default_expense_category' => 0,'exclude_export'=>0];
             }
             $this->data['actionUrl'] = 'product/saveupdated';
             $this->data['showDefaultExpenseCategoryChk'] = true;
