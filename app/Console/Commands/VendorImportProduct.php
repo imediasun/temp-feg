@@ -390,7 +390,7 @@ class VendorImportProduct extends Command
     public function sendVendorEmailNotification($subject,$message,$to,$vendor = null)
     {
 
-        $from = 'vendor.products@fegllc.com';
+        $from = env('MAIL_VENDOR_USERNAME',"vendor.products@fegllc.com");
         $sendEmailFromMerchandise = false;
         $sendEmailFromVendorAccount = true;
 
