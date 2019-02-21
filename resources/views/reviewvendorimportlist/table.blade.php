@@ -185,7 +185,8 @@
                                         <input type="hidden" class="itemId" value="{{ $row->id }}" name="item_id[]">
                                     </td>
                                 @elseif($row->is_omitted != 0 && $field['field'] == 'vendor_description')
-                                    <td></td>
+                                    <td> <input type="hidden" class="parent_id" value="{{ $row->id }}" name="parent_id[]">
+                                        <input type="hidden" class="itemId" value="{{ $row->id }}" name="item_id[]"></td>
                                 @endif
 							@endif
                     <?php

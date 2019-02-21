@@ -76,6 +76,7 @@ class VendorProductsImportHelper
         $data[] = [];
         $data[] = [];
         $data[] = ["Don't update Product ID."];
+        $data[] = ["vendor#".$product->vendor_id];
 
 
         // save each row of the data
@@ -95,7 +96,7 @@ class VendorProductsImportHelper
         $to = $vendorEmail;
 
         $sendEmailFromMerchandise = false;
-        $from = 'vendor.products@fegllc.com';
+        $from = env('MAIL_VENDOR_USERNAME',"vendor.products@fegllc.com");
 
         $message = '<p>Hello ' . $vendor->vendor_name . ',</p>';
         $marginTopZero = 'style=" margin-top: 0px; "';
