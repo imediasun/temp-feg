@@ -287,6 +287,18 @@
             count = "#remove_me_" + count;
             $("#add_more_types").show();
             $(count).remove();
+
+            var total_types = document.getElementsByClassName('product_types').length;
+            for(var i =0; i<total_types; i++ ){
+
+                $('.excludeHidden').eq(i).attr('name','exclude_export['+i+']');
+                $('.excludeCHK').eq(i).attr('name','exclude_export['+i+']');
+                $('.excludeCHK').eq(i).iCheck({
+                    checkboxClass: 'icheckbox_square-blue',
+                    radioClass: 'iradio_square-blue'
+                });
+            }
+
             var orderForm = document.getElementById('ordersubmitFormAjax');
             var productForm = document.getElementById('productFormAjax');
             reInitFormValidatorParsley($(orderForm));
@@ -378,6 +390,18 @@
 @if($showDefaultExpenseCategoryChk == false)
         isDefaultExpenseCategoryInput = '';
                 @endif
+
+        var excludeExportChk = '<div class="form-group">';
+        excludeExportChk += '<label for="Exclude From Export" class="control-label col-md-4 text-left">Exclude from Export</label>';
+        excludeExportChk += '<div class="col-md-6 check-no">';
+        excludeExportChk += '<label class="checked checkbox-inline">';
+        excludeExportChk += '<input type="hidden" name="exclude_export[' + (types_counter - 2)+ ']" class="excludeHidden" value="0"/>';
+        excludeExportChk += '<input type="checkbox" name="exclude_export[' + (types_counter - 2)+ ']" value="1" class="excludeCHK" /> </label>';
+        excludeExportChk += '</div>';
+        excludeExportChk += '<div class="col-md-2">';
+        excludeExportChk += '</div>';
+        excludeExportChk += '</div>';
+
         var more_types_html = '<span class="product_types productTypeBox" id="remove_me_' + types_counter + '"><div class="form-group  "> <input type="hidden" name="itemId[]" value="0">' +
                         '<label for="Prod Type Id" class=" control-label col-md-4 text-left">{!! SiteHelpers::activeLang("Product Type", (isset($fields["prod_type_id"]["language"])? $fields["prod_type_id"]["language"] : array())) !!}</label> ' +
                         '<div class="col-md-6"> <select data-previous="0" name="prod_type_id[]" rows="5" data-counter="' + types_counter + '" id="prod_type_id_' + types_counter + '" class="prod_type select2 "required="required"></select>' +
@@ -394,7 +418,8 @@
                         ' <div class="col-md-2"> </div> </div>' +
                         '<div class="form-group ticket_values " id="ticket_value_' + types_counter + '"> <label for="Ticket Value" class="control-label col-md-4 text-left addcolon">Ticket Value </label> ' +
                         '<div class="col-md-6"> <input class="form-control" placeholder="" id="ticket_input_' + types_counter + '" name="ticket_value[]" type="text" value=""> </div> <div class="col-md-2">  </div> </div>' +
-                        '</span>';
+                excludeExportChk+
+                '</span>';
         //console.log(more_types_html);
         $("#more_types_container").append(more_types_html);
 
@@ -417,7 +442,16 @@
             $(this).hide();
         }
         <?php } ?>
+        var total_types = document.getElementsByClassName('product_types').length;
+        for(var i =0; i<total_types; i++ ){
 
+            $('.excludeHidden').eq(i).attr('name','exclude_export['+i+']');
+            $('.excludeCHK').eq(i).attr('name','exclude_export['+i+']');
+            $('.excludeCHK').eq(i).iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue'
+            });
+        }
         var orderForm = document.getElementById('ordersubmitFormAjax');
         var productForm = document.getElementById('productFormAjax');
         reInitFormValidatorParsley($(orderForm));
