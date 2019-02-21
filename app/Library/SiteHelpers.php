@@ -937,13 +937,13 @@ class SiteHelpers
                 break;
 
             case 'text_date';
-                $form = "<input  type='text' name='$field{$bulk}' 
+                $form = "<input autocomplete='off'  type='text' name='$field{$bulk}' 
                     class='date form-control input-sm $simpleSearchClass' 
                     $mandatory $simpleSearchOptions value='{$value}'/> ";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
                         . "<div class='betweenseparator pull-left' > - </div>"
-                        . "<input type='text'
+                        . "<input autocomplete='off' type='text'
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
                                 class='date form-control input-sm pull-left $simpleSearchEndClass' 
@@ -958,13 +958,13 @@ class SiteHelpers
                 break;
 
             case 'text_datetime';
-                $form = "<input  type='text' name='$field{$bulk}' 
+                $form = "<input autocomplete='off'  type='text' name='$field{$bulk}' 
                     class='date form-control input-sm $simpleSearchClass'  
                     $mandatory $simpleSearchOptions value='{$value}'/> ";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
                         . "<div class='betweenseparator pull-left' > - </div>"
-                        . "<input type='text'
+                        . "<input autocomplete='off' type='text'
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
                                 class='date form-control input-sm pull-left $simpleSearchEndClass' 
@@ -1226,11 +1226,11 @@ class SiteHelpers
                 break;
 
             case 'text_date':
-                $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory value='{$value}'/> ";
+                $form = "<input  type='text' autocomplete='off' name='$field{$bulk}' class='date form-control input-sm' $mandatory value='{$value}'/> ";
                 break;
 
             case 'text_datetime':
-                $form = "<input  type='text' name='$field{$bulk}'  class='datetime form-control input-sm'  $mandatory value='{$value}'/> ";
+                $form = "<input  type='text' autocomplete='off' name='$field{$bulk}'  class='datetime form-control input-sm'  $mandatory value='{$value}'/> ";
                 break;
 
             case 'select':
