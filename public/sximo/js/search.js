@@ -237,7 +237,7 @@ function showBetweenFields(options) {
             "margin-right": "5%"
         });
 
-    fieldElm2 = jQuery('<input name="'+field+'_end" class="form-control" />')
+    fieldElm2 = jQuery('<input autocomplete="off" name="'+field+'_end" class="form-control" />')
                 .insertAfter(fieldElm);
     fieldElm2.attr('placeholder', "End")
             .addClass('pull-left')
