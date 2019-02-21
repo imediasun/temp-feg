@@ -8,6 +8,7 @@ use App\Models\Ordertyperestrictions;
 use App\Models\Product;
 use App\Models\ProductType;
 use App\Models\UserFavoriteProduct;
+use App\Models\VendorProductTrack;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -1328,10 +1329,20 @@ class ProductController extends Controller
 
         if ($excludeExport == "true") {
             $update = \DB::update('update products set exclude_export = 1 where id IN(' . implode(',', $ids) . ')');
+
+            $vendorProductTracks = VendorProductTrack::whereIn('product_id',$ids);
+            if($vendorProductTracks){
+                $vendorProductTracks->update(['is_excluded'=>1]);
+            }
         }
         else
         {
             $update = \DB::update('update products set exclude_export = 0 where id IN(' . implode(',', $ids) . ')');
+
+            $vendorProductTracks = VendorProductTrack::whereIn('product_id',$ids);
+            if($vendorProductTracks){
+                $vendorProductTracks->update(['is_excluded'=>0]);
+            }
         }
         if ($update) {
             return response()->json(array(
@@ -1793,6 +1804,10 @@ if(!empty($removedItemIds)) {
                         $img->save($img_path);
                         $prodData['img'] = $newfilename;
 
+                    }
+                    $vendorProductTracks = VendorProductTrack::where('product_id',$itemIds[$count]);
+                    if($vendorProductTracks){
+                        $vendorProductTracks->update(['is_excluded'=>$prodData['exclude_export']]);
                     }
                     $ids[] = $this->model->insertRow($prodData, $itemIds[$count]);
                     $count++;
