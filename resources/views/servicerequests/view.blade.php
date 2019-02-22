@@ -4,6 +4,17 @@
     {
         top:0 !important;
     }
+    .margin-bottom-30px{
+        margin-bottom: 30px;
+    }
+    .part-request-inner{
+        background: #f9f9f9;
+        padding-bottom: 20px;
+        border: 1px solid #ececec;
+    }
+    .remove-part-request-fields{
+        top:30px !important;
+    }
 </style>
 @if($setting['view-method'] =='native')
 
@@ -151,7 +162,58 @@
                 <div class="ticketMainViewContainer col-sm-8 col-lg-9">
 
                     <div class="ticketHeaderAddonsContainer"></div>
+                    <div class="margin-bottom-30px">
 
+                        <div class="row" style="    margin-right: 0px; margin-left: 0px;">
+
+                            <div class="col-md-12">
+                                <div id="part-requests-contianer" style="    margin-top: -30px;" class="form-group  ">
+                                    <div class="col-md-12 part-request-inner">
+                                        <div class="row">
+                                    <span class="part-request-field-contianer" id="part-request-field-contianer">
+                                        <span class="part-request-field" id="part-request-field_1">
+                                    <div class="col-md-3" style="margin-bottom: 20px;">
+                                        <label for="part-number">Part Number</label>
+                                        <input type="text" class="form-control" name="part_number[]" id="part-number">
+                                    </div>
+                                    <div class="col-md-3" style="margin-bottom: 20px;">
+                                        <label for="part-number">Quantity</label>
+                                        <input type="text" name="qty[]" class="form-control">
+                                    </div>
+                                    <div class="col-md-3 part-request-last-field"
+                                         style="margin-bottom: 20px; position: relative;">
+                                        <label for="part-number">Cost</label>
+                                        <div class="input-group ig-full">
+                                <span class="input-group-addon" style="border-right: 1px solid #e5e6e7;
+    position: absolute;
+    left: 0;    z-index: 111111;">$</span>
+                                            <input type="number" step="1" placeholder="0.00" value=""
+                                                   style="padding-left: 35px;" name="cost[]" class="form-control">
+                                        </div>
+                                        </div>
+                                             <div class="col-md-3" style="margin-bottom: 20px;">
+                                                <label for="part-number">Action</label>
+                                                 <div>
+                                        <input type="button" value="Approve" class="btn btn-primary">
+                                        <input type="button" value="Deny" class="btn btn-warning">
+                                                     </div>
+                                    </div>
+
+                                        </span>
+                                    </span>
+                                            <div class="col-md-12">
+                                                <input type="button"
+                                                       class="btn btn-primary pull-right addmorepartfields"
+                                                       id="addmorepartfields" value="Add More">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                     <div class="ticketReplyContainer">
 
                         <div class="myUserProfileImageContainer img-avatar-container tips"
@@ -165,6 +227,7 @@
                         <div class="ticketReplyInputsContainer" >
 
                             <div class="ticketReplyMainContainer" >
+
 
                                 <div class="replyLabel">Reply</div>
 

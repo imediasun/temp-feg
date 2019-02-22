@@ -15,9 +15,11 @@ class CreatePartRequestsTable extends Migration
         Schema::create('part_requests', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('ticket_id');
-            $table->string('part_number');
-            $table->integer('qty');
-            $table->double('cose');
+            $table->string('part_number')->nullable();
+            $table->decimal('cost',10,5)->default(0);
+            $table->integer('qty')->default(0);
+            $table->string('reason')->default(0);
+            $table->integer('status_id')->default(1);
             $table->timestamps();
         });
     }

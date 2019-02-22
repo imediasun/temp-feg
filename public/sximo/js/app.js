@@ -1750,3 +1750,37 @@ function clearFields(doSearch) {
         $('.doSimpleSearch').trigger('click');
     }
 }
+
+
+$(function () {
+    $(document).off('click','#issue_type_id').on('change', '#issue_type_id', function () {
+
+        if (Number($(this).val()) == 2) {
+            $('#trobleshotingchecklist-contianer').hide('slow');
+            $('#part-requests-contianer').show('slow');
+            $('#trobleshotingchecklist-contianer input[name="troubleshootchecklist[]"]').iCheck('uncheck');
+        } else {
+            $('#part-requests-contianer').hide('slow');
+            $('#trobleshotingchecklist-contianer').show('slow');
+            $('#part-request-field-contianer input').val('');
+        }
+    });
+
+    $(document).off('click','#addmorepartfields').on('click', '#addmorepartfields', function () {
+        var partRequestFieldLenght = $('.part-request-field').length + 1;
+        var partRequestFields = $("#part-request-field_1").clone();
+        partRequestFields.attr('id', 'part-request-field_' + partRequestFieldLenght);
+        partRequestFields.children('.col-md-4').children('input.form-control').val('');
+        partRequestFields.children('.col-md-4').children('input[type="number"]').val('');
+        partRequestFields.children('.col-md-4').children('label').remove();
+        var onclick = 'onclick="removePartRequest(\'part-request-field_' + partRequestFieldLenght + '\');"';
+        var removeFields = '<i class="fa fa-times tips remove-part-request-fields" title="Remove" ' + onclick + ' style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;"></i>';
+        partRequestFields.children('.part-request-last-field').append(removeFields);
+        $('#part-request-field-contianer').append(partRequestFields);
+        $('.tips').tooltip();
+
+    });
+});
+function removePartRequest(id) {
+    $("#" + id).remove();
+}

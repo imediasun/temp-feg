@@ -9,6 +9,11 @@
     .input-group span.input-group-addon {
         padding: 8px 18px 8px 10px;
     }
+    .part-request-inner{
+        background: #f9f9f9;
+        padding-bottom: 20px;
+        border: 1px solid #ececec;
+    }
     @media screen and  (max-width:992px){
         .change-padding{
             padding-right: 15px !important;
@@ -83,7 +88,7 @@
                                 {!! SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type_id']['language'])? $fields['issue_type_id']['language'] : array())) !!}
                             </label>
                             <div class="col-md-8">
-                                <select name='issue_type_id' rows='5'   class='select2 ' required >
+                                <select name='issue_type_id' rows='5' id="issue_type_id"  class='select2 ' required >
                                     <option value="">Select Issue Type</option>
                                     @foreach($game_related_issue_types as $gameRelatedIssueType)
                                         <option @if(!empty($row['issue_type_id'])) @if($row['issue_type_id'] == $gameRelatedIssueType->id) selected @endif @endif value ='{{ $gameRelatedIssueType->id }}'>{{ $gameRelatedIssueType->issue_type_name }}</option>
@@ -108,16 +113,39 @@
                 </div>
                     </div>
 
-                    <div class="col-md-12">
-                <div class="form-group  " >
-                    <label for="Date" class=" control-label col-md-2 text-left">
-                        {!! SiteHelpers::activeLang('Date', (isset($fields['game_realted_date']['language'])? $fields['game_realted_date']['language'] : array())) !!}
-                    </label>
-                    <div class="col-md-10">
-                        <input type="text" class="form-control" readonly required value="{{ !empty($row['game_realted_date']) ?  date('m / d / Y',strtotime($row['game_realted_date'])) : date('m / d / Y')}}" name="game_realted_date">
+                    <div class="col-md-6">
+                        <div class="form-group  ">
+                            <label for="Date" class=" control-label col-md-4 text-left">
+                                {!! SiteHelpers::activeLang('Date', (isset($fields['game_realted_date']['language'])? $fields['game_realted_date']['language'] : array())) !!}
+                            </label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" readonly required
+                                       value="{{ !empty($row['game_realted_date']) ?  date('m / d / Y',strtotime($row['game_realted_date'])) : date('m / d / Y')}}"
+                                       name="game_realted_date">
+                            </div>
+                        </div>
                     </div>
-                </div>
-                </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group  ">
+                            <label for="Shipping Priority" class=" control-label col-md-3 text-left">
+                                {!! SiteHelpers::activeLang('Shipping Priority', (isset($fields['shipping_priority_id']['language'])? $fields['shipping_priority_id']['language'] : array())) !!}
+                            </label>
+                            <div class="col-md-9">
+                                <select name='shipping_priority_id' rows='5' id='shipping_priority_id' class='select2'>
+                                    <option value="">--Select Shipping Priority--</option>
+                                    @foreach($shippingPriorities as $shippingPriority)
+
+                                        <option @if($shippingPriority->id == $row['shipping_priority_id']) selected
+                                                @endif value="{{ $shippingPriority->id }}">{{ $shippingPriority->priority_name }}</option>
+
+                                    @endforeach
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-12">
                         <div class="form-group" >
                             <label for="Service Request Title" class="control-label col-md-2 text-left">
@@ -135,7 +163,7 @@
                             </label>
                             <div class="col-md-10">
 					  <textarea name='Description' rows='5' id='Description' class='form-control '
-                                required  placeholder="Actions taken before opening game service request. Please provide concise and detailed information!">{{ $row['Description'] }}</textarea>
+                                required  placeholder="Actions taken before opening game service or part approval request.">{{ $row['Description'] }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -144,7 +172,7 @@
                 <div class="row">
 
                     <div class="col-md-12">
-                <div class="form-group  " >
+                <div id="trobleshotingchecklist-contianer" class="form-group  " >
                     <label for="Description" class=" control-label col-md-2 text-left">
                         {!! SiteHelpers::activeLang('Troubleshooting Checklist', (isset($fields['troubleshootchecklist']['language'])? $fields['troubleshootchecklist']['language'] : array())) !!}
                     </label>
@@ -166,7 +194,44 @@
                         </div>
                     </div>
                 </div>
-                </div>
+
+                        <div id="part-requests-contianer" style="display: none;" class="form-group  ">
+                            <label  class=" control-label col-md-2 text-left">
+                                Part Requests :
+                            </label>
+                            <div class="col-md-10 part-request-inner">
+                                <div class="row">
+                                    <span class="part-request-field-contianer" id="part-request-field-contianer">
+                                        <span class="part-request-field"  id="part-request-field_1">
+                                    <div class="col-md-4" style="margin-bottom: 20px;">
+                                        <label for="part-number">Part Number</label>
+                                        <input type="text" class="form-control" name="part_number[]" id="part-number">
+                                    </div>
+                                    <div class="col-md-4" style="margin-bottom: 20px;">
+                                        <label for="part-number">Quantity</label>
+                                        <input type="text" name="qty[]" class="form-control">
+                                    </div>
+                                    <div class="col-md-4 part-request-last-field" style="margin-bottom: 20px; position: relative;" >
+                                        <label for="part-number">Cost</label>
+                                        <div class="input-group ig-full">
+                                <span class="input-group-addon" style="border-right: 1px solid #e5e6e7;
+    position: absolute;
+    left: 0;    z-index: 111111;">$</span>
+                                            <input type="number"  step="1" placeholder="0.00" value=""
+                                                   style="padding-left: 35px;" name="cost[]" class="form-control">
+                                        </div>
+                                        </div>
+
+                                        </span>
+                                    </span>
+                                    <div class="col-md-12">
+                                        <input type="button" class="btn btn-primary pull-right addmorepartfields" id="addmorepartfields" value="Add More">
+                                    </div>
+                                </div>
+
+                            </div>
+                            </div>
+                        </div>
                 </div>
 
                 <div class="row">
@@ -192,64 +257,10 @@
                         @endif
                     </div>
                 </div>
-                    </div>
-                    <div class="col-md-6">
-                <div class="form-group  " >
-                    <label for="Part Number" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Part Number', (isset($fields['part_number']['language'])? $fields['part_number']['language'] : array())) !!}
-                    </label>
-                    <div class="col-md-8">
-                    <input type="text" name="part_number" value="{{ $row['part_number'] }}" class="form-control">
-                    </div>
-                </div>
         </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="Costs" class=" control-label col-md-3 text-left">
-                                {!! SiteHelpers::activeLang('Costs', (isset($fields['cost']['language'])? $fields['cost']['language'] : array())) !!}
-                            </label>
-                            <div class="col-md-9">
-                            <div class="input-group ig-full">
-                                <span class="input-group-addon" style="border-right: 1px solid #e5e6e7;
-    position: absolute;
-    left: 0;    z-index: 111111;" >$</span>
-                                <input type="number" step="1" placeholder="0.00" value="{{ $row['cost'] }}" style="padding-left: 35px;" name="cost"  class="form-control">
-                            </div>
-                                </div>
-                        </div>
-                    </div>
+
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                <div class="form-group" >
-                    <label for="Quantity" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Quantity', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) !!}
-                    </label>
-                    <div class="col-md-8">
-                        <input type="number" name="qty" step="1" min="0" minlength="0" value="{{ $row['qty'] }}" class="form-control" >
-                    </div>
-                </div>
-                    </div>
-                    <div class="col-md-6">
-                <div class="form-group  "  >
-                    <label for="Shipping Priority" class=" control-label col-md-3 text-left">
-                        {!! SiteHelpers::activeLang('Shipping Priority', (isset($fields['shipping_priority_id']['language'])? $fields['shipping_priority_id']['language'] : array())) !!}
-                    </label>
-                    <div class="col-md-9">
-                        <select name='shipping_priority_id' rows='5' id='shipping_priority_id' class='select2'>
-                            <option value="">--Select Shipping Priority--</option>
-                           @foreach($shippingPriorities as $shippingPriority)
-
-                                <option @if($shippingPriority->id == $row['shipping_priority_id']) selected @endif value="{{ $shippingPriority->id }}">{{ $shippingPriority->priority_name }}</option>
-
-                               @endforeach
-
-                        </select>
-                    </div>
-                </div>
-                    </div>
-                </div>
 
                 <div class="row">
 
