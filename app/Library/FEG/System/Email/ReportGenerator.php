@@ -68,7 +68,7 @@ class ReportGenerator
         $params['humanDate'] = $humanDate = FEGSystemHelper::getHumanDate($date);
         $params['humanDateToday'] = $humanDateToday = FEGSystemHelper::getHumanDate($today);
         $sleepFor = intval($sleepFor);
-
+        $gamesNotPlayed = self::getGamesNotPlayedReport($params);
         // Transfer Basic Status
         $dailyTransferStatusReport = '';
         if (empty($location)) {
@@ -1243,7 +1243,11 @@ class ReportGenerator
         //$q .= " AND E.location_id NOT IN (" . implode(',', $locationsNotReportingIds). ")";
         
         $data = DB::select($q);
-
+        /**
+         *  Removing the data entries having the location_id present in $locationNotReportingIds
+         * (Removing the games whom locations are down)
+         */
+        $data = self::array_usearch($data, function ($o) use ($locationsNotReportingIds) { return !in_array($o->location_id, $locationsNotReportingIds); });
         $allTheGamesOfLocationsNotReporting = self::getAllTheGamesOfLocationsNotReporting($locationsNotReportingIds);
 
         $data = array_merge($allTheGamesOfLocationsNotReporting, $data);
@@ -1304,6 +1308,16 @@ class ReportGenerator
             $reportString = implode("", $report);
         }
         return $reportString;        
+    }
+    static function array_usearch(array $array, callable $comparitor) {
+        return array_filter(
+            $array,
+            function ($element) use ($comparitor) {
+                if ($comparitor($element)) {
+                    return $element;
+                }
+            }
+        );
     }
     static function sort_objects_by_total($a, $b) {
         if($a->days_not_played == $b->days_not_played){ return 0 ; }
