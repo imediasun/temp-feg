@@ -154,7 +154,7 @@
                     <div class="col-md-6">
                         <div class="input-group">
 							<span class="input-group-addon datepickerHandleButton" style="width: 32px;"><i class="fa fa-calendar" id="icon"></i></span>
-							{!! Form::text('need_by_date', $needByDate, array('class'=>'form-control date', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
+							{!! Form::text('need_by_date', $needByDate, array('class'=>'form-control date', 'id'=>'my-datepicker','autocomplete'=>'off', 'style'=>'width:150px !important;'   )) !!}
                         </div>
                     </div>
                     <div class="col-md-2"></div>

@@ -109,14 +109,14 @@
 
                         </div>
                         <div class="form-group" id="date_needed_div">
-                            <label for="date_needed" class="control-label col-md-4 text-left date">
+                            <label for="date_needed" class="control-label col-md-4 text-left ">
                                 Date Needed: </label>
 
                             <div class="col-md-6">
                                 <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
                                     <i class="fa fa-calendar" id="icon"></i>
                                 </span>
-                                <input typ="text" class="form-control date" name="need_by_date" value="" id="date_needed"
+                                <input typ="text" class="form-control date" name="need_by_date" autocomplete="off" value="" id="date_needed"
                                         style="width:150px !important;" />
                             </div>
 
