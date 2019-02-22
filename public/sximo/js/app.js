@@ -1744,6 +1744,7 @@ function serverRequestTabsSelect(tabElement,tabClass,contentClass,contentId,load
     }
     return true;
 }
+
 /**
  *
  * @param object
