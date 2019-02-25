@@ -2490,13 +2490,36 @@ class OrderController extends Controller
         return $games_options;
     }
 
-    public function getBillAccount()
+    public function getBillAccount(Request $request)
     {
-        $vendor_id = @$_GET['vendor'];
+
+        $vendor_id = $request->vendor;
+        $location = $request->location;
         if (empty($vendor_id)) {
             $vendor_id = 0;
         }
-        return \DB::table('vendor')->select('bill_account_num',"freight_id")->where('id', $vendor_id)->get();
+        $vendor =  \DB::table('vendor')->select('bill_account_num',"freight_id","is_fedex_enabled")->where('id', $vendor_id)->get();
+
+        if($location>0) {
+            if($vendor[0]->is_fedex_enabled==1) {
+                $vendor[0]->fedNo = location::where('id', $location)->select('fedex_number')->first();
+            }else{
+                $vendor[0]->fedNo['fedex_number'] = 'No Data';
+            }
+        }
+
+        return $vendor;
+    }
+    public function postFedNumber(Request $request)
+    {
+        $vendor_id = $request->vendor;
+        if (empty($vendor_id)) {
+            $vendor_id = 0;
+        }
+
+       $data = \DB::table('vendor')->select('is_fedex_enabled')->where('id', $vendor_id)->first();
+       return response()->json(['status'=>200,'data'=>$data]);
+
     }
 
     function getComboselect(Request $request)
