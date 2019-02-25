@@ -68,7 +68,7 @@ class ReportGenerator
         $params['humanDate'] = $humanDate = FEGSystemHelper::getHumanDate($date);
         $params['humanDateToday'] = $humanDateToday = FEGSystemHelper::getHumanDate($today);
         $sleepFor = intval($sleepFor);
-        $gamesNotPlayed = self::getGamesNotPlayedReport($params);
+
         // Transfer Basic Status
         $dailyTransferStatusReport = '';
         if (empty($location)) {
