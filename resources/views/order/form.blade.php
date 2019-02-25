@@ -202,7 +202,7 @@
                             {{ Lang::get('core.fedex_number') }}
                         </label>
                         <div class="col-md-8">
-                            <input name='fedex_number' id='fedex_number' class="form-control" value="{{ is_object($row) ? $row->fedex_number  : 'No Data' }}" readonly/>
+                            <input name='fedex_number' id='fedex_number' class="form-control" value="" readonly/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -1290,14 +1290,19 @@
         });
         $("#vendor_id").on('change', function() {
             oldLocationId = $('#location_id').val();
+            console.log("location:"+oldLocationId);
             oldAltShipToVal = $('#alt_ship_to').is(':checked');
             vendor = $(this);
+
+
+
             if ($('#is_freehand').val() == 0){
 
             if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
             {
 
                 if($('#item_name').val()) {
+
                     $('#submit_btn').attr('disabled','disabled');
                     App.notyConfirm({
                         message: "Are you sure you want to change Vendor <br> <b>***WARNING***</b><br>if you change vendor all of your items will be removed and you will have to add them again. Freight Type will be updated as well",
@@ -1310,9 +1315,14 @@
                             $.ajax({
                                 type: "GET",
                                 url: "{{ url() }}/order/bill-account",
-                                data: {'vendor': vendor.val()},
+                                data: {
+                                    'vendor': vendor.val(),
+                                    'location':oldLocationId
+                                },
                                 success: function (data) {
                                     if(data.length>0){
+                                        console.log(data[0].fedNo.fedex_number);
+                                        $('#fedex_number').val(data[0].fedNo.fedex_number);
                                         $('#bil_ac_num').val(data[0].bill_account_num);
                                         updateShippingMethod(data[0].freight_id,true);
                                     }
@@ -1352,9 +1362,14 @@
                     $.ajax({
                         type: "GET",
                         url: "{{ url() }}/order/bill-account",
-                        data: {'vendor': vendor.val()},
+                        data: {'vendor': vendor.val(),
+                        'location':oldLocationId
+                        },
                         success: function (data) {
                             if(data.length>0){
+                                console.log(data[0].fedNo.fedex_number);
+
+                                $('#fedex_number').val(data[0].fedNo.fedex_number);
                                 $('#bil_ac_num').val(data[0].bill_account_num);
                                 updateShippingMethod(data[0].freight_id,true);
                             }
@@ -1364,12 +1379,16 @@
             }
             else
             {
+
                 $.ajax({
                     type: "GET",
                     url: "{{ url() }}/order/bill-account",
-                    data: {'vendor': vendor.val()},
+                    data: {'vendor': vendor.val(),
+                    'location':oldLocationId},
                     success: function (data) {
                         if(data.length>0){
+                            console.log(data[0].fedNo.fedex_number);
+                            $('#fedex_number').val(data[0].fedNo.fedex_number);
                             $('#bil_ac_num').val(data[0].bill_account_num);
                             updateShippingMethod(data[0].freight_id);
                         }
@@ -1377,13 +1396,18 @@
                 });
             }
             }else{
+
                 //free hand order
                 $.ajax({
                     type: "GET",
                     url: "{{ url() }}/order/bill-account",
-                    data: {'vendor': vendor.val()},
+                    data: {'vendor': vendor.val(),
+                        'location':oldLocationId},
                     success: function (data) {
                         if(data.length>0){
+                            console.log(data[0].fedNo.fedex_number);
+
+                            $('#fedex_number').val(data[0].fedNo.fedex_number);
                             $('#bil_ac_num').val(data[0].bill_account_num);
                             updateShippingMethod(data[0].freight_id);
                         }
@@ -1480,7 +1504,7 @@
                             $("#po_message").show(200);
                         }
 
-                        $("#fedex_number").val(!isCheckedAltShippingAddress ? msg.fedex_number: 'No data');
+                        //$("#fedex_number").val(!isCheckedAltShippingAddress ? msg.fedex_number: 'No data');
 
                         if(!isCheckedAltShippingAddress)
                             $("#po_1").val(location_id);

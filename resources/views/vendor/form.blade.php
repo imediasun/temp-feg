@@ -12,7 +12,9 @@
 	</div>
 
 	<div class="sbox-content"> 
-@endif	
+@endif
+
+
 			{!! Form::open(array('url'=>'vendor/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'vendorFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset>
@@ -309,6 +311,23 @@
 										<input type='checkbox' name='status' value ='1'   class=''
 											   @if(in_array('1',$status))checked @endif
 										/>  </label>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+							<div class="form-group  " >
+								<input type='hidden' value='0' name='status'>
+								<label for="Active" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Enable FedEx #', (isset($fields['is_fedex_enabled']['language'])? $fields['status']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6 check-no">
+
+									<label class='checked checkbox-inline'>
+										<input type='hidden' name='is_fedex_enabled' value="0">
+										<input type='checkbox' name='is_fedex_enabled' @if($row['is_fedex_enabled']==1) checked @endif  value="1"    class=''
+										/>
+									</label>
 								</div>
 								<div class="col-md-2">
 

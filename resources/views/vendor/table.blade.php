@@ -134,6 +134,8 @@
 											   data-on-text="Yes" data-field="hide" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
 											   id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 									</td>
+                                @elseif($field['field']=='is_fedex_enabled')
+                                    <td>{{$value==1?'Yes':'No'}}</td>
 								@else
 									<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 										{!! $value !!}
