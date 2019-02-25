@@ -13,7 +13,8 @@
         border: 1px solid #ececec;
     }
     .remove-part-request-fields{
-        top:30px !important;
+        right: -10px !important;
+        z-index: 1000;
     }
 </style>
 @if($setting['view-method'] =='native')
@@ -168,6 +169,7 @@
 
                             <div class="col-md-12">
                                 <div id="part-requests-contianer" style="    margin-top: -30px;" class="form-group  ">
+                                    <div class="col-md-12" style="padding-left: 0px;"><label class="replyLabel">Part Information</label></div>
                                     <div class="col-md-12 part-request-inner">
                                         <div class="row">
                                     <span class="part-request-field-contianer" id="part-request-field-contianer">
@@ -191,11 +193,12 @@
                                                    style="padding-left: 35px;" name="cost[]" class="form-control">
                                         </div>
                                         </div>
-                                             <div class="col-md-3" style="margin-bottom: 20px;">
-                                                <label for="part-number">Action</label>
+                                             <div class="col-md-3" style="margin-bottom: 20px; text-align: center;">
+                                                <label >Action</label>
                                                  <div>
-                                        <input type="button" value="Approve" class="btn btn-primary">
-                                        <input type="button" value="Deny" class="btn btn-warning">
+
+                                        <input type="button" value="Deny" class="btn btn-warning pull-right"  style="margin-left: 5px;">
+                                        <input type="button" value="Approve" class="btn btn-primary pull-right">
                                                      </div>
                                     </div>
 
@@ -348,7 +351,7 @@
     $(document).ready(function() {
 
         @if($ticketType == 'game-related')
-        $('.ticketMainViewContainer').height($('.ticketLeftSidebarContainer').height()-84);
+        $('.ticketMainViewContainer').css("min-height",($('.ticketLeftSidebarContainer').height()-84)+"px");
         @endif
 
         App.modules.tickets.detailedView.init({

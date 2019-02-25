@@ -1773,6 +1773,11 @@ $(function () {
         partRequestFields.children('.col-md-4').children('input.form-control').val('');
         partRequestFields.children('.col-md-4').children('input[type="number"]').val('');
         partRequestFields.children('.col-md-4').children('label').remove();
+        if(partRequestFields.children('.col-md-3').length>0) {
+            partRequestFields.children('.col-md-3').children('input.form-control').val('');
+            partRequestFields.children('.col-md-3').children('input[type="number"]').val('');
+            partRequestFields.children('.col-md-3').children('label').remove();
+        }
         var onclick = 'onclick="removePartRequest(\'part-request-field_' + partRequestFieldLenght + '\');"';
         var removeFields = '<i class="fa fa-times tips remove-part-request-fields" title="Remove" ' + onclick + ' style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;"></i>';
         partRequestFields.children('.part-request-last-field').append(removeFields);
