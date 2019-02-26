@@ -8,7 +8,7 @@
                 1265 Hamilton Parkway<br/>Itasca, Illinois 60143 <br/>
             </p>
         </div>
-        {{dd($data[0])}}
+
         <div style="width:50%; position:absolute; left:50%;top:8px">
             <table width="100%" style="border-collapse: collapse">
                 <tr>
@@ -49,6 +49,7 @@
                         <br/>
                         @if($data[0]['ismerch'] && (in_array($data[0]['order_type_id'], ['6', '7', '8'])))
                         @elseif($data[0]['is_fed']==1)
+                            {{dd($data[0]['fedex_number'])}}
                             {{ $data[0]['fedex_number'] ?  'Please Ship parcels using '.Lang::get('core.fedex_number') .': '.$data[0]['fedex_number'] : ''}}
                         @endif
                     </td>
