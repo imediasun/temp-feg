@@ -8,6 +8,7 @@
                 1265 Hamilton Parkway<br/>Itasca, Illinois 60143 <br/>
             </p>
         </div>
+        {{dd($data[0])}}
         <div style="width:50%; position:absolute; left:50%;top:8px">
             <table width="100%" style="border-collapse: collapse">
                 <tr>
