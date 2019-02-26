@@ -692,24 +692,27 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
 
-        $editMode = $request->get('editmode');
-        if(in_array($editMode, ['edit', 'clone'])){
-            $productIdsFromOrderContents = \DB::table('order_contents')->whereIn('id', request()->input('order_content_id'))->lists('product_id');
-            $existingProductIds = \DB::table('products')->whereIn('id', $productIdsFromOrderContents)->lists('id');
-            $deletedProductsIds = array_diff($productIdsFromOrderContents, $existingProductIds);
-            if(count($deletedProductsIds) > 0){
-                $deletedOrderContents = \DB::table('order_contents')->where('order_id', request()->input('order_id'))->whereIn('product_id', $deletedProductsIds)->get();
-                $names = "<br><ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
-                foreach ($deletedOrderContents as $content){
-                    $names .= '<li>'.$content->item_name.'</li>';
+
+            $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
+            if($request->input('is_freehand',0) != 1) {
+            $editMode = $request->get('editmode');
+            if (in_array($editMode, ['edit', 'clone'])) {
+                $productIdsFromOrderContents = \DB::table('order_contents')->whereIn('id', request()->input('order_content_id'))->lists('product_id');
+                $existingProductIds = \DB::table('products')->whereIn('id', $productIdsFromOrderContents)->lists('id');
+                $deletedProductsIds = array_diff($productIdsFromOrderContents, $existingProductIds);
+                if (count($deletedProductsIds) > 0) {
+                    $deletedOrderContents = \DB::table('order_contents')->where('order_id', request()->input('order_id'))->whereIn('product_id', $deletedProductsIds)->get();
+                    $names = "<br><ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
+                    foreach ($deletedOrderContents as $content) {
+                        $names .= '<li>' . $content->item_name . '</li>';
+                    }
+                    $names .= "</ul><br>";
+                    return response()->json([
+                        'status' => 'deleted_product_error',
+                        'message' => str_replace('{products}', $names, \Lang::get('core.item_already_deleted')),
+                    ]);
                 }
-                $names .= "</ul><br>";
-                return response()->json([
-                    'status' => 'deleted_product_error',
-                    'message' => str_replace('{products}', $names, \Lang::get('core.item_already_deleted')),
-                ]);
             }
         }
         /*$productIdArray = $request->get('product_id');
