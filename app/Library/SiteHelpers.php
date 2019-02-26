@@ -3211,6 +3211,7 @@ class SiteHelpers
      * @description encryptStringOPENSSL($string,$password="") is used to encrypt a string you can use decryptStringOPENSSL($string,$password="") to decrypt the string again. $password is optional
      * @return string
      */
+
     public static function encryptStringOPENSSL($string,$password="FEGPASSWORD"){
         $string = base64_encode($string);
         return openssl_encrypt($string,"AES-128-ECB",$password);
