@@ -3068,6 +3068,16 @@ class SiteHelpers
         $string = base64_encode($string);
         return openssl_encrypt($string,"AES-128-ECB",$password);
     }
+    public static function getTextBetweenTags($string, $tagBefore,$tagAfter)
+    {
+        $pattern = "/$tagBefore(.*)$tagAfter/";
+        preg_match($pattern, $string, $matches);
+        if (!empty($matches)) {
+            return $matches[1];
+        } else {
+            return $string;
+        }
+    }
 
     /**
      * @param $string
