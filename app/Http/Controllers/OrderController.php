@@ -1180,6 +1180,7 @@ class OrderController extends Controller
 
     public function validateProductForReserveQty($request,$isOrderContentPreBroken)
     {
+
         $item_names = $request->input('item_name');
         $productInformation = [];
         for ($i = 0; $i < count($item_names); $i++) {
@@ -1188,7 +1189,7 @@ class OrderController extends Controller
                 $product->item_name = $item_names[$i];
                 $product->qty = $request->input('qty')[$i];
                 $product->prev_qty = $request->input('prev_qty')[$i];
-                $product->product_is_broken_case = is_null($request->input('is_broken_case')[$i]) ? (int) $request->input('broken_case')[$i]: (int) $request->input('is_broken_case')[$i];
+                $product->product_is_broken_case = empty($request->input('is_broken_case')[$i]) ? !empty($request->input('broken_case')[$i]) ? (int) $request->input('broken_case')[$i]:0: (int) $request->input('is_broken_case')[$i];
                 $product->isPreIsBrokenCase = $this->model->getMatchedElement($isOrderContentPreBroken,$request->input('product_id')[$i]);
                 $product->order_product_id = ($request->input('product_id')[$i] == $product->id) ? $request->input('product_id')[$i] : 0;
                 $productInformation[] = $product;
