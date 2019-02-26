@@ -1771,13 +1771,17 @@ $(function () {
         var partRequestFields = $("#part-request-field_1").clone();
         partRequestFields.attr('id', 'part-request-field_' + partRequestFieldLenght);
         partRequestFields.children('.col-md-4').children('input.form-control').val('');
+        partRequestFields.children('.col-md-4').children('input.part-request-id').val(0);
         partRequestFields.children('.col-md-4').children('.input-group').children('input[type="number"]').val('');
         partRequestFields.children('.col-md-4').children('label').remove();
+
         if(partRequestFields.children('.col-md-3').length>0) {
             partRequestFields.children('.col-md-3').children('input.form-control').val('');
+            partRequestFields.children('.col-md-3').children('input.part-request-id').val(0);
             partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').val('');
             partRequestFields.children('.col-md-3').children('label').remove();
         }
+
         var onclick = 'onclick="removePartRequest(\'part-request-field_' + partRequestFieldLenght + '\');"';
         var removeFields = '<i class="fa fa-times tips remove-part-request-fields" title="Remove" ' + onclick + ' style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;"></i>';
         partRequestFields.children('.part-request-last-field').append(removeFields);
@@ -1787,5 +1791,15 @@ $(function () {
     });
 });
 function removePartRequest(id) {
+    var partRequestRemoved = $('#part_request_removed');
+    var value = $("#"+id+" input.part-request-id").val();
+console.log(value);
+       if(partRequestRemoved.val().length > 0){
+        partRequestRemoved.val(partRequestRemoved.val()+','+value);
+    }else{
+        partRequestRemoved.val(value);
+    }
+    console.log($('#part_request_removed').val());
+
     $("#" + id).remove();
 }

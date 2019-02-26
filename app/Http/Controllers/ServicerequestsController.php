@@ -42,6 +42,8 @@ class servicerequestsController extends Controller
 
         $this->model->attachObserver('FirstEmail',new TicketMailer);
         $this->model->attachObserver('AddComment',new TicketMailer);
+        $this->model->attachObserver('sendApprovalLink',new TicketMailer);
+        $this->model->attachObserver('thankYouMessage',new TicketMailer);
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
@@ -572,8 +574,10 @@ class servicerequestsController extends Controller
         $this->data['fid'] = \Session::get('fid');
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $partRequests = PartRequest::where('ticket_id',$id)->get();
 
         $this->data['id'] = $id;
+        $this->data['partRequests'] = $partRequests;
 
         $this->data['issueType'] = $row['issue_type'];
         /*$this->data['priority']  =  $row['Priority'];*/
@@ -1296,6 +1300,7 @@ class servicerequestsController extends Controller
     function postSaveGameRelated(Request $request, $id = NULL)
     {
 
+
         $date = date("Y-m-d");
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
@@ -1318,12 +1323,14 @@ class servicerequestsController extends Controller
             $data['Status'] = $request->get('Status');
             $oldStatus = $request->get('oldStatus');
             $partNumbers = $data['part_number'];
+            $partRequestId = $request->input('part_request_id');
             $qtys = $data['qty'];
             $costs = $data['cost'];
 
             unset($data['part_number']);
             unset($data['qty']);
             unset($data['cost']);
+            unset($data['part_request_id']);
 
             $data['ticket_type'] = 'game-related';
             if (!$isAdd) {
@@ -1353,7 +1360,9 @@ class servicerequestsController extends Controller
             if($data['issue_type_id'] != Servicerequests::PART_APPROVAL) {
                 $this->model->saveTroubleshootingChecklist($troubleshootingchecklist, $id);
             }else{
+                $partRequestIds = [];
                 if(count($partNumbers) > 0) {
+                    $partRequestRemovedId = explode(',',$request->input('part_request_removed',0));
                     $partRequests = [];
                     for ($i = 0; $i < count($partNumbers); $i++) {
                         $partRequests[] = [
@@ -1362,9 +1371,55 @@ class servicerequestsController extends Controller
                             'qty' => $qtys[$i],
                             'cost' => $costs[$i],
                             'created_at' => date('Y-m-d H:i:s'),
+                            'part_request_id' => empty($partRequestId[$i]) ? 0:$partRequestId[$i],
                         ];
+                        if(empty($partRequestId[$i])) {
+                            if($partRequestId[$i] > 0) {
+                                $partRequestIds[] = $partRequestId[$i];
+                            }
+                        }
                     }
-                    $this->model->savePartRequest($partRequests, $id);
+                    $partRequestIds1 =  $this->model->savePartRequest($partRequests, $id,$partRequestRemovedId);
+                    $partRequestIds = array_merge($partRequestIds,$partRequestIds1);
+                }
+                if(count($partRequestIds) > 0){
+                    $partRequestIds = array_unique($partRequestIds);
+
+                    foreach ($partRequestIds as $partRequestId){
+                        $partRequest = PartRequest::where(['id'=>$partRequestId, 'status_id'=>1])->first();
+                        if($partRequest){
+                            $approveLink = url().'/servicerequests/approvepart/'.\SiteHelpers::encryptID($partRequest->id);
+                            $denyLink = url().'/servicerequests/denypart/'.\SiteHelpers::encryptID($partRequest->id);
+                            $requestLink = url(). "/servicerequests/?view=".\SiteHelpers::encryptID($id)."&ticket_type=game-related";
+                            $requestDate = \DateHelpers::formatDate($data['game_realted_date']);
+                            $partNumber = $partRequest->part_number;
+                            $partQty = $partRequest->qty;
+                            $cost = \CurrencyHelpers::formatPrice($partRequest->cost);
+                            $description = $request->input('Description');
+                            $requester = Session::get('ufname')." ".Session::get('ulname');
+
+                            $message = \View::make('servicerequests.email.part-request-email', [
+                                'approve_link' => $approveLink,
+                                'deny_link' => $denyLink,
+                                'request_link' => $requestLink,
+                                'request_date' => $requestDate,
+                                'part_number' => $partNumber,
+                                'part_qty' => $partQty,
+                                'part_cost' => $cost,
+                                'description' => $description,
+                                'submitter' => $requester,
+                            ])->render();
+                            $subject = "Part Request [Part # ".$partNumber."] [Qty ".$partQty."][Cost ".$cost."]  [Service Request #".$id."] ".date('m/d/Y',strtotime($requestDate));
+
+                            $this->model->notifyObserver('sendApprovalLink',[
+                                "message"       =>$message,
+                                "ticketId"      => $id,
+                                'ticket'        => $data,
+                                'subject'       => $subject,
+                                'ticket_type' => 'game-related'
+                            ]);
+                        }
+                    }
                 }
             }
 

@@ -91,20 +91,21 @@
                                 </select>
                             </td>
                         </tr>                        
-                        {{--<tr>--}}
+                        <tr>
                             {{--<td>5</td>--}}
-                            {{--<td>Able to subscribe to email alerts by ticket</td>--}}
-                            {{--<td>--}}
-                                {{--<select name='role5[]' multiple id="role5" rows='5' class='select2 '>--}}
+                            <td>Ability to approve/deny a part request on the ticket</td>
+                            <td>Selected User(s)/Group(s) have ability to approve/deny a part request on the ticket VIEW page and via email.</td>
+                            <td>
+                                <select name='user_permission_groups[]' multiple id="user_permission_groups" rows='5' class='select2 '>
 
-                                {{--</select>--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                                {{--<select name='individual5[]' multiple rows='5' id="individual5" class='select2 '>--}}
+                                </select>
+                            </td>
+                            <td>
+                                <select name='user_permission[]' multiple rows='5' id="user_permission" class='select2 '>
 
-                                {{--</select>--}}
-                            {{--</td>--}}
-                        {{--</tr>--}}
+                                </select>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                     </div>
@@ -127,8 +128,8 @@
                     {selected_value: '{{ $ticket_setting[0]->role3 }}'});
             $("#role4").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: '{{ $ticket_setting[0]->role4 }}'});
-            $("#role5").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $ticket_setting[0]->role5 }}'});
+            $("#user_permission_groups").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
+                    {selected_value: '{{ $ticket_setting[0]->user_permission_groups }}'});
             $("#individual1").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting[0]->individual1 }}'});
             $("#individual2").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
@@ -137,8 +138,8 @@
                     {selected_value: '{{ $ticket_setting[0]->individual3 }}'});
             $("#individual4").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting[0]->individual4 }}'});
-            $("#individual5").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting[0]->individual5 }}'});
+            $("#user_permission").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
+                    {selected_value: '{{ $ticket_setting[0]->user_permission }}'});
 
         });
 

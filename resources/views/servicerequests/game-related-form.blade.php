@@ -172,11 +172,12 @@
                 <div class="row">
 
                     <div class="col-md-12">
-                <div id="trobleshotingchecklist-contianer" class="form-group  " >
+                <div id="trobleshotingchecklist-contianer" class="form-group  " @if($row['issue_type_id'] == \App\Models\Servicerequests::PART_APPROVAL) style="display: none;" @endif>
                     <label for="Description" class=" control-label col-md-2 text-left">
                         {!! SiteHelpers::activeLang('Troubleshooting Checklist', (isset($fields['troubleshootchecklist']['language'])? $fields['troubleshootchecklist']['language'] : array())) !!}
                     </label>
-                    <div class="col-md-10">
+
+                    <div class="col-md-10" >
                         <div class="row">
                         <?php $index = 0 ?>
                         <div class="col-md-6">
@@ -195,14 +196,55 @@
                     </div>
                 </div>
 
-                        <div id="part-requests-contianer" style="display: none;" class="form-group  ">
+                        <div id="part-requests-contianer" @if($row['issue_type_id'] == \App\Models\Servicerequests::PART_APPROVAL) style="display: block;" @else style="display: none;" @endif class="form-group  ">
                             <label  class=" control-label col-md-2 text-left">
                                 Part Requests :
                             </label>
                             <div class="col-md-10 part-request-inner">
                                 <div class="row">
-                                    <span class="part-request-field-contianer" id="part-request-field-contianer">
-                                        <span class="part-request-field"  id="part-request-field_1">
+
+                                            <span class="part-request-field-contianer"
+                                                  id="part-request-field-contianer">
+                                                <input type="hidden" name="part_request_removed" style="display: none;" id="part_request_removed">
+                                                <?php $i = 1; ?>
+                                                @if($partRequests->count()>0)
+                                                    @foreach($partRequests as $partRequest)
+                                        <span class="part-request-field" id="part-request-field_{{ $i }}">
+                                    <div class="col-md-4" style="margin-bottom: 20px;">
+                                            <input type="hidden" style="display: none;" name="part_request_id[]" class="part-request-id" id="partrequestid-{{ $i }}" value="{{ $partRequest->id }}">
+                                        @if($i == 1)
+                                        <label for="part-number">Part Number</label>
+                                        @endif
+                                        <input type="text" class="form-control" name="part_number[]" value="{{ $partRequest->part_number }}" id="part-number">
+                                    </div>
+                                    <div class="col-md-4" style="margin-bottom: 20px;">
+                                        @if($i == 1)
+                                        <label for="part-number">Quantity</label>
+                                        @endif
+                                        <input type="text" name="qty[]" value="{{ $partRequest->qty }}" class="form-control">
+                                    </div>
+                                    <div class="col-md-4 part-request-last-field"
+                                         style="margin-bottom: 20px; position: relative;">
+                                        @if($i == 1)
+                                        <label for="part-number">Cost</label>
+                                        @endif
+                                        <div class="input-group ig-full">
+                                <span class="input-group-addon" style="border-right: 1px solid #e5e6e7;
+    position: absolute;
+    left: 0;    z-index: 111111;">$</span>
+                                            <input type="number" step="1" placeholder="0.00" value="{{ CurrencyHelpers::formatPrice($partRequest->cost,'5',false) }}"
+                                                   style="padding-left: 35px;" name="cost[]" class="form-control">
+                                        </div>
+                                            @if($i > 1)
+                                        <i class="fa fa-times tips remove-part-request-fields" title="" onclick="removePartRequest('part-request-field_{{ $i }}');" style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;" data-original-title="Remove"></i>
+                                       @endif
+                                        </div>
+
+                                        </span>
+                                                        <?php $i++; ?>
+                                                    @endforeach
+                                                @else
+                                                    <span class="part-request-field" id="part-request-field_1">
                                     <div class="col-md-4" style="margin-bottom: 20px;">
                                         <label for="part-number">Part Number</label>
                                         <input type="text" class="form-control" name="part_number[]" id="part-number">
@@ -211,19 +253,24 @@
                                         <label for="part-number">Quantity</label>
                                         <input type="text" name="qty[]" class="form-control">
                                     </div>
-                                    <div class="col-md-4 part-request-last-field" style="margin-bottom: 20px; position: relative;" >
+                                    <div class="col-md-4 part-request-last-field"
+                                         style="margin-bottom: 20px; position: relative;">
                                         <label for="part-number">Cost</label>
                                         <div class="input-group ig-full">
                                 <span class="input-group-addon" style="border-right: 1px solid #e5e6e7;
     position: absolute;
     left: 0;    z-index: 111111;">$</span>
-                                            <input type="number"  step="1" placeholder="0.00" value=""
+                                            <input type="number" step="1" placeholder="0.00" value=""
                                                    style="padding-left: 35px;" name="cost[]" class="form-control">
                                         </div>
                                         </div>
 
                                         </span>
+                                                @endif
                                     </span>
+
+
+
                                     <div class="col-md-12">
                                         <input type="button" class="btn btn-primary pull-right addmorepartfields" id="addmorepartfields" value="Add More">
                                     </div>

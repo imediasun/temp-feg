@@ -518,18 +518,21 @@ class Servicerequests extends Observerable  {
      * @param $ticketId
      * @return bool
      */
-    public function savePartRequest($rows = [],$ticketId)
+    public function savePartRequest($rows = [],$ticketId,$partRequestRemovedId = [])
     {
         if(empty($rows)){
-            return false;
+            return [0];
         }
+        PartRequest::whereIn('id',$partRequestRemovedId)->delete();
         $partRequest = new PartRequest();
-        PartRequest::where('ticket_id',$ticketId)->delete();
+$ids = [];
         foreach ($rows as $row){
-            $partRequest->insertRow($row,null);
+            $id = $row['part_request_id'];
+            unset($row['part_request_id']);
+            $ids[] = $partRequest->insertRow($row,$id);
         }
 
-        return true;
+        return $ids;
 
     }
 }

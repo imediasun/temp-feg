@@ -1,5 +1,7 @@
 <?php
 namespace App\Models\Core;
+use App\Models\sbticket;
+use App\Models\sbticketsetting;
 use Log;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Ticketfollowers;
@@ -7,8 +9,9 @@ use App\Models\Ticketfollowers;
 class TicketMailer
 {
     function callBack($object, $type, $data){
-        
+        Log::info("Ticket Mailer Log".$type);
         $actions = ["AddComment", "FirstEmail"];
+        $actions2 = ["sendApprovalLink",'thankYouMessage'];
         if (in_array($type, $actions)) {
 
             $ticketData = $data['ticket'];
@@ -40,11 +43,32 @@ class TicketMailer
             }
 
             $this->sendTicketNotification($ticketId, $message, $emails, $ticketData,$gameRelatedSubject);
+        }elseif (in_array($type,$actions2)){
+            $ticketData = $data['ticket'];
+            $ticketId = $data['ticketId'];
+            $message = $data['message'];
+            $ticketType = !empty($data['ticket_type']) ? $data['ticket_type']:'debit-card-related';
+            $locationId = $ticketData['location_id'];
+            $gameRelatedSubject = $data['subject'];
+            $emails['to'] = [];
+
+
+            if($type == 'sendApprovalLink') {
+                $sbticketsetting = sbticketsetting::getPartRequestUsers();
+                $emails['to'] = $sbticketsetting['user_email_addresses'];
+
+            }elseif($type == 'thankYouMessage'){
+
+            }
+            Log::info($emails);
+            if(!empty($emails['to'])) {
+                $this->sendTicketNotification($ticketId, $message, $emails, $ticketData, $gameRelatedSubject,$data['subject']);
+            }
         }
         
     }
 
-    protected function sendTicketNotification($ticketId, $message, $users, $data,$gameRelatedSubject)
+    protected function sendTicketNotification($ticketId, $message, $users, $data,$gameRelatedSubject,$partSubject = '')
     {
         // $assigneesTo = $assigneesTo = \DB::select("select users.email FROM users WHERE users.id IN (" . $assignTo . ")");
         $title = @$data['Subject'];
@@ -60,6 +84,9 @@ class TicketMailer
         /* FEG-2003 Comment out Priority field from Service Requests */
        /* $subject    = "$locationName, $title, [".(strtolower($priority)=="urgent" ? strtoupper($priority):$priority)."][Service Request #{$ticketId}] $createdOn" ;*/
         $subject    = "$locationName,$gameRelatedSubject $title, [Service Request #{$ticketId}] $createdOn" ;
+        if($partSubject != ''){
+            $subject = $partSubject;
+        }
 //        $headers    = 'MIME-Version: 1.0' . "\r\n";
 //        $headers   .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 //        $headers   .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
