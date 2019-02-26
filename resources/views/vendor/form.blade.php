@@ -319,7 +319,7 @@
 							<div class="form-group  " >
 								<input type='hidden' value='0' name='status'>
 								<label for="Active" class=" control-label col-md-4 text-left">
-									{!! SiteHelpers::activeLang('Enable FedEx #', (isset($fields['is_fedex_enabled']['language'])? $fields['status']['language'] : array())) !!}
+									{!! SiteHelpers::activeLang('Enable FedEx# on Order POs :', (isset($fields['is_fedex_enabled']['language'])? $fields['status']['language'] : array())) !!}
 								</label>
 								<div class="col-md-6 check-no">
 
