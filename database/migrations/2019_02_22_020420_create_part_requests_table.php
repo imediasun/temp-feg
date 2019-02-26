@@ -18,7 +18,7 @@ class CreatePartRequestsTable extends Migration
             $table->string('part_number')->nullable();
             $table->decimal('cost',10,5)->default(0);
             $table->integer('qty')->default(0);
-            $table->string('reason')->default(0);
+            $table->string('reason')->nullable();
             $table->integer('status_id')->default(1);
             $table->timestamps();
         });

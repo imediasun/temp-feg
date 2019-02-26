@@ -14,6 +14,7 @@ class Servicerequests extends Observerable  {
     protected $table = 'sb_tickets';
     protected $primaryKey = 'TicketID';
     public $timestamps = false;
+    const PART_APPROVAL = 2;
     public $hideGridFieldsTab1 = [
         'functionality_id',
         'issue_type_id',
@@ -386,7 +387,8 @@ class Servicerequests extends Observerable  {
     $sbTicketsTroubleshootingCheckList = new SbTicketsTroubleshootingCheckList();
         $removeItems = $sbTicketsTroubleshootingCheckList->where('sb_ticket_id',$ticketId)->delete();
         foreach ($checkList as $item){
-            $data = ['sb_ticket_id'=>$ticketId,'troubleshooting_check_list_id'=>$item];
+            $checkListName = TroubleshootingCheckList::find($item);
+            $data = ['sb_ticket_id'=>$ticketId,'troubleshooting_check_list_id'=>$item,'check_list_name'=>$checkListName->check_list_name];
             $sbTicketsTroubleshootingCheckList->insertRow($data,null);
         }
 
@@ -510,4 +512,24 @@ class Servicerequests extends Observerable  {
       }
       return $formElements;
   }
+
+    /**
+     * @param array $rows
+     * @param $ticketId
+     * @return bool
+     */
+    public function savePartRequest($rows = [],$ticketId)
+    {
+        if(empty($rows)){
+            return false;
+        }
+        $partRequest = new PartRequest();
+        PartRequest::where('ticket_id',$ticketId)->delete();
+        foreach ($rows as $row){
+            $partRequest->insertRow($row,null);
+        }
+
+        return true;
+
+    }
 }

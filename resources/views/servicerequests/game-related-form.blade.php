@@ -186,9 +186,9 @@
                                 </div>
                         <div class="col-md-6 change-padding" style="padding-left: 6%; padding-right: 0px;">
                                 @endif
-					<input type="checkbox" name="troubleshootchecklist[]" @if(in_array($troubleshootingCheckList->id,$savedCheckList)) checked @endif id="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}" value="{{ $troubleshootingCheckList->id }}">&nbsp;&nbsp; <label title="{{ $troubleshootingCheckList->check_list_name }}" class="tips" style="vertical-align: middle; width: 90%; font-size: 12px; white-space: nowrap;
+					<input type="checkbox" name="troubleshootchecklist[]" @if(in_array($troubleshootingCheckList->id,$savedCheckList['savedCheckList'])) checked @endif id="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}" value="{{ $troubleshootingCheckList->id }}">&nbsp;&nbsp; <label title="{{ !empty($savedCheckList['savedCheckListOptions'][$troubleshootingCheckList->id]) ? $savedCheckList['savedCheckListOptions'][$troubleshootingCheckList->id]:$troubleshootingCheckList->check_list_name }}" class="tips" style="vertical-align: middle; width: 90%; font-size: 12px; white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;" for="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}">{{ $troubleshootingCheckList->check_list_name }}</label><br /><br />
+    text-overflow: ellipsis;" for="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}">{{ !empty($savedCheckList['savedCheckListOptions'][$troubleshootingCheckList->id]) ? $savedCheckList['savedCheckListOptions'][$troubleshootingCheckList->id]:$troubleshootingCheckList->check_list_name }}</label><br /><br />
                         @endforeach
                         </div>
                         </div>

@@ -13,7 +13,7 @@
         border: 1px solid #ececec;
     }
     .remove-part-request-fields{
-        right: -10px !important;
+        right: 0px !important;
         z-index: 1000;
     }
 </style>
@@ -193,12 +193,13 @@
                                                    style="padding-left: 35px;" name="cost[]" class="form-control">
                                         </div>
                                         </div>
-                                             <div class="col-md-3" style="margin-bottom: 20px; text-align: center;">
+                                             <div class="col-md-3" style="margin-bottom: 20px; text-align: center; padding-left: 0px; ">
                                                 <label >Action</label>
                                                  <div>
 
-                                        <input type="button" value="Deny" class="btn btn-warning pull-right"  style="margin-left: 5px;">
-                                        <input type="button" value="Approve" class="btn btn-primary pull-right">
+                                        <input type="button" value="Deny" class="btn btn-warning pull-right"  style="margin-left: 3px;">
+                                        <input type="button" value="Approve" class="btn btn-primary pull-right" style="margin-left: 3px;">
+                                                     <input type="button" value="Save" class="btn btn-primary pull-right">
                                                      </div>
                                     </div>
 

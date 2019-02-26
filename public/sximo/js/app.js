@@ -1771,11 +1771,11 @@ $(function () {
         var partRequestFields = $("#part-request-field_1").clone();
         partRequestFields.attr('id', 'part-request-field_' + partRequestFieldLenght);
         partRequestFields.children('.col-md-4').children('input.form-control').val('');
-        partRequestFields.children('.col-md-4').children('input[type="number"]').val('');
+        partRequestFields.children('.col-md-4').children('.input-group').children('input[type="number"]').val('');
         partRequestFields.children('.col-md-4').children('label').remove();
         if(partRequestFields.children('.col-md-3').length>0) {
             partRequestFields.children('.col-md-3').children('input.form-control').val('');
-            partRequestFields.children('.col-md-3').children('input[type="number"]').val('');
+            partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').val('');
             partRequestFields.children('.col-md-3').children('label').remove();
         }
         var onclick = 'onclick="removePartRequest(\'part-request-field_' + partRequestFieldLenght + '\');"';

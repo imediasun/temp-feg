@@ -6,6 +6,7 @@ use App\Models\game;
 use App\Models\Gamestitle;
 use App\Models\IssueType;
 use App\Models\location;
+use App\Models\PartRequest;
 use App\Models\SbTicketsTroubleshootingCheckList;
 use App\Models\Servicerequests;
 use App\Models\servicerequestsSetting;
@@ -587,7 +588,13 @@ class servicerequestsController extends Controller
         $this->data['game_functionalities'] = \App\Models\GameFunctionality::isActive()->get();
         $this->data['troubleshootingCheckLists'] = TroubleshootingCheckList::isActive()->get();
         $this->data['shippingPriorities'] = ShippingPriority::isActive()->get();
-        $this->data['savedCheckList'] = SbTicketsTroubleshootingCheckList::where('sb_ticket_id',$id)->get()->pluck('troubleshooting_check_list_id')->toArray();
+        $userSelectedOptions = SbTicketsTroubleshootingCheckList::select(['troubleshooting_check_list_id','check_list_name'])->where('sb_ticket_id',$id)->get()->toArray();
+        $savedCheckList = ['savedCheckList' =>[],'savedCheckListOptions'=>[]];
+        foreach ($userSelectedOptions as $userSelectedOption){
+            $savedCheckList['savedCheckList'][] = $userSelectedOption['troubleshooting_check_list_id'];
+            $savedCheckList['savedCheckListOptions'][$userSelectedOption['troubleshooting_check_list_id']] = $userSelectedOption['check_list_name'];
+        }
+        $this->data['savedCheckList'] = $savedCheckList;
 
         return view('servicerequests.'.$view, $this->data);
     }
@@ -1288,9 +1295,15 @@ class servicerequestsController extends Controller
 
     function postSaveGameRelated(Request $request, $id = NULL)
     {
+
         $date = date("Y-m-d");
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
+
+        $partNumbers = null;
+        $qtys = 0;
+        $costs = 0;
+
         $isAdd = empty($id);
         $rules = $this->validateForm();
         unset($rules['department_id']);
@@ -1304,6 +1317,14 @@ class servicerequestsController extends Controller
             $data['shipping_priority_id'] = $request->input('shipping_priority_id',0);
             $data['Status'] = $request->get('Status');
             $oldStatus = $request->get('oldStatus');
+            $partNumbers = $data['part_number'];
+            $qtys = $data['qty'];
+            $costs = $data['cost'];
+
+            unset($data['part_number']);
+            unset($data['qty']);
+            unset($data['cost']);
+
             $data['ticket_type'] = 'game-related';
             if (!$isAdd) {
                 if (!ticketsetting::canUserChangeStatus('game-related')) {
@@ -1328,7 +1349,24 @@ class servicerequestsController extends Controller
             unset($data['oldStatus']);
             $id = $this->model->insertRow($data, $id);
             $troubleshootingchecklist = $request->has('troubleshootchecklist') ? $request->input('troubleshootchecklist'):[];
-            $this->model->saveTroubleshootingChecklist($troubleshootingchecklist,$id);
+
+            if($data['issue_type_id'] != Servicerequests::PART_APPROVAL) {
+                $this->model->saveTroubleshootingChecklist($troubleshootingchecklist, $id);
+            }else{
+                if(count($partNumbers) > 0) {
+                    $partRequests = [];
+                    for ($i = 0; $i < count($partNumbers); $i++) {
+                        $partRequests[] = [
+                            'ticket_id' => $id,
+                            'part_number' => $partNumbers[$i],
+                            'qty' => $qtys[$i],
+                            'cost' => $costs[$i],
+                            'created_at' => date('Y-m-d H:i:s'),
+                        ];
+                    }
+                    $this->model->savePartRequest($partRequests, $id);
+                }
+            }
 
             $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
             if (!empty($files['file_path'])) {
@@ -1360,6 +1398,8 @@ class servicerequestsController extends Controller
                     'data'=>$data,
                     'savedCheckList' => $troubleshootingchecklist,
                     'checkList' => TroubleshootingCheckList::all(),
+                    'is_partRequest' =>$data['issue_type_id'] == Servicerequests::PART_APPROVAL,
+                    'partRequests' => PartRequest::where('ticket_id',$id)->get(),
                     'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($id)."&ticket_type=game-related",
                 ])->render();
 
