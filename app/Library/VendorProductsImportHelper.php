@@ -141,7 +141,7 @@ class VendorProductsImportHelper
             $configName = 'Send Product Export To Merchandise Vendor';
             $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
             if (!empty($to)) {
-                $recipients['to'] .= ',' . $to;
+                $recipients['to'] .= $recipients['to'] != '' ? ',' . $to : $to;
             }
 
             if ($recipients['to'] != '') {
@@ -176,7 +176,7 @@ class VendorProductsImportHelper
                 $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
                 $to = $vendor->games_contact_email;
                 if (!empty($to)) {
-                    $recipients['to'] .= ',' . $to;
+                    $recipients['to'] .= $recipients['to'] != '' ? ',' . $to : $to;
                 }
 
                 if ($recipients['to'] != '') {
