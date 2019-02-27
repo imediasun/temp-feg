@@ -2,6 +2,7 @@
 namespace App\Models\Core;
 use App\Models\sbticket;
 use App\Models\sbticketsetting;
+use Illuminate\Support\Facades\Session;
 use Log;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Ticketfollowers;
@@ -58,7 +59,7 @@ class TicketMailer
                 $emails['to'] = $sbticketsetting['user_email_addresses'];
 
             }elseif($type == 'thankYouMessage'){
-
+                $emails['to'] = [Session::get('eid')];
             }
             Log::info($emails);
             if(!empty($emails['to'])) {

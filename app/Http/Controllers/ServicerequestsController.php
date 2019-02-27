@@ -2,6 +2,7 @@
 
 use App\GameFunctionality;
 use App\Http\Controllers\controller;
+use App\Models\employee;
 use App\Models\game;
 use App\Models\Gamestitle;
 use App\Models\IssueType;
@@ -691,6 +692,8 @@ class servicerequestsController extends Controller
         if($this->data['ticketType'] == 'game-related'){
             $this->data['canChangeStatus'] = ticketsetting::canUserChangeStatus(null,'game-related');
         }
+        $partRequests = PartRequest::where('ticket_id',$id)->get();
+        $this->data['partRequests'] = $partRequests;
 
         return view('servicerequests.view', $this->data);
     }
@@ -1418,6 +1421,29 @@ class servicerequestsController extends Controller
                                 'subject'       => $subject,
                                 'ticket_type' => 'game-related'
                             ]);
+
+                            $message = \View::make('servicerequests.email.part-request-thankyou-email', [
+                                'approve_link' => $approveLink,
+                                'deny_link' => $denyLink,
+                                'request_link' => $requestLink,
+                                'request_date' => $requestDate,
+                                'part_number' => $partNumber,
+                                'part_qty' => $partQty,
+                                'part_cost' => $cost,
+                                'description' => $description,
+                                'email' => Session::get('eid'),
+                                'submitter' => $requester,
+                            ])->render();
+                            $subject = "Part Request [Part # ".$partNumber."] [Qty ".$partQty."][Cost ".$cost."]  [Service Request #".$id."] ".date('m/d/Y',strtotime($requestDate));
+
+                            $this->model->notifyObserver('thankYouMessage',[
+                                "message"       =>$message,
+                                "ticketId"      => $id,
+                                'ticket'        => $data,
+                                'subject'       => $subject,
+                                'ticket_type' => 'game-related'
+                            ]);
+
                         }
                     }
                 }
@@ -1480,5 +1506,42 @@ class servicerequestsController extends Controller
             ));
         }
 
+    }
+
+    public function getApprovepart($id = ''){
+        if(!empty($id)) {
+            $id = \SiteHelpers::encryptID($id);
+
+            $partRequest = PartRequest::where('id', $id);
+
+                if ($partRequest) {
+                    $updated = $partRequest->update(['status_id' => 2, 'updated_by' => Session::get('uid')]);
+
+                    if ($updated) {
+                        return Redirect::to('servicerequests')->with(['messagetext'=>'Part request approved','ticketType'=>'game-related'])->with('msgstatus', 'success');
+                    } else {
+                        return Redirect::to('servicerequests')->with(['messagetext'=> 'Error on approving part request','ticketType'=>'game-related'])->with('msgstatus', 'error');
+                    }
+                }
+
+        }
+    }
+
+    public function getDenypart($id = ''){
+        if(!empty($id)) {
+            $id = \SiteHelpers::encryptID($id);
+            $partRequest = PartRequest::where('id', $id);
+
+            if ($partRequest) {
+                $update = $partRequest->update(['status_id' => 3, 'updated_by'=>Session::get('uid')]);
+
+                if ($update) {
+                    return Redirect::to('servicerequests')->with('messagetext', 'Part request denied')->with('msgstatus', 'success');
+                } else {
+                    return Redirect::to('servicerequests')->with('messagetext', 'Error on declining part request')->with('msgstatus', 'error');
+                }
+            }
+
+        }
     }
 }

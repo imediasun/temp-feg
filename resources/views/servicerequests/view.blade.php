@@ -168,11 +168,13 @@
                         <div class="row" style="    margin-right: 0px; margin-left: 0px;">
 
                             <div class="col-md-12">
-                                <div id="part-requests-contianer" style="    margin-top: -30px;" class="form-group  ">
-                                    <div class="col-md-12" style="padding-left: 0px;"><label class="replyLabel">Part Information</label></div>
+                                <div id="part-requests-contianer" style="margin-top: -30px;" class="form-group  ">
+                                    <div class="col-md-12" style="padding-left: 0px;"><label class="replyLabel">Part
+                                            Information</label></div>
                                     <div class="col-md-12 part-request-inner">
                                         <div class="row">
                                     <span class="part-request-field-contianer" id="part-request-field-contianer">
+
                                         <span class="part-request-field" id="part-request-field_1">
                                     <div class="col-md-3" style="margin-bottom: 20px;">
                                         <label for="part-number">Part Number</label>
@@ -186,20 +188,22 @@
                                          style="margin-bottom: 20px; position: relative;">
                                         <label for="part-number">Cost</label>
                                         <div class="input-group ig-full">
-                                <span class="input-group-addon" style="border-right: 1px solid #e5e6e7;
-    position: absolute;
-    left: 0;    z-index: 111111;">$</span>
+                                <span class="input-group-addon" style="border-right: 1px solid #e5e6e7; position: absolute; left: 0;    z-index: 111111;">$</span>
                                             <input type="number" step="1" placeholder="0.00" value=""
                                                    style="padding-left: 35px;" name="cost[]" class="form-control">
                                         </div>
                                         </div>
-                                             <div class="col-md-3" style="margin-bottom: 20px; text-align: center; padding-left: 0px; ">
-                                                <label >Action</label>
+                                             <div class="col-md-3"
+                                                  style="margin-bottom: 20px; text-align: center; padding-left: 0px; ">
+                                                <label>Action</label>
                                                  <div>
 
-                                        <input type="button" value="Deny" class="btn btn-warning pull-right"  style="margin-left: 3px;">
-                                        <input type="button" value="Approve" class="btn btn-primary pull-right" style="margin-left: 3px;">
-                                                     <input type="button" value="Save" class="btn btn-primary pull-right">
+                                        <input type="button" value="Deny" class="btn btn-warning pull-right"
+                                               style="margin-left: 3px;">
+                                        <input type="button" value="Approve" class="btn btn-primary pull-right"
+                                               style="margin-left: 3px;">
+                                                     <input type="button" value="Save"
+                                                            class="btn btn-primary pull-right">
                                                      </div>
                                     </div>
 
