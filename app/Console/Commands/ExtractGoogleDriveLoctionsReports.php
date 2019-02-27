@@ -70,8 +70,8 @@ class ExtractGoogleDriveLoctionsReports extends Command
 //            } catch (Exception $e) {
 //                print "An error occurred: " . $e->getMessage();
 //            }
-
-            $this->L->log('Google Drive', $this->drive);
+            $this->L->log('User:', $user);
+            $this->L->log('Google Drive locations', $this->drive);
 
             $files = $this->getAllLocationFoldersFromDrive($this->drive, $parentId);
 
