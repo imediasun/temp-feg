@@ -60,7 +60,7 @@ class ExtractGoogleDriveLoctionsReports extends Command
             $this->drive = $this->getGoogleDriveObject($user);
 //            $client = new \Google_Client();
 //            $client->setAccessToken($user->oauth_token);
-
+           print_r("here");
             $parentId = env('LOCATION_DEBIT_CARD_FOLDER_ID'); //Location Debit Card Reports folder
 
 //            $this->L->log('Google Client', $client);
@@ -167,7 +167,9 @@ class ExtractGoogleDriveLoctionsReports extends Command
         $client = new \Google_Client();
         $client->setAccessToken($user->oauth_token);
         $this->L->log('Google Client', $client->getAccessToken());
-        return new \Google_Service_Drive($client);
+        $at = new \Google_Service_Drive($client);
+        $this->L->log('Google Client atta', $at);
+
     }
 
 
