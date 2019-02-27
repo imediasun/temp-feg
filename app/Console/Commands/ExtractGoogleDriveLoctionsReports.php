@@ -56,9 +56,10 @@ class ExtractGoogleDriveLoctionsReports extends Command
 
             $this->L->log('------------Command Started.-------------');
 
-             $this->info('Command Executed.');
-             $this->drive = $this->getGoogleDriveObject($user);
+            $this->info('Command Executed.');
+            $this->drive = $this->getGoogleDriveObject($user);
             $parentId = env('LOCATION_DEBIT_CARD_FOLDER_ID'); //Location Debit Card Reports folder
+            echo "this is parent id".$parentId;
             $this->L->log('Parent ID', $parentId);
             $this->L->log('User:', $user);
             $this->L->log('Google Drive locations', $this->drive);
