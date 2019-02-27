@@ -8,6 +8,7 @@ use App\Models\Gamestitle;
 use App\Models\IssueType;
 use App\Models\location;
 use App\Models\PartRequest;
+use App\Models\sbticketsetting;
 use App\Models\SbTicketsTroubleshootingCheckList;
 use App\Models\Servicerequests;
 use App\Models\servicerequestsSetting;
@@ -694,6 +695,7 @@ class servicerequestsController extends Controller
         }
         $partRequests = PartRequest::where('ticket_id',$id)->get();
         $this->data['partRequests'] = $partRequests;
+        $this->data['can_approve_deny'] = $this->model->hasApproveDenyPermission();
 
         return view('servicerequests.view', $this->data);
     }
@@ -1510,26 +1512,42 @@ class servicerequestsController extends Controller
 
     public function getApprovepart($id = ''){
         if(!empty($id)) {
-            $id = \SiteHelpers::encryptID($id);
+            $id = \SiteHelpers::encryptID($id,true);
 
             $partRequest = PartRequest::where('id', $id);
 
-                if ($partRequest) {
-                    $updated = $partRequest->update(['status_id' => 2, 'updated_by' => Session::get('uid')]);
+            if ($partRequest) {
+                $updated = $partRequest->update(['status_id' => 2, 'updated_by' => Session::get('uid')]);
 
-                    if ($updated) {
-                        return Redirect::to('servicerequests')->with(['messagetext'=>'Part request approved','ticketType'=>'game-related'])->with('msgstatus', 'success');
-                    } else {
-                        return Redirect::to('servicerequests')->with(['messagetext'=> 'Error on approving part request','ticketType'=>'game-related'])->with('msgstatus', 'error');
-                    }
+                if ($updated) {
+                    return Redirect::to('servicerequests')->with(['messagetext'=>'Part request approved','ticketType'=>'game-related'])->with('msgstatus', 'success');
+                } else {
+                    return Redirect::to('servicerequests')->with(['messagetext'=> 'Error on approving part request','ticketType'=>'game-related'])->with('msgstatus', 'error');
                 }
+            }
 
         }
     }
+    public function postApprove(Request $request){
 
+            $id = $request->input('id',0);
+
+            $partRequest = PartRequest::where('id', $id);
+
+
+        if ($partRequest) {
+            $updated = $partRequest->update(['status_id' => 2, 'updated_by' => Session::get('uid')]);
+            return response()->json(array(
+                'message' => 'Part request approved',
+                'status' => 'success'
+            ));
+        }
+
+
+    }
     public function getDenypart($id = ''){
         if(!empty($id)) {
-            $id = \SiteHelpers::encryptID($id);
+            $id = \SiteHelpers::encryptID($id,true);
             $partRequest = PartRequest::where('id', $id);
 
             if ($partRequest) {
@@ -1542,6 +1560,49 @@ class servicerequestsController extends Controller
                 }
             }
 
+        }
+    }
+
+    public function postDenyPart(Request $request){
+        $id = $request->input('partRequestId',0);
+        $reason = $request->input('reason','');
+
+        $partRequest = PartRequest::where('id', $id);
+
+
+        if ($partRequest) {
+            $updated = $partRequest->update(['status_id' => 3,'reason'=>$reason, 'updated_by' => Session::get('uid')]);
+            return response()->json(array(
+                'message' => 'Part request denied',
+                'status' => 'success'
+            ));
+        }
+    }
+
+    public function postSavePartRequest(Request $request){
+        $request->all();
+        $rules=[
+            'part_number' => 'required',
+            'qty' => 'required',
+            'cost' => 'required',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+            $data = $request->all();
+            $partRequest = new PartRequest();
+
+            $partRequest->insertRow($data,null);
+
+            return response()->json(array(
+                'message' => 'Part request has been added',
+                'status' => 'success'
+            ));
+        }else{
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));
         }
     }
 }

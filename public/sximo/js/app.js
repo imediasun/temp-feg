@@ -1776,10 +1776,25 @@ $(function () {
         partRequestFields.children('.col-md-4').children('label').remove();
 
         if(partRequestFields.children('.col-md-3').length>0) {
+
+            partRequestFields.children('.col-md-3').children('input.form-control').removeAttr('readonly');
+            partRequestFields.children('.col-md-3').children('input.part-request-id').removeAttr('readonly');
+            partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').removeAttr('readonly');
+
+            partRequestFields.children('.col-md-3').children('input#part-number-1').attr('id','part-number-'+partRequestFieldLenght);
+            partRequestFields.children('.col-md-3').children('input#part-qty-1').attr('id','part-qty-'+partRequestFieldLenght);
+            partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').attr('id','part-cost-'+partRequestFieldLenght);
+
+
             partRequestFields.children('.col-md-3').children('input.form-control').val('');
             partRequestFields.children('.col-md-3').children('input.part-request-id').val(0);
             partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').val('');
+            partRequestFields.children('.col-md-3').children('.action-btns').empty();
+            var saveBtn = '<input type="button" value="Save" onclick="savePartRequest(\''+partRequestFieldLenght+'\',this);" class="btn btn-primary ">';
+            partRequestFields.children('.col-md-3').children('.action-btns').append(saveBtn);
+            partRequestFields.children('.col-md-3').children('.action-btns').css('display','block');
             partRequestFields.children('.col-md-3').children('label').remove();
+            partRequestFields.children('.col-md-12').remove();
         }
 
         var onclick = 'onclick="removePartRequest(\'part-request-field_' + partRequestFieldLenght + '\');"';
@@ -1792,14 +1807,142 @@ $(function () {
 });
 function removePartRequest(id) {
     var partRequestRemoved = $('#part_request_removed');
-    var value = $("#"+id+" input.part-request-id").val();
-console.log(value);
-       if(partRequestRemoved.val().length > 0){
-        partRequestRemoved.val(partRequestRemoved.val()+','+value);
-    }else{
-        partRequestRemoved.val(value);
+    var value = $("#" + id + " input.part-request-id").val();
+    if (partRequestRemoved) {
+        if (partRequestRemoved.val().length > 0) {
+            partRequestRemoved.val(partRequestRemoved.val() + ',' + value);
+        } else {
+            partRequestRemoved.val(value);
+        }
     }
-    console.log($('#part_request_removed').val());
 
     $("#" + id).remove();
 }
+
+function approvePartRequest(id,rowId) {
+    $('.ajaxLoading').show();
+    var actionBox = $('#part-request-field_'+rowId+" .action-btns");
+    $.ajax({
+       type:'POST',
+        url: 'servicerequests/approve',
+        data:{id:id},
+        success:function (response) {
+        $('.ajaxLoading').hide();
+            if(response.status == 'success'){
+                var approveLabel = '<span style="background: #8fe222; font-weight: 700; padding: 2px 5px;">Approved</span>';
+                actionBox.html(approveLabel);
+                notyMessage(response.message);
+            }else{
+                notyMessageError(response.message);
+            }
+        }
+    });
+
+}
+
+function denyPartRequest(id,partRequestId) {
+    var d = new Date();
+    var randomId = d.getMilliseconds();
+
+    var reasonBox = '<div class="col-md-12" id="reason-'+id+'" style="margin-bottom: 20px; margin-top: -15px;">';
+        reasonBox += '<label>Reason</label><textarea class="form-control part-deny-reason" id="reason-'+randomId+'"  rows="5"></textarea>';
+        reasonBox += '<div style="text-align: center">';
+        reasonBox += '<br>';
+        reasonBox += '<input type="button" class="btn btn-primary" onclick="denyPartRequestbtn(this,\''+id+'\');" row-id="'+id+'" reasonbox-id="reason-'+id+'" data-id="'+partRequestId+'" reason-id="reason-'+randomId+'" value="Deny Part Request" style="margin-right: 5px;">';
+        reasonBox += '<input type="button" class="btn btn-primary" onclick="cancelDelyProcess(\''+id+'\')" value="Cancel">';
+        reasonBox += '</div>';
+        reasonBox += '</div>';
+
+    $('#part-request-field_'+id+" .action-btns").hide();
+    $('#part-request-field_'+id).append(reasonBox);
+}
+function denyPartRequestbtn(object,id){
+    var partRequestId = $(object).attr('data-id');
+    var reasonId = $(object).attr('reason-id');
+    var reason = document.getElementById(reasonId).value;
+    var reasonBoxId = $(object).attr('reasonbox-id');
+    var rowId = $(object).attr('row-id');
+    var actionBox = $('#part-request-field_'+rowId+" .action-btns");
+
+    $('.ajaxLoading').show();
+    $.ajax({
+        type:'POST',
+        url: 'servicerequests/deny-part',
+        data:{partRequestId:partRequestId,reason:reason},
+        success:function (response) {
+            $('.ajaxLoading').hide();
+            if(response.status == 'success'){
+                $("#"+reasonBoxId).remove();
+                var denyLabel = '<span style="background-color: #f7a54a; font-weight: 700; padding: 2px 5px;">Denied</span>';
+                actionBox.show();
+                actionBox.html(denyLabel);
+                notyMessage(response.message);
+            }else{
+                notyMessageError(response.message);
+            }
+        }
+    });
+
+}
+function cancelDelyProcess(id){
+    var reasonBox = document.getElementById('reason-'+id);
+    $('#part-request-field_'+id+" .action-btns").show();
+        $(reasonBox).remove();
+}
+
+function savePartRequest(id,obj) {
+    var reasonBox = document.getElementById('part-request-field_' + id);
+    var ticketId = document.getElementById('TicketID').value;
+    var partNumberContainer = $(reasonBox).children('.part-number-container');
+    var partQtyContainer = $(reasonBox).children('.part-qty-container');
+    var partCostContainer = $(reasonBox).children('.part-cost-container');
+    var partNumber = document.getElementById('part-number-' + id).value;
+    var partQty = document.getElementById('part-qty-' + id).value;
+    var partCost = document.getElementById('part-cost-' + id).value;
+    var fieldMessage = '<span class="error" id="error-message-span" style="color:red;">Field is required</span>';
+    var error = true;
+    if (partNumber.length <= 0 && partNumberContainer.children('span.error').length == 0) {
+        partNumberContainer.append(fieldMessage);
+        error = false;
+    }
+
+    if (partQty.length <= 0 && partQtyContainer.children('span.error').length == 0) {
+        partQtyContainer.append(fieldMessage);
+        error = false;
+    }
+
+    if (partCost.length <= 0 && partCostContainer.children('span.error').length == 0) {
+        partCostContainer.append(fieldMessage);
+        error = false;
+    }
+
+    if (!error){
+        return error;
+    }
+$('.ajaxLoading').show();
+    $.ajax({
+        type:"POST",
+        url:"servicerequests/save-part-request",
+        data: {part_number:partNumber,qty:partQty,cost:partCost,ticket_id:ticketId,status_id:1},
+        success:function (response) {
+            $('.ajaxLoading').hide();
+            if(response.status == 'success'){
+                $(obj).remove();
+                notyMessage(response.message);
+            }else{
+                notyMessageError(response.error);
+            }
+        }
+    });
+}
+
+$(function () {
+    $(document).on('focus', '.fixonfocus', function () {
+        var parent = $(this).parent();
+        if (parent.children('span#error-message-span').length > 0) {
+            parent.children('span#error-message-span').remove();
+        } else {
+            parent.parent().children('span#error-message-span').remove();
+        }
+    });
+});

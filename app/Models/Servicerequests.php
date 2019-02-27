@@ -535,4 +535,12 @@ $ids = [];
         return $ids;
 
     }
+
+    public function hasApproveDenyPermission(){
+        $userId = Session::get('uid');
+        $groupId = Session::get('gid');
+        $partRequestPermissions = sbticketsetting::getPartRequestUsers();
+
+        return (in_array($userId,$partRequestPermissions['allowed_users']) || in_array($groupId,$partRequestPermissions['allowed_user_groups']));
+    }
 }

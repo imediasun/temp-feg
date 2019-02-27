@@ -10,4 +10,5 @@ class PartRequest extends Sximo
     protected $table = 'part_requests';
     protected $primaryKey = 'id';
     public $timestamps = false;
+    const STATUS_IDS =  [2,3];
 }

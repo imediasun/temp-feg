@@ -60,6 +60,10 @@
                     @if(!empty($row['phone']))
                         <span class="ticketCreatedOnText hasPrefixSeparator">Requester's Phone Number: {{$row['phone']}}</span>
                     @endif
+
+                    @if(!empty($row->shipping_priroty))
+                        <span class="ticketCreatedOnText hasPrefixSeparator">Shipping Priority: {{$row->shipping_priroty}}</span>
+                    @endif
                 </div>
 
             </div>
@@ -69,7 +73,7 @@
             @endif
             <div class="ticketViewParentContainer clearfix">
                 {!! Form::open(array('url'=>'servicerequests/status-update/'.SiteHelpers::encryptID($row['TicketID']), 'id'=> 'servicerequestsStatusUpdateFormAjax')) !!}
-                {!! Form::hidden('TicketID', $row['TicketID']) !!}
+                {!! Form::hidden('TicketID', $row['TicketID'],['id'=>'TicketID']) !!}
                 {!! Form::hidden('ticket_type', $ticketType) !!}
                 {!! Form::hidden('Status', $row['Status']) !!}
                 {!! Form::hidden('oldStatus', $row['Status']) !!}
@@ -116,7 +120,7 @@
                         <div class="followersListContainer sidebarInput" data-caption="Followers">
                             <select name='allFollowers[]' multiple id='followers' class='select2 ' ></select>
                         </div>
-                        @if($ticketType == 'game-related')
+                        @if($ticketType == 'game-related' &&  $row->issue_type_id != \App\Models\Servicerequests::PART_APPROVAL)
                         <div class="followersListContainer sidebarInput" style="border: 1px solid black;">
                             <div style="font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 5px; padding: 5px 0px;">Troubleshooting Checklist</div>
                             <div>
@@ -127,35 +131,6 @@
                                 @endforeach
                             </div>
                         </div>
-                        <div class="followersListContainer sidebarInput" style="border: 1px solid black;">
-                            <div style="font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 5px; padding: 5px 0px;">Part Information</div>
-                            <div style="font-size:12px; text-align: left; ">
-                                <div class="row" style="margin-bottom: 5px; margin-left: 0px; margin-right: 0px;">
-                                    <div class="col-md-5" style="text-align: right; padding: 0px;">Part Number:&nbsp;&nbsp;</div>
-                                    <div class="col-md-7" style="padding: 0px; padding-right: 2px;">
-                                        <input type="text" style="width: 100%;" disabled value="{{ $row->part_number }}">
-                                    </div>
-                                </div>
-                                <div class="row" style="margin-bottom: 5px; margin-left: 0px; margin-right: 0px;">
-                                    <div class="col-md-5" style="text-align: right;  padding: 0px;">Costs:&nbsp;&nbsp;</div>
-                                    <div class="col-md-7" style="padding: 0px; padding-right: 2px;">
-                                        <input type="text" style="width: 100%;" disabled value="{{ CurrencyHelpers::formatCurrency($row->cost) }}">
-                                    </div>
-                                    </div>
-                                <div class="row" style="margin-bottom: 5px; margin-left: 0px; margin-right: 0px;">
-                                    <div class="col-md-5" style="text-align: right; padding: 0px;">Quantity:&nbsp;&nbsp;</div>
-                                    <div class="col-md-7" style="padding: 0px; padding-right: 2px;">
-                                        <input type="text" style="width: 100%;" disabled value="{{ $row->qty }}">
-                                    </div>
-                                </div>
-                                <div class="row" style="margin-bottom: 5px; margin-left: 0px; margin-right: 0px;">
-                                    <div class="col-md-5" style="text-align: right; padding: 0px;">Shipping Priority:&nbsp;&nbsp;</div>
-                                    <div class="col-md-7" style="padding: 0px; padding-right: 2px;">
-                                        <input type="text" style="width: 100%;" disabled value="{{ $row->shipping_priroty }}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                             @endif
                     </div>
                 </div>
@@ -163,65 +138,151 @@
                 <div class="ticketMainViewContainer col-sm-8 col-lg-9">
 
                     <div class="ticketHeaderAddonsContainer"></div>
-                    <div class="margin-bottom-30px">
+                    @if($row->issue_type_id == \App\Models\Servicerequests::PART_APPROVAL)
+                        <div class="margin-bottom-30px">
 
-                        <div class="row" style="    margin-right: 0px; margin-left: 0px;">
+                            <div class="row" style="    margin-right: 0px; margin-left: 0px;">
 
-                            <div class="col-md-12">
-                                <div id="part-requests-contianer" style="margin-top: -30px;" class="form-group  ">
-                                    <div class="col-md-12" style="padding-left: 0px;"><label class="replyLabel">Part
-                                            Information</label></div>
-                                    <div class="col-md-12 part-request-inner">
-                                        <div class="row">
-                                    <span class="part-request-field-contianer" id="part-request-field-contianer">
+                                <div class="col-md-12">
+                                    <div id="part-requests-contianer" style="margin-top: -30px;" class="form-group  ">
+                                        <div class="col-md-12" style="padding-left: 0px;"><label class="replyLabel">Part
+                                                Information</label></div>
+                                        <div class="col-md-12 part-request-inner">
+                                            <div class="row">
+                                                <dev class="part-request-field-contianer"
+                                                     id="part-request-field-contianer">
+                                                    <input type="hidden" id="part_request_removed"
+                                                           style="display: none;">
+                                                    <?php $i = 1; ?>
+                                                    @if($partRequests->count()>0)
+                                                        @foreach($partRequests as $partRequest)
+                                                            <div class="part-request-field row"
+                                                                 id="part-request-field_{{ $i }}"
+                                                                 style="margin-left: 15px; margin-right: 15px">
+                                                                <div class="col-md-3 part-number-container"
+                                                                     style="margin-bottom: 20px;">
+                                                                    @if($i == 1) <label for="part-number">Part
+                                                                        Number</label> @endif
+                                                                    <input type="text" class="form-control fixonfocus"
+                                                                           readonly
+                                                                           value="{{ $partRequest->part_number }}"
+                                                                           id="part-number-{{ $i }}" name="part_number">
+                                                                </div>
+                                                                <div class="col-md-3 part-qty-container"
+                                                                     style="margin-bottom: 20px;">
+                                                                    @if($i == 1) <label
+                                                                            for="part-number">Quantity</label> @endif
+                                                                    <input type="text" name="qty" readonly
+                                                                           id="part-qty-{{ $i }}"
+                                                                           value="{{ $partRequest->qty }}"
+                                                                           class="form-control fixonfocus">
+                                                                </div>
+                                                                <div class="col-md-3 part-cost-container part-request-last-field"
+                                                                     style="margin-bottom: 20px; position: relative;">
+                                                                    @if($i == 1) <label
+                                                                            for="part-number">Cost</label> @endif
+                                                                    <div class="input-group ig-full">
+                                <span class="input-group-addon"
+                                      style="border-right: 1px solid #e5e6e7; position: absolute; left: 0;    z-index: 111111;">$</span>
+                                                                        <input type="number" step="1" readonly
+                                                                               placeholder="0.00"
+                                                                               value="{{ CurrencyHelpers::formatPrice($partRequest->cost,5,false ) }}"
+                                                                               style="padding-left: 35px;"
+                                                                               id="part-cost-{{ $i }}" name="cost[]"
+                                                                               class="form-control fixonfocus">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-3"
+                                                                     style="margin-bottom: 20px; text-align: center; padding-left: 0px; ">
+                                                                    @if($i == 1) <label>Action</label> @endif
+                                                                    <div class="action-btns">
+                                                                        @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS))
 
-                                        <span class="part-request-field" id="part-request-field_1">
-                                    <div class="col-md-3" style="margin-bottom: 20px;">
-                                        <label for="part-number">Part Number</label>
-                                        <input type="text" class="form-control" name="part_number[]" id="part-number">
-                                    </div>
-                                    <div class="col-md-3" style="margin-bottom: 20px;">
-                                        <label for="part-number">Quantity</label>
-                                        <input type="text" name="qty[]" class="form-control">
-                                    </div>
-                                    <div class="col-md-3 part-request-last-field"
-                                         style="margin-bottom: 20px; position: relative;">
-                                        <label for="part-number">Cost</label>
-                                        <div class="input-group ig-full">
-                                <span class="input-group-addon" style="border-right: 1px solid #e5e6e7; position: absolute; left: 0;    z-index: 111111;">$</span>
-                                            <input type="number" step="1" placeholder="0.00" value=""
-                                                   style="padding-left: 35px;" name="cost[]" class="form-control">
-                                        </div>
-                                        </div>
-                                             <div class="col-md-3"
-                                                  style="margin-bottom: 20px; text-align: center; padding-left: 0px; ">
-                                                <label>Action</label>
-                                                 <div>
+                                                                            @if($partRequest->status_id == 2)
+                                                                                <span style="background: #8fe222; font-weight: 700; padding: 2px 5px;">Approved</span>
 
-                                        <input type="button" value="Deny" class="btn btn-warning pull-right"
-                                               style="margin-left: 3px;">
-                                        <input type="button" value="Approve" class="btn btn-primary pull-right"
-                                               style="margin-left: 3px;">
-                                                     <input type="button" value="Save"
-                                                            class="btn btn-primary pull-right">
-                                                     </div>
-                                    </div>
+                                                                            @else
+                                                                                <span style="background-color: #f7a54a; font-weight: 700; padding: 2px 5px;">Denied</span>
 
-                                        </span>
-                                    </span>
-                                            <div class="col-md-12">
-                                                <input type="button"
-                                                       class="btn btn-primary pull-right addmorepartfields"
-                                                       id="addmorepartfields" value="Add More">
+                                                                            @endif
+
+
+                                                                        @else
+                                                                            @if($can_approve_deny == true)
+                                                                                <input type="button" value="Deny"
+                                                                                       onclick="denyPartRequest('{{ $i }}','{{ $partRequest->id }}',this);"
+                                                                                       class="btn btn-warning pull-right"
+                                                                                       style="margin-left: 3px;">
+                                                                                <input type="button" value="Approve"
+                                                                                       onclick="approvePartRequest('{{ $partRequest->id }}','{{ $i }}');"
+                                                                                       class="btn btn-primary pull-right"
+                                                                                       style="margin-left: 3px;">
+                                                                                <div style="clear:both;"></div>
+                                                                            @endif
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12"></div>
+
+                                                            </div>
+                                                            <?php $i++; ?>
+                                                        @endforeach
+                                                    @else
+                                                        <div class="part-request-field" id="part-request-field_1">
+                                                            <div class="col-md-3 part-number-container"
+                                                                 style="margin-bottom: 20px;">
+                                                                <label for="part-number">Part Number</label>
+                                                                <input type="text" class="form-control "
+                                                                       name="part_number"
+                                                                       id="part-number-1">
+                                                            </div>
+                                                            <div class="col-md-3 part-qty-container"
+                                                                 style="margin-bottom: 20px;">
+                                                                <label for="part-number">Quantity</label>
+                                                                <input type="text" name="qty" class="form-control "
+                                                                       id="part-qty-1">
+                                                            </div>
+                                                            <div class="col-md-3 part-cost-container part-request-last-field"
+                                                                 style="margin-bottom: 20px; position: relative;">
+                                                                <label for="part-number">Cost</label>
+                                                                <div class="input-group ig-full">
+                                <span class="input-group-addon"
+                                      style="border-right: 1px solid #e5e6e7; position: absolute; left: 0;    z-index: 111111;">$</span>
+                                                                    <input type="number" step="1" placeholder="0.00"
+                                                                           value=""
+                                                                           style="padding-left: 35px;" name="cost"
+                                                                           class="form-control" id="part-cost-1">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3"
+                                                                 style="margin-bottom: 20px; text-align: center; padding-left: 0px; ">
+                                                                <label>Action</label>
+                                                                <div>
+
+                                                                    <input type="button" value="Save"
+                                                                           onclick="savePartRequest('1',this);"
+                                                                           class="btn btn-primary ">
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    @endif
+
+                                                </dev>
+                                                <div class="col-md-12">
+                                                    <input type="button"
+                                                           class="btn btn-primary pull-right addmorepartfields"
+                                                           id="addmorepartfields" value="Add More">
+                                                </div>
                                             </div>
-                                        </div>
 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                    </div>
+                        </div>
+                    @endif
                     <div class="ticketReplyContainer">
 
                         <div class="myUserProfileImageContainer img-avatar-container tips"
