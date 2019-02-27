@@ -363,7 +363,7 @@ class VendorImportProduct extends Command
                 $configName = 'Send Product Export To Merchandise Vendor';
                 $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
                 if (!empty($to)) {
-                    $recipients['to'] .= ',' . $to;
+                    $recipients['to'] .= $recipients['to'] != '' ? ',' . $to : $to;
                 }
 
                 if ($recipients['to'] != '') {
@@ -386,7 +386,7 @@ class VendorImportProduct extends Command
                 $configName = 'Send Product Export To Game Vendor';
                 $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
                 if (!empty($to)) {
-                    $recipients['to'] .= ',' . $to;
+                    $recipients['to'] .= $recipients['to'] != '' ? ',' . $to : $to;
                 }
 
                 if ($recipients['to'] != '') {
