@@ -53,23 +53,13 @@ class ExtractGoogleDriveLoctionsReports extends Command
         }
         try {
             $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
-            print_r($user);
+
             $this->L->log('------------Command Started.-------------');
 
              $this->info('Command Executed.');
-            $this->drive = $this->getGoogleDriveObject($user);
-//            $client = new \Google_Client();
-//            $client->setAccessToken($user->oauth_token);
-           print_r("here");
+             $this->drive = $this->getGoogleDriveObject($user);
             $parentId = env('LOCATION_DEBIT_CARD_FOLDER_ID'); //Location Debit Card Reports folder
-
-//            $this->L->log('Google Client', $client);
-
-//            try {
-//                $drive = new \Google_Service_Drive($client);
-//            } catch (Exception $e) {
-//                print "An error occurred: " . $e->getMessage();
-//            }
+            $this->L->log('Parent ID', $parentId);
             $this->L->log('User:', $user);
             $this->L->log('Google Drive locations', $this->drive);
 
@@ -167,9 +157,7 @@ class ExtractGoogleDriveLoctionsReports extends Command
         $client = new \Google_Client();
         $client->setAccessToken($user->oauth_token);
         $this->L->log('Google Client', $client->getAccessToken());
-        $at = new \Google_Service_Drive($client);
-        $this->L->log('Google Client atta', $at);
-
+        return new \Google_Service_Drive($client);
     }
 
 
