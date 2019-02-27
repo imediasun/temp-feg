@@ -53,23 +53,17 @@ class ExtractGoogleDriveLoctionsReports extends Command
         }
         try {
             $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
-
             $this->L->log('------------Command Started.-------------');
-
             $this->info('Command Executed.');
             $this->drive = $this->getGoogleDriveObject($user);
             $parentId = env('LOCATION_DEBIT_CARD_FOLDER_ID'); //Location Debit Card Reports folder
-            echo "this is parent id".$parentId."end";
             $this->L->log('Parent ID', $parentId);
             $this->L->log('User:', $user);
             $this->L->log('Google Drive locations', $this->drive);
-
             $files = $this->getAllLocationFoldersFromDrive($this->drive, $parentId);
-
             if ($files) {
                 $this->L->log('Google Drive Files: ', $files);
             }
-
             $locations = [];
             foreach ($files as $file) {
                 if ($file->mimeType == 'application/vnd.google-apps.folder') {
