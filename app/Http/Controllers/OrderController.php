@@ -23,6 +23,7 @@ use App\Models\OrderSendDetails;
 use App\Models\productlog;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
+use App\Models\vendor;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -579,6 +580,10 @@ class OrderController extends Controller
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
 
+         $is_fed = vendor::where('id', $this->data['row']->vendor_id)->select('is_fedex_enabled')->first();
+        if($is_fed->is_fedex_enabled == 0){
+            $this->data['row']->fedex_number = 'N\A';
+        }
         $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit', $this->data['pass']);
         $this->data['typesUsingCasePrice'] = !empty($this->data['pass']['calculate price according to case price']->data_options) ? explode(",",$this->data['pass']['calculate price according to case price']->data_options) : [];
         $this->data['id'] = $id;
