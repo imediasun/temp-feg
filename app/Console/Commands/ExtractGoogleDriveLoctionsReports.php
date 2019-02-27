@@ -53,7 +53,7 @@ class ExtractGoogleDriveLoctionsReports extends Command
         }
         try {
             $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
-
+            print_r($user);
             $this->L->log('------------Command Started.-------------');
 
              $this->info('Command Executed.');
