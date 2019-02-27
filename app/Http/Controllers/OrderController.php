@@ -2482,6 +2482,9 @@ class OrderController extends Controller
         if($location>0) {
             if($vendor[0]->is_fedex_enabled==1) {
                 $vendor[0]->fedNo = location::where('id', $location)->select('fedex_number')->first();
+                if(empty($vendor[0]->fedNo) || $vendor[0]->fedNo ==''){
+                    $vendor[0]->fedNo = 'N/A';
+                }
             }else{
                 $vendor[0]->fedNo['fedex_number'] = 'N/A';
             }
