@@ -692,6 +692,15 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        $qtys = $request->input('qty');
+        foreach ($qtys as $qty){
+            if ($qty == 0){
+                return response()->json(array(
+                    'message' => 'Order Qty needs to be greater than 0',
+                    'status' => 'error',
+                ));
+            }
+        }
         $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
 
         /*$productIdArray = $request->get('product_id');
