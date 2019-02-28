@@ -75,7 +75,7 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('extract:googledrivefiles Monthly')->monthly();//Get Daily google drive files
 //        $schedule->command('extract:googledrivefiles 13Weeks')->weekly();//Get Daily google drive files
 //
-//        $schedule->command('extract:googledrivelocations')->weekly();//Get the google drive location files ID (Daily, weekly, monthly, 13 weeks)
+        $schedule->command('extract:googledrivelocations')->weekly();//Get the google drive location files ID (Daily, weekly, monthly, 13 weeks)
         //$schedule->command('refresh:googledriveaccesstoken')->cron('*/55 * * * *');//Refresh Google drive access token.
 
         //2AM daily

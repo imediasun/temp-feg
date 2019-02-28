@@ -28,6 +28,7 @@ class ExtractGoogleDriveLoctionsReports extends Command
 
     protected $L = null;
     protected $path = '';
+    protected $drive;
     /**
      * Create a new command instance.
      *
@@ -52,32 +53,17 @@ class ExtractGoogleDriveLoctionsReports extends Command
         }
         try {
             $user = GoogleDriveAuthToken::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token', '!=', '')->first();
-
             $this->L->log('------------Command Started.-------------');
-
             $this->info('Command Executed.');
-
-            $client = new \Google_Client();
-            $client->setAccessToken($user->oauth_token);
-
+            $this->drive = $this->getGoogleDriveObject($user);
             $parentId = env('LOCATION_DEBIT_CARD_FOLDER_ID'); //Location Debit Card Reports folder
-
-            $this->L->log('Google Client', $client);
-
-            try {
-                $drive = new \Google_Service_Drive($client);
-            } catch (Exception $e) {
-                print "An error occurred: " . $e->getMessage();
-            }
-
-            $this->L->log('Google Drive', $drive);
-
-            $files = $this->getAllLocationFoldersFromDrive($drive, $parentId);
-
+            $this->L->log('Parent ID', $parentId);
+            $this->L->log('User:', $user);
+            $this->L->log('Google Drive locations', $this->drive);
+            $files = $this->getAllLocationFoldersFromDrive($this->drive, $parentId);
             if ($files) {
                 $this->L->log('Google Drive Files: ', $files);
             }
-
             $locations = [];
             foreach ($files as $file) {
                 if ($file->mimeType == 'application/vnd.google-apps.folder') {
@@ -100,7 +86,7 @@ class ExtractGoogleDriveLoctionsReports extends Command
 
                 $this->L->log('Extracting Files From: ' . $location->locationFolderName);
 
-                $files = $this->getFilesFromLocationFolder($drive, $location->locationFolderId, $location);
+                $files = $this->getFilesFromLocationFolder($this->drive, $location->locationFolderId, $location);
                 foreach ($files as $file) {
 
                     if ($file->mimeType == 'application/vnd.google-apps.folder') {
@@ -160,6 +146,13 @@ class ExtractGoogleDriveLoctionsReports extends Command
             $files = $result->files;
         }
         return $files;
+    }
+
+    function getGoogleDriveObject($user){
+        $client = new \Google_Client();
+        $client->setAccessToken($user->oauth_token);
+        $this->L->log('Google Client', $client->getAccessToken());
+        return new \Google_Service_Drive($client);
     }
 
 
