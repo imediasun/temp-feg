@@ -353,6 +353,8 @@
         // Configure data grid columns for sorting
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 
+        $('select[name="product_type"],[name="type_description"],[name="operate"]').removeAttr('disabled');
+
     });
 
     function deleteProductSubtype(url, name, id, thisRow) {
@@ -399,6 +401,11 @@
     App.autoCallbacks.registerCallback('inline.row.save.after', function (params) {
        reloadData('#productsubtype','productsubtype/data?search=')
     });
+
+    App.autoCallbacks.registerCallback('advancedsearch', function(){
+        $('select[name="product_type"],[name="type_description"],[name="operate"]').removeAttr('disabled');
+    });
+
 </script>
 <style>
     .table th.right {
