@@ -356,17 +356,20 @@ class VendorImportProduct extends Command
 
         // Old email configuration name "Send Product Export To Vendor"
         if ($vendor != null) {
+            $this->L->log('Vendor Email:'.$vendor->email); //-----------Debug---------------
             //Merchandise Vendor Email Configuration name "Send Product Export To Merchandise Vendor"
             //Check if vendor ismerch = yes
             if ($vendor->ismerch == 1) {
-
+                $this->L->log('Vendor is merch'); //-----------Debug---------------
                 $configName = 'Send Product Export To Merchandise Vendor';
                 $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
                 if (!empty($to)) {
+                    $this->L->log('TO was not empty when vendor is merch'); //-----------Debug---------------
                     $recipients['to'] .= $recipients['to'] != '' ? ',' . $to : $to;
                 }
 
                 if ($recipients['to'] != '') {
+                    $this->L->log('recipients TO was not empty when vendor is merch'); //-----------Debug---------------
                     $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                         'subject' => $subject,
                         'message' => $message,
@@ -382,14 +385,16 @@ class VendorImportProduct extends Command
             // Game Related Vendor Email Configuration name "Send Product Export To Game Vendor"
             //Check if vendor isgame = yes
             if ($vendor->isgame == 1) {
-
+                $this->L->log('Vendor is game'); //-----------Debug---------------
                 $configName = 'Send Product Export To Game Vendor';
                 $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
                 if (!empty($to)) {
+                    $this->L->log('TO was not empty when vendor is game'); //-----------Debug---------------
                     $recipients['to'] .= $recipients['to'] != '' ? ',' . $to : $to;
                 }
 
                 if ($recipients['to'] != '') {
+                    $this->L->log('recipients TO was not empty when vendor is game'); //-----------Debug---------------
                     $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                         'subject' => $subject,
                         'message' => $message,
@@ -402,14 +407,16 @@ class VendorImportProduct extends Command
                 }
             }
         } else {
-
+            $this->L->log('vendor is null'); //-----------Debug---------------
             $configName = 'Send Product Export To Merchandise Vendor';
             $recipients = FEGSystemHelper::getSystemEmailRecipients($configName);
             if (!empty($to)) {
+                $this->L->log('TO was empty when vendor is null'); //-----------Debug---------------
                 $recipients['to'] .= ',' . $to;
             }
 
             if ($recipients['to'] != '') {
+                $this->L->log('recipients TO was empty when vendor is null'); //-----------Debug---------------
                 $sent = FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                     'subject' => $subject,
                     'message' => $message,
