@@ -242,13 +242,13 @@
                                         @if($i == 1)
                                         <label for="part-number">Part Number</label>
                                         @endif
-                                        <input type="text" class="form-control" name="part_number[]" value="{{ $partRequest->part_number }}" id="part-number">
+                                        <input type="text" class="form-control" name="part_number[]" required value="{{ $partRequest->part_number }}" id="part-number">
                                     </div>
                                     <div class="col-md-4" style="margin-bottom: 20px;">
                                         @if($i == 1)
                                         <label for="part-number">Quantity</label>
                                         @endif
-                                        <input type="text" name="qty[]" value="{{ $partRequest->qty }}" class="form-control">
+                                        <input type="number" name="qty[]" value="{{ $partRequest->qty }}" required class="form-control">
                                     </div>
                                     <div class="col-md-4 part-request-last-field"
                                          style="margin-bottom: 20px; position: relative;">
@@ -259,7 +259,7 @@
                                 <span class="input-group-addon" style="border-right: 1px solid #e5e6e7;
     position: absolute;
     left: 0;    z-index: 111111;">$</span>
-                                            <input type="number" step="1" placeholder="0.00" value="{{ CurrencyHelpers::formatPrice($partRequest->cost,'5',false) }}"
+                                            <input type="number" step="1" placeholder="0.00" required value="{{ CurrencyHelpers::formatPrice($partRequest->cost,'5',false) }}"
                                                    style="padding-left: 35px;" name="cost[]" class="form-control">
                                         </div>
                                             @if($i > 1)
@@ -274,11 +274,11 @@
                                                     <span class="part-request-field" id="part-request-field_1">
                                     <div class="col-md-4" style="margin-bottom: 20px;">
                                         <label for="part-number">Part Number</label>
-                                        <input type="text" class="form-control" name="part_number[]" id="part-number">
+                                        <input type="text" required class="form-control" name="part_number[]" id="part-number">
                                     </div>
                                     <div class="col-md-4" style="margin-bottom: 20px;">
                                         <label for="part-number">Quantity</label>
-                                        <input type="text" name="qty[]" class="form-control">
+                                        <input type="number" required name="qty[]" class="form-control">
                                     </div>
                                     <div class="col-md-4 part-request-last-field"
                                          style="margin-bottom: 20px; position: relative;">
@@ -288,7 +288,7 @@
     position: absolute;
     left: 0;    z-index: 111111;">$</span>
                                             <input type="number" step="1" placeholder="0.00" value=""
-                                                   style="padding-left: 35px;" name="cost[]" class="form-control">
+                                                   style="padding-left: 35px;" required name="cost[]" class="form-control">
                                         </div>
                                         </div>
 

@@ -1758,12 +1758,19 @@ $(function () {
         if (Number($(this).val()) == 2) {
             $('#trobleshotingchecklist-contianer').hide('slow');
             $('#part-requests-contianer').show('slow');
+
+            $('#part-requests-contianer input[type="text"], #part-requests-contianer input[type="number"]').attr('required','required');
+
             $('#trobleshotingchecklist-contianer input[name="troubleshootchecklist[]"]').iCheck('uncheck');
         } else {
+            $('#part-requests-contianer input[type="text"], #part-requests-contianer input[type="number"]').removeAttr('required');
             $('#part-requests-contianer').hide('slow');
             $('#trobleshotingchecklist-contianer').show('slow');
             $('#part-request-field-contianer input').val('');
         }
+
+        $('#sbticketFormAjax').parsley().destroy();
+        $('#sbticketFormAjax').parsley();
     });
 
     $(document).off('click','#addmorepartfields').on('click', '#addmorepartfields', function () {
