@@ -1782,6 +1782,7 @@ $(function () {
         partRequestFields.attr('id', 'part-request-field_' + partRequestFieldLenght);
         partRequestFields.children('.col-md-4').children('input.form-control').val('');
         partRequestFields.children('.col-md-4').children('input.part-request-id').val(0);
+        partRequestFields.children('.col-md-4').children('ul.parsley-error-list').remove();
         partRequestFields.children('.col-md-4').children('.input-group').children('input[type="number"]').val('');
         partRequestFields.children('.col-md-4').children('label').remove();
 
