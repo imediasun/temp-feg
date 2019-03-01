@@ -1774,6 +1774,9 @@ $(function () {
     });
 
     $(document).off('click','#addmorepartfields').on('click', '#addmorepartfields', function () {
+        if($('#sbticketFormAjax').length > 0) {
+            $('#sbticketFormAjax').parsley().destroy();
+        }
         var partRequestFieldLenght = $('.part-request-field').length + 1;
         var partRequestFields = $("#part-request-field_1").clone();
         partRequestFields.attr('id', 'part-request-field_' + partRequestFieldLenght);
