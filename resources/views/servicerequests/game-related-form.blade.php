@@ -266,6 +266,7 @@
                                         <i class="fa fa-times tips remove-part-request-fields" title="" onclick="removePartRequest('part-request-field_{{ $i }}');" style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;" data-original-title="Remove"></i>
                                        @endif
                                         </div>
+                                            <div clas="col-md-12"></div>
 
                                         </span>
                                                         <?php $i++; ?>
@@ -291,7 +292,7 @@
                                                    style="padding-left: 35px;" required name="cost[]" class="form-control">
                                         </div>
                                         </div>
-
+<div clas="col-md-12"></div>
                                         </span>
                                                 @endif
                                     </span>
