@@ -1809,8 +1809,10 @@ $(function () {
         partRequestFields.children('.part-request-last-field').append(removeFields);
         $('#part-request-field-contianer').append(partRequestFields);
         $('.tips').tooltip();
-        $('#sbticketFormAjax').parsley().destroy();
-        $('#sbticketFormAjax').parsley();
+        if($('#sbticketFormAjax').length > 0) {
+            $('#sbticketFormAjax').parsley().destroy();
+            $('#sbticketFormAjax').parsley();
+        }
 
     });
 });
@@ -1826,6 +1828,10 @@ function removePartRequest(id) {
     }
 
     $("#" + id).remove();
+    if($('#sbticketFormAjax').length > 0) {
+        $('#sbticketFormAjax').parsley().destroy();
+        $('#sbticketFormAjax').parsley();
+    }
 }
 
 function approvePartRequest(id,rowId) {
