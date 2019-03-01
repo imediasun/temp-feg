@@ -19,7 +19,8 @@ class Productsubtype extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT * FROM product_type  ";
+		return "  SELECT product_type.*, order_type.order_type FROM product_type 
+                  INNER JOIN order_type ON (product_type.request_type_id = order_type.id) ";
 	}	
 
 	public static function queryWhere(  ){

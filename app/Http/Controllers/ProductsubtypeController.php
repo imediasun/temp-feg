@@ -14,6 +14,7 @@ class ProductsubtypeController extends Controller
 
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $sortMapping = [];
     public $module = 'productsubtype';
     static $per_page = '10';
     protected $L = null;
@@ -34,7 +35,7 @@ class ProductsubtypeController extends Controller
             'return' => self::returnUrl()
         );
 
-
+        $this->sortMapping = ['order_type' => 'order_type.order_type', 'product_type' => 'product_type.type_description'];
     }
 
     public function getIndex()
@@ -108,9 +109,9 @@ class ProductsubtypeController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $filter = $this->getSearchFilterQuery();//(!is_null($request->input('search')) ? $this->buildSearch() : '');
 
-
+        $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -122,6 +123,8 @@ class ProductsubtypeController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
+        $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
+
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
         //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
@@ -160,6 +163,35 @@ class ProductsubtypeController extends Controller
 
     }
 
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+
+
+        // Get custom Ticket Type filter value
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $skipFilters = ['search_all_fields'];
+        $mergeFilters = [];
+        extract($globalSearchFilter); //search_all_fields
+
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+        $searchInput = $trimmedSearchQuery;
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                'order_type.order_type',
+                'product_type.product_type',
+            ];
+            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+        }
+
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
+
+
+        return $filter;
+    }
 
     function postRemoval(Request $request, $productSubtypeId)
     {
