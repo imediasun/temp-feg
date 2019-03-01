@@ -1809,6 +1809,8 @@ $(function () {
         partRequestFields.children('.part-request-last-field').append(removeFields);
         $('#part-request-field-contianer').append(partRequestFields);
         $('.tips').tooltip();
+        $('#sbticketFormAjax').parsley().destroy();
+        $('#sbticketFormAjax').parsley();
 
     });
 });
