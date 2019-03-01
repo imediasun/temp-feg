@@ -18,7 +18,7 @@ use App\Models\Ticketcomment;
 use App\Models\Ticketfollowers;
 use App\Models\ticketsetting;
 use App\Models\Core\TicketMailer;
-use App\Models\TroubleshootingCheckList;
+use App\Models\Troubleshootingchecklist;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Session;
@@ -592,7 +592,7 @@ class servicerequestsController extends Controller
         $this->data['games'] = $this->model->getGames();
         $this->data['game_related_issue_types'] = IssueType::isActive()->get();
         $this->data['game_functionalities'] = \App\Models\GameFunctionality::isActive()->get();
-        $this->data['troubleshootingCheckLists'] = TroubleshootingCheckList::isActive()->orderBy('troubleshooting_check_lists.order','asc')->get();
+        $this->data['troubleshootingCheckLists'] = Troubleshootingchecklist::isActive()->orderBy('troubleshooting_check_lists.order','asc')->get();
         $this->data['shippingPriorities'] = ShippingPriority::isActive()->get();
         $userSelectedOptions = SbTicketsTroubleshootingCheckList::select(['troubleshooting_check_list_id','check_list_name'])->where('sb_ticket_id',$id)->orderBy('sb_tickets_troubleshooting_check_lists.order','asc')->get()->toArray();
         $savedCheckList = ['savedCheckList' =>[],'savedCheckListOptions'=>[]];
@@ -687,9 +687,9 @@ class servicerequestsController extends Controller
         $this->data['myUserTooltip'] = "You";
 
         $this->data['savedCheckList'] = SbTicketsTroubleshootingCheckList::where('sb_ticket_id',$id)->get()->pluck('troubleshooting_check_list_id')->toArray();
-        $this->data['troubleshootingCheckList'] = TroubleshootingCheckList::all();
+        $this->data['troubleshootingCheckList'] = Troubleshootingchecklist::all();
 
-        $this->data['troubleshootingCheckLists'] = TroubleshootingCheckList::isActive()->orderBy('troubleshooting_check_lists.order','asc')->get();
+        $this->data['troubleshootingCheckLists'] = Troubleshootingchecklist::isActive()->orderBy('troubleshooting_check_lists.order','asc')->get();
         $userSelectedOptions = SbTicketsTroubleshootingCheckList::select(['troubleshooting_check_list_id','check_list_name'])->where('sb_ticket_id',$id)->orderBy('sb_tickets_troubleshooting_check_lists.order','asc')->get()->toArray();
         $savedCheckList = ['savedCheckList' =>[],'savedCheckListOptions'=>[]];
         foreach ($userSelectedOptions as $userSelectedOption){
@@ -1490,7 +1490,7 @@ class servicerequestsController extends Controller
                 $message .= \View::make('servicerequests.email.game-related-email', [
                     'data'=>$data,
                     'savedCheckList' => $troubleshootingchecklist,
-                    'checkList' => TroubleshootingCheckList::all(),
+                    'checkList' => Troubleshootingchecklist::all(),
                     'is_partRequest' =>$data['issue_type_id'] == Servicerequests::PART_APPROVAL,
                     'partRequests' => PartRequest::where('ticket_id',$id)->get(),
                     'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($id)."&ticket_type=game-related",

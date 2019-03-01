@@ -30,7 +30,7 @@ class InsertDataInTrubleshootingCheckListTable extends Migration
         ];
 
         foreach ($rows as $row){
-            \App\Models\TroubleshootingCheckList::forceCreate(['check_list_name'=>$row]);
+            \App\Models\Troubleshootingchecklist::forceCreate(['check_list_name'=>$row]);
         }
         
     }

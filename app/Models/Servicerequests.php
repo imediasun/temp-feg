@@ -387,7 +387,7 @@ class Servicerequests extends Observerable  {
     $sbTicketsTroubleshootingCheckList = new SbTicketsTroubleshootingCheckList();
         $removeItems = $sbTicketsTroubleshootingCheckList->where('sb_ticket_id',$ticketId)->delete();
         foreach ($checkList as $item){
-            $checkListName = TroubleshootingCheckList::find($item);
+            $checkListName = Troubleshootingchecklist::find($item);
             $data = ['sb_ticket_id'=>$ticketId,'troubleshooting_check_list_id'=>$item,'check_list_name'=>$checkListName->check_list_name,'order'=>$checkListName->order];
             $sbTicketsTroubleshootingCheckList->insertRow($data,null);
         }
