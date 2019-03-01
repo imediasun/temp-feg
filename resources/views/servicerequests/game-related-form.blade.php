@@ -168,6 +168,33 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="form-group clearfix" >
+                            <label for="Attach File" class=" control-label col-md-4 text-left">
+                                {!! SiteHelpers::activeLang('Attach File', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}
+                            </label>
+                            <div class="col-md-8 col-sm-10 col-xs-12">
+                                <div class="file_pathUpl">
+                                    <input  type='file' name='file_path[]'  />
+                                </div>
+                                <a href="javascript:void(0)" class="btn btn-xs btn-primary" onclick="addMoreFiles('file_path')"><i class="fa fa-plus"></i> Add more files</a>
+                                <ul class="uploadedLists " >
+                                    @foreach($filePaths as $cr => $file)
+                                        @if($file !='')
+                                            <li id="cr-{!! $cr !!}" class="">
+                                                <a href="{{ url('.'.$file) }}" target="_blank" >{{  FEGSystemHelper::getSanitizedFileNameForTicketAttachments($file, 50) }}</a>
+                                                <span class="pull-right" rel="cr-{!! $cr !!}" onclick=" $(this).parent().remove();"><i class="fa fa-trash-o  btn btn-xs btn-danger"></i></span>
+                                                <input type="hidden" name="currfile_path[]" value="{{ $file }}"/>
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="row">
 
@@ -309,33 +336,7 @@
                 </div>
 
 
-                <div class="row">
 
-                    <div class="col-md-6">
-                <div class="form-group clearfix" >
-                    <label for="Attach File" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Attach File', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}
-                    </label>
-                    <div class="col-md-8 col-sm-10 col-xs-12">
-                        <div class="file_pathUpl">
-                            <input  type='file' name='file_path[]'  />
-                        </div>
-                        <a href="javascript:void(0)" class="btn btn-xs btn-primary" onclick="addMoreFiles('file_path')"><i class="fa fa-plus"></i> Add more files</a>
-                        <ul class="uploadedLists " >
-                            @foreach($filePaths as $cr => $file)
-                            @if($file !='')
-                            <li id="cr-{!! $cr !!}" class="">
-                                <a href="{{ url('.'.$file) }}" target="_blank" >{{  FEGSystemHelper::getSanitizedFileNameForTicketAttachments($file, 50) }}</a>
-                                <span class="pull-right" rel="cr-{!! $cr !!}" onclick=" $(this).parent().remove();"><i class="fa fa-trash-o  btn btn-xs btn-danger"></i></span>
-                                <input type="hidden" name="currfile_path[]" value="{{ $file }}"/>
-                            </li>
-                            @endif
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-                    </div>
-                </div>
 
             </fieldset>
         </div>

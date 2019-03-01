@@ -592,9 +592,9 @@ class servicerequestsController extends Controller
         $this->data['games'] = $this->model->getGames();
         $this->data['game_related_issue_types'] = IssueType::isActive()->get();
         $this->data['game_functionalities'] = \App\Models\GameFunctionality::isActive()->get();
-        $this->data['troubleshootingCheckLists'] = TroubleshootingCheckList::isActive()->get();
+        $this->data['troubleshootingCheckLists'] = TroubleshootingCheckList::isActive()->orderBy('troubleshooting_check_lists.order','asc')->get();
         $this->data['shippingPriorities'] = ShippingPriority::isActive()->get();
-        $userSelectedOptions = SbTicketsTroubleshootingCheckList::select(['troubleshooting_check_list_id','check_list_name'])->where('sb_ticket_id',$id)->get()->toArray();
+        $userSelectedOptions = SbTicketsTroubleshootingCheckList::select(['troubleshooting_check_list_id','check_list_name'])->where('sb_ticket_id',$id)->orderBy('sb_tickets_troubleshooting_check_lists.order','asc')->get()->toArray();
         $savedCheckList = ['savedCheckList' =>[],'savedCheckListOptions'=>[]];
         foreach ($userSelectedOptions as $userSelectedOption){
             $savedCheckList['savedCheckList'][] = $userSelectedOption['troubleshooting_check_list_id'];
@@ -688,6 +688,16 @@ class servicerequestsController extends Controller
 
         $this->data['savedCheckList'] = SbTicketsTroubleshootingCheckList::where('sb_ticket_id',$id)->get()->pluck('troubleshooting_check_list_id')->toArray();
         $this->data['troubleshootingCheckList'] = TroubleshootingCheckList::all();
+
+        $this->data['troubleshootingCheckLists'] = TroubleshootingCheckList::isActive()->orderBy('troubleshooting_check_lists.order','asc')->get();
+        $userSelectedOptions = SbTicketsTroubleshootingCheckList::select(['troubleshooting_check_list_id','check_list_name'])->where('sb_ticket_id',$id)->orderBy('sb_tickets_troubleshooting_check_lists.order','asc')->get()->toArray();
+        $savedCheckList = ['savedCheckList' =>[],'savedCheckListOptions'=>[]];
+        foreach ($userSelectedOptions as $userSelectedOption){
+            $savedCheckList['savedCheckList'][] = $userSelectedOption['troubleshooting_check_list_id'];
+            $savedCheckList['savedCheckListOptions'][$userSelectedOption['troubleshooting_check_list_id']] = $userSelectedOption['check_list_name'];
+        }
+        $this->data['savedCheckList'] = $savedCheckList;
+
         $this->data['ticketType'] = $ticketType;
 
         if($this->data['ticketType'] == 'game-related'){
@@ -1591,17 +1601,20 @@ class servicerequestsController extends Controller
             $data = $request->all();
             $partRequest = new PartRequest();
 
-            $partRequest->insertRow($data,null);
-
+            $id = $partRequest->insertRow($data,null);
+            $hasPermission = $this->model->hasApproveDenyPermission();
             return response()->json(array(
                 'message' => 'Part request has been added',
-                'status' => 'success'
+                'status' => 'success',
+                'hasPermission'=>$hasPermission,
+                'id'=> $id,
             ));
         }else{
             $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
                 'message' => $message,
-                'status' => 'error'
+                'status' => 'error',
+
             ));
         }
     }

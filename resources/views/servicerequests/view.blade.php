@@ -124,9 +124,13 @@
                         <div class="followersListContainer sidebarInput" style="border: 1px solid black;">
                             <div style="font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 5px; padding: 5px 0px;">Troubleshooting Checklist</div>
                             <div>
-                                @foreach($troubleshootingCheckList as $itemChk)
+                                @foreach($troubleshootingCheckLists as $troubleshootingCheckList)
                                     <div style="font-size:6px; padding:5px;">
-                                        <input type="checkbox" disabled name="troubleshootchecklist[]" id="troubleshootchecklist_{{ $itemChk->id  }}" @if(in_array($itemChk->id,$savedCheckList)) checked @endif value="{{ $itemChk->id }}"> <label class="tips" style="vertical-align: middle; width: 90%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $itemChk->check_list_name }}" for="troubleshootchecklist_{{ $itemChk->id  }}">{{ $itemChk->check_list_name }}</label>
+
+                                        <input type="checkbox" disabled name="troubleshootchecklist[]" @if(in_array($troubleshootingCheckList->id,$savedCheckList['savedCheckList'])) checked @endif id="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}" value="{{ $troubleshootingCheckList->id }}">&nbsp;&nbsp;
+                                        <label title="{{ !empty($savedCheckList['savedCheckListOptions'][$troubleshootingCheckList->id]) ? $savedCheckList['savedCheckListOptions'][$troubleshootingCheckList->id]:$troubleshootingCheckList->check_list_name }}" class="tips" style="vertical-align: middle; width: 85%; font-size: 12px; white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;" for="troubleshootchecklist_{{ $troubleshootingCheckList->id  }}">{{ !empty($savedCheckList['savedCheckListOptions'][$troubleshootingCheckList->id]) ? $savedCheckList['savedCheckListOptions'][$troubleshootingCheckList->id]:$troubleshootingCheckList->check_list_name }}</label>
                                     </div>
                                 @endforeach
                             </div>
@@ -172,7 +176,7 @@
                                                                      style="margin-bottom: 20px;">
                                                                     @if($i == 1) <label
                                                                             for="part-number">Quantity</label> @endif
-                                                                    <input type="text" name="qty" readonly
+                                                                    <input type="number" name="qty" readonly
                                                                            id="part-qty-{{ $i }}"
                                                                            value="{{ $partRequest->qty }}"
                                                                            class="form-control fixonfocus">
@@ -222,7 +226,13 @@
                                                                         @endif
                                                                     </div>
                                                                 </div>
+                                                                @if($partRequest->status_id == 3)
+                                                                    <div class="col-md-12" style="margin-bottom: 20px; margin-top:-15px;">
+                                                                        <label>Reason: &nbsp;</label> <span style=" color:red;">{{ $partRequest->reason }}</span>
+                                                                    </div>
+                                                                @endif
                                                                 <div class="col-md-12"></div>
+
 
                                                             </div>
                                                             <?php $i++; ?>
@@ -239,7 +249,7 @@
                                                             <div class="col-md-3 part-qty-container"
                                                                  style="margin-bottom: 20px;">
                                                                 <label for="part-number">Quantity</label>
-                                                                <input type="text" name="qty" class="form-control "
+                                                                <input type="number" name="qty" class="form-control "
                                                                        id="part-qty-1">
                                                             </div>
                                                             <div class="col-md-3 part-cost-container part-request-last-field"
@@ -316,6 +326,9 @@
                                                     <?php
                                                     if($ticketType == 'game-related'){
                                                         unset($statusOptions['development']);
+                                                        unset($statusOptions['inqueue']);
+                                                    }elseif($ticketType == 'debit-card-related'){
+                                                        unset($statusOptions['in_progress']);
                                                     }
                                                     ?>
                                                     @foreach($statusOptions as $key => $val)

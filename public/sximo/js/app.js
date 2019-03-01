@@ -1798,7 +1798,7 @@ $(function () {
         }
 
         var onclick = 'onclick="removePartRequest(\'part-request-field_' + partRequestFieldLenght + '\');"';
-        var removeFields = '<i class="fa fa-times tips remove-part-request-fields" title="Remove" ' + onclick + ' style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;"></i>';
+        var removeFields = '<i class="fa fa-times tips remove-part-request-fields" id="remove-part-request-fields'+partRequestFieldLenght+'" title="Remove" ' + onclick + ' style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;"></i>';
         partRequestFields.children('.part-request-last-field').append(removeFields);
         $('#part-request-field-contianer').append(partRequestFields);
         $('.tips').tooltip();
@@ -1863,25 +1863,28 @@ function denyPartRequestbtn(object,id){
     var reasonBoxId = $(object).attr('reasonbox-id');
     var rowId = $(object).attr('row-id');
     var actionBox = $('#part-request-field_'+rowId+" .action-btns");
-
+if(reason.length > 0) {
     $('.ajaxLoading').show();
     $.ajax({
-        type:'POST',
+        type: 'POST',
         url: 'servicerequests/deny-part',
-        data:{partRequestId:partRequestId,reason:reason},
-        success:function (response) {
+        data: {partRequestId: partRequestId, reason: reason},
+        success: function (response) {
             $('.ajaxLoading').hide();
-            if(response.status == 'success'){
-                $("#"+reasonBoxId).remove();
+            if (response.status == 'success') {
+                $("#" + reasonBoxId).html(' <label>Reason: &nbsp;</label> <span style=" color:red;">'+reason+'</span>');
                 var denyLabel = '<span style="background-color: #f7a54a; font-weight: 700; padding: 2px 5px;">Denied</span>';
                 actionBox.show();
                 actionBox.html(denyLabel);
                 notyMessage(response.message);
-            }else{
+            } else {
                 notyMessageError(response.message);
             }
         }
     });
+}else{
+    notyMessageError('Reason field can\'t be empty');
+}
 
 }
 function cancelDelyProcess(id){
@@ -1901,17 +1904,33 @@ function savePartRequest(id,obj) {
     var partCost = document.getElementById('part-cost-' + id).value;
     var fieldMessage = '<span class="error" id="error-message-span" style="color:red;">Field is required</span>';
     var error = true;
-    if (partNumber.length <= 0 && partNumberContainer.children('span.error').length == 0) {
-        partNumberContainer.append(fieldMessage);
+    if (partNumber.length <= 0 ) {
         error = false;
+    }else {
+        error = true;
+    }
+    if ( error == false && partNumberContainer.children('span.error').length == 0) {
+        partNumberContainer.append(fieldMessage);
     }
 
-    if (partQty.length <= 0 && partQtyContainer.children('span.error').length == 0) {
+    if (partQty.length <= 0 ) {
+        error = false;
+    }else {
+        error = true;
+    }
+
+    if (error == false && partQtyContainer.children('span.error').length == 0) {
         partQtyContainer.append(fieldMessage);
         error = false;
     }
 
-    if (partCost.length <= 0 && partCostContainer.children('span.error').length == 0) {
+    if (partCost.length <= 0) {
+        error = false;
+    }else {
+        error = true;
+    }
+
+    if (error == false && partCostContainer.children('span.error').length == 0) {
         partCostContainer.append(fieldMessage);
         error = false;
     }
@@ -1927,7 +1946,19 @@ $('.ajaxLoading').show();
         success:function (response) {
             $('.ajaxLoading').hide();
             if(response.status == 'success'){
+                console.log(response);
                 $(obj).remove();
+                $('#remove-part-request-fields'+id).remove();
+                //hasPermission,id
+                if(response.hasPermission) {
+                    var buttons = '<input type="button" value="Deny" onclick="denyPartRequest(\'' + id + '\',\'' + response.id + '\',this);" class="btn btn-warning pull-right" style="margin-left: 3px;"> <input type="button" value="Approve" onclick="approvePartRequest(\'' + response.id + '\',\'' + id + '\');" class="btn btn-primary pull-right" style="margin-left: 3px;">';
+                    $('#part-request-field_' + id + " .col-md-3 .action-btns").html(buttons);
+                }
+                $(document.getElementById('part-number-' + id)).prop('readonly',true);
+                $(document.getElementById('part-qty-' + id)).prop('readonly',true);
+                $(document.getElementById('part-cost-' + id)).prop('readonly',true);
+
+
                 notyMessage(response.message);
             }else{
                 notyMessageError(response.error);
@@ -1946,3 +1977,27 @@ $(function () {
         }
     });
 });
+
+function ajaxTrougleshootingModule(url){
+$('.ajaxLoading').show();
+    $.ajax(
+        {
+            type:"POST",
+            url:url,
+            data:{page:1},
+            success:function (response) {
+                $("#page-content-wrapper-1").hide('slow');
+                $("#troubleshootingchecklistGrid").empty();
+                $("#troubleshootingchecklistGrid").html(response);
+                $("#troubleshootingchecklistGrid").show('slow');
+                $('.ajaxLoading').hide();
+            }
+        }
+    )
+
+}
+
+function backToGameSettings(){
+    $("#troubleshootingchecklistGrid").hide('slow');
+    $("#page-content-wrapper-1").show('slow');
+}
