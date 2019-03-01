@@ -1844,14 +1844,14 @@ function denyPartRequest(id,partRequestId) {
     var d = new Date();
     var randomId = d.getMilliseconds();
 
-    var reasonBox = '<div class="col-md-12" id="reason-'+id+'" style="margin-bottom: 20px; margin-top: -15px;">';
+    var reasonBox = '<div class="col-md-9" id="reason-'+id+'" style="margin-bottom: 20px; margin-top: -15px;">';
         reasonBox += '<label>Reason</label><textarea class="form-control part-deny-reason" id="reason-'+randomId+'"  rows="5"></textarea>';
         reasonBox += '<div style="text-align: center">';
         reasonBox += '<br>';
         reasonBox += '<input type="button" class="btn btn-primary" onclick="denyPartRequestbtn(this,\''+id+'\');" row-id="'+id+'" reasonbox-id="reason-'+id+'" data-id="'+partRequestId+'" reason-id="reason-'+randomId+'" value="Deny Part Request" style="margin-right: 5px;">';
         reasonBox += '<input type="button" class="btn btn-primary" onclick="cancelDelyProcess(\''+id+'\')" value="Cancel">';
         reasonBox += '</div>';
-        reasonBox += '</div>';
+        reasonBox += '</div><div class="col-md-3"></div>';
 
     $('#part-request-field_'+id+" .action-btns").hide();
     $('#part-request-field_'+id).append(reasonBox);

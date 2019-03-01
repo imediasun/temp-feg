@@ -227,11 +227,12 @@
                                                                     </div>
                                                                 </div>
                                                                 @if($partRequest->status_id == 3)
-                                                                    <div class="col-md-12" style="margin-bottom: 20px; margin-top:-15px;">
+                                                                    <div class="col-md-9" style="margin-bottom: 20px; margin-top:-15px;">
                                                                         <label>Reason: &nbsp;</label> <span style=" color:red;">{{ $partRequest->reason }}</span>
                                                                     </div>
+                                                                    <div class="col-md-3"></div>
                                                                 @endif
-                                                                <div class="col-md-12"></div>
+                                                                <div class="col-md-9"></div><div class="col-md-3"></div>
 
 
                                                             </div>
