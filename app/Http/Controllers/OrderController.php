@@ -563,6 +563,9 @@ class OrderController extends Controller
             $this->data['merchItems'] = rtrim($merch, ',');
         }
         $this->data['excludedOrderTypes'] = implode(',', $excludedOrderTypesArray);
+
+        $this->data['isAllowedToCombineFreehandProductList'] = $this->model->isAllowedToCombineFreehandProductList();
+
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 

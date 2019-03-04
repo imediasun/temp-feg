@@ -318,10 +318,13 @@
                 price.val(price.fixDecimal());
                 casePrice.val(productData.case_price);
                 casePrice.val(casePrice.fixDecimal());
-                casePrice.attr("onkeyup","calculateUnitPrice(this);");
-                productId.val(productData.id);
+
                 orderContentRow.children('td').children('input.case_per_quantity').val(productData.num_items);
-                $('#is_freehand').val(0);
+                if(productData.isAllowedToCombineFreehandProductList) {
+                    $('#is_freehand').val(0);
+                    casePrice.attr("onkeyup", "calculateUnitPrice(this);");
+                    productId.val(productData.id);
+                }
 
                 var orderForm = document.getElementById('ordersubmitFormAjax');
                 reInitFormValidatorParsley(orderForm);
