@@ -1884,7 +1884,7 @@ $(function(){
                         });
                     },
                     change: function (event, ui) {
-
+                        if ($(this).attr('freehand') == 0) {
                             if ($(this).val()) {
                                 if (($(this).val() == 'No Match')) {
                                     $(this).val("");
@@ -1911,6 +1911,7 @@ $(function(){
                                 //$('.'+$(this).attr('id')+'_span').remove();
                                 $(this).css('border-color', '#e5e6e7', 'important');
                             }
+                        }
                     }
                 });
                 $(obj).autocomplete( "enable" );

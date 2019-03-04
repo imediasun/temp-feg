@@ -313,11 +313,14 @@
                 var orderContentRow = $(document.getElementById(productData.rowId));
                 var price = orderContentRow.children('td').children('input[name="price[]"]');
                 var casePrice = orderContentRow.children('td').children('input[name="case_price[]"]');
+                var productId = orderContentRow.children('input[name="product_id[]"]');
                 price.val(productData.unit_price);
                 price.val(price.fixDecimal());
                 casePrice.val(productData.case_price);
                 casePrice.val(casePrice.fixDecimal());
+                productId.val(productData.id);
                 orderContentRow.children('td').children('input.case_per_quantity').val(productData.num_items);
+                $('#is_freehand').val(0);
 
                 var orderForm = document.getElementById('ordersubmitFormAjax');
                 reInitFormValidatorParsley(orderForm);
