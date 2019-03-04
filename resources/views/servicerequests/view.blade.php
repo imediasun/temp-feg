@@ -142,7 +142,7 @@
                 <div class="ticketMainViewContainer col-sm-8 col-lg-9">
 
                     <div class="ticketHeaderAddonsContainer"></div>
-                    @if($row->issue_type_id == \App\Models\Servicerequests::PART_APPROVAL)
+                    @if($row->issue_type_id == \App\Models\Servicerequests::PART_APPROVAL || $row->issue_type_id == \App\Models\Servicerequests::TROUBLESHOOTING_ASSISTANCE)
                         <div class="margin-bottom-30px">
 
                             <div class="row" style="    margin-right: 0px; margin-left: 0px;">
@@ -168,7 +168,7 @@
                                                                     @if($i == 1) <label for="part-number">Part
                                                                         Number</label> @endif
                                                                     <input type="text" class="form-control fixonfocus"
-                                                                           readonly
+                                                                           @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS)) readonly @endif
                                                                            value="{{ $partRequest->part_number }}"
                                                                            id="part-number-{{ $i }}" name="part_number">
                                                                 </div>
@@ -176,7 +176,8 @@
                                                                      style="margin-bottom: 20px;">
                                                                     @if($i == 1) <label
                                                                             for="part-number">Quantity</label> @endif
-                                                                    <input type="number" name="qty" readonly
+                                                                    <input type="number" name="qty"
+                                                                           @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS)) readonly @endif
                                                                            id="part-qty-{{ $i }}"
                                                                            value="{{ $partRequest->qty }}"
                                                                            class="form-control fixonfocus">
@@ -188,7 +189,8 @@
                                                                     <div class="input-group ig-full">
                                 <span class="input-group-addon"
                                       style="border-right: 1px solid #e5e6e7; position: absolute; left: 0;    z-index: 111111;">$</span>
-                                                                        <input type="number" step="1" readonly
+                                                                        <input type="number" step="1"
+                                                                               @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS)) readonly @endif
                                                                                placeholder="0.00"
                                                                                value="{{ CurrencyHelpers::formatPrice($partRequest->cost,5,false ) }}"
                                                                                style="padding-left: 35px;"
@@ -212,25 +214,27 @@
 
 
                                                                         @else
+                                                                            <a href="#" onclick="savePartRequest('{{ $i }}',this,'{{ $partRequest->id }}'); return false;"
+                                                                                     class="btn btn-default btn-part-save tips" title="Save"
+                                                                                     style="margin-left: 3px;"><i class="fa fa-save"></i></a>
                                                                             @if($can_approve_deny == true)
-                                                                                <input type="button" value="Deny"
-                                                                                       onclick="denyPartRequest('{{ $i }}','{{ $partRequest->id }}',this);"
-                                                                                       class="btn btn-warning pull-right"
-                                                                                       style="margin-left: 3px;">
-                                                                                <input type="button" value="Approve"
-                                                                                       onclick="approvePartRequest('{{ $partRequest->id }}','{{ $i }}');"
-                                                                                       class="btn btn-primary pull-right"
-                                                                                       style="margin-left: 3px;">
-                                                                                <div style="clear:both;"></div>
+                                                                                <a href="#" onclick="approvePartRequest('{{ $partRequest->id }}','{{ $i }}'); return false;"
+                                                                                        class="btn btn-primary tips" title="Approve"
+                                                                                        style="margin-left: 3px;"><i class="fa fa-check"></i></a>
+                                                                                <a href="#" onclick="denyPartRequest('{{ $i }}','{{ $partRequest->id }}',this); return false;"
+                                                                                        class="btn btn-warning tips" title="Deny"
+                                                                                        style="margin-left: 3px;"><i class="fa fa-ban"></i></a>
                                                                             @endif
                                                                         @endif
                                                                     </div>
                                                                 </div>
                                                                 @if($partRequest->status_id == 3)
-                                                                    <div class="col-md-9" style="margin-bottom: 20px; margin-top:-15px;">
-                                                                        <label>Reason: &nbsp;</label> <span style=" color:red;">{{ $partRequest->reason }}</span>
+                                                                    @if(!empty($partRequest->reason))
+                                                                    <div class="col-md-9 reasontxt" style="margin-bottom: 20px; margin-top:-15px;">
+                                                                         <span style=" color:red;"><b>Reason: &nbsp;</b>{{ $partRequest->reason }}</span>
                                                                     </div>
-                                                                    <div class="col-md-3"></div>
+                                                                    <div class="col-md-3 reasontxt"></div>
+                                                                        @endif
                                                                 @endif
                                                                 <div class="col-md-9"></div><div class="col-md-3"></div>
 
@@ -268,11 +272,11 @@
                                                             <div class="col-md-3"
                                                                  style="margin-bottom: 20px; text-align: center; padding-left: 0px; ">
                                                                 <label>Action</label>
-                                                                <div>
+                                                                <div class="action-btns">
 
-                                                                    <input type="button" value="Save"
-                                                                           onclick="savePartRequest('1',this);"
-                                                                           class="btn btn-primary ">
+                                                                    <a href="#" onclick="savePartRequest('1',this,'0'); return false;"
+                                                                       class="btn btn-default btn-part-save tips" title="Save"
+                                                                       style="margin-left: 3px;"><i class="fa fa-save"></i></a>
                                                                 </div>
                                                             </div>
 

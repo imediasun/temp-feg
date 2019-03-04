@@ -15,6 +15,7 @@ class Servicerequests extends Observerable  {
     protected $primaryKey = 'TicketID';
     public $timestamps = false;
     const PART_APPROVAL = 2;
+    const TROUBLESHOOTING_ASSISTANCE = 4;
     public $hideGridFieldsTab1 = [
         'functionality_id',
         'issue_type_id',

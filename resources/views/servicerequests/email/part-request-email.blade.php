@@ -4,4 +4,4 @@
 <b>Part Qty:</b> {{$part_qty}}<br>
 <b>Part Cost:</b> {{$part_cost}}<br>
 <b>Description:</b> {{$description}} <a href="{{$request_link}}">See full request</a><br>
-Please click on <a href="{{$approve_link}}">Approval</a> or <a href="{{$deny_link}}">Denial</a> to Approve/Deny this graphic request <br><br>
+Please click on <a href="{{$approve_link}}">Approval</a> or <a href="{{$deny_link}}">Denial</a> to Approve/Deny this part request <br><br>

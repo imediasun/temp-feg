@@ -1802,10 +1802,12 @@ $(function () {
             partRequestFields.children('.col-md-3').children('input.part-request-id').val(0);
             partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').val('');
             partRequestFields.children('.col-md-3').children('.action-btns').empty();
-            var saveBtn = '<input type="button" value="Save" onclick="savePartRequest(\''+partRequestFieldLenght+'\',this);" class="btn btn-primary ">';
+           // var saveBtn = '<input type="button" value="Save" onclick="savePartRequest(\''+partRequestFieldLenght+'\',this);" class="btn btn-primary ">';
+            var saveBtn = ' <a href="#" onclick="savePartRequest(\''+partRequestFieldLenght+'\',this); return false;" class="btn btn-default btn-part-save tips" title="Save" style="margin-left: 3px;"><i class="fa fa-save"></i></a>';
             partRequestFields.children('.col-md-3').children('.action-btns').append(saveBtn);
             partRequestFields.children('.col-md-3').children('.action-btns').css('display','block');
             partRequestFields.children('.col-md-3').children('label').remove();
+            partRequestFields.children('.reasontxt').remove();
             partRequestFields.children('.col-md-12').remove();
         }
 
@@ -1851,6 +1853,9 @@ function approvePartRequest(id,rowId) {
             if(response.status == 'success'){
                 var approveLabel = '<span style="background: #8fe222; font-weight: 700; padding: 2px 5px;">Approved</span>';
                 actionBox.html(approveLabel);
+                $(document.getElementById('part-number-' + rowId)).prop('readonly', true);
+                $(document.getElementById('part-qty-' + rowId)).prop('readonly', true);
+                $(document.getElementById('part-cost-' + rowId)).prop('readonly', true);
                 notyMessage(response.message);
             }else{
                 notyMessageError(response.message);
@@ -1876,35 +1881,38 @@ function denyPartRequest(id,partRequestId) {
     $('#part-request-field_'+id+" .action-btns").hide();
     $('#part-request-field_'+id).append(reasonBox);
 }
-function denyPartRequestbtn(object,id){
+function denyPartRequestbtn(object, id) {
     var partRequestId = $(object).attr('data-id');
     var reasonId = $(object).attr('reason-id');
     var reason = document.getElementById(reasonId).value;
     var reasonBoxId = $(object).attr('reasonbox-id');
     var rowId = $(object).attr('row-id');
-    var actionBox = $('#part-request-field_'+rowId+" .action-btns");
-if(reason.length > 0) {
-    $('.ajaxLoading').show();
-    $.ajax({
-        type: 'POST',
-        url: 'servicerequests/deny-part',
-        data: {partRequestId: partRequestId, reason: reason},
-        success: function (response) {
-            $('.ajaxLoading').hide();
-            if (response.status == 'success') {
-                $("#" + reasonBoxId).html(' <label>Reason: &nbsp;</label> <span style=" color:red;">'+reason+'</span>');
-                var denyLabel = '<span style="background-color: #f7a54a; font-weight: 700; padding: 2px 5px;">Denied</span>';
-                actionBox.show();
-                actionBox.html(denyLabel);
-                notyMessage(response.message);
-            } else {
-                notyMessageError(response.message);
+    var actionBox = $('#part-request-field_' + rowId + " .action-btns");
+    if (reason.length > 0) {
+        $('.ajaxLoading').show();
+        $.ajax({
+            type: 'POST',
+            url: 'servicerequests/deny-part',
+            data: {partRequestId: partRequestId, reason: reason},
+            success: function (response) {
+                $('.ajaxLoading').hide();
+                if (response.status == 'success') {
+                    $("#" + reasonBoxId).html('<span style=" color:red;"><b>Reason: &nbsp;</b> ' + reason + '</span>');
+                    var denyLabel = '<span style="background-color: #f7a54a; font-weight: 700; padding: 2px 5px;">Denied</span>';
+                    actionBox.show();
+                    actionBox.html(denyLabel);
+                    $(document.getElementById('part-number-' + rowId)).prop('readonly', true);
+                    $(document.getElementById('part-qty-' + rowId)).prop('readonly', true);
+                    $(document.getElementById('part-cost-' + rowId)).prop('readonly', true);
+                    notyMessage(response.message);
+                } else {
+                    notyMessageError(response.message);
+                }
             }
-        }
-    });
-}else{
-    notyMessageError('Reason field can\'t be empty');
-}
+        });
+    } else {
+        notyMessageError('Reason field can\'t be empty');
+    }
 
 }
 function cancelDelyProcess(id){
@@ -1913,7 +1921,7 @@ function cancelDelyProcess(id){
         $(reasonBox).remove();
 }
 
-function savePartRequest(id,obj) {
+function savePartRequest(id,obj,partRequestId) {
     var reasonBox = document.getElementById('part-request-field_' + id);
     var ticketId = document.getElementById('TicketID').value;
     var partNumberContainer = $(reasonBox).children('.part-number-container');
@@ -1924,18 +1932,18 @@ function savePartRequest(id,obj) {
     var partCost = document.getElementById('part-cost-' + id).value;
     var fieldMessage = '<span class="error" id="error-message-span" style="color:red;">Field is required</span>';
     var error = true;
-    if (partNumber.length <= 0 ) {
+    if (partNumber.length <= 0) {
         error = false;
-    }else {
+    } else {
         error = true;
     }
-    if ( error == false && partNumberContainer.children('span.error').length == 0) {
+    if (error == false && partNumberContainer.children('span.error').length == 0) {
         partNumberContainer.append(fieldMessage);
     }
 
-    if (partQty.length <= 0 ) {
+    if (partQty.length <= 0) {
         error = false;
-    }else {
+    } else {
         error = true;
     }
 
@@ -1946,7 +1954,7 @@ function savePartRequest(id,obj) {
 
     if (partCost.length <= 0) {
         error = false;
-    }else {
+    } else {
         error = true;
     }
 
@@ -1955,32 +1963,47 @@ function savePartRequest(id,obj) {
         error = false;
     }
 
-    if (!error){
+    if (!error) {
         return error;
     }
-$('.ajaxLoading').show();
+    $('.ajaxLoading').show();
     $.ajax({
-        type:"POST",
-        url:"servicerequests/save-part-request",
-        data: {part_number:partNumber,qty:partQty,cost:partCost,ticket_id:ticketId,status_id:1},
-        success:function (response) {
+        type: "POST",
+        url: "servicerequests/save-part-request",
+        data: {
+            part_number: partNumber,
+            qty: partQty,
+            cost: partCost,
+            ticket_id: ticketId,
+            status_id: 1,
+            partRequestId: partRequestId
+        },
+        success: function (response) {
             $('.ajaxLoading').hide();
-            if(response.status == 'success'){
-                console.log(response);
+            if (response.status == 'success') {
                 $(obj).remove();
-                $('#remove-part-request-fields'+id).remove();
+                $('#remove-part-request-fields' + id).remove();
                 //hasPermission,id
-                if(response.hasPermission) {
-                    var buttons = '<input type="button" value="Deny" onclick="denyPartRequest(\'' + id + '\',\'' + response.id + '\',this);" class="btn btn-warning pull-right" style="margin-left: 3px;"> <input type="button" value="Approve" onclick="approvePartRequest(\'' + response.id + '\',\'' + id + '\');" class="btn btn-primary pull-right" style="margin-left: 3px;">';
-                    $('#part-request-field_' + id + " .col-md-3 .action-btns").html(buttons);
+                var saveBtn = ' <a href="#" onclick="savePartRequest(\'' + id + '\',this,\'' + response.id + '\'); return false;" class="btn btn-default btn-part-save tips" title="Save" style="margin-left: 3px;"><i class="fa fa-save"></i></a>';
+
+                var buttons = saveBtn;
+                if (response.hasPermission) {
+
+                    var denyBtn = '<a href="#" onclick="denyPartRequest(\'' + id + '\',\'' + response.id + '\',this); return false;" class="btn btn-warning tips" title="Deny" style="margin-left: 3px;"><i class="fa fa-ban"></i></a>';
+                    var approveBtn = '<a href="#" onclick="approvePartRequest(\'' + response.id + '\',\'' + id + '\'); return false;" class="btn btn-primary tips" title="Approve" style="margin-left: 3px;"><i class="fa fa-check"></i></a>';
+                    buttons += approveBtn;
+                    buttons += denyBtn;
+
                 }
-                $(document.getElementById('part-number-' + id)).prop('readonly',true);
-                $(document.getElementById('part-qty-' + id)).prop('readonly',true);
-                $(document.getElementById('part-cost-' + id)).prop('readonly',true);
+                $('#part-request-field_' + id + " .col-md-3 .action-btns").html(buttons);
+                $('.tips').tooltip();
+            /*    $(document.getElementById('part-number-' + id)).prop('readonly', true);
+                $(document.getElementById('part-qty-' + id)).prop('readonly', true);
+                $(document.getElementById('part-cost-' + id)).prop('readonly', true);*/
 
 
                 notyMessage(response.message);
-            }else{
+            } else {
                 notyMessageError(response.error);
             }
         }

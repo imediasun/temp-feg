@@ -1557,19 +1557,41 @@ class servicerequestsController extends Controller
     }
     public function getDenypart($id = ''){
         if(!empty($id)) {
+
             $id = \SiteHelpers::encryptID($id,true);
-            $partRequest = PartRequest::where('id', $id);
+            $this->data['id'] = $id;
+            return view('servicerequests.reason-form.email-deny-reason',$this->data);
 
+        }
+    }
+
+    public function postDenyPartEmail(Request $request)
+    {
+        $id = $request->input('id', 0);
+        $reason = $request->input('reason', '');
+
+        $partRequest = PartRequest::where('id', $id);
+        if (strlen($reason) > 10) {
             if ($partRequest) {
-                $update = $partRequest->update(['status_id' => 3, 'updated_by'=>Session::get('uid')]);
+                $updated = $partRequest->update(['status_id' => 3, 'reason' => $reason, 'updated_by' => Session::get('uid')]);
 
-                if ($update) {
-                    return Redirect::to('servicerequests')->with('messagetext', 'Part request denied')->with('msgstatus', 'success');
+                if ($updated) {
+                    return response()->json(array(
+                        'message' => 'Part request denied',
+                        'status' => 'success'
+                    ));
                 } else {
-                    return Redirect::to('servicerequests')->with('messagetext', 'Error on declining part request')->with('msgstatus', 'error');
+                    return response()->json(array(
+                        'message' => 'Some thing went wrong',
+                        'status' => 'error'
+                    ));
                 }
             }
-
+        } else {
+            return response()->json(array(
+                'message' => 'At least 10 characters must be entered.',
+                'status' => 'error'
+            ));
         }
     }
 
@@ -1591,17 +1613,21 @@ class servicerequestsController extends Controller
 
     public function postSavePartRequest(Request $request){
         $request->all();
+        $partRequestId = $request->input('partRequestId',0);
+
         $rules=[
             'part_number' => 'required',
             'qty' => 'required',
             'cost' => 'required',
         ];
+
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $request->all();
+            unset($data['partRequestId']);
             $partRequest = new PartRequest();
-
-            $id = $partRequest->insertRow($data,null);
+            $partRequestId = ($partRequestId > 0)? $partRequestId:null;
+            $id = $partRequest->insertRow($data,$partRequestId);
             $hasPermission = $this->model->hasApproveDenyPermission();
             return response()->json(array(
                 'message' => 'Part request has been added',
