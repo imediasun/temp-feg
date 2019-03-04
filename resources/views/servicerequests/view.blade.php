@@ -168,7 +168,8 @@
                                                                     @if($i == 1) <label for="part-number">Part
                                                                         Number</label> @endif
                                                                     <input type="text" class="form-control fixonfocus"
-                                                                           @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS)) readonly @endif
+                                                                           @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS)) readonly
+                                                                           @endif
                                                                            value="{{ $partRequest->part_number }}"
                                                                            id="part-number-{{ $i }}" name="part_number">
                                                                 </div>
@@ -177,7 +178,8 @@
                                                                     @if($i == 1) <label
                                                                             for="part-number">Quantity</label> @endif
                                                                     <input type="number" name="qty"
-                                                                           @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS)) readonly @endif
+                                                                           @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS)) readonly
+                                                                           @endif
                                                                            id="part-qty-{{ $i }}"
                                                                            value="{{ $partRequest->qty }}"
                                                                            class="form-control fixonfocus">
@@ -190,7 +192,8 @@
                                 <span class="input-group-addon"
                                       style="border-right: 1px solid #e5e6e7; position: absolute; left: 0;    z-index: 111111;">$</span>
                                                                         <input type="number" step="1"
-                                                                               @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS)) readonly @endif
+                                                                               @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS)) readonly
+                                                                               @endif
                                                                                placeholder="0.00"
                                                                                value="{{ CurrencyHelpers::formatPrice($partRequest->cost,5,false ) }}"
                                                                                style="padding-left: 35px;"
@@ -214,29 +217,40 @@
 
 
                                                                         @else
-                                                                            <a href="#" onclick="savePartRequest('{{ $i }}',this,'{{ $partRequest->id }}'); return false;"
-                                                                                     class="btn btn-default btn-part-save tips" title="Save"
-                                                                                     style="margin-left: 3px;"><i class="fa fa-save"></i></a>
+                                                                            <a href="#"
+                                                                               onclick="savePartRequest('{{ $i }}',this,'{{ $partRequest->id }}'); return false;"
+                                                                               class="btn btn-default btn-part-save tips"
+                                                                               title="Save"
+                                                                               style="margin-left: 3px;"><i
+                                                                                        class="fa fa-save"></i></a>
                                                                             @if($can_approve_deny == true)
-                                                                                <a href="#" onclick="approvePartRequest('{{ $partRequest->id }}','{{ $i }}'); return false;"
-                                                                                        class="btn btn-primary tips" title="Approve"
-                                                                                        style="margin-left: 3px;"><i class="fa fa-check"></i></a>
-                                                                                <a href="#" onclick="denyPartRequest('{{ $i }}','{{ $partRequest->id }}',this); return false;"
-                                                                                        class="btn btn-warning tips" title="Deny"
-                                                                                        style="margin-left: 3px;"><i class="fa fa-ban"></i></a>
+                                                                                <a href="#"
+                                                                                   onclick="approvePartRequest('{{ $partRequest->id }}','{{ $i }}'); return false;"
+                                                                                   class="btn btn-primary tips"
+                                                                                   title="Approve"
+                                                                                   style="margin-left: 3px;"><i
+                                                                                            class="fa fa-check"></i></a>
+                                                                                <a href="#"
+                                                                                   onclick="denyPartRequest('{{ $i }}','{{ $partRequest->id }}',this); return false;"
+                                                                                   class="btn btn-warning tips"
+                                                                                   title="Deny"
+                                                                                   style="margin-left: 3px;"><i
+                                                                                            class="fa fa-ban"></i></a>
                                                                             @endif
                                                                         @endif
                                                                     </div>
                                                                 </div>
                                                                 @if($partRequest->status_id == 3)
                                                                     @if(!empty($partRequest->reason))
-                                                                    <div class="col-md-9 reasontxt" style="margin-bottom: 20px; margin-top:-15px;">
-                                                                         <span style=" color:red;"><b>Reason: &nbsp;</b>{{ $partRequest->reason }}</span>
-                                                                    </div>
-                                                                    <div class="col-md-3 reasontxt"></div>
-                                                                        @endif
+                                                                        <div class="col-md-9 reasontxt"
+                                                                             style="margin-bottom: 20px; margin-top:-15px;">
+                                                                            <span style=" color:red;"><b>Reason: &nbsp;</b>{{ $partRequest->reason }}</span>
+                                                                        </div>
+                                                                        <div class="col-md-3 reasontxt"></div>
+                                                                    @endif
                                                                 @endif
-                                                                <div class="col-md-9"></div><div class="col-md-3"></div>
+                                                                <div class="col-md-9"></div>
+                                                                <div class="col-md-3"></div>
 
 
                                                             </div>
@@ -247,14 +261,15 @@
                                                             <div class="col-md-3 part-number-container"
                                                                  style="margin-bottom: 20px;">
                                                                 <label for="part-number">Part Number</label>
-                                                                <input type="text" class="form-control "
+                                                                <input type="text" class="form-control fixonfocus"
                                                                        name="part_number"
                                                                        id="part-number-1">
                                                             </div>
                                                             <div class="col-md-3 part-qty-container"
                                                                  style="margin-bottom: 20px;">
                                                                 <label for="part-number">Quantity</label>
-                                                                <input type="number" name="qty" class="form-control "
+                                                                <input type="number" name="qty"
+                                                                       class="form-control fixonfocus"
                                                                        id="part-qty-1">
                                                             </div>
                                                             <div class="col-md-3 part-cost-container part-request-last-field"
@@ -266,7 +281,8 @@
                                                                     <input type="number" step="1" placeholder="0.00"
                                                                            value=""
                                                                            style="padding-left: 35px;" name="cost"
-                                                                           class="form-control" id="part-cost-1">
+                                                                           class="form-control fixonfocus"
+                                                                           id="part-cost-1">
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-3"
@@ -274,9 +290,12 @@
                                                                 <label>Action</label>
                                                                 <div class="action-btns">
 
-                                                                    <a href="#" onclick="savePartRequest('1',this,'0'); return false;"
-                                                                       class="btn btn-default btn-part-save tips" title="Save"
-                                                                       style="margin-left: 3px;"><i class="fa fa-save"></i></a>
+                                                                    <a href="#"
+                                                                       onclick="savePartRequest('1',this,'0'); return false;"
+                                                                       class="btn btn-default btn-part-save tips"
+                                                                       title="Save"
+                                                                       style="margin-left: 3px;"><i
+                                                                                class="fa fa-save"></i></a>
                                                                 </div>
                                                             </div>
 

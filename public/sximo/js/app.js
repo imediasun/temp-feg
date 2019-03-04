@@ -1930,7 +1930,7 @@ function savePartRequest(id,obj,partRequestId) {
     var partNumber = document.getElementById('part-number-' + id).value;
     var partQty = document.getElementById('part-qty-' + id).value;
     var partCost = document.getElementById('part-cost-' + id).value;
-    var fieldMessage = '<span class="error" id="error-message-span" style="color:red;">Field is required</span>';
+    var fieldMessage = '<span class="error" id="error-message-span" style="color:red; width: 100%; display: inline-block; ">Field is required</span>';
     var error = true;
     if (partNumber.length <= 0) {
         error = false;
