@@ -680,7 +680,7 @@
 </div>
 
 <div style="clear:both"></div>
-
+<input type="hidden" name="OrderTypeId" value="{{ !empty($OrderTypeId) ? $OrderTypeId:0 }}">
 <div class="form-group">
     <div class="col-sm-12 text-center">
         <button type="submit" class="btn btn-primary btn-sm "><i

@@ -3628,6 +3628,7 @@ ORDER BY aa_id");
         }
         $this->data['productTypes'] = $productTypes->orderBy('order_type', 'asc')->get()->toArray();
         $this->data['access'] = $this->access;
+        $this->data['OrderTypeId'] = $productTypeId;
 
         return view('order.freehand-product-form', $this->data);
 

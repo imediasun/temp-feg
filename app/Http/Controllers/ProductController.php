@@ -646,6 +646,7 @@ class ProductController extends Controller
     function postSave(Request $request, $id = 0)
     {
 
+        $OrderTypeId = $request->input('OrderTypeId',0);
         $product = "";
         $rules = $this->validateForm();
         if(!empty($request->product_id) || $id){
@@ -837,7 +838,7 @@ class ProductController extends Controller
                 $postedtoNetSuite = mb_substr($data['vendor_description'],0,53);
             }
 
-
+            unset($data['OrderTypeId']);
 
             if($id>0) {
                 $products_combined = $this->model->checkProducts($id);
@@ -1003,10 +1004,17 @@ class ProductController extends Controller
                 }
             }
 
+            $productData = $this->model->where([
+                'vendor_description' => $data['vendor_description'],
+                'sku' => $data['sku'],
+                'case_price' => $data['case_price'],
+                'prod_type_id' => $OrderTypeId,
+            ])->get()->toArray();
+            $productData[0]['rowId'] = $request->input('rowId',0);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success'),
-                'productData' => $request->all()
+                'productData' => $productData[0]
             ));
 
         } else {
@@ -1692,7 +1700,7 @@ if(!empty($removedItemIds)) {
 
         $rules['expense_category'] = 'required';
 
-
+        $OrderTypeId = $request->input('OrderTypeId',0);
         $request->Product_Type = $request->prod_type_id;
         $request->Vendor = $request->vendor_id;
 
@@ -1714,6 +1722,7 @@ if(!empty($removedItemIds)) {
         if ($validator->passes()) {
             //for inline editing all fields do not get saved
             $data = $this->validatePost('products',true);
+            unset($data['OrderTypeId']);
             $data['vendor_description'] = trim(preg_replace('/\s+/',' ', $data['vendor_description']));
             $data['netsuite_description'] = "$id...".$data['vendor_description'];
 
@@ -1832,10 +1841,18 @@ if(!empty($removedItemIds)) {
                ));
            }
 
+
+            $productData = $this->model->where([
+                'vendor_description' => $data['vendor_description'],
+                'sku' => $data['sku'],
+                'case_price' => $data['case_price'],
+                'prod_type_id' => $OrderTypeId,
+            ])->get()->toArray();
+            $productData[0]['rowId'] = $request->input('rowId',0);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success'),
-                'productData' => $request->all()
+                'productData' => $productData[0]
             ));
 
         }else{
