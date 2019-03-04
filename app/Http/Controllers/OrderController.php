@@ -553,6 +553,9 @@ class OrderController extends Controller
            $excludedOrderTypesArray = array_merge($excludedOrderTypesArray,$otherExcluded);
        }
         $this->data['excludedOrderTypes'] = implode(',', $excludedOrderTypesArray);
+
+        $this->data['isAllowedToCombineFreehandProductList'] = $this->model->isAllowedToCombineFreehandProductList();
+
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 

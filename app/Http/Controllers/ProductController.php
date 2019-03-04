@@ -4,6 +4,7 @@ use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
+use App\Models\order;
 use App\Models\Ordertyperestrictions;
 use App\Models\Product;
 use App\Models\ProductType;
@@ -1011,6 +1012,8 @@ class ProductController extends Controller
                 'prod_type_id' => $OrderTypeId,
             ])->get()->toArray();
             $productData[0]['rowId'] = $request->input('rowId',0);
+            $orderModel = new order();
+            $productData[0]['isAllowedToCombineFreehandProductList'] = $orderModel->isAllowedToCombineFreehandProductList();
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success'),
@@ -1849,6 +1852,8 @@ if(!empty($removedItemIds)) {
                 'prod_type_id' => $OrderTypeId,
             ])->get()->toArray();
             $productData[0]['rowId'] = $request->input('rowId',0);
+            $orderModel = new order();
+            $productData[0]['isAllowedToCombineFreehandProductList'] = $orderModel->isAllowedToCombineFreehandProductList();
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success'),

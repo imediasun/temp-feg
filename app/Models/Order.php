@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\OrderController;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\Feg\System\Options;
 use App\Models\Sximo\Module;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,7 @@ use App\Models\Ordertyperestrictions;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Log;
 use Illuminate\Support\Facades\File;
 
@@ -1543,5 +1545,26 @@ class order extends Sximo
                 }
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAllowedToCombineFreehandProductList(){
+
+        $option = Options::where('option_name', 'canCombineOrderContentUsers')->first();
+        $canCombineOrderContentUsers = [];
+        if($option){
+            $canCombineOrderContentUsers =  explode(',', $option->option_value);
+        }
+
+        $option = Options::where('option_name', 'canCombineOrderContentGroups')->first();
+        $canCombineOrderContentGroups = [];
+        if($option){
+            $canCombineOrderContentGroups =  explode(',', $option->option_value);
+        }
+
+        return (in_array($canCombineOrderContentUsers,Session::get('uid')) || in_array($canCombineOrderContentGroups,Session::get('gid')));
+
     }
 }

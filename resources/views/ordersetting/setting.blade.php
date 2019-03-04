@@ -31,7 +31,7 @@
                             <tr>
                                 <!--                            <th field="name1" width="5%">No</th>-->
                                 <th field="name2" width="20%">Title</th>
-                                <th field="name2" width="20%">Description</th>
+                                <th field="name2" width="40%">Description</th>
                                 <th field="name3" width="60%">PO Note</th>
                                 <th field="name4" width="40%">Order Types</th>
                                 <th field="name5" width="40%">Groups</th>
@@ -222,6 +222,22 @@
                                     <select class="select2" multiple id="exemptedUsers" name="exemptedUsers[]"></select>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>User/Groups can combine freehand and product list orders.</td>
+                                <td>
+                                    If the user is not on the special permission list (or their user group is not on that list) then they cannot combine freehand and product list orders.
+                                </td>
+                                <td>
+                                </td>
+                                <td id="last_td">
+                                </td>
+                                <td>
+                                    <select class="select2" multiple id="canCombineOrderContentGroups" name="canCombineOrderContentGroups[]"></select>
+                                </td>
+                                <td>
+                                    <select class="select2" multiple id="canCombineOrderContentUsers" name="canCombineOrderContentUsers[]"></select>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -252,6 +268,12 @@
 
             $("#exemptedGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: "{{ $exemptedGroups }}"});
+
+            $("#canCombineOrderContentUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
+                    {selected_value: "{{ $canCombineOrderContentUsers }}"});
+
+            $("#canCombineOrderContentGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
+                    {selected_value: "{{ $canCombineOrderContentGroups }}"});
 
         });
 
