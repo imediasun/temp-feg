@@ -219,20 +219,20 @@
                                                                         @else
                                                                             <a href="#"
                                                                                onclick="savePartRequest('{{ $i }}',this,'{{ $partRequest->id }}'); return false;"
-                                                                               class="btn btn-default btn-part-save tips"
+                                                                               class="btn btn-primary tips"
                                                                                title="Save"
                                                                                style="margin-left: 3px;"><i
                                                                                         class="fa fa-save"></i></a>
                                                                             @if($can_approve_deny == true)
                                                                                 <a href="#"
                                                                                    onclick="approvePartRequest('{{ $partRequest->id }}','{{ $i }}'); return false;"
-                                                                                   class="btn btn-primary tips"
+                                                                                   class="btn btn-primary greenbutton tips"
                                                                                    title="Approve"
                                                                                    style="margin-left: 3px;"><i
                                                                                             class="fa fa-check"></i></a>
                                                                                 <a href="#"
                                                                                    onclick="denyPartRequest('{{ $i }}','{{ $partRequest->id }}',this); return false;"
-                                                                                   class="btn btn-warning tips"
+                                                                                   class="btn btn-warning redbutton tips"
                                                                                    title="Deny"
                                                                                    style="margin-left: 3px;"><i
                                                                                             class="fa fa-ban"></i></a>
@@ -240,6 +240,7 @@
                                                                         @endif
                                                                     </div>
                                                                 </div>
+                                                                <div style="clear: both;"></div>
                                                                 @if($partRequest->status_id == 3)
                                                                     @if(!empty($partRequest->reason))
                                                                         <div class="col-md-9 reasontxt"
@@ -292,12 +293,13 @@
 
                                                                     <a href="#"
                                                                        onclick="savePartRequest('1',this,'0'); return false;"
-                                                                       class="btn btn-default btn-part-save tips"
+                                                                       class="btn btn-primary  tips"
                                                                        title="Save"
                                                                        style="margin-left: 3px;"><i
                                                                                 class="fa fa-save"></i></a>
                                                                 </div>
                                                             </div>
+                                                            <div style="clear: both;"></div>
 
                                                         </div>
                                                     @endif
@@ -352,7 +354,7 @@
                                                         unset($statusOptions['development']);
                                                         unset($statusOptions['inqueue']);
                                                     }elseif($ticketType == 'debit-card-related'){
-                                                        unset($statusOptions['in_progress']);
+                                                        unset($statusOptions['in_process']);
                                                     }
                                                     ?>
                                                     @foreach($statusOptions as $key => $val)

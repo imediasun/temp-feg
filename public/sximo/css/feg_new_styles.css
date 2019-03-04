@@ -272,3 +272,19 @@ span.moduleTab.active:after{
     background: #7a66e1 !important;
     color: white;
 }
+
+/**
+Red: #ed5565;  Green: 1cc63f;
+**/
+
+.redbutton{
+    background: #ed5565 !important;
+    color:white !important;
+    border-color: #ed5565 !important;
+}
+
+.greenbutton{
+    background: #47e245 !important;
+    color:white !important;
+    border-color: #47e245 !important;
+}

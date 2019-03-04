@@ -1803,7 +1803,7 @@ $(function () {
             partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').val('');
             partRequestFields.children('.col-md-3').children('.action-btns').empty();
            // var saveBtn = '<input type="button" value="Save" onclick="savePartRequest(\''+partRequestFieldLenght+'\',this);" class="btn btn-primary ">';
-            var saveBtn = ' <a href="#" onclick="savePartRequest(\''+partRequestFieldLenght+'\',this); return false;" class="btn btn-default btn-part-save tips" title="Save" style="margin-left: 3px;"><i class="fa fa-save"></i></a>';
+            var saveBtn = ' <a href="#" onclick="savePartRequest(\''+partRequestFieldLenght+'\',this); return false;" class="btn btn-primary tips" title="Save" style="margin-left: 3px;"><i class="fa fa-save"></i></a>';
             partRequestFields.children('.col-md-3').children('.action-btns').append(saveBtn);
             partRequestFields.children('.col-md-3').children('.action-btns').css('display','block');
             partRequestFields.children('.col-md-3').children('label').remove();
@@ -1984,13 +1984,13 @@ function savePartRequest(id,obj,partRequestId) {
                 $(obj).remove();
                 $('#remove-part-request-fields' + id).remove();
                 //hasPermission,id
-                var saveBtn = ' <a href="#" onclick="savePartRequest(\'' + id + '\',this,\'' + response.id + '\'); return false;" class="btn btn-default btn-part-save tips" title="Save" style="margin-left: 3px;"><i class="fa fa-save"></i></a>';
+                var saveBtn = ' <a href="#" onclick="savePartRequest(\'' + id + '\',this,\'' + response.id + '\'); return false;" class="btn btn-primary tips" title="Save" style="margin-left: 3px;"><i class="fa fa-save"></i></a>';
 
                 var buttons = saveBtn;
                 if (response.hasPermission) {
 
-                    var denyBtn = '<a href="#" onclick="denyPartRequest(\'' + id + '\',\'' + response.id + '\',this); return false;" class="btn btn-warning tips" title="Deny" style="margin-left: 3px;"><i class="fa fa-ban"></i></a>';
-                    var approveBtn = '<a href="#" onclick="approvePartRequest(\'' + response.id + '\',\'' + id + '\'); return false;" class="btn btn-primary tips" title="Approve" style="margin-left: 3px;"><i class="fa fa-check"></i></a>';
+                    var denyBtn = '<a href="#" onclick="denyPartRequest(\'' + id + '\',\'' + response.id + '\',this); return false;" class="btn btn-warning redbutton tips" title="Deny" style="margin-left: 3px;"><i class="fa fa-ban"></i></a>';
+                    var approveBtn = '<a href="#" onclick="approvePartRequest(\'' + response.id + '\',\'' + id + '\'); return false;" class="btn btn-primary greenbutton tips" title="Approve" style="margin-left: 3px;"><i class="fa fa-check"></i></a>';
                     buttons += approveBtn;
                     buttons += denyBtn;
 
