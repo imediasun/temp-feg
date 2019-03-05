@@ -97,7 +97,7 @@ class ReportGenerator
             // $dailyTransferStatusReport
             // Locations Not Reporting:
         if ($noClosed != 1) {
-            $locationsNotReportingReport = self::getLocationsNotReportingReport($params);
+            $locationsNotReportingReport = self::getLocationsNotReportingReport($params);            
         }
         // Games Not Played:
         if ($noDownGames != 1) {   
