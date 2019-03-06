@@ -275,6 +275,8 @@ class servicerequestsController extends Controller
         $this->data['tableForm'] = $this->info['config']['forms'];
         if($this->data['ticketType'] == 'game-related') {
             $this->data['tableForm'] = $this->model->resetFormElements($this->data['tableForm']);
+        }else{
+            $this->data['tableForm'] = $this->model->resetFormElements($this->data['tableForm'],true);
         }
         $this->data['tableGrid'] = $this->model->displayFieldsByType($this->info['config']['grid'],$this->data['ticketType']);
         $this->data['searchMode'] = $mode;
@@ -538,6 +540,8 @@ class servicerequestsController extends Controller
         // Render into template
         if($this->data['ticketType'] == 'game-related') {
             $this->data['tableForm'] = $this->model->resetFormElements($this->data['tableForm']);
+        }else{
+            $this->data['tableForm'] = $this->model->resetFormElements($this->data['tableForm'],true);
         }
         return view('servicerequests.table', $this->data);
 

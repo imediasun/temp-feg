@@ -482,8 +482,20 @@ class Servicerequests extends Observerable  {
             && (!in_array(Session::get('uid'),$excludedUsers))
         );
     }
-  function resetFormElements($formData = []){
+  function resetFormElements($formData = [],$debitCardType = false){
       $formElements = [];
+      if($debitCardType == true){
+          foreach ($formData as $item) {
+              if ($item['field'] == 'Status') {
+                  $item['option']["opt_type"] = "datalist";
+                  $item['option']["lookup_query"] = "open:Open|pending:Pending|development:In Development|closed:Closed";
+                  $formElements[] = $item;
+              }
+
+              $formElements[] = $item;
+          }
+          return $formElements;
+      }
       foreach ($formData as $item) {
           if ($item['field'] == 'Status') {
               $item['option']["opt_type"] = "datalist";
