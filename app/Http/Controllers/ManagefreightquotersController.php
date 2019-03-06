@@ -162,7 +162,9 @@ class ManagefreightquotersController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
-
+        $isTest = env('APP_ENV') != "production" ? true : false;
+        $recipients =  \FEGHelp::getSystemEmailRecipients('GET FREIGHT QUOTE EMAIL', null, $isTest);
+        $this->data['recipients'] = $recipients;
         return view('managefreightquoters.form', $this->data);
     }
 
@@ -629,7 +631,8 @@ class ManagefreightquotersController extends Controller
             $sender_name = \Session::get('fname');
             $sender_name .= \Session::get('lname');
             $freightCompanyQuery = \DB::select('SELECT rep_email FROM freight_companies WHERE active = 1  AND rep_email != ""');
-            $recipients =  \FEGHelp::getSystemEmailRecipients('GET FREIGHT QUOTE EMAIL');
+            $recipients = $request->get("recipients");
+            $recipients['configName'] = 'GET FREIGHT QUOTE EMAIL';// \FEGHelp::getSystemEmailRecipients('GET FREIGHT QUOTE EMAIL');
             foreach ($freightCompanyQuery as $rowFreight) {
                 $recipients['to'] .= (empty($recipients['to']))? $rowFreight->rep_email:','.$rowFreight->rep_email;
             }
@@ -638,11 +641,17 @@ class ManagefreightquotersController extends Controller
                 $recipients['to'] = $to;
                 if(!empty($recipients['to'])){
                     FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                        'to' => $recipients['to'],
+                        'cc' => $recipients['cc'],
+                        'bcc' => $recipients['bcc'],
                         'subject' => $subject,
                         'message' => $message,
                         'preferGoogleOAuthMail' => true,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-                        'from' => $from
+                        'from' => $from,
+                        'overrideToEmailInTestMode' => true,
+                        'overrideCCEmailInTestMode' => true,
+                        'overrideBCCEmailInTestMode' => true
                     )));
                 }
             }
