@@ -18,6 +18,9 @@
             'managefreightquotersFormAjax')) !!}
             <div class="col-md-8 col-md-offset-2" style="background: #FFF;box-shadow:1px 1px 5px lightgray">
                 <fieldset>
+                    <input type="hidden" value="" id="recipient_to" name='recipients[to]'/>
+                    <input type="hidden" value="" id="recipient_cc" name='recipients[cc]'/>
+                    <input type="hidden" value="" id="recipient_bcc" name='recipients[bcc]'>
 
                     <div class="form-group">
                         <label class="col-md-4">
@@ -424,9 +427,71 @@
             @if($setting['form-method'] =='native')
         </div>
     </div>
+    <!-- popup for sending email  -->
+
+    <div class="modal" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div id="mycontent" class="modal-content">
+                <div id="myheader" class="modal-header">
+                    <button type="button " class="btn-xs collapse-close btn btn-danger pull-right"
+                            data-dismiss="modal" aria-hidden="true"><i class="fa fa fa-times"></i>
+                    </button>
+                    <h4>Send Email</h4>
+                </div>
+                <div class="modal-body col-md-offset-1 col-md-10">
+                    {!! Form::open(array('url'=>'order/saveorsendemail',
+                    'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>'
+                    ','id'=>'sendFormAjax')) !!}
+
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="to">To</label>
+
+                        <div class="col-md-8">
+                            <input name="to" id="to" value="{{$recipients['to']}}" data-value="" class="form-control orderEmailAutoComplete" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="cc">CC</label>
+                        <div class="col-md-8">
+                            <input name="cc" id="cc" value="{{$recipients['cc']}}" data-value="" multiple class="form-control orderEmailAutoComplete" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="bcc">BCC</label>
+
+                        <div class="col-md-8">
+                            <input name="bcc" id="bcc" value="{{$recipients['bcc']}}" multiple data-value="" class="form-control orderEmailAutoComplete" />
+                        </div>
+                    </div>
+                    <input type="hidden" name="type" value="send"/>
+                    <div class="col-md-offset-6 col-md-6">
+                        <div class="form-group" style="margin-top:10px;">
+                            <button type="button" name="submit" value="sendemail" id="send-email"
+                                    data-button="create" onclick="submitForm()"
+                                    class="btn btn-info btn-lg" style="width:33%" title="SEND"><i
+                                        class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }}
+                            </button>
+                        </div>
+                    </div>
+                    {!! Form::close() !!}
+                </div>
+                <div class="clearfix"></div>
+
+            </div>
+
+        </div>
+    </div>
+    <!-- popup for sending email ends here.. -->
 @endif
 <script type="text/javascript">
     $(document).ready(function () {
+        var orderEmailAutoComplete = $('.orderEmailAutoComplete')
+        App.initAutoComplete(orderEmailAutoComplete,
+        {
+            url: siteUrl+'/order/email-history',
+            params: {'search': orderEmailAutoComplete}
+        });
         $('#std_from_div,#vend_from_div,#location_from_div,#from_vendor_type_div,#std_to_div,#vend_to_div,#location_to_div,#to_vendor_type_div').hide();
         $("#location_id").jCombo("{{ URL::to('managefreightquoters/comboselect?filter=location:id:id|location_name') }}",
                 {selected_value: '', initial_text: 'Select Location'});
@@ -458,12 +523,8 @@
         form.parsley();
         form.submit(function () {
             if (form.parsley('isValid') == true) {
-                var options = {
-                    dataType: 'json',
-                    beforeSubmit: showRequest,
-                    success: showResponse
-                }
-                $(this).ajaxSubmit(options);
+                $('#myModal').modal('show');
+
                 return false;
 
             } else {
@@ -594,6 +655,24 @@ $("#radio_to_loc").click();
                     excluded: 'input[type=button], input[type=submit], input[type=reset]',
                     inputs: 'input, textarea, select, input[type=hidden], :hidden'
                 } );
+    }
+    function submitForm() {
+        $('#recipient_to').val($('#to').val());
+        $('#recipient_cc').val($('#cc').val());
+        $('#recipient_bcc').val($('#bcc').val());
+
+    /*    setTimeout(function () {
+            $('#managefreightquotersFormAjax').submit();
+            $('#myModal').modal('hide');
+        }, 100)*/
+
+        var options = {
+            dataType: 'json',
+            beforeSubmit: showRequest,
+            success: showResponse
+        }
+        $('#managefreightquotersFormAjax').ajaxSubmit(options);
+        $('#myModal').modal('hide');
     }
 </script>
 <style>
