@@ -1494,12 +1494,12 @@ $(document).on('change', 'select' ,function () {
 });
 $(function(){
     $(document).on('click','.modal',function () {
-        if(pageModule != 'product'){
+        if(pageModule != 'product' && pageModule != 'location'){
             $('select.select3,select.select2').select2("close");
         }
     });
     $(document).on("click",".collapse-close,.cancelButton",function(){
-        if(pageModule != 'product') {
+        if(pageModule != 'product' && pageModule != 'location') {
             $('select.select3,select.select2').select2("close");
         }
         $(document).scrollTop(0);
