@@ -288,3 +288,9 @@ Red: #ed5565;  Green: 1cc63f;
     color:white !important;
     border-color: #47e245 !important;
 }
+
+.greenbutton:hover{
+    background: #2bcc29 !important;
+    color:white !important;
+    border-color: #2bcc29 !important;
+}
