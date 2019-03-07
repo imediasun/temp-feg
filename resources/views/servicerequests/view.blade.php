@@ -208,10 +208,10 @@
                                                                         @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS))
 
                                                                             @if($partRequest->status_id == 2)
-                                                                                <span style="background: #8fe222; font-weight: 700; padding: 2px 5px;">Approved</span>
+                                                                                <span style="background: #47e245; font-weight: 700; padding: 2px 5px;">Approved</span>
 
                                                                             @else
-                                                                                <span style="background-color: #f7a54a; font-weight: 700; padding: 2px 5px;">Denied</span>
+                                                                                <span style="background-color: #ed5565; font-weight: 700; padding: 2px 5px;">Denied</span>
 
                                                                             @endif
 

@@ -1753,6 +1753,7 @@ function clearFields(doSearch) {
 
 
 $(function () {
+
     $(document).off('click','#issue_type_id').on('change', '#issue_type_id', function () {
 
         if (Number($(this).val()) == 2) {
@@ -1851,7 +1852,7 @@ function approvePartRequest(id,rowId) {
         success:function (response) {
         $('.ajaxLoading').hide();
             if(response.status == 'success'){
-                var approveLabel = '<span style="background: #8fe222; font-weight: 700; padding: 2px 5px;">Approved</span>';
+                var approveLabel = '<span style="background: #47e245; font-weight: 700; padding: 2px 5px;">Approved</span>';
                 actionBox.html(approveLabel);
                 $(document.getElementById('part-number-' + rowId)).prop('readonly', true);
                 $(document.getElementById('part-qty-' + rowId)).prop('readonly', true);
@@ -1898,7 +1899,7 @@ function denyPartRequestbtn(object, id) {
                 $('.ajaxLoading').hide();
                 if (response.status == 'success') {
                     $("#" + reasonBoxId).html('<span style=" color:red;"><b>Reason: &nbsp;</b> ' + reason + '</span>');
-                    var denyLabel = '<span style="background-color: #f7a54a; font-weight: 700; padding: 2px 5px;">Denied</span>';
+                    var denyLabel = '<span style="background-color: #ed5565; font-weight: 700; padding: 2px 5px;">Denied</span>';
                     actionBox.show();
                     actionBox.html(denyLabel);
                     $(document.getElementById('part-number-' + rowId)).prop('readonly', true);

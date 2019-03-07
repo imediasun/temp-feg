@@ -492,7 +492,18 @@ $(document).on('change','#location_id',function(){
             return false;
         }
     }
-
+$(function () {
+    setTimeout(function(){
+        var issueTypeValue =  $('#issue_type_id').val();
+        if(Number(issueTypeValue) == 2){
+            $('#part-requests-contianer input[type="text"], #part-requests-contianer input[type="number"]').attr('required','required');
+        }else{
+            $('#part-requests-contianer input[type="text"], #part-requests-contianer input[type="number"]').removeAttr('required');
+        }
+        $('#sbticketFormAjax').parsley().destroy();
+        $('#sbticketFormAjax').parsley();
+    },1000);
+});
 </script>
 
 <style>
