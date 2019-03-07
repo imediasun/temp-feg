@@ -467,8 +467,8 @@
                     <input type="hidden" name="type" value="send"/>
                     <div class="col-md-offset-6 col-md-6">
                         <div class="form-group" style="margin-top:10px;">
-                            <button type="button" name="submit" value="sendemail" id="send-email"
-                                    data-button="create" onclick="submitForm()"
+                            <button type="submit" name="submit" value="sendemail" id="send-email"
+                                    data-button="create" onclick="//submitForm()"
                                     class="btn btn-info btn-lg" style="width:33%" title="SEND"><i
                                         class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }}
                             </button>
@@ -656,15 +656,45 @@ $("#radio_to_loc").click();
                     inputs: 'input, textarea, select, input[type=hidden], :hidden'
                 } );
     }
-    function submitForm() {
+    //sendFormAjax
+    $(function () {
+        var popupForm =  $('#sendFormAjax');
+
+        popupForm.parsley().destroy();
+        popupForm.parsley();
+        popupForm.submit(function (e) {
+            e.preventDefault();
+            if (popupForm.parsley('isValid') == true) {
+
+                $('#recipient_to').val($('#to').val());
+                $('#recipient_cc').val($('#cc').val());
+                $('#recipient_bcc').val($('#bcc').val());
+
+                var options = {
+                    dataType: 'json',
+                    beforeSubmit: showRequest,
+                    success: showResponse
+                }
+                $('#managefreightquotersFormAjax').ajaxSubmit(options);
+                $('#myModal').modal('hide');
+
+                return false;
+
+            } else {
+                return false;
+            }
+
+        });
+    })
+    function submitForm() {/*
         $('#recipient_to').val($('#to').val());
         $('#recipient_cc').val($('#cc').val());
         $('#recipient_bcc').val($('#bcc').val());
 
-    /*    setTimeout(function () {
+    /!*    setTimeout(function () {
             $('#managefreightquotersFormAjax').submit();
             $('#myModal').modal('hide');
-        }, 100)*/
+        }, 100)*!/
 
         var options = {
             dataType: 'json',
@@ -672,7 +702,7 @@ $("#radio_to_loc").click();
             success: showResponse
         }
         $('#managefreightquotersFormAjax').ajaxSubmit(options);
-        $('#myModal').modal('hide');
+        $('#myModal').modal('hide');*/
     }
 </script>
 <style>
@@ -684,6 +714,7 @@ $("#radio_to_loc").click();
         display:none;
     }
 </style>
+
 
 
 
