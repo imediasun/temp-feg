@@ -685,7 +685,7 @@ $("#radio_to_loc").click();
             }
 
         });
-    })
+    });
     function submitForm() {/*
         $('#recipient_to').val($('#to').val());
         $('#recipient_cc').val($('#cc').val());

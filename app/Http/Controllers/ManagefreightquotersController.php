@@ -183,6 +183,18 @@ class ManagefreightquotersController extends Controller
         $this->data['setting'] = $this->info['setting'];
         $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        if ($this->data['row']['loc_1'] == 0) {
+            $this->data['row']['ship_to_type'] = 'external';
+        } else {
+            $this->data['row']['ship_to_type'] = 'internal';
+        }
+        $recipients =  $this->data['row']['ship_to_type'];
+        $isTest = env('APP_ENV') != "production" ? true : false;
+        if( $recipients == 'external'){
+            $this->data['row']['recipients'] = \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT EXTERNAL EMAIL', null, $isTest);
+        } else {
+            $this->data['row']['recipients'] = \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT INTERNAL EMAIL', null, $isTest);
+        }
         return view('managefreightquoters.view', $this->data);
     }
 

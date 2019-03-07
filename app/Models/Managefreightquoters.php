@@ -491,7 +491,9 @@ class managefreightquoters extends Sximo
                         }
 
                         $from = \Session::get('eid');
-                        $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT INTERNAL EMAIL', $data['request']['loc'][$i]);
+                        $recipients =  $data['request']['recipients'];//\FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT EXTERNAL EMAIL');
+                        $recipients['configName'] = 'UPDATE FREIGHT INTERNAL EMAIL';
+//                        $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT INTERNAL EMAIL', $data['request']['loc'][$i]);
                         $subject = ((int)$num_games_per_destination == 0)?('Scheduled for delivery to ' . $locationName . '!'):('('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!');
                         $message = '<p>
 										' . $email_notes . '
@@ -581,11 +583,17 @@ class managefreightquoters extends Sximo
 
                         if(!empty($recipients['to'])){
                             FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                                'to' => $recipients['to'],
+                                'cc' => $recipients['cc'],
+                                'bcc' => $recipients['bcc'],
                                 'subject' => $subject,
                                 'message' => $message,
                                 'preferGoogleOAuthMail' => true,
                                 'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                                 'from' => $from,
+                                'overrideToEmailInTestMode' => true,
+                                'overrideCCEmailInTestMode' => true,
+                                'overrideBCCEmailInTestMode' => true
                             )));
                         }
 
@@ -635,17 +643,24 @@ class managefreightquoters extends Sximo
 								immediately</b> for determination as to whether you should accept or refuse the shipment.
 							<br>
 						</p>';
-                $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT EXTERNAL EMAIL');
+                $recipients =  $data['request']['recipients'];//\FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT EXTERNAL EMAIL');
+                $recipients['configName'] = 'UPDATE FREIGHT EXTERNAL EMAIL';
                 if($email == 1 && !empty($contact_email)){
                     $recipients['to'].= (empty($recipients['to']))? $contact_email:','.$contact_email;
                 }
                 if($recipients['to']!=''){
                     FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                        'to' => $recipients['to'],
+                        'cc' => $recipients['cc'],
+                        'bcc' => $recipients['bcc'],
                         'subject' => $subject,
                         'message' => $message,
                         'preferGoogleOAuthMail' => true,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                         'from' => $from,
+                        'overrideToEmailInTestMode' => true,
+                        'overrideCCEmailInTestMode' => true,
+                        'overrideBCCEmailInTestMode' => true
                     )));
                 }
 

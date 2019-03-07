@@ -20,6 +20,9 @@
         <input type="hidden" id="freight_contents" name="freight_contents" value=' ' >
         <input type="hidden" id="current_status_id" name="current_status_id" value='{{ $row["current_status_id"] }}' >
         <input type="hidden" id="contact_email" name="contact_email" value='{{ $row["contact_email"] }}' >
+        <input type="hidden" value="" id="recipient_to" name='recipients[to]'/>
+        <input type="hidden" value="" id="recipient_cc" name='recipients[cc]'/>
+        <input type="hidden" value="" id="recipient_bcc" name='recipients[bcc]'>
 		<div class="col-md-8 col-md-offset-2" style="background-color:#FFF;box-shadow: 1px 1px 5px lightgray;padding:15px">
             <div class="clearfix freightOrderBasicDetailsContainer">
             <h2 class="text-center">Freight Order</h2>
@@ -242,8 +245,63 @@
         {!! Form::close() !!}
 @if($setting['form-method'] =='native')
 	</div>
-</div>	
+</div>
 @endif
+<!-- popup for sending email  -->
+<div class="modal" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div id="mycontent" class="modal-content">
+            <div id="myheader" class="modal-header">
+                <button type="button " class="btn-xs collapse-close btn btn-danger pull-right"
+                        data-dismiss="modal" aria-hidden="true"><i class="fa fa fa-times"></i>
+                </button>
+                <h4>Send Email</h4>
+            </div>
+            <div class="modal-body col-md-offset-1 col-md-10">
+                {!! Form::open(array('url'=>'order/saveorsendemail',
+                'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>'
+                ','id'=>'sendFormAjax')) !!}
+
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="to">To</label>
+
+                    <div class="col-md-8">
+                        <input name="to" id="to" value="{{$row['recipients']['to']}}" data-value="" class="form-control orderEmailAutoComplete" required/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="cc">CC</label>
+                    <div class="col-md-8">
+                        <input name="cc" id="cc" value="{{$row['recipients']['cc']}}" data-value="" multiple class="form-control orderEmailAutoComplete" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="bcc">BCC</label>
+
+                    <div class="col-md-8">
+                        <input name="bcc" id="bcc" value="{{$row['recipients']['bcc']}}" multiple data-value="" class="form-control orderEmailAutoComplete" />
+                    </div>
+                </div>
+                <input type="hidden" name="type" value="send"/>
+                <div class="col-md-offset-6 col-md-6">
+                    <div class="form-group" style="margin-top:10px;">
+                        <button type="submit" name="submit" value="sendemail" id="send-email"
+                                data-button="create" onclick="//submitForm()"
+                                class="btn btn-info btn-lg" style="width:33%" title="SEND"><i
+                                    class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }}
+                        </button>
+                    </div>
+                </div>
+                {!! Form::close() !!}
+            </div>
+            <div class="clearfix"></div>
+
+        </div>
+
+    </div>
+</div>
+<!-- popup for sending email ends here.. -->
 
 <script type="text/javascript">
     
@@ -251,6 +309,12 @@
         mainModule = '{{ $pageModule }}';
     
     $(document).ready(function() {
+        var orderEmailAutoComplete = $('.orderEmailAutoComplete')
+        App.initAutoComplete(orderEmailAutoComplete,
+        {
+            url: siteUrl+'/order/email-history',
+            params: {'search': orderEmailAutoComplete}
+        });
         $('#markPaid').click(function (e) {
             $('.ajaxLoading').show();
             e.preventDefault();
@@ -282,6 +346,45 @@
             },
             {!! json_encode($row) !!}
         );
-        
+        var form = $('#managefreightquotersFormAjax');
+        form.submit(function () {
+            if (form.parsley('isValid') == true) {
+                $('#myModal').modal('show');
+
+                return false;
+
+            } else {
+                return false;
+            }
+
+        });
+    });
+    $(function () {
+        var popupForm =  $('#sendFormAjax');
+
+        popupForm.parsley().destroy();
+        popupForm.parsley();
+        popupForm.submit(function (e) {
+            e.preventDefault();
+            if (popupForm.parsley('isValid') == true) {
+
+                $('#recipient_to').val($('#to').val());
+                $('#recipient_cc').val($('#cc').val());
+                $('#recipient_bcc').val($('#bcc').val());
+
+                var options = {
+                    dataType: 'json',
+                }
+                $('#managefreightquotersFormAjax').ajaxSubmit(options);
+                $('#myModal').modal('hide');
+                ajaxViewClose('#managefreightquoters');
+
+                return false;
+
+            } else {
+                return false;
+            }
+
+        });
     });
 </script>
