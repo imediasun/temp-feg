@@ -1564,7 +1564,7 @@ class order extends Sximo
             $canCombineOrderContentGroups =  explode(',', $option->option_value);
         }
 
-        return (in_array($canCombineOrderContentUsers,Session::get('uid')) || in_array($canCombineOrderContentGroups,Session::get('gid')));
+        return (in_array(Session::get('uid'),$canCombineOrderContentUsers) || in_array(Session::get('gid'),$canCombineOrderContentGroups));
 
     }
 }

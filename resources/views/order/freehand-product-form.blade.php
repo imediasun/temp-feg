@@ -321,6 +321,7 @@
 
                 orderContentRow.children('td').children('input.case_per_quantity').val(productData.num_items);
                 if(productData.isAllowedToCombineFreehandProductList) {
+                    $('#is_pre_freehand').val(1);
                     $('#is_freehand').val(0);
                     casePrice.attr("onkeyup", "calculateUnitPrice(this);");
                     productId.val(productData.id);

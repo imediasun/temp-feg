@@ -1,5 +1,6 @@
 <?php use App\Models\Order;?>
 <?php
+    $isPreFreehand = is_object($row) ? $row->is_pre_freehand == 1 : 0;
     $isFreeHand = is_object($row) ? ($fromStore == 1 ? 0 : $row->is_freehand) : 0;
     $show_freehand = $mode=='clone' || (!is_object($row) && $fromStore != 1) ? 1: 0;
 ?>
@@ -30,6 +31,7 @@
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'ordersubmitFormAjax')) !!}
             <input type='hidden' name='force_remove_items' id="force_remove_items">
             <input type="hidden" id="is_freehand" name="is_freehand" value="{{ $isFreeHand  }}">
+            <input type="hidden" id="is_pre_freehand" name="is_pre_freehand" value="{{ $isPreFreehand  }}">
             <input type="hidden" id="can_select_product_list" value="1">
             <input type="hidden" id="denied_SIDs" name="denied_SIDs">
 
@@ -342,22 +344,27 @@
                     <?php
                     // Disable order items for Non-Freehand orders and Orders from Store
                     $readOnlyItem = 'freehand="1" onfocus="init(this.id,this);"';
+                            $readonlyStatus = 'readonly';
+                            if($isPreFreehand == 1){
+                                $readonlyStatus = '';
+                            }
+
                     if ((is_object($row) && $row->is_freehand != 1) || $fromStore == 1) {
-                        $readOnlyItem = 'readonly freehand="0"';
+                        $readOnlyItem = $readonlyStatus.' freehand="0"';
                     }
                     ?>
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
                                         style="width:30px;border:none;background:none"/></td>
-                        <td><br/><input type="text" placeholder="SKU" {{  is_object($row) ? $fromStore == 1?'readonly': $row->is_freehand != 1 ?'readonly': '':'readonly' }} class="form-control sku" id="sku_num" name="sku[]"
+                        <td><br/><input type="text" placeholder="SKU" {{  is_object($row) ? $fromStore == 1?'readonly': $row->is_freehand != 1 && $isPreFreehand !=1 ?'readonly': '':'readonly' }} class="form-control sku" id="sku_num" name="sku[]"
                                     /></td>
 
-                        <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
+                        <td><br/> <input type="text" name='item_name[]' is-pre-freehand="{{ $isPreFreehand }}" placeholder='Item  Name' id="item_name"
                                          class='form-control item_name mysearch' {!! $readOnlyItem !!}  maxlength="225"
                                          required>
                         </td>
                         <td>
-                            <textarea name='item[]' {{  is_object($row) ? $fromStore == 1?'readonly':$row->is_freehand != 1 ?'readonly': '':'readonly' }} placeholder='Item  Description' id="item"
+                            <textarea name='item[]' {{  is_object($row) ? $fromStore == 1?'readonly':$row->is_freehand != 1 && $isPreFreehand !=1 ?'readonly': '':'readonly' }} placeholder='Item  Description' id="item"
                                       class='form-control item' cols="30" rows="4" maxlength="225"></textarea>
                         </td>
 
@@ -366,7 +373,7 @@
                                          style="width: 85px"
                                          required></td>
                         <td>
-                            <br/> <input type='number' name='case_price[]' @if(is_object($row)) @if($row->is_freehand != 1) onkeyup="calculateUnitPrice(this);" @endif @else onkeyup="calculateUnitPrice(this);" @endif id="case_price"
+                            <br/> <input type='number' name='case_price[]' @if(is_object($row)) @if($row->is_freehand != 1 ) onkeyup="calculateUnitPrice(this);" @endif @else onkeyup="calculateUnitPrice(this);" @endif id="case_price"
                                          class='calculate form-control fixDecimal' min="0.00" step=".001" placeholder="0.00"
                                          style="width: 85px"
                                          required></td>
@@ -404,7 +411,7 @@
                                onclick="removeRow(this.id);"
                                class="remove btn btn-xs btn-danger hide-button tips" title="Remove Item">-
                             </p>
-                            <p id="add-items-button" @if($row['is_freehand'] == 1) freehandorder="1" @else style="display: none;" @endif data-id=""
+                            <p id="add-items-button" @if($row['is_freehand'] == 1 || $isPreFreehand == 1) freehandorder="1" @else style="display: none;" @endif data-id=""
                                class="addToProductList btn btn-xs btn-danger add-items-button tips" title="Add product to the Product List">+
                             </p>
                             <input type="hidden" name="counter[]">
@@ -515,7 +522,7 @@
         case_price_categories = case_price_categories.split(",").map(Number);
 
         var show_freehand = <?php echo $show_freehand  ; ?>;
-        var isFreeHand = '<?php echo $isFreeHand; ?>';
+        var isFreeHand = '<?php echo  $isFreeHand; ?>';
         var mode = "{{ $data['prefill_type'] }}";
         var forceRemoveOrderContentIds = [];
         $(document).ready(function () {
@@ -1541,9 +1548,11 @@
             $(this).attr('lastSelected', $(this).val());
         });
         $('#order_type_id').change(function () {
+            console.log("Order Type Changes debugger");
             var orderType = $(this);
             var selected_type = $(this).val();
              var  merch_val = <?php echo json_encode(explode(',', $merchItems)); ?>;
+            var isPreFreehand = '<?php echo $isPreFreehand ?>';
 
             if(Number(selected_type) > 0) {
 
@@ -1602,14 +1611,14 @@
                     else
                     {
                         $('#can-freehand').hide();
-                        $('.addToProductList').hide();
+                            $('.addToProductList').hide();
                     }
                 }
             }
             else
             {
                 $('#can-freehand').hide();
-                if(Number(isFreeHand) != 1) {
+                if(Number(isFreeHand) != 1 && Number(isPreFreehand) !=1) {
                     $('.addToProductList').hide();
                 }
             }
@@ -1640,6 +1649,9 @@
             clone.prop('id', newtrID)
             $(clone).find('input:text, input[type=number], textarea').each(function(){
                 $(this).val("");
+                @if($isPreFreehand == 1)
+                    $(this).removeAttr('readonly');
+                @endif
             });
             $(clone).find('.hide-button').attr({'id':'hide-button' + productRows,'title':"Remove Item"});
             $(clone).find('.hide-button').tooltip();
@@ -1648,6 +1660,9 @@
             $(clone).find('input:checkbox').prop('checked', false);
             $(clone).find('input[name="item_received[]"]').val(0);
             $(clone).find('input[name="order_content_id[]"]').val(0);
+            $(clone).find('input[name="product_id[]"]').val(0);
+            $(clone).find('input[name="case_per_quantity[]"]').val(0);
+            $(clone).find('input[name="prev_qty[]"]').val(0);
             let checkboxClone = $(clone).find('.icheck input:checkbox').clone();
             $(clone).find('.icheck').html('<br /><input type="hidden" name="broken_case_value[]" value="0">');
             $(clone).find('.icheck').append(checkboxClone);
@@ -1935,7 +1950,7 @@ $(function(){
                         });
                     },
                     change: function (event, ui) {
-                        if ($(this).attr('freehand') == 0) {
+                        if ($(this).attr('freehand') == 0 && $(this).attr('is-pre-freehand') == 0) {
                             if ($(this).val()) {
                                 if (($(this).val() == 'No Match')) {
                                     $(this).val("");

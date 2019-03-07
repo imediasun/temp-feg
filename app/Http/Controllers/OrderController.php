@@ -529,6 +529,12 @@ class OrderController extends Controller
                    $row->order_freight_id = "";
                }
            }
+
+           $freehandTypes = !empty($this->pass['Can add freehand products']) ? $this->pass['Can add freehand products']->data_options:'';
+            $freehandTypeArray = explode(",",$freehandTypes);
+            if(in_array($row->order_type_id,$freehandTypeArray)){
+                $row->is_pre_freehand = 1;
+            }
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
@@ -709,7 +715,24 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
+            if($request->get('is_freehand') == 0 && in_array(0,$request->get('product_id'))){
+                $items = $request->input('item_name');
+                $productIds = $request->get('product_id');
+                $errorMessage = '';
+                for ($i=0; $i< count($items); $i++){
+                        if($productIds[$i] == 0 || $productIds[$i] == ''){
+                            $errorMessage .= '<li>'.$items[$i].'</li>';
+                        }
+                }
+                if($errorMessage !=''){
+                    $message = 'You cannot save the order until all freehanded item(s) have been added to the product list. <br>Please add the Following Item(s) to the product List:';
+                    $errorMessage = $message.'<ul>'.$errorMessage.'</ul>';
+                }
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $errorMessage,
+                ]);
+            }
 
             $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
             if($request->input('is_freehand',0) != 1) {
