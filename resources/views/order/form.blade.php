@@ -361,7 +361,7 @@
                             <button  type="button"  title="Make this item freehand" style="width: 55%; padding: 0px 4px; @if(is_object($row)) display: none; @endif " class="btn btn-primary btn-small tips make-content-editable"><i class="fa  fa-edit"></i></button>
                        @endif
                         </td>
-                        <td><br/><input type="text" placeholder="SKU" {{  is_object($row) ? $fromStore == 1?'readonly': $row->is_freehand != 1 && $isPreFreehand !=1 ?'readonly': '':'readonly' }} class="form-control sku" id="sku_num" name="sku[]"
+                        <td><br/><input type="text" placeholder="SKU" {{  is_object($row) ? $fromStore == 1?'readonly': $row->is_freehand != 1  ?'readonly': '':'readonly' }} class="form-control sku" id="sku_num" name="sku[]"
                                     /></td>
 
                         <td><br/> <input type="text" name='item_name[]' is-pre-freehand="{{ $isPreFreehand }}" placeholder='Item  Name' prevent-search="0" id="item_name"
@@ -369,7 +369,7 @@
                                          required>
                         </td>
                         <td>
-                            <textarea name='item[]' {{  is_object($row) ? $fromStore == 1?'readonly':$row->is_freehand != 1 && $isPreFreehand !=1 ?'readonly': '':'readonly' }} placeholder='Item  Description' id="item"
+                            <textarea name='item[]' {{  is_object($row) ? $fromStore == 1?'readonly':$row->is_freehand != 1  ?'readonly': '':'readonly' }} placeholder='Item  Description' id="item"
                                       class='form-control item' cols="30" rows="4" maxlength="225"></textarea>
                         </td>
 
