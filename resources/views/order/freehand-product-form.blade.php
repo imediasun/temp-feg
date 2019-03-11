@@ -314,6 +314,21 @@
                 var price = orderContentRow.children('td').children('input[name="price[]"]');
                 var casePrice = orderContentRow.children('td').children('input[name="case_price[]"]');
                 var productId = orderContentRow.children('input[name="product_id[]"]');
+
+                var skuField = orderContentRow.children('td').children('input[name="sku[]"]');
+                var itemDescriptionField = orderContentRow.children('td').children('textarea[name="item[]"]');
+                var itemNameField = orderContentRow.children('td').children('input[name="item_name[]"]');
+                var makeContentEditableBtn = orderContentRow.children('td').children('button.make-content-editable');
+                var addToProductListBtn = orderContentRow.children('td').children('.addToProductList');
+
+                makeContentEditableBtn.css('display','none');
+                addToProductListBtn.css('display','none');
+
+                skuField.attr('readonly','readonly');
+              //  itemNameField.attr('readonly','readonly');
+                itemNameField.attr('prevent-search','0');
+                itemDescriptionField.attr('readonly','readonly');
+
                 price.val(productData.unit_price);
                 price.val(price.fixDecimal());
                 casePrice.val(productData.case_price);

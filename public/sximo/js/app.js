@@ -2230,11 +2230,11 @@ $(function () {
         var itemNameField = $('#'+row.attr('id')+' input[name="item_name[]"]');
         var itemDescriptionField = $('#'+row.attr('id')+' textarea[name="item[]"]');
         var addItemBtn = $('#'+row.attr('id')+' .addToProductList');
-        $('#'+row.attr('id')+' input,'+'#'+row.attr('id')+' textarea').empty();
 
         if(icon.hasClass('fa-edit')){
             icon.removeClass('fa-edit');
-            icon.addClass('fa-arrow-left');
+            // icon.addClass('fa-arrow-left');
+            icon.addClass('fa-file-o');
             $(this).attr('title','Add from product list');
 
             addItemBtn.css("display",'');
@@ -2246,7 +2246,8 @@ $(function () {
             itemDescriptionField.removeAttr('readonly');
 
         }else {
-            icon.removeClass('fa-arrow-left');
+            // icon.removeClass('fa-arrow-left');
+            icon.removeClass('fa-file-o');
             icon.addClass('fa-edit');
             $(this).attr('title','Make this item freehand');
 

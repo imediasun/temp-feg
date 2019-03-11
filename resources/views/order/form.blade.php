@@ -32,6 +32,7 @@
             <input type='hidden' name='force_remove_items' id="force_remove_items">
             <input type="hidden" id="is_freehand" name="is_freehand" value="{{ $isFreeHand  }}">
             <input type="hidden" id="is_pre_freehand" name="is_pre_freehand" value="{{ $isPreFreehand  }}">
+            <input type="hidden" id="isAllowedToCombineFreehandProductList" value="{{ $isAllowedToCombineFreehandProductList  }}">
             <input type="hidden" id="can_select_product_list" value="1">
             <input type="hidden" id="denied_SIDs" name="denied_SIDs">
 
@@ -356,7 +357,9 @@
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
                                         style="width:35%;border:none;background:none; "/>
-                            <button  type="button"  title="Make this item freehand" style="width: 55%; padding: 0px 4px;  display: none; " class="btn btn-primary btn-small tips make-content-editable"><i class="fa  fa-edit"></i></button>
+                            @if($isAllowedToCombineFreehandProductList == 1)
+                            <button  type="button"  title="Make this item freehand" style="width: 55%; padding: 0px 4px; @if(is_object($row)) display: none; @endif " class="btn btn-primary btn-small tips make-content-editable"><i class="fa  fa-edit"></i></button>
+                       @endif
                         </td>
                         <td><br/><input type="text" placeholder="SKU" {{  is_object($row) ? $fromStore == 1?'readonly': $row->is_freehand != 1 && $isPreFreehand !=1 ?'readonly': '':'readonly' }} class="form-control sku" id="sku_num" name="sku[]"
                                     /></td>
@@ -413,9 +416,11 @@
                                onclick="removeRow(this.id);"
                                class="remove btn btn-xs btn-danger hide-button tips" title="Remove Item">-
                             </p>
+                            @if($isAllowedToCombineFreehandProductList == 1)
                             <p id="add-items-button" @if($row['is_freehand'] == 1 || $isPreFreehand == 1) freehandorder="1" @else style="display: none;" @endif data-id=""
                                class="addToProductList btn btn-xs btn-danger add-items-button tips" title="Add product to the Product List">+
                             </p>
+                            @endif
                             <input type="hidden" name="counter[]">
                         </td>
                     </tr>
@@ -606,6 +611,7 @@
                 } else {
                     Price = unitPrice;
                 }
+                Qty = Number(Qty) == 0 ? 1:Qty;
                 sum = (Qty * Price).toFixed(6);
                 Subtotal += parseFloat(sum);
                 //sum = sum.toFixed(PRECISION);
@@ -842,8 +848,10 @@
             $("#add_new_item").click(function () {
                 ///window.ParsleyUI.removeError($("input").pars‌​ley(), 'required');
                 // $('input[name^=price],input[name^=case_price],input[name^=qty]').parsley().reset();
+                var runTimeClick = $(this).attr('run-time-click');
+                var isRunTimeClick = Number(runTimeClick);
 
-                addProductRow(true);
+                addProductRow(isRunTimeClick);
                 handleItemCount('add');
                 if(add_new_item_button_click == 1){
                     setTimeout(function () {
@@ -990,11 +998,15 @@
                 if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
                 {
                     add_new_item_button_click = 0;
+                    $("#add_new_item").attr('run-time-click','1');
                     $("#add_new_item").click();
                     add_new_item_button_click = 1;
                 }
 
             }
+            setTimeout(function () {
+                $("#add_new_item").removeAttr('run-time-click');
+            },1000);
             if(mode=="edit")
             {
                 counter=requests_item_count;
@@ -1644,20 +1656,24 @@
             //}
         }
 
-        function addProductRow() {
+        function addProductRow(isRunTimeClick) {
             console.log("Add order contents");
             var productRows = $('.itemstable tbody tr').length;
             let clone = $('.itemstable tbody tr:first').clone();
             let newtrID = clone.prop('id') + productRows;
             clone.prop('id', newtrID)
             $(clone).find('input:text, input[type=number], textarea').each(function(){
-                $(this).val("");
+                $(this).val('');
                 @if($isPreFreehand == 1)
                     $(this).removeAttr('readonly');
                 @endif
             });
             $(clone).find('.hide-button').attr({'id':'hide-button' + productRows,'title':"Remove Item"});
-            $(clone).find('.make-content-editable').css('display', '');
+            if(isRunTimeClick != 1 && $('#isAllowedToCombineFreehandProductList').val() == 1) {
+                if($('#is_freehand').val() == 0 ) {
+                    $(clone).find('.make-content-editable').css('display', '');
+                }
+            }
 
             $(clone).find('.hide-button').tooltip();
             $(clone).find('.add-items-button').attr({'id': 'add-items-button' + productRows,'title':'Add product to the Product List'});
@@ -2090,6 +2106,9 @@ $(function(){
                             $('input[name="item_name[]"]').change();
                             $("input[name='case_price[]']").attr("onkeyup","calculateUnitPrice(this);");
                             $('.addToProductList').hide();
+                            $('.make-content-editable i').removeClass('fa-file-o');
+                            $('.make-content-editable i').addClass('fa-edit');
+
                         }
                         else{
                             $('input[name="item_name[]"]').removeAttr('id');
@@ -2115,6 +2134,8 @@ $(function(){
                             $('input[name="Subtotal"]').val(0.00);
                             $("input[name='case_price[]']").removeAttr("onkeyup");
                             $('.addToProductList').show();
+                            $('.make-content-editable i').removeClass('fa-edit');
+                            $('.make-content-editable i').addClass('fa-file-o');
                             reInitParcley();
                         }
                     }
@@ -2142,6 +2163,8 @@ $(function(){
                     $('input[name="item_name[]"]').addClass('mysearch');
                     $('input[name="item_name[]"]').change();
                     $('.addToProductList').hide();
+                    $('.make-content-editable i').removeClass('fa-file-o');
+                    $('.make-content-editable i').addClass('fa-edit');
                 }
                 else{
                     currentElm.data('status','enabled');
@@ -2164,6 +2187,9 @@ $(function(){
                     $('input[name="item_name[]"]').change();
                     console.log("freehand order");
                     $('.addToProductList').show();
+                    $('.make-content-editable i').removeClass('fa-edit');
+                    $('.make-content-editable i').addClass('fa-file-o');
+
                 }
             }
             if (currentElm.data('status') == 'enabled') {
@@ -2378,6 +2404,7 @@ $(function(){
                         $.each(adjustQty, function (k, v) {
                             adjustQtyAssoc[k] = v;
                         });
+
 
                         $('.clonedInput').each(function (i, ele) {
                             var product_id = $(ele).find("[name='product_id[]']").first().val();

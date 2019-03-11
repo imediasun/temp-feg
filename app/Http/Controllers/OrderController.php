@@ -468,6 +468,7 @@ class OrderController extends Controller
         $where_in_expression = '';
         \Session::put('redirect', 'order');
         $this->data['setting'] = $this->info['setting'];
+        $this->data['can_add_to_list'] = 0;
         $isRequestApproveProcess = false;
         $requestId = [$id];
         if ($id != 0 && $mode == '') {
@@ -534,6 +535,7 @@ class OrderController extends Controller
             $freehandTypeArray = explode(",",$freehandTypes);
             if(in_array($row->order_type_id,$freehandTypeArray)){
                 $row->is_pre_freehand = 1;
+                $this->data['can_add_to_list'] = 1;
             }
             $this->data['row'] = $row;
         } else {
@@ -570,7 +572,7 @@ class OrderController extends Controller
         }
         $this->data['excludedOrderTypes'] = implode(',', $excludedOrderTypesArray);
 
-        $this->data['isAllowedToCombineFreehandProductList'] = $this->model->isAllowedToCombineFreehandProductList();
+        $this->data['isAllowedToCombineFreehandProductList'] = ($this->model->isAllowedToCombineFreehandProductList()) ?1:0;
 
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
