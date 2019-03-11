@@ -1665,7 +1665,7 @@
             $(clone).find('input:text, input[type=number], textarea').each(function(){
                 $(this).val('');
                 @if($isPreFreehand == 1)
-                    $(this).removeAttr('readonly');
+//                    $(this).removeAttr('readonly');
                 @endif
             });
             $(clone).find('.hide-button').attr({'id':'hide-button' + productRows,'title':"Remove Item"});
