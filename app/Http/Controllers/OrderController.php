@@ -737,7 +737,7 @@ class OrderController extends Controller
             }
 
             $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
-            if($request->input('is_freehand',0) != 1) {
+            if($request->input('is_freehand',0) != 1 && $request->input('is_pre_freehand',0) != 1) {
             $editMode = $request->get('editmode');
             if (in_array($editMode, ['edit', 'clone'])) {
                 $productIdsFromOrderContents = \DB::table('order_contents')->whereIn('id', request()->input('order_content_id'))->lists('product_id');
