@@ -3773,7 +3773,7 @@ ORDER BY aa_id");
         $systemEmailConfiguration = $this->getSystemEmailConfigurations($orderType, $methodFunctionality);
 
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
-        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($systemEmailConfiguration['config_name'], null, $isTest);
+        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($systemEmailConfiguration->config_name, null, $isTest);
 
         $requestInvoicePONumber = $order->po_number;
 
@@ -3792,7 +3792,9 @@ ORDER BY aa_id");
             'name'
         ];
 
-        $fromUserConfig = DB::table('email_sender_credentials')->where('username', $systemEmailConfiguration['from'])->first();
+        $fromUserConfig = \DB::table('email_sender_credentials')
+            ->where('username', $systemEmailConfiguration->from_email_address)
+            ->first();
 
         $config = [];
 
@@ -3804,12 +3806,13 @@ ORDER BY aa_id");
             $config[$configKey] = $fromUserConfig->{$configKey};
         }
 
-        \Config::set('mail', $config);
+        if(!$order->vendor)
+            return Response::json(['status'=>'error', 'message'=>"Oops! No Vendor found. Please contact to the administrator."]);
 
-        $vendorApContact = '';
+        return $vendorApContactName = $order->vendor->vendor_ap_contact_name;
 
         $message = $this->getShow($orderId, 'emails.inquireOrder');
-        $message = view('emails.requestInvoice', compact('message', 'requestInvoicePONumber', 'vendorApContact'));
+        $message = view('emails.requestInvoice', compact('message', 'requestInvoicePONumber', 'vendorApContactName'));
 
 
         if(!empty($systemEmailRecipients['to'])){
@@ -3830,6 +3833,8 @@ ORDER BY aa_id");
         $options['from']                    = $fromUserConfig->from;
         $options['isTest']                  = $isTest;
 
+        $options['config']                  = $config;
+
         $options['overrideToEmail'] =
 
         FEGSystemHelper::sendSystemEmail(
@@ -3841,74 +3846,9 @@ ORDER BY aa_id");
     }
 
     public function getSystemEmailConfigurations($orderType, $methodFunctionality){
-        $sysEmailConfigNames = [
-             'getRequestInvoice' => [
-                '1' => [
-                    'config_name'   =>'Request Invoice - Games',        //'Parts for Games',
-                    'from'          =>'ap.games@fegllc.com'
-                ],
-                '2' => [
-                    'config_name'   =>'Request Invoice - Games',        //'Advance Replacement',
-                    'from'          =>'ap.games@fegllc.com'
-                ],
-                '6' => [
-                    'config_name'   =>'Request Invoice - Merchandise',  //'Office Supplies',
-                    'from'          =>'merch.Office@fegllc.com'
-                ],
-                '7' => [
-                    'config_name'   =>'Request Invoice - Merchandise',  //'Redemption Prizes',
-                    'from'          =>'merch.Office@fegllc.com'
-                ],
-                '8' => [
-                    'config_name'   =>'Request Invoice - Merchandise',  //'Instant Win Prizes',
-                    'from'          =>'merch.Office@fegllc.com'
-                ],
-                '10' => [
-                    'config_name'   =>'Request Invoice - Graphics',     //'Graphics',
-                    'from'          =>'ap.graphics@fegllc.com'
-                ],
-                '17' => [
-                    'config_name'   =>'Request Invoice - Merchandise',  //'Party Supplies',
-                    'from'          =>'merch.Office@fegllc.com'
-                ],
-                '20' => [
-                    'config_name'   =>'Request Invoice - Debit Card',   //'Debit card parts',
-                    'from'          =>'ap.debitcards@fegllc.com'
-                ],
-                '21' => [
-                    'config_name'   =>'Request Invoice - Games',        //'Marketing',
-                    'from'          =>'ap.games@fegllc.com'
-                ],
-                '22' => [
-                    'config_name'   =>'Request Invoice - Merchandise',  //'Tickets',
-                    'from'          =>'merch.Office@fegllc.com'
-                ],
-                '23' => [
-                    'config_name'   =>'Request Invoice - Games',        //'Tokens',
-                    'from'          =>'ap.games@fegllc.com'
-                ],
-                '24' => [
-                    'config_name'   =>'Request Invoice - Merchandise',  //'Uniforms',
-                    'from'          =>'merch.Office@fegllc.com'
-                ],
-                '25' => [
-                    'config_name'   =>'Request Invoice - Games',        //'Photo Paper',
-                    'from'          =>'ap.games@fegllc.com'
-                ],
-                '26' => [
-                    'config_name'   =>'Request Invoice - Debit Card',   //'Debit Cards',
-                    'from'          =>'ap.debitcards@fegllc.com'
-                ],
-                '27' => [
-                    'config_name'   =>'Request Invoice - Merchandise',  //'Retail',
-                    'from'          =>'merch.Office@fegllc.com'
-                ],
-                '28' => [
-                    'config_name'   =>'Request Invoice - Games',        //'Food and Beverage'
-                    'from'          =>'ap.games@fegllc.com'
-                ]
-             ]
-        ];
-        return $sysEmailConfigNames[$methodFunctionality][$orderType];
+        return \DB::table('system_email_config_names')
+            ->where('method_name', $methodFunctionality)
+            ->where('order_type_id', $orderType)
+            ->first();
     }
 }

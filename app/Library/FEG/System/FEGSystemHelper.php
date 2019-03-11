@@ -693,6 +693,11 @@ class FEGSystemHelper
                         \Config::set('mail', $config);
                         $from = env('MAIL_VENDOR_USERNAME');
                     }
+                    else if(isset($options['config'])){
+                        \Config::set('mail', $options['config']);
+                        $from = $options['config']['username'];
+                    }
+
                     
 
                     return self::laravelMail($to, $subject, $message, $from, $options);

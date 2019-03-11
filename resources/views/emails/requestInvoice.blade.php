@@ -1,7 +1,7 @@
 REQUEST INVOICE_PO# {{$requestInvoicePONumber}}
 
 Email Body:
-Hello {{$vendorApContact}}!,
+Hello {{$vendorApContactName}}!,
 
 Please REPLY-ALL to this email and attach your invoice for the purchase order detailed below. If you have any questions, please contact us directly.
 
