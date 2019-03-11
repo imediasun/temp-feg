@@ -346,9 +346,7 @@
                     // Disable order items for Non-Freehand orders and Orders from Store
                     $readOnlyItem = 'freehand="1" onfocus="init(this.id,this);"';
                             $readonlyStatus = 'readonly';
-                            if($isPreFreehand == 1){
-                                $readonlyStatus = '';
-                            }
+
 
                     if ((is_object($row) && $row->is_freehand != 1) || $fromStore == 1) {
                         $readOnlyItem = $readonlyStatus.' freehand="0"';
