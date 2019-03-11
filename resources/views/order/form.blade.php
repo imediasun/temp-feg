@@ -355,11 +355,13 @@
                     ?>
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
-                                        style="width:30px;border:none;background:none"/></td>
+                                        style="width:35%;border:none;background:none; "/>
+                            <button  type="button"  title="Make this item freehand" style="width: 55%; padding: 0px 4px;  display: none; " class="btn btn-primary btn-small tips make-content-editable"><i class="fa  fa-edit"></i></button>
+                        </td>
                         <td><br/><input type="text" placeholder="SKU" {{  is_object($row) ? $fromStore == 1?'readonly': $row->is_freehand != 1 && $isPreFreehand !=1 ?'readonly': '':'readonly' }} class="form-control sku" id="sku_num" name="sku[]"
                                     /></td>
 
-                        <td><br/> <input type="text" name='item_name[]' is-pre-freehand="{{ $isPreFreehand }}" placeholder='Item  Name' id="item_name"
+                        <td><br/> <input type="text" name='item_name[]' is-pre-freehand="{{ $isPreFreehand }}" placeholder='Item  Name' prevent-search="0" id="item_name"
                                          class='form-control item_name mysearch' {!! $readOnlyItem !!}  maxlength="225"
                                          required>
                         </td>
@@ -841,7 +843,7 @@
                 ///window.ParsleyUI.removeError($("input").pars‌​ley(), 'required');
                 // $('input[name^=price],input[name^=case_price],input[name^=qty]').parsley().reset();
 
-                addProductRow();
+                addProductRow(true);
                 handleItemCount('add');
                 if(add_new_item_button_click == 1){
                     setTimeout(function () {
@@ -1643,6 +1645,7 @@
         }
 
         function addProductRow() {
+            console.log("Add order contents");
             var productRows = $('.itemstable tbody tr').length;
             let clone = $('.itemstable tbody tr:first').clone();
             let newtrID = clone.prop('id') + productRows;
@@ -1654,6 +1657,8 @@
                 @endif
             });
             $(clone).find('.hide-button').attr({'id':'hide-button' + productRows,'title':"Remove Item"});
+            $(clone).find('.make-content-editable').css('display', '');
+
             $(clone).find('.hide-button').tooltip();
             $(clone).find('.add-items-button').attr({'id': 'add-items-button' + productRows,'title':'Add product to the Product List'});
             $(clone).find('.add-items-button').tooltip();
@@ -1677,6 +1682,8 @@
             });
             //reindex row id
             reindexRows($('.itemstable tbody tr'));
+            $('.tips').tooltip('destroy');
+            $('.tips').tooltip();
         }
 
         function reindexRows(rowsCollection){
@@ -1800,6 +1807,9 @@ $(function(){
     <script>
         function init(id, obj) {
 
+            if ($(obj).attr('prevent-search') == 1){
+                return false;
+            }
             var cache = {}, lastXhr;
             var trid = $(obj).closest('tr').attr('id');
             var skuid = $("#" + trid + "  input[id^='sku_num']");
@@ -2429,5 +2439,8 @@ $(function(){
                     });
                 }
             });
+
+            $('.tips').tooltip('destroy');
+            $('.tips').tooltip();
         });
     </script>

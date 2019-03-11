@@ -2219,3 +2219,49 @@ function reInitFormValidatorParsley(form){
     }
 }
 var onlyOnceTimeTrigger = true;
+
+//make-content-editable
+
+$(function () {
+    $(document).on('click','.make-content-editable',function () {
+        var icon = $(this).children('i');
+        var row = $(this).closest('tr');
+        var skuField = $('#'+row.attr('id')+' input[name="sku[]"]');
+        var itemNameField = $('#'+row.attr('id')+' input[name="item_name[]"]');
+        var itemDescriptionField = $('#'+row.attr('id')+' textarea[name="item[]"]');
+        var addItemBtn = $('#'+row.attr('id')+' .addToProductList');
+        $('#'+row.attr('id')+' input,'+'#'+row.attr('id')+' textarea').empty();
+
+        if(icon.hasClass('fa-edit')){
+            icon.removeClass('fa-edit');
+            icon.addClass('fa-arrow-left');
+            $(this).attr('title','Add from product list');
+
+            addItemBtn.css("display",'');
+
+            skuField.removeAttr('readonly');
+            itemNameField.removeAttr('readonly');
+            itemNameField.attr('prevent-search','1');
+            itemNameField.attr('is-pre-freehand','1');
+            itemDescriptionField.removeAttr('readonly');
+
+        }else {
+            icon.removeClass('fa-arrow-left');
+            icon.addClass('fa-edit');
+            $(this).attr('title','Make this item freehand');
+
+            addItemBtn.css("display",'none');
+
+            skuField.attr('readonly','readonly');
+            itemNameField.removeAttr('readonly');
+            itemNameField.attr('prevent-search','0');
+            itemNameField.removeAttr('is-pre-freehand');
+            itemDescriptionField.attr('readonly','readonly');
+        }
+
+        $(this).tooltip('destroy');
+        $(this).tooltip();
+
+        });
+
+})
