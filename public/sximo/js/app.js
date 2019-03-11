@@ -1852,7 +1852,7 @@ function approvePartRequest(id,rowId) {
         success:function (response) {
         $('.ajaxLoading').hide();
             if(response.status == 'success'){
-                var approveLabel = '<span style="background: #47e245; color:white; font-weight: 700; padding: 2px 5px;">Approved</span>';
+                var approveLabel = '<span style="background: #3c763d; color:white; font-weight: 700; padding: 2px 5px;">Approved</span>';
                 actionBox.html(approveLabel);
                 $(document.getElementById('part-number-' + rowId)).prop('readonly', true);
                 $(document.getElementById('part-qty-' + rowId)).prop('readonly', true);

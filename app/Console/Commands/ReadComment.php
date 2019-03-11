@@ -133,44 +133,46 @@ class ReadComment extends Command
                 $L->log("Checked if ticket exists result = ".$ticketExists);
 
                 if ($ticketExists) {
-                    $L->log("in if block means ticket exists");
-                    $posted = $this->getDate($meta);
-                    $L->log("Posted date = ".$posted);
-                    $L->log("inbox = ".$inbox);
-                    $L->log("email_number = ".$email_number);
-                    $L->log("getMessage() = ".$this->getMessage($inbox, $email_number));
-                    $message = $this->cleanUpMessage($this->getMessage($inbox, $email_number));
-                    $attachments = $this->getIMapAttachment($inbox,$email_number,$ticketId);
-                    $L->log("Message = ".$posted);
-                    //Insert In sb_ticketcomments table
-                    $L->log("Creating new comment");
-                    $comment_model = new Ticketcomment();
-                    $L->log("Created new comment instance");
-                    $commentsData = array(
-                        'TicketID' => $ticketId,
-                        'Comments' => $message,
-                        'Posted' => $posted,
-                        'UserID' => $userId,
-                        'USERNAME' => $userName,
-                        'imap_read' => 1,
-                        'imap_meta' => json_encode($meta),
-                        'imap_message_id' => $UID,
-                    );
-                    $L->log("comments data = ".json_encode($commentsData));
-                    $L->log("comments Attachments = ".json_encode($attachments));
-                    $L->log('Adding comment to database', $commentsData);
-                    $id = $comment_model->insertRow($commentsData, NULL);
-                    $commentModel = $comment_model->getInsertRecordObject($id);
-                    foreach($attachments as $attachment){
-                        $attachmentClass = new Attachment($attachment);
-                        $attachmentClass->name = $attachment['name'];
-                        $attachmentClass->path = $attachment["path"];
-                        $attachmentClass->extension = $attachment['extension'];
-                        $commentModel->attachments()->save($attachmentClass);
-                    }
-                    $L->log("Updaet ticket updated date to $posted");
-                    Servicerequests::where("TicketID", $ticketId)->update(['updated' => $posted]);
-
+                    $serverRequestTicket = Servicerequests::where(['TicketID'=>$ticketId,'ticket_type'=>'game-related'])->where('Status','=','closed')->get();
+                   if ($serverRequestTicket->count() == 0) {
+                       $L->log("in if block means ticket exists");
+                       $posted = $this->getDate($meta);
+                       $L->log("Posted date = " . $posted);
+                       $L->log("inbox = " . $inbox);
+                       $L->log("email_number = " . $email_number);
+                       $L->log("getMessage() = " . $this->getMessage($inbox, $email_number));
+                       $message = $this->cleanUpMessage($this->getMessage($inbox, $email_number));
+                       $attachments = $this->getIMapAttachment($inbox, $email_number, $ticketId);
+                       $L->log("Message = " . $posted);
+                       //Insert In sb_ticketcomments table
+                       $L->log("Creating new comment");
+                       $comment_model = new Ticketcomment();
+                       $L->log("Created new comment instance");
+                       $commentsData = array(
+                           'TicketID' => $ticketId,
+                           'Comments' => $message,
+                           'Posted' => $posted,
+                           'UserID' => $userId,
+                           'USERNAME' => $userName,
+                           'imap_read' => 1,
+                           'imap_meta' => json_encode($meta),
+                           'imap_message_id' => $UID,
+                       );
+                       $L->log("comments data = " . json_encode($commentsData));
+                       $L->log("comments Attachments = " . json_encode($attachments));
+                       $L->log('Adding comment to database', $commentsData);
+                       $id = $comment_model->insertRow($commentsData, NULL);
+                       $commentModel = $comment_model->getInsertRecordObject($id);
+                       foreach ($attachments as $attachment) {
+                           $attachmentClass = new Attachment($attachment);
+                           $attachmentClass->name = $attachment['name'];
+                           $attachmentClass->path = $attachment["path"];
+                           $attachmentClass->extension = $attachment['extension'];
+                           $commentModel->attachments()->save($attachmentClass);
+                       }
+                       $L->log("Updaet ticket updated date to $posted");
+                       Servicerequests::where("TicketID", $ticketId)->update(['updated' => $posted]);
+                   }
                 }
                 else {
                     $L->log("TICKET [ID: $ticketId] DOES NOT EXIST. Skipping.....");

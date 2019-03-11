@@ -284,13 +284,13 @@ Red: #ed5565;  Green: 1cc63f;
 }
 
 .greenbutton{
-    background: #47e245 !important;
+    background: #3c763d !important;
     color:white !important;
-    border-color: #47e245 !important;
+    border-color: #3c763d !important;
 }
 
-.greenbutton:hover{
-    background: #2bcc29 !important;
+.greenbutton:hover,.greenbutton:active{
+    background: #3c763d !important;
     color:white !important;
-    border-color: #2bcc29 !important;
+    border-color: #3c763d !important;
 }
