@@ -162,7 +162,7 @@
 					{!! SiteHelpers::activeLang('Vendor AP Contact Name', (isset($fields['vendor_ap_contact_name']['language'])? $fields['vendor_ap_contact_name']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('vendor_ap_contact_name', $row['vendor_ap_contact_name'],array('class'=>'form-control', 'placeholder'=>''   )) !!}
+					  {!! Form::text('vendor_ap_contact_name', $row['vendor_ap_contact_name'],array('class'=>'form-control', 'placeholder'=>'',  'parsley-type'=>'vendor_ap_contact_name'   )) !!}
 					 </div>
 					 <div class="col-md-2">
 
@@ -173,7 +173,7 @@
 					{!! SiteHelpers::activeLang('Vendor AP Email', (isset($fields['vendor_ap_email']['language'])? $fields['vendor_ap_email']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('vendor_ap_email', $row['vendor_ap_email'],array('class'=>'form-control', 'placeholder'=>''   )) !!}
+					  {!! Form::text('vendor_ap_email', $row['vendor_ap_email'],array('class'=>'form-control', 'placeholder'=>'',  'parsley-type'=>'vendor_ap_email'   )) !!}
 					 </div>
 					 <div class="col-md-2">
 

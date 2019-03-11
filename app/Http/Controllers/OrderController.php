@@ -3803,15 +3803,15 @@ ORDER BY aa_id");
         }
 
         foreach ($arrayOfFromUserConfig as $configKey){
-            $config[$configKey] = $fromUserConfig->{$configKey};
+            $config[$configKey] = $configKey != 'pretend' ? $fromUserConfig->{$configKey} : ($fromUserConfig->{$configKey} == 0 ? false : true);
         }
 
         if(!$order->vendor)
             return Response::json(['status'=>'error', 'message'=>"Oops! No Vendor found. Please contact to the administrator."]);
 
-        return $vendorApContactName = $order->vendor->vendor_ap_contact_name;
+        $vendorApContactName = $order->vendor->vendor_ap_contact_name;
 
-        $message = $this->getShow($orderId, 'emails.inquireOrder');
+        $message = (string)$this->getShow($orderId, 'emails.inquireOrder');
         $message = view('emails.requestInvoice', compact('message', 'requestInvoicePONumber', 'vendorApContactName'));
 
 
@@ -3829,7 +3829,7 @@ ORDER BY aa_id");
         $options['preferGoogleOAuthMail']   = false;
 
         $options['to']                      = $systemEmailRecipients['to'];
-        $options['configName']              = $systemEmailConfiguration['config_name'];
+        $options['configName']              = $systemEmailConfiguration->config_name;
         $options['from']                    = $fromUserConfig->from;
         $options['isTest']                  = $isTest;
 
