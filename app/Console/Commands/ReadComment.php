@@ -176,7 +176,7 @@ class ReadComment extends Command
                        $dataUpdate = ['updated' => $posted];
                        if($serverRequestTicket){
                            if($serverRequestTicket->ticket_type == 'game-related'){
-                               $dataUpdate['Status'] = 'in_progress';
+                               $dataUpdate['Status'] = 'in_process';
                            }
                        }
 
