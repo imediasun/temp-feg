@@ -609,7 +609,7 @@
                 } else {
                     Price = unitPrice;
                 }
-                Qty = Number(Qty) == 0 ? 1:Qty;
+                Qty = Number(Qty) == 0 ? 0:Qty;
                 sum = (Qty * Price).toFixed(6);
                 Subtotal += parseFloat(sum);
                 //sum = sum.toFixed(PRECISION);
@@ -1670,6 +1670,9 @@
             if(isRunTimeClick != 1 && $('#isAllowedToCombineFreehandProductList').val() == 1) {
                 if($('#is_freehand').val() == 0 ) {
                     $(clone).find('.make-content-editable').css('display', '');
+                    $(clone).find('.make-content-editable i.fa').removeClass('fa-file-o');
+                    $(clone).find('.make-content-editable i.fa').addClass('fa-edit');
+                   // $(clone).find('.addToProductList').css('display', '');
                 }
             }
 
@@ -1833,7 +1836,8 @@ $(function(){
             var itemid = $("#" + trid + "  textarea[name^=item]");
             var retailpriceid = $('#' + trid + "  input[name^=retail]");
             var selectorProductId = $('#' + trid + "  input[name^=product_id]");
-            var casePerQuantityId = $('#' + trid + " input[id^=case_per_quantity]").attr('id');
+//            var casePerQuantityId = $('#' + trid + " input[id^=case_per_quantity]").attr('id');
+            var casePerQuantityId = $('#' + trid + " input[id^=case_per_quantity]");
             if(($('#is_freehand').val() == 0))
             {
                 $(obj).autocomplete({
@@ -1939,7 +1943,8 @@ $(function(){
                                 }
 
                                 if(result.qty_per_case){
-                                    $("#"+casePerQuantityId).val(result.qty_per_case);
+//                                    $("#"+casePerQuantityId).val(result.qty_per_case);
+                                    casePerQuantityId.val(result.qty_per_case);
                                 }
                                 if (result.sku) {
                                     $(skuid).val(result.sku);

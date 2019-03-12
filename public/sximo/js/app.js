@@ -2230,6 +2230,8 @@ $(function () {
         var itemNameField = $('#'+row.attr('id')+' input[name="item_name[]"]');
         var itemDescriptionField = $('#'+row.attr('id')+' textarea[name="item[]"]');
         var addItemBtn = $('#'+row.attr('id')+' .addToProductList');
+        var unitPriceField = $('#'+row.attr('id')+' #price');
+        var casePriceField = $('#'+row.attr('id')+' #case_price');
 
         if(icon.hasClass('fa-edit')){
             icon.removeClass('fa-edit');
@@ -2240,6 +2242,8 @@ $(function () {
             addItemBtn.css("display",'');
 
             skuField.removeAttr('readonly');
+            unitPriceField.removeAttr('onkeyup');
+            casePriceField.removeAttr('onkeyup');
             itemNameField.removeAttr('readonly');
             itemNameField.attr('prevent-search','1');
             itemNameField.attr('is-pre-freehand','1');
@@ -2252,6 +2256,9 @@ $(function () {
             $(this).attr('title','Make this item freehand');
 
             addItemBtn.css("display",'none');
+
+            unitPriceField.attr('onkeyup','calculateUnitPrice(this);');
+            casePriceField.attr('onkeyup','calculateUnitPrice(this);');
 
             skuField.attr('readonly','readonly');
             itemNameField.removeAttr('readonly');
