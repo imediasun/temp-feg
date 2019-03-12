@@ -3806,20 +3806,41 @@ ORDER BY aa_id");
             $config[$configKey] = $configKey != 'pretend' ? $fromUserConfig->{$configKey} : ($fromUserConfig->{$configKey} == 0 ? false : true);
         }
 
-        if(!$order->vendor)
+        $vendor = $order->vendor;
+
+        if(!$vendor)
             return Response::json(['status'=>'error', 'message'=>"Oops! No Vendor found. Please contact to the administrator."]);
 
-        $vendorApContactName = $order->vendor->vendor_ap_contact_name;
+        $vendorApContactName = $vendor->vendor_ap_contact_name;
 
         $message = (string)$this->getShow($orderId, 'emails.inquireOrder');
         $message = view('emails.requestInvoice', compact('message', 'requestInvoicePONumber', 'vendorApContactName'));
 
 
-        if(!empty($systemEmailRecipients['to'])){
-            $systemEmailRecipients['to'] .= ','.Session::get('eid');
-        }else{
-            $systemEmailRecipients['to'] .= Session::get('eid');
-        }
+        /**
+         * Setting the cc for email sending
+         */
+        if($systemEmailRecipients['cc'] == '')
+            $systemEmailRecipients['cc'] = Session::get('eid');
+        else
+            $systemEmailRecipients['cc'] .= ','.Session::get('eid');
+
+        /**
+         * Setting the to for email sending
+         */
+        $vendorEmails = [$vendor->email, $vendor->email_2, $vendor->games_contact_email, $vendor->vendor_ap_email];
+        $vendorEmails = array_filter($vendorEmails, function ($var){
+            return ($var != '' && !is_null($var));
+        });
+
+        $systemEmailRecipients['to']        .= ','.implode(',',$vendorEmails);
+        $toEmailsArray                      =   array_values(
+                                                    array_unique(
+                                                        explode(',', $systemEmailRecipients['to'])
+                                                    )
+                                                );
+
+        $systemEmailRecipients['to']        = implode(',',$toEmailsArray);
 
         $options['message']                 = $message;
         $options['subject']                 = $subject;
@@ -3827,14 +3848,11 @@ ORDER BY aa_id");
         $options['bcc']                     = $systemEmailRecipients['bcc'];
         $options['replyTo']                 = '';
         $options['preferGoogleOAuthMail']   = false;
-
         $options['to']                      = $systemEmailRecipients['to'];
         $options['configName']              = $systemEmailConfiguration->config_name;
         $options['from']                    = $fromUserConfig->from;
         $options['isTest']                  = $isTest;
-
         $options['config']                  = $config;
-
         $options['overrideToEmail'] =
 
         FEGSystemHelper::sendSystemEmail(
