@@ -87,6 +87,7 @@ class TicketMailer
         $subject    = "$locationName,$gameRelatedSubject $title, [Service Request #{$ticketId}] $createdOn" ;
         if($partSubject != ''){
             $subject = $partSubject;
+            $reply_to = env('MAIL_USERNAME','info@fegllc.com');
         }
 //        $headers    = 'MIME-Version: 1.0' . "\r\n";
 //        $headers   .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
