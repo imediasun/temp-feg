@@ -171,7 +171,16 @@ class ReadComment extends Command
                            $commentModel->attachments()->save($attachmentClass);
                        }
                        $L->log("Updaet ticket updated date to $posted");
-                       Servicerequests::where("TicketID", $ticketId)->update(['updated' => $posted]);
+
+                       $serverRequestTicket = Servicerequests::where(['TicketID'=>$ticketId,])->first();
+                       $dataUpdate = ['updated' => $posted];
+                       if($serverRequestTicket){
+                           if($serverRequestTicket->ticket_type == 'game-related'){
+                               $dataUpdate['Status'] = 'in_progress';
+                           }
+                       }
+
+                       Servicerequests::where("TicketID", $ticketId)->update($dataUpdate);
                    }
                 }
                 else {
