@@ -148,7 +148,7 @@
                 
                     <h4>
                         <strong>
-                            @if(strpos($vrow->report_name, '- Merchandise') !== false)
+                            @if(strpos($vrow->report_name, '- Merch') !== false)
                                 <i style="background-color: green; color: white">&nbsp;&nbsp;>&nbsp;&nbsp;</i>
                             @elseif(strpos($vrow->report_name, '- Games') !== false)
                                 <i style="background-color: red; color: white">&nbsp;&nbsp;>&nbsp;&nbsp;</i>
