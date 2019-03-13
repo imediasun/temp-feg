@@ -112,7 +112,8 @@
                     </div>
                 </div>
                     </div>
-
+</div>
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group  ">
                             <label for="Date" class=" control-label col-md-4 text-left">
@@ -145,7 +146,8 @@
                             </div>
                         </div>
                     </div>
-
+                </div>
+                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group" >
                             <label for="Service Request Title" class="control-label col-md-2 text-left">
