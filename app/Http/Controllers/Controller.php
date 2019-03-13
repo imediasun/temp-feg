@@ -168,8 +168,14 @@ abstract class Controller extends BaseController
 
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
             $delimiter = empty($request->input('delimiter')) ? ' ' : $request->input('delimiter');
+            $space = empty($request->input('space')) ? 0 : $request->input('space');
             $assignedLocation = $param[0] == 'location' && strtolower(''. @$request->input('assigned')) == 'me';
-            
+
+            //needs spaces in front of and after the | symbol only
+            if((!empty($delimiter) && trim($delimiter) == "|") || $space == 1 ){
+                $delimiter = " ".$delimiter." ";
+            }
+
             if ($assignedLocation) {
                 $rows = $this->model->getUserAssignedLocation();
             }
