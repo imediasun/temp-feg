@@ -168,8 +168,14 @@ abstract class Controller extends BaseController
 
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
             $delimiter = empty($request->input('delimiter')) ? ' ' : $request->input('delimiter');
+            $space = empty($request->input('space')) ? 0 : $request->input('space');
             $assignedLocation = $param[0] == 'location' && strtolower(''. @$request->input('assigned')) == 'me';
-            
+
+            //needs spaces in front of and after the | symbol only
+            if((!empty($delimiter) && trim($delimiter) == "|") || $space == 1 ){
+                $delimiter = " ".$delimiter." ";
+            }
+
             if ($assignedLocation) {
                 $rows = $this->model->getUserAssignedLocation();
             }
@@ -526,6 +532,7 @@ abstract class Controller extends BaseController
         $product_type=(isset($_GET['product_type']) ? $_GET['product_type'] : '');
         $active = (isset($_GET['active']) ? $_GET['active'] : '');
         $active_inactive = (isset($_GET['active_inactive']) ? $_GET['active_inactive'] : '');
+        $filterBy = (isset($_GET['filterBy']) ? $_GET['filterBy'] : '');
         $type = (isset($_GET['type']) ? $_GET['type'] : '');
         $view = (isset($_GET['view']) ? $_GET['view'] : '');
         $v1 = (isset($_GET['v1']) ? $_GET['v1'] : '');
@@ -554,6 +561,9 @@ abstract class Controller extends BaseController
         }
         if ($active_inactive != '') {
             $appends['active_inactive'] = $active_inactive;
+        }
+        if ($filterBy != '') {
+            $appends['filterBy'] = $filterBy;
         }
         if ($view != '') {
             $appends['view'] = $view;
