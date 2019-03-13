@@ -189,7 +189,7 @@
 		timetoclose = Number('{{env('NOTIFICATION_POPUP_CLOSE_TIMEOUT_PASSWORD_VAULT', 3)}}') * 60000;
 		showFirstPopup = setTimeout(function () {
 			App.notyConfirm({
-				message: "Screen Timed Out! <br>Do you want to stay on this screen? <br> Note : After 3 minutes if no further action is performed screen will automatically get closed",
+				message: "Are you still using this page? For security purposes this page will automatically close itself in 3 minutes.",
 				confirmButtonText: 'Yes',
 				cancelButtonText: 'No',
 				timeout:500,
