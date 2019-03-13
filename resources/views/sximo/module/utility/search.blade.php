@@ -92,7 +92,7 @@ if('{{ $pageModule }}' == 'merchandisebudget'){
 if('{{ $pageModule }}' == 'new-location-setup'){
 		$('.ajaxLoading').show();
 	$('#new-location-setupSearch select[name="location_id"]').jCombo(
-			"{{ URL::to('new-location-setup/comboselect?filter=location:id:location_name ') }}");
+			"{{ URL::to('new-location-setup/comboselect?filter=location:id:location_name|id ') }}"+ "&delimiter=%20-%20");
 	 timeout = setTimeout(function () {
 		$('.ajaxLoading').hide();
 		if(timeout){
