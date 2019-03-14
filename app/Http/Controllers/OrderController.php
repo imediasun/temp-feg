@@ -3859,7 +3859,7 @@ ORDER BY aa_id");
             $options
         );
 
-        return Response::json(['status'=>'success', 'message'=>'Inquire order email sent successfully!']);
+        return Response::json(['status'=>'success', 'message'=>'Request Invoice email sent successfully!']);
 
     }
 
