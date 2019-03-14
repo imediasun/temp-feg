@@ -23,6 +23,7 @@ use App\Models\OrderSendDetails;
 use App\Models\productlog;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
+use App\SystemEmailConfigName;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -3626,40 +3627,13 @@ ORDER BY aa_id");
         $orderType = $order->order_type_id;
 
         $systemEmailConfiguration = $this->getSystemEmailConfigurations($orderType, $methodFunctionality);
-
+        extract($systemEmailConfiguration);
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
-        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($systemEmailConfiguration->config_name, null, $isTest);
+        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($systemEmailConfiguration['config_name'], null, $isTest);
 
         $requestInvoicePONumber = $order->po_number;
 
         $subject = 'REQUEST INVOICE '.$requestInvoicePONumber;
-
-        $arrayOfFromUserConfig = [
-            'encryption',
-            'sendmail',
-            'username',
-            'password',
-            'pretend',
-            'driver',
-            'host',
-            'port',
-            'from',
-            'name'
-        ];
-
-        $fromUserConfig = \DB::table('email_sender_credentials')
-            ->where('username', $systemEmailConfiguration->from_email_address)
-            ->first();
-
-        $config = [];
-
-        if(!$fromUserConfig){
-            return Response::json(['status'=>'error', 'message'=>"Oops! Something went wrong. Please contact to the administrator."]);
-        }
-
-        foreach ($arrayOfFromUserConfig as $configKey){
-            $config[$configKey] = $configKey != 'pretend' ? $fromUserConfig->{$configKey} : ($fromUserConfig->{$configKey} == 0 ? false : true);
-        }
 
         $vendor = $order->vendor;
 
@@ -3704,8 +3678,8 @@ ORDER BY aa_id");
         $options['replyTo']                 = '';
         $options['preferGoogleOAuthMail']   = false;
         $options['to']                      = $systemEmailRecipients['to'];
-        $options['configName']              = $systemEmailConfiguration->config_name;
-        $options['from']                    = $fromUserConfig->from;
+        $options['configName']              = $systemEmailConfiguration['config_name'];
+        $options['from']                    = $config['from'];
         $options['isTest']                  = $isTest;
         $options['config']                  = $config;
         $options['overrideToEmail'] =
@@ -3719,9 +3693,9 @@ ORDER BY aa_id");
     }
 
     public function getSystemEmailConfigurations($orderType, $methodFunctionality){
-        return \DB::table('system_email_config_names')
+        return SystemEmailConfigName::with('config')
             ->where('method_name', $methodFunctionality)
             ->where('order_type_id', $orderType)
-            ->first();
+            ->first()->toArray();
     }
 }
