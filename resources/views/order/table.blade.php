@@ -291,6 +291,15 @@ usort($tableGrid, "SiteHelpers::_sort");
                                 <i class="fa fa-question" aria-hidden="true"></i>
                             </a>
 
+                            <a href="javascript:void(0)"
+                               data-id="{{$eid}}"
+                               id="{{$row->id}}"
+                               class="tips btn btn-xs btn-white requestInvoiceAction"
+                               title="{{ Lang::get('core.request_invoice_button_title') }}"
+                               style="vertical-align: middle"
+                            >
+                                <img src="/invoice.png"  style="vertical-align: middle; color: grey" width="15">
+                            </a>
                         @else
                             <a href="{{ URL::to('order/restoreorder/'.$row->id)}}"
                                data-id="{{$eid}}"
@@ -301,15 +310,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                             </a>
                         @endif
 
-                        <a href="javascript:void(0)"
-                           data-id="{{$eid}}"
-                           id="{{$row->id}}"
-                           class="tips btn btn-xs btn-white requestInvoiceAction"
-                           title="{{ Lang::get('core.request_invoice_button_title') }}"
-                           style="vertical-align: middle"
-                        >
-                            <img src="/invoice.png"  style="vertical-align: middle; color: grey" width="15">
-                        </a>
+
 
                         @if($row->isFullyReceived)
                             <a href="/order/dpl-file/{{ $row->id }}" class="tips btn btn-xs btn-white" title="Download Full DPL"><i class="fa fa-download"></i></a>
