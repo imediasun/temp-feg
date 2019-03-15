@@ -9,7 +9,7 @@ class SystemEmailConfigName extends Model
 
     protected $fillable = ['email_sender_credentials_id'];
 
-    public function config(){
+    public function email_sender(){
         return $this->belongsTo(EmailSenderCredential::class, 'email_sender_credentials_id');
     }
 }

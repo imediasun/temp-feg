@@ -695,7 +695,7 @@ class FEGSystemHelper
                     }
                     else if(isset($options['config'])){
                         \Config::set('mail', $options['config']);
-                        $from = $options['config']['username'];
+                        $from = $options['config']['from'];
                     }
 
                     

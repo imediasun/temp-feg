@@ -3774,7 +3774,7 @@ ORDER BY aa_id");
         $systemEmailConfiguration = $this->getSystemEmailConfigurations($orderType, $methodFunctionality);
         extract($systemEmailConfiguration);
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
-        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($systemEmailConfiguration['config_name'], null, $isTest);
+        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($config_name, null, $isTest);
 
         $requestInvoicePONumber = $order->po_number;
 
@@ -3823,10 +3823,10 @@ ORDER BY aa_id");
         $options['replyTo']                 = '';
         $options['preferGoogleOAuthMail']   = false;
         $options['to']                      = $systemEmailRecipients['to'];
-        $options['configName']              = $systemEmailConfiguration['config_name'];
-        $options['from']                    = $config['from'];
+        $options['configName']              = $config_name;
+        $options['from']                    = $email_sender['from'];
         $options['isTest']                  = $isTest;
-        $options['config']                  = $config;
+        $options['config']                  = $email_sender;
         $options['overrideToEmail'] =
 
         FEGSystemHelper::sendSystemEmail(
@@ -3838,7 +3838,7 @@ ORDER BY aa_id");
     }
 
     public function getSystemEmailConfigurations($orderType, $methodFunctionality){
-        return SystemEmailConfigName::with('config')
+        return SystemEmailConfigName::with('email_sender')
             ->where('method_name', $methodFunctionality)
             ->where('order_type_id', $orderType)
             ->first()->toArray();
