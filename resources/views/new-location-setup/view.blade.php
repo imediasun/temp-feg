@@ -189,7 +189,7 @@
 		timetoclose = Number('{{env('NOTIFICATION_POPUP_CLOSE_TIMEOUT_PASSWORD_VAULT', 3)}}') * 60000;
 		showFirstPopup = setTimeout(function () {
 			App.notyConfirm({
-				message: "<b>No Activity Detected<br />Are you still using this page? For security purposes this page will automatically close itself in 3 minutes.",
+				message: "<b>No Activity Detected</b><br />Are you still using this page? For security purposes this page will automatically close itself in 3 minutes.",
 				confirmButtonText: 'Yes',
 				cancelButtonText: 'No',
 				timeout:500,
