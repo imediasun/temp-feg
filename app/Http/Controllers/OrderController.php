@@ -3662,7 +3662,7 @@ ORDER BY aa_id");
             return ($var != '' && !is_null($var));
         });
 
-        $systemEmailRecipients['to']        .= ','.implode(',',$vendorEmails);
+        $systemEmailRecipients['to']        = $systemEmailRecipients['to'] != '' ? $systemEmailRecipients['to'].','.implode(',',$vendorEmails) : implode(',',$vendorEmails);
         $toEmailsArray                      =   array_values(
                                                     array_unique(
                                                         explode(',', $systemEmailRecipients['to'])
