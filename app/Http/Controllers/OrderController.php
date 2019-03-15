@@ -3682,7 +3682,9 @@ ORDER BY aa_id");
         $options['from']                    = $email_sender['from'];
         $options['isTest']                  = $isTest;
         $options['config']                  = $email_sender;
-        $options['overrideToEmail'] =
+        $options['overrideToEmailInTestMode'] = true;
+        $options['overrideCCEmailInTestMode'] = true;
+        $options['overrideBCCEmailInTestMode'] = true;
 
         FEGSystemHelper::sendSystemEmail(
             $options
