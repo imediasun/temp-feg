@@ -712,7 +712,7 @@
         $('.isReservedChk').on('ifChanged', function (event) {
             var checkbox = $('.reservedQtySection input[name="allow_negative_reserve_qty"]');
         if($(event.target).is(":checked")){
-            $('.reservedQtySection input[type="text"]').val('');
+          //  $('.reservedQtySection input[type="text"]').val('');
             checkbox.iCheck('uncheck');
             checkbox.change();
             $(".reservedQtySection").slideDown('slow');
