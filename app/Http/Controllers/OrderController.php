@@ -916,6 +916,7 @@ class OrderController extends Controller
                     'order_description' => $order_description,
                     'order_total' => $total_cost,
                     'freight_id' => $freight_type_id,
+                    'is_freehand' => $isFreehandFlag,
                     'alt_address' => $alt_address,
                     'po_notes' => $notes,
                     'po_notes_additionaltext' => $po_notes_additionaltext,
@@ -1195,6 +1196,7 @@ class OrderController extends Controller
                 }
                 $data['order_total'] = $orderTotal;
             }
+            $data['is_freehand'] = $isFreehandFlag;
             $this->model->insertRow($data, $id);
 
             \Session::put('order_id', $id);

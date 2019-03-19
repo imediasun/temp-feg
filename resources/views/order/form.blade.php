@@ -1670,8 +1670,8 @@
             if(isRunTimeClick != 1 && $('#isAllowedToCombineFreehandProductList').val() == 1) {
                 if($('#is_freehand').val() == 0 ) {
                     $(clone).find('.make-content-editable').css('display', '');
-                    $(clone).find('.make-content-editable i.fa').removeClass('fa-file-o');
-                    $(clone).find('.make-content-editable i.fa').addClass('fa-edit');
+                   // $(clone).find('.make-content-editable i.fa').removeClass('fa-file-o');
+                   // $(clone).find('.make-content-editable i.fa').addClass('fa-edit');
                    // $(clone).find('.addToProductList').css('display', '');
                 }
             }
