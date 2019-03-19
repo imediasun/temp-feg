@@ -718,6 +718,11 @@ class OrderController extends Controller
     function postSave(Request $request, $id = 0)
     {
         $productIds = $request->input('product_id');
+        $productIdsArray = [];
+        foreach($productIds as $productIdArr){
+            $productIdsArray[] = !empty($productIdArr) ? $productIdArr:0;
+        }
+        $productIds = $productIdsArray;
         $isFreehandFlag = $request->input('is_freehand',0);
         $productIdsUnique = is_array($productIds) ? array_unique($productIds):[];
         if(count($productIdsUnique) == 1){
@@ -725,7 +730,6 @@ class OrderController extends Controller
                 $isFreehandFlag = 1;
             }
         }
-
             if($isFreehandFlag == 0 && in_array(0,$productIds)){
                 $items = $request->input('item_name');
 
