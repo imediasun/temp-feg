@@ -717,9 +717,18 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-            if($request->get('is_freehand') == 0 && in_array(0,$request->get('product_id'))){
+        $productIds = $request->input('product_id');
+        $isFreehandFlag = $request->input('is_freehand',0);
+        $productIdsUnique = is_array($productIds) ? array_unique($productIds):[];
+        if(count($productIdsUnique) == 1){
+            if($productIdsUnique[0] == 0){
+                $isFreehandFlag = 1;
+            }
+        }
+
+            if($isFreehandFlag == 0 && in_array(0,$productIds)){
                 $items = $request->input('item_name');
-                $productIds = $request->get('product_id');
+
                 $errorMessage = '';
                 for ($i=0; $i< count($items); $i++){
                         if($productIds[$i] == 0 || $productIds[$i] == ''){
@@ -802,7 +811,7 @@ class OrderController extends Controller
             $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
-            $is_freehand = $request->get('is_freehand') == "1" ? 1 : 0;
+            $is_freehand = $isFreehandFlag;
             $po_1 = $request->get('po_1');
             $po_2 = $request->get('po_2');
             $po_3 = $request->get('po_3');
