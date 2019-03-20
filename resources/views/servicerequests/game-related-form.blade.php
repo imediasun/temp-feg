@@ -225,11 +225,16 @@
                     </div>
                 </div>
 
-                        <div id="part-requests-contianer" @if($row['issue_type_id'] == \App\Models\Servicerequests::PART_APPROVAL) style="display: block;" @else style="display: none;" @endif class="form-group  ">
+                        <div id="part-requests-contianer" @if($row['issue_type_id'] != \App\Models\Servicerequests::TROUBLESHOOTING_ASSISTANCE) style="display: block;" @else style="display: none;" @endif class="form-group  ">
                             <label  class=" control-label col-md-2 text-left">
                                 Part Requests :
                             </label>
                             <div class="col-md-10 part-request-inner">
+                                <div class="row">
+                                    <div class="col-md-4" ><label for="part-number">Part Number</label></div>
+                                    <div class="col-md-4" > <label for="part-number">Quantity</label></div>
+                                    <div class="col-md-4" ><label for="part-number">Cost</label></div>
+                                </div>
                                 <div class="row">
 
                                             <span class="part-request-field-contianer"
@@ -242,20 +247,20 @@
                                     <div class="col-md-4" style="margin-bottom: 20px;">
                                             <input type="hidden" style="display: none;" name="part_request_id[]" class="part-request-id" id="partrequestid-{{ $i }}" value="{{ $partRequest->id }}">
                                         @if($i == 1)
-                                        <label for="part-number">Part Number</label>
+                                        {{--<label for="part-number">Part Number</label>--}}
                                         @endif
                                         <input type="text" class="form-control" name="part_number[]" required value="{{ $partRequest->part_number }}" id="part-number">
                                     </div>
                                     <div class="col-md-4" style="margin-bottom: 20px;">
                                         @if($i == 1)
-                                        <label for="part-number">Quantity</label>
+                                        {{--<label for="part-number">Quantity</label>--}}
                                         @endif
                                         <input type="number" name="qty[]" value="{{ $partRequest->qty }}" required class="form-control">
                                     </div>
                                     <div class="col-md-4 part-request-last-field"
                                          style="margin-bottom: 20px; position: relative;">
                                         @if($i == 1)
-                                        <label for="part-number">Cost</label>
+                                        {{--<label for="part-number">Cost</label>--}}
                                         @endif
                                         <div class="input-group ig-full">
                                 <span class="input-group-addon" style="border-right: 1px solid #e5e6e7;
@@ -264,7 +269,7 @@
                                             <input type="number" step="1" placeholder="0.00" required value="{{ CurrencyHelpers::formatPrice($partRequest->cost,'5',false) }}"
                                                    style="padding-left: 35px;" name="cost[]" class="form-control">
                                         </div>
-                                            @if($i > 1)
+                                            @if($i > 0)
                                         <i class="fa fa-times tips remove-part-request-fields" title="" onclick="removePartRequest('part-request-field_{{ $i }}');" style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;" data-original-title="Remove"></i>
                                        @endif
                                         </div>
@@ -276,16 +281,16 @@
                                                 @else
                                                     <span class="part-request-field" id="part-request-field_1">
                                     <div class="col-md-4" style="margin-bottom: 20px;">
-                                        <label for="part-number">Part Number</label>
+                                        {{--<label for="part-number">Part Number</label>--}}
                                         <input type="text" required class="form-control" name="part_number[]" id="part-number">
                                     </div>
                                     <div class="col-md-4" style="margin-bottom: 20px;">
-                                        <label for="part-number">Quantity</label>
+                                        {{--<label for="part-number">Quantity</label>--}}
                                         <input type="number" required name="qty[]" class="form-control">
                                     </div>
                                     <div class="col-md-4 part-request-last-field"
                                          style="margin-bottom: 20px; position: relative;">
-                                        <label for="part-number">Cost</label>
+                                        {{--<label for="part-number">Cost</label>--}}
                                         <div class="input-group ig-full">
                                 <span class="input-group-addon" style="border-right: 1px solid #e5e6e7;
     position: absolute;
@@ -293,6 +298,7 @@
                                             <input type="number" step="1" placeholder="0.00" value=""
                                                    style="padding-left: 35px;" required name="cost[]" class="form-control">
                                         </div>
+                                        <i class="fa fa-times tips remove-part-request-fields" id="remove-part-request-fields1" title="" onclick="removePartRequest('part-request-field_1');" style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;" data-original-title="Remove"></i>
                                         </div>
 <div style="clear: both;"></div>
                                         </span>

@@ -142,7 +142,7 @@
                 <div class="ticketMainViewContainer col-sm-8 col-lg-9">
 
                     <div class="ticketHeaderAddonsContainer"></div>
-                    @if($row->issue_type_id == \App\Models\Servicerequests::PART_APPROVAL || $row->issue_type_id == \App\Models\Servicerequests::TROUBLESHOOTING_ASSISTANCE)
+                    @if($row->issue_type_id == \App\Models\Servicerequests::PART_APPROVAL || $row->issue_type_id == \App\Models\Servicerequests::TROUBLESHOOTING_ASSISTANCE || 1==1)
                         <div class="margin-bottom-30px">
 
                             <div class="row" style="    margin-right: 0px; margin-left: 0px;">
@@ -152,6 +152,14 @@
                                         <div class="col-md-12" style="padding-left: 0px;"><label class="replyLabel">Part
                                                 Information</label></div>
                                         <div class="col-md-12 part-request-inner">
+                                            <div class="row">
+                                            <div class="row" style="margin-left: 15px; margin-right: 15px">
+                                                <div class="col-md-3 part-number-container"><label >Part Number</label></div>
+                                                <div class="col-md-3 part-number-container"><label >Quantity</label></div>
+                                                <div class="col-md-3 part-number-container"><label >Cost</label></div>
+                                                <div class="col-md-3 part-number-container"><label>Action</label></div>
+                                            </div>
+                                            </div>
                                             <div class="row">
                                                 <dev class="part-request-field-contianer"
                                                      id="part-request-field-contianer">
@@ -165,8 +173,7 @@
                                                                  style="margin-left: 15px; margin-right: 15px">
                                                                 <div class="col-md-3 part-number-container"
                                                                      style="margin-bottom: 20px;">
-                                                                    @if($i == 1) <label for="part-number">Part
-                                                                        Number</label> @endif
+
                                                                     <input type="text" class="form-control fixonfocus"
                                                                            @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS)) readonly
                                                                            @endif
@@ -175,8 +182,6 @@
                                                                 </div>
                                                                 <div class="col-md-3 part-qty-container"
                                                                      style="margin-bottom: 20px;">
-                                                                    @if($i == 1) <label
-                                                                            for="part-number">Quantity</label> @endif
                                                                     <input type="number" name="qty"
                                                                            @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS)) readonly
                                                                            @endif
@@ -186,8 +191,6 @@
                                                                 </div>
                                                                 <div class="col-md-3 part-cost-container part-request-last-field"
                                                                      style="margin-bottom: 20px; position: relative;">
-                                                                    @if($i == 1) <label
-                                                                            for="part-number">Cost</label> @endif
                                                                     <div class="input-group ig-full">
                                 <span class="input-group-addon"
                                       style="border-right: 1px solid #e5e6e7; position: absolute; left: 0;    z-index: 111111;">$</span>
@@ -200,10 +203,10 @@
                                                                                id="part-cost-{{ $i }}" name="cost[]"
                                                                                class="form-control fixonfocus">
                                                                     </div>
+                                                                    <i class="fa fa-times tips remove-part-request-fields" id="remove-part-request-fields1" remove-id="{{ $partRequest->id }}" title="" onclick="removePartRequest('part-request-field_1','{{ $partRequest->id }}');" style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;" data-original-title="Remove"></i>
                                                                 </div>
                                                                 <div class="col-md-3"
                                                                      style="margin-bottom: 20px; text-align: center; padding-left: 0px; ">
-                                                                    @if($i == 1) <label>Action</label> @endif
                                                                     <div class="action-btns">
                                                                         @if(in_array($partRequest->status_id,\App\Models\PartRequest::STATUS_IDS))
 
@@ -261,21 +264,18 @@
                                                         <div class="part-request-field" id="part-request-field_1">
                                                             <div class="col-md-3 part-number-container"
                                                                  style="margin-bottom: 20px;">
-                                                                <label for="part-number">Part Number</label>
                                                                 <input type="text" class="form-control fixonfocus"
                                                                        name="part_number"
                                                                        id="part-number-1">
                                                             </div>
                                                             <div class="col-md-3 part-qty-container"
                                                                  style="margin-bottom: 20px;">
-                                                                <label for="part-number">Quantity</label>
                                                                 <input type="number" name="qty"
                                                                        class="form-control fixonfocus"
                                                                        id="part-qty-1">
                                                             </div>
                                                             <div class="col-md-3 part-cost-container part-request-last-field"
                                                                  style="margin-bottom: 20px; position: relative;">
-                                                                <label for="part-number">Cost</label>
                                                                 <div class="input-group ig-full">
                                 <span class="input-group-addon"
                                       style="border-right: 1px solid #e5e6e7; position: absolute; left: 0;    z-index: 111111;">$</span>
@@ -285,10 +285,11 @@
                                                                            class="form-control fixonfocus"
                                                                            id="part-cost-1">
                                                                 </div>
+                                                                <i class="fa fa-times tips remove-part-request-fields" id="remove-part-request-fields1" title="" onclick="removePartRequest('part-request-field_1');" style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;" data-original-title="Remove"></i>
+
                                                             </div>
                                                             <div class="col-md-3"
                                                                  style="margin-bottom: 20px; text-align: center; padding-left: 0px; ">
-                                                                <label>Action</label>
                                                                 <div class="action-btns">
 
                                                                     <a href="#"

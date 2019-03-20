@@ -1763,6 +1763,14 @@ $(function () {
             $('#part-requests-contianer input[type="text"], #part-requests-contianer input[type="number"]').attr('required','required');
 
             $('#trobleshotingchecklist-contianer input[name="troubleshootchecklist[]"]').iCheck('uncheck');
+        }else if($.inArray(Number($(this).val()),[1,3]) != -1){
+            $('#trobleshotingchecklist-contianer').show('slow');
+
+
+            $('#part-requests-contianer input[type="text"], #part-requests-contianer input[type="number"]').attr('required','required');
+            $('#trobleshotingchecklist-contianer input[name="troubleshootchecklist[]"]').iCheck('uncheck');
+            $('#part-requests-contianer').show('slow');
+
         } else {
             $('#part-requests-contianer input[type="text"], #part-requests-contianer input[type="number"]').removeAttr('required');
             $('#part-requests-contianer').hide('slow');
@@ -1779,7 +1787,11 @@ $(function () {
             $('#sbticketFormAjax').parsley().destroy();
         }
         var partRequestFieldLenght = $('.part-request-field').length + 1;
-        var partRequestFields = $("#part-request-field_1").clone();
+        var lastInsertedId = ($('.part-request-field:last').attr('id')).split('_');
+        console.log(lastInsertedId);
+        var partRequestField = document.getElementsByClassName('part-request-field');
+
+        var partRequestFields = $(partRequestField[0]).clone();
         partRequestFields.attr('id', 'part-request-field_' + partRequestFieldLenght);
         partRequestFields.children('.col-md-4').children('input.form-control').val('');
         partRequestFields.children('.col-md-4').children('input.part-request-id').val(0);
@@ -1814,6 +1826,7 @@ $(function () {
 
         var onclick = 'onclick="removePartRequest(\'part-request-field_' + partRequestFieldLenght + '\');"';
         var removeFields = '<i class="fa fa-times tips remove-part-request-fields" id="remove-part-request-fields'+partRequestFieldLenght+'" title="Remove" ' + onclick + ' style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;"></i>';
+        partRequestFields.children('.part-request-last-field').children('.remove-part-request-fields').remove();
         partRequestFields.children('.part-request-last-field').append(removeFields);
         $('#part-request-field-contianer').append(partRequestFields);
         $('.tips').tooltip();
@@ -1824,9 +1837,12 @@ $(function () {
 
     });
 });
-function removePartRequest(id) {
+function removePartRequest(id,recordId) {
+    var partRequestLastFields = document.getElementsByClassName('part-request-field');
     var partRequestRemoved = $('#part_request_removed');
     var value = $("#" + id + " input.part-request-id").val();
+
+
     if (partRequestRemoved) {
         if (partRequestRemoved.val().length > 0) {
             partRequestRemoved.val(partRequestRemoved.val() + ',' + value);
@@ -1835,7 +1851,26 @@ function removePartRequest(id) {
         }
     }
 
-    $("#" + id).remove();
+    if(partRequestLastFields.length > 1) {
+        $("#" + id).remove();
+    }else{
+        $('#' + id+ ' input[type="text"], #' + id+ ' input[type="number"]').val('');
+
+        $('#' + id+ ' .action-btns .greenbutton, #' + id+ ' .action-btns .redbutton').hide('slow');
+    }
+
+    if(recordId != undefined){
+        $.ajax({
+            url:'/servicerequests/removepartrequest',
+            type:"post",
+            data:{id:recordId},
+            success:function (response) {
+                if(response.status == 'success'){
+                    notyMessage(response.message);
+                }
+            }
+        });
+    }
     if($('#sbticketFormAjax').length > 0) {
         $('#sbticketFormAjax').parsley().destroy();
         $('#sbticketFormAjax').parsley();
@@ -1983,7 +2018,7 @@ function savePartRequest(id,obj,partRequestId) {
             $('.ajaxLoading').hide();
             if (response.status == 'success') {
                 $(obj).remove();
-                $('#remove-part-request-fields' + id).remove();
+                $('#remove-part-request-fields' + id).attr('onclick',"removePartRequest('part-request-field_"+id+"','"+response.id+"');");
                 //hasPermission,id
                 var saveBtn = ' <a href="#" onclick="savePartRequest(\'' + id + '\',this,\'' + response.id + '\'); return false;" class="btn btn-primary tips" title="Save" style="margin-left: 3px;"><i class="fa fa-save"></i></a>';
 

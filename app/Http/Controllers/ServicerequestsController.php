@@ -1065,6 +1065,10 @@ class servicerequestsController extends Controller
                 if ($oldStatus != 'closed') {
                     $ticketsData['closed'] = date('Y-m-d H:i:s');
                 }
+            }elseif ($status == 'open'){
+                $ticketsData['Status'] = 'in_process';
+
+                //$ticketsData['closed'] = date('Y-m-d H:i:s');
             }
             else {
                 $ticketsData['closed']= null;   
@@ -1378,7 +1382,9 @@ class servicerequestsController extends Controller
 
             if($data['issue_type_id'] != Servicerequests::PART_APPROVAL) {
                 $this->model->saveTroubleshootingChecklist($troubleshootingchecklist, $id);
-            }else{
+            }
+
+            if($data['issue_type_id'] != Servicerequests::TROUBLESHOOTING_ASSISTANCE){
                 $partRequestIds = [];
                 if(count($partNumbers) > 0) {
                     $partRequestRemovedId = explode(',',$request->input('part_request_removed',0));
@@ -1646,6 +1652,23 @@ class servicerequestsController extends Controller
                 'status' => 'error',
 
             ));
+        }
+    }
+    public function postRemovepartrequest(Request $request){
+        $id = $request->input('id',0);
+        if($id>0) {
+            $isPartRequest = PartRequest::find($id);
+            if ($isPartRequest) {
+                $partRequest = PartRequest::where('id', $id);
+
+                if ($partRequest) {
+                    $partRequest->delete();
+                    return response()->json(array(
+                        'message' => 'Part request has been deleted',
+                        'status' => 'success'
+                    ));
+                }
+            }
         }
     }
 }
