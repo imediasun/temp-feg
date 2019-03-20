@@ -348,13 +348,21 @@
         );
         var form = $('#managefreightquotersFormAjax');
         form.submit(function () {
-            if (form.parsley('isValid') == true) {
-                $('#myModal').modal('show');
 
-                return false;
+            if($("#send_email_update").prop('checked')){
+                if (form.parsley('isValid') == true) {
+                    $('#myModal').modal('show');
 
-            } else {
-                return false;
+                    return false;
+
+                } else {
+                    return false;
+                }
+            }else{
+                $('#recipient_to').val($('#to').val());
+                $('#recipient_cc').val($('#cc').val());
+                $('#recipient_bcc').val($('#bcc').val());
+                $('#sendFormAjax').submit();
             }
 
         });
