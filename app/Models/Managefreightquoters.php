@@ -648,7 +648,7 @@ class managefreightquoters extends Sximo
                 if($email == 1 && !empty($contact_email)){
                     $recipients['to'].= (empty($recipients['to']))? $contact_email:','.$contact_email;
                 }
-                if($recipients['to']!=''){
+                if($email == 1 && $recipients['to']!=''){
                     FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                         'to' => $recipients['to'],
                         'cc' => $recipients['cc'],
