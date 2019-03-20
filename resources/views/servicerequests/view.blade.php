@@ -157,7 +157,7 @@
                                                 <div class="col-md-3 part-number-container"><label >Part Number</label></div>
                                                 <div class="col-md-3 part-number-container"><label >Quantity</label></div>
                                                 <div class="col-md-3 part-number-container"><label >Cost</label></div>
-                                                <div class="col-md-3 part-number-container"><label>Action</label></div>
+                                                <div class="col-md-3 part-number-container" align="center"><label>Action</label></div>
                                             </div>
                                             </div>
                                             <div class="row">

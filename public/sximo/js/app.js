@@ -1788,7 +1788,10 @@ $(function () {
         }
         var partRequestFieldLenght = $('.part-request-field').length + 1;
         var lastInsertedId = ($('.part-request-field:last').attr('id')).split('_');
-        console.log(lastInsertedId);
+        if(lastInsertedId.length > 1){
+            partRequestFieldLenght = Number(lastInsertedId[1])+1;
+
+        }
         var partRequestField = document.getElementsByClassName('part-request-field');
 
         var partRequestFields = $(partRequestField[0]).clone();
@@ -1806,10 +1809,9 @@ $(function () {
             partRequestFields.children('.col-md-3').children('input.part-request-id').removeAttr('readonly');
             partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').removeAttr('readonly');
 
-            partRequestFields.children('.col-md-3').children('input#part-number-1').attr('id','part-number-'+partRequestFieldLenght);
-            partRequestFields.children('.col-md-3').children('input#part-qty-1').attr('id','part-qty-'+partRequestFieldLenght);
+            partRequestFields.children('.col-md-3').children('input[name="part_number"]').attr('id','part-number-'+partRequestFieldLenght);
+            partRequestFields.children('.col-md-3').children('input[name="qty"]').attr('id','part-qty-'+partRequestFieldLenght);
             partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').attr('id','part-cost-'+partRequestFieldLenght);
-
 
             partRequestFields.children('.col-md-3').children('input.form-control').val('');
             partRequestFields.children('.col-md-3').children('input.part-request-id').val(0);
