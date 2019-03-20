@@ -142,7 +142,6 @@
                 <div class="ticketMainViewContainer col-sm-8 col-lg-9">
 
                     <div class="ticketHeaderAddonsContainer"></div>
-                    @if($row->issue_type_id == \App\Models\Servicerequests::PART_APPROVAL || $row->issue_type_id == \App\Models\Servicerequests::TROUBLESHOOTING_ASSISTANCE || 1==1)
                         <div class="margin-bottom-30px">
 
                             <div class="row" style="    margin-right: 0px; margin-left: 0px;">
@@ -319,7 +318,6 @@
                             </div>
 
                         </div>
-                    @endif
                     <div class="ticketReplyContainer">
 
                         <div class="myUserProfileImageContainer img-avatar-container tips"
