@@ -3747,47 +3747,61 @@ ORDER BY aa_id");
         $order = Order::find($orderId);
         $methodFunctionality = __FUNCTION__; //'getRequestInvoice';
 
-//        $pass = $this->pass;
-//        $order_types = '';
-//        if(!empty($pass['merchandise type for inquire about orders email'])) {
-//            $order_types = $pass['merchandise type for inquire about orders email']->data_options;
-//        }
-//
-//        $configName = 'Non-Merchandise-Related Order Inquires';
-//        $order_types = explode(",", $order_types);
-//        $order_types = is_array($order_types) ? $order_types:[$order_types];
-//        $fromEmail = 'info@fegllc.com';
-//        $sendEmailFromMerchandiseOrNot = false;
-//        if(in_array($order->order_type_id, $order_types)){
-//            $configName = 'Merchandise-Related Order Inquires';
-//            $fromEmail = 'merch.office@fegllc.com';
-//            $sendEmailFromMerchandiseOrNot = true;
-//        }
-
         if(!$order)
-        {
             return Response::json(['status'=>'error', 'message'=> \Lang::get('core.note_order_not_found')]);
-        }
+
+
+        $vendor = $order->vendor;
+        if(!$vendor)
+            return Response::json(['status'=>'error', 'message'=>"Oops! No Vendor found. Please contact to the administrator."]);
+
+        if(!$vendor->isgame && !$vendor->ismerch)
+            return Response::json(['status'=>'error', 'message'=>"Please update vendor entry and select whether this is a Games Vendor or a Merchandise Vendor."]);
+
 
         $orderType = $order->order_type_id;
 
         $systemEmailConfiguration = $this->getSystemEmailConfigurations($orderType, $methodFunctionality);
         extract($systemEmailConfiguration);
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
-        $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($config_name, null, $isTest);
 
+
+        if(in_array($config_name, ['Request Invoice - Games', 'Request Invoice - Merchandise'])){
+
+            if($vendor->ismerch)
+                $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients('Request Invoice - Games', null, $isTest);
+
+            if($vendor->ismerch)
+                $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients('Request Invoice - Merchandise', null, $isTest);
+
+            print_r($systemEmailRecipients);
+            exit;
+        }
+        else
+        {
+            $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($config_name, null, $isTest);
+        }
+
+        foreach ($systemEmailRecipients as $emailRecipient)
+            $this->sendEmailOfRequestInvoice($order, $vendor, $emailRecipient, $config_name, $email_sender, $isTest);
+
+
+
+
+        return Response::json(['status'=>'success', 'message'=>'Request Invoice email sent successfully!']);
+
+    }
+
+
+    private function sendEmailOfRequestInvoice($order, $vendor, $systemEmailRecipients, $config_name, $email_sender, $isTest){
         $requestInvoicePONumber = $order->po_number;
 
         $subject = 'REQUEST INVOICE '.$requestInvoicePONumber;
 
-        $vendor = $order->vendor;
-
-        if(!$vendor)
-            return Response::json(['status'=>'error', 'message'=>"Oops! No Vendor found. Please contact to the administrator."]);
 
         $vendorApContactName = $vendor->vendor_ap_contact_name;
 
-        $message = (string)$this->getShow($orderId, 'emails.inquireOrder');
+        $message = (string)$this->getShow($order->id, 'emails.inquireOrder');
         $message = view('emails.requestInvoice', compact('message', 'requestInvoicePONumber', 'vendorApContactName'));
 
 
@@ -3809,10 +3823,10 @@ ORDER BY aa_id");
 
         $systemEmailRecipients['to']        = $systemEmailRecipients['to'] != '' ? $systemEmailRecipients['to'].','.implode(',',$vendorEmails) : implode(',',$vendorEmails);
         $toEmailsArray                      =   array_values(
-                                                    array_unique(
-                                                        explode(',', $systemEmailRecipients['to'])
-                                                    )
-                                                );
+            array_unique(
+                explode(',', $systemEmailRecipients['to'])
+            )
+        );
 
         $systemEmailRecipients['to']        = implode(',',$toEmailsArray);
 
@@ -3834,10 +3848,10 @@ ORDER BY aa_id");
         FEGSystemHelper::sendSystemEmail(
             $options
         );
-
-        return Response::json(['status'=>'success', 'message'=>'Request Invoice email sent successfully!']);
-
     }
+
+
+
 
     public function getSystemEmailConfigurations($orderType, $methodFunctionality){
         return SystemEmailConfigName::with('email_sender')
