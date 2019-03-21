@@ -101,7 +101,7 @@
                             @if($setting['view-method']=='expand')
                                 <td></td> @endif
                             @foreach ($tableGrid as $t)
-                                @if($t['view'] =='1')
+                                @if($t['view'] =='1' && $t['inline'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
                                         <td data-form="{{ $t['field'] }}"

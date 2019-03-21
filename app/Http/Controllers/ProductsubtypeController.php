@@ -325,11 +325,13 @@ class ProductsubtypeController extends Controller
             $exceptionCustomMessages = [
                 'SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry'=>'Product Sub Type already exists!'
             ];
+            if($id != 0){
+                $request->merge(['id'=>$id]);
+            }
             try{
                 $id = $this->model->insertRow($data, $request->input('id'));
-
                 if($id){
-                    if($data['id'] == ''){
+                    if(!$request->input('id') && array_key_exists('request_type_id', $data)){
                         $expenseCategoryMappingObject = DB::table('expense_category_mapping')->where('order_type', $data['request_type_id'])->first();
                         if($expenseCategoryMappingObject)
                         {
