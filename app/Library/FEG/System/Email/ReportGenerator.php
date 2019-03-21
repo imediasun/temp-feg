@@ -1346,7 +1346,7 @@ class ReportGenerator
                 ->where('report_status','0')
                 ->where('record_status','1')
                 ->where('game_not_debit','0')
-                ->whereDate('date_played',$date)
+                ->where('date_played',$date)
                 ->whereIn('game_type_id',['1','2','3','4','5','7','8'])
                 ->orderBy('date_last_played', 'desc')
                 ->first();
