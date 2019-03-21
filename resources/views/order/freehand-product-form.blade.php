@@ -321,13 +321,13 @@
                 var makeContentEditableBtn = orderContentRow.children('td').children('button.make-content-editable');
                 var addToProductListBtn = orderContentRow.children('td').children('.addToProductList');
 
-                makeContentEditableBtn.css('display','none');
-                addToProductListBtn.css('display','none');
+               // makeContentEditableBtn.css('display','none');
+                //addToProductListBtn.css('display','none');
 
-                skuField.attr('readonly','readonly');
+              //  skuField.attr('readonly','readonly');
               //  itemNameField.attr('readonly','readonly');
                 itemNameField.attr('prevent-search','0');
-                itemDescriptionField.attr('readonly','readonly');
+              //  itemDescriptionField.attr('readonly','readonly');
 
                 price.val(productData.unit_price);
                 price.val(price.fixDecimal());
