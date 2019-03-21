@@ -1334,8 +1334,10 @@ class ReportGenerator
         ])
         ->select(['id', 'location_id', 'game_title_id'])->whereIn('location_id', $locationIds)
         ->where('sold', 0)
+        ->where('not_debit','0')
+        ->whereIn('game_type_id',['1','2','3','4','5','7','8'])
         ->get();
-
+        $filteredGames = [];
         foreach ($games as $key=>$game){
 
             $resultSetOfReportGamePlays = \DB::table('report_game_plays')
@@ -1343,10 +1345,15 @@ class ReportGenerator
                 ->where('game_id', $game->id)
                 ->where('report_status','0')
                 ->where('record_status','1')
+                ->where('game_not_debit','0')
+                ->whereIn('game_type_id',['1','2','3','4','5','7','8'])
                 ->orderBy('date_last_played', 'desc')
                 ->first();
-
-            $games[$key]->lastGameReported = $resultSetOfReportGamePlays;
+            if($resultSetOfReportGamePlays) {
+                //$filteredGames[] = $resultSetOfReportGamePlays;
+                $games[$key]->lastGameReported = $resultSetOfReportGamePlays;
+            }
+           // $games[$key]->lastGameReported = $resultSetOfReportGamePlays;
         }
 
         $newGamesArray = [];
