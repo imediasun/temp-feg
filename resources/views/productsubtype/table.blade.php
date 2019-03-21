@@ -404,6 +404,32 @@
 
     App.autoCallbacks.registerCallback('advancedsearch', function(){
         $('select[name="product_type"],[name="type_description"],[name="operate"]').removeAttr('disabled');
+
+        var firstTime = 0;
+
+        var orderTypeField = $('select[name="request_type_id"]');
+        orderTypeField.jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
+            { initial_text: '-- Select --'});
+
+        orderTypeField.on('change', function () {
+            var productTypeId = $(this).val();
+            $.ajax({
+                url: 'product/get-product-subtype?product_type_id='+productTypeId,
+                type: 'get',
+                beforeSend: function(){
+                    if(firstTime !== 0)
+                        $('.ajaxLoading').show();
+
+                    firstTime = 1;
+                },
+                success: function(result){
+                    var subTypeSelectBox = $('select[name="product_type"]');
+                    subTypeSelectBox.attr('disabled', null);
+                    populateProductSubTypeSelect(subTypeSelectBox, result, $('select[name="request_type_id"]'), '');
+                    $('.ajaxLoading').hide();
+                }
+            })
+        });
     });
 
 </script>
