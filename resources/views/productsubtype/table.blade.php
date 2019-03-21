@@ -414,19 +414,13 @@
         orderTypeField.on('change', function () {
             var productTypeId = $(this).val();
             $.ajax({
-                url: 'product/get-product-subtype?product_type_id='+productTypeId,
+                url: 'product/get-product-subtype?product_type_id='+productTypeId+'&commaSeparatedKeyValueParams=product_type,product_type',
                 type: 'get',
-                beforeSend: function(){
-                    if(firstTime !== 0)
-                        $('.ajaxLoading').show();
-
-                    firstTime = 1;
-                },
                 success: function(result){
+                    console.log(result);
                     var subTypeSelectBox = $('select[name="product_type"]');
                     subTypeSelectBox.attr('disabled', null);
                     populateProductSubTypeSelect(subTypeSelectBox, result, $('select[name="request_type_id"]'), '');
-                    $('.ajaxLoading').hide();
                 }
             })
         });
