@@ -1248,7 +1248,7 @@ class ReportGenerator
          * (Removing the games whom locations are down)
          */
         $data = self::array_usearch($data, function ($o) use ($locationsNotReportingIds) { return !in_array($o->location_id, $locationsNotReportingIds); });
-        $allTheGamesOfLocationsNotReporting = self::getAllTheGamesOfLocationsNotReporting($locationsNotReportingIds);
+        $allTheGamesOfLocationsNotReporting = self::getAllTheGamesOfLocationsNotReporting($locationsNotReportingIds,$date);
 
         $data = array_merge($allTheGamesOfLocationsNotReporting, $data);
         usort($data, array('App\Library\FEG\System\Email\ReportGenerator', 'sort_objects_by_total'));
@@ -1323,7 +1323,7 @@ class ReportGenerator
         if($a->days_not_played == $b->days_not_played){ return 0 ; }
         return ($a->days_not_played < $b->days_not_played) ? 1 : -1;
     }
-    public static function getAllTheGamesOfLocationsNotReporting($locationIds){
+    public static function getAllTheGamesOfLocationsNotReporting($locationIds,$date){
         $games = game::with([
             'location'=>function($query){
                 $query->select('id', 'location_name');
@@ -1346,6 +1346,7 @@ class ReportGenerator
                 ->where('report_status','0')
                 ->where('record_status','1')
                 ->where('game_not_debit','0')
+                ->whereDate('date_played',$date)
                 ->whereIn('game_type_id',['1','2','3','4','5','7','8'])
                 ->orderBy('date_last_played', 'desc')
                 ->first();
