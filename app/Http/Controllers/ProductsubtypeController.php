@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\Ordertyperestrictions;
 use App\Models\product;
 use App\Models\Productsubtype;
+use App\Models\ProductType;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\DB;
@@ -158,6 +160,21 @@ class ProductsubtypeController extends Controller
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
+
+        /**
+         *  Exclude order types which having can_request as 0 and r
+         */
+        $this->data['product_type_ids_to_be_excluded']      = Ordertyperestrictions::where('can_request', 0)->lists('id')->toArray();
+        $this->data['product_sub_type_ids_to_be_excluded'] = [];
+        if($request->has('search')){
+            $searchQuery = $request->get('search');
+            if(str_contains($searchQuery, 'request_type_id:equal:')){
+                $searchQueryOrderTypeIdWithPipeSign = explode('request_type_id:equal:', $searchQuery)[1];
+                $orderTypeId = explode('|', $searchQueryOrderTypeIdWithPipeSign)[0];
+                $this->data['product_sub_type_ids_to_be_excluded']  = ProductType::where('request_type_id', '!=' ,$orderTypeId)->orWhereNull('request_type_id')->lists('product_type')->toArray();
+            }
+        }
+
         // Render into template
         return view('productsubtype.table', $this->data);
 

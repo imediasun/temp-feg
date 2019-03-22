@@ -269,6 +269,8 @@
 <script>
 
     var productSubtypeRowToBeDeleted = null;
+    var product_type_ids_to_be_excluded     = {!! json_encode($product_type_ids_to_be_excluded) !!};
+    var product_sub_type_ids_to_be_excluded = {!! json_encode($product_sub_type_ids_to_be_excluded) !!};
     function checkTheFormForValueAndSubmit(checkForValue){
         if(checkForValue){
             if($('#newProductSubtype').val() == ''){
@@ -405,25 +407,47 @@
     App.autoCallbacks.registerCallback('advancedsearch', function(){
         $('select[name="product_type"],[name="type_description"],[name="operate"]').removeAttr('disabled');
 
-        var firstTime = 0;
-
         var orderTypeField = $('select[name="request_type_id"]');
-        orderTypeField.jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
-            { initial_text: '-- Select --'});
+        var productSubTypeFieldMajor = $('select[name="product_type"]');
+
+        $.each(product_type_ids_to_be_excluded, function (key, val) {
+            $('option[value="'+val+'"]', orderTypeField).remove();
+            console.log(key, val);
+        });
+
+        if(orderTypeField.val() !== ''){
+            $('select[name="product_type"] > option').each(function() {
+                if(product_sub_type_ids_to_be_excluded.indexOf($(this).val()) !== -1){
+                    $('option[value="'+$(this).val()+'"]', productSubTypeFieldMajor).remove();
+                }
+            });
+        }
 
         orderTypeField.on('change', function () {
             var productTypeId = $(this).val();
+            updateSubtypeField(productTypeId)
+        });
+
+        function updateSubtypeField(productTypeId) {
+
             $.ajax({
                 url: 'product/get-product-subtype?product_type_id='+productTypeId+'&commaSeparatedKeyValueParams=product_type,product_type',
                 type: 'get',
+                beforeSend: function(){
+                    $('.ajaxLoading').show();
+                },
                 success: function(result){
                     console.log(result);
                     var subTypeSelectBox = $('select[name="product_type"]');
                     subTypeSelectBox.attr('disabled', null);
                     populateProductSubTypeSelect(subTypeSelectBox, result, $('select[name="request_type_id"]'), '');
+                    setTimeout(function () {
+                        $('.ajaxLoading').hide();
+                    }, 700);
                 }
             })
-        });
+        }
+
     });
 
 </script>
