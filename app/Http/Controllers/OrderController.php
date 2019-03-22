@@ -3765,35 +3765,60 @@ ORDER BY aa_id");
         extract($systemEmailConfiguration);
         $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
 
+        $systemEmailRecipients = [];
+        $email_senders = [];
+        $configNames = ['Request Invoice - Games', 'Request Invoice - Merchandise'];
+        if(in_array($config_name, $configNames)){
 
-        if(in_array($config_name, ['Request Invoice - Games', 'Request Invoice - Merchandise'])){
-
-            if($vendor->ismerch)
+            if($vendor->isgame){
+                $email_senders[] = SystemEmailConfigName::with('email_sender')
+                    ->where('config_name', $configNames[0])
+                    ->first()->email_sender->toArray();
                 $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients('Request Invoice - Games', null, $isTest);
+            }
 
-            if($vendor->ismerch)
+            if($vendor->ismerch){
+                $email_senders[] = SystemEmailConfigName::with('email_sender')
+                    ->where('config_name', $configNames[1])
+                    ->first()->email_sender->toArray();
                 $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients('Request Invoice - Merchandise', null, $isTest);
+            }
 
-            print_r($systemEmailRecipients);
-            exit;
+
+            if($vendor->ismerch && $vendor->isgame){
+
+                $toArray     = array_merge(explode(',', $systemEmailRecipients[0]['to']), explode(',', $systemEmailRecipients[1]['to']));
+                $ccArray     = array_merge(explode(',', $systemEmailRecipients[0]['cc']), explode(',', $systemEmailRecipients[1]['cc']));
+                $bccArray    = array_merge(explode(',', $systemEmailRecipients[0]['bcc']), explode(',', $systemEmailRecipients[1]['bcc']));
+
+                $to     = implode(',', $toArray);
+                $cc     = implode(',', $ccArray);
+                $bcc    = implode(',', $bccArray);
+
+                $systemEmailRecipients[0]['to']     = $systemEmailRecipients[1]['to']   = $to;
+                $systemEmailRecipients[0]['cc']     = $systemEmailRecipients[1]['cc']   = $cc;
+                $systemEmailRecipients[0]['bcc']    = $systemEmailRecipients[1]['bcc']  = $bcc;
+
+            }
+
         }
         else
         {
-            $systemEmailRecipients = \FEGHelp::getSystemEmailRecipients($config_name, null, $isTest);
+            $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients($config_name, null, $isTest);
+            $email_senders[] = $email_sender;
         }
 
-        foreach ($systemEmailRecipients as $emailRecipient)
-            $this->sendEmailOfRequestInvoice($order, $vendor, $emailRecipient, $config_name, $email_sender, $isTest);
-
-
-
+        foreach ($systemEmailRecipients as $key=>$emailRecipient){
+            if($key == 1){
+                $this->sendEmailOfRequestInvoice($order, $vendor, $emailRecipient, $email_senders[$key], $isTest);
+            }
+        }
 
         return Response::json(['status'=>'success', 'message'=>'Request Invoice email sent successfully!']);
-
     }
 
 
-    private function sendEmailOfRequestInvoice($order, $vendor, $systemEmailRecipients, $config_name, $email_sender, $isTest){
+    private function sendEmailOfRequestInvoice($order, $vendor, $systemEmailRecipients, $email_sender, $isTest){
         $requestInvoicePONumber = $order->po_number;
 
         $subject = 'REQUEST INVOICE '.$requestInvoicePONumber;
@@ -3837,7 +3862,7 @@ ORDER BY aa_id");
         $options['replyTo']                 = '';
         $options['preferGoogleOAuthMail']   = false;
         $options['to']                      = $systemEmailRecipients['to'];
-        $options['configName']              = $config_name;
+        $options['configName']              = $systemEmailRecipients['configName'];
         $options['from']                    = $email_sender['from'];
         $options['isTest']                  = $isTest;
         $options['config']                  = $email_sender;
