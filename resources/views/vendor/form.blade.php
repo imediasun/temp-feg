@@ -156,8 +156,30 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+				  </div>
+				  <div class="form-group  " >
+					<label for="Vendor AP Contact Name" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Vendor AP Contact Name', (isset($fields['vendor_ap_contact_name']['language'])? $fields['vendor_ap_contact_name']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('vendor_ap_contact_name', $row['vendor_ap_contact_name'],array('class'=>'form-control', 'placeholder'=>''   )) !!}
+					 </div>
+					 <div class="col-md-2">
+
+					 </div>
+				  </div>
+				  <div class="form-group  " >
+					<label for="Vendor AP Email" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Vendor AP Email', (isset($fields['vendor_ap_email']['language'])? $fields['vendor_ap_email']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('vendor_ap_email', $row['vendor_ap_email'],array('class'=>'form-control', 'placeholder'=>''   )) !!}
+					 </div>
+					 <div class="col-md-2">
+
+					 </div>
+				  </div>
+				  <div class="form-group  " >
 					<label for="Email 2" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Email 2', (isset($fields['email_2']['language'])? $fields['email_2']['language'] : array())) !!}	
 					</label>
