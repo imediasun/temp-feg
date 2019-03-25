@@ -3676,7 +3676,7 @@ ORDER BY aa_id");
     private function sendEmailOfRequestInvoice($order, $vendor, $systemEmailRecipients, $email_sender, $isTest){
         $requestInvoicePONumber = $order->po_number;
 
-        $subject = 'REQUEST INVOICE '.$requestInvoicePONumber;
+        $subject = 'REQUEST INVOICE PO#'.$requestInvoicePONumber;
 
 
         $vendorApContactName = $vendor->vendor_ap_contact_name;
