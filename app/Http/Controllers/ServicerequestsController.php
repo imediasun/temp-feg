@@ -1057,6 +1057,10 @@ class servicerequestsController extends Controller
             unset($ticketsData['Status']);
             unset($ticketsData['closed']);
 
+            if($oldStatus == 'inqueue' && $ticketType == 'debit-card-related'){
+                $ticketsData['Status'] = 'open';
+            }
+
             if($ticketType  == 'game-related'){
                 $ticketsData['Status'] = 'in_process';
             }
