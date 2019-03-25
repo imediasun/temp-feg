@@ -179,7 +179,7 @@ class ReadComment extends Command
 
                            if($serverRequestTicket->ticket_type == 'game-related'){
 
-                               if($serverRequestTicket->Status == 'closed')
+                             //  if($serverRequestTicket->Status == 'closed')
                                    $dataUpdate['Status'] = 'in_process';
 
                            }
