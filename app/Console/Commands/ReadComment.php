@@ -71,9 +71,9 @@ class ReadComment extends Command
         FEGSystemHelper::updateOption('ReadingTicketCommentsFromIMAP', $now);
         
         /* connect to gmail */
-        $hostname = '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX';
-        $username = "tickets@tickets.fegllc.com";
-        $password = "MdkHly2Ub5";
+        $hostname = env("TICKETS_EMAIL_HOST");
+        $username = env("TICKETS_EMAIL_USERNAME");
+        $password = env("TICKETS_EMAIL_PASSWORD");
         $emailConfigurations = TicketMailer::getTicketEmailByENV();
         if(!empty($emailConfigurations)) {
             $username = $emailConfigurations['username'];
