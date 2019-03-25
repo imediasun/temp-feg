@@ -20,31 +20,33 @@
 						<td>{{ $row->id }} </td>
 						
 					</tr>
-				
+
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Product Type', (isset($fields['product_type']['language'])? $fields['product_type']['language'] : array())) }}
-						</td>
-						<td>{{ $row->product_type }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Type Description', (isset($fields['type_description']['language'])? $fields['type_description']['language'] : array())) }}
-						</td>
-						<td>{{ $row->type_description }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Request Type Id', (isset($fields['request_type_id']['language'])? $fields['request_type_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Product Type', (isset($fields['request_type_id']['language'])? $fields['request_type_id']['language'] : array())) }}
 						</td>
 						<td>{{ \App\Models\Ordertyperestrictions::find($row->request_type_id) ? \App\Models\Ordertyperestrictions::find($row->request_type_id)->order_type : "No Data" }} </td>
-						
+
+					</tr>
+
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Product Sub Type', (isset($fields['product_type']['language'])? $fields['product_type']['language'] : array())) }}
+						</td>
+						<td>{{ $row->product_type }} </td>
+
 					</tr>
 				
+					{{--<tr>--}}
+						{{--<td width='30%' class='label-view text-right'>--}}
+							{{--{{ SiteHelpers::activeLang('Type Description', (isset($fields['type_description']['language'])? $fields['type_description']['language'] : array())) }}--}}
+						{{--</td>--}}
+						{{--<td>{{ $row->type_description }} </td>--}}
+						{{----}}
+					{{--</tr>--}}
+				
+
+
 			</tbody>	
 		</table>  
 			
