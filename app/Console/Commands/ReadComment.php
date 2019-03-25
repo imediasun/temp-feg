@@ -170,13 +170,16 @@ class ReadComment extends Command
                            $attachmentClass->extension = $attachment['extension'];
                            $commentModel->attachments()->save($attachmentClass);
                        }
-                       $L->log("Updaet ticket updated date to $posted");
+                       $L->log("Update ticket updated date to $posted");
 
                        $serverRequestTicket = Servicerequests::where(['TicketID'=>$ticketId,])->first();
                        $dataUpdate = ['updated' => $posted];
                        if($serverRequestTicket){
                            if($serverRequestTicket->ticket_type == 'game-related'){
                                $dataUpdate['Status'] = 'in_process';
+                           }
+                           if($serverRequestTicket->ticket_type == 'debit-card-related'){
+                               $dataUpdate['Status'] = 'open';
                            }
                        }
 

@@ -59,7 +59,7 @@
 					<div class="col-md-6">					  
                         @if($isAdd || !$canChangeStatus) 
                             <input type='hidden' name='oldStatus' value='{{ $status }}' />
-                            <input type='hidden' name='Status' value='{{ empty($status) ? 'open' : $status }}' />
+                            <input type='hidden' name='Status' value='{{ empty($status) ? 'inqueue' : $status }}' />
                             <input type="text" readonly class="form-control" value="{{ $ticketStatusLabel }}" /> 
                         @else
                             <input type='hidden' name='oldStatus' value='{{ $status }}' />
