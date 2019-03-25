@@ -1052,7 +1052,7 @@ class servicerequestsController extends Controller
 
         $comment_model = new Ticketcomment();
         $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
-        
+        $oldStatus = $request->get('oldStatus');
         if (!ticketsetting::canUserChangeStatus(null,$ticketType)) {
             unset($ticketsData['Status']);
             unset($ticketsData['closed']);
@@ -1060,15 +1060,16 @@ class servicerequestsController extends Controller
         elseif (isset($ticketsData['Status'])) {
             $status = $ticketsData['Status'];
             $isStatusClosed = $status == 'closed';
-            if ($isStatusClosed) {                
-                $oldStatus = $request->get('oldStatus');
+            if ($isStatusClosed) {
                 if ($oldStatus != 'closed') {
                     $ticketsData['closed'] = date('Y-m-d H:i:s');
                 }
-            }elseif ($status == 'open'){
+            }elseif ($status == 'open' && $ticketType == 'game-related'){
                 $ticketsData['Status'] = 'in_process';
 
                 //$ticketsData['closed'] = date('Y-m-d H:i:s');
+            }elseif ($status == 'inqueue' && $ticketType == 'debit-card-related'){
+                $ticketsData['Status'] = 'open';
             }
             else {
                 $ticketsData['closed']= null;   

@@ -175,12 +175,22 @@ class ReadComment extends Command
                        $serverRequestTicket = Servicerequests::where(['TicketID'=>$ticketId,])->first();
                        $dataUpdate = ['updated' => $posted];
                        if($serverRequestTicket){
+
+
                            if($serverRequestTicket->ticket_type == 'game-related'){
-                               $dataUpdate['Status'] = 'in_process';
+
+                               if($serverRequestTicket->Status == 'closed')
+                                   $dataUpdate['Status'] = 'in_process';
+
                            }
+
                            if($serverRequestTicket->ticket_type == 'debit-card-related'){
-                               $dataUpdate['Status'] = 'open';
+
+                               if(in_array($serverRequestTicket->Status, ['closed', 'inqueue']))
+                                   $dataUpdate['Status'] = 'open';
+
                            }
+
                        }
 
                        Servicerequests::where("TicketID", $ticketId)->update($dataUpdate);
