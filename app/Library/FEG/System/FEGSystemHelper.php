@@ -512,6 +512,12 @@ class FEGSystemHelper
         }
     }
 
+    public static function sendNotificationToDevTeam($subject, $message, $options = []){
+        $from = 'info@fegllc.com';
+        $recipients["to"] = env('LARAVEL_DEV_TEAM_EMAILS','stanlymarian@gmail.com');
+        return self::laravelMail($recipients["to"], $subject, $message, $from, $options);
+    }
+
     public static function configLaravelMail($mail, $options)
     {
         extract($options);
