@@ -1056,6 +1056,10 @@ class servicerequestsController extends Controller
         if (!ticketsetting::canUserChangeStatus(null,$ticketType)) {
             unset($ticketsData['Status']);
             unset($ticketsData['closed']);
+
+            if($ticketType  == 'game-related'){
+                $ticketsData['Status'] = 'in_process';
+            }
         }
         elseif (isset($ticketsData['Status'])) {
             $status = $ticketsData['Status'];
