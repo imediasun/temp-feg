@@ -3605,14 +3605,9 @@ ORDER BY aa_id");
         if(!$order)
             return Response::json(['status'=>'error', 'message'=> \Lang::get('core.note_order_not_found')]);
 
-
         $vendor = $order->vendor;
         if(!$vendor)
             return Response::json(['status'=>'error', 'message'=>"Oops! No Vendor found. Please contact to the administrator."]);
-
-        if(!$vendor->isgame && !$vendor->ismerch)
-            return Response::json(['status'=>'error', 'message'=>"Please update vendor entry and select whether this is a Games Vendor or a Merchandise Vendor."]);
-
 
         $orderType = $order->order_type_id;
 
@@ -3624,6 +3619,9 @@ ORDER BY aa_id");
         $email_senders = [];
         $configNames = ['Request Invoice - Games', 'Request Invoice - Merchandise'];
         if(in_array($config_name, $configNames)){
+
+            if(!$vendor->isgame && !$vendor->ismerch)
+                return Response::json(['status'=>'error', 'message'=>"Please update vendor entry and select whether this is a Games Vendor or a Merchandise Vendor."]);
 
             if($vendor->isgame){
                 $email_senders[] = SystemEmailConfigName::with('email_sender')
