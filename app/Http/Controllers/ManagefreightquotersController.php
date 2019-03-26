@@ -735,6 +735,19 @@ class ManagefreightquotersController extends Controller
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+
+        /**
+         *   sending system email recipients to the view along with row data
+         */
+        if($row['loc_1'] != 0)
+            $config = 'UPDATE FREIGHT INTERNAL EMAIL';
+        else
+            $config = 'UPDATE FREIGHT EXTERNAL EMAIL';
+
+        $isTest = env('APP_ENV') != "production" ? true : false;
+        $recipients =  \FEGHelp::getSystemEmailRecipients($config, null, $isTest);
+        $this->data['row']['recipients'] = $recipients;
+
         return view('managefreightquoters.view', $this->data);
         //return Redirect::to('managefreightquoters')->with('messagetext', \Lang::get('core.note_freight_paid'))->with('msgstatus', 'success');
     }
