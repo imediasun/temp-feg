@@ -719,35 +719,63 @@ class OrderController extends Controller
     {
         $productIds = $request->input('product_id');
         $productIdsArray = [];
-        foreach($productIds as $productIdArr){
-            $productIdsArray[] = !empty($productIdArr) ? $productIdArr:0;
+        $productNames = $request->input('item_name');
+        $skus = $request->input('sku');
+        $errorMessage = '';
+        foreach ($productIds as $key => $productIdArr) {
+
+            $pID = !empty($productIdArr) ? $productIdArr : 0;
+
+            $productIdsArray[] = $pID;
+
+            if ($pID > 0) {
+                $isItemExist = product::where([
+                    'id' => $pID,
+                    'vendor_description' => $productNames[$key],
+                    'sku' => $skus[$key],
+                ])->first();
+                if (!$isItemExist) {
+                    $errorMessage .= '<li>' . $productNames[$key] . '</li>';
+                }
+            }
         }
+
+        if ($errorMessage != '') {
+            $message = 'You cannot save the order until all freehanded item(s) have been added to the product list. <br>Please add the Following Item(s) to the product List:';
+            $errorMessage = $message . '<ul>' . $errorMessage . '</ul>';
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $errorMessage,
+            ]);
+        }
+
         $productIds = $productIdsArray;
-        $isFreehandFlag = $request->input('is_freehand',0);
-        $productIdsUnique = is_array($productIds) ? array_unique($productIds):[];
-        if(count($productIdsUnique) == 1){
-            if($productIdsUnique[0] == 0){
+        $isFreehandFlag = $request->input('is_freehand', 0);
+        $productIdsUnique = is_array($productIds) ? array_unique($productIds) : [];
+        if (count($productIdsUnique) == 1) {
+            if ($productIdsUnique[0] == 0) {
                 $isFreehandFlag = 1;
             }
         }
-            if($isFreehandFlag == 0 && in_array(0,$productIds)){
-                $items = $request->input('item_name');
+        if ($isFreehandFlag == 0 && in_array(0, $productIds)) {
+            $items = $request->input('item_name');
 
-                $errorMessage = '';
-                for ($i=0; $i< count($items); $i++){
-                        if($productIds[$i] == 0 || $productIds[$i] == ''){
-                            $errorMessage .= '<li>'.$items[$i].'</li>';
-                        }
+            $errorMessage = '';
+            for ($i = 0; $i < count($items); $i++) {
+                if ($productIds[$i] == 0 || $productIds[$i] == '') {
+                    $errorMessage .= '<li>' . $items[$i] . '</li>';
                 }
-                if($errorMessage !=''){
-                    $message = 'You cannot save the order until all freehanded item(s) have been added to the product list. <br>Please add the Following Item(s) to the product List:';
-                    $errorMessage = $message.'<ul>'.$errorMessage.'</ul>';
-                }
-                return response()->json([
-                    'status' => 'error',
-                    'message' => $errorMessage,
-                ]);
             }
+            if ($errorMessage != '') {
+                $message = 'You cannot save the order until all freehanded item(s) have been added to the product list. <br>Please add the Following Item(s) to the product List:';
+                $errorMessage = $message . '<ul>' . $errorMessage . '</ul>';
+            }
+            return response()->json([
+                'status' => 'error',
+                'message' => $errorMessage,
+            ]);
+        }
 
             $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
             if($request->input('is_freehand',0) != 1 && $request->input('is_pre_freehand',0) != 1) {

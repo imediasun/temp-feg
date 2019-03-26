@@ -336,7 +336,7 @@
                         <th class="game" style="display:none" width="200">Game</th>
                         <th width="90">Total ( $ )</th>
                         @if(is_object($row))  @if($fromStore != 1 && $mode == "edit")  <th width="90">Broken Case</th> @endif @endif
-                        <th width="80" align="center"><span id="remove-col">Actions </span></th>
+                        <th width="100" align="center"><span id="remove-col">Actions </span></th>
                     </tr>
 
                     </thead>
@@ -355,9 +355,6 @@
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
                                         style="width:35%;border:none;background:none; "/>
-                            @if($isAllowedToCombineFreehandProductList == 1)
-                            <button  type="button"  title="Make this item freehand" style="width: 55%; padding: 0px 4px; @if(is_object($row)) display: none; @endif " class="btn btn-primary btn-small tips make-content-editable"><i class="fa  fa-edit"></i></button>
-                       @endif
                         </td>
                         <td><br/><input type="text" placeholder="SKU" {{  is_object($row) ? $fromStore == 1?'readonly': $row->is_freehand != 1  ?'readonly': '':'readonly' }} class="form-control sku" id="sku_num" name="sku[]"
                                     /></td>
@@ -393,6 +390,7 @@
                             <br/> <input type='hidden' name='game[]' id='game_0'>
                         </td>
                         <input type='hidden' name='product_id[]' id="product_id">
+                        <input type='hidden'  id="product_id_temp" value="0">
                         <input type='hidden' name='request_id[]' id="request_id">
                         <input type='hidden' name='item_received[]'>
                         <input type='hidden' name='order_content_id[]' class="order_content">
@@ -414,6 +412,9 @@
                                onclick="removeRow(this.id);"
                                class="remove btn btn-xs btn-danger hide-button tips" title="Remove Item">-
                             </p>
+                            @if($isAllowedToCombineFreehandProductList == 1)
+                                <button  type="button"  title="Make this item freehand" style="    padding: 0px 0px; height: 25px; float: left; width: 25px; margin: 2px 0px; text-align: center; @if(is_object($row)) display: none; @endif " class="btn btn-primary btn-small tips make-content-editable"><i class="fa  fa-edit"></i></button>
+                            @endif
                             @if($isAllowedToCombineFreehandProductList == 1)
                             <p id="add-items-button" @if($row['is_freehand'] == 1 || $isPreFreehand == 1) freehandorder="1" @else style="display: none;" @endif data-id=""
                                class="addToProductList btn btn-xs btn-danger add-items-button tips" title="Add product to the Product List">+
@@ -1662,9 +1663,9 @@
             clone.prop('id', newtrID)
             $(clone).find('input:text, input[type=number], textarea').each(function(){
                 $(this).val('');
-                @if($isPreFreehand == 1)
+//                @if($isPreFreehand == 1)
 //                    $(this).removeAttr('readonly');
-                @endif
+//                @endif
             });
             $(clone).find('.hide-button').attr({'id':'hide-button' + productRows,'title':"Remove Item"});
             if(isRunTimeClick != 1 && $('#isAllowedToCombineFreehandProductList').val() == 1) {

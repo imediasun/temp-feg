@@ -2232,6 +2232,8 @@ $(function () {
         var addItemBtn = $('#'+row.attr('id')+' .addToProductList');
         var unitPriceField = $('#'+row.attr('id')+' #price');
         var casePriceField = $('#'+row.attr('id')+' #case_price');
+        var productIdTempField = $('#'+row.attr('id')+' #product_id_temp');
+        var productIdField = $('#'+row.attr('id')+' #product_id');
 
         if(icon.hasClass('fa-edit')){
             icon.removeClass('fa-edit');
@@ -2248,6 +2250,8 @@ $(function () {
             itemNameField.attr('prevent-search','1');
             itemNameField.attr('is-pre-freehand','1');
             itemDescriptionField.removeAttr('readonly');
+            productIdTempField.val(Number(productIdField.val()));
+            productIdField.val('0');
 
         }else {
             // icon.removeClass('fa-arrow-left');
@@ -2265,6 +2269,8 @@ $(function () {
             itemNameField.attr('prevent-search','0');
             itemNameField.removeAttr('is-pre-freehand');
             itemDescriptionField.attr('readonly','readonly');
+            productIdField.val(Number(productIdTempField.val()));
+            productIdTempField.val('0');
         }
 
         $(this).tooltip('destroy');
