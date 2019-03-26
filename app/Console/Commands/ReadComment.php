@@ -52,7 +52,7 @@ class ReadComment extends Command
             return;
         }
 
-        
+
         global $__logger;
         $L = $this->L = $__logger = FEGSystemHelper::setLogger($this->L, "fetch-ticket-emails.log", "FEGTicketCron/ReadComments", "TICKET");
         $L->log('Start Fetching Emails');
@@ -87,6 +87,7 @@ class ReadComment extends Command
                 array('DISABLE_AUTHENTICATOR' => 'PLAIN'));
             
         } catch (Exception $ex) {
+            $exceptionMessage = view("emails.notifications.dev-team.read-comments-exception", compact('ex'));
             $L->log("Error connecting to IMAP:" . $ex->getMessage());
             return;
         }
