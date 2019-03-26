@@ -1663,9 +1663,9 @@
             clone.prop('id', newtrID)
             $(clone).find('input:text, input[type=number], textarea').each(function(){
                 $(this).val('');
-//                @if($isPreFreehand == 1)
+                @if($isPreFreehand == 1)
 //                    $(this).removeAttr('readonly');
-//                @endif
+                @endif
             });
             $(clone).find('.hide-button').attr({'id':'hide-button' + productRows,'title':"Remove Item"});
             if(isRunTimeClick != 1 && $('#isAllowedToCombineFreehandProductList').val() == 1) {
