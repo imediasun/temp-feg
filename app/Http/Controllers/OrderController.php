@@ -3762,26 +3762,25 @@ ORDER BY aa_id");
 
         $systemEmailRecipients = [];
         $email_senders = [];
-        $configNames = ['Request Invoice - Games', 'Request Invoice - Merchandise'];
+        $configNames = ['Request Invoice - Merchandise', 'Request Invoice - Games'];
         if(in_array($config_name, $configNames)){
 
             if(!$vendor->isgame && !$vendor->ismerch)
                 return Response::json(['status'=>'error', 'message'=>"Please update vendor entry and select whether this is a Games Vendor or a Merchandise Vendor."]);
 
-            if($vendor->isgame){
-                $email_senders[] = SystemEmailConfigName::with('email_sender')
-                    ->where('config_name', $configNames[0])
-                    ->first()->email_sender->toArray();
-                $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients('Request Invoice - Games', null, $isTest);
-            }
-
             if($vendor->ismerch){
                 $email_senders[] = SystemEmailConfigName::with('email_sender')
-                    ->where('config_name', $configNames[1])
+                    ->where('config_name', $configNames[0])
                     ->first()->email_sender->toArray();
                 $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients('Request Invoice - Merchandise', null, $isTest);
             }
 
+            if($vendor->isgame){
+                $email_senders[] = SystemEmailConfigName::with('email_sender')
+                    ->where('config_name', $configNames[1])
+                    ->first()->email_sender->toArray();
+                $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients('Request Invoice - Games', null, $isTest);
+            }
 
             if($vendor->ismerch && $vendor->isgame){
 
@@ -3807,7 +3806,7 @@ ORDER BY aa_id");
         }
 
         foreach ($systemEmailRecipients as $key=>$emailRecipient){
-            if($key == 1){
+            if($key == 0){
                 $this->sendEmailOfRequestInvoice($order, $vendor, $emailRecipient, $email_senders[$key], $isTest);
             }
         }
