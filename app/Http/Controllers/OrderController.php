@@ -3768,17 +3768,15 @@ ORDER BY aa_id");
             if(!$vendor->isgame && !$vendor->ismerch)
                 return Response::json(['status'=>'error', 'message'=>"Please update vendor entry and select whether this is a Games Vendor or a Merchandise Vendor."]);
 
+            $email_senders[] = SystemEmailConfigName::with('email_sender')
+                ->where('config_name', $configNames[0])
+                ->first()->email_sender->toArray();
+
             if($vendor->ismerch){
-                $email_senders[] = SystemEmailConfigName::with('email_sender')
-                    ->where('config_name', $configNames[0])
-                    ->first()->email_sender->toArray();
                 $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients('Request Invoice - Merchandise', null, $isTest);
             }
 
             if($vendor->isgame){
-                $email_senders[] = SystemEmailConfigName::with('email_sender')
-                    ->where('config_name', $configNames[1])
-                    ->first()->email_sender->toArray();
                 $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients('Request Invoice - Games', null, $isTest);
             }
 
