@@ -83,11 +83,12 @@ class ReadComment extends Command
         $L->log("Connecting...");
         /* try to connect */
         try {            
-            $inbox = imap_open($hostname, $username, $password,NULL, 1,
+            $inbox = imap_open($hostname, 'stanlymarian@gmail.com', $password,NULL, 1,
                 array('DISABLE_AUTHENTICATOR' => 'PLAIN'));
             
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $exceptionMessage = view("emails.notifications.dev-team.read-comments-exception", compact('ex'));
+            FEGSystemHelper::sendNotificationToDevTeam('Exception', $exceptionMessage, $options = []);
             $L->log("Error connecting to IMAP:" . $ex->getMessage());
             return;
         }
