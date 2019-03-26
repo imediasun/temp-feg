@@ -171,7 +171,10 @@ class ProductsubtypeController extends Controller
             if(str_contains($searchQuery, 'request_type_id:equal:')){
                 $searchQueryOrderTypeIdWithPipeSign = explode('request_type_id:equal:', $searchQuery)[1];
                 $orderTypeId = explode('|', $searchQueryOrderTypeIdWithPipeSign)[0];
-                $this->data['product_sub_type_ids_to_be_excluded']  = ProductType::where('request_type_id', '!=' ,$orderTypeId)->orWhereNull('request_type_id')->lists('product_type')->toArray();
+                $this->data['product_sub_type_ids_to_be_excluded']  = ProductType::where('request_type_id', '!=' ,$orderTypeId)
+                    ->orWhere(function($q){
+                        $q->whereNull('request_type_id')->orWhereNotNull('deleted_at');
+                    })->orderBy('product_type', 'asc')->lists('product_type')->toArray();
             }
         }
 
