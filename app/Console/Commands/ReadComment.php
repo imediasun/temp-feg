@@ -238,7 +238,7 @@ class ReadComment extends Command
         }
         else {
             $exceptionMessage = 'No emails found';
-            $this->sendExceptionMessage($exceptionMessage, [$exceptionMessage]);
+//            $this->sendExceptionMessage($exceptionMessage, [$exceptionMessage]);
             $L->log($exceptionMessage);
 
             $message = "no emails found....";
