@@ -3768,19 +3768,22 @@ ORDER BY aa_id");
             if(!$vendor->isgame && !$vendor->ismerch)
                 return Response::json(['status'=>'error', 'message'=>"Please update vendor entry and select whether this is a Games Vendor or a Merchandise Vendor."]);
 
-            $email_senders[] = SystemEmailConfigName::with('email_sender')
-                ->where('config_name', $configNames[0])
-                ->first()->email_sender->toArray();
-
-            if($vendor->ismerch){
-                $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients('Request Invoice - Merchandise', null, $isTest);
+            if($vendor->ismerch && !$vendor->isgame)
+            {
+                $email_senders[]            = SystemEmailConfigName::with('email_sender')->where('config_name', $configNames[0])->first()->email_sender->toArray();
+                $systemEmailRecipients[]    = \FEGHelp::getSystemEmailRecipients($configNames[0], null, $isTest);
             }
-
-            if($vendor->isgame){
-                $systemEmailRecipients[] = \FEGHelp::getSystemEmailRecipients('Request Invoice - Games', null, $isTest);
+            else if($vendor->isgame && !$vendor->ismerch)
+            {
+                $email_senders[]            = SystemEmailConfigName::with('email_sender')->where('config_name', $configNames[1])->first()->email_sender->toArray();
+                $systemEmailRecipients[]    = \FEGHelp::getSystemEmailRecipients($configNames[1], null, $isTest);
             }
+            else if($vendor->ismerch && $vendor->isgame){
 
-            if($vendor->ismerch && $vendor->isgame){
+                foreach ($configNames as $configName){
+                    $email_senders[]            = SystemEmailConfigName::with('email_sender')->where('config_name', $configName)->first()->email_sender->toArray();
+                    $systemEmailRecipients[]    = \FEGHelp::getSystemEmailRecipients($configName, null, $isTest);
+                }
 
                 $toArray     = array_merge(explode(',', $systemEmailRecipients[0]['to']), explode(',', $systemEmailRecipients[1]['to']));
                 $ccArray     = array_merge(explode(',', $systemEmailRecipients[0]['cc']), explode(',', $systemEmailRecipients[1]['cc']));
