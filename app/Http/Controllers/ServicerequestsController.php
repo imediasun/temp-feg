@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Console\Commands\ReadComment;
 use App\GameFunctionality;
 use App\Http\Controllers\controller;
 use App\Models\employee;
@@ -41,6 +42,7 @@ class servicerequestsController extends Controller
     {
         parent::__construct();
         $this->model = new Servicerequests();
+        $this->readComment = new ReadComment();
 
         $this->model->attachObserver('FirstEmail',new TicketMailer);
         $this->model->attachObserver('AddComment',new TicketMailer);
@@ -1543,16 +1545,27 @@ class servicerequestsController extends Controller
         if(!empty($id)) {
             $id = \SiteHelpers::encryptID($id,true);
 
-            $partRequest = PartRequest::where('id', $id);
+            $partRequest = PartRequest::with('service_request')->where('id', $id)->first();
 
             if ($partRequest) {
-                $updated = $partRequest->update(['status_id' => 2, 'updated_by' => Session::get('uid')]);
 
-                if ($updated) {
-                    return Redirect::to('servicerequests')->with(['messagetext'=>'Part request approved','ticketType'=>'game-related'])->with('msgstatus', 'success');
-                } else {
-                    return Redirect::to('servicerequests')->with(['messagetext'=> 'Error on approving part request','ticketType'=>'game-related'])->with('msgstatus', 'error');
+                if(is_null($partRequest->service_request)){
+                    $ex = "SPECIFIED PART REQUEST [ID: $id] CANNOT BE APPROVED AS ITS SERVICE REQUEST ALREADY BEEN DELETED";
+                    $this->readComment->sendExceptionMessage($ex, [$ex]);
+                    return Redirect::to('servicerequests')->with(['messagetext'=> ucwords(strtolower($ex)),'ticketType'=>'game-related'])->with('msgstatus', 'error');
+                }else{
+                    $updated = $partRequest->update(['status_id' => 2, 'updated_by' => Session::get('uid')]);
+
+                    if ($updated) {
+                        return Redirect::to('servicerequests')->with(['messagetext'=>'Part request approved','ticketType'=>'game-related'])->with('msgstatus', 'success');
+                    } else {
+                        return Redirect::to('servicerequests')->with(['messagetext'=> 'Error on approving part request','ticketType'=>'game-related'])->with('msgstatus', 'error');
+                    }
                 }
+            }else{
+                $ex = "SPECIFIED PART REQUEST [ID: $id] CANNOT BE APPROVED AS ITS ALREADY BEEN DELETED";
+                $this->readComment->sendExceptionMessage($ex, [$ex]);
+                return Redirect::to('servicerequests')->with(['messagetext'=> ucwords(strtolower($ex)),'ticketType'=>'game-related'])->with('msgstatus', 'error');
             }
 
         }
@@ -1589,22 +1602,34 @@ class servicerequestsController extends Controller
         $id = $request->input('id', 0);
         $reason = $request->input('reason', '');
 
-        $partRequest = PartRequest::where('id', $id);
+        $partRequest = PartRequest::with('service_request')->where('id', $id)->first();
         if (strlen($reason) > 10) {
             if ($partRequest) {
-                $updated = $partRequest->update(['status_id' => 3, 'reason' => $reason, 'updated_by' => Session::get('uid')]);
 
-                if ($updated) {
-                    return response()->json(array(
-                        'message' => 'Part request denied',
-                        'status' => 'success'
-                    ));
-                } else {
-                    return response()->json(array(
-                        'message' => 'Some thing went wrong',
-                        'status' => 'error'
-                    ));
+                if(is_null($partRequest->service_request)){
+                    $ex = "SPECIFIED PART REQUEST [ID: $id] CANNOT BE DENIED AS ITS SERVICE REQUEST ALREADY BEEN DELETED";
+                    $this->readComment->sendExceptionMessage($ex, [$ex]);
+                    return response()->json(['message'=> ucwords(strtolower($ex)),'ticketType'=>'game-related', 'status'=>'error']);
+                }else {
+                    $updated = $partRequest->update(['status_id' => 3, 'reason' => $reason, 'updated_by' => Session::get('uid')]);
+
+                    if ($updated) {
+                        return response()->json(array(
+                            'message' => 'Part request denied',
+                            'status' => 'success'
+                        ));
+                    } else {
+                        return response()->json(array(
+                            'message' => 'Some thing went wrong',
+                            'status' => 'error'
+                        ));
+                    }
                 }
+            }
+            else{
+                $ex = "SPECIFIED PART REQUEST [ID: $id] CANNOT BE DENIED AS ITS ALREADY BEEN DELETED";
+                $this->readComment->sendExceptionMessage($ex, [$ex]);
+                return response()->json(['message'=> ucwords(strtolower($ex)),'ticketType'=>'game-related', 'status'=>'error']);
             }
         } else {
             return response()->json(array(
