@@ -1552,7 +1552,8 @@ class servicerequestsController extends Controller
                     $this->model->sendExceptionMessage($ex, [$ex]);
                     return Redirect::to('servicerequests')->with(['messagetext'=> ucwords(strtolower($ex)),'ticketType'=>'game-related'])->with('msgstatus', 'error');
                 }else{
-                    $updated = $partRequest->update(['status_id' => 2, 'updated_by' => Session::get('uid')]);
+                    $partRequest1 = PartRequest::where('id', $id);
+                    $updated = $partRequest1->update(['status_id' => 2, 'updated_by' => Session::get('uid')]);
 
                     if ($updated) {
                         return Redirect::to('servicerequests')->with(['messagetext'=>'Part request approved','ticketType'=>'game-related'])->with('msgstatus', 'success');
@@ -1609,7 +1610,8 @@ class servicerequestsController extends Controller
                     $this->model->sendExceptionMessage($ex, [$ex]);
                     return response()->json(['message'=> ucwords(strtolower($ex)),'ticketType'=>'game-related', 'status'=>'error']);
                 }else {
-                    $updated = $partRequest->update(['status_id' => 3, 'reason' => $reason, 'updated_by' => Session::get('uid')]);
+                    $partRequest1 = PartRequest::where('id', $id);
+                    $updated = $partRequest1->update(['status_id' => 3, 'reason' => $reason, 'updated_by' => Session::get('uid')]);
 
                     if ($updated) {
                         return response()->json(array(
