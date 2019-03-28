@@ -222,6 +222,10 @@ class UserController extends Controller
                 {
                     return Redirect::to(session('url.intended'));
                 }
+                if(strpos(session('url.intended'),'new-location-setup') )
+                {
+                    return Redirect::to(session('url.intended'));
+                }
                 if(strpos(session('url.intended'),'removeorder') )
                 {
 
