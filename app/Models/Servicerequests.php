@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\SbTicketsTroubleshootingCheckList;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -555,5 +556,22 @@ $ids = [];
         $partRequestPermissions = sbticketsetting::getPartRequestUsers();
 
         return (in_array($userId,$partRequestPermissions['allowed_users']) || in_array($groupId,$partRequestPermissions['allowed_user_groups']));
+    }
+
+    /**
+     * @param $ex
+     * @param array $messages
+     */
+    public  function sendExceptionMessage($ex, $messages = []){
+        $typeOfException = gettype($ex);
+        if($typeOfException == 'object'){
+            $exceptionMessage = view("emails.notifications.dev-team.read-comments-system-exception", compact('ex'));
+            FEGSystemHelper::sendNotificationToDevTeam('[Error]['.env('APP_ENV').'] '.ucfirst($ex->getMessage()).' From Console on '.date('l, F d Y'), $exceptionMessage);
+        }
+
+        if($typeOfException == 'string'){
+            $exceptionMessage = view("emails.notifications.dev-team.read-comments-exception", compact('messages'));
+            FEGSystemHelper::sendNotificationToDevTeam('[Error]['.env('APP_ENV').'] '.ucfirst($ex).' From Console on '.date('l, F d Y'), $exceptionMessage);
+        }
     }
 }

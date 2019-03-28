@@ -21,6 +21,7 @@ class ReadComment extends Command
     protected $signature = 'comments:read';
     
     protected $L = null;
+    protected $serviceRequestObject;
 
     /**
      * The console command description.
@@ -37,6 +38,7 @@ class ReadComment extends Command
     public function __construct()
     {
         parent::__construct();
+        $this->serviceRequestObject = new Servicerequests();
     }
 
     /**
@@ -87,14 +89,14 @@ class ReadComment extends Command
                 array('DISABLE_AUTHENTICATOR' => 'PLAIN'));
             
         } catch (\Exception $ex) {
-            $this->sendExceptionMessage($ex);
+            $this->serviceRequestObject->sendExceptionMessage($ex);
             $L->log("Error connecting to IMAP:" . $ex->getMessage());
             return;
         }
         
         if (empty($inbox)) {
             $ex = "IMAP Error:" . imap_last_error();
-            $this->sendExceptionMessage($ex, [$ex]);
+            $this->serviceRequestObject->sendExceptionMessage($ex, [$ex]);
             $L->log($ex);
             return;
         }
@@ -203,7 +205,7 @@ class ReadComment extends Command
                         }
                         else {
                             $ex = "TICKET [ID: $ticketId] DOES NOT EXIST. Skipping.....";
-                            $this->sendExceptionMessage($ex, [$ex]);
+                            $this->serviceRequestObject->sendExceptionMessage($ex, [$ex]);
                             $L->log($ex);
                         }
 
@@ -231,7 +233,7 @@ class ReadComment extends Command
             }
             catch (\Exception $ex)
             {
-                $this->sendExceptionMessage($ex);
+                $this->serviceRequestObject->sendExceptionMessage($ex);
             }
         }
         else {
@@ -246,23 +248,6 @@ class ReadComment extends Command
         imap_close($inbox);
         FEGSystemHelper::updateOption('ReadingTicketCommentsFromIMAP', '');
         $L->log('End Fetching Emails');
-    }
-
-    /**
-     * @param $ex
-     * @param array $messages
-     */
-    public function sendExceptionMessage($ex, $messages = []){
-        $typeOfException = gettype($ex);
-        if($typeOfException == 'object'){
-            $exceptionMessage = view("emails.notifications.dev-team.read-comments-system-exception", compact('ex'));
-            FEGSystemHelper::sendNotificationToDevTeam('[Error]['.env('APP_ENV').'] '.ucfirst($ex->getMessage()).' From Console on '.date('l, F d Y'), $exceptionMessage);
-        }
-
-        if($typeOfException == 'string'){
-            $exceptionMessage = view("emails.notifications.dev-team.read-comments-exception", compact('messages'));
-            FEGSystemHelper::sendNotificationToDevTeam('[Error]['.env('APP_ENV').'] '.ucfirst($ex).' From Console on '.date('l, F d Y'), $exceptionMessage);
-        }
     }
 
     public function getMessageDetails($inbox, $email_number) {
