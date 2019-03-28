@@ -137,8 +137,8 @@ class ReadComment extends Command
 
                         if ($ticketExists) {
 
-                            $serverRequestTicket = Servicerequests::where(['TicketID'=>$ticketId,'ticket_type'=>'game-related'])->where('Status','=','closed')->get();
-                            if ($serverRequestTicket->count() == 0) {
+//                            $serverRequestTicket = Servicerequests::where(['TicketID'=>$ticketId,'ticket_type'=>'game-related'])->where('Status','=','closed')->get();
+//                            if ($serverRequestTicket->count() == 0) {
 
                                     $L->log("in if block means ticket exists");
                                     $posted = $this->getDate($meta);
@@ -181,12 +181,10 @@ class ReadComment extends Command
                                     $dataUpdate = ['updated' => $posted];
                                     if($serverRequestTicket){
 
-
                                         if($serverRequestTicket->ticket_type == 'game-related'){
-
-                                            if($serverRequestTicket->Status == 'closed')
+                                            if($serverRequestTicket->Status == 'closed') {
                                                 $dataUpdate['Status'] = 'in_process';
-
+                                            }
                                         }
 
                                         if($serverRequestTicket->ticket_type == 'debit-card-related'){
@@ -201,7 +199,7 @@ class ReadComment extends Command
                                     Servicerequests::where("TicketID", $ticketId)->update($dataUpdate);
 
 
-                            }
+//                            }
                         }
                         else {
                             $ex = "TICKET [ID: $ticketId] DOES NOT EXIST. Skipping.....";
