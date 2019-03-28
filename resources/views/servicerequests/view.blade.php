@@ -143,7 +143,7 @@
 
                     <div class="ticketHeaderAddonsContainer"></div>
                         <div class="margin-bottom-30px">
-
+@if($ticketType == 'game-related')
                             <div class="row" style="    margin-right: 0px; margin-left: 0px;">
 
                                 <div class="col-md-12">
@@ -316,6 +316,7 @@
                                     </div>
                                 </div>
                             </div>
+    @endif
 
                         </div>
                     <div class="ticketReplyContainer">
