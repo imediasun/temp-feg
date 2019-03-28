@@ -14,7 +14,7 @@ class TbPages extends Migration
     {
         if (!Schema::hasColumn('tb_pages','page_content')) {
             Schema::table('tb_pages', function (Blueprint $table) {
-                $table->text('page_content')->nullable();
+                $table->longText('page_content')->nullable();
             });
         }
     }
