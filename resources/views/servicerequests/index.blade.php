@@ -34,7 +34,7 @@
         var pageModule = '{{$pageModule}}',
             pageUrl = '{{$pageUrl}}',
             viewTicketId = @if(empty(@$_GET['view'])) "" @else "{{ \SiteHelpers::encryptID($_GET['view'], true) }}" @endif,
-                ticketType = @if(empty(@$_GET['ticket_type'])) "" @else "{{ $_GET['ticket_type'] }}" @endif,
+                ticketType = @if(empty(@$_GET['ticket_type'])) "debit-card-related" @else "{{ $_GET['ticket_type'] }}" @endif,
             hasViewTicket = viewTicketId && viewTicketId != 0;
         
         $(document).ready(function(){
