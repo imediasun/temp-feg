@@ -157,7 +157,7 @@
                         @if($setting['disablerowactions']=='false')
                             <td data-values="action" data-key="<?php echo $row->id;?>">
                                 {!! AjaxHelpers::buttonAction('productsubtype',$access,$id ,$setting) !!}
-                                <a  onclick='deleteProductSubtype("{{ URL::to('productsubtype/removal/'.$row->id)}}", "{{$row->type_description}}", "{{$row->id}}", this)'
+                                <a  onclick='deleteProductSubtype("{{ URL::to('productsubtype/removal/'.$row->id)}}", "{{$row->product_type}}", "{{$row->id}}", this)'
                                     data-id="{{$row->id}}"
                                     data-action="removal"
                                     class="tips btn btn-xs btn-white productsubtypeRemovalRequestAction"
@@ -355,7 +355,7 @@
         // Configure data grid columns for sorting
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 
-        $('select[name="product_type"],[name="type_description"],[name="operate"]').removeAttr('disabled');
+        $('select[name="product_type"],[name="operate"]').removeAttr('disabled');
 
     });
 
@@ -381,7 +381,7 @@
                     $('#removeProductSubtypeModal').modal('show');
                     $('#removeProductSubtypeFormAjax').attr('action', url);
                     $('#thisProductSubtype').html(name);
-                    newProductSubtype.jCombo("{{ URL::to('productsubtype/comboselect?filter=product_type:id:type_description') }}"
+                    newProductSubtype.jCombo("{{ URL::to('productsubtype/comboselect?filter=product_type:id:product_type') }}"
                         +"&parent=request_type_id:"+data.product_type_id+"&limit=WHERE:deleted_at:is:NULL", {selected_value: '', excludeItems: [id]});
                     newProductSubtype.select2();
                 }
@@ -405,7 +405,7 @@
     });
 
     App.autoCallbacks.registerCallback('advancedsearch', function(){
-        $('select[name="product_type"],[name="type_description"],[name="operate"]').removeAttr('disabled');
+        $('select[name="product_type"],[name="operate"]').removeAttr('disabled');
 
         var orderTypeField = $('select[name="request_type_id"]');
         var productSubTypeFieldMajor = $('select[name="product_type"]');
