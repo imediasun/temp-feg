@@ -222,7 +222,7 @@ class UserController extends Controller
                 {
                     return Redirect::to(session('url.intended'));
                 }
-                if(strpos(session('url.intended'),'new-location-setup') )
+                if(strpos(str_replace("-","",session('url.intended')),'newlocationsetup') )
                 {
                     return Redirect::to(session('url.intended'));
                 }
