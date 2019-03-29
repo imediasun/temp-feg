@@ -1548,8 +1548,7 @@ class servicerequestsController extends Controller
             if ($partRequest) {
 
                 if(is_null($partRequest->service_request)){
-                    $ex = "SPECIFIED PART REQUEST [ID: $id] CANNOT BE APPROVED AS ITS SERVICE REQUEST ALREADY BEEN DELETED";
-                    $this->model->sendExceptionMessage($ex, [$ex]);
+                    $ex = "Part already been deleted or Service Request not found!";
                     return Redirect::to('servicerequests')->with(['messagetext'=> ucwords(strtolower($ex)),'ticketType'=>'game-related'])->with('msgstatus', 'error');
                 }else{
                     $partRequest1 = PartRequest::where('id', $id);
@@ -1562,8 +1561,7 @@ class servicerequestsController extends Controller
                     }
                 }
             }else{
-                $ex = "SPECIFIED PART REQUEST [ID: $id] CANNOT BE APPROVED AS ITS ALREADY BEEN DELETED";
-                $this->model->sendExceptionMessage($ex, [$ex]);
+                $ex = "Part already been deleted or Service Request not found!";
                 return Redirect::to('servicerequests')->with(['messagetext'=> ucwords(strtolower($ex)),'ticketType'=>'game-related'])->with('msgstatus', 'error');
             }
 
@@ -1606,8 +1604,7 @@ class servicerequestsController extends Controller
             if ($partRequest) {
 
                 if(is_null($partRequest->service_request)){
-                    $ex = "SPECIFIED PART REQUEST [ID: $id] CANNOT BE DENIED AS ITS SERVICE REQUEST ALREADY BEEN DELETED";
-                    $this->model->sendExceptionMessage($ex, [$ex]);
+                    $ex = "Part already been deleted or Service Request not found!";
                     return response()->json(['message'=> ucwords(strtolower($ex)),'ticketType'=>'game-related', 'status'=>'error']);
                 }else {
                     $partRequest1 = PartRequest::where('id', $id);
@@ -1627,8 +1624,7 @@ class servicerequestsController extends Controller
                 }
             }
             else{
-                $ex = "SPECIFIED PART REQUEST [ID: $id] CANNOT BE DENIED AS ITS ALREADY BEEN DELETED";
-                $this->model->sendExceptionMessage($ex, [$ex]);
+                $ex = "Part already been deleted or Service Request not found!";
                 return response()->json(['message'=> ucwords(strtolower($ex)),'ticketType'=>'game-related', 'status'=>'error']);
             }
         } else {
