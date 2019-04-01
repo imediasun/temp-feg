@@ -4,6 +4,7 @@ namespace App\Library\FEG\System\Email;
 
 use App\Http\Controllers\OrderController;
 use App\Models\Feg\System\Options;
+use App\Models\location;
 use App\Models\Reader;
 use PDO;
 use DB;
