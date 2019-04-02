@@ -802,7 +802,7 @@ class SiteHelpers
         return $f;
     }
 
-    public static function transForm($field, $forms = array(), $bulk = false, $value = '', $typeRestricted = [])
+    public static function transForm($field, $forms = array(), $bulk = false, $value = '', $typeRestricted = [],$isSubtypeDeleted = false)
     {
         $value = !empty($value) ? urldecode($value) : "";
         $type = '';
@@ -1014,6 +1014,9 @@ class SiteHelpers
                         $fields = explode("|", $option['lookup_value']);
                         $search = isset($option['lookup_search']) ? $option['lookup_search'] : '';
                         $query = DB::table($option['lookup_table']);
+                       if ($option['lookup_table'] =='product_type' && $isSubtypeDeleted == true){
+                           $query->whereNull('deleted_at');
+                       }
                         if (!empty($search)) {
                             $searchParts = explode(':', urldecode($search));
                             if (count($searchParts) > 1) {
@@ -1079,7 +1082,7 @@ class SiteHelpers
                     $multiple = true;
                 }
                 $disableField = "";
-                if($option['lookup_table'] == "product_type"){
+                if($option['lookup_table'] == "product_type" && request()->segment(1) != 'productsubtype'){
                     $disableField = 'disabled="disabled"';
                 }
 

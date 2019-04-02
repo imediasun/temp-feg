@@ -266,7 +266,7 @@ function excludeProductsAndProductTypes(){
                 }
             })
          }
-    }, 1000);
+    }, 2000);
 }
 App.autoCallbacks.registerCallback('columnselector', function(params){
 
@@ -1455,8 +1455,7 @@ function populateProductSubTypeSelect(subTypeSelectBox, result, selectBox, selec
  *  4. Product create and edit
  */
 $(document).on('change', 'select' ,function () {
-
-    if(pageModule != 'shopfegrequeststore'){
+    if(pageModule != 'shopfegrequeststore' && pageModule != 'productsubtype'){
         var nameOfSelectBox = $(this).attr('name');
         var productTypeId = $(this).val();
         var productTypeSelectorsNames = ['prod_type_id', 'Product_Type', 'order_type', 'prod_type_id[]'];
