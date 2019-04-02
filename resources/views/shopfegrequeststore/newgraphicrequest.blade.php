@@ -30,7 +30,7 @@
                         <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
                             <i class="fa fa-calendar" id="icon"></i>
                         </span>
-                        <input type="text" class="date form-control" id="date_needed" name="date_needed" required="required" style="width:150px !important;" />
+                        <input type="text" class="date form-control" id="date_needed" name="date_needed" autocomplete="off" required="required" style="width:150px !important;" />
                     </div>
                     <div class="col-md-2">
 

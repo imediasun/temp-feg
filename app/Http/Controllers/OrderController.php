@@ -20,8 +20,10 @@ use App\Models\Ordertyperestrictions;
 use App\Models\OrderContent;
 use App\Models\product;
 use App\Models\OrderSendDetails;
+use App\Models\productlog;
 use App\Models\Sximo;
 use \App\Models\Sximo\Module;
+use App\Models\vendor;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -39,7 +41,7 @@ use App\Models\ReservedQtyLog;
 use Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
-
+use App\Models\Ordersetting;
 /**
  * Test comment 8
  * Class OrderController
@@ -551,6 +553,15 @@ class OrderController extends Controller
            $otherExcluded = Ordertyperestrictions::select('id')->where('can_request', 1)->whereNotIn('id',[7])->get()->pluck('id')->toArray();
            $excludedOrderTypesArray = array_merge($excludedOrderTypesArray,$otherExcluded);
        }
+
+        $MerchandiseOrderSetting  = Ordersetting::where("is_merchandiseorder", 1)->first();
+        $merch = '';
+        if ($MerchandiseOrderSetting) {
+            foreach ($MerchandiseOrderSetting->ordersettingcontent as $SettingContent) {
+                $merch  .=  $SettingContent->ordertype_id.',';
+               }
+            $this->data['merchItems'] = rtrim($merch, ',');
+        }
         $this->data['excludedOrderTypes'] = implode(',', $excludedOrderTypesArray);
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
@@ -578,6 +589,10 @@ class OrderController extends Controller
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
 
+         $is_fed = vendor::where('id', $this->data['row']->vendor_id)->select('is_fedex_enabled')->first();
+        if($is_fed->is_fedex_enabled == 0){
+            $this->data['row']->fedex_number = 'N/A';
+        }
         $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit', $this->data['pass']);
         $this->data['typesUsingCasePrice'] = !empty($this->data['pass']['calculate price according to case price']->data_options) ? explode(",",$this->data['pass']['calculate price according to case price']->data_options) : [];
         $this->data['id'] = $id;
@@ -691,8 +706,29 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
 
+
+            $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
+            if($request->input('is_freehand',0) != 1) {
+            $editMode = $request->get('editmode');
+            if (in_array($editMode, ['edit', 'clone'])) {
+                $productIdsFromOrderContents = \DB::table('order_contents')->whereIn('id', request()->input('order_content_id'))->lists('product_id');
+                $existingProductIds = \DB::table('products')->whereIn('id', $productIdsFromOrderContents)->lists('id');
+                $deletedProductsIds = array_diff($productIdsFromOrderContents, $existingProductIds);
+                if (count($deletedProductsIds) > 0) {
+                    $deletedOrderContents = \DB::table('order_contents')->where('order_id', request()->input('order_id'))->whereIn('product_id', $deletedProductsIds)->get();
+                    $names = "<br><ul style='padding-left: 17px;margin-bottom: 0px; text-align:left !important;'>";
+                    foreach ($deletedOrderContents as $content) {
+                        $names .= '<li>' . $content->item_name . '</li>';
+                    }
+                    $names .= "</ul><br>";
+                    return response()->json([
+                        'status' => 'deleted_product_error',
+                        'message' => str_replace('{products}', $names, \Lang::get('core.item_already_deleted')),
+                    ]);
+                }
+            }
+        }
         /*$productIdArray = $request->get('product_id');
         $query = \DB::select('select id from requests where location_id = "' . (int)$request->location_id . '" AND status_id = 1 AND product_id IN ('.implode(',',$productIdArray).')');
 */
@@ -857,7 +893,12 @@ class OrderController extends Controller
                 $removedProducts = $orderContent->orderedContent()->whereIn("product_id",$supperSetofProducts)->get();
                 foreach($removedProducts as $removedProduct){
                     $product = product::find($removedProduct->product_id);
-                    if($product->is_reserved == 1) {
+                    /**
+                     * As all the operations done below in the following if() block
+                     * depends on product object therefore if product object
+                     * is missing then no action should be performed.
+                     **/
+                    if($product && $product->is_reserved == 1) {
                         $productVariations = $product->getProductVariations();
                         $product->reserved_qty += $removedProduct->qty;
                         $product->updateProduct(['reserved_qty' => $product->reserved_qty]);
@@ -2349,7 +2390,7 @@ class OrderController extends Controller
         }
 
         $whereOrderTypeCondition = " AND products.prod_type_id in(".$orderTypeId.")";
-        // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Party Supplies, 22-Tickets
+        // include order type match if type is any of - 6-Office Supplies, 7-Redemption Prizes, 8-Instant Win Prizes, 17-Marketing, 22-Tickets
         if (
                 !empty($orderTypeId)
                 && in_array($orderTypeId,$restrictedOrderTypes)
@@ -2463,13 +2504,39 @@ class OrderController extends Controller
         return $games_options;
     }
 
-    public function getBillAccount()
+    public function getBillAccount(Request $request)
     {
-        $vendor_id = @$_GET['vendor'];
+
+        $vendor_id = $request->vendor;
+        $location = $request->location;
         if (empty($vendor_id)) {
             $vendor_id = 0;
         }
-        return \DB::table('vendor')->select('bill_account_num',"freight_id")->where('id', $vendor_id)->get();
+        $vendor =  \DB::table('vendor')->select('bill_account_num',"freight_id","is_fedex_enabled")->where('id', $vendor_id)->get();
+
+        if($location>0) {
+            if(isset($vendor[0]->is_fedex_enabled) && $vendor[0]->is_fedex_enabled==1) {
+                $vendor[0]->fedNo = location::where('id', $location)->select('fedex_number')->first();
+                if(empty($vendor[0]->fedNo['fedex_number'])){
+                    $vendor[0]->fedNo['fedex_number'] = 'N/A';
+                }
+            }else{
+                $vendor[0]->fedNo['fedex_number'] = 'N/A';
+            }
+        }
+
+        return $vendor;
+    }
+    public function postFedNumber(Request $request)
+    {
+        $vendor_id = $request->vendor;
+        if (empty($vendor_id)) {
+            $vendor_id = 0;
+        }
+
+       $data = \DB::table('vendor')->select('is_fedex_enabled')->where('id', $vendor_id)->first();
+       return response()->json(['status'=>200,'data'=>$data]);
+
     }
 
     function getComboselect(Request $request)
@@ -3463,10 +3530,120 @@ ORDER BY aa_id");
 
     }
 
-    public function getDownloaddpl(){
+    public function postProductform(Request $request)
+    {
+
+        $vendorId = $request->input('vendor_id', 0);
+        $productTypeId = $request->input('prod_type_id', 0);
+        $itemName = $request->input('item_name', null);
+        $unitPrice = $request->input('unit_price', null);
+        $unitPrice = \CurrencyHelpers::formatPrice($unitPrice, 5, false);
+        $casePrice = $request->input('case_price', null);
+        $casePrice = \CurrencyHelpers::formatPrice($casePrice, 5, false);
+        $itemDescription = $request->input('item', null);
+        $this->data['rowId'] = $request->input('rowId', null);
+        $sku = $request->input('sku', null);
+        $errorMessage = "";
+        if (!$productTypeId) {
+            $errorMessage = '<li>Order Type is required</li>';
+        }
+
+        if (!$vendorId) {
+            $errorMessage .= '<li>Vendor is required</li>';
+        }
+
+        if ($sku == null || $sku == '') {
+            $errorMessage .= '<li>SKU is required</li>';
+        }
+        if ($itemName == null || $itemName == '') {
+            $errorMessage .= '<li>Item name is required</li>';
+        }
+        if (in_array($casePrice ,[null,'', '0','0.00',0])) {
+            $errorMessage .= '<li>Case Price is required</li>';
+        }
+        if (!empty($errorMessage)){
+             return response()->json(array(
+                        'message' => '<ul>'.$errorMessage."</li>",
+                        'status' => 'error'
+                    ));
+        }
+        $productController = new ProductController();
+        $this->info = $this->model->makeInfo($productController->module);
+        $this->access = $this->model->validAccess($productController->info['id']);
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $this->data['access'] = $this->access;
+        $this->data['fromOrder'] = 1;
+        $productModel = new product();
+
+
+        $id = 0;
+        $variations = [];
+        $row = $productModel->where('vendor_description', $itemName)->where('vendor_id', $vendorId)->where('sku', $sku)->first();
+        if ($row) {
+            $this->data['row'] = $row;
+            $columns = ['id', 'prod_type_id', 'prod_sub_type_id', 'retail_price', 'ticket_value', 'expense_category', 'is_default_expense_category'];
+
+            if (empty($row->variation_id)) {
+                $variations = [];
+            } else {
+                $variations = $productModel->select($columns)->where('variation_id', $row->variation_id)->get()->toArray();
+            }
+
+        } else {
+            $this->data['row'] = $productModel->getColumnTable('products');
+        }
+
+        if (empty($variations)) {
+            $variations[] = ['id' => 0, 'prod_type_id' => $productTypeId, 'prod_sub_type_id' => '', 'retail_price' => '', 'ticket_value' => '', 'expense_category' => '', 'is_default_expense_category' => 1];
+            $this->data['row']['vendor_description'] = $itemName;
+            $this->data['row']['vendor_id'] = $vendorId;
+            $this->data['row']['prod_type_id'] = $productTypeId;
+            $this->data['row']['sku'] = $sku;
+            $this->data['row']['num_items'] = 1;
+            $this->data['row']['unit_price'] = $casePrice;
+            $this->data['row']['case_price'] = $casePrice;
+            $this->data['row']['item_description'] = $itemDescription;
+            $this->data['actionUrl'] = 'product/save/' . $row['id'];
+            $this->data['showDefaultExpenseCategoryChk'] = false;
+        } else {
+            $itemMatch = $productModel->where('vendor_description', $itemName)->where('vendor_id', $vendorId)->where('prod_type_id', $productTypeId)->first();
+            if (!$itemMatch) {
+                $variations[] = ['id' => 0, 'prod_type_id' => $productTypeId, 'prod_sub_type_id' => '', 'retail_price' => '', 'ticket_value' => '', 'expense_category' => '', 'is_default_expense_category' => 0];
+            }
+            $this->data['actionUrl'] = 'product/saveupdated';
+            $this->data['showDefaultExpenseCategoryChk'] = true;
+        }
+        $this->data['variations'] = $variations;
+
+        $this->data['row']['case_price'] = \CurrencyHelpers::formatPrice($this->data['row']['case_price'], 5, false);
+        $this->data['row']['unit_price'] = \CurrencyHelpers::formatPrice($this->data['row']['unit_price'], 5, false);
+
+        $this->data['id'] = $id;
+        $excludedOrderTypesArray = FEGDBRelationHelpers::getExcludedProductTypeAndExcludedProductIds(null, true, false)['excluded_product_type_ids'];
+        $this->data['excludedProductTypes'] = implode(',', $excludedOrderTypesArray);
+        $productTypes = Ordertyperestrictions::where('can_request', 1);
+        if (!empty($excludedOrderTypesArray)) {
+            $productTypes->whereNotIn('id', $excludedOrderTypesArray);
+        }
+        $this->data['productTypes'] = $productTypes->orderBy('order_type', 'asc')->get()->toArray();
+        $this->data['access'] = $this->access;
+
+        return view('order.freehand-product-form', $this->data);
+
+    }
+
+    public function getDownloaddpl($isActive = 0){
+        $isActiveOnly = false;
+        $onlyActiveItemQuery = "";
+        if($isActive == 1){
+            $isActiveOnly = true;
+            $onlyActiveItemQuery = " AND P.upc_barcode IS NOT NULL ";
+        }
+
         $locationId = 2031;
         $productTypeId = 7;
-        $query = $this->model->getManualGenerateDplQuery($locationId,$productTypeId);
+        $query = $this->model->getManualGenerateDplQuery($locationId,$productTypeId,$isActiveOnly,$onlyActiveItemQuery);
         $items = \DB::select(\DB::raw($query));
         $fileName = 'FEG-2424-location-'.$locationId.'-Redemption-Prize-dpl-file-'.time().'.dpl';
         $dplFile = $this->model->saveItemsInDplFile($items,$productTypeId,$locationId,'00000000001','uploads/manual-dpl/',$fileName);

@@ -112,8 +112,8 @@ class Data
 "UPDATE products,order_type,product_type SET products.expense_category = '61703' WHERE products.prod_type_id = order_type.id AND products.prod_sub_type_id = product_type.id AND order_type.order_type =  'Tickets-Tokens-Uniforms-Photo Paper-Debit Cards' AND product_type.product_type =  'candy'",
 "UPDATE products,order_type,product_type SET products.expense_category = '61703' WHERE products.prod_type_id = order_type.id AND products.prod_sub_type_id = product_type.id AND order_type.order_type =  'Redemption Prizes' AND product_type.product_type =  'candy'",
 
-"UPDATE products,order_type 				SET products.expense_category = '61605' WHERE products.prod_type_id = order_type.id AND order_type.order_type = 'Party Supplies'",
-"UPDATE products,order_type 				SET products.expense_category = '61605' WHERE products.prod_type_id = order_type.id AND order_type.order_type = 'Party Supplies' ",
+"UPDATE products,order_type 				SET products.expense_category = '61605' WHERE products.prod_type_id = order_type.id AND order_type.order_type = 'Marketing'",
+"UPDATE products,order_type 				SET products.expense_category = '61605' WHERE products.prod_type_id = order_type.id AND order_type.order_type = 'Marketing' ",
 
 "UPDATE products,product_type,order_type SET products.expense_category = '61705' WHERE products.prod_sub_type_id = product_type.id AND product_type.type_description = 'Tickets' ",
 "UPDATE products,product_type,order_type SET products.expense_category = '61705' WHERE products.prod_sub_type_id = product_type.id AND product_type.type_description = 'Photo Paper'  ",

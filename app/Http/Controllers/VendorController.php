@@ -374,7 +374,8 @@ class VendorController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             //No one tested for 1 year that edit was not saving missing data
-            $data = $this->validatePost('vendor');
+            $data = $this->validatePost('vendor',true);
+
             $data['updated_by'] = \Session::get('uid');
             $data['hide'] = $request->get('hide') == "1" ?1:0;
             if (!empty($request->get('status'))) {
@@ -511,9 +512,19 @@ class VendorController extends Controller
                 'message' => 'Vendor Email does not exist.'
             ));
         }
-
-        $vendorEmail = empty($row->email) ? $row->email_2: $row->email;//get vendor mail address
-        
+        $vendorEmail = '';
+        if(!empty($row->email) && $row->email !='') {
+            $vendorEmail[] = $row->email; //get vendor mail address one
+        }
+        if(!empty($row->email_2) && $row->email_2 !='') {
+            $vendorEmail[] = $row->email_2; //get vendor mail address one
+        }
+        if(!empty($vendorEmail)) {
+            if (count($vendorEmail) > 1) {
+                $vendorEmail = array_unique($vendorEmail);
+            }
+        }
+        $vendorEmail = !empty($vendorEmail) ? implode(',',$vendorEmail):$vendorEmail;
         
         $response = VendorProductsImportHelper::exportExcel($id, $vendorEmail);
         if($response){
@@ -594,5 +605,30 @@ class VendorController extends Controller
         }
     }
 
+    public function postToggleOption(Request $request){
+        $vendorId = $request->input('vendor_id',0);
+        $field = $request->input('field','is_export_product_in_development');
+        $state = $request->input('status',0);
+        $vendor = $this->model->where('id','=',$vendorId)->update([$field=>$state]);
+        if($vendor) {
+            if ($state == 1) {
+                return response()->json(array(
+                    'status' => 'success',
+                    'message' => 'Now product(s) has become part of vendor product list too,which are in development.'
+
+                ));
+            } else {
+                return response()->json(array(
+                    'status' => 'success',
+                    'message' => 'Product(s) in developement has been excluded from vendor product list.'
+                ));
+            }
+        }else{
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in updating record.'
+            ));
+        }
+    }
 
 }

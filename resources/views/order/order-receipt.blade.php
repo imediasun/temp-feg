@@ -239,7 +239,7 @@
                                 else
                                     $date_received=date('m/d/Y');
                                 ?>
-                                <input type="text" class="date form-control" name="date_received" value="{{ $date_received }}" required/>
+                                <input type="text" class="date form-control" autocomplete="off" name="date_received" value="{{ $date_received }}" required/>
                             </div>
                         </div>
                         <div class="form-group clearfix">

@@ -1997,7 +1997,9 @@ $message" .
             $contents = $order->orderedContent;
             foreach($contents as $item) {
                 $product = $item->product;
-                $meta = self::updateProductMeta($product, $data, $options);
+                if($product){
+                    $meta = self::updateProductMeta($product, $data, $options);
+                }
             }
         }
     }
@@ -2084,6 +2086,28 @@ $message" .
             }
         }
         return $attachmentsDetail;
+    }
+
+    /**
+     * @param array $array1
+     * @param array $array2
+     * @return bool
+     */
+    public static function isArrayCombinationUnique($array1 = [], $array2 = [])
+    {
+        for ($i = 0; $i < count($array1); $i++) {
+
+            for ($j = 0; $j < count($array2); $j++) {
+                if ($j != $i) {
+                    if (($array1[$i] == $array1[$j]) && ($array2[$i] == $array2[$j])) {
+                        return true;
+                    }
+                }
+
+            }
+
+        }
+        return false;
     }
 
 }

@@ -11,7 +11,7 @@
                 <option value="instant" data-active="0">Instant Win Prizes</option>
                 <option value="officesupplies" data-active="0">Office Supplies - Products List</option>
                 <option value="parts" data-active="0">Parts - Products List</option>
-                <option value="party" data-active="0">Party Supplies</option>
+                <option value="marketing" data-active="0">Marketing</option>
                 <option value="redemption" data-active="0">Redemption Prizes</option>
                 <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
                 <option value="productsindevelopment" data-active="0">Products In Development</option>

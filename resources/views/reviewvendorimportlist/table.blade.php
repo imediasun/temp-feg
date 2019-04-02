@@ -169,8 +169,13 @@
                                              <option @if($row->$field['field'] == 1) selected @endif value="1">Inactive</option>
 
                                          </select>
-                                        @elseif(in_array($field['field'],['allow_negative_reserve_qty','in_development','hot_item','exclude_export']))
-                                         <select required=""  style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2" onchange="setValuesToVariations(this)">
+                                        @elseif(in_array($field['field'],['allow_negative_reserve_qty','in_development','hot_item']))
+                                         <select required=""  style="width: 100%;" name="{{ $field['field'] }}[]" onchange="setValuesToVariations(this)" class="select3 select2" >
+                                             <option @if($row->$field['field'] == 1) selected @endif value="1">Yes</option>
+                                             <option @if($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0') selected @endif value="0">No</option>
+                                         </select>
+                                     @elseif(in_array($field['field'],['exclude_export']))
+                                         <select required=""  style="width: 100%;" name="{{ $field['field'] }}[]" class="select3 select2" >
                                              <option @if($row->$field['field'] == 1) selected @endif value="1">Yes</option>
                                              <option @if($row->$field['field'] == 0 || $row->$field['field'] == '' || $row->$field['field'] == '0') selected @endif value="0">No</option>
                                          </select>
@@ -185,7 +190,8 @@
                                         <input type="hidden" class="itemId" value="{{ $row->id }}" name="item_id[]">
                                     </td>
                                 @elseif($row->is_omitted != 0 && $field['field'] == 'vendor_description')
-                                    <td></td>
+                                    <td> <input type="hidden" class="parent_id" value="{{ $row->id }}" name="parent_id[]">
+                                        <input type="hidden" class="itemId" value="{{ $row->id }}" name="item_id[]"></td>
                                 @endif
 							@endif
                     <?php

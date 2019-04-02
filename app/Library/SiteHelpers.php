@@ -259,7 +259,47 @@ class SiteHelpers
 
         return $out;
     }
+  public static function getExtensionName($val,$defaultValue = '-'){
+      $mime_types = array(
+          "application/pdf" => "PDF Document",
+          "application/octet-stream" => "exe",
+          "application/zip" => "Zip Document",
+          "application/msword" => "Word Document",
+          "application/vnd.ms-excel" => "Excel Document",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"=>'Excel Document',
+          "application/x-ms-shortcut"=>"Document Shortcut",
+          "application/vnd.ms-powerpoint" => "Powerpoint Document",
+          "application/vnd.google-apps.spreadsheet" => "Excel Document",
+          "application/vnd.google-apps.document"=>'PDF Dcocument',
+          "text/csv" => "Excel Document",
+          "image/gif" => "Gif",
+          "image/png" => "PNG",
+          "image/jpeg" => "JPEG",
+          "image/jpg" => "JPG Image",
+          "text/html" => "Html File",
+          "audio/mpeg" => "mp3",
+          "audio/x-wav"=>   "wav",
+          "video/mpeg"=>    "mpeg",
+          "video/quicktime" =>   "mov",
+          "video/x-msvideo" =>  "avi",
+          "video/3gpp" =>    "3gp",
+          "text/css" =>"css",
+          "text/x-url" => "URL",
+          "text/x-sql" => "Sql File",
+          "application/javascript" =>"js"
+      );
+      if(in_array($val,array_keys($mime_types))){
+         return $mime_types[$val];
+      }
+    else{
+        return $defaultValue;
+    }
 
+
+
+
+
+  }
 
     public static function toForm($forms, $layout)
     {
@@ -897,13 +937,13 @@ class SiteHelpers
                 break;
 
             case 'text_date';
-                $form = "<input  type='text' name='$field{$bulk}' 
+                $form = "<input autocomplete='off'  type='text' name='$field{$bulk}' 
                     class='date form-control input-sm $simpleSearchClass' 
                     $mandatory $simpleSearchOptions value='{$value}'/> ";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
                         . "<div class='betweenseparator pull-left' > - </div>"
-                        . "<input type='text'
+                        . "<input autocomplete='off' type='text'
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
                                 class='date form-control input-sm pull-left $simpleSearchEndClass' 
@@ -918,13 +958,13 @@ class SiteHelpers
                 break;
 
             case 'text_datetime';
-                $form = "<input  type='text' name='$field{$bulk}' 
+                $form = "<input autocomplete='off'  type='text' name='$field{$bulk}' 
                     class='date form-control input-sm $simpleSearchClass'  
                     $mandatory $simpleSearchOptions value='{$value}'/> ";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
                         . "<div class='betweenseparator pull-left' > - </div>"
-                        . "<input type='text'
+                        . "<input autocomplete='off' type='text'
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
                                 class='date form-control input-sm pull-left $simpleSearchEndClass' 
@@ -1189,11 +1229,11 @@ class SiteHelpers
                 break;
 
             case 'text_date':
-                $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory value='{$value}'/> ";
+                $form = "<input  type='text' autocomplete='off' name='$field{$bulk}' class='date form-control input-sm' $mandatory value='{$value}'/> ";
                 break;
 
             case 'text_datetime':
-                $form = "<input  type='text' name='$field{$bulk}'  class='datetime form-control input-sm'  $mandatory value='{$value}'/> ";
+                $form = "<input  type='text' autocomplete='off' name='$field{$bulk}'  class='datetime form-control input-sm'  $mandatory value='{$value}'/> ";
                 break;
 
             case 'select':
@@ -3102,7 +3142,7 @@ class SiteHelpers
         $tableHeadings = [];
         if(!empty($data[0])) {
             foreach ($data[0] as $heading) {
-                //"=\"61605 Party Supplies\""
+                //"=\"61605 Marketing\""
 
                 $tableHeadings[0][] = strtolower(str_replace(array('/','\\',' '),'_',$heading));
             }

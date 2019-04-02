@@ -28,7 +28,7 @@ class order extends Sximo
     const ORDER_TYPE_REDEMPTION = 7;
     const ORDER_TYPE_INSTANT_WIN_PRIZE = 8;
     const ORDER_TYPE_OFFICE_SUPPLIES = 6;
-    const ORDER_TYPE_PARTY_SUPPLIES = 17;
+    const ORDER_TYPE_MARKETING = 17;
     const ORDER_TYPE_UNIFORM = 24;
     const ORDER_TYPE_REPAIR_LABOUR = 3;
     const ORDER_TYPE_ADVANCED_REPLACEMENT = 2;
@@ -133,7 +133,7 @@ class order extends Sximo
 
             $orderedProduct = $orderContent->product;
 
-            if ($orderedProduct->is_reserved == 1) {
+            if ($orderedProduct && $orderedProduct->is_reserved == 1) {
 
                 if ($reduceQuantity) {
                     Log::info("claiming qty from product because order is restoring");
@@ -1415,10 +1415,18 @@ class order extends Sximo
     /**
      * @param $locationId
      * @param $productTypeId
+     * @param bool $isActiveItemsOnly
+     * @param string $onlyActiveItemQuery
      * @return string
      */
-    public function getManualGenerateDplQuery($locationId, $productTypeId)
+    public function getManualGenerateDplQuery($locationId, $productTypeId, $isActiveItemsOnly = false, $onlyActiveItemQuery = "")
     {
+        $groupBy = " GROUP BY OC.item_name,OC.sku,OC.case_price ";
+
+        if($isActiveItemsOnly){
+            $groupBy = " GROUP BY P.vendor_description,P.sku,P.case_price ";
+            $onlyActiveItemQuery .= " AND (P.inactive = 0 OR P.inactive = '' OR P.inactive IS NULL) ";
+        }
         $sql = 'SELECT
                   O.id            AS Order_id,
                   OC.id            AS Order_Content_id,
@@ -1450,7 +1458,7 @@ class order extends Sximo
                 WHERE O.location_id = ' . $locationId . '
                     AND OC.prod_type_id = ' . $productTypeId . '
                     AND OC.item_received > 0 
-                GROUP BY OC.item_name,OC.sku,OC.case_price';
+                '.$onlyActiveItemQuery.$groupBy;
         return $sql;
     }
 
@@ -1489,7 +1497,7 @@ class order extends Sximo
                     Order::ORDER_TYPE_OFFICE_SUPPLIES => 'OffSuppl',
                     Order::ORDER_TYPE_REDEMPTION => 'RedPrize',
                     Order::ORDER_TYPE_INSTANT_WIN_PRIZE => 'InstWin',
-                    Order::ORDER_TYPE_PARTY_SUPPLIES => 'PartySup',
+                    Order::ORDER_TYPE_MARKETING => 'Marketing',
                     Order::ORDER_TYPE_UNIFORM => 'Uniforms'
                 ];
                 $itemName = \SiteHelpers::removeSpecialCharacters($itemName);

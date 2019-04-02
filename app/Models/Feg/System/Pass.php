@@ -383,4 +383,17 @@ class Pass extends Sximo  {
 
     }
 
+    /**
+     * this function checks if given user and group is allowed in permission
+     * @param $userId integer
+     * @param $groupId integer
+     * @param $permission Object
+     */
+    public static function isAllowed($userId, $groupId, $permission){
+        $userAllowed = explode(",",$permission->user_ids);
+        $groupAllowed = explode(",",$permission->group_ids);
+        $excludeUserIds = explode(",",$permission->exclude_user_ids);
+        return (in_array($userId,$userAllowed) || in_array($groupId,$groupAllowed)) && !in_array($userId,$excludeUserIds);
+    }
+
 }

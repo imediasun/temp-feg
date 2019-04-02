@@ -35,7 +35,9 @@ class sbticket extends Sximo  {
 		    $extra = [
 		        'method' => 'whereNotIn',
                 'field' => 'location.id',
-                'data' => [ 6000, 6001, 6030]
+                'data' => [
+//                    6000, 6001, 6030
+                ]
             ];
 			return parent::getUserAssignedLocation($extra);
 

@@ -1522,6 +1522,7 @@ class Sximo extends Model {
                           V.zip                 AS vend_zip,
                           V.contact             AS vend_contact,
                           V.email               AS vend_email,
+                          V.is_fedex_enabled    AS is_fed,
                           V.bill_account_num    AS billing_account,
                           O.order_description,
                           O.order_total,

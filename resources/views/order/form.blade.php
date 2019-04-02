@@ -202,7 +202,7 @@
                             {{ Lang::get('core.fedex_number') }}
                         </label>
                         <div class="col-md-8">
-                            <input name='fedex_number' id='fedex_number' class="form-control" value="{{ is_object($row) ? $row->fedex_number  : 'No Data' }}" readonly/>
+                            <input name='fedex_number' id='fedex_number' class="form-control" value="" readonly/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -333,7 +333,7 @@
                         <th class="game" style="display:none" width="200">Game</th>
                         <th width="90">Total ( $ )</th>
                         @if(is_object($row))  @if($fromStore != 1 && $mode == "edit")  <th width="90">Broken Case</th> @endif @endif
-                        <th width="60" align="center"><span id="remove-col">Remove </span></th>
+                        <th width="80" align="center"><span id="remove-col">Actions </span></th>
                     </tr>
 
                     </thead>
@@ -377,7 +377,7 @@
                                          placeholder="00"
                                          required>
                             <input type="hidden" name="prev_qty[]" value="0"/>
-                            <input type="hidden" class="case_per_quantity" id="case_per_quantity" value="0"/>
+                            <input type="hidden" class="case_per_quantity" name="case_per_quantity[]" disabled id="case_per_quantity" value="0"/>
                         </td>
                         <td class="game game_dropdown" style="display:none">
                             <br/> <input type='hidden' name='game[]' id='game_0'>
@@ -402,7 +402,10 @@
 
                             <p id="hide-button" data-id=""
                                onclick="removeRow(this.id);"
-                               class="remove btn btn-xs btn-danger hide-button">-
+                               class="remove btn btn-xs btn-danger hide-button tips" title="Remove Item">-
+                            </p>
+                            <p id="add-items-button" @if($row['is_freehand'] == 1) freehandorder="1" @else style="display: none;" @endif data-id=""
+                               class="addToProductList btn btn-xs btn-danger add-items-button tips" title="Add product to the Product List">+
                             </p>
                             <input type="hidden" name="counter[]">
                         </td>
@@ -512,6 +515,7 @@
         case_price_categories = case_price_categories.split(",").map(Number);
 
         var show_freehand = <?php echo $show_freehand  ; ?>;
+        var isFreeHand = '<?php echo $isFreeHand; ?>';
         var mode = "{{ $data['prefill_type'] }}";
         var forceRemoveOrderContentIds = [];
         $(document).ready(function () {
@@ -1086,7 +1090,26 @@
              window.setTimeout(function() { $("#ordersubmitFormAjax").submit(); }, 5000);
              }*/
             else {
-                notyMessageError(data.message);
+                if(data.status == 'deleted_product_error' ){
+                    App.notyConfirm({
+                        type:'alert',
+                        buttons:false,
+                        container: '.custom-container',
+                        message: data.message,
+                        afterShow: function(){
+                            $('#button-0').remove();
+                        },
+                        cancel: function () {
+                            $('.custom_overlay').slideUp(500);
+                        }
+                    });
+
+                    setTimeout(function () {
+                        $('#button-1').remove();
+                    }, 100);
+                }else{
+                    notyMessageError(data.message);
+                }
                 return false;
             }
         }
@@ -1098,56 +1121,73 @@
             changeLocation();
         });
 
-        $('#orderView .iCheck-helper').on('click', function () {
-
-            if(mode == 'edit'){
-                if($('#alt_ship_to').is(':checked')){
-                    $('#ship_address').css('display', 'block');
-                }else{
-                    $('#ship_address').css('display', 'none');
-                }
-            }else{
-
-                if($('#alt_ship_to').is(':checked')){
-                    var selectedLocationId          = $("#user_locations").val();
-                    var isCheckedAltShippingAddress = true;
-                }else{
-                    var selectedLocationId          =  $("#location_id").val() != '' ? $("#location_id").val() : 0;
-                    var isCheckedAltShippingAddress = false;
-                }
-                @if($mode != 'clone')
-                        if($('#vendor_id').val() == '') {
-                     onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId);
-                 }else {
-                     confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId);
-                 }
-                 @else
-                 if($('#alt_ship_to').is(':checked')){
-                     $('#ship_address').css('display', 'block');
-                 }else{
-                     $('#ship_address').css('display', 'none');
-                 }
-                @endif
-            }
-
+        $(document).on('ifChecked','#alt_ship_to',function(){
+            $(this).trigger('change');
+        });
+        $(document).on('ifUnchecked','#alt_ship_to',function(){
+            $(this).trigger('change');
         });
 
-        function  onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId){
-            $('.ajaxLoading').css('display', 'block');
+        $(document).on('change', '#alt_ship_to', function () {
+            if (onlyOnceTimeTrigger == true) {
+                onlyOnceTimeTrigger = false;
+                setTimeout(function () {
+                    onlyOnceTimeTrigger = true;
+                }, 1000);
+
+
+                if (mode == 'edit') {
+                    if ($('#alt_ship_to').is(':checked')) {
+                        $('#ship_address').css('display', 'block');
+                    } else {
+                        $('#ship_address').css('display', 'none');
+                    }
+                } else {
+
+                    if ($('#alt_ship_to').is(':checked')) {
+                        var selectedLocationId = $("#user_locations").val();
+                        var isCheckedAltShippingAddress = true;
+                    } else {
+                        var selectedLocationId = $("#location_id").val() != '' ? $("#location_id").val() : 0;
+                        var isCheckedAltShippingAddress = false;
+                    }
+                    @if ($mode != 'clone')
+                    if ($('#vendor_id').val() == '') {
+                        onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId);
+                    } else {
+                        confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId);
+                    }
+                    @else
+
+                    if ($('#alt_ship_to').is(':checked')) {
+                        $('#ship_address').css('display', 'block');
+                    } else {
+                        $('#ship_address').css('display', 'none');
+                    }
+                    @endif
+                }
+            } else {
+                return false;
+            }
+        });
+
+        function  onConfirmChangeLocation(isCheckedAltShippingAddress, selectedLocationId) {
+            $('.ajaxLoading').show();
+
             $.ajax({
                 url: '/order/update',
                 method: 'GET',
-                success:function (resultHTML) {
+                success: function (resultHTML) {
                     $('#orderView').html(resultHTML);
                     $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
-                        {
-                            selected_value: isCheckedAltShippingAddress ? '' : selectedLocationId,
-                            initial_text: '-------- Select Location --------',
-                            <?php $data["order_loc_id"] == '' ? '' : print_r("onLoad:addInactiveItem('#location_id', ".$data['order_loc_id']." , 'Location', 'active' , 'id|location_name' )") ?>
-                        });
+                            {
+                                selected_value: isCheckedAltShippingAddress ? '' : selectedLocationId,
+                                initial_text: '-------- Select Location --------',
+                                <?php $data["order_loc_id"] == '' ? '' : print_r("onLoad:addInactiveItem('#location_id', " . $data['order_loc_id'] . " , 'Location', 'active' , 'id|location_name' )") ?>
+                            });
 
                     $("#po_1").val(0);
-                    if(isCheckedAltShippingAddress){
+                    if (isCheckedAltShippingAddress) {
                         $('#ship_address').css('display', 'block');
                         $('#alt_ship_to').attr('checked', true);
                         $('#alt_ship_to').parent().addClass('icheckbox_square-blue checked');
@@ -1169,10 +1209,14 @@
                         }
                     });
 
-                    if(oldLocationId != selectedLocationId)
+                    if (oldLocationId != selectedLocationId) {
                         oldLocationId = selectedLocationId;
+                    }
+
                 }
             });
+
+
         }
 
         function confirmTheChangeForLocation(isCheckedAltShippingAddress, selectedLocationId){
@@ -1208,6 +1252,7 @@
 
                 },
                 cancel:function(){
+                    $('.ajaxLoading').hide();
                     @if($mode == 'clone')
                     oldLocationId = {{ $data['order_loc_id'] }}
                     @endif
@@ -1264,16 +1309,19 @@
         });
         $("#vendor_id").on('change', function() {
             oldLocationId = $('#location_id').val();
+            console.log("location:"+oldLocationId);
             oldAltShipToVal = $('#alt_ship_to').is(':checked');
+            vendor = $(this);
+
+
 
             if ($('#is_freehand').val() == 0){
 
-
-            vendor = $(this);
             if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
             {
 
                 if($('#item_name').val()) {
+
                     $('#submit_btn').attr('disabled','disabled');
                     App.notyConfirm({
                         message: "Are you sure you want to change Vendor <br> <b>***WARNING***</b><br>if you change vendor all of your items will be removed and you will have to add them again. Freight Type will be updated as well",
@@ -1286,9 +1334,14 @@
                             $.ajax({
                                 type: "GET",
                                 url: "{{ url() }}/order/bill-account",
-                                data: {'vendor': vendor.val()},
+                                data: {
+                                    'vendor': vendor.val(),
+                                    'location':oldLocationId
+                                },
                                 success: function (data) {
                                     if(data.length>0){
+                                        console.log(data[0].fedNo.fedex_number);
+                                        $('#fedex_number').val(data[0].fedNo.fedex_number);
                                         $('#bil_ac_num').val(data[0].bill_account_num);
                                         updateShippingMethod(data[0].freight_id,true);
                                     }
@@ -1328,9 +1381,14 @@
                     $.ajax({
                         type: "GET",
                         url: "{{ url() }}/order/bill-account",
-                        data: {'vendor': vendor.val()},
+                        data: {'vendor': vendor.val(),
+                        'location':oldLocationId
+                        },
                         success: function (data) {
                             if(data.length>0){
+                                console.log(data[0].fedNo.fedex_number);
+
+                                $('#fedex_number').val(data[0].fedNo.fedex_number);
                                 $('#bil_ac_num').val(data[0].bill_account_num);
                                 updateShippingMethod(data[0].freight_id,true);
                             }
@@ -1340,12 +1398,16 @@
             }
             else
             {
+
                 $.ajax({
                     type: "GET",
                     url: "{{ url() }}/order/bill-account",
-                    data: {'vendor': vendor.val()},
+                    data: {'vendor': vendor.val(),
+                    'location':oldLocationId},
                     success: function (data) {
                         if(data.length>0){
+                            console.log(data[0].fedNo.fedex_number);
+                            $('#fedex_number').val(data[0].fedNo.fedex_number);
                             $('#bil_ac_num').val(data[0].bill_account_num);
                             updateShippingMethod(data[0].freight_id);
                         }
@@ -1353,13 +1415,18 @@
                 });
             }
             }else{
+
                 //free hand order
                 $.ajax({
                     type: "GET",
                     url: "{{ url() }}/order/bill-account",
-                    data: {'vendor': vendor.val()},
+                    data: {'vendor': vendor.val(),
+                        'location':oldLocationId},
                     success: function (data) {
                         if(data.length>0){
+                            console.log(data[0].fedNo.fedex_number);
+
+                            $('#fedex_number').val(data[0].fedNo.fedex_number);
                             $('#bil_ac_num').val(data[0].bill_account_num);
                             updateShippingMethod(data[0].freight_id);
                         }
@@ -1456,7 +1523,7 @@
                             $("#po_message").show(200);
                         }
 
-                        $("#fedex_number").val(!isCheckedAltShippingAddress ? msg.fedex_number: 'No data');
+                        //$("#fedex_number").val(!isCheckedAltShippingAddress ? msg.fedex_number: 'No data');
 
                         if(!isCheckedAltShippingAddress)
                             $("#po_1").val(location_id);
@@ -1476,6 +1543,25 @@
         $('#order_type_id').change(function () {
             var orderType = $(this);
             var selected_type = $(this).val();
+             var  merch_val = <?php echo json_encode(explode(',', $merchItems)); ?>;
+
+            if(Number(selected_type) > 0) {
+
+                if (showFirstPopup) {
+                    clearTimeout(showFirstPopup);
+                }
+                if ($.inArray(selected_type, merch_val) > -1) {
+                    settimeout = showPopups({{env('NOTIFICATION_POPUP_TIME_FOR_MERCH')}});
+                } else {
+                    settimeout = showPopups({{env('NOTIFICATION_POPUP_TIME_FOR_NON_MERCH')}});
+                }
+            }else{
+                if (showFirstPopup) {
+                    clearTimeout(showFirstPopup);
+                }
+            }
+
+                 console.log(merch_val);
             if($.inArray(parseInt(selected_type),type_permissions) != -1 && show_freehand)
             {
                 $('#can-freehand').show();
@@ -1491,6 +1577,7 @@
                             confirmButtonText: 'Yes',
                             confirm: function () {
                                 $('#can-freehand').hide();
+                                $('.addToProductList').hide();
                                 $('#is_freehand').val(0);
                                 $('#can_select_product_list').val(1);
                                 $('.itemstable .clonedInput:not(:first-child)').remove();
@@ -1515,12 +1602,16 @@
                     else
                     {
                         $('#can-freehand').hide();
+                        $('.addToProductList').hide();
                     }
                 }
             }
             else
             {
                 $('#can-freehand').hide();
+                if(Number(isFreeHand) != 1) {
+                    $('.addToProductList').hide();
+                }
             }
             gameShowHide();
             calculateSum();
@@ -1550,8 +1641,10 @@
             $(clone).find('input:text, input[type=number], textarea').each(function(){
                 $(this).val("");
             });
-            $(clone).find('.hide-button').prop('id', 'hide-button' + productRows);
-
+            $(clone).find('.hide-button').attr({'id':'hide-button' + productRows,'title':"Remove Item"});
+            $(clone).find('.hide-button').tooltip();
+            $(clone).find('.add-items-button').attr({'id': 'add-items-button' + productRows,'title':'Add product to the Product List'});
+            $(clone).find('.add-items-button').tooltip();
             $(clone).find('input:checkbox').prop('checked', false);
             $(clone).find('input[name="item_received[]"]').val(0);
             $(clone).find('input[name="order_content_id[]"]').val(0);
@@ -1610,37 +1703,13 @@
                 counter = index + 1;
             });
             calculateSum();
-            /*
-             if(mode == "add")
-             {
-             counter = 1;
-             }
-             $('input[name^=item_num]').each(function () {
-             if(mode == "add") {
 
-             counter = counter + 1;
-             $('input[name^=item_num]').eq(counter-1).val(counter);
-
-             }
-             else if (mode == "remove")
-             {
-             if(counter >0)
-             counter = counter-1;
-             $('input[name^=item_num]').eq(counter-1).val(counter);
-
-
-             }
-
-             });*/
-
-
-            // init("item_name"+counter);
         }
         /**
          *
          * @returns {string}
          */
-        function showPopups()
+        function showPopups(time)
         {
             showFirstPopup = setTimeout(function () {
                 App.notyConfirm({
@@ -1651,6 +1720,7 @@
                     confirm: function (){
                         $(document).scrollTop(0);
                         clearTimeout(showFirstPopup);
+                        ajaxViewClose('#orderItemForm');
                         reloadOrder();
                     },
                     cancel:function () {
@@ -1660,10 +1730,15 @@
                             data:{requestIds:requestIds}
                         }).success(function (data) {
                             clearTimeout(hidePopup);
-                            showFirstPopup =  showPopups();
+                            if(showFirstPopup){
+                                clearTimeout(showFirstPopup);
+                            }
+                            showFirstPopup =  showPopups(time);
                         })
                             .error(function (data) {
-
+                                if(showFirstPopup){
+                                    clearTimeout(showFirstPopup);
+                                }
                             })
                     }
                 });
@@ -1672,10 +1747,10 @@
                         $('#noty_topCenter_layout_container').hide(200);
                         reloadOrder();
                     },60000)
-            }, ({{env('notification_popup_time_for_order',1)}} * 60000));
+            }, (time * 60000));
             return showFirstPopup;
         }
-
+        var settimeout = undefined;
 $(function(){
     /**
      * Order.create -> after specific time period if system remains idle on SAVE will show message related timeout
@@ -1683,7 +1758,10 @@ $(function(){
      * Order.clone -> after specific time period if system remains idle on SAVE will show message related timeout and order will be changed to its initial state
      * managefegrequeststore.create -> after specific time period if system remains idle on SAVE will show message related timeout
      */
-    var settimeout =  showPopups();
+    var oType = Number($('#order_type_id').val());
+    if(oType > 0 ) {
+        settimeout = showPopups();
+    }
 });
 
     </script>
@@ -1985,6 +2063,7 @@ $(function(){
                             $('input[name="item_name[]"]').addClass('mysearch');
                             $('input[name="item_name[]"]').change();
                             $("input[name='case_price[]']").attr("onkeyup","calculateUnitPrice(this);");
+                            $('.addToProductList').hide();
                         }
                         else{
                             $('input[name="item_name[]"]').removeAttr('id');
@@ -2009,6 +2088,7 @@ $(function(){
                             $('#total_cost').val(0.00);
                             $('input[name="Subtotal"]').val(0.00);
                             $("input[name='case_price[]']").removeAttr("onkeyup");
+                            $('.addToProductList').show();
                             reInitParcley();
                         }
                     }
@@ -2035,6 +2115,7 @@ $(function(){
                     $('input[name="item_name[]"]').addClass('item_name');
                     $('input[name="item_name[]"]').addClass('mysearch');
                     $('input[name="item_name[]"]').change();
+                    $('.addToProductList').hide();
                 }
                 else{
                     currentElm.data('status','enabled');
@@ -2056,6 +2137,7 @@ $(function(){
                     $('input[name="item_name[]"]').removeClass('mysearch');
                     $('input[name="item_name[]"]').change();
                     console.log("freehand order");
+                    $('.addToProductList').show();
                 }
             }
             if (currentElm.data('status') == 'enabled') {
@@ -2259,6 +2341,7 @@ $(function(){
 </script>
 
     <script>
+
         $(document).ready(function () {
             $(document).ajaxComplete(function (event, xhr, settings) {
                 if (xhr.status == 200 && settings.url == "{{ action('OrderController@postSave') }}") {
@@ -2280,5 +2363,55 @@ $(function(){
                 }
             });
             reInitParcley();
+
+            $(document).on('click','.addToProductList',function(){
+                $('.ajaxLoading').show();
+                var ordersubmitFormAjax = $("#ordersubmitFormAjax");
+                var url = '/order/productform';
+                var rowId = $(this).parent().parent();
+                var rowData = $('#'+rowId.attr('id')+" input, #"+rowId.attr('id')+" textarea");
+                var OrderTypeId = $('#order_type_id').val();
+                var vendorId = $('#vendor_id').val();
+                var dataRow = {};
+                dataRow['rowId'] = rowId.attr('id');
+                dataRow['vendor_id'] = vendorId;
+                dataRow['prod_type_id'] = OrderTypeId;
+                rowData.each(function(){
+                    var name = ($(this).attr('name')) ? ($(this).attr('name')).replace('[]',''):undefined;
+                    if ($(this).attr('type') == 'checkbox' || $(this).attr('type') == 'radio' || $(this).attr('name') == undefined){
+                       /* if($(this).is(":checked")){
+                            dataRow[$(this).attr('name')] = $(this).val();
+                        }*/
+                    }else{
+                        dataRow[name] = $(this).val();
+                    }
+                });
+                //clearTimeout(settimeout);
+                if(onlyOnceTimeTrigger == true) {
+                    onlyOnceTimeTrigger = false;
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: dataRow,
+                        success: function (response) {
+                            $('.ajaxLoading').hide();
+                            if (response.status != undefined) {
+                                if (response.status = 'error') {
+                                    notyMessageError(response.message);
+                                }
+                            } else {
+                                $('#orderView').hide('slow');
+                                $('#orderItemFormView').html(response);
+                                $('#orderItemFormView').show('slow');
+                                var orderForm = document.getElementById('ordersubmitFormAjax');
+                                var productForm = document.getElementById('productFormAjax');
+                                reInitFormValidatorParsley($(orderForm));
+                                reInitFormValidatorParsley($(productForm));
+                            }
+                            setTimeout(function(){ onlyOnceTimeTrigger = true; },500);
+                        }
+                    });
+                }
+            });
         });
     </script>

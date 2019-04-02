@@ -12,7 +12,9 @@
 	</div>
 
 	<div class="sbox-content"> 
-@endif	
+@endif
+
+
 			{!! Form::open(array('url'=>'vendor/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'vendorFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset>
@@ -154,8 +156,30 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+				  </div>
+				  <div class="form-group  " >
+					<label for="Vendor AP Contact Name" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Vendor AP Contact Name', (isset($fields['vendor_ap_contact_name']['language'])? $fields['vendor_ap_contact_name']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('vendor_ap_contact_name', $row['vendor_ap_contact_name'],array('class'=>'form-control', 'placeholder'=>''   )) !!}
+					 </div>
+					 <div class="col-md-2">
+
+					 </div>
+				  </div>
+				  <div class="form-group  " >
+					<label for="Vendor AP Email" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Vendor AP Email', (isset($fields['vendor_ap_email']['language'])? $fields['vendor_ap_email']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('vendor_ap_email', $row['vendor_ap_email'],array('class'=>'form-control', 'placeholder'=>''   )) !!}
+					 </div>
+					 <div class="col-md-2">
+
+					 </div>
+				  </div>
+				  <div class="form-group  " >
 					<label for="Email 2" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Email 2', (isset($fields['email_2']['language'])? $fields['email_2']['language'] : array())) !!}	
 					</label>
@@ -299,7 +323,7 @@
 								</div>
 							</div>
 							<div class="form-group  " >
-								<input type='hidden' value='0' name='status'>
+								<input type='hidden' value='0' name='is_export_product_in_development'>
 								<label for="Active" class=" control-label col-md-4 text-left">
 									{!! SiteHelpers::activeLang('Active', (isset($fields['status']['language'])? $fields['status']['language'] : array())) !!}
 								</label>
@@ -308,6 +332,38 @@
 									<label class='checked checkbox-inline'>
 										<input type='checkbox' name='status' value ='1'   class=''
 											   @if(in_array('1',$status))checked @endif
+										/>  </label>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+							<div class="form-group  " >
+								<label for="Active" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Enable FedEx# on Order POs :', (isset($fields['is_fedex_enabled']['language'])? $fields['status']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6 check-no">
+
+									<label class='checked checkbox-inline'>
+										<input type='hidden' name='is_fedex_enabled' value="0">
+										<input type='checkbox' name='is_fedex_enabled' @if($row['is_fedex_enabled']==1) checked @endif  value="1"    class=''
+										/>
+									</label>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+							<div class="form-group  " >
+								<input type='hidden' value='0' name='is_export_product_in_development'>
+								<label for="Export Product in Development" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Export Product in Development', (isset($fields['is_export_product_in_development']['language'])? $fields['is_export_product_in_development']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6 check-no">
+									<?php  $is_export_product_in_development = $row['is_export_product_in_development']; ?>
+									<label class='checked checkbox-inline'>
+										<input type='checkbox' name='is_export_product_in_development' value ='1'   class=''
+											   @if($is_export_product_in_development == 1 )checked @endif
 										/>  </label>
 								</div>
 								<div class="col-md-2">

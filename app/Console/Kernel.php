@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\ExtractGoogleDriveFiles;
 use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -32,6 +33,9 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\VendorImportProduct::class,
         \App\Console\Commands\SendVendorScheduleEmails::class,
         \App\Console\Commands\CheckEnvConfiguration::class,
+        \App\Console\Commands\ExtractGoogleDriveFiles::class,
+        \App\Console\Commands\ExtractGoogleDriveLoctionsReports::class,
+        \App\Console\Commands\RefreshGoogleDriveAccessToken::class
     ];
 
     /**
@@ -43,12 +47,15 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //giving error
-        $schedule->command('refresh:token')->cron('*/50 * * * * *')->withoutOverlapping();;
+        //$schedule->command('refresh:token')->cron('*/50 * * * * *')->withoutOverlapping();;
+        //this command was not executing properly from this file. under FEG-2855 this command moved to FEG tasks in admin panel
+        //to run after every 50 minutes
+        //$schedule->command('refresh:token')->cron('*/50 * * * *');
         $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->everyMinute();
         //turning off to allow client to test and avoid from varying counts
-        $schedule->command('create:dummy_order')->cron('*/30 * * * * *')->withoutOverlapping();;
+        $schedule->command('create:dummy_order')->cron('*/30 * * * *')->withoutOverlapping();;
         $schedule->command('elm5taskmanager')->everyMinute();
         $schedule->command('enable:blocked_order_items')->everyMinute();
         $schedule->command('restore:po')->everyMinute();
@@ -62,6 +69,24 @@ class Kernel extends ConsoleKernel
         $schedule->command('vendorproduct:import')->withoutOverlapping(2);
 
         $schedule->command('env:checkenv')->daily();
+
+//        $schedule->command('extract:googledrivefiles Daily')->daily();//Get Daily google drive files
+//        $schedule->command('extract:googledrivefiles Weekly')->weekly();//Get Daily google drive files
+//        $schedule->command('extract:googledrivefiles Monthly')->monthly();//Get Daily google drive files
+//        $schedule->command('extract:googledrivefiles 13Weeks')->weekly();//Get Daily google drive files
+//
+        $schedule->command('extract:googledrivelocations')->weekly();//Get the google drive location files ID (Daily, weekly, monthly, 13 weeks)
+        //$schedule->command('refresh:googledriveaccesstoken')->cron('*/55 * * * *');//Refresh Google drive access token.
+
+        //2AM daily
+        $schedule->command('extract:googledrivefiles Daily')->cron('0 2 * * *');
+        //5AM Weekly
+        $schedule->command('extract:googledrivefiles Weekly')->cron('0 5 * * *');
+        ///6AM Monthly
+        $schedule->command('extract:googledrivefiles Monthly')->cron('0 6 * * *');
+        //7AM 13 weeks
+        $schedule->command('extract:googledrivefiles 13Weeks')->cron('0 7 * * *');
+
 
     }
 }

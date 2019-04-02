@@ -127,13 +127,20 @@
 									   		data-on-text="Active" data-field="status" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
 									   		id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 									</td>
-
+                                @elseif($field['field']=='is_export_product_in_development')
+                                    <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                        <input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif 	data-size="mini" data-animate="true"
+                                               data-on-text="Yes" data-field="is_export_product_in_development" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+                                               id="is_export_product_in_development_toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+                                    </td>
 								@elseif($field['field']=='hide')
 									<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 										<input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif 	data-size="mini" data-animate="true"
 											   data-on-text="Yes" data-field="hide" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
 											   id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 									</td>
+                                @elseif($field['field']=='is_fedex_enabled')
+                                    <td>{{$value==1?'Yes':'No'}}</td>
 								@else
 									<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 										{!! $value !!}
@@ -197,6 +204,33 @@
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
 $(document).ready(function() {
+
+    $("[id^='is_export_product_in_development_toggle_trigger_']").on('switchChange.bootstrapSwitch', function (event, state) {
+        $('.ajaxLoading').show();
+        var vendorId = $(this).data('id');
+        var field = $(this).data('field');
+        console.log(state);
+        console.log(vendorId + "  ****  " + field);
+        var status = 0;
+        if (state == true) {
+            status = 1;
+        }
+
+        $.ajax({
+            url: "vendor/toggle-option",
+            type: "POST",
+            data: {vendor_id: vendorId, field: field, status: status},
+            success: function (response) {
+                $('.ajaxLoading').hide();
+                if (response.status == "error") {
+                    notyMessageError(response.message);
+                } else {
+                    notyMessage(response.message)
+                }
+            }
+        });
+    });
+
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
 
 
@@ -279,7 +313,8 @@ $(document).ready(function() {
     });
 
     $("[id^='toggle_trigger_']").bootstrapSwitch();
-	$('.tips').tooltip();	
+    $("[id^='is_export_product_in_development_toggle_trigger_']").bootstrapSwitch();
+	$('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue',
