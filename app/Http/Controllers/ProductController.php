@@ -6,6 +6,7 @@ use App\Library\FEGDBRelationHelpers;
 use App\Models\location;
 use App\Models\Ordertyperestrictions;
 use App\Models\Product;
+use App\Models\Productsubtype;
 use App\Models\ProductType;
 use App\Models\UserFavoriteProduct;
 use App\Models\VendorProductTrack;
@@ -1459,6 +1460,21 @@ GROUP BY mapped_expense_category");
      */
     public function getProductSubtype(){
 
+        $key    = 'type_description';
+        $value  = 'id';
+
+        $commaSeparatedKeyValueParams =  request()->get('commaSeparatedKeyValueParams');
+
+        if($commaSeparatedKeyValueParams){
+            if(str_contains($commaSeparatedKeyValueParams, ',')){
+                $keyValueArray = explode(',', $commaSeparatedKeyValueParams);
+                if(count($keyValueArray) == 2){
+                    $key    = $keyValueArray[0];
+                    $value  = $keyValueArray[1];
+                }
+            }
+        }
+
         $commaSeparatedProductType =  request()->get('product_type_id');
         $productTypes = [];
 
@@ -1469,11 +1485,11 @@ GROUP BY mapped_expense_category");
             else
                 array_push($productTypes, $commaSeparatedProductType);
 
-            $productSubtypes = ProductType::select('type_description', 'id')->whereIn('request_type_id', $productTypes)->orderBy('type_description', 'asc')->get();
+            $productSubtypes = ProductType::select(["$key as type_description", "$value as id"])->whereIn('request_type_id', $productTypes)->orderBy('type_description', 'asc')->get();
         }
         else
         {
-            $productSubtypes = ProductType::select('type_description', 'id')->orderBy('type_description', 'asc')->get();
+            $productSubtypes = ProductType::select("$key as type_description", "$value as id")->orderBy('type_description', 'asc')->get();
         }
 
 
@@ -1867,5 +1883,10 @@ if(!empty($removedItemIds)) {
             ));
         }
 
+    }
+
+    public function getFirstTenProductsBySubType($id){
+        $productSubType = Productsubtype::find($id);
+        return ['product_type_id'=>$productSubType->request_type_id, 'products'=>$this->model->where('prod_sub_type_id', $id)->take(10)->lists('vendor_description', 'id')];
     }
 }

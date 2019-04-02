@@ -115,8 +115,11 @@ return array(
 	"sb_submit"					=> "Submit",
 	"sb_cancel"					=> "Cancel",
     "sb_close"					=> "Close",
-    "sb_save_send"               => "Save & Send",
-	
+    "sb_save_send"              => "Save & Send",
+    "sb_remove_product_subtype" => "Remove",
+    "sb_reactivate_product_subtype" => "Yes",
+    "sb_dont_reactivate_product_subtype" => "No",
+
 /* button */
 	"btn_back"						=> "Back",	
 	"btn_action"					=> "Action",	
@@ -193,6 +196,8 @@ return array(
 	"note_noexists"				=> "Sorry, The page does not exist!", // updated apidevlab
 	"note_restric"				=> "Sorry, You are not allowed to access this page!", // updated apidevlab
 	"note_success"				=> "Saved successfully!", // updated apidevlab
+	"reactivation_success"		=> "Reactivated successfully!", // updated apidevlab
+	"reactivation_failure"		=> "Something went wrong while reactivation!", // updated apidevlab
 	"note_error"				=> "The following errors occurred !",
 	"note_success_delete"		=> "Removed successfully!",	// updated apidevlab
     "note_block"                => "Blocked",
