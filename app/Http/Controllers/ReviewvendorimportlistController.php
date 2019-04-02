@@ -577,7 +577,7 @@ class ReviewvendorimportlistController extends Controller
 
         return response()->json(array(
             'status' => 'success',
-            'message' => "Items has been Omitted Successfully."
+            'message' => "Item(s) has been Omitted Successfully."
         ));
 
     }
@@ -610,7 +610,7 @@ class ReviewvendorimportlistController extends Controller
 
         return response()->json(array(
             'status' => 'success',
-            'message' => "Items has been Omitted Successfully."
+            'message' => "Item(s) has been Un-Omitted Successfully."
         ));
 
     }
