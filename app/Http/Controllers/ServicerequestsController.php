@@ -1061,7 +1061,7 @@ class servicerequestsController extends Controller
                 $ticketsData['Status'] = 'open';
             }
 
-            if($oldStatus == 'closed' && $ticketType  == 'game-related'){
+            if(in_array($oldStatus , ['closed','open']) && $ticketType  == 'game-related'){
                 $ticketsData['Status'] = 'in_process';
             }
         }
@@ -1072,7 +1072,7 @@ class servicerequestsController extends Controller
                 if ($oldStatus != 'closed') {
                     $ticketsData['closed'] = date('Y-m-d H:i:s');
                 }
-            }elseif ($status == 'closed' && $ticketType == 'game-related'){
+            }elseif (in_array($status,['closed','open'] ) && $ticketType == 'game-related'){
                 $ticketsData['Status'] = 'in_process';
 
                 //$ticketsData['closed'] = date('Y-m-d H:i:s');
