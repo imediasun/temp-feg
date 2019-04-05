@@ -338,7 +338,7 @@ class Servicerequests extends Observerable  {
                 'last_user',
                 'last_updated_elapsed_days',
             ],
-            ['debit_card_related']=>[
+            'debit_card_related'=>[
                 'TicketID',
                 'Created',
                 'issue_type',
