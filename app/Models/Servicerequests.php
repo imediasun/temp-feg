@@ -489,7 +489,7 @@ class Servicerequests extends Observerable  {
           foreach ($formData as $item) {
               if ($item['field'] == 'Status') {
                   $item['option']["opt_type"] = "datalist";
-                  $item['option']["lookup_query"] = "open:Open|pending:Pending|development:In Development|closed:Closed";
+                  $item['option']["lookup_query"] = "open:Open|inqueue:Pending|development:In Development|closed:Closed";
               }
 
               $formElements[] = $item;
