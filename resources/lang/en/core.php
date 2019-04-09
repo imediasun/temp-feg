@@ -281,6 +281,24 @@ In order to purchase this product, it will need to be added to a Freehand order 
                     <li>Click the Submit button.</li>
                 </ol>",
 
+        ],
+
+        "daily_duplicate_assets_ids_report" => [
+            "head" => "Attention FEG Team,<br /><br />
+                The following asset id(s) report income from more than 1 location. 
+                Please check your Sacoa/Embed game configurations to ensure that the correct asset ID is assigned. <br />",
+            "foot" => "<br /><br />When this has been corrected, please alert Silvia Lintner that you have made a
+                        change so that 
+                        she may coordinate re-syncing the earnings.<br /><br />
+                        Thank you.<br /><br />
+                        The FEG Admin Team",
+            "subject" => "Duplicate Asset IDs Detected - %s",
+        ],
+
+        "daily_duplicate_readers_ids_report" => [
+            "head" => "Hello FEG Team,<br/><br/>The reader_ids assigned to the games below have changed. This does not necessarily indicate a problem, if the change was intentional. Please review the games and reader_ids below and correct any incorrect configurations<br/><br/>",
+            "foot" => "<br/><br/>If any reader_id assignments are changed as result of this report, please alert Silvia Lintner so that she can coordinate a data re-sync.<br/><br/>Thank you.<br/><br/>The FEG Admin",
+            "subject" => "Reader ID Changes %s",
         ]
     ],
 
