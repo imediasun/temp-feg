@@ -2218,3 +2218,63 @@ function reInitFormValidatorParsley(form){
     }
 }
 var onlyOnceTimeTrigger = true;
+
+//make-content-editable
+
+$(function () {
+    $(document).on('click','.make-content-editable',function () {
+        var icon = $(this).children('i');
+        var row = $(this).closest('tr');
+        var skuField = $('#'+row.attr('id')+' input[name="sku[]"]');
+        var itemNameField = $('#'+row.attr('id')+' input[name="item_name[]"]');
+        var itemDescriptionField = $('#'+row.attr('id')+' textarea[name="item[]"]');
+        var addItemBtn = $('#'+row.attr('id')+' .addToProductList');
+        var unitPriceField = $('#'+row.attr('id')+' #price');
+        var casePriceField = $('#'+row.attr('id')+' #case_price');
+        var productIdTempField = $('#'+row.attr('id')+' #product_id_temp');
+        var productIdField = $('#'+row.attr('id')+' #product_id');
+
+        if(icon.hasClass('fa-edit')){
+            icon.removeClass('fa-edit');
+            // icon.addClass('fa-arrow-left');
+            icon.addClass('fa-file-o');
+            $(this).attr('title','Add from product list');
+
+            addItemBtn.css("display",'');
+
+            skuField.removeAttr('readonly');
+            unitPriceField.removeAttr('onkeyup');
+            casePriceField.removeAttr('onkeyup');
+            itemNameField.removeAttr('readonly');
+            itemNameField.attr('prevent-search','1');
+            itemNameField.attr('is-pre-freehand','1');
+            itemDescriptionField.removeAttr('readonly');
+            productIdTempField.val(Number(productIdField.val()));
+            productIdField.val('0');
+
+        }else {
+            // icon.removeClass('fa-arrow-left');
+            icon.removeClass('fa-file-o');
+            icon.addClass('fa-edit');
+            $(this).attr('title','Make this item freehand');
+
+            addItemBtn.css("display",'none');
+
+            unitPriceField.attr('onkeyup','calculateUnitPrice(this);');
+            casePriceField.attr('onkeyup','calculateUnitPrice(this);');
+
+            skuField.attr('readonly','readonly');
+            itemNameField.removeAttr('readonly');
+            itemNameField.attr('prevent-search','0');
+            itemNameField.removeAttr('is-pre-freehand');
+            itemDescriptionField.attr('readonly','readonly');
+            productIdField.val(Number(productIdTempField.val()));
+            productIdTempField.val('0');
+        }
+
+        $(this).tooltip('destroy');
+        $(this).tooltip();
+
+        });
+
+})

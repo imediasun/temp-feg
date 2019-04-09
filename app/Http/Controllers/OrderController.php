@@ -468,6 +468,7 @@ class OrderController extends Controller
         $where_in_expression = '';
         \Session::put('redirect', 'order');
         $this->data['setting'] = $this->info['setting'];
+        $this->data['can_add_to_list'] = 0;
         $isRequestApproveProcess = false;
         $requestId = [$id];
         if ($id != 0 && $mode == '') {
@@ -529,6 +530,13 @@ class OrderController extends Controller
                    $row->order_freight_id = "";
                }
            }
+
+           $freehandTypes = !empty($this->pass['Can add freehand products']) ? $this->pass['Can add freehand products']->data_options:'';
+            $freehandTypeArray = explode(",",$freehandTypes);
+            if(in_array($row->order_type_id,$freehandTypeArray)){
+                $row->is_pre_freehand = 1;
+                $this->data['can_add_to_list'] = 1;
+            }
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
@@ -563,6 +571,9 @@ class OrderController extends Controller
             $this->data['merchItems'] = rtrim($merch, ',');
         }
         $this->data['excludedOrderTypes'] = implode(',', $excludedOrderTypesArray);
+
+        $this->data['isAllowedToCombineFreehandProductList'] = ($this->model->isAllowedToCombineFreehandProductList()) ?1:0;
+
         return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
@@ -706,10 +717,68 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        $productIds = $request->input('product_id');
+        $productIdsArray = [];
+        $productNames = $request->input('item_name');
+        $skus = $request->input('sku');
+        $errorMessage = '';
+        foreach ($productIds as $key => $productIdArr) {
 
+            $pID = !empty($productIdArr) ? $productIdArr : 0;
+
+            $productIdsArray[] = $pID;
+
+            if ($pID > 0) {
+                $isItemExist = product::where([
+                    'id' => $pID,
+                    'vendor_description' => $productNames[$key],
+                    'sku' => $skus[$key],
+                ])->first();
+                if (!$isItemExist) {
+                    $errorMessage .= '<li>' . $productNames[$key] . '</li>';
+                }
+            }
+        }
+
+        if ($errorMessage != '') {
+            $message = 'You cannot save the order until all freehanded item(s) have been added to the product list. <br>Please add the Following Item(s) to the product List:';
+            $errorMessage = $message . '<ul>' . $errorMessage . '</ul>';
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $errorMessage,
+            ]);
+        }
+
+        $productIds = $productIdsArray;
+        $isFreehandFlag = $request->input('is_freehand', 0);
+        $productIdsUnique = is_array($productIds) ? array_unique($productIds) : [];
+        if (count($productIdsUnique) == 1) {
+            if ($productIdsUnique[0] == 0) {
+                $isFreehandFlag = 1;
+            }
+        }
+        if ($isFreehandFlag == 0 && in_array(0, $productIds)) {
+            $items = $request->input('item_name');
+
+            $errorMessage = '';
+            for ($i = 0; $i < count($items); $i++) {
+                if ($productIds[$i] == 0 || $productIds[$i] == '') {
+                    $errorMessage .= '<li>' . $items[$i] . '</li>';
+                }
+            }
+            if ($errorMessage != '') {
+                $message = 'You cannot save the order until all freehanded item(s) have been added to the product list. <br>Please add the Following Item(s) to the product List:';
+                $errorMessage = $message . '<ul>' . $errorMessage . '</ul>';
+            }
+            return response()->json([
+                'status' => 'error',
+                'message' => $errorMessage,
+            ]);
+        }
 
             $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
-            if($request->input('is_freehand',0) != 1) {
+            if($request->input('is_freehand',0) != 1 && $request->input('is_pre_freehand',0) != 1) {
             $editMode = $request->get('editmode');
             if (in_array($editMode, ['edit', 'clone'])) {
                 $productIdsFromOrderContents = \DB::table('order_contents')->whereIn('id', request()->input('order_content_id'))->lists('product_id');
@@ -774,7 +843,7 @@ class OrderController extends Controller
             $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
-            $is_freehand = $request->get('is_freehand') == "1" ? 1 : 0;
+            $is_freehand = $isFreehandFlag;
             $po_1 = $request->get('po_1');
             $po_2 = $request->get('po_2');
             $po_3 = $request->get('po_3');
@@ -879,6 +948,7 @@ class OrderController extends Controller
                     'order_description' => $order_description,
                     'order_total' => $total_cost,
                     'freight_id' => $freight_type_id,
+                    'is_freehand' => $isFreehandFlag,
                     'alt_address' => $alt_address,
                     'po_notes' => $notes,
                     'po_notes_additionaltext' => $po_notes_additionaltext,
@@ -1158,6 +1228,7 @@ class OrderController extends Controller
                 }
                 $data['order_total'] = $orderTotal;
             }
+            $data['is_freehand'] = $isFreehandFlag;
             $this->model->insertRow($data, $id);
 
             \Session::put('order_id', $id);
@@ -3628,6 +3699,7 @@ ORDER BY aa_id");
         }
         $this->data['productTypes'] = $productTypes->orderBy('order_type', 'asc')->get()->toArray();
         $this->data['access'] = $this->access;
+        $this->data['OrderTypeId'] = $productTypeId;
 
         return view('order.freehand-product-form', $this->data);
 

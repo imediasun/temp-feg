@@ -103,6 +103,18 @@ class OrdersettingController extends Controller
             $exemptedGroups = $option->option_value; // explode(',', $option->option_value);
         }
 
+        $option = Options::where('option_name', 'canCombineOrderContentUsers')->first();
+        $canCombineOrderContentUsers = "";
+        if($option){
+            $canCombineOrderContentUsers = $option->option_value; // explode(',', $option->option_value);
+        }
+
+        $option = Options::where('option_name', 'canCombineOrderContentGroups')->first();
+        $canCombineOrderContentGroups = "";
+        if($option){
+            $canCombineOrderContentGroups = $option->option_value; // explode(',', $option->option_value);
+        }
+
         $newOrdersArray = [];
         foreach ($orders as $order){
             $newOrdersArray[$order] = $order;
@@ -121,6 +133,8 @@ class OrdersettingController extends Controller
         $this->data['excludedGroups']       = $excludedGroups;
         $this->data['exemptedUsers']        = $exemptedUsers;
         $this->data['exemptedGroups']       = $exemptedGroups;
+        $this->data['canCombineOrderContentUsers']        = $canCombineOrderContentUsers;
+        $this->data['canCombineOrderContentGroups']       = $canCombineOrderContentGroups;
         $productOptions =   Options::whereIn('option_name', ['product_label_new','product_label_backinstock'])->get();
 
         foreach ($productOptions as $productOption){
@@ -152,6 +166,11 @@ class OrdersettingController extends Controller
         $excludedUserGroups = !empty($request->input('userGroups')) ? implode(',', $request->input('userGroups')) : '';;
         $productLabelNew = !empty($request->product_label_new) ? $request->product_label_new : 0;
         $productLabelBackinstock = !empty($request->product_label_backinstock) ? $request->product_label_backinstock:14;
+
+
+        $canCombineOrderContentUsers = !empty($request->input('canCombineOrderContentUsers')) ? implode(',', $request->input('canCombineOrderContentUsers')) : '';
+        $canCombineOrderContentGroups = !empty($request->input('canCombineOrderContentGroups')) ? implode(',', $request->input('canCombineOrderContentGroups')) : '';
+
         if (is_array($merchandiseOrderTypes) && is_array($NonMerchandiseOrderTypes)) {
             if (count(array_intersect($merchandiseOrderTypes, $NonMerchandiseOrderTypes)) > 0) {
                 return response()->json(array(
@@ -284,6 +303,7 @@ class OrdersettingController extends Controller
                 ]);
         }
 
+
         $option = Options::where('option_name', 'excluded_orders')->first();
         if(!$option){
             Options::addOption('excluded_orders', $excludedOrders, [
@@ -335,6 +355,45 @@ class OrdersettingController extends Controller
                 'notes' => null,
                 'option_title' => 'Exclude Order(s) From Specified User Groups',
                 'option_description' => 'The Orders which are related to these PO Numbers will be excluded from specified user groups.',
+                'option_form_element_details' => null
+            ]);
+        }
+
+        //canCombineOrderContentUsers
+        $option = Options::where('option_name', 'canCombineOrderContentUsers')->first();
+        if(!$option){
+            Options::addOption('canCombineOrderContentUsers', $canCombineOrderContentUsers, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'User can combine freehand and product list orders',
+                'option_description' => 'User can combine freehand and product list orders.',
+                'option_form_element_details' => null
+            ]);
+        }else{
+            Options::updateOption('canCombineOrderContentUsers', $canCombineOrderContentUsers, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'User can combine freehand and product list orders',
+                'option_description' => 'User can combine freehand and product list orders.',
+                'option_form_element_details' => null
+            ]);
+        }
+
+        $option = Options::where('option_name', 'canCombineOrderContentGroups')->first();
+        if(!$option){
+            Options::addOption('canCombineOrderContentGroups', $canCombineOrderContentGroups, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'User Groups can combine freehand and product list orders',
+                'option_description' => 'User Groups can combine freehand and product list orders.',
+                'option_form_element_details' => null
+            ]);
+        }else{
+            Options::updateOption('canCombineOrderContentGroups', $canCombineOrderContentGroups, [
+                'is_active' => 1,
+                'notes' => null,
+                'option_title' => 'User Groups can combine freehand and product list orders',
+                'option_description' => 'User Groups can combine freehand and product list orders.',
                 'option_form_element_details' => null
             ]);
         }
