@@ -232,6 +232,7 @@ class GoogledriveearningreportController extends Controller {
 
 	}
 
+
 	public function postDelete( Request $request)
 	{
 
