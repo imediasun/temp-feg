@@ -720,6 +720,7 @@ class OrderController extends Controller
     function postSave(Request $request, $id = 0)
     {
         $productIds = $request->input('product_id');
+        $productIds = !empty($productIds) ? $productIds : [];
         $productIdsArray = [];
         $productNames = $request->input('item_name');
         $skus = $request->input('sku');
