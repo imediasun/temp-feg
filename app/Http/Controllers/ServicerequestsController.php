@@ -1054,25 +1054,38 @@ class servicerequestsController extends Controller
         $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
         $oldStatus = $request->get('oldStatus');
         if (!ticketsetting::canUserChangeStatus(null,$ticketType)) {
-            unset($ticketsData['Status']);
-            unset($ticketsData['closed']);
+            /**
+             * Old Status was coming null for this code block
+             * therefore called db for the Status
+             */
+            $ticket = $this->model->find($ticketId);
 
-            if($oldStatus == 'inqueue' && $ticketType == 'debit-card-related'){
-                $ticketsData['Status'] = 'open';
+            if($ticket){
+
+                $oldStatus = $ticket->Status;
+                unset($ticketsData['Status']);
+                unset($ticketsData['closed']);
+
+                if($oldStatus == 'inqueue' && $ticketType == 'debit-card-related'){
+                    $ticketsData['Status'] = 'open';
+                }
+
+                if(in_array($oldStatus , ['closed','open']) && $ticketType  == 'game-related'){
+                    $ticketsData['Status'] = 'in_process';
+                }
             }
 
-            if(in_array($oldStatus , ['closed','open']) && $ticketType  == 'game-related'){
-                $ticketsData['Status'] = 'in_process';
-            }
         }
         elseif (isset($ticketsData['Status'])) {
-            if (in_array($oldStatus,['closed','open'] ) && $ticketType == 'game-related'){
+            if ($ticketType == 'game-related'){
 
-                if($oldStatus != 'closed') {
+                if($oldStatus != 'closed' && $ticketsData['Status'] == 'closed') {
                     $ticketsData['closed'] = date('Y-m-d H:i:s');
                 }
 
-                $ticketsData['Status'] = 'in_process';
+                if($oldStatus ==  $ticketsData['Status']) {
+                    $ticketsData['Status'] = 'in_process';
+                }
 
                 //$ticketsData['closed'] = date('Y-m-d H:i:s');
             }elseif ($oldStatus == 'inqueue' && $ticketType == 'debit-card-related'){
