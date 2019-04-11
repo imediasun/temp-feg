@@ -1066,21 +1066,20 @@ class servicerequestsController extends Controller
             }
         }
         elseif (isset($ticketsData['Status'])) {
-            $status = $ticketsData['Status'];
-            $isStatusClosed = $status == 'closed';
-            if ($isStatusClosed) {
-                if ($oldStatus != 'closed') {
+            if (in_array($oldStatus,['closed','open'] ) && $ticketType == 'game-related'){
+
+                if($oldStatus != 'closed') {
                     $ticketsData['closed'] = date('Y-m-d H:i:s');
                 }
-            }elseif (in_array($status,['closed','open'] ) && $ticketType == 'game-related'){
+
                 $ticketsData['Status'] = 'in_process';
 
                 //$ticketsData['closed'] = date('Y-m-d H:i:s');
-            }elseif ($status == 'inqueue' && $ticketType == 'debit-card-related'){
+            }elseif ($oldStatus == 'inqueue' && $ticketType == 'debit-card-related'){
                 $ticketsData['Status'] = 'open';
             }
             else {
-                $ticketsData['closed']= null;   
+                $ticketsData['closed']= null;
             }
         }
 
