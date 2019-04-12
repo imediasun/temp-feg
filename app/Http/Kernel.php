@@ -20,6 +20,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\InputTrim::class,
        // \App\Http\Middleware\VerifyCsrfToken::class,
        // \App\Http\Middleware\IpblockedMiddleware::class,
+        \App\Http\Middleware\HttpsProtocol::class,
     ];
 
     /**
