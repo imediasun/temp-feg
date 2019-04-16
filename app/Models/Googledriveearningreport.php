@@ -165,60 +165,11 @@ class googledriveearningreport extends Sximo  {
             $orderConditional = self::queryWhere();
         }
 
-        if(!empty($createdFrom)){
-            if($cond != 'only_api_visible')
-            {
-                $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
-            }
-            else
-            {
-                $select .= " AND api_created_at BETWEEN '$createdFrom' AND '$createdTo'";
-            }
-            $createdFlag = true;
-        }
-
-        if(!empty($updatedFrom)){
-
-            if($createdFlag){
-                if($cond != 'only_api_visible')
-                {
-                    $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-                else
-                {
-                    $select .= " OR api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-            }
-            else{
-                if($cond != 'only_api_visible')
-                {
-                    $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-                else
-                {
-                    $select .= " AND api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-            }
-
-        }
-
-        if(!empty($order_type_id)){
-            $select .= " AND order_type_id in($order_type_id)";
-        }
-        if(!empty($status_id)){
-            $select .= " AND status_id='$status_id'";
-        }
-        if(!empty($active)){//added for location
-            $select .= " AND location.active='$active'";
-        }
-        $select.=' AND '.$table.'.loc_id IN ('.\SiteHelpers::getCurrentUserLocationsFromSession().')';
-        \Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $total= count($counter_select);
-        if($table=="img_uploads")
-        {
-            $total="";
-        }
+        $countSelect = self::queryCountSelect();
+        $countQuery = $countSelect . " {$orderConditional} {$params} " . self::queryGroup();
+        $counter_select =\DB::select($countQuery);
+        \Log::info("Total Query : $countQuery");
+        $total = $counter_select[0]->totalCount;
         $offset = ($page - 1) * $limit;
         if ($offset >= $total && $total != 0 && $limit != 0) {
             $page = ceil($total/$limit);
