@@ -398,6 +398,10 @@ function initDataGrid(module, url, options) {
         }
         //?product_import_vendor_id=3023&search=import_vendor_id:equal:5
         //&page=1&search=import_vendor_id:equal:5&rows=0&undefined=Update Product List Module&sort=vendor_description&order=asc
+        if(elm.attr('grid-type')){
+            allAttr +='&ticket_type='+elm.attr('grid-type')
+        }
+
 
         if (useAjax) {
             reloadData('#'+module, url+'/data?colheadersort=1' + allAttr);
@@ -1748,6 +1752,460 @@ function serverRequestTabsSelect(tabElement,tabClass,contentClass,contentId,load
     return true;
 }
 
+function clearFields(doSearch) {
+    $('input[name="search_all_fields"]').val('');
+    $('select[name="ticket_custom_type"]').val('').change();
+    $('select[name="Status"]').val('').change();
+    $('#showAll').prop('checked',false);
+    $('#showAll').change();
+    if(doSearch === undefined) {
+        $('.doSimpleSearch').trigger('click');
+    }
+}
+
+
+$(function () {
+
+    $(document).off('click','#issue_type_id').on('change', '#issue_type_id', function () {
+
+        if (Number($(this).val()) == 2) {
+            $('#trobleshotingchecklist-contianer').hide('slow');
+            $('#part-requests-contianer').show('slow');
+
+            $('#part-requests-contianer input[type="text"], #part-requests-contianer input[type="number"]').attr('required','required');
+
+            $('#trobleshotingchecklist-contianer input[name="troubleshootchecklist[]"]').iCheck('uncheck');
+        }else if($.inArray(Number($(this).val()),[1,3]) != -1){
+            $('#trobleshotingchecklist-contianer').show('slow');
+
+
+            $('#part-requests-contianer input[type="text"], #part-requests-contianer input[type="number"]').attr('required','required');
+            $('#trobleshotingchecklist-contianer input[name="troubleshootchecklist[]"]').iCheck('uncheck');
+            $('#part-requests-contianer').show('slow');
+
+        } else {
+            $('#part-requests-contianer input[type="text"], #part-requests-contianer input[type="number"]').removeAttr('required');
+            $('#part-requests-contianer').hide('slow');
+            $('#trobleshotingchecklist-contianer').show('slow');
+            $('#part-request-field-contianer input').val('');
+        }
+
+        $('#sbticketFormAjax').parsley().destroy();
+        $('#sbticketFormAjax').parsley();
+    });
+
+    $(document).off('click','#addmorepartfields').on('click', '#addmorepartfields', function () {
+        if($('#sbticketFormAjax').length > 0) {
+            $('#sbticketFormAjax').parsley().destroy();
+        }
+        var partRequestFieldLenght = $('.part-request-field').length + 1;
+        var lastInsertedId = ($('.part-request-field:last').attr('id')).split('_');
+        if(lastInsertedId.length > 1){
+            partRequestFieldLenght = Number(lastInsertedId[1])+1;
+
+        }
+        var partRequestField = document.getElementsByClassName('part-request-field');
+
+        var partRequestFields = $(partRequestField[0]).clone();
+        partRequestFields.attr('id', 'part-request-field_' + partRequestFieldLenght);
+        partRequestFields.children('.col-md-4').children('input.form-control').val('');
+        partRequestFields.children('.col-md-4').children('input.part-request-id').val(0);
+        partRequestFields.children('.col-md-4').children('ul.parsley-error-list').remove();
+        partRequestFields.children('.col-md-4').children('.input-group').children('ul.parsley-error-list').remove();
+        partRequestFields.children('.col-md-4').children('.input-group').children('input[type="number"]').val('');
+        partRequestFields.children('.col-md-4').children('label').remove();
+
+        if(partRequestFields.children('.col-md-3').length>0) {
+
+            partRequestFields.children('.col-md-3').children('input.form-control').removeAttr('readonly');
+            partRequestFields.children('.col-md-3').children('input.part-request-id').removeAttr('readonly');
+            partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').removeAttr('readonly');
+
+            partRequestFields.children('.col-md-3').children('input[name="part_number"]').attr('id','part-number-'+partRequestFieldLenght);
+            partRequestFields.children('.col-md-3').children('input[name="qty"]').attr('id','part-qty-'+partRequestFieldLenght);
+            partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').attr('id','part-cost-'+partRequestFieldLenght);
+
+            partRequestFields.children('.col-md-3').children('input.form-control').val('');
+            partRequestFields.children('.col-md-3').children('input.part-request-id').val(0);
+            partRequestFields.children('.col-md-3').children('.input-group').children('input[type="number"]').val('');
+            partRequestFields.children('.col-md-3').children('.action-btns').empty();
+           // var saveBtn = '<input type="button" value="Save" onclick="savePartRequest(\''+partRequestFieldLenght+'\',this);" class="btn btn-primary ">';
+            var saveBtn = ' <a href="#" onclick="savePartRequest(\''+partRequestFieldLenght+'\',this); return false;" class="btn btn-primary tips" title="Save" style="margin-left: 3px;"><i class="fa fa-save"></i></a>';
+            partRequestFields.children('.col-md-3').children('.action-btns').append(saveBtn);
+            partRequestFields.children('.col-md-3').children('.action-btns').css('display','block');
+            partRequestFields.children('.col-md-3').children('label').remove();
+            partRequestFields.children('.reasontxt').remove();
+            partRequestFields.children('.col-md-12').remove();
+        }
+
+        var onclick = 'onclick="removePartRequest(\'part-request-field_' + partRequestFieldLenght + '\');"';
+        var removeFields = '<i class="fa fa-times tips remove-part-request-fields" id="remove-part-request-fields'+partRequestFieldLenght+'" title="Remove" ' + onclick + ' style="position: absolute; cursor: pointer; top: 7px; font-size: 18px; color: #e00f0f; right:0px;"></i>';
+        partRequestFields.children('.part-request-last-field').children('.remove-part-request-fields').remove();
+        partRequestFields.children('.part-request-last-field').append(removeFields);
+        $('#part-request-field-contianer').append(partRequestFields);
+        $('.tips').tooltip();
+        if($('#sbticketFormAjax').length > 0) {
+            $('#sbticketFormAjax').parsley().destroy();
+            $('#sbticketFormAjax').parsley();
+        }
+
+    });
+});
+function removePartRequest(id,recordId) {
+    var partRequestLastFields = document.getElementsByClassName('part-request-field');
+    var partRequestRemoved = $('#part_request_removed');
+    var value = $("#" + id + " input.part-request-id").val();
+
+
+    if (partRequestRemoved) {
+        if (partRequestRemoved.val().length > 0) {
+            partRequestRemoved.val(partRequestRemoved.val() + ',' + value);
+        } else {
+            partRequestRemoved.val(value);
+        }
+    }
+
+    if(partRequestLastFields.length > 1) {
+        $("#" + id).remove();
+    }else{
+        $('#' + id+ ' input[type="text"], #' + id+ ' input[type="number"]').val('');
+
+        $('#' + id+ ' .action-btns .greenbutton, #' + id+ ' .action-btns .redbutton').hide('slow');
+    }
+
+    if(recordId != undefined){
+        $.ajax({
+            url:'/servicerequests/removepartrequest',
+            type:"post",
+            data:{id:recordId},
+            success:function (response) {
+                if(response.status == 'success'){
+                    notyMessage(response.message);
+                }
+            }
+        });
+    }
+    if($('#sbticketFormAjax').length > 0) {
+        $('#sbticketFormAjax').parsley().destroy();
+        $('#sbticketFormAjax').parsley();
+    }
+}
+
+function approvePartRequest(id,rowId) {
+    $('.ajaxLoading').show();
+    var actionBox = $('#part-request-field_'+rowId+" .action-btns");
+    $.ajax({
+       type:'POST',
+        url: 'servicerequests/approve',
+        data:{id:id},
+        success:function (response) {
+        $('.ajaxLoading').hide();
+            if(response.status == 'success'){
+                var approveLabel = '<span style="background: #3c763d; color:white; font-weight: 700; padding: 2px 5px;">Approved</span>';
+                actionBox.html(approveLabel);
+                $(document.getElementById('part-number-' + rowId)).prop('readonly', true);
+                $(document.getElementById('part-qty-' + rowId)).prop('readonly', true);
+                $(document.getElementById('part-cost-' + rowId)).prop('readonly', true);
+                notyMessage(response.message);
+            }else{
+                notyMessageError(response.message);
+            }
+        }
+    });
+
+}
+
+function denyPartRequest(id,partRequestId) {
+    var d = new Date();
+    var randomId = d.getMilliseconds();
+
+    var reasonBox = '<div class="col-md-9" id="reason-'+id+'" style="margin-bottom: 20px; margin-top: -15px;">';
+        reasonBox += '<label>Reason</label><textarea class="form-control part-deny-reason" id="reason-'+randomId+'"  rows="5"></textarea>';
+        reasonBox += '<div style="text-align: center">';
+        reasonBox += '<br>';
+        reasonBox += '<input type="button" class="btn btn-primary" onclick="denyPartRequestbtn(this,\''+id+'\');" row-id="'+id+'" reasonbox-id="reason-'+id+'" data-id="'+partRequestId+'" reason-id="reason-'+randomId+'" value="Deny Part Request" style="margin-right: 5px;">';
+        reasonBox += '<input type="button" class="btn btn-primary" onclick="cancelDelyProcess(\''+id+'\')" value="Cancel">';
+        reasonBox += '</div>';
+        reasonBox += '</div><div class="col-md-3"></div>';
+
+    $('#part-request-field_'+id+" .action-btns").hide();
+    $('#part-request-field_'+id).append(reasonBox);
+}
+function denyPartRequestbtn(object, id) {
+    var partRequestId = $(object).attr('data-id');
+    var reasonId = $(object).attr('reason-id');
+    var reason = document.getElementById(reasonId).value;
+    var reasonBoxId = $(object).attr('reasonbox-id');
+    var rowId = $(object).attr('row-id');
+    var actionBox = $('#part-request-field_' + rowId + " .action-btns");
+    if (reason.length > 0) {
+        $('.ajaxLoading').show();
+        $.ajax({
+            type: 'POST',
+            url: 'servicerequests/deny-part',
+            data: {partRequestId: partRequestId, reason: reason},
+            success: function (response) {
+                $('.ajaxLoading').hide();
+                if (response.status == 'success') {
+                    $("#" + reasonBoxId).html('<span style=" color:red;"><b>Reason: &nbsp;</b> ' + reason + '</span>');
+                    var denyLabel = '<span style="background-color: #ed5565; color:white; font-weight: 700; padding: 2px 5px;">Denied</span>';
+                    actionBox.show();
+                    actionBox.html(denyLabel);
+                    $(document.getElementById('part-number-' + rowId)).prop('readonly', true);
+                    $(document.getElementById('part-qty-' + rowId)).prop('readonly', true);
+                    $(document.getElementById('part-cost-' + rowId)).prop('readonly', true);
+                    notyMessage(response.message);
+                } else {
+                    notyMessageError(response.message);
+                }
+            }
+        });
+    } else {
+        notyMessageError('Reason field can\'t be empty');
+    }
+
+}
+function cancelDelyProcess(id){
+    var reasonBox = document.getElementById('reason-'+id);
+    $('#part-request-field_'+id+" .action-btns").show();
+        $(reasonBox).remove();
+}
+
+function savePartRequest(id,obj,partRequestId) {
+    var reasonBox = document.getElementById('part-request-field_' + id);
+    var ticketId = document.getElementById('TicketID').value;
+    var partNumberContainer = $(reasonBox).children('.part-number-container');
+    var partQtyContainer = $(reasonBox).children('.part-qty-container');
+    var partCostContainer = $(reasonBox).children('.part-cost-container');
+    var partNumber = document.getElementById('part-number-' + id).value;
+    var partQty = document.getElementById('part-qty-' + id).value;
+    var partCost = document.getElementById('part-cost-' + id).value;
+    var fieldMessage = '<span class="error" id="error-message-span" style="color:red; width: 100%; display: inline-block; ">Field is required</span>';
+    var error = true;
+    if (partNumber.length <= 0) {
+        error = false;
+    } else {
+        error = true;
+    }
+    if (error == false && partNumberContainer.children('span.error').length == 0) {
+        partNumberContainer.append(fieldMessage);
+    }
+
+    if (partQty.length <= 0) {
+        error = false;
+    } else {
+        error = true;
+    }
+
+    if (error == false && partQtyContainer.children('span.error').length == 0) {
+        partQtyContainer.append(fieldMessage);
+        error = false;
+    }
+
+    if (partCost.length <= 0) {
+        error = false;
+    } else {
+        error = true;
+    }
+
+    if (error == false && partCostContainer.children('span.error').length == 0) {
+        partCostContainer.append(fieldMessage);
+        error = false;
+    }
+
+    if (!error) {
+        return error;
+    }
+    $('.ajaxLoading').show();
+    $.ajax({
+        type: "POST",
+        url: "servicerequests/save-part-request",
+        data: {
+            part_number: partNumber,
+            qty: partQty,
+            cost: partCost,
+            ticket_id: ticketId,
+            status_id: 1,
+            partRequestId: partRequestId
+        },
+        success: function (response) {
+            $('.ajaxLoading').hide();
+            if (response.status == 'success') {
+                $(obj).remove();
+                $('#remove-part-request-fields' + id).attr('onclick',"removePartRequest('part-request-field_"+id+"','"+response.id+"');");
+                //hasPermission,id
+                var saveBtn = ' <a href="#" onclick="savePartRequest(\'' + id + '\',this,\'' + response.id + '\'); return false;" class="btn btn-primary tips" title="Save" style="margin-left: 3px;"><i class="fa fa-save"></i></a>';
+
+                var buttons = saveBtn;
+                if (response.hasPermission) {
+
+                    var denyBtn = '<a href="#" onclick="denyPartRequest(\'' + id + '\',\'' + response.id + '\',this); return false;" class="btn btn-warning redbutton tips" title="Deny" style="margin-left: 3px;"><i class="fa fa-ban"></i></a>';
+                    var approveBtn = '<a href="#" onclick="approvePartRequest(\'' + response.id + '\',\'' + id + '\'); return false;" class="btn btn-primary greenbutton tips" title="Approve" style="margin-left: 3px;"><i class="fa fa-check"></i></a>';
+                    buttons += approveBtn;
+                    buttons += denyBtn;
+
+                }
+                $('#part-request-field_' + id + " .col-md-3 .action-btns").html(buttons);
+                $('.tips').tooltip();
+            /*    $(document.getElementById('part-number-' + id)).prop('readonly', true);
+                $(document.getElementById('part-qty-' + id)).prop('readonly', true);
+                $(document.getElementById('part-cost-' + id)).prop('readonly', true);*/
+
+
+                notyMessage(response.message);
+            } else {
+                notyMessageError(response.error);
+            }
+        }
+    });
+}
+
+$(function () {
+    $(document).on('focus', '.fixonfocus', function () {
+        var parent = $(this).parent();
+        if (parent.children('span#error-message-span').length > 0) {
+            parent.children('span#error-message-span').remove();
+        } else {
+            parent.parent().children('span#error-message-span').remove();
+        }
+    });
+});
+
+function ajaxTrougleshootingModule(url){
+$('.ajaxLoading').show();
+    $.ajax(
+        {
+            type:"POST",
+            url:url,
+            data:{page:1},
+            success:function (response) {
+                $("#page-content-wrapper-1").hide('slow');
+                $("#troubleshootingchecklistGrid").empty();
+                $("#troubleshootingchecklistGrid").html(response);
+                $("#troubleshootingchecklistGrid").show('slow');
+                $('.ajaxLoading').hide();
+            }
+        }
+    )
+
+}
+
+function backToGameSettings(){
+    $("#troubleshootingchecklistGrid").hide('slow');
+    $("#page-content-wrapper-1").show('slow');
+}
+
+
+/**
+ * return back all duplicate values in array
+ * @param arra1
+ * @returns {Array}
+ */
+function findDuplicatesInArray(arra1) {
+    var object = {};
+    var result = [];
+
+    arra1.forEach(function (item) {
+        if(!object[item])
+            object[item] = 0;
+        object[item] += 1;
+    })
+
+    for (var prop in object) {
+        if(object[prop] >= 2) {
+            result.push(prop);
+        }
+    }
+    return result;
+}
+
+/**
+ * @description You need to pass an form object
+ * @param form
+ */
+function reInitFormValidatorParsley(form){
+    if(form) {
+        $(form).parsley().destroy();
+        $(form).parsley();
+    }
+}
+var onlyOnceTimeTrigger = true;
+
+//make-content-editable
+
+$(function () {
+    $(document).on('click','.make-content-editable',function () {
+        var icon = $(this).children('i');
+        var row = $(this).closest('tr');
+        var skuField = $('#'+row.attr('id')+' input[name="sku[]"]');
+        var itemNameField = $('#'+row.attr('id')+' input[name="item_name[]"]');
+        var itemDescriptionField = $('#'+row.attr('id')+' textarea[name="item[]"]');
+        var addItemBtn = $('#'+row.attr('id')+' .addToProductList');
+        var unitPriceField = $('#'+row.attr('id')+' #price');
+        var casePriceField = $('#'+row.attr('id')+' #case_price');
+        var productIdTempField = $('#'+row.attr('id')+' #product_id_temp');
+        var productIdField = $('#'+row.attr('id')+' #product_id');
+
+        if(icon.hasClass('fa-edit')){
+            icon.removeClass('fa-edit');
+            // icon.addClass('fa-arrow-left');
+            icon.addClass('fa-file-o');
+            $(this).attr('title','Add from product list');
+
+            addItemBtn.css("display",'');
+
+            skuField.removeAttr('readonly');
+            unitPriceField.removeAttr('onkeyup');
+            casePriceField.removeAttr('onkeyup');
+            itemNameField.removeAttr('readonly');
+            itemNameField.attr('prevent-search','1');
+            itemNameField.attr('is-pre-freehand','1');
+            itemDescriptionField.removeAttr('readonly');
+            productIdTempField.val(Number(productIdField.val()));
+            productIdField.val('0');
+
+        }else {
+            // icon.removeClass('fa-arrow-left');
+            icon.removeClass('fa-file-o');
+            icon.addClass('fa-edit');
+            $(this).attr('title','Make this item freehand');
+
+            addItemBtn.css("display",'none');
+
+            unitPriceField.attr('onkeyup','calculateUnitPrice(this);');
+            casePriceField.attr('onkeyup','calculateUnitPrice(this);');
+
+            skuField.attr('readonly','readonly');
+            itemNameField.removeAttr('readonly');
+            itemNameField.attr('prevent-search','0');
+            itemNameField.removeAttr('is-pre-freehand');
+            itemDescriptionField.attr('readonly','readonly');
+            productIdField.val(Number(productIdTempField.val()));
+            productIdTempField.val('0');
+        }
+
+        $(this).tooltip('destroy');
+        $(this).tooltip();
+
+    });
+
+})
+var showFirstPopup;
+var hidePopup;
+function beforepopupClose() {
+    $('a.btn-search[data-original-title="Clear Search"]').trigger("click");
+    var alertpopup = document.getElementById('noty_topCenter_layout_container');
+    if(alertpopup) {
+        $(alertpopup).remove();
+    }
+    if(hidePopup) {
+        clearTimeout(hidePopup);
+    }
+    if(showFirstPopup) {
+        clearTimeout(showFirstPopup);
+    }
+}
+
 /**
  *
  * @param object
@@ -1799,7 +2257,7 @@ function removeClone(rowId){
 /**
  * @param vendorId
  */
- function filterByVendor(Object){
+function filterByVendor(Object){
     var vendorImportListId = Object.val();
     var vendorId = $("#selected_vendor option:selected").attr("vendor-id");
     if(Object.val() == '0'){
@@ -1828,7 +2286,7 @@ function setProductSubTypes(object,row,existingId){
     $('.ajaxLoading').show();
 
     $.ajax({
-       url:'/reviewvendorimportlist/all-product-sub-types/',
+        url:'/reviewvendorimportlist/all-product-sub-types/',
         data:{id:object.value},
         type:"GET",
         success:function (response) {
@@ -1845,7 +2303,7 @@ function setProductSubTypes(object,row,existingId){
             $('.ajaxLoading').hide();
         }
     });
-return true;
+    return true;
 }
 
 function saveImportListRecord() {
@@ -2140,7 +2598,7 @@ function setValuesToVariations(object){
 
         if(selectFeild.length >0) {
             selectFeild.select2('val', field.val());
-       }
+        }
         if(inputFeild.length >0) {
             inputFeild.val(field.val());
         }
@@ -2161,135 +2619,14 @@ function checkVariationExistWithType(object){
         var validate = true;
         selectFeild.each(function(i){
 
-           if(i != ignore){
-            if($(this).val() == field.val() && selectselectedsubtypeFeild.val() == selectsubtypesFeild.eq(i).val()){
-                validate = false;
-                return validate;
+            if(i != ignore){
+                if($(this).val() == field.val() && selectselectedsubtypeFeild.val() == selectsubtypesFeild.eq(i).val()){
+                    validate = false;
+                    return validate;
+                }
             }
-           }
         });
         return validate;
     }
 }
 
-
-function clearFields(doSearch) {
-    $('input[name="search_all_fields"]').val('');
-    $('select[name="ticket_custom_type"]').val('').change();
-    $('select[name="Status"]').val('').change();
-    $('#showAll').prop('checked',false);
-    $('#showAll').change();
-    if(doSearch === undefined) {
-        $('.doSimpleSearch').trigger('click');
-    }
-}
-
-/**
- * return back all duplicate values in array
- * @param arra1
- * @returns {Array}
- */
-function findDuplicatesInArray(arra1) {
-    var object = {};
-    var result = [];
-
-    arra1.forEach(function (item) {
-        if(!object[item])
-            object[item] = 0;
-        object[item] += 1;
-    })
-
-    for (var prop in object) {
-        if(object[prop] >= 2) {
-            result.push(prop);
-        }
-    }
-    return result;
-}
-
-/**
- * @description You need to pass an form object
- * @param form
- */
-function reInitFormValidatorParsley(form){
-    if(form) {
-        $(form).parsley().destroy();
-        $(form).parsley();
-    }
-}
-var onlyOnceTimeTrigger = true;
-
-//make-content-editable
-
-$(function () {
-    $(document).on('click','.make-content-editable',function () {
-        var icon = $(this).children('i');
-        var row = $(this).closest('tr');
-        var skuField = $('#'+row.attr('id')+' input[name="sku[]"]');
-        var itemNameField = $('#'+row.attr('id')+' input[name="item_name[]"]');
-        var itemDescriptionField = $('#'+row.attr('id')+' textarea[name="item[]"]');
-        var addItemBtn = $('#'+row.attr('id')+' .addToProductList');
-        var unitPriceField = $('#'+row.attr('id')+' #price');
-        var casePriceField = $('#'+row.attr('id')+' #case_price');
-        var productIdTempField = $('#'+row.attr('id')+' #product_id_temp');
-        var productIdField = $('#'+row.attr('id')+' #product_id');
-
-        if(icon.hasClass('fa-edit')){
-            icon.removeClass('fa-edit');
-            // icon.addClass('fa-arrow-left');
-            icon.addClass('fa-file-o');
-            $(this).attr('title','Add from product list');
-
-            addItemBtn.css("display",'');
-
-            skuField.removeAttr('readonly');
-            unitPriceField.removeAttr('onkeyup');
-            casePriceField.removeAttr('onkeyup');
-            itemNameField.removeAttr('readonly');
-            itemNameField.attr('prevent-search','1');
-            itemNameField.attr('is-pre-freehand','1');
-            itemDescriptionField.removeAttr('readonly');
-            productIdTempField.val(Number(productIdField.val()));
-            productIdField.val('0');
-
-        }else {
-            // icon.removeClass('fa-arrow-left');
-            icon.removeClass('fa-file-o');
-            icon.addClass('fa-edit');
-            $(this).attr('title','Make this item freehand');
-
-            addItemBtn.css("display",'none');
-
-            unitPriceField.attr('onkeyup','calculateUnitPrice(this);');
-            casePriceField.attr('onkeyup','calculateUnitPrice(this);');
-
-            skuField.attr('readonly','readonly');
-            itemNameField.removeAttr('readonly');
-            itemNameField.attr('prevent-search','0');
-            itemNameField.removeAttr('is-pre-freehand');
-            itemDescriptionField.attr('readonly','readonly');
-            productIdField.val(Number(productIdTempField.val()));
-            productIdTempField.val('0');
-        }
-
-        $(this).tooltip('destroy');
-        $(this).tooltip();
-
-        });
-
-})
-var showFirstPopup;
-var hidePopup;
-function beforepopupClose() {
-    $('a.btn-search[data-original-title="Clear Search"]').trigger("click");
-    var alertpopup = document.getElementById('noty_topCenter_layout_container');
-   if(alertpopup) {
-       $(alertpopup).remove();
-   }
-    if(hidePopup) {
-        clearTimeout(hidePopup);
-    }
-    if(showFirstPopup) {
-        clearTimeout(showFirstPopup);
-    }
-}

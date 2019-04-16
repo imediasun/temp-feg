@@ -2164,14 +2164,18 @@ class SiteHelpers
         return $groups;
     }
 
-    static function getRequiredConfigs($module_id)
+    static function getRequiredConfigs($module_id,$tabType = '')
     {
         $group_id = Session::get('gid');
         $user_id = Session::get('uid');
         $configs = array();
         $i = 0;
         //get all the configurations against a module
-        $result = \DB::table('user_module_config')->where(array('module_id' => $module_id))->get();
+        $res = \DB::table('user_module_config')->where(array('module_id' => $module_id));
+        if(!empty($tabType)){
+            $res->where('tab_type',$tabType);
+        }
+        $result = $res->get();
 
         foreach ($result as $t) {
             // if configuration is private only show to owner

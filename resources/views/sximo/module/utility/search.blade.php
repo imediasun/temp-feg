@@ -1,3 +1,8 @@
+<style>
+	.datepicker{
+		z-index: 90000000 !important;
+	}
+</style>
 <?php
     $searchoperators = array(
 //        "equal" => " = ",
@@ -75,7 +80,8 @@ jQuery(function(){
             url: "{{ $pageUrl }}",
             event: event,
             ajaxSearch: ajaxSerachMode,
-            container: $("#advance-search")
+            container: $("#advance-search"),
+			ticketType: '{{ !empty($ticketType)? $ticketType:'' }}'
         });
 	});
 

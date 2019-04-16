@@ -2,20 +2,20 @@
 	<div class="col-md-9">
 		@if($access['is_add'] ==1)
             <div class="float-margin">
-			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
+			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting,'',"?ticket_type=".$ticketType) !!}
                 </div>
 		@endif
 		@if($setting['disableactioncheckbox']=='false')
-		@if($access['is_add'] ==1)
-			<a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
+		@if($access['is_add'] ==1 && $ticketType == 'debit-card-related')
+			<a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}','{{ '&ticket_type='.$ticketType }}')"><i class="fa fa-file-o"></i> Copy </a>
 		@endif
-		@if($access['is_remove'] ==1)
-			<a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+		@if($canRemoveRequests == true)
+			<a href="javascript://ajax" class="btn btn-sm btn-white float-margin" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}','{{ '&ticket_type='.$ticketType }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
 		@endif
 		@endif
-		<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
+		<a href="{{ URL::to( $pageModule .'/search?ticket_type='.$ticketType) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
             @if(SiteHelpers::isModuleEnabled($pageModule))
-                <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+                <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'?tab_type='.$ticketType) }}" class="btn btn-sm btn-white float-margin" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
                 @if(!empty($colconfigs))
                     <select class="form-control float-margin height-set" style="width:auto!important;display:inline;" name="col-config"
                             id="col-config">
@@ -26,7 +26,7 @@
                         @endforeach
                     </select>
                     @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
-                        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="float-margin btn btn-sm btn-white tips"
+                        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit?tab_type='.$ticketType) }}" class="float-margin btn btn-sm btn-white tips"
                            onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit column arrangement">  <i class="fa fa-pencil-square-o"></i></a>
                         <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="float-margin btn btn-sm btn-white tips" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
                     @endif
@@ -113,7 +113,7 @@
 
         if (data.status == 'success') {
             ajaxViewClose('#{{ $pageModule }}');
-            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data','&ticket_type={{$ticketType}}');
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');
         } else {
@@ -123,6 +123,6 @@
         }
     }
     $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?ticket_type={{ $ticketType }}&config_id='+$("#col-config").val()+ getFooterFilters());
     });
 </script>

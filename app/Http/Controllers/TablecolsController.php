@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\Servicerequests;
 use App\Models\Tablecols;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -224,7 +225,18 @@ class TablecolsController extends Controller
         $configstr="";
         $configstr = implode(',',$data['cols']);
         $configstr = \SiteHelpers::CF_encode_json($configstr);
-        $id = $this->model->insertRow(array('user_id' => $data['user_id'], 'module_id' => $data['module_id'], 'config' => $configstr, 'config_name' => $data['config_name'], 'is_private' => $data['user_mode'], 'group_id' => $data['group_id']), $data['config_id']);
+        $columnData = [
+            'user_id' => $data['user_id'],
+            'module_id' => $data['module_id'],
+            'config' => $configstr,
+            'config_name' => $data['config_name'],
+            'is_private' => $data['user_mode'],
+            'group_id' => $data['group_id']
+        ];
+        if(!empty($data['tab_type'])){
+            $columnData['tab_type'] = $data['tab_type'];
+        }
+        $id = $this->model->insertRow($columnData, $data['config_id']);
         return response()->json(array(
             'status' => 'success',
             'message' => \Lang::get('core.note_success'),
@@ -235,7 +247,7 @@ class TablecolsController extends Controller
 
     public function getArrangeCols($pageModule, $mode = null)
     {       
-        
+
         $info = $this->model->makeInfo($pageModule);
         $module_id = \DB::table('tb_module')->where('module_name', '=', $pageModule)->pluck('module_id');
         $user_id = \Session::get('uid');
@@ -272,9 +284,17 @@ class TablecolsController extends Controller
         }
         //add code here to get all columns for a module
         $groups = \SiteHelpers::getAllGroups();
-       // $groups = \DB::table('tb_groups')->where('level', '>=', \Session::get('level'))->get();        
+       // $groups = \DB::table('tb_groups')->where('level', '>=', \Session::get('level'))->get();
+        $tabType = '';
+        if(!empty($_GET['tab_type'])){
+            $tabType=$_GET['tab_type'];
+            if ($tabType == 'game-related'){
+                $serviceRequest = new Servicerequests();
+                $info['config']['grid'] = $serviceRequest->displayFieldsByType(@$info['config']['grid'],$tabType);
+            }
+        }
         return view('tablecols.arrange_cols', [
-            'allColumns' => @$info['config']['grid'], 
+            'allColumns' => $info['config']['grid'],
             'user_id' => $user_id, 
             'module_id' => $module_id, 
             'pageModule' => $pageModule, 
@@ -283,7 +303,8 @@ class TablecolsController extends Controller
             'group_id'=>$group_id,
             'config_name'=>$config_name,
             'is_private'=>$is_private,
-            'config_id'=>$config_id 
+            'config_id'=>$config_id,
+            'tabType' => $tabType
         ]);
     }
     function getDeleteConfig(Request $request)

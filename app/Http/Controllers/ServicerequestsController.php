@@ -1,12 +1,24 @@
 <?php namespace App\Http\Controllers;
 
+use App\GameFunctionality;
 use App\Http\Controllers\controller;
+use App\Models\employee;
+use App\Models\game;
+use App\Models\Gamestitle;
+use App\Models\IssueType;
+use App\Models\location;
+use App\Models\PartRequest;
+use App\Models\sbticketsetting;
+use App\Models\SbTicketsTroubleshootingCheckList;
 use App\Models\Servicerequests;
 use App\Models\servicerequestsSetting;
+use App\Models\ShippingPriority;
+use App\Models\Sximo\Module;
 use App\Models\Ticketcomment;
 use App\Models\Ticketfollowers;
 use App\Models\ticketsetting;
 use App\Models\Core\TicketMailer;
+use App\Models\Troubleshootingchecklist;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Session;
@@ -18,9 +30,10 @@ class servicerequestsController extends Controller
 {
 
     static $per_page = '10';
-    public $module = 'Servicerequests';
+    public $module = 'servicerequests';
     protected $layout = "layouts.main";
     protected $data = array();
+    public $module_id = '';
     protected $sortMapping = [];
     protected $sortUnMapping = [];
 
@@ -31,9 +44,13 @@ class servicerequestsController extends Controller
 
         $this->model->attachObserver('FirstEmail',new TicketMailer);
         $this->model->attachObserver('AddComment',new TicketMailer);
+        $this->model->attachObserver('sendApprovalLink',new TicketMailer);
+        $this->model->attachObserver('thankYouMessage',new TicketMailer);
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
 
         $this->data = array(
             'pageTitle' => $this->info['title'],
@@ -49,9 +66,194 @@ class servicerequestsController extends Controller
         );
         $this->sortMapping = ['location_id11' => 'L.location_name', 'last_user' => 'U.first_name'];
         $this->sortUnMapping = ['L.location_name11' => 'location_id', 'U.first_name' => 'last_user'];
+    }
+    function returnUrl()
+    {
+        $pages = (isset($_GET['page']) ? $_GET['page'] : '');
+        $ticketType = (isset($_GET['ticket_type']) ? $_GET['ticket_type'] : '');
+        $sort = (isset($_GET['sort']) ? $_GET['sort'] : '');
+        $order = (isset($_GET['order']) ? $_GET['order'] : '');
+        $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
+        $search = (isset($_GET['search']) ? $_GET['search'] : '');
+        $v1 = (isset($_GET['v1']) ? $_GET['v1'] : '');
+        $v2 = (isset($_GET['v2']) ? $_GET['v2'] : '');
+        $v3 = (isset($_GET['v3']) ? $_GET['v3'] : '');
+
+        $appends = array();
+        if ($pages != '') $appends['page'] = $pages;
+        if ($ticketType != '') $appends['ticket_type'] = $ticketType;
+        if ($sort != '') $appends['sort'] = $sort;
+        if ($order != '') $appends['order'] = $order;
+        if ($rows != '') $appends['rows'] = $rows;
+        if ($search != '') $appends['search'] = $search;
+        $url = "";
+        foreach ($appends as $key => $val) {
+            $url .= "&$key=$val";
+        }
+        return $url;
 
     }
+    public function getExport($t = 'excel')
+    {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
 
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+
+        $info = $this->model->makeInfo($this->module);
+        //$master  	= $this->buildMasterDetail();
+        if (method_exists($this, 'getSearchFilterQuery')) {
+            $filter = $this->getSearchFilterQuery();
+        }
+        else {
+            $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+        }
+
+        //$filter 	.=  $master['masterFilter'];
+//    $params = array(
+//        'params' => ''
+//    );
+        $ticketType = isset($_GET['ticket_type']) ? $_GET['ticket_type'] : 'debit-card-related';
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby'];
+        $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];
+        $params = array(
+            'params' => '',
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,
+            'ticket_type' =>$ticketType,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0),
+            'forExcel'=>1
+        );
+
+
+        $results = $this->model->getRows($params);
+
+        if($ticketType == 'game-related'){
+            $this->data['pageTitle'] = 'Game Related Service Request';
+        }else{
+            $this->data['pageTitle'] = 'Debit Card Related Service Request';
+        }
+
+        $info['config']['grid'] = $this->model->displayFieldsByType($info['config']['grid'],$ticketType);
+
+        $fields = $info['config']['grid'];
+
+        $rows = $results['rows'];
+        $rows = array_map(function($row){
+            if($row->Status == 'inqueue'){
+                $row->Status = 'pending';
+            }
+            return $row;
+        },$rows);
+        //print_r($fields[0]);die;
+        $extra = array(
+            'field' => '',
+            'alias' => 'departments',
+            'language' =>
+                array('id' => ''),
+            'label' => '',
+            'view' => '1',
+            'detail' => '1',
+            'sortable' => '1',
+            'search' => '1',
+
+            'download' => '1',
+            'frozen' => '1',
+            'limited' => '',
+            'width' => '100',
+            'align' => 'left',
+            'sortlist' => '0',
+            'conn' =>
+                array(
+                    'valid' => '0',
+                    'db' => '',
+                    'key' => '',
+                    'display' => ''),
+            'attribute' =>
+                array(
+                    'hyperlink' => '',
+                    array(
+                        'active' => '0',
+                        'link' => '',
+                        'target' => 'modal',
+                        'html' => ''),
+                    'image' =>
+                        array(
+
+                            'active' => '0',
+                            'path' => '',
+                            'size_x' => '',
+                            'size_y' => '',
+                            'html' => ''),
+                    'formater' =>
+                        array(
+                            'active' => '0',
+                            'value' => '',
+
+
+                        )));
+
+        $rows = $this->updateDateInAllRows($rows);
+        if ($this->module == 'department') {
+
+            $extra['field'] = 'total_open';
+            $extra['label'] = 'No Tickets Open';
+            $fields[] = $extra;
+            $extra['field'] = 'total_closed';
+            $extra['label'] = 'No Tickets Closed';
+            $fields[] = $extra;
+            unset($fields[2]);
+            unset($fields[3]);
+            unset($fields[4]);
+            foreach ($rows as $index => $row) {
+
+                $open = \DB::select("Select * FROM sb_tickets WHERE department_id = " . $row->id . " AND status = 'open'");
+                $close = \DB::select("Select * FROM sb_tickets WHERE department_id = " . $row->id . " AND status = 'close'");
+                unset($rows[$index]->created_at);
+                unset($rows[$index]->updated_at);
+                $rows[$index]->total_closed = count($close);
+                $rows[$index]->total_open = count($open);
+            }
+
+        }
+
+
+        $content = array(
+            'exportID' => $exportSessionID,
+            'fields' => $fields,
+            'rows' => $rows,
+            'title' => $this->data['pageTitle'],
+            'excelExcludeFormatting' => isset($results['excelExcludeFormatting'])?$results['excelExcludeFormatting']:[]
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('sximo.module.utility.excel', $content);
+        }
+    }
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
@@ -59,6 +261,43 @@ class servicerequestsController extends Controller
 
         $this->data['access'] = $this->access;
         return view('servicerequests.index', $this->data);
+    }
+
+    public function getSearch($mode = 'ajax')
+    {
+        $this->data['ticketType'] = 'debit-card-related';
+        if(!empty($_GET['ticket_type'])){
+            $this->data['ticketType'] = $_GET['ticket_type'];
+            if($this->data['ticketType'] == 'game-related'){
+                $this->data['pageTitle'] = '+ Create Game-Related Service Request';
+            }
+        }
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        if($this->data['ticketType'] == 'game-related') {
+            $this->data['tableForm'] = $this->model->resetFormElements($this->data['tableForm']);
+        }else{
+            $this->data['tableForm'] = $this->model->resetFormElements($this->data['tableForm'],true);
+        }
+        $this->data['tableGrid'] = $this->model->displayFieldsByType($this->info['config']['grid'],$this->data['ticketType']);
+        $this->data['searchMode'] = $mode;
+        $this->data['typeRestricted'] = ['isTypeRestricted' => false ,'displayTypeOnly' => ''];
+        $this->data['excluded_locations'] = $this->getUsersExcludedLocations();
+
+        if($this->model->isTypeRestrictedModule($this->module)){
+            if($this->model->isTypeRestricted()){
+                $this->data['typeRestricted'] = [
+                    'isTypeRestricted' => $this->model->isTypeRestricted(),
+                    'displayTypeOnly' => $this->model->getAllowedTypes(),
+                ];
+            }
+        }
+
+        if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
+            return view('feg_common.search', $this->data);
+        } else {
+            return view('sximo.module.utility.search', $this->data);
+        }
+
     }
     
     public function getSearchFilterQuery($customQueryString = null) {
@@ -103,13 +342,14 @@ class servicerequestsController extends Controller
         if (empty($status) && $showAll == 0) {
             $filter .= " AND sb_tickets.Status != 'closed' ";
         }
-        if($showAll == 0){
+        if(empty($status) || $showAll == 0){
             \Session::put('showAllChecked',false);
         }
         else
         {
             \Session::put('showAllChecked',true);
         }
+
         if (!empty($search_all_fields)) {
             $searchFields = [
                 'sb_tickets.TicketID',
@@ -139,6 +379,13 @@ class servicerequestsController extends Controller
     }
     public function postData(Request $request)
     {
+        $this->data['ticketType'] = 'debit-card-related';
+        if($request->has('ticket_type')){
+            $this->data['ticketType'] = $request->input('ticket_type');
+            if($this->data['ticketType'] == 'game-related'){
+                $this->data['pageTitle'] = '+ Create Game-Related Service Request';
+            }
+        }
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'servicerequests')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -151,7 +398,8 @@ class servicerequestsController extends Controller
         }
         $this->data['config_id'] = $config_id;
         \Session::put('config_id', $config_id);
-        $config = $this->model->getModuleConfig($module_id, $config_id);
+        $config = $this->model->getModuleConfig($module_id, $config_id,$this->data['ticketType']);
+
         if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
         }
@@ -164,6 +412,7 @@ class servicerequestsController extends Controller
         $sort = !empty($this->sortMapping) && isset($this->sortMapping[$sort]) ? $this->sortMapping[$sort] : $sort;
 
         $page = $request->input('page', 1);
+
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
@@ -173,6 +422,7 @@ class servicerequestsController extends Controller
             ],
             'order' => $order,
             'params' => $filter,
+            'ticket_type' =>$this->data['ticketType'],
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
@@ -284,7 +534,15 @@ class servicerequestsController extends Controller
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
+        $this->data['tableGrid'] = $this->model->displayFieldsByType($this->data['tableGrid'],$this->data['ticketType']);
+        $this->data['canEditDetail'] = $this->model->canEdit($this->data['ticketType'],$this->pass);
+        $this->data['canRemoveRequests'] = $this->model->canDelete($this->data['ticketType'],$this->pass);
         // Render into template
+        if($this->data['ticketType'] == 'game-related') {
+            $this->data['tableForm'] = $this->model->resetFormElements($this->data['tableForm']);
+        }else{
+            $this->data['tableForm'] = $this->model->resetFormElements($this->data['tableForm'],true);
+        }
         return view('servicerequests.table', $this->data);
 
     }
@@ -292,6 +550,13 @@ class servicerequestsController extends Controller
 
     function getUpdate(Request $request, $id = null)
     {
+        $view = 'form';
+        if($request->has('ticket_type')){
+            $view = ($request->input('ticket_type') == 'game-related') ? 'game-related-form':$view;
+            if($view == 'game-related-form'){
+                $this->data['pageTitle'] = '+ Create Game-Related Service Request';
+            }
+        }
 
         $isAdd = $this->data['isAdd'] = is_null($id);
         
@@ -315,8 +580,10 @@ class servicerequestsController extends Controller
         $this->data['fid'] = \Session::get('fid');
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $partRequests = PartRequest::where('ticket_id',$id)->get();
 
         $this->data['id'] = $id;
+        $this->data['partRequests'] = $partRequests;
 
         $this->data['issueType'] = $row['issue_type'];
         /*$this->data['priority']  =  $row['Priority'];*/
@@ -326,30 +593,34 @@ class servicerequestsController extends Controller
         $this->data['filePaths'] = explode(",", $row['file_path']);        
         $this->data['entryBy'] = $isAdd ? $userId : $row['entry_by'];
         $this->data['locationId'] = $isAdd ? \Session::get('selected_location') : $row['location_id'];
+        $this->data['games'] = $this->model->getGames();
+        $this->data['game_related_issue_types'] = IssueType::isActive()->get();
+        $this->data['game_functionalities'] = \App\Models\GameFunctionality::isActive()->get();
+        $this->data['troubleshootingCheckLists'] = Troubleshootingchecklist::isActive()->orderBy('troubleshooting_check_lists.order','asc')->get();
+        $this->data['shippingPriorities'] = ShippingPriority::isActive()->get();
+        $userSelectedOptions = SbTicketsTroubleshootingCheckList::select(['troubleshooting_check_list_id','check_list_name'])->where('sb_ticket_id',$id)->orderBy('sb_tickets_troubleshooting_check_lists.order','asc')->get()->toArray();
+        $savedCheckList = ['savedCheckList' =>[],'savedCheckListOptions'=>[]];
+        foreach ($userSelectedOptions as $userSelectedOption){
+            $savedCheckList['savedCheckList'][] = $userSelectedOption['troubleshooting_check_list_id'];
+            $savedCheckList['savedCheckListOptions'][$userSelectedOption['troubleshooting_check_list_id']] = $userSelectedOption['check_list_name'];
+        }
+        $this->data['savedCheckList'] = $savedCheckList;
 
-        /*$this->data['priorityOptions'] = array(
-                                                'normal' => 'Normal',
-                                                'urgent' => 'Urgent'
-                                                );*/
-        /*foreach( $this->data['priorityOptions'] as $p_keys =>$p_values){
-            if($p_keys=="sameday" || strtolower($p_keys)=="urgent"){
-                unset($this->data['priorityOptions'][$p_keys]);
-                $this->data['priorityOptions']['urgent']="URGENT";
-
-            }
-
-        }*/
-
-        return view('servicerequests.form', $this->data);
+        return view('servicerequests.'.$view, $this->data);
     }
 
-    public function getShow($id = null)
+    public function getShow(Request $request,$id = null)
     {
+
+        $ticketType = $request->input('ticket_type','debit-card-related');
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $row = $this->model->find($id);
+        if($ticketType == 'game-related'){
+            $row->issue_type = IssueType::find($row->issue_type_id)->issue_type_name;
+        }
         $assign_employee_ids = explode(',', $row->assign_to);
         $assign_employee_names = array();
 
@@ -364,7 +635,18 @@ class servicerequestsController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
         }
-        
+        $row->shipping_priroty ='';
+        if(!empty($row->shipping_priority_id)){
+            $row->shipping_priroty = ShippingPriority::find($row->shipping_priority_id)->priority_name;
+        }
+        $row->issue_type ='';
+        if(!empty($row->issue_type_id)){
+            $row->issue_type = IssueType::find($row->issue_type_id)->issue_type_name;
+        }
+        $row->functionality ='';
+        if(!empty($row->functionality_id)){
+            $row->functionality = \App\Models\GameFunctionality::find($row->functionality_id)->functionalty_name;
+        }
         $comments = Ticketcomment::getCommentsWithUserData($id);
         $this->data['comments'] = $comments;
 
@@ -374,8 +656,8 @@ class servicerequestsController extends Controller
         $this->data['uid'] = $userId;
         $this->data['fid'] = \Session::get('fid');
         $this->data['creator'] = $creator = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
-        $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
-        $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
+        $this->data['following'] = Ticketfollowers::isFollowing($id, $userId,'',$ticketType);
+        $this->data['followers'] = Ticketfollowers::getAllFollowers($id, null, false, $ticketType);
         $this->data['setting'] = $this->info['setting'];
         $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -393,7 +675,11 @@ class servicerequestsController extends Controller
         $this->data['updatedOn'] = \DateHelpers::formatDate($row->updated);
         $this->data['updatedOnWithTime'] = \DateHelpers::formatDateCustom($row->updated);
         $this->data['locationName'] = \SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name');
-
+        if(!empty($row->game_id)) {
+            $gameTitleId = game::find($row->game_id)->game_title_id;
+            $gameTitle = Gamestitle::find($gameTitleId)->game_title;
+            $this->data['gameName'] = $row->game_id." | ".$gameTitle;
+        }
         $this->data['creatorID'] = $row->entry_by;
         $this->data['creatorProfile'] = $creatorProfile = FEGSystemHelper::getUserProfileDetails($creator);
 
@@ -402,9 +688,29 @@ class servicerequestsController extends Controller
         $this->data['creatorTooltip'] = $creatorProfile['tooltip'];
 
         $this->data['myUserAvatar'] = FEGSystemHelper::getUserAvatarUrl($userId);
-        $this->data['myUserTooltip'] = "You";        
-        
-        
+        $this->data['myUserTooltip'] = "You";
+
+        $this->data['savedCheckList'] = SbTicketsTroubleshootingCheckList::where('sb_ticket_id',$id)->get()->pluck('troubleshooting_check_list_id')->toArray();
+        $this->data['troubleshootingCheckList'] = Troubleshootingchecklist::all();
+
+        $this->data['troubleshootingCheckLists'] = Troubleshootingchecklist::isActive()->orderBy('troubleshooting_check_lists.order','asc')->get();
+        $userSelectedOptions = SbTicketsTroubleshootingCheckList::select(['troubleshooting_check_list_id','check_list_name'])->where('sb_ticket_id',$id)->orderBy('sb_tickets_troubleshooting_check_lists.order','asc')->get()->toArray();
+        $savedCheckList = ['savedCheckList' =>[],'savedCheckListOptions'=>[]];
+        foreach ($userSelectedOptions as $userSelectedOption){
+            $savedCheckList['savedCheckList'][] = $userSelectedOption['troubleshooting_check_list_id'];
+            $savedCheckList['savedCheckListOptions'][$userSelectedOption['troubleshooting_check_list_id']] = $userSelectedOption['check_list_name'];
+        }
+        $this->data['savedCheckList'] = $savedCheckList;
+
+        $this->data['ticketType'] = $ticketType;
+
+        if($this->data['ticketType'] == 'game-related'){
+            $this->data['canChangeStatus'] = ticketsetting::canUserChangeStatus(null,'game-related');
+        }
+        $partRequests = PartRequest::where('ticket_id',$id)->get();
+        $this->data['partRequests'] = $partRequests;
+        $this->data['can_approve_deny'] = $this->model->hasApproveDenyPermission();
+
         return view('servicerequests.view', $this->data);
     }
     function getSubscribe(Request $request, $id = NULL, $userID = NULL, $unfollow = NULL) {
@@ -703,7 +1009,8 @@ class servicerequestsController extends Controller
 
     public function postStatusUpdate(Request $request, $id) {
         $response = ['status' => 'error',  'message' => 'Not authorized to change status'];
-        if (ticketsetting::canUserChangeStatus()){
+       $ticketType = $request->input('ticket_type','debit-card-related');
+        if (ticketsetting::canUserChangeStatus(null,$ticketType)){
             $id = \SiteHelpers::encryptID($id, true);
             $date = date("Y-m-d");
             $status = @$request->input('Status');
@@ -733,8 +1040,10 @@ class servicerequestsController extends Controller
     }
     public function postComment(Request $request)
     {
+
         $date = date("Y-m-d");
         $ticketId = $request->input('TicketID');
+        $ticketType = $request->input('ticket_type','debit-card-related');
 
         //validate post for sb_tickets module
         $ticketsData = $this->validatePost('sb_tickets', true);
@@ -743,22 +1052,47 @@ class servicerequestsController extends Controller
 
         $comment_model = new Ticketcomment();
         $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
-        
-        if (!ticketsetting::canUserChangeStatus()) {
-            unset($ticketsData['Status']);
-            unset($ticketsData['closed']);
-        }
-        elseif (isset($ticketsData['Status'])) {
-            $status = $ticketsData['Status'];
-            $isStatusClosed = $status == 'closed';
-            if ($isStatusClosed) {                
-                $oldStatus = $request->get('oldStatus');
-                if ($oldStatus != 'closed') {
-                    $ticketsData['closed'] = date('Y-m-d H:i:s');
+        $oldStatus = $request->get('oldStatus');
+        if (!ticketsetting::canUserChangeStatus(null,$ticketType)) {
+            /**
+             * Old Status was coming null for this code block
+             * therefore called db for the Status
+             */
+            $ticket = $this->model->find($ticketId);
+
+            if($ticket){
+
+                $oldStatus = $ticket->Status;
+                unset($ticketsData['Status']);
+                unset($ticketsData['closed']);
+
+                if($oldStatus == 'inqueue' && $ticketType == 'debit-card-related'){
+                    $ticketsData['Status'] = 'open';
+                }
+
+                if(in_array($oldStatus , ['closed','open']) && $ticketType  == 'game-related'){
+                    $ticketsData['Status'] = 'in_process';
                 }
             }
+
+        }
+        elseif (isset($ticketsData['Status'])) {
+            if ($ticketType == 'game-related'){
+
+                if($oldStatus != 'closed' && $ticketsData['Status'] == 'closed') {
+                    $ticketsData['closed'] = date('Y-m-d H:i:s');
+                }
+
+                if($oldStatus ==  $ticketsData['Status']) {
+                    $ticketsData['Status'] = 'in_process';
+                }
+
+                //$ticketsData['closed'] = date('Y-m-d H:i:s');
+            }elseif ($oldStatus == 'inqueue' && $ticketType == 'debit-card-related'){
+                $ticketsData['Status'] = 'open';
+            }
             else {
-                $ticketsData['closed']= null;   
+                $ticketsData['closed']= null;
             }
         }
 
@@ -826,7 +1160,14 @@ class servicerequestsController extends Controller
         $message .= \View::make('servicerequests.email.commentviewlink', [
             'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($ticketId),
         ])->render();
-        
+        $ticketInfo = Servicerequests::select('*')->where('TicketID',$ticketId)->first()->toArray();
+        $ticketsData['ticket_type'] = $ticketInfo['ticket_type'];
+        if(!empty($ticketInfo['game_id'])) {
+            $game = game::find($ticketInfo['game_id']);
+            $gameTitle = Gamestitle::find($game->game_title_id);
+            $ticketsData['game']['game_id'] = $ticketInfo['game_id'];
+            $ticketsData['game']['game_title'] = $gameTitle->game_title;
+        }
         $message .= $ticketThreadContent;
         $this->model->notifyObserver('AddComment',[
                 'message'       =>$message,
@@ -985,5 +1326,391 @@ class servicerequestsController extends Controller
         $this->data['individuals'] = $individuals;
         $this->data['access'] = $this->access;
         return view('servicerequests.setting', $this->data);
+    }
+    public function getLocationGames(Request $request){
+        $locationId = $request->input('location_id',0);
+        if($locationId > 0){
+            $locationGames = $this->model->getGames($locationId);
+            $locationGamesOptions = view('servicerequests.dropdowns.games',['games'=>$locationGames])->render();
+            return response()->json(['gameOptions'=>$locationGamesOptions,'status' => 'success']);
+        }else{
+            return response()->json(array(
+                'message' => 'Error',
+                'status' => 'commentError'
+            ));
+        }
+    }
+
+    function postSaveGameRelated(Request $request, $id = NULL)
+    {
+
+
+        $date = date("Y-m-d");
+        //$data['need_by_date'] = date('Y-m-d');
+        //$rules = $this->validateForm();
+
+        $partNumbers = null;
+        $qtys = 0;
+        $costs = 0;
+
+        $isAdd = empty($id);
+        $rules = $this->validateForm();
+        unset($rules['department_id']);
+        //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
+        //unset($rules['debit_card']);
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+            $data = $this->validatePost('sb_tickets', !empty($id));
+            $data = $this->validateDates($data);
+            $data['game_realted_date']= date("Y-m-d H:i:s", strtotime(str_replace(" ","",$request->get('game_realted_date'))));
+            $data['shipping_priority_id'] = $request->input('shipping_priority_id',0);
+            $data['Status'] = $request->get('Status');
+            $oldStatus = $request->get('oldStatus');
+            $partNumbers = $data['part_number'];
+            $partRequestId = $request->input('part_request_id');
+            $qtys = $data['qty'];
+            $costs = $data['cost'];
+
+            unset($data['part_number']);
+            unset($data['qty']);
+            unset($data['cost']);
+            unset($data['part_request_id']);
+
+            $data['ticket_type'] = 'game-related';
+            if (!$isAdd) {
+                if (!ticketsetting::canUserChangeStatus('game-related')) {
+                    unset($data['Status']);
+                    unset($data['closed']);
+                }
+                if(isset($data['Status'])) {
+                    if ($data['Status'] == "closed") {
+                        if ($oldStatus != 'closed') {
+                            $data['closed'] = date('Y-m-d H:i:s');
+                        }
+                    }
+                    else {
+                        $data['closed'] = null;
+                    }
+                }
+            }
+            else {
+                $data['Created'] = date('Y-m-d H:i:s');
+            }
+
+            unset($data['oldStatus']);
+            $id = $this->model->insertRow($data, $id);
+            $troubleshootingchecklist = $request->has('troubleshootchecklist') ? $request->input('troubleshootchecklist'):[];
+
+            if($data['issue_type_id'] != Servicerequests::PART_APPROVAL) {
+                $this->model->saveTroubleshootingChecklist($troubleshootingchecklist, $id);
+            }
+
+            if($data['issue_type_id'] != Servicerequests::TROUBLESHOOTING_ASSISTANCE){
+                $partRequestIds = [];
+                if(count($partNumbers) > 0) {
+                    $partRequestRemovedId = explode(',',$request->input('part_request_removed',0));
+                    $partRequests = [];
+                    for ($i = 0; $i < count($partNumbers); $i++) {
+                        $partRequests[] = [
+                            'ticket_id' => $id,
+                            'part_number' => $partNumbers[$i],
+                            'qty' => $qtys[$i],
+                            'cost' => $costs[$i],
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'part_request_id' => empty($partRequestId[$i]) ? 0:$partRequestId[$i],
+                        ];
+                        if(empty($partRequestId[$i])) {
+                            if($partRequestId[$i] > 0) {
+                                $partRequestIds[] = $partRequestId[$i];
+                            }
+                        }
+                    }
+                    $partRequestIds1 =  $this->model->savePartRequest($partRequests, $id,$partRequestRemovedId);
+                    $partRequestIds = array_merge($partRequestIds,$partRequestIds1);
+                }
+                if(count($partRequestIds) > 0){
+                    $partRequestIds = array_unique($partRequestIds);
+
+                    foreach ($partRequestIds as $partRequestId){
+                        $partRequest = PartRequest::where(['id'=>$partRequestId, 'status_id'=>1])->first();
+                        if($partRequest){
+                            $approveLink = url().'/servicerequests/approvepart/'.\SiteHelpers::encryptID($partRequest->id);
+                            $denyLink = url().'/servicerequests/denypart/'.\SiteHelpers::encryptID($partRequest->id);
+                            $requestLink = url(). "/servicerequests/?view=".\SiteHelpers::encryptID($id)."&ticket_type=game-related";
+                            $requestDate = \DateHelpers::formatDate($data['game_realted_date']);
+                            $partNumber = $partRequest->part_number;
+                            $partQty = $partRequest->qty;
+                            $cost = \CurrencyHelpers::formatPrice($partRequest->cost);
+                            $description = $request->input('Description');
+                            $requester = Session::get('ufname')." ".Session::get('ulname');
+
+                            $message = \View::make('servicerequests.email.part-request-email', [
+                                'approve_link' => $approveLink,
+                                'deny_link' => $denyLink,
+                                'request_link' => $requestLink,
+                                'request_date' => $requestDate,
+                                'part_number' => $partNumber,
+                                'part_qty' => $partQty,
+                                'part_cost' => $cost,
+                                'description' => $description,
+                                'submitter' => $requester,
+                            ])->render();
+                            $subject = "Part Request [Part # ".$partNumber."] [Qty ".$partQty."][Cost ".$cost."]  [Service Request #".$id."] ".date('m/d/Y',strtotime($requestDate));
+
+                            $this->model->notifyObserver('sendApprovalLink',[
+                                "message"       =>$message,
+                                "ticketId"      => $id,
+                                'ticket'        => $data,
+                                'subject'       => $subject,
+                                'ticket_type' => 'game-related'
+                            ]);
+
+                            $message = \View::make('servicerequests.email.part-request-thankyou-email', [
+                                'approve_link' => $approveLink,
+                                'deny_link' => $denyLink,
+                                'request_link' => $requestLink,
+                                'request_date' => $requestDate,
+                                'part_number' => $partNumber,
+                                'part_qty' => $partQty,
+                                'part_cost' => $cost,
+                                'description' => $description,
+                                'email' => Session::get('eid'),
+                                'submitter' => $requester,
+                            ])->render();
+                            $subject = "Part Request [Part # ".$partNumber."] [Qty ".$partQty."][Cost ".$cost."]  [Service Request #".$id."] ".date('m/d/Y',strtotime($requestDate));
+
+                            $this->model->notifyObserver('thankYouMessage',[
+                                "message"       =>$message,
+                                "ticketId"      => $id,
+                                'ticket'        => $data,
+                                'subject'       => $subject,
+                                'ticket_type' => 'game-related'
+                            ]);
+
+                        }
+                    }
+                }
+            }
+
+            $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
+            if (!empty($files['file_path'])) {
+                if ($isAdd) {
+                    $data['file_path'] = $files['file_path'];
+                }
+                else {
+                    $oldFiles = $data['file_path'];
+                    if (empty($oldFiles)) {
+                        $data['file_path'] = $files['file_path'];
+                    }
+                    else {
+                        $data['file_path'] .= ','.$files['file_path'];
+                    }
+                }
+
+                $data['_base_file_path'] = $files['_base_file_path'];
+
+                $this->model->where('TicketID', $id)
+                    ->update(['file_path' => $data['file_path']]);
+            }
+
+            $data = $this->model->prepareDataforGameEmail($data);
+
+            if($isAdd){
+                Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
+                $message = '';
+                $message .= \View::make('servicerequests.email.game-related-email', [
+                    'data'=>$data,
+                    'savedCheckList' => $troubleshootingchecklist,
+                    'checkList' => Troubleshootingchecklist::all(),
+                    'is_partRequest' =>$data['issue_type_id'] == Servicerequests::PART_APPROVAL,
+                    'partRequests' => PartRequest::where('ticket_id',$id)->get(),
+                    'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($id)."&ticket_type=game-related",
+                ])->render();
+
+                $this->model->notifyObserver('FirstEmail',[
+                    "message"       =>$message,
+                    "ticketId"      => $id,
+                    'ticket'        => $data,
+                    'ticket_type' => 'game-related'
+                ]);
+            }
+
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
+
+        } else {
+
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));
+        }
+
+    }
+
+    public function getApprovepart($id = ''){
+        if(!empty($id)) {
+            $id = \SiteHelpers::encryptID($id,true);
+
+            $partRequest = PartRequest::with('service_request')->where('id', $id)->first();
+
+            if ($partRequest) {
+
+                if(is_null($partRequest->service_request)){
+                    $ex = "Part already been deleted or Service Request not found!";
+                    return Redirect::to('servicerequests')->with(['messagetext'=> ucwords(strtolower($ex)),'ticketType'=>'game-related'])->with('msgstatus', 'error');
+                }else{
+                    $partRequest1 = PartRequest::where('id', $id);
+                    $updated = $partRequest1->update(['status_id' => 2, 'updated_by' => Session::get('uid')]);
+
+                    if ($updated) {
+                        return Redirect::to('servicerequests')->with(['messagetext'=>'Part request approved','ticketType'=>'game-related'])->with('msgstatus', 'success');
+                    } else {
+                        return Redirect::to('servicerequests')->with(['messagetext'=> 'Error on approving part request','ticketType'=>'game-related'])->with('msgstatus', 'error');
+                    }
+                }
+            }else{
+                $ex = "Part already been deleted or Service Request not found!";
+                return Redirect::to('servicerequests')->with(['messagetext'=> ucwords(strtolower($ex)),'ticketType'=>'game-related'])->with('msgstatus', 'error');
+            }
+
+        }
+    }
+    public function postApprove(Request $request){
+
+            $id = $request->input('id',0);
+
+            $partRequest = PartRequest::where('id', $id);
+
+
+        if ($partRequest) {
+            $updated = $partRequest->update(['status_id' => 2, 'updated_by' => Session::get('uid')]);
+            return response()->json(array(
+                'message' => 'Part request approved',
+                'status' => 'success'
+            ));
+        }
+
+
+    }
+    public function getDenypart($id = ''){
+        if(!empty($id)) {
+
+            $id = \SiteHelpers::encryptID($id,true);
+            $this->data['id'] = $id;
+            return view('servicerequests.reason-form.email-deny-reason',$this->data);
+
+        }
+    }
+
+    public function postDenyPartEmail(Request $request)
+    {
+        $id = $request->input('id', 0);
+        $reason = $request->input('reason', '');
+
+        $partRequest = PartRequest::with('service_request')->where('id', $id)->first();
+        if (strlen($reason) > 10) {
+            if ($partRequest) {
+
+                if(is_null($partRequest->service_request)){
+                    $ex = "Part already been deleted or Service Request not found!";
+                    return response()->json(['message'=> ucwords(strtolower($ex)),'ticketType'=>'game-related', 'status'=>'error']);
+                }else {
+                    $partRequest1 = PartRequest::where('id', $id);
+                    $updated = $partRequest1->update(['status_id' => 3, 'reason' => $reason, 'updated_by' => Session::get('uid')]);
+
+                    if ($updated) {
+                        return response()->json(array(
+                            'message' => 'Part request denied',
+                            'status' => 'success'
+                        ));
+                    } else {
+                        return response()->json(array(
+                            'message' => 'Some thing went wrong',
+                            'status' => 'error'
+                        ));
+                    }
+                }
+            }
+            else{
+                $ex = "Part already been deleted or Service Request not found!";
+                return response()->json(['message'=> ucwords(strtolower($ex)),'ticketType'=>'game-related', 'status'=>'error']);
+            }
+        } else {
+            return response()->json(array(
+                'message' => 'At least 10 characters must be entered.',
+                'status' => 'error'
+            ));
+        }
+    }
+
+    public function postDenyPart(Request $request){
+        $id = $request->input('partRequestId',0);
+        $reason = $request->input('reason','');
+
+        $partRequest = PartRequest::where('id', $id);
+
+
+        if ($partRequest) {
+            $updated = $partRequest->update(['status_id' => 3,'reason'=>$reason, 'updated_by' => Session::get('uid')]);
+            return response()->json(array(
+                'message' => 'Part request denied',
+                'status' => 'success'
+            ));
+        }
+    }
+
+    public function postSavePartRequest(Request $request){
+        $request->all();
+        $partRequestId = $request->input('partRequestId',0);
+
+        $rules=[
+            'part_number' => 'required',
+            'qty' => 'required',
+            'cost' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+            $data = $request->all();
+            unset($data['partRequestId']);
+            $partRequest = new PartRequest();
+            $partRequestId = ($partRequestId > 0)? $partRequestId:null;
+            $id = $partRequest->insertRow($data,$partRequestId);
+            $hasPermission = $this->model->hasApproveDenyPermission();
+            return response()->json(array(
+                'message' => 'Part request has been added',
+                'status' => 'success',
+                'hasPermission'=>$hasPermission,
+                'id'=> $id,
+            ));
+        }else{
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error',
+
+            ));
+        }
+    }
+    public function postRemovepartrequest(Request $request){
+        $id = $request->input('id',0);
+        if($id>0) {
+            $isPartRequest = PartRequest::find($id);
+            if ($isPartRequest) {
+                $partRequest = PartRequest::where('id', $id);
+
+                if ($partRequest) {
+                    $partRequest->delete();
+                    return response()->json(array(
+                        'message' => 'Part request has been deleted',
+                        'status' => 'success'
+                    ));
+                }
+            }
+        }
     }
 }

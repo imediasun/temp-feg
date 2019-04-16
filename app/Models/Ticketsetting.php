@@ -27,16 +27,16 @@ class ticketsetting extends Sximo  {
 		return "  ";
 	}
     
-    public static function getSettings() {
-        return self::first()->toArray();
+    public static function getSettings($ticketType = 'debit-card-related') {
+        return self::where('setting_type',$ticketType)->first()->toArray();
     }
 
-	public static function getUserPermissions($id = null){
+	public static function getUserPermissions($id = null,$ticketType = 'debit-card-related'){
         $gid = \SiteHelpers::getUserGroup($id);
         if (empty($id)) {
             $id = \Session::get('uid');
         }        
-		$data = self::getAllPermissions();
+		$data = self::getAllPermissions($ticketType);
         $permissions = [
             "canChangeStatus" => false, 
             "omniscient" => false, 
@@ -65,8 +65,8 @@ class ticketsetting extends Sximo  {
         return $permissions;        
 	}
     
-	public static function getAllPermissions(){
-		$data = self::getSettings();
+	public static function getAllPermissions($ticketType = 'debit-card-related'){
+		$data = self::getSettings($ticketType);
         if (is_null($data)) {
             return [
                 "nodata" => true, 
@@ -113,8 +113,8 @@ class ticketsetting extends Sximo  {
         $permissions = self::getUserPermissions($id);           
         return $permissions['omniscient'];
 	}
-	public static function canUserChangeStatus($id = null){
-        $permissions = self::getUserPermissions($id);           
+	public static function canUserChangeStatus($id = null,$ticketType = 'debit-card-related'){
+        $permissions = self::getUserPermissions($id,$ticketType);
         return $permissions['canChangeStatus'];
 	}
 }

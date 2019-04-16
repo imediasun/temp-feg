@@ -34,14 +34,15 @@
         var pageModule = '{{$pageModule}}',
             pageUrl = '{{$pageUrl}}',
             viewTicketId = @if(empty(@$_GET['view'])) "" @else "{{ \SiteHelpers::encryptID($_GET['view'], true) }}" @endif,
+                ticketType = @if(empty(@$_GET['ticket_type'])) "debit-card-related" @else "{{ $_GET['ticket_type'] }}" @endif,
             hasViewTicket = viewTicketId && viewTicketId != 0;
         
         $(document).ready(function(){
 
             if(hasViewTicket){
-                ajaxViewDetail('#'+pageModule, pageUrl + "/show/"+viewTicketId);
+                ajaxViewDetail('#'+pageModule, pageUrl + "/show/"+viewTicketId+"?ticket_type="+ticketType);
             }
-            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data', UNFN, { isBackground: hasViewTicket});
+            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?ticket_type=debit-card-related', UNFN, { isBackground: hasViewTicket});
         });
     </script>
     <script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/grid.js') }}"></script>          

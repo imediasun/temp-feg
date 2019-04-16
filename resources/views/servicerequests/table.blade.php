@@ -1,11 +1,16 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<style>
+    .select2-drop{
+        z-index: 600000000 !important;
+    }
+</style>
 <div class="sbox">
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>
 
         <div class="sbox-tools">
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips clearSearchButton" title="Clear Search"
-               onclick="reloadData('#{{ $pageModule }}','servicerequests/data?search=')"><i class="fa fa-trash-o"></i> Clear
+               onclick="reloadData('#{{ $pageModule }}','servicerequests/data?ticket_type={{$ticketType}}','',{},undefined,true);"><i class="fa fa-trash-o"></i> Clear
                 Search </a>
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips reloadDataButton" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','servicerequests/data?return={{ $return }}')"><i
@@ -17,6 +22,17 @@
         </div>
     </div>
     <div class="sbox-content">
+        <div class="settingTabContainer">
+            <?php $isActive1 = 1; $isActive2 = 0;  ?>
+            @if($ticketType == 'game-related')
+                <?php $isActive2 = 1; $isActive1 = 0; ?>
+                @else
+                <?php $isActive1 = 1; $isActive2 = 0; ?>
+                @endif
+
+            <div class="setting-tab @if( $isActive1 == 1) setting-tab-active @endif" is-active='{{ $isActive1 }}' data-type="debit-card-related" onclick="return serverRequestTabsSelect(this,'setting-tab','','',true);">Debit Card Related</div>
+            <div class="setting-tab setting-tab-second @if( $isActive2 == 1) setting-tab-active @endif" is-active='{{ $isActive2 }}' data-type="game-related" onclick="return serverRequestTabsSelect(this,'setting-tab','','',true);">Game Related</div>
+        </div>
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
             @if(!empty($simpleSearchForm))
@@ -28,15 +44,17 @@
                         </div>
                     @endforeach
                         <div class="sscol col-md-2">
+                            <input type="hidden" name="ticket_type" value="{{ $ticketType }}">
                             <span style="width: 100%;margin-top:22px;float: left;margin-bottom: 5px;margin-left: 3px;"><input type="checkbox" name="showAll" id="showAll" class="form-control checkbox" data-simplesearch="1" @if(\Illuminate\Support\Facades\Session::get('showAllChecked') == true) checked @endif>&nbsp;&nbsp; <label for="showAll">Display Closed</label></span>
                         </div>
                     {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
             @endif
         @endif
-       @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
+       @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id,$ticketType)])
 
         <div class="table-responsive">
+
             @if(count($rowData)>=1)
 
                 <table class="table table-striped  datagrid" id="{{ $pageModule }}Table">
@@ -49,7 +67,7 @@
                             <th width="30"> <input type="checkbox" class="checkall" /></th>
                         @endif
                         @if($setting['view-method']=='expand') <th>  </th> @endif
-                        <?php foreach ($tableGrid as $t) :
+                        <?php  foreach ($tableGrid as $t) :
                             if($t['view'] =='1'):
                                 $limited = isset($t['limited']) ? $t['limited'] :'';
                                 if(SiteHelpers::filterColumn($limited ))
@@ -63,6 +81,7 @@
                                     $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
                                     $th = '<th'.
                                             ' class="'.$colClass.'"'.
+                                            ' grid-type="'.$ticketType.'"'.
                                             ' data-field="'.$colField.'"'.
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
@@ -123,8 +142,10 @@
                         @endif
 
                         @if($setting['view-method']=='expand')
-                            <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->TicketID }}"
-                                   data-url="{{ url('servicerequests/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
+                            <td>
+                                <a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->TicketID }}"
+                                   data-url="{{ url('servicerequests/show/'.$id) }}"><i class="fa fa-plus "></i></a>
+                            </td>
                         @endif
                         <?php foreach ($tableGrid as $field) :
                         if($field['view'] == '1') :
@@ -152,7 +173,16 @@
                         endforeach;
                         ?>
                         <td data-values="action" data-key="<?php echo $row->TicketID;?>">
-                            {!! AjaxHelpers::buttonAction('servicerequests',$access,$id ,$setting) !!}
+                            <div class=" action dropup">
+
+                                <a href="{{ url('servicerequests/show/'.$row->TicketID."?ticket_type=".$ticketType) }}" onclick="ajaxViewDetail('#servicerequests',this.href); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="View"><i class="fa fa-search"></i></a>
+
+                                @if($canEditDetail)
+                                <a href="{{ url('servicerequests/update/'.$row->TicketID."?ticket_type=".$ticketType) }}" onclick="ajaxViewDetail('#servicerequests',this.href); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Edit"><i class="fa  fa-edit"></i></a>
+                                @endif
+                            </div>
+
+
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -203,11 +233,11 @@
         });
 
         $('#{{ $pageModule }}Paginate .pagination li a').click(function () {
-            var url = $(this).attr('href');
+            var url = $(this).attr('href')+'&ticket_type={{ $ticketType }}';
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
-        $('select[name="Status"]').change(function () {
+        /*$('select[name="Status"]').change(function () {
             var showAll = $('input[name=showAll]');
             if($('select[name="Status"] :selected')[0].index == 0)
             {
@@ -218,7 +248,7 @@
                 showAll.attr('disabled','disabled');
                 showAll.parent('.icheckbox_square-blue').removeClass('checked');
             }
-        });
+        });*/
         <?php if ($setting['view-method'] == 'expand') :
         echo AjaxHelpers::htmlExpandGrid();
     endif;
@@ -231,13 +261,14 @@
                     moduleID: '#{{ $pageModule }}',
                     url: "{{ $pageUrl }}",
                     event: event,
+                    ticketType:'&ticket_type={{ $ticketType }}',
                     container: simpleSearch
                 });
             });
         }
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
-        setTimeout(function () {
+      /*  setTimeout(function () {
             console.log($('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text(),$('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen')[0]);
             if($('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text() == ' -- Select  -- ')
             {
@@ -246,8 +277,10 @@
             else {
                 $('input[name=showAll]').attr('disabled','disabled').parent('.icheckbox_square-blue').removeClass('checked').css('cursor','no-drop');
             }
-        },400);
+        },400);*/
     });
+    makeSimpleSearchFieldsToInitiateSearchOnEnter();
+
 </script>
 <style>
     .table th.right {

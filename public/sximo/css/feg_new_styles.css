@@ -268,3 +268,29 @@ span.moduleTab.active:after{
         margin-left: 66px !important;
     }
 }
+.btn-part-save{
+    background: #7a66e1 !important;
+    color: white;
+}
+
+/**
+Red: #ed5565;  Green: 1cc63f;
+**/
+
+.redbutton{
+    background: #ed5565 !important;
+    color:white !important;
+    border-color: #ed5565 !important;
+}
+
+.greenbutton{
+    background: #3c763d !important;
+    color:white !important;
+    border-color: #3c763d !important;
+}
+
+.greenbutton:hover,.greenbutton:active{
+    background: #3c763d !important;
+    color:white !important;
+    border-color: #3c763d !important;
+}

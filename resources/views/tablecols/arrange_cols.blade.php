@@ -4,6 +4,7 @@
     <input type="hidden" name="module_id" value="{{ $module_id }}"/>
     <input type="hidden" name="user_id" value="{{ $user_id }}"/>
     <input type="hidden" value="{{ $config_id }}" name="config_id"/>
+    <input type="hidden" value="{{ $tabType }}" id="tab_type" name="tab_type"/>
     <div class="form-group form-group-sm col-md-12">
         <input type="text" name="config_name" id="configname" class="form-control" required
                placeholder="Enter Column Arrangement Name" value="{{ $config_name }}"/>
@@ -131,7 +132,13 @@
                 $('#sximo-modal').modal('hide');
                 $('.ajaxLoading').hide();
                 //window.location.reload();
-                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + data.id + getFooterFilters());
+                var tabType = $('#tab_type').val();
+                if (tabType.length > 0){
+                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + data.id + getFooterFilters()+"&ticket_type="+tabType);
+                }else{
+                    reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + data.id + getFooterFilters());
+                }
+
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();

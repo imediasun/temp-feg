@@ -8,7 +8,8 @@ function performAdvancedSearch(params) {
         moduleID = params.moduleID,
         url = params.url,
         ajaxSearch = params.ajaxSearch,
-        cache = {};
+        cache = {},
+        ticketType = params.ticketType || '';
 
         container.find(' tr.fieldsearch').each(function(i){
 			var UNDEFINED,                 
@@ -96,6 +97,9 @@ function performAdvancedSearch(params) {
 		});
 
     attr += getFooterFilters({'simplesearch': true, 'search': true, 'page': true});
+    if (ticketType.length > 0){
+        attr+='&ticket_type='+ticketType;
+    }
     
     App.search.cache = cache;
     App.lastSearchMode = 'advanced';

@@ -643,11 +643,15 @@ class Sximo extends Model {
         return $id;
     }
 
-    public function getModuleConfig($module_id, $config_id) {
+    public function getModuleConfig($module_id, $config_id,$tabType = '') {
 
-        $res = \DB::table('user_module_config')->where('module_id', '=', $module_id)->where('id', '=', $config_id)->get();
+        $res = \DB::table('user_module_config')->where('module_id', '=', $module_id)->where('id', '=', $config_id);
+            if(!empty($tabType)){
+            $res->where('tab_type',$tabType);
+            }
+            $result = $res->get();
 
-        return $res;
+        return $result;
     }
 
     public function getLocations($id) {

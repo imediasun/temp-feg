@@ -1,10 +1,13 @@
 <?php namespace App\Models;
 
+use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\SbTicketsTroubleshootingCheckList;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Observers\Observerable;
 use App\Models\ticketsetting;
 use App\Library\FEG\System\Formatter;
+use Illuminate\Support\Facades\Session;
 use Log;
 
 class Servicerequests extends Observerable  {
@@ -12,7 +15,38 @@ class Servicerequests extends Observerable  {
     protected $table = 'sb_tickets';
     protected $primaryKey = 'TicketID';
     public $timestamps = false;
-    
+    const PART_APPROVAL = 2;
+    const TROUBLESHOOTING_ASSISTANCE = 4;
+    public $hideGridFieldsTab1 = [
+        'functionality_id',
+        'issue_type_id',
+        'shipping_priority_id',
+        'game_realted_date',
+        'part_number',
+        'cost',
+        'qty',
+        'updated',
+    ];
+    public $hideGridFieldsTab2 = [
+        'issue_type',
+        'functionality_id',
+        'game_realted_date',
+        'part_number',
+        'cost',
+        'qty',
+        'debit_type',
+        'need_by_date',
+    ];
+    public $tab2FieldLabels = [
+        'fields'=>[
+        'Description',
+            'Subject',
+        ],
+        'labels'=>[
+            'Description'=>'Troubleshooting Description',
+            'Subject'=>'Service Request Title',
+        ],
+    ];
     public function __construct() {
         parent::__construct();
 
@@ -31,6 +65,7 @@ class Servicerequests extends Observerable  {
                       UC.first_name   AS firstname,
                       UC.last_name    AS lastname,
                       sbc.USERNAME    AS sbcusername,
+                      sb_tickets.ticket_type,
                       (SELECT
                      GROUP_CONCAT(sb_ticketcomments.Comments)
                     FROM sb_ticketcomments
@@ -159,7 +194,8 @@ class Servicerequests extends Observerable  {
             'extraSorts' => [],
             'order' => '',
             'params' => '',
-            'global' => 1
+            'global' => 1,
+            'ticket_type' => 'debit-card-related',
         ), $args));
 
 
@@ -247,6 +283,10 @@ class Servicerequests extends Observerable  {
             $select .= " AND location.active='$active'";
         }
 
+        if(!empty($ticket_type)){
+            $select .= " AND sb_tickets.ticket_type='$ticket_type'";
+        }
+
         Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $total= count($counter_select);
@@ -281,5 +321,256 @@ class Servicerequests extends Observerable  {
             $key = $table . "." . $key;
         }
         return $results = array('rows' => $result, 'total' => $total);
+    }
+
+    public function getGameRelatedfields(){
+        $fields = [
+            'game_related'=>[
+                'TicketID',
+                'shipping_priority_id',
+                'Created',
+                'issue_type',
+                'location_id',
+                'Description',
+                'need_by_date',
+                'closed',
+                'Status',
+                'last_user',
+                'last_updated_elapsed_days',
+            ],
+            'debit_card_related'=>[
+                'TicketID',
+                'Created',
+                'issue_type',
+                'location_id',
+                'debit_type',
+                'Subject',
+                'Description',
+                'need_by_date',
+                'closed',
+                'Status',
+                'last_user',
+                'last_updated_elapsed_days',
+            ],
+
+        ];
+
+        return $fields;
+        }
+
+        public function getGames($locationId = 0){
+           return game::select('game.id','game_title.game_title')->join('game_title','game.game_title_id','=','game_title.id')->where('game.location_id',$locationId)->get();
+        }
+
+    public function displayFieldsByType($tableGrid, $type)
+    {
+
+        $updatedGrid = [];
+
+        foreach ($tableGrid as $item) {
+            if (in_array($item['field'], $this->hideGridFieldsTab1) && $type == 'debit-card-related') {
+                $item['view'] = 0;
+                $item['download'] = 0;
+            }elseif(in_array($item['field'], $this->hideGridFieldsTab2) && $type == 'game-related'){
+                $item['view'] = 0;
+                $item['download'] = 0;
+            }
+            if ($type == 'game-related'){
+                if(in_array($item['field'],$this->tab2FieldLabels['fields'])){
+                $item['label'] = $this->tab2FieldLabels['labels'][$item['field']];
+                }
+            }
+            $updatedGrid[] = $item;
+        }
+        return $updatedGrid;
+    }
+
+    public function saveTroubleshootingChecklist($checkList = [],$ticketId){
+    $sbTicketsTroubleshootingCheckList = new SbTicketsTroubleshootingCheckList();
+        $removeItems = $sbTicketsTroubleshootingCheckList->where('sb_ticket_id',$ticketId)->delete();
+        foreach ($checkList as $item){
+            $checkListName = Troubleshootingchecklist::find($item);
+            $data = ['sb_ticket_id'=>$ticketId,'troubleshooting_check_list_id'=>$item,'check_list_name'=>$checkListName->check_list_name,'order'=>$checkListName->order];
+            $sbTicketsTroubleshootingCheckList->insertRow($data,null);
+        }
+
+    }
+    public function prepareDataforGameEmail($data = []){
+
+        $game_id = $data['game_id'];
+        $game = game::find($game_id);
+        $gameTitle = Gamestitle::find($game->game_title_id);
+        $data['game']['game_id'] = $game_id;
+        $data['game']['game_title'] = $gameTitle->game_title;
+
+        $data['location'] = location::find($data['location_id']);
+        $data['issue_type'] = IssueType::find($data['issue_type_id'])->issue_type_name;
+        $data['functionality'] = GameFunctionality::find($data['functionality_id'])->functionalty_name;
+        if(!empty($data['shipping_priority_id'])) {
+            $data['shipping_priority'] = ShippingPriority::find($data['shipping_priority_id'])->priority_name;
+        }
+        return $data;
+    }
+
+    /**
+     * @param string $type
+     * @param array $passes
+     * @return bool
+     */
+    public function canEdit($type = 'debit-card-related' , $passes = []){
+        $groups = [];
+        $users = [];
+        $excludedUsers = [];
+        if(empty($passes)){
+            return false;
+        }
+        if($type == 'debit-card-related'){
+            if(empty($passes['can edit debit card related requests'])){
+                return false;
+            }
+             $pass = $passes['can edit debit card related requests'];
+            $groups = !empty($pass->group_ids)? explode(',',$pass->group_ids):[];
+            $users = !empty($pass->user_ids)? explode(',',$pass->user_ids):[];
+            $excludedUsers = !empty($pass->exclude_user_ids)? explode(',',$pass->exclude_user_ids):[];
+        }else{
+            if(empty($passes['can edit game related requests'])){
+                return false;
+            }
+            $pass = $passes['can edit game related requests'];
+            $groups = !empty($pass->group_ids)? explode(',',$pass->group_ids):[];
+            $users = !empty($pass->user_ids)? explode(',',$pass->user_ids):[];
+            $excludedUsers = !empty($pass->exclude_user_ids)? explode(',',$pass->exclude_user_ids):[];
+        }
+
+        return (
+        (in_array(Session::get('gid'),$groups) || in_array(Session::get('uid'),$users))
+        && (!in_array(Session::get('uid'),$excludedUsers))
+            );
+    }
+
+    /**
+     * @param string $type
+     * @param array $passes
+     * @return bool
+     */
+    public function canDelete($type = 'debit-card-related' , $passes = []){
+        $groups = [];
+        $users = [];
+        $excludedUsers = [];
+        if(empty($passes)){
+            return false;
+        }
+        if($type == 'debit-card-related'){
+            if(empty($passes['can remove debit card related requests'])){
+                return false;
+            }
+            $pass = $passes['can remove debit card related requests'];
+            $groups = !empty($pass->group_ids)? explode(',',$pass->group_ids):[];
+            $users = !empty($pass->user_ids)? explode(',',$pass->user_ids):[];
+            $excludedUsers = !empty($pass->exclude_user_ids)? explode(',',$pass->exclude_user_ids):[];
+        }else{
+            if(empty($passes['can remove game related requests'])){
+                return false;
+            }
+            $pass = $passes['can remove game related requests'];
+            $groups = !empty($pass->group_ids)? explode(',',$pass->group_ids):[];
+            $users = !empty($pass->user_ids)? explode(',',$pass->user_ids):[];
+            $excludedUsers = !empty($pass->exclude_user_ids)? explode(',',$pass->exclude_user_ids):[];
+        }
+
+        return (
+            (in_array(Session::get('gid'),$groups) || in_array(Session::get('uid'),$users))
+            && (!in_array(Session::get('uid'),$excludedUsers))
+        );
+    }
+  function resetFormElements($formData = [],$debitCardType = false){
+      $formElements = [];
+      if($debitCardType == true){
+          foreach ($formData as $item) {
+              if ($item['field'] == 'Status') {
+                  $item['option']["opt_type"] = "datalist";
+                  $item['option']["lookup_query"] = "open:Open|inqueue:Pending|development:In Development|closed:Closed";
+              }
+
+              $formElements[] = $item;
+          }
+          return $formElements;
+      }
+      foreach ($formData as $item) {
+          if ($item['field'] == 'Status') {
+              $item['option']["opt_type"] = "datalist";
+              $item['option']["lookup_query"] = "open:Open|closed:Closed|in_process:In Process";
+              $formElements[] = $item;
+          }elseif ($item['field'] == 'issue_type') {
+             // $item['field'] = 'issue_type_id';
+              $item['search'] = 0;
+             /* $item['option']["lookup_query"] = "";
+              $item['option']["opt_type"] = "external";
+              $item['option']["lookup_table"] = "issue_types";
+              $item['option']["lookup_key"] = "id";
+              $item['option']["lookup_value"] = "issue_type_name";*/
+              $formElements[] = $item;
+          } elseif($item['field'] == 'ticket_custom_type'){
+              $item['field'] = 'issue_type_id';
+              $item['label'] = 'Issue Type';
+              $item['option']["lookup_query"] = "";
+              $item['option']["opt_type"] = "external";
+              $item['option']["lookup_table"] = "issue_types";
+              $item['option']["lookup_key"] = "id";
+              $item['option']["lookup_value"] = "issue_type_name";
+              $formElements[] = $item;
+          } else {
+              $formElements[] = $item;
+          }
+      }
+      return $formElements;
+  }
+
+    /**
+     * @param array $rows
+     * @param $ticketId
+     * @return bool
+     */
+    public function savePartRequest($rows = [],$ticketId,$partRequestRemovedId = [])
+    {
+        if(empty($rows)){
+            return [0];
+        }
+        PartRequest::whereIn('id',$partRequestRemovedId)->delete();
+        $partRequest = new PartRequest();
+$ids = [];
+        foreach ($rows as $row){
+            $id = $row['part_request_id'];
+            unset($row['part_request_id']);
+            $ids[] = $partRequest->insertRow($row,$id);
+        }
+
+        return $ids;
+
+    }
+
+    public function hasApproveDenyPermission(){
+        $userId = Session::get('uid');
+        $groupId = Session::get('gid');
+        $partRequestPermissions = sbticketsetting::getPartRequestUsers();
+
+        return (in_array($userId,$partRequestPermissions['allowed_users']) || in_array($groupId,$partRequestPermissions['allowed_user_groups']));
+    }
+
+    /**
+     * @param $ex
+     * @param array $messages
+     */
+    public  function sendExceptionMessage($ex, $messages = []){
+        $typeOfException = gettype($ex);
+        if($typeOfException == 'object'){
+            $exceptionMessage = view("emails.notifications.dev-team.read-comments-system-exception", compact('ex'));
+            FEGSystemHelper::sendNotificationToDevTeam('[Error]['.env('APP_ENV').'] '.ucfirst($ex->getMessage()).' From Console on '.date('l, F d Y'), $exceptionMessage);
+        }
+
+        if($typeOfException == 'string'){
+            $exceptionMessage = view("emails.notifications.dev-team.read-comments-exception", compact('messages'));
+            FEGSystemHelper::sendNotificationToDevTeam('[Error]['.env('APP_ENV').'] '.ucfirst($ex).' From Console on '.date('l, F d Y'), $exceptionMessage);
+        }
     }
 }

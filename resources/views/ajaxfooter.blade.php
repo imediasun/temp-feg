@@ -87,7 +87,11 @@ $pageModule = !empty($product_import_vendor_id) ? 'product' : $pageModule;
 		 @endforeach
 		</select>
         @endif
-
+		  <?php $extraQuery = '';
+		  if ($pageModule == 'servicerequests') {
+			  $extraVars = '&ticket_type=' . $ticketType;
+		  }
+		  ?>
         @if((!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false') || (!isset($setting['disablesort']) || $setting['disablesort'] == 'false'))
 		<button type="button" class="btn  btn-primary btn-sm" onclick="ajaxFilter('#<?php echo $pageModule;?>','{{ $pageUrl }}/data','{{ $extraVars }}')" style="float:left;"><i class="fa  fa-search"></i> GO</button>
         @endif

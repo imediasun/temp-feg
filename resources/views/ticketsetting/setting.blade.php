@@ -6,7 +6,7 @@
         <!-- Page header -->
         <div class="page-header">
             <div class="page-title">
-                <h3> Setting </h3>
+                <h3>Debit Card Related Setting </h3>
             </div>
 
             <ul class="breadcrumb">
@@ -23,9 +23,10 @@
             {!! Form::open(array('url'=>'sbticket/savepermission', 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ', 'id'=> 'sbticketSetting')) !!}
 
             <div class="sbox">
-                <div class="sbox-title"><h5> Setting </h5></div>
+                <div class="sbox-title"><h5> Debit Card Related Setting </h5></div>
+
                 <div class="sbox-content">
-                    <div class="table-responsive">
+                    <div class="table-responsive settingtab-content">
                         <table class="table table-striped table-bordered no-white-space" id="table">
                         <thead class="no-border">
                         <tr>
@@ -119,26 +120,26 @@
         $(document).ready(function(){
             superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
             $("#role1").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $ticket_setting->role1 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->role1 }}'});
             $("#role2").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $ticket_setting->role2 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->role2 }}'});
             $("#role3").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $ticket_setting->role3 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->role3 }}'});
             $("#role4").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $ticket_setting->role4 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->role4 }}'});
             $("#role5").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: '{{ $ticket_setting->role5 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->role5 }}'});
             $("#individual1").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting->individual1 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->individual1 }}'});
             $("#individual2").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting->individual2 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->individual2 }}'});
             $("#individual3").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting->individual3 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->individual3 }}'});
             $("#individual4").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting->individual4 }}'});
+                    {selected_value: '{{ $ticket_setting[0]->individual4 }}'});
             $("#individual5").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: '{{ $ticket_setting->individual5 }}'});
-        });
+                    {selected_value: '{{ $ticket_setting[0]->individual5 }}'});
+
         @if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN)
                     $( document ).ajaxStop(function() {
             console.log( "Triggered ajaxStop handler." );
@@ -165,6 +166,7 @@
                 return false;
             }
 
+        });
         });
         function showRequest() {
             $('.ajaxLoading').show();

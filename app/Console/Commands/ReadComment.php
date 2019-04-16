@@ -21,6 +21,7 @@ class ReadComment extends Command
     protected $signature = 'comments:read';
     
     protected $L = null;
+    protected $serviceRequestObject;
 
     /**
      * The console command description.
@@ -37,6 +38,7 @@ class ReadComment extends Command
     public function __construct()
     {
         parent::__construct();
+        $this->serviceRequestObject = new Servicerequests();
     }
 
     /**
@@ -52,7 +54,7 @@ class ReadComment extends Command
             return;
         }
 
-        
+
         global $__logger;
         $L = $this->L = $__logger = FEGSystemHelper::setLogger($this->L, "fetch-ticket-emails.log", "FEGTicketCron/ReadComments", "TICKET");
         $L->log('Start Fetching Emails');
@@ -71,9 +73,14 @@ class ReadComment extends Command
         FEGSystemHelper::updateOption('ReadingTicketCommentsFromIMAP', $now);
         
         /* connect to gmail */
-        $hostname = '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX';
-        $username = "tickets@tickets.fegllc.com";
-        $password = "MdkHly2Ub5";
+        $hostname = env("TICKETS_EMAIL_HOST");
+        $username = env("TICKETS_EMAIL_USERNAME");
+        $password = env("TICKETS_EMAIL_PASSWORD");
+        $emailConfigurations = TicketMailer::getTicketEmailByENV();
+        if(!empty($emailConfigurations)) {
+            $username = $emailConfigurations['username'];
+            $password = $emailConfigurations['password'];
+        }
 
         $L->log("Connecting...");
         /* try to connect */
@@ -81,13 +88,16 @@ class ReadComment extends Command
             $inbox = imap_open($hostname, $username, $password,NULL, 1,
                 array('DISABLE_AUTHENTICATOR' => 'PLAIN'));
             
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
+            $this->serviceRequestObject->sendExceptionMessage($ex);
             $L->log("Error connecting to IMAP:" . $ex->getMessage());
             return;
         }
         
         if (empty($inbox)) {
-            $L->log("IMAP Error:" . imap_last_error());
+            $ex = "IMAP Error:" . imap_last_error();
+            $this->serviceRequestObject->sendExceptionMessage($ex, [$ex]);
+            $L->log($ex);
             return;
         }
         $L->log("connection established");
@@ -96,112 +106,150 @@ class ReadComment extends Command
         $emails = imap_search($inbox, 'TEXT "ticket-reply-" UNDELETED');
         /* if emails are returned, cycle through each... */
         if ($emails) {
+
             /* begin output var */
             $output = '';
+            try{
+                /* put the newest emails on top */
+                rsort($emails);
 
-            /* put the newest emails on top */
-            rsort($emails);
+                /* for every email... */
+                foreach ($emails as $key=>$email_number) {
+                        /* get information specific to this email */
+                        $meta = $this->getMessageDetails($inbox, $email_number);
+                        $L->log("Message Details: ", $meta);
+                        $UID = isset($meta->message_id) ? $meta->message_id: '';
+                        //$messageExists = Ticketcomment::doesCommentExist($UID);
+                        //if ($messageExists) {
+                        //     $L->log("Message exists with ID: $UID.");
+                        //}
+                        //else{
+                        $fromDetails = $this->getSenderDetails($meta);
+                        $fromEmail = @$fromDetails['email'];
 
-            /* for every email... */
-            foreach ($emails as $email_number) {
+                        $userId = $this->getUserIdFromEmail($fromEmail);
+                        $userName = @$fromDetails['personal'];
 
-                /* get information specific to this email */
-                $meta = $this->getMessageDetails($inbox, $email_number);
-                $L->log("Message Details: ", $meta);
-                $UID = isset($meta->message_id) ? $meta->message_id: '';
-                //$messageExists = Ticketcomment::doesCommentExist($UID);
-                //if ($messageExists) {
-                //     $L->log("Message exists with ID: $UID.");
-                //}
-                //else{
+                        $ticketId = $this->getTicketID($meta);
 
-                $fromDetails = $this->getSenderDetails($meta);
-                $fromEmail = @$fromDetails['email'];
+                        $L->log("Ticket ID: ", $ticketId);
+                        $L->log("Checking if ticket exists....");
+                        $ticketExists = !empty($ticketId) && Servicerequests::doesTicketExist($ticketId);
+                        $L->log("Checked if ticket exists result = ".$ticketExists);
 
-                $userId = $this->getUserIdFromEmail($fromEmail);
-                $userName = @$fromDetails['personal'];
+                        if ($ticketExists) {
 
-                $ticketId = $this->getTicketID($meta);
-                $L->log("Ticket ID: ", $ticketId);
-                $L->log("Checking if ticket exists....");
-                $ticketExists = !empty($ticketId) && Servicerequests::doesTicketExist($ticketId);
-                $L->log("Checked if ticket exists result = ".$ticketExists);
+//                            $serverRequestTicket = Servicerequests::where(['TicketID'=>$ticketId,'ticket_type'=>'game-related'])->where('Status','=','closed')->get();
+//                            if ($serverRequestTicket->count() == 0) {
 
-                if ($ticketExists) {
-                    $L->log("in if block means ticket exists");
-                    $posted = $this->getDate($meta);
-                    $L->log("Posted date = ".$posted);
-                    $L->log("inbox = ".$inbox);
-                    $L->log("email_number = ".$email_number);
-                    $L->log("getMessage() = ".$this->getMessage($inbox, $email_number));
-                    $message = $this->cleanUpMessage($this->getMessage($inbox, $email_number));
-                    $attachments = $this->getIMapAttachment($inbox,$email_number,$ticketId);
-                    $L->log("Message = ".$posted);
-                    //Insert In sb_ticketcomments table
-                    $L->log("Creating new comment");
-                    $comment_model = new Ticketcomment();
-                    $L->log("Created new comment instance");
-                    $commentsData = array(
-                        'TicketID' => $ticketId,
-                        'Comments' => $message,
-                        'Posted' => $posted,
-                        'UserID' => $userId,
-                        'USERNAME' => $userName,
-                        'imap_read' => 1,
-                        'imap_meta' => json_encode($meta),
-                        'imap_message_id' => $UID,
-                    );
-                    $L->log("comments data = ".json_encode($commentsData));
-                    $L->log("comments Attachments = ".json_encode($attachments));
-                    $L->log('Adding comment to database', $commentsData);
-                    $id = $comment_model->insertRow($commentsData, NULL);
-                    $commentModel = $comment_model->getInsertRecordObject($id);
-                    foreach($attachments as $attachment){
-                        $attachmentClass = new Attachment($attachment);
-                        $attachmentClass->name = $attachment['name'];
-                        $attachmentClass->path = $attachment["path"];
-                        $attachmentClass->extension = $attachment['extension'];
-                        $commentModel->attachments()->save($attachmentClass);
-                    }
-                    $L->log("Updaet ticket updated date to $posted");
-                    Servicerequests::where("TicketID", $ticketId)->update(['updated' => $posted]);
+                                    $L->log("in if block means ticket exists");
+                                    $posted = $this->getDate($meta);
+                                    $L->log("Posted date = " . $posted);
+                                    $L->log("inbox = " . $inbox);
+                                    $L->log("email_number = " . $email_number);
+                                    $L->log("getMessage() = " . $this->getMessage($inbox, $email_number));
+                                    $message = $this->cleanUpMessage($this->getMessage($inbox, $email_number));
+                                    $attachments = $this->getIMapAttachment($inbox, $email_number, $ticketId);
+                                    $L->log("Message = " . $posted);
+                                    //Insert In sb_ticketcomments table
+                                    $L->log("Creating new comment");
+                                    $comment_model = new Ticketcomment();
+                                    $L->log("Created new comment instance");
+                                    $commentsData = array(
+                                        'TicketID' => $ticketId,
+                                        'Comments' => $message,
+                                        'Posted' => $posted,
+                                        'UserID' => $userId,
+                                        'USERNAME' => $userName,
+                                        'imap_read' => 1,
+                                        'imap_meta' => json_encode($meta),
+                                        'imap_message_id' => $UID,
+                                    );
+                                    $L->log("comments data = " . json_encode($commentsData));
+                                    $L->log("comments Attachments = " . json_encode($attachments));
+                                    $L->log('Adding comment to database', $commentsData);
+                                    $id = $comment_model->insertRow($commentsData, NULL);
+                                    $commentModel = $comment_model->getInsertRecordObject($id);
+                                    foreach ($attachments as $attachment) {
+                                        $attachmentClass = new Attachment($attachment);
+                                        $attachmentClass->name = $attachment['name'];
+                                        $attachmentClass->path = $attachment["path"];
+                                        $attachmentClass->extension = $attachment['extension'];
+                                        $commentModel->attachments()->save($attachmentClass);
+                                    }
+                                    $L->log("Update ticket updated date to $posted");
+
+                                    $serverRequestTicket = Servicerequests::where(['TicketID'=>$ticketId,])->first();
+                                    $dataUpdate = ['updated' => $posted];
+                                    if($serverRequestTicket){
+
+                                        if($serverRequestTicket->ticket_type == 'game-related'){
+                                            if(in_array($serverRequestTicket->Status ,['closed','open'])) {
+                                                $dataUpdate['Status'] = 'in_process';
+                                            }
+                                        }
+
+                                        if($serverRequestTicket->ticket_type == 'debit-card-related'){
+
+                                            if(in_array($serverRequestTicket->Status, ['closed', 'inqueue']))
+                                                $dataUpdate['Status'] = 'open';
+
+                                        }
+
+                                    }
+
+                                    Servicerequests::where("TicketID", $ticketId)->update($dataUpdate);
+
+
+//                            }
+                        }
+                        else {
+                            $ex = "TICKET [ID: $ticketId] DOES NOT EXIST. Skipping.....";
+                            $this->serviceRequestObject->sendExceptionMessage($ex, [$ex]);
+                            $L->log($ex);
+                        }
+
+
+                        if(!env('DONT_DELETE_IMAP_TICKET_COMMENTS', true))
+                        {
+                            //commented for testing on dev
+                            $L->log('Delete email');
+                            imap_delete($inbox, $email_number);
+                        }
+                        else
+                        {
+                            //commented for testing on dev
+                            //not delete emails if environment is not production
+                        }
+
+
+                        //$L->log('Sending comment notificaiton');
+                        //$this->sendNotification($commentsData, $userId);
+
+                        //}
+                        $L->log('---------------------------------------------');
 
                 }
-                else {
-                    $L->log("TICKET [ID: $ticketId] DOES NOT EXIST. Skipping.....");
-                }
-
-
-                if(!env('DONT_DELETE_IMAP_TICKET_COMMENTS', true))
-                {
-                    //commented for testing on dev
-                    $L->log('Delete email');
-                    imap_delete($inbox, $email_number);
-                }
-                else
-                {
-                    //commented for testing on dev
-                    //not delete emails if environment is not production
-                }
-
-
-                //$L->log('Sending comment notificaiton');
-                //$this->sendNotification($commentsData, $userId);
-
-                //}
-                $L->log('---------------------------------------------');
             }
-        } 
+            catch (\Exception $ex)
+            {
+                $this->serviceRequestObject->sendExceptionMessage($ex);
+            }
+        }
         else {
-            echo " no emails found....";
-            $L->log(' No emails found');
+            $exceptionMessage = 'No emails found';
+//            $this->sendExceptionMessage($exceptionMessage, [$exceptionMessage]);
+            $L->log($exceptionMessage);
+
+            $message = "no emails found....";
+            echo PHP_EOL.$message;
         }
         /* close the connection */
         imap_close($inbox);
         FEGSystemHelper::updateOption('ReadingTicketCommentsFromIMAP', '');
         $L->log('End Fetching Emails');
     }
-    
+
     public function getMessageDetails($inbox, $email_number) {
         $header = imap_rfc822_parse_headers(imap_fetchheader($inbox, $email_number));
         return $header;
@@ -481,5 +529,4 @@ class ReadComment extends Command
         return $ticketAttachments;
     }
 
-    
 }

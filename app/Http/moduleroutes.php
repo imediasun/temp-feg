@@ -52,6 +52,7 @@ Route::controller('readersmissingassetidreport', 'ReadersmissingassetidreportCon
 Route::controller('merchandiseexpensesreport', 'MerchandiseexpensesreportController');
 Route::controller('itemreceipt', 'ItemreceiptController');
 Route::controller('ticketsetting', 'TicketsettingController');
+Route::controller('gamerelatedsetting', 'GameRelatedSettingController');
 Route::controller('throwreport', 'ThrowreportController');
 Route::controller('throwreportpayout', 'ThrowreportpayoutController');
 Route::controller('throwreportinstantwin', 'ThrowreportinstantwinController');
@@ -73,4 +74,5 @@ Route::controller('envconfiguration', 'EnvconfigurationController');
 Route::controller('googledriveearningreport', 'GoogledriveearningreportController');
 Route::controller('productsubtype', 'ProductsubtypeController');
 Route::controller('new-location-setup', 'NewlocationsetupController');
+Route::controller('troubleshootingchecklist', 'TroubleshootingchecklistController');
 ?>
