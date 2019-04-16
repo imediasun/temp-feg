@@ -1668,7 +1668,7 @@ class servicerequestsController extends Controller
         $partRequestId = $request->input('partRequestId',0);
 
         $rules=[
-            'part_number' => 'required',
+            'part_number' => 'required|numeric',
             'qty' => 'required',
             'cost' => 'required',
         ];
