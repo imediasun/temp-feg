@@ -732,17 +732,18 @@ class OrderController extends Controller
                 $pID = !empty($productIdArr) ? $productIdArr : 0;
 
                 $productIdsArray[] = $pID;
-
-                if ($pID > 0) {
-                    $isItemExist = product::where([
-                        'id' => $pID,
-                        'vendor_description' => $productNames[$key],
-                        'sku' => $skus[$key],
-                    ])->first();
-                    if (!$isItemExist) {
-                        $errorMessage .= '<li>' . $productNames[$key] . '</li>';
-                    }
+        if(!empty($skus[$key]) && $skus[$key] !='N/A') {
+            if ($pID > 0) {
+                $isItemExist = product::where([
+                    'id' => $pID,
+                    'vendor_description' => $productNames[$key],
+                    'sku' => $skus[$key],
+                ])->first();
+                if (!$isItemExist) {
+                    $errorMessage .= '<li>' . $productNames[$key] . '</li>';
                 }
+            }
+        }
             }
         }
         if ($errorMessage != '') {
