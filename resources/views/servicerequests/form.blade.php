@@ -65,9 +65,11 @@
                             <input type='hidden' name='oldStatus' value='{{ $status }}' />
                             <select name='Status' required class='select2 '>
                             	@foreach($statusOptions as $key => $val)
+									@if($key !='in_process')
                                     <option  value ='{{ $key }}' 
                                         @if($status == $key) selected='selected' @endif
                                     >{{ $val }}</option>
+									@endif
                                 @endforeach
                             </select>
                         @endif
