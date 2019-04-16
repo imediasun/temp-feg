@@ -2054,7 +2054,7 @@ function savePartRequest(id,obj,partRequestId) {
 
                 notyMessage(response.message);
             } else {
-                notyMessageError(response.error);
+                notyMessageError(response.message);
             }
         }
     });
