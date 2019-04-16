@@ -1668,9 +1668,9 @@ class servicerequestsController extends Controller
         $partRequestId = $request->input('partRequestId',0);
 
         $rules=[
-            'part_number' => 'required|numeric',
-            'qty' => 'required',
-            'cost' => 'required',
+            'part_number' => 'required',
+            'qty' => 'required|numeric',
+            'cost' => 'required|numeric',
         ];
 
         $validator = Validator::make($request->all(), $rules);
