@@ -432,7 +432,7 @@
                 {!! Form::hidden('need_by_date', $row->need_by_date) !!}
                 {!! Form::hidden('Created', $createdOn) !!}
                 {!! Form::hidden('entry_by', $creatorID) !!}
-                {!! Form::hidden('issue_type', $row->issue_type) !!}
+                <input type="hidden" id="issue_type" class="issue_type" value="{{ $row->issue_type }}" >
                 {!! Form::hidden('location_id', $row->location_id) !!}
                 {!! Form::hidden('department_id', $row->department_id) !!}
                 {!! Form::hidden('ticket_type', $ticketType) !!}
