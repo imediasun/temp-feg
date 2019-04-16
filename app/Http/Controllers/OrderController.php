@@ -732,7 +732,7 @@ class OrderController extends Controller
                 $pID = !empty($productIdArr) ? $productIdArr : 0;
 
                 $productIdsArray[] = $pID;
-        if(!empty($skus[$key]) && $skus[$key] !='N/A') {
+        if($skus[$key] !='N/A') {
             if ($pID > 0) {
                 $isItemExist = product::where([
                     'id' => $pID,
