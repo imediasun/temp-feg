@@ -721,28 +721,30 @@ class OrderController extends Controller
     {
         $productIds = $request->input('product_id');
         $productIds = !empty($productIds) ? $productIds : [];
+        $whereInRequests = $request->get('where_in_expression');
         $productIdsArray = [];
         $productNames = $request->input('item_name');
         $skus = $request->input('sku');
         $errorMessage = '';
-        foreach ($productIds as $key => $productIdArr) {
+        if(empty($whereInRequests)) {
+            foreach ($productIds as $key => $productIdArr) {
 
-            $pID = !empty($productIdArr) ? $productIdArr : 0;
+                $pID = !empty($productIdArr) ? $productIdArr : 0;
 
-            $productIdsArray[] = $pID;
+                $productIdsArray[] = $pID;
 
-            if ($pID > 0) {
-                $isItemExist = product::where([
-                    'id' => $pID,
-                    'vendor_description' => $productNames[$key],
-                    'sku' => $skus[$key],
-                ])->first();
-                if (!$isItemExist) {
-                    $errorMessage .= '<li>' . $productNames[$key] . '</li>';
+                if ($pID > 0) {
+                    $isItemExist = product::where([
+                        'id' => $pID,
+                        'vendor_description' => $productNames[$key],
+                        'sku' => $skus[$key],
+                    ])->first();
+                    if (!$isItemExist) {
+                        $errorMessage .= '<li>' . $productNames[$key] . '</li>';
+                    }
                 }
             }
         }
-
         if ($errorMessage != '') {
             $message = 'You cannot save the order until all freehanded item(s) have been added to the product list. <br>Please add the Following Item(s) to the product List:';
             $errorMessage = $message . '<ul>' . $errorMessage . '</ul>';
