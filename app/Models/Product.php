@@ -857,7 +857,7 @@ WHERE orders.is_api_visible = 1
         ];
         $items = self::select($columns)->join('order_type','order_type.id','=','products.prod_type_id')
             ->where('products.is_reserved','=',1)->where('products.is_converted','=',$isConverted)
-            ->whereIn('products.prod_type_id',[7,8,6,21,22,24]);
+            ->whereIn('products.prod_type_id',[7,8,6,17,22,24,27]);
         if($isGroupBy){
             $items->groupby('products.vendor_description');
             $items->groupby('products.sku');
