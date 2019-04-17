@@ -38,14 +38,10 @@ class HomeController extends Controller
             if (count($content) >= 1) {
 
                 $row = $content[0];
-
-                $this->data['editLink'] = '';
-                if (Pages::canIEdit($row->pageID)){
-                    $editUrl = url('core/pages/update/'.$row->pageID.'?return='.$pageUrl);
-                    $editLink = view('core.pages.edit-link', ['page' => $row,
-                                    'url' => $editUrl]);
-                    $this->data['editLink'] = $editLink;
-                }
+                $this->data['pageRow'] = $row;
+                $editUrl = url('core/pages/update/'.$row->pageID.'?return='.$pageUrl);
+                $this->data['is_edit'] = Pages::canIEdit($row->pageID);
+                $this->data['editUrl'] = $editUrl;
 
                 $this->data['pageTitle'] = $row->title;
                 $this->data['pageNote'] = $row->note;
@@ -69,29 +65,14 @@ class HomeController extends Controller
                         //->with('message', \SiteHelpers::alert('error',Lang::get('core.note_restric')));
                     }
                 }
-                if ($row->template == 'backend') {
-                    $page = 'pages.' . $row->filename;
-                } else {
-                    $page = 'layouts.' . CNF_THEME . '.index';
-                }
-                //print_r($this->data);exit;
 
-                $filename = base_path() . "/resources/views/pages/" . $row->filename . ".blade.php";
-                if (file_exists($filename)) {
-                    $this->data['pages'] = 'pages.' . $row->filename;
-                    //	print_r($this->data);exit;
+                $this->data['pages'] = 'pages.master';
+                return view('pages.master', $this->data);
 
-                    return view($page, $this->data);
-                } else {
-                    return Redirect::to('')
-                        ->with('message', \SiteHelpers::alert('error', \Lang::get('core.note_noexists')));
-                }
-
-            } else {
+            }else{
                 return Redirect::to('')
                     ->with('message', \SiteHelpers::alert('error', \Lang::get('core.note_noexists')));
             }
-
 
         else :
             $this->data['pageTitle'] = 'Home';
@@ -162,7 +143,7 @@ class HomeController extends Controller
 
             return Redirect::to($request->input('redirect'))->with('message', \SiteHelpers::alert('success', 'Thank You , Your message has been sent !'));
 
-        } else {
+        }else{
             return Redirect::to($request->input('redirect'))->with('message', \SiteHelpers::alert('error', 'The following errors occurred'))
                 ->withErrors($validator)->withInput();
         }
@@ -170,7 +151,7 @@ class HomeController extends Controller
     function TermsAndConditions(Request $request){
         $this->data['pageTitle'] = "Terms And Conditions";
         $this->data['editLink'] = '';
-       return view('pages.terms',$this->data);
+        return view('pages.terms',$this->data);
     }
     function PrivacyPolicy(Request $request){
         $this->data['pageTitle'] = "Privacy Policy";

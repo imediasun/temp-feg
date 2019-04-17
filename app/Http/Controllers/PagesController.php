@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\PageCMSFile;
 use App\Models\Pages;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -220,16 +221,14 @@ class PagesController extends Controller
 
     function postUpload(Request $request)
     {
-        //return $request->all();
+        $pageCMSFile = new PageCMSFile();
         $this->validate($request, [
             'upload_file' => 'required',
         ]);
-        if( $request->hasFile('upload_file')) {
-            $file = $request->file('upload_file');
-            $path = public_path('upload/pageCmsPDF');
-            $name = mt_rand() . '_' . $file->getClientOriginalName();
-            $file->move($path, $name);
-            return $name;
+
+        if($pageCMSFile->requestHasFile($request)) {
+            $data = $pageCMSFile->uploadFile($request);
+            return response()->json($data);
         }
     }
 }

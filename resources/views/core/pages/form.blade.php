@@ -1,6 +1,47 @@
 @extends('layouts.app')
 
+@section("beforeheadend")
+	<!-- include summernote css/js -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+	<link href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
+	<link href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-bs4.css" rel="stylesheet">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-bs4.js"></script>
+	<style>
+		.note-popover .popover-content .dropdown-menu, .card-header.note-toolbar .dropdown-menu {
+			min-width: 140px;
+		}
+		.note-popover .popover-content .dropdown-menu.note-check a i, .card-header.note-toolbar .dropdown-menu.note-check a{
+			color:black;
+			display: block;
+		}
+		.note-popover .popover-content .dropdown-menu.note-check a i, .card-header.note-toolbar .dropdown-menu.note-check a i {
+			color: black;
+		}
+		.note-toolbar .btn-sm, .note-toolbar .btn-group-sm > .btn {
+			font-size: 14px !important;
+		}
+
+	</style>
+	<script>
+		$(function(){
+			$(".note-recent-color").css({"background-color":"#dddddd"});
+			$('.note-btn.btn.btn-light.btn-sm.dropdown-toggle[data-original-title="More Color"]').html('<i class="fa fa-arrow-down"></i>');
+			var button = '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+			$(".modal button.close").remove();
+			$(".modal .modal-header").prepend(button);
+		});
+	</script>
+	@endsection
 @section('content')
+	<style>
+		.resizing{
+			cursor: col-resize;
+		}
+		.note-editor table.table th,.note-editor table.table td{
+			word-break: break-all;
+			width:10%;
+		}
+	</style>
   <div class="page-content row">
     <!-- Page header -->
     <div class="page-header">
@@ -51,9 +92,23 @@
 							  <div class="form-group  " >
 
 								<div class="" style="background:#fff;">
-								  <textarea name='content' rows='35' id='content'    class='form-control markItUp editor note-editor note-editable'
-									 >{{ htmlentities($content) }}</textarea>
+									<textarea class="pageContentEditor" name="content">{!! html_entity_decode($content) !!}</textarea>
+									<script>
+										$(".pageContentEditor").summernote({ toolbar: [
+											["style", ["style"]],
+											["font", ["bold", "italic", "underline", "clear"]],
+											["fontsize", ["fontsize"]],
+											["color", ["color"]],
+											["para", ["ul", "ol", "paragraph"]],
+											["height", ["height"]],
+											["table", ["table"]],
+											["insert", ["link", "picture", "video"]],
+											["view", ["fullscreen", "codeview"]],
+											["help", ["help"]]
+										]});
+									</script>
 								 </div>
+
 							  </div>
 
 						  </div>
@@ -214,23 +269,27 @@
 	</div>
 </div>
 
-  {{--Upload PDF --}}
+  {{--Upload File --}}
 
   <div class="note-link-dialog modal" aria-hidden="false" id="pdf_modal">
 	  <div class="modal-dialog">
 		  <div class="modal-content">
 			  <div class="modal-header">
 				  <button type="button" class="close" aria-hidden="true" tabindex="-1" onclick="cancelFileUpload();">×</button>
-				  <h4>Upload PDF</h4>
+				  <h4>Attach File</h4>
 			  </div>
 			  <div class="modal-body">
 				  <div class="row-fluid">
 					  <form method="post" enctype="multipart/form-data" name="pdf_form">
 					  <div class="form-group">
 						  <label>Browse File</label>
-						  <input type="file" name="upload_file" id="pdf_file" accept="application/pdf, application/msword" />
+						  <input type="file" class="form-control" required name="upload_file" id="pdf_file"  />
 						  <label style="color:red;font-size:14px;margin-top:5px;" id="pdf_error"></label>
 					  </div>
+						  <div class="form-group">
+							  <input type="radio"  name="file_behaviour" value="download" id="file_behaviour1" checked  /> <label for="file_behaviour1">Force Download</label>
+							  &nbsp;&nbsp;<input type="radio"  name="file_behaviour" value="open" id="file_behaviour2"   /> <label for="file_behaviour2">Open in New Tab</label>
+						  </div>
 					  </form>
 					  <div class="progress upload_progress_container">
 						  <div class="progress-bar" id="upload_file_progress_bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
@@ -240,36 +299,14 @@
 				  </div>
 			  </div>
 			  <div class="modal-footer">
-				  <button href="#" onclick="upload_pdf();" class="btn btn-primary" id="pdf_upload">Insert</button>
+				  <button href="#" onclick="uploadFile();" class="btn btn-primary" id="pdf_upload">Insert</button>
 			  </div>
 		  </div>
 	  </div>
   </div>
-<style>
-	.page-content-wrapper.m-t,.sbox-content {
-		float: left;
-		width: 100%;
-		height: 100%;
-	}
-	.clearfix
-	{
-		width: 0;
-		height:0;
-		display: none;
-	}
-	.page-content-wrapper.m-t
-	{
-		margin-top: 0;
-	}
-	.note-editable > *:not(.page-content-wrapper),.page-content-wrapper.m-t > *:not(.sbox),.sbox.animated.fadeInRight > *:not(.sbox-content) {
-		display: none;
-	}
-	.note-editor { height: 1146px !important;  }
-	.note-editor.codeview .note-codable{height: 1146px !important;}
-</style>
   <script>
 	  var file_upload_request;
-	  function upload_pdf() {
+	  function uploadFile() {
 		  $(window).bind('beforeunload', function(){
 			  return 'You are not finished uploading your file, do you wish to continue?';
 		  });
@@ -301,7 +338,6 @@
 							  $('#upload_file_progress_bar').attr('aria-valuenow', '0');
 							  $('#upload_file_progress_bar').css('width', '0%');
 						  }
-
 					  }
 				  }, false);
 
@@ -310,9 +346,20 @@
 			  success: function (data) {
 				  console.log(data);
 				  $('#pdf_modal').modal('toggle');
-				  $('.icon-link').trigger('click');
-				  $('.note-link-url').val("{{url('')}}/upload/pageCmsPDF/"+data);
-				  $('.note-link-btn').trigger('click');
+				  $('.note-insert .note-btn.btn.btn-light.btn-sm[data-original-title="Link (CTRL+K)"]').trigger('click');
+				  //note-link-text
+				  if(data.file_behaviour == 'open'){
+					  $('.note-link-url').val(data.FileOpenUrl);
+				  }
+				  if(data.file_behaviour == "download"){
+					  $('.note-link-url').val(data.FileDownloadUrl);
+				  }
+				  $(".note-link-text").val(data.filename);
+				 // $('.note-insert .note-btn.btn.btn-light.btn-sm[data-original-title="Link (CTRL+K)"]').trigger('click');
+				  $(".note-link-btn").trigger("click");
+                  if(data.file_behaviour == 'open'){
+				  	$("a[href='"+data.FileOpenUrl+"']").attr("target","_blank");
+				  }
 				  $('#pdf_file').val('');
 				  $('#pdf_upload').text('Insert');
 				  $('#pdf_upload').prop('disabled', false);
@@ -347,81 +394,22 @@
 		  }
 	  }
 
-
-	  $( document ).ready(function() {
-		  var model_obj = "{backdrop:'static',keyboard:false}";
-		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach File" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal('+model_obj+');$(".upload_progress_container").hide();><i class="fa fa-file-o"></i></button></div>');
-		  $('[data-toggle="tooltip"]').tooltip();
-
-		  $('.note-editor .note-editable').css('height', $('#cms_bar_id').height()-208);
-		  //$('.upload_progress_container').toggle();
-	  });
-
-  </script>
-
-
-  <!--<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>-->
-<!--  <script>tinymce.init({
-          selector: '#content4',
-          plugins: ["advlist autolink lists link image charmap print preview anchor", "searchreplace" +
-          " visualblocks code fullscreen", "insertdatetime media table contextmenu paste",
-              "advlist","textcolor colorpicker","imagetools"],
-          toolbar: "insertfile undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image", theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect"
-           });
-  </script>-->
-
-
-    <script>
 		superAdmin = {{\App\Models\Core\Groups::SUPPER_ADMIN}};
-		$(document).on("keyup",".note-editable",function(e){
-			var key = e.keyCode || e.charCode;
-			if (key == 8 || key == 46) {
-				var text = $(".note-editable .page-content-wrapper .sbox-content .col-md-12").text();
-				if($.trim(text)=="" || text.length==1) {
-					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").text('');
-					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").empty();
-					var html = '<div class="page-content-wrapper m-t">';
-					html += '<div class="sbox animated fadeInRight">';
-					html += '<div class="sbox-content">';
-					html += '<div class="col-md-12" style="height: auto; min-height:50px; margin-top: -15px; line-height: normal; background-color: #ffffff;">';
-					html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
-							$(".note-editable").html("<p><br><p>"+html);
-						return false;
-					}
-				}
-		})
         $(document).ready(function(){
-			//fix height while moving from code view to text.
-			$( ".note-editable" ).focus(function() {
-				$(this).animate({height:"1146px"});
-				var text = $(".note-editable .page-content-wrapper .sbox-content .col-md-12").text();
-				if($.trim(text)=="" || text.length==1) {
-					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").text('');
-					$(".note-editable .page-content-wrapper .sbox-content .col-md-12").empty();
-					var html = '<div class="page-content-wrapper m-t">';
-					html += '<div class="sbox animated fadeInRight">';
-					html += '<div class="sbox-content">';
-					html += '<div class="col-md-12" style="height: auto; min-height:50px; margin-top: -15px; line-height: normal; background-color: #ffffff;">';
-					html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
-					$(".note-editable").html("<p><br><p>"+html);
-					return false;
-				}
+			var model_obj = "{backdrop:'static',keyboard:false}";
+			$('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-sm btn-small" data-toggle="tooltip" title="Attach File" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal('+model_obj+');$(".upload_progress_container").hide();>&nbsp;&nbsp;<i class="fa fa-paperclip"></i>&nbsp;&nbsp;</button></div>');
+			$('[data-toggle="tooltip"]').tooltip();
 
+			$('.note-editor .note-editable').css('height', $('#cms_bar_id').height()-208);
+			//$('.upload_progress_container').toggle();
+        	$(document).on("click",".note-toolbar.btn-toolbar div button.btn",function(){
+				$('.note-editor .note-editable').css('height', $('#cms_bar_id').height()-208);
+			});
+			$(document).on("click","button.btn-codeview",function(){
+				$('.note-editor .note-editable').css('height', $(document).height()-324);
 			});
 
-        	//$('button.btn[data-event="codeview"]').remove();
-			var html = '<div class="page-content-wrapper m-t">';
-			html += '<div class="sbox animated fadeInRight">';
-			html += '<div class="sbox-content">';
-			html += '<div class="col-md-12" style="height: auto; min-height:50px; margin-top: -15px; line-height: normal; background-color: #ffffff;">';
-			html +='</div><div class="clearfix">&nbsp;</div></div></div></div>';
-			setTimeout(function(){
-				console.log("Length "+$(".note-editable .page-content-wrapper").length);
-				if($(".note-editable .page-content-wrapper").length==0){
-						$(".note-editable").html("<p><br><p>"+html);
-					console.log("Length "+$(".note-editable .page-content-wrapper").length);
-				}
-			},700);
+
 
 
             $("#iGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
@@ -433,7 +421,6 @@
             @if(Session::get('gid') != \App\Models\Core\Groups::SUPPER_ADMIN)
 				$('#group_id'+superAdmin).css('display','none');
 				$( document ).ajaxStop(function() {
-					console.log( "Triggered ajaxStop handler." );
 					/*$('#iGroups option[value="'+superAdmin+'"]').attr('disabled','disabled');*/
 					$('#iGroups option[value="'+superAdmin+'"]').remove();
 					$('#iGroups').trigger('change');
@@ -444,6 +431,49 @@
                 $('#iGroups').trigger('change');
             })*/
         });
-        var row = <?php echo json_encode($row) ; ?>;
+
+	/*  $(function(){
+		  $(document).on("mouseup",".note-editor p a",function(){
+			  var element = $(this).offset();
+
+			// $(".note-link-popover").css("top",(Number($(this).position().top)+20)+"px");
+
+		  });
+
+
+		  var pressed = false;
+		  var start = undefined;
+		  var startX, startWidth;
+
+		  $(document).on("mousedown",".note-editor table.table th,.note-editor table.table td",function(e) {
+			  start = $(this);
+			  pressed = true;
+			  startX = e.pageX;
+			  startWidth = $(this).width();
+			  $(start).addClass("resizing");
+		  });
+
+		  $(document).mousemove(function(e) {
+			  if(pressed) {
+				  $(start).width(startWidth+(e.pageX-startX));
+			  }
+		  });
+
+		  $(document).mouseup(function() {
+			  if(pressed) {
+				  $(start).removeClass("resizing");
+				  pressed = false;
+			  }
+		  });
+
+	  });*/
+	  (function($) {
+		  var origAppend = $.fn.append;
+
+		  $.fn.append = function () {
+			  return origAppend.apply(this, arguments).trigger("append");
+		  };
+	  })(jQuery);
+
     </script>
 @stop

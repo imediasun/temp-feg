@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<?php $pageModule = !empty($pageModule) ? $pageModule:""; ?>
 <html lang="en">
 <head>
 @yield('afterheadstart', '')
