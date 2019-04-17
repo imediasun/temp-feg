@@ -676,6 +676,10 @@ class ProductController extends Controller
                 $Product = product::find($id);
                 $NewReservedQty = $request->input('reserved_qty');
                 if ($Product->reserved_qty != $NewReservedQty && $NewReservedQty != '') {
+                    $reason = "Manual adjustment";
+                    if(!empty($request->input('reserved_qty_reason'))){
+                        $reason .='<br>'.$request->input('reserved_qty_reason');
+                    }
                     $type = "negative";
                     if ($NewReservedQty > $Product->reserved_qty) {
                         $type = "positive";
@@ -695,6 +699,7 @@ class ProductController extends Controller
                         "product_id" => $id,
                         "adjustment_amount" => $NewReservedQty,
                         "adjustment_type" => $type,
+                        "reserved_qty_reason" => $reason,
                         "variation_id" => !empty($Product->variation_id) ? $Product->variation_id:null,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
@@ -936,6 +941,10 @@ class ProductController extends Controller
                 }
                 if (isset($ids) && count($ids) > 0) {
                     $Product = product::find($ids[0]);
+                    $reason = "Manual adjustment";
+                    if(!empty($request->input('reserved_qty_reason'))){
+                        $reason .='<br>'.$request->input('reserved_qty_reason');
+                    }
                     $type = "negative";
                     if ($Product->reserved_qty > 0) {
                         $type = "positive";
@@ -947,6 +956,7 @@ class ProductController extends Controller
                         "product_id" => $Product->id,
                         "adjustment_amount" => ($Product->reserved_qty < 0 ? ($Product->reserved_qty * -1):$Product->reserved_qty),
                         "adjustment_type" => $type,
+                        "reserved_qty_reason" => $reason,
                         "variation_id" => $Product->variation_id,
                         "adjusted_by" => \AUTH::user()->id,
                     ];
@@ -1910,5 +1920,14 @@ if(!empty($removedItemIds)) {
     public function getFirstTenProductsBySubType($id){
         $productSubType = Productsubtype::find($id);
         return ['product_type_id'=>$productSubType->request_type_id, 'products'=>$this->model->where('prod_sub_type_id', $id)->take(10)->lists('vendor_description', 'id')];
+    }
+
+    public function getConvertitemreservedqty($executeScript = 0){
+        if($executeScript) {
+            $items = $this->model->getMerchandiseItems();
+            $this->model->convertReservedQty($items);
+            die('Converted');
+        }
+        exit;
     }
 }

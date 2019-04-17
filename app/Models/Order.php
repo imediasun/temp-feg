@@ -138,18 +138,32 @@ class order extends Sximo
             if ($orderedProduct && $orderedProduct->is_reserved == 1) {
 
                 if ($reduceQuantity) {
+
+                    if($orderContent->is_broken_case == 1 && in_array($this->order_type_id,$order_types)){
+
+                        $orderContent->qty = $orderContent->qty;
+
+                    }elseif($orderContent->is_broken_case == 0 && in_array($this->order_type_id,$order_types)){
+                        $orderContent->qty =  $orderContent->qty * $orderContent->qty_per_case;
+                    }else{
+                        $orderContent->qty = $orderContent->qty;
+                    }
+
                     Log::info("claiming qty from product because order is restoring");
                     if ($orderedProduct->allow_negative_reserve_qty == 0 && $orderedProduct->reserved_qty < $orderContent->qty) {
                         throw new \Exception("Product does not have sufficient reserved quantities");
                     }
-                    $reserved_qty =  ($orderContent->is_broken_case == 1 && in_array($this->order_type_id,$order_types)) ? ($orderedProduct->reserved_qty - ceil($orderContent->qty/$orderContent->qty_per_case)):$orderedProduct->reserved_qty - $orderContent->qty;
+                    $reserved_qty =  $orderedProduct->reserved_qty - $orderContent->qty;
+
+
 
                     $reservedLogData = [
                         "product_id" => $orderContent->product_id,
                         "order_id" => $orderContent->order_id,
-                        "adjustment_amount" => ($orderContent->is_broken_case == 1 && in_array($this->order_type_id,$order_types)) ? ceil($orderContent->qty/$orderContent->qty_per_case):$orderContent->qty,
+                        "adjustment_amount" => $orderContent->qty,
                         "variation_id"=>$orderedProduct->variation_id,
                         "adjustment_type" => "negative",
+                        "reserved_qty_reason" => 'Order restored',
                         "adjusted_by" => \AUTH::user()->id,
                     ];
 
@@ -167,14 +181,26 @@ class order extends Sximo
                 {
                     //This part is all working
                     Log::info("Putting back qty to product because order is deleting");
-                    $reserved_qty =  ($orderContent->is_broken_case == 1 && in_array($this->order_type_id,$order_types)) ? ($orderedProduct->reserved_qty + ceil($orderContent->qty/$orderContent->qty_per_case)):$orderedProduct->reserved_qty + $orderContent->qty;
+
+                    if($orderContent->is_broken_case == 1 && in_array($this->order_type_id,$order_types)){
+
+                        $orderContent->qty = $orderContent->qty;
+
+                    }elseif($orderContent->is_broken_case == 0 && in_array($this->order_type_id,$order_types)){
+                        $orderContent->qty =  $orderContent->qty * $orderContent->qty_per_case;
+                    }else{
+                        $orderContent->qty = $orderContent->qty;
+                    }
+
+                    $reserved_qty =  $orderedProduct->reserved_qty + $orderContent->qty;
 
                     $reservedLogData = [
                         "product_id" => $orderContent->product_id,
                         "order_id" => $orderContent->order_id,
-                        "adjustment_amount" => ($orderContent->is_broken_case == 1 && in_array($this->order_type_id,$order_types)) ? ceil($orderContent->qty/$orderContent->qty_per_case):$orderContent->qty,
+                        "adjustment_amount" => $orderContent->qty,
                         "variation_id"=>$orderedProduct->variation_id,
                         "adjustment_type" => "positive",
+                        "reserved_qty_reason" => "Order removed",
                         "adjusted_by" => \AUTH::user()->id,
                     ];
 
@@ -1415,6 +1441,17 @@ class order extends Sximo
     }
 
     /**
+     * @return array
+     */
+    public static function getMerchandiseTypes(){
+        $module = new OrderController();
+        $pass = \FEGSPass::getMyPass($module->module_id, '', false, true);
+        $order_types = $pass['calculate price according to case price']->data_options;
+        $order_types = explode(",", $order_types);
+        return !empty($order_types) ? $order_types:[];
+    }
+
+    /**
      * @param $locationId
      * @param $productTypeId
      * @param bool $isActiveItemsOnly
@@ -1566,5 +1603,24 @@ class order extends Sximo
 
         return (in_array(Session::get('uid'),$canCombineOrderContentUsers) || in_array(Session::get('gid'),$canCombineOrderContentGroups));
 
+    }
+
+    /**
+     * @param $items
+     * @param $productId
+     * @return int
+     */
+    public function getMatchedElement($items, $productId)
+    {
+        if ($items) {
+            foreach ($items as $item) {
+                if ($item['product_id'] == $productId) {
+                    return $item['is_broken_case'];
+                }
+            }
+        } else {
+            return 0;
+        }
+        return 0;
     }
 }

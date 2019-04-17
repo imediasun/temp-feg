@@ -19,6 +19,7 @@ foreach ($data as $d) {
         $content .= '<td>'.((!empty($orderID) || $orderID=0)?$orderID:"No Data").'</td>';
         $content .= '<td>'.($d->adjustment_type =='negative' ? ($d->adjustment_amount<0) ? $d->adjustment_amount:$d->adjustment_amount * -1:$d->adjustment_amount).'</td>';
         $content .= '<td>'.$d->reservedQuantity.'</td>';
+        $content .= '<td>'.$d->reserved_qty_reason.'</td>';
         $content .= '<td>'.$d->adjusted_by.'</td>';
         $content .= '<td>'.$d->created_at.'</td>';
     $content .= '</tr>';
@@ -58,7 +59,7 @@ foreach ($cellIterator as $cell) {
         $serialColumn = $cell->getColumn();
         //$objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn)->setAutoSize(true);
         $serialCol = $objPHPExcel->getActiveSheet()->getColumnDimension($serialColumn);
-        $colString = ($serialCol->getColumnIndex() . '1:' . $serialCol->getColumnIndex() . (count($ds) + 2));
+        $colString = ($serialCol->getColumnIndex() . '1:' . $serialCol->getColumnIndex() . (count($fields) + 2));
 
         $objPHPExcel->getActiveSheet()->getStyle($colString)
             ->getNumberFormat()

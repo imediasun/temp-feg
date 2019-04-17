@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\controller;
 use App\Library\FEGDBRelationHelpers;
+use App\Models\order;
+use App\Models\product;
 use App\Models\Shopfegrequeststore;
 use App\Models\Addtocart;
 use App\Models\Sximo;
@@ -511,11 +513,21 @@ class ShopfegrequeststoreController extends Controller
         \Session::put('productId', $productId);
 
         $productExistsInCart = $this->addToCartModel->getCartData($productId);
+        $product  = product::find($productId);
         if (!empty($productExistsInCart)) {
             //if ($current_total_cart == $total_cart[0]->total) {
             $existingQty = \DB::select("SELECT qty FROM requests WHERE product_id = $productId AND request_user_id = ".\Session::get('uid')." AND status_id = 4 AND location_id = ".\Session::get('selected_location'));
             $newQty = $existingQty[0]->qty + $qty;
-            \DB::update("UPDATE requests SET qty = $newQty WHERE product_id = $productId AND request_user_id = ".\Session::get('uid')." AND status_id = 4 AND location_id = ".\Session::get('selected_location'));
+            $unitQty = 0;
+            if($product) {
+                $merchandiseTypes = order::getMerchandiseTypes();
+                if(in_array($product->prod_type_id,$merchandiseTypes)){
+                    $unitQty = $newQty * $product->num_items;
+                }else {
+                    $unitQty = $newQty;
+                }
+            }
+            \DB::update("UPDATE requests SET unit_qty=$unitQty, qty = $newQty WHERE product_id = $productId AND request_user_id = ".\Session::get('uid')." AND status_id = 4 AND location_id = ".\Session::get('selected_location'));
             $message = \Lang::get('core.add_qty_to_cart');
         } else {
             $cartData = $this->addToCartModel->popupCartData($productId, null, $qty);

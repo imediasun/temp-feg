@@ -72,6 +72,7 @@ class product extends Sximo  {
   T.type_description AS prod_sub_type_id,
   '' as excluded_locations_and_groups,
   '' as product_type_excluded_data,
+  (reserved_qty/num_items) as reserved_qty_cases,
   $supQuries
 FROM `products`
   LEFT JOIN vendor
@@ -800,6 +801,10 @@ WHERE orders.is_api_visible = 1
         $NewReservedQty = $request->input('reserved_qty');
         if ($product->reserved_qty != $NewReservedQty && $NewReservedQty != '') {
             $type = "negative";
+            $reason = "Manual adjustment";
+            if(!empty($request->input('reserved_qty_reason'))){
+                $reason .='<br>'.$request->input('reserved_qty_reason');
+            }
             if ($NewReservedQty > $product->reserved_qty) {
                 $type = "positive";
                 if($product->reserved_qty_limit < $NewReservedQty) {
@@ -818,10 +823,104 @@ WHERE orders.is_api_visible = 1
                 "product_id" => $id,
                 "adjustment_amount" => $NewReservedQty,
                 "adjustment_type" => $type,
+                "reserved_qty_reason" => $reason,
                 "variation_id" => !empty($product->variation_id) ? $product->variation_id:null,
                 "adjusted_by" => $userId,
             ];
             $ReservedQtyLog->insertRow($reservedLogData, 0);
+        }
+    }
+
+
+    public function getImportVendors(){
+
+        $fields = [
+            'import_vendors.id',
+            'import_vendors.vendor_id',
+            'vendor.vendor_name',
+            'import_vendors.email_recieved_at'
+        ];
+        $vendors = vendor::select($fields)
+            ->join('import_vendors','import_vendors.vendor_id','=','vendor.id')
+            ->orderBy('vendor.vendor_name','asc')
+            ->where('import_vendors.is_imported','=','0')->groupBy('import_vendors.vendor_id')->get();
+
+        return $vendors;
+    }
+
+    /**
+     * @param int $isConverted
+     * @param bool $isGroupBy
+     * @return mixed
+     */
+    public function getMerchandiseItems($isConverted = 0,$isGroupBy = false)
+    {
+        $columns = [
+            'products.*',
+        ];
+        $items = self::select($columns)->join('order_type','order_type.id','=','products.prod_type_id')
+            ->where('products.is_reserved','=',1)->where('products.is_converted','=',$isConverted)
+            ->whereIn('products.prod_type_id',[7,8,6,17,22,24,27]);
+        if($isGroupBy){
+            $items->groupby('products.vendor_description');
+            $items->groupby('products.sku');
+            $items->groupby('products.case_price');
+        }
+       $itemsQuery =  $items->get();
+
+        return $itemsQuery;
+    }
+
+    /**
+     * @param $items
+     */
+    public function convertReservedQty($items){
+        $prevQty = [];
+        if($items->count() > 0){
+            foreach($items as $item){
+                $prevQty[$item->id] = $item->reserved_qty;
+                $product  = self::where([
+                    'vendor_description' => $item->vendor_description,
+                    'sku' => $item->sku,
+                    'case_price' => $item->case_price,
+                    'is_converted' => 0,
+                ])->update([
+                    'reserved_qty' => ($item->reserved_qty * $item->num_items),
+                    'is_converted' => 1,
+                ]);
+            }
+            $this->insertItemLog($prevQty);
+        }
+    }
+
+    /**
+     * @description insertItemLog() method was written only for qty conversion script
+     */
+    public function insertItemLog($prevQty = []){
+        $items = $this->getMerchandiseItems(1,false);
+        foreach ($items as $item){
+
+            $ReservedQtyLog = new ReservedQtyLog();
+            $reservedLogData = [
+                "product_id" => $item->id,
+                "adjustment_amount" => isset($prevQty[$item->id])?$prevQty[$item->id]:0,
+                "adjustment_type" => 'negative',
+                "reserved_qty_reason" => '---System Generated Log--- <br> Remove all reserved Qty before converting reserved Qty from Cases to Units.',
+                "variation_id" => !empty($item->variation_id) ? $item->variation_id:null,
+                "adjusted_by" => Session::get('uid'),
+            ];
+            $ReservedQtyLog->insertRow($reservedLogData, 0);
+
+            $reservedLogData = [
+                "product_id" => $item->id,
+                "adjustment_amount" => $item->reserved_qty,
+                "adjustment_type" => 'positive',
+                "reserved_qty_reason" => '---System Generated Log--- <br> Reserved Product Qty was converted from Case Qty to Unit Qty.',
+                "variation_id" => !empty($item->variation_id) ? $item->variation_id:null,
+                "adjusted_by" => Session::get('uid'),
+            ];
+            $ReservedQtyLog->insertRow($reservedLogData, 0);
+
         }
     }
 

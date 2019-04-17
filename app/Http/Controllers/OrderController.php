@@ -719,6 +719,16 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
+        $qtys = $request->input('qty');
+        foreach ($qtys as $qty){
+            if ($qty == 0){
+                return response()->json(array(
+                    'message' => 'Order Qty needs to be greater than 0',
+                    'status' => 'error',
+                ));
+            }
+        }
         $productIds = $request->input('product_id');
         $productIds = !empty($productIds) ? $productIds : [];
         $whereInRequests = $request->get('where_in_expression');
@@ -821,6 +831,7 @@ class OrderController extends Controller
             'date_ordered' => 'required',
             //   'po_3' => 'required'
         );
+
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
         $order_contents = array();
@@ -835,7 +846,10 @@ class OrderController extends Controller
             $case_price_if_no_unit_categories = explode(',', $this->data['pass']['use case price if unit price is 0.00']->data_options);
         }
         if ($validator->passes()) {
+
             $order_id = ($request->get('editmode') == "clone") ? 0:$request->get('order_id');
+            $prevOrderTypeObj = ($order_id > 0) ? $this->model->select('order_type_id')->where('id',$order_id)->first():0;
+            $prevOrderTypeId = !empty($prevOrderTypeObj->order_type_id) ? $prevOrderTypeObj->order_type_id:0;
             $editmode = $request->get('editmode');
             $where_in = $request->get('where_in_expression');
             //$where_in = implode(',',$query);
@@ -917,7 +931,6 @@ class OrderController extends Controller
             $po_notes_additionaltext = $request->get('po_notes_additionaltext');
             $num_items_in_array = count($itemsArray);
             $isOrderContentPreBroken = OrderContent::where('order_id',$order_id)->whereIn('product_id', is_array($productIdArray)? $productIdArray:[$productIdArray])->select('product_id','is_broken_case')->get()->toArray();
-
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
 
@@ -936,7 +949,7 @@ class OrderController extends Controller
                     $itemsPriceArray[$i] . ' ea. (SKU: ' . $skuNumArray[$i] . ')';
             }
             if ($is_freehand == 0) {
-                $validationResponse = $this->validateProductForReserveQty($request);
+                $validationResponse = $this->validateProductForReserveQty($request,$isOrderContentPreBroken);
 
                 if (!empty($validationResponse) && $validationResponse['error'] == true) {
                     return response()->json(array(
@@ -976,14 +989,35 @@ class OrderController extends Controller
                      **/
                     if($product && $product->is_reserved == 1) {
                         $productVariations = $product->getProductVariations();
+
+                        $isPrevMerch = 0;
+                        $merchandiseTypes = Order::getMerchandiseTypes();
+
+                        if(in_array($prevOrderTypeId,$merchandiseTypes)){
+                            $isPrevMerch = 1;
+                        }
+                        if($removedProduct->is_broken_case == 0 && $isPrevMerch == 1){
+                            $product->reserved_qty += $removedProduct->qty * $product->num_items;
+                        }else{
+                            $product->reserved_qty += $removedProduct->qty;
+                        }
                         $product->reserved_qty += $removedProduct->qty;
                         $product->updateProduct(['reserved_qty' => $product->reserved_qty]);
                         $product->save();
+                        $QtyForLog = $removedProduct->qty;
+                        if($removedProduct->is_broken_case == 0 && $isPrevMerch == 1){
+                            $QtyForLog = $removedProduct->qty * $product->num_items;
+                        }else{
+                            $QtyForLog = $removedProduct->qty;
+                        }
+
                         $reservedLogData = [
                             "product_id" => $product->id,
                             "order_id" => $last_insert_id,
-                            "adjustment_amount" => ($removedProduct->is_broken_case == 1 && !in_array($orderData['order_type_id'],$case_price_categories)) ? $removedProduct->qty/$removedProduct->qty_per_case:$removedProduct->qty,
+//                            "adjustment_amount" => ($removedProduct->is_broken_case == 1 && !in_array($orderData['order_type_id'],$case_price_categories)) ? $removedProduct->qty/$removedProduct->qty_per_case:$removedProduct->qty, "adjustment_amount" => ($removedProduct->is_broken_case == 1 && !in_array($orderData['order_type_id'],$case_price_categories)) ? $removedProduct->qty/$removedProduct->qty_per_case:$removedProduct->qty,
+                            "adjustment_amount" => $QtyForLog,
                             "adjustment_type" => 'positive',
+                            "reserved_qty_reason"=>'Quantity ordered decreased',
                             "variation_id" => $product->variation_id,
                             "adjusted_by" => \AUTH::user()->id,
                         ];
@@ -1130,12 +1164,24 @@ class OrderController extends Controller
                         }
                     }
                 }
-                $orderTypeIdsArray = (!empty($this->data['pass']['calculate price according to case price']->data_options)) ? explode(",",$this->data['pass']['calculate price according to case price']->data_options):'';
-                $orderTypeIdsArray = is_array($orderTypeIdsArray) ? $orderTypeIdsArray:[$orderTypeIdsArray];
-                if(!in_array($order_type,$orderTypeIdsArray)){
+                $isMerch = 0;
+                $isPrevMerch = 0;
+                $merchandiseTypes = Order::getMerchandiseTypes();
+                if(in_array($order_type,$merchandiseTypes)){
+                    $isMerch = 1;
+                }
+
+
+                if(in_array($prevOrderTypeId,$merchandiseTypes)){
+                    $isPrevMerch = 1;
+                }
+                $contentsData['isPreMerchandise'] = $isPrevMerch;
+                $contentsData['isMerchandise'] = $isMerch;
+
+              /*  if($isMerch == 1){
                     $contentsData['pre_is_broken_case'] = 0;
                     $contentsData['is_broken_case'] = 0;
-                }
+                }*/
 
                 if ($is_freehand == 0) {
                     event(new PostSaveOrderEvent($contentsData));
@@ -1259,8 +1305,9 @@ class OrderController extends Controller
 
     }
 
-    public function validateProductForReserveQty($request)
+    public function validateProductForReserveQty($request,$isOrderContentPreBroken)
     {
+
         $item_names = $request->input('item_name');
         $productInformation = [];
         for ($i = 0; $i < count($item_names); $i++) {
@@ -1269,7 +1316,8 @@ class OrderController extends Controller
                 $product->item_name = $item_names[$i];
                 $product->qty = $request->input('qty')[$i];
                 $product->prev_qty = $request->input('prev_qty')[$i];
-                $product->product_is_broken_case = $request->input('is_broken_case')[$i];
+                $product->product_is_broken_case = empty($request->input('is_broken_case')[$i]) ? !empty($request->input('broken_case')[$i]) ? (int) $request->input('broken_case')[$i]:0: (int) $request->input('is_broken_case')[$i];
+                $product->isPreIsBrokenCase = $this->model->getMatchedElement($isOrderContentPreBroken,$request->input('product_id')[$i]);
                 $product->order_product_id = ($request->input('product_id')[$i] == $product->id) ? $request->input('product_id')[$i] : 0;
                 $productInformation[] = $product;
             }

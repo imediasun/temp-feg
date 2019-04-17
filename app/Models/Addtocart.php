@@ -145,6 +145,16 @@ FROM requests
                 /// TO AVOID ADDITNG THE SAME PRODUCT IN TWO PLACES
                 if (count($query) == 0)
                 {
+                    $product = product::find($productId);
+                    $unitQty = 0;
+                    if($product) {
+                            $merchandiseTypes = order::getMerchandiseTypes();
+                            if(in_array($product->prod_type_id,$merchandiseTypes)){
+                                $unitQty = $qty * $product->num_items;
+                            }else {
+                                $unitQty = $qty;
+                            }
+                    }
 
                     $now = date('Y-m-d');
                     $insert = array(
@@ -153,6 +163,7 @@ FROM requests
                         'request_user_id' => \Session::get('uid'),
                         'request_date' => $now,
                         'qty' => $qty,
+                        'unit_qty' => $unitQty,
                         'status_id' => $statusId
                     );
                     \DB::table('requests')->insert($insert);
@@ -354,6 +365,7 @@ FROM requests
         $request = $this->where("product_id",$newRequest->product_id)->where("status_id",1)->where("location_id",\Session::get('selected_location'))->first();
         if($request){
             $request->qty = $request->qty + $newRequest->qty;
+            $request->unit_qty = $request->unit_qty + $newRequest->unit_qty;
             $request->request_user_id = \Session::get('uid');
             $request->request_date = $now;
             unset($request->updated_at);
@@ -394,7 +406,7 @@ FROM requests
             }
             $alreadyRequestedQuantity = \DB::table('requests')->whereIn('product_id', $productIds)
                 //->where('qty', '!=', $requestedQTY)
-                ->where('status_id', 1)->sum('qty');
+                ->where('status_id', 1)->sum('unit_qty');
             $reservedQty = \DB::table('products')->where('id', $productId)->pluck('reserved_qty');
             $column = [
                 'requests.id',
@@ -436,7 +448,7 @@ FROM requests
     private function getRequestObjects($productIds){
         $column = [
             'requests.product_id',
-            \DB::raw('requests.qty as requestedQTY'),
+            \DB::raw('requests.unit_qty as requestedQTY'),
         ];
         $requests = $this->select($column)->
         join('products', 'products.id', '=', 'requests.product_id')
@@ -449,5 +461,12 @@ FROM requests
             ->where('products.is_reserved', '=', 1)
             ->lists('requestedQTY', "requests.product_id");
         return $requests;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function products(){
+        return $this->hasOne(product::class);
     }
 }

@@ -48,26 +48,40 @@ class PostSaveOrderEventHandler
                 ->orderBy('id', 'DESC')
                 ->first();
             if($item->is_broken_case == 1){
-                $item->qty = ceil($item->qty/$item->qty_per_case);
+//                $item->qty = ceil($item->qty/$item->qty_per_case);
+                $item->qty = $item->qty;
             }
 
             if($item->pre_is_broken_case == 1){
-                $item->prev_qty = ceil($item->prev_qty/$item->qty_per_case);
+//                $item->prev_qty = ceil($item->prev_qty/$item->qty_per_case);
+                $item->prev_qty = $item->prev_qty;
             }
 
+            if($item->is_broken_case == 0 && $item->isMerchandise == 1){
+                $item->qty = $item->qty * $item->qty_per_case;
+            }
 
+            if($item->pre_is_broken_case == 0 && $item->isPreMerchandise == 1){
+                $item->prev_qty = $item->prev_qty * $item->qty_per_case;
+            }
+//dd($item->qty,$item->prev_qty);
             if ($ReservedProductQtyLogObj and $item->prev_qty) {
                 $adjustmentAmount = ($product->reserved_qty + $item->prev_qty) - $item->qty;
+                if($item->is_broken_case == 0 && $item->isMerchandise == 1) {
+
+                    $adjustmentAmount = ($product->reserved_qty + $item->prev_qty) - $item->qty;
+
+                }
                 if($item->prev_qty > $item->qty){
                     $qty = ($item->qty - $item->prev_qty) < 0 ? ( ($item->qty - $item->prev_qty) * -1 ):($item->qty - $item->prev_qty);
                     if($item->prev_qty != $item->qty) {
-                        self::setPositiveAdjustement($item, $product, "positive", $qty);
+                        self::setPositiveAdjustement($item, $product, "positive", $qty,'Quantity ordered decreased');
                     }
                 }else{
 
                     $qty = ($item->qty - $item->prev_qty) < 0 ? ( ($item->qty - $item->prev_qty) * -1 ):($item->qty - $item->prev_qty);
                     if($item->prev_qty != $item->qty) {
-                        self::setPositiveAdjustement($item, $product, "negative", $qty);
+                        self::setPositiveAdjustement($item, $product, "negative", $qty,'Quantity ordered increased');
                     }
                 }
 
@@ -76,7 +90,7 @@ class PostSaveOrderEventHandler
 
                 $qty = ($item->qty) < 0 ? ( ($item->qty) * -1 ):($item->qty);
 
-                self::setPositiveAdjustement($item,$product,"negative",$qty);
+                self::setPositiveAdjustement($item,$product,"negative",$qty,'Order created');
             }
 
             $inactive = 0;
@@ -144,12 +158,13 @@ class PostSaveOrderEventHandler
             }
         }
     }
-    public static function setPositiveAdjustement($item,$product,$type,$qty){
+    public static function setPositiveAdjustement($item,$product,$type,$qty,$reason = 'Order created'){
         $reservedLogData = [
             "product_id" => $item->product_id,
             "order_id" => $item->order_id,
             "adjustment_amount" => $qty,
             "adjustment_type" => $type,
+            "reserved_qty_reason" => $reason,
             "variation_id" => $product->variation_id,
             "adjusted_by" => \AUTH::user()->id,
         ];
