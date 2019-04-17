@@ -897,7 +897,7 @@ WHERE orders.is_api_visible = 1
      * @description insertItemLog() method was written only for qty conversion script
      */
     public function insertItemLog($prevQty = []){
-        $items = $this->getMerchandiseItems(1,false);
+        $items = $this->getMerchandiseItems(1,true);
         foreach ($items as $item){
 
             $ReservedQtyLog = new ReservedQtyLog();
