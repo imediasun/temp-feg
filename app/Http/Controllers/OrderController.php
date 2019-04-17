@@ -721,6 +721,7 @@ class OrderController extends Controller
     {
 
         $qtys = $request->input('qty');
+        $qtys = !empty($qtys) ? $qtys : [];
         foreach ($qtys as $qty){
             if ($qty == 0){
                 return response()->json(array(
