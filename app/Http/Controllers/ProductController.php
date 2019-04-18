@@ -604,7 +604,9 @@ class ProductController extends Controller
 
 
         $sql = "INSERT INTO products (" . implode(",", $columns) . ") ";
-        $columns[1] = "CONCAT('copy ".mt_rand()." ',vendor_description)";
+        $columns[1] = "''";
+        $columns[2] = "CONCAT('copy ".mt_rand()." ',vendor_description)";
+
         $column = str_replace("variation_id"," SUBSTRING(UUID(),1,10) as variation_id ",implode(",", $columns));
 
         $sql .= " SELECT " .$column. " FROM products WHERE id IN (" . $toCopy . ")";
