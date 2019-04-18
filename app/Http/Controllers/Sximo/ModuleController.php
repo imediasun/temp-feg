@@ -1026,6 +1026,7 @@ class ModuleController extends Controller
         }
 
         $this->data['access'] = $access;
+        $this->data['access'] = array_merge($this->data['access'],['is_add'=>0,'is_edit'=>0]);
         $this->data['groups_access'] = \DB::select("select * from tb_groups_access where module_id ='" . $row->module_id . "'");
 
         return view('sximo.module.permission', $this->data);
