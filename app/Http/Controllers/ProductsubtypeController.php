@@ -337,9 +337,12 @@ class ProductsubtypeController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        $messages = [
+            'product_type.required'    => 'Product Sub Type is required!',
+        ];
         $request->merge(['type_description' => $request->input('product_type')]);
         $rules = $this->validateForm();
-        $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->passes()) {
             $data = $this->validatePost('product_type');
             $exceptionCustomMessages = [
