@@ -193,6 +193,7 @@ class LocationController extends Controller
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
+        $this->data['userBelongsToExemptedUsersList'] = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
 // Render into template
         return view('location.table', $this->data);
 
