@@ -19,7 +19,7 @@ class HttpsProtocol
             return $next($request);
         }
 
-        if (!$request->secure()) {
+        if (!$request->secure() && !$request->ajax() ) {
             return redirect()->secure($request->getRequestUri());
         }
         return $next($request);
