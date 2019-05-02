@@ -378,9 +378,25 @@ FROM `products`
         }
         else
         {
-            $total = \DB::select( $select. "
-				{$params} {$groupConditions} {$orderConditional}  ");
-            $total = count($total);
+            /**
+             *  Old Implementation of getting the total Count
+             *  ---------------------------------------------
+             *  $total = \DB::select( $select. "
+             *           {$params} {$groupConditions} {$orderConditional}  ");
+             *   $total = count($total);
+             */
+
+
+            /**
+             *  New Implementation of getting the total Count
+             */
+            $select = strstr($select, 'FROM `products`');
+            $select = "SELECT count(products.id) as cnt ".$select;
+            $query =  $select. " {$params} {$groupConditions} ";
+            $query = str_replace('ORDER BY id', 'ORDER BY products.id', $query);
+
+            $total = \DB::select($query);
+            $total = $total[0]->cnt;
         }
         //$total = 1000;
         return $results = array('rows'=> $result , 'total' => $total);
