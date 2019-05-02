@@ -514,10 +514,13 @@ class VendorController extends Controller
         }
         $vendorEmail = '';
         if(!empty($row->email) && $row->email !='') {
-            $vendorEmail[] = $row->email; //get vendor mail address one
+            $vendorEmail[] = $row->email; //get vendor mail address
         }
         if(!empty($row->email_2) && $row->email_2 !='') {
-            $vendorEmail[] = $row->email_2; //get vendor mail address one
+            $vendorEmail[] = $row->email_2; //get vendor mail address two
+        }
+        if(!empty($row->games_contact_email) && $row->games_contact_email !='') {
+            $vendorEmail[] = $row->games_contact_email; //get vendor games contact email address one
         }
         if(!empty($vendorEmail)) {
             if (count($vendorEmail) > 1) {
@@ -528,7 +531,6 @@ class VendorController extends Controller
         
         $response = VendorProductsImportHelper::exportExcel($id, $vendorEmail);
         if($response){
-//            dd($response);
             return response()->json(array(
                 'status' => 'success',
                 'message' => 'Mail sent successfully.'
