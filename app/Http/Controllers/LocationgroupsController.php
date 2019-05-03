@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Library\FEGDBRelationHelpers;
+use App\Models\Core\Users;
 use App\Models\location;
 use App\Models\Locationgroups;
 use App\Models\product;
@@ -132,6 +133,14 @@ class LocationgroupsController extends Controller {
         if ($this->data['config_id'] != 0 && !empty($config)) {
         $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
+        $userBelongsToExemptedUsersList = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
+
+        if(!$userBelongsToExemptedUsersList){
+            foreach($this->data['tableGrid'] as $key=>$item){
+                if($item['field'] == 'excluded_product_ids' || $item['field'] == 'excluded_product_type_ids')
+                    $this->data['tableGrid'][$key]['view'] = 0;
+            }
+        }
 // Render into template
 		return view('locationgroups.table',$this->data);
 
@@ -179,6 +188,7 @@ class LocationgroupsController extends Controller {
 		$this->data['fields'] 		    =  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
 		$this->data['id'] = $id;
+        $this->data['userBelongsToExemptedUsersList'] = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
 
 		return view('locationgroups.form',$this->data);
 	}
@@ -211,8 +221,9 @@ class LocationgroupsController extends Controller {
 		$this->data['setting'] 		=   $this->info['setting'];
         $this->data['nodata']       =   \SiteHelpers::isNoData($this->info['config']['grid']);
 		$this->data['fields'] 		=   \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $this->data['userBelongsToExemptedUsersList'] = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
 
-		return view('locationgroups.view',$this->data);
+        return view('locationgroups.view',$this->data);
 	}
 
 

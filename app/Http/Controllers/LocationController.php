@@ -193,8 +193,15 @@ class LocationController extends Controller
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
-        $this->data['userBelongsToExemptedUsersList'] = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
-// Render into template
+        $userBelongsToExemptedUsersList = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
+
+        if(!$userBelongsToExemptedUsersList){
+            foreach($this->data['tableGrid'] as $key=>$item){
+                if($item['field'] == 'product_ids' || $item['field'] == 'product_type_ids')
+                    $this->data['tableGrid'][$key]['view'] = 0;
+            }
+        }
+        // Render into template
         return view('location.table', $this->data);
 
     }
@@ -229,6 +236,7 @@ class LocationController extends Controller
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         $this->data['id'] = $id;
+        $this->data['userBelongsToExemptedUsersList'] = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
         \Session::put('location_updated',$id);
         return view('location.form', $this->data);
     }
@@ -273,6 +281,7 @@ class LocationController extends Controller
         }
         $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $this->data['userBelongsToExemptedUsersList'] = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
         return view('location.view', $this->data);
     }
 

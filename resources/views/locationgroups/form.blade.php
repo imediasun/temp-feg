@@ -46,6 +46,7 @@
 
                         </div>
                     </div>
+                    @if($userBelongsToExemptedUsersList)
                     <div class="form-group  " >
                         <label for="Name" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Excluded Product Types', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}
@@ -69,6 +70,7 @@
 
                         </div>
                     </div>
+                    @endif
 
 				</fieldset>
 			</div>
