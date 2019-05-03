@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Core\Users;
 use App\Models\location;
 use App\Models\UserLocations;
 use App\Library\FEGDBRelationHelpers;
@@ -1053,6 +1054,16 @@ abstract class Controller extends BaseController
                 $rows[$index]->total_open = count($open);
             }
 
+        }
+
+        if (in_array($this->module, ['location', 'locationgroups'])) {
+            $userBelongsToExemptedUsersList = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
+            if(!$userBelongsToExemptedUsersList){
+                foreach($fields as $key=>$item){
+                    if(in_array($item['field'], ['product_ids', 'product_type_ids', 'excluded_product_ids', 'excluded_product_type_ids']))
+                        $fields[$key]['view'] = 0;
+                }
+            }
         }
 
         if ($this->module == 'merchandisebudget'){

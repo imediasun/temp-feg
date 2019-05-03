@@ -128,6 +128,7 @@
                 </div>
                 <br>
                 <br>
+                @if($userBelongsToExemptedUsersList)
                 <h3>Excluded Product Types</h3>
                 <table class="table table-striped table-bordered" >
                     @if(count($excludedProductTypes) == 0)
@@ -173,6 +174,7 @@
                         </tbody>
                     @endif
                 </table>
+                @endif
             </div>
 
 

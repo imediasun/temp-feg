@@ -144,7 +144,6 @@ if (!$colconfigs) {
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                            @if($field['field'] != 'product_ids' || $field['field'] == 'product_ids' && $userBelongsToExemptedUsersList || $field['field'] == 'product_type_ids' && $userBelongsToExemptedUsersList)
                                 <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
                                     data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                     @if($field['field'] =='active')
@@ -176,7 +175,6 @@ if (!$colconfigs) {
                                 @endif
                                 </td>
                             @endif
-                        @endif
                         <?php
                         endif;
                         endforeach;
