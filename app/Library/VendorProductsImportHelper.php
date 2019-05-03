@@ -163,6 +163,9 @@ class VendorProductsImportHelper
                     'filename' => $fileName,
                     'encoding' => 'base64',
                     'type' => 'text/csv',
+                    'overrideToEmailInTestMode' => true,
+                    'overrideCCEmailInTestMode' => true,
+                    'overrideBCCEmailInTestMode' => true
                 )), $sendEmailFromMerchandise, $sendEmailFromVendorAccount = true);
                 if (!$sent) {
                     $isSent = 3;
@@ -198,6 +201,9 @@ class VendorProductsImportHelper
                         'filename' => $fileName,
                         'encoding' => 'base64',
                         'type' => 'text/csv',
+                        'overrideToEmailInTestMode' => true,
+                        'overrideCCEmailInTestMode' => true,
+                        'overrideBCCEmailInTestMode' => true
                     )), $sendEmailFromMerchandise, $sendEmailFromVendorAccount = true);
 
                     if (!$sent) {
