@@ -819,6 +819,14 @@ class ProductController extends Controller
         $productTypeId = $request->prod_type_id;
         unset($request->excluded_locations_and_groups);
         unset($request->product_type_excluded_data);
+
+        foreach($rules as $key=>$value){
+            if($value=='required' && $product->$key!==null && $request->input($key)==null){
+                $request->merge([$key => $product->$key]);
+                $_POST[$key]=$product->$key;
+            }
+        }
+
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
 
