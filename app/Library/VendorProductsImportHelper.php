@@ -53,7 +53,7 @@ class VendorProductsImportHelper
         $file = fopen(storage_path("/app/vendor-products/" . $fileName), 'w');
 
         // save the column headers
-        fputcsv($file, array('Product ID', 'Item Name', 'SKU', 'UPC/Barcode', 'Item Per Case', 'Case Price', 'Unit Price', 'Reserved Qty'));
+        fputcsv($file, array('Product ID', 'Item Name', 'SKU', 'UPC/Barcode', 'Item Per Case', 'Case Price', 'Unit Price','Active', 'Reserved Qty','In-Development'));
 
         $start = 0;
 
@@ -75,7 +75,9 @@ class VendorProductsImportHelper
                 is_string($product->num_items) ? "=\"$product->num_items\"" : $product->num_items,
                 is_string($product->case_price) ? "=\"$product->case_price\"" : $product->case_price,
                 is_string($product->unit_price) ? "=\"$product->unit_price\"" : $product->unit_price,
-                is_string($product->reserved_qty) ? "=\"$product->reserved_qty\"" : $product->reserved_qty
+                ($product->inactive == 0  || $product->inactive == '') ? "=\"Yes\"":"=\"No\"",
+                is_string($product->reserved_qty) ? "=\"$product->reserved_qty\"" : $product->reserved_qty,
+                ($product->in_development == 0  || $product->in_development == '') ? "=\"No\"":"=\"Yes\"",
             ];
         }
         $data[] = [];
