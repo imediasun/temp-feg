@@ -3145,6 +3145,8 @@ class SiteHelpers
         fclose($file);
         $fileArray = self::stipTagsFromArray($fileArray,'="','"');
         $fileArray = self::makeAssociatedAarry($fileArray);
+        $fileArray = self::changeKeyNameInArray($fileArray  ,['in-development' => 'in_development','active'=>'inactive']);
+        $fileArray = self::toggleFlagValue($fileArray);
         return $fileArray;
     }
 
@@ -3230,5 +3232,48 @@ class SiteHelpers
     public static function decryptStringOPENSSL($string,$password="FEGPASSWORD"){
         $string = openssl_decrypt($string,"AES-128-ECB",$password);
         return base64_decode($string);;
+    }
+
+    public static function changeKeyNameInArray($data = [], $columns = [])
+    {
+        $dataArray = [];
+        foreach ($data as $items) {
+            foreach ($items as $key => $item) {
+
+                if(!empty($columns[$key])){
+
+                    $items[$columns[$key]] = $item;
+                   // echo "<pre>"; print_r($items); echo "</pre>";
+                    unset($items[$key]);
+                }
+            }
+            $dataArray[]  = $items;
+        }
+        return $dataArray;
+    }
+
+    public static function toggleFlagValue($data = [])
+    {
+        $dataArray = [];
+        foreach ($data as $items) {
+            foreach ($items as $key => $item) {
+                if ($key == 'inactive') {
+                    if (in_array(strtolower(trim($item)), ['', 'yes', 'null'])) {
+                        $items[$key] = '0';
+                    } else {
+                        $items[$key] = '1';
+                    }
+                }else if ($key == 'in_development') {
+                    if (in_array(strtolower(trim($item)), ['', 'no', 'null'])) {
+                        $items[$key] = '0';
+                    } else {
+                        $items[$key] = '1';
+                    }
+                }
+
+            }
+            $dataArray[] = $items;
+        }
+        return $dataArray;
     }
 }
