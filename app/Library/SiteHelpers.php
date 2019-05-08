@@ -3276,4 +3276,16 @@ class SiteHelpers
         }
         return $dataArray;
     }
+
+    public static function makeEmptyCell($field , $fileType = '')
+    {
+        if (in_array(trim(strtolower($field)),['','null','nodata','no data','No Data','0',0])){
+            if($fileType != 'excel'){
+                return ' ';
+            }
+            return "=\"\"";
+        }else{
+            return $field;
+        }
+    }
 }

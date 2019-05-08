@@ -108,6 +108,10 @@ class ProductController extends Controller
 //    $params = array(
 //        'params' => ''
 //    );
+        if(!empty($_REQUEST['vendor_id']) && isset($_REQUEST['exportEXT'])){
+            $filter .=" AND products.vendor_id = '".$_REQUEST['vendor_id']."' ";
+        }
+
         $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby'];
         $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];
         $params = array(
@@ -123,9 +127,51 @@ class ProductController extends Controller
         $results = $this->model->getRows($params);
 
         $fields = $info['config']['grid'];
+
+        $arrangeFields = [
+            ['field' => 'vendor_id', 'label' => 'Vendor'],
+            ['field' => 'vendor_description', 'label' => 'Item Name'],
+            ['field' => 'sku', 'label' => 'SKU'],
+            ['field' => 'upc_barcode', 'label' => 'UPC/Barcode'],
+            ['field' => 'unit_price', 'label' => 'Unit Price'],
+            ['field' => 'num_items', 'label' => 'Items Per Case'],
+            ['field' => 'case_price', 'label' => 'Case Price'],
+            ['field' => 'ticket_value', 'label' => 'Ticket Value'],
+            ['field' => 'prod_type_id', 'label' => 'Product Type'],
+            ['field' => 'prod_sub_type_id', 'label' => 'Product Sub-type'],
+            ['field' => 'inactive', 'label' => 'Active', 'conn' => [
+                "valid" => "1",
+                "db" => "yes_no",
+                "key" => "id",
+                "display" => "yesno",
+            ]],
+            ['field' => 'reserved_qty', 'label' => 'Reserved Qty', "attribute" => [
+                "hyperlink" => ["active" => 0,
+                    "link" => "",
+                    "target" => "modal",
+                    "html" => "",
+                ],
+                "image" => ["active" => 0,
+                    "path" => "",
+                    "size_x" => "",
+                    "size_y" => "",
+                    "html" => "",
+                ],
+                "formater" => [
+                    "active" => 1,
+                    "value" => "SiteHelpers|makeEmptyCell|reserved_qty:".$t,
+                ],
+            ]],
+            ['field' => 'in_development', 'label' => 'In-Development'],
+        ];
+
+
+        $fields = $this->reArrangeFields($fields,$arrangeFields);
+
         $rows = $results['rows'];
         $rows = $this->model->setGroupsAndLocations($rows,true);
-        if($t == 'excel') {
+
+        if(in_array($t ,[ 'excel','csv','print','pdf'])) {
             $results['rows'] = array_map(function ($row) {
                 // changing status only for excel correction
                 if ($row->inactive == 0) {
@@ -198,6 +244,7 @@ class ProductController extends Controller
             'fields' => $fields,
             'rows' => $rows,
             'title' => $this->data['pageTitle'],
+            'reviewVendorList' => 'true',
             'excelExcludeFormatting' => isset($results['excelExcludeFormatting']) ? $results['excelExcludeFormatting'] : []
         );
 
@@ -1212,32 +1259,6 @@ class ProductController extends Controller
         $data['return'] = "";
         $data['pageModule'] = $this->data['pageModule'];
         return view('product.upload-image-popup', $data);
-    }
-
-    function postListcsv(Request $request)
-    {
-        global $exportSessionID;
-        ini_set('memory_limit', '1G');
-        set_time_limit(0);
-
-        $exportId = Input::get('exportID');
-        if (!empty($exportId)) {
-            $exportSessionID = 'export-'.$exportId;
-            \Session::put($exportSessionID, microtime(true));
-        }
-        
-        $vendor_id = $request->vendor_id;
-        $rows = $this->model->getVendorPorductlist($vendor_id);
-        $fields = array('Vendor', 'Description', 'Sku','UPC/Barcode', 'Unit Price', 'Item Per Case', 'Case Price', 'Ticket Value', 'Order Type', 'Product Type', 'INACTIVE', 'Reserved Qty');
-        $this->data['pageTitle'] = 'ProductList_';
-        $content = array(
-            'exportID' => $exportSessionID,
-            'fields' => $fields,
-            'rows' => $rows,
-            'type' => 'move',
-            'title' => $this->data['pageTitle'],
-        );
-        return view('product.csvhistory', $content);
     }
 
 

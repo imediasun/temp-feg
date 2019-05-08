@@ -1345,5 +1345,39 @@ abstract class Controller extends BaseController
             'message' => 'Error reported successfully!',
         ));
     }
+
+    /**
+     * @param array $fields
+     * @param array $newArrangement
+     * @return array
+     */
+    public function reArrangeFields($fields = [], $newArrangement = [])
+    {
+        $arrangedFields = [];
+
+        for ($i = 0; $i < count($newArrangement); $i++) {
+
+            foreach ($fields as $field) {
+                if ($field['field'] == $newArrangement[$i]['field']) {
+
+                    if (!empty($newArrangement[$i]['label'])) {
+                        $field['label'] = $newArrangement[$i]['label'];
+                    }
+
+                    if (!empty($newArrangement[$i]['conn'])) {
+                        $field['conn'] = $newArrangement[$i]['conn'];
+                    }
+
+                    if (!empty($newArrangement[$i]['attribute'])) {
+                        $field['attribute'] = $newArrangement[$i]['attribute'];
+                    }
+
+                    $field['download'] = 1;
+                    $arrangedFields[] = $field;
+                }
+            }
+        }
+        return $arrangedFields;
+    }
 }
 
