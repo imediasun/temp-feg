@@ -103,6 +103,9 @@ class ProductController extends Controller
         } else {
             $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
         }
+        if(strpos($filter,"products.in_development = '2'")){
+            $filter = str_replace("products.in_development = '2'"," products.in_development in (0,1,2) ",$filter);
+        }
 
         //$filter 	.=  $master['masterFilter'];
 //    $params = array(
