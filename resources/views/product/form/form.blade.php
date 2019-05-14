@@ -626,6 +626,7 @@
                 </div>
 </span>
 
+                @if($userBelongsToExemptedUsersList)
                 <div class="form-group">
                     <label for="Excluded Locations and Groups" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Excluded Locations and Groups', (isset($fields['excluded_locations_and_groups']['language'])?
@@ -640,7 +641,7 @@
 
                     </div>
                 </div>
-
+                @endif
 
                 <div class="form-group  ">
                     <label for="Img" class=" control-label col-md-4 text-left">
