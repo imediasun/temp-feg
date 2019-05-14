@@ -761,5 +761,12 @@
         }
 
         });
+
+
+        $('#excluded_locations_and_groups').parent().bind("DOMSubtreeModified",function(){
+            if($(this).children().length > 2){
+                $('.select2-container--default:last-child', this).remove();
+            }
+        });
     })
 </script>
