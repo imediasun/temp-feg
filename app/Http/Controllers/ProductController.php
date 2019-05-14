@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Library\FEGDBRelationHelpers;
+use App\Models\Core\Users;
 use App\Models\location;
 use App\Models\order;
 use App\Models\Ordertyperestrictions;
@@ -508,7 +509,14 @@ class ProductController extends Controller
         }
 
         $this->data['vendorsList'] = $this->model->getImportVendors();//list of vendors who send products list on email
+        $userBelongsToExemptedUsersList = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
 
+        if(!$userBelongsToExemptedUsersList){
+            foreach($this->data['tableGrid'] as $key=>$item){
+                if($item['field'] == 'excluded_locations_and_groups' || $item['field'] == 'product_type_excluded_data')
+                    $this->data['tableGrid'][$key]['view'] = 0;
+            }
+        }
         // Render into template
         return view('product.table', $this->data);
 
@@ -563,6 +571,7 @@ class ProductController extends Controller
         }
         $this->data['productTypes'] = $productTypes->orderBy('order_type','asc')->get()->toArray();
 
+        $this->data['userBelongsToExemptedUsersList'] = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
 
         return view('product.form', $this->data);
     }
