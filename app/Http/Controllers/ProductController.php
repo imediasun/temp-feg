@@ -871,7 +871,8 @@ class ProductController extends Controller
         unset($request->product_type_excluded_data);
 
         foreach($rules as $key=>$value){
-            if($value=='required' && $product->$key!==null && $request->input($key)==null){
+            //check added by arslan to see if product object exists
+            if(!empty($product) && $value=='required'   && $product->$key!==null && $request->input($key)==null){
                 $request->merge([$key => $product->$key]);
                 $_POST[$key]=$product->$key;
             }
