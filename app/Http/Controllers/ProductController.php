@@ -872,7 +872,7 @@ class ProductController extends Controller
 
         foreach($rules as $key=>$value){
             //check added by arslan to see if product object exists
-            if(!empty($product) && $value=='required'   && $product->$key!==null && $request->input($key)==null){
+            if($product != "" && !empty($product) && $value=='required'   && $product->$key!==null && $request->input($key)==null){
                 $request->merge([$key => $product->$key]);
                 $_POST[$key]=$product->$key;
             }
