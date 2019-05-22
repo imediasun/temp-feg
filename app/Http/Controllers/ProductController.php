@@ -114,6 +114,7 @@ class ProductController extends Controller
         if(!empty($_REQUEST['vendor_id']) && isset($_REQUEST['exportEXT'])){
             $filter .=" AND products.vendor_id = '".$_REQUEST['vendor_id']."' ";
         }
+        $filter .= " AND products.exclude_export = 0 ";
 
         $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby'];
         $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];
