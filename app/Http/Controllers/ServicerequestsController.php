@@ -886,7 +886,8 @@ class servicerequestsController extends Controller
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
                     "ticketId"      => $id,
-                    'ticket'        => $data
+                    'ticket'        => $data,
+                    'ticket_type' => 'debit-card-related'
                 ]);
             }      
             
