@@ -1173,7 +1173,8 @@ class servicerequestsController extends Controller
                 'message'       =>$message,
                 'ticketId'      => $ticketId,
                 'ticket'        => $ticketsData,
-                "department_id" =>"",                
+                "department_id" =>"",
+                "ticket_type" => $ticketInfo['ticket_type'],
             ]);
 
         return response()->json(array(
