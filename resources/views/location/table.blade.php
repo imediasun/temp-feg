@@ -53,6 +53,7 @@ if (!$colconfigs) {
                         @endif
                         @if($setting['view-method']=='expand') <th>  </th> @endif
                         <?php foreach ($tableGrid as $t) :
+                         if(($t['label']!=='Excluded Products') && ($t['label']!=='Excluded Product Types') ){
                             if($t['view'] =='1'):
                                 $limited = isset($t['limited']) ? $t['limited'] :'';
                                 if(SiteHelpers::filterColumn($limited ))
@@ -73,11 +74,12 @@ if (!$colconfigs) {
                                             ' style=text-align:'.$t['align'].
                                             ' width="'.$t['width'].'"';
                                     $th .= '>';
+
                                     $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
                                     $th .= '</th>';
                                     echo $th;
                                 }
-                            endif;
+                            endif;}
                         endforeach; ?>
 
                         @if($setting['disablerowactions']=='false')
@@ -94,6 +96,7 @@ if (!$colconfigs) {
                             @endif
                             @if($setting['view-method']=='expand') <td> </td> @endif
                             @foreach ($tableGrid as $t)
+
                                 @if(isset($t['inline']) && $t['inline'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
@@ -142,10 +145,14 @@ if (!$colconfigs) {
                             $conn = (isset($field['conn']) ? $field['conn'] : array());
                             $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                         ?>
+
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
+                                @if(($field['field']!=='product_ids') && ($field['field']!=='product_type_ids'))
+
                                 <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
                                     data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+
                                     @if($field['field'] =='active')
                                         <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif 	data-size="mini" data-animate="true"
                                                data-on-text="Active" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
@@ -174,6 +181,7 @@ if (!$colconfigs) {
                                             @endif
                                 @endif
                                 </td>
+                            @endif
                             @endif
                         <?php
                         endif;

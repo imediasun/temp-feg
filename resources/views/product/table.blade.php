@@ -57,6 +57,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
                         <?php foreach ($tableGrid as $t) :
+                            if(($t['label']!=='Excluded Locations and Groups') && ($t['label']!=='Excluded Location and Group for Product Type') ){
                             if ($t['view'] == '1'):
                                 $limited = isset($t['limited']) ? $t['limited'] : '';
                                 if (SiteHelpers::filterColumn($limited)) {
@@ -82,6 +83,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                     echo $th;
                                 }
                             endif;
+                                }
                         endforeach; ?>
                         @if($setting['disablerowactions']=='false')
                             <th width="145"><?php echo Lang::get('core.btn_action');?></th>
@@ -164,9 +166,10 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                            @if($field['field']=='img')
+                            @if(($field['field']!=="excluded_locations_and_groups") && ($field['field']!=="product_type_excluded_data"))
 
-                                @endif
+                            @if($field['field']=='img')
+                            @endif
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
@@ -226,6 +229,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                 @endif
 
                             </td>
+                            @endif
                         @endif
                         <?php endif;
                         endforeach;
