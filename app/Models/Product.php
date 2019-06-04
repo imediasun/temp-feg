@@ -9,9 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Log;
+use Elasticsearch\Client;
+use App\Repositories\Products\ProductsRepository;
+use App\Search\Searchable;
 
 class product extends Sximo  {
-	
+    use Searchable;
 	protected $table = 'products';
 	protected $primaryKey = 'id';
     protected $guarded = [];
@@ -272,9 +275,27 @@ FROM `products`
         return " GROUP BY products.vendor_description, products.sku, products.vendor_id, products.case_price ";
     }
 
+    public static function getElastic(Client $client){
+        if(isset($_SESSION['product_search'])){
+
+            var_dump('testimonial=>',$_SESSION['product_search']);
+
+            $explode_string=explode('|',$_SESSION['product_search']);
+            $second_explode=explode(':',$explode_string[0]);
+            var_dump($second_explode[2]);
+
+        }
+$repository = new \App\Repositories\Products\ElasticsearchProductsRepository($client);
+        return $products = $repository->search((string) $second_explode[2]);
+    }
+
     public static function getRows( $args,$cond=null,$active=null,$sub_type=null, $is_api=false)
     {
-
+        //session_start();
+        if(isset($_SESSION['product_search'])){
+        $client = new Client();
+        $repository=self::getElastic($client);
+        var_dump($repository);}
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
 
@@ -383,6 +404,11 @@ FROM `products`
             $total = count($total);
         }
         //$total = 1000;
+        if(isset($result)){
+            var_dump($result);
+
+        }
+
         return $results = array('rows'=> $result , 'total' => $total);
 
     }

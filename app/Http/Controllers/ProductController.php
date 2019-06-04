@@ -425,6 +425,10 @@ class ProductController extends Controller
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'product')->pluck('module_id');
         $this->data['module_id'] = $module_id;
+        //var_dump($_GET['search']);
+        if(isset($_GET['search'])){
+            $_SESSION['product_search']=$_GET['search'];
+        }
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
             \Session::put('config_id',$config_id);

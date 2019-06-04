@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Repositories\Orders;
+namespace App\Repositories\Products;
 
-use App\Models\Order;
+use App\Models\Product;
 use Elasticsearch\Client;
 use Illuminate\Database\Eloquent\Collection;
 
-class ElasticsearchOrdersRepository implements ProductsRepository
+class ElasticsearchProductsRepository implements ProductsRepository
 {
     private $search;
 
@@ -23,7 +23,7 @@ class ElasticsearchOrdersRepository implements ProductsRepository
 
     private function searchOnElasticsearch($query)
     {
-        $instance = new Order;
+        $instance = new Product;
         $items = $this->search->search([
             'index' => $instance->getSearchIndex(),
             'type' => $instance->getSearchType(),
@@ -83,6 +83,6 @@ class ElasticsearchOrdersRepository implements ProductsRepository
         }, $hits);
 
         // We have to convert the results array into Eloquent Models.
-        return Order::hydrate($sources);
+        return Product::hydrate($sources);
     }
 }

@@ -1230,11 +1230,13 @@ abstract class Controller extends BaseController
     function getSearchParamsForRedirect($mode='default')
     {
         $url="?";
+        //var_dump($_GET );die;
         foreach($_GET as $paramName=>$paramValue)
         {
             $url .= $paramName."=".$paramValue."&";
         }
         $url=substr($url,0,strlen($url)-1);
+
         if($mode == 'default'){
             \Session::put('searchParams',$url);
         }else{

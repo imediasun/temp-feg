@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories\Orders;
+namespace App\Repositories\Products;
 
-use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 
-class EloquentOrdersRepository implements ProductsRepository
+class EloquentProductsRepository implements ProductsRepository
 {
     public function search($query = "")
     {

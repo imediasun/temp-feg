@@ -217,7 +217,6 @@ class OrderController extends Controller
 
     public function getSearch($mode = 'ajax')
     {
-
         $this->data['tableForm'] = $this->info['config']['forms'];
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['searchMode'] = $mode;
@@ -270,7 +269,6 @@ class OrderController extends Controller
 
     public function postData(Request $request)
     {
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'order')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if(Session::get('redirect') != "managefegrequeststore") {
@@ -280,7 +278,6 @@ class OrderController extends Controller
 
         session_start();
         $_SESSION['searchParamsForOrder'] = \Session::get('searchParams');
-
         // echo \Session::get('searchParams');
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');

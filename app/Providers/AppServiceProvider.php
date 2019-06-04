@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
-use App\Repositories\Orders\OrdersRepository;
+use App\Repositories\Orders\ProductsRepository;
 use App\Repositories\Orders\EloquentOrdersRepository;
 use App\Repositories\Orders\ElasticsearchOrdersRepository;
 
@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(OrdersRepository::class, function($app) {
+        $this->app->singleton(ProductsRepository::class, function($app) {
             // This is useful in case we want to turn-off our
             // search cluster or when deploying the search
             // to a live, running application at first.
