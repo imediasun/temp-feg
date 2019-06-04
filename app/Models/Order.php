@@ -13,10 +13,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Log;
 use Illuminate\Support\Facades\File;
-
+use App\Search\Searchable;
 class order extends Sximo
 {
     use SoftDeletes;
+    use Searchable;
+
+    protected $casts = [
+        'tags' => 'json',
+    ];
+
 
     protected $table = 'orders';
     protected $primaryKey = 'id';
