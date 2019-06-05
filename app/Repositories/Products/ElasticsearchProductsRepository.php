@@ -17,7 +17,6 @@ class ElasticsearchProductsRepository implements ProductsRepository
     public function search($query = "")
     {
         $items = $this->searchOnElasticsearch($query);
-
         return $this->buildCollection($items);
     }
 

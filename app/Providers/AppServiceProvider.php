@@ -6,9 +6,9 @@ use Illuminate\Support\ServiceProvider;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
-use App\Repositories\Orders\ProductsRepository;
-use App\Repositories\Orders\EloquentOrdersRepository;
-use App\Repositories\Orders\ElasticsearchOrdersRepository;
+use App\Repositories\Products\ProductsRepository;
+use App\Repositories\Products\EloquentProductsRepository;
+use App\Repositories\Products\ElasticsearchProductsRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        dump(555);
     }
 
     /**
@@ -29,15 +30,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        dump(444);
         $this->app->singleton(ProductsRepository::class, function($app) {
             // This is useful in case we want to turn-off our
             // search cluster or when deploying the search
             // to a live, running application at first.
+
             if (!config('services.search.enabled')) {
-                return new EloquentOrdersRepository();
+                return new EloquentProductsRepository();
             }
 
-            return new ElasticsearchOrdersRepository(
+            return new ElasticsearchProductsRepository(
                 $app->make(Client::class)
             );
         });

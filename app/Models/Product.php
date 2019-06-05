@@ -9,9 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Log;
+
 use Elasticsearch\Client;
 use App\Repositories\Products\ProductsRepository;
+use App\Repositories\Products\ElasticsearchProductsRepository;
 use App\Search\Searchable;
+use Elasticsearch\ClientBuilder;
 
 class product extends Sximo  {
     use Searchable;
@@ -275,27 +278,34 @@ FROM `products`
         return " GROUP BY products.vendor_description, products.sku, products.vendor_id, products.case_price ";
     }
 
-    public static function getElastic(Client $client){
-        if(isset($_SESSION['product_search'])){
+    public static function getElastic(ProductsRepository $repository){
 
-            var_dump('testimonial=>',$_SESSION['product_search']);
 
-            $explode_string=explode('|',$_SESSION['product_search']);
-            $second_explode=explode(':',$explode_string[0]);
-            var_dump($second_explode[2]);
 
-        }
-$repository = new \App\Repositories\Products\ElasticsearchProductsRepository($client);
-        return $products = $repository->search((string) $second_explode[2]);
     }
 
     public static function getRows( $args,$cond=null,$active=null,$sub_type=null, $is_api=false)
     {
         //session_start();
         if(isset($_SESSION['product_search'])){
-        $client = new Client();
-        $repository=self::getElastic($client);
-        var_dump($repository);}
+        var_dump('testimonial=>',$_SESSION['product_search']);
+        $explode_string=explode('|',$_SESSION['product_search']);
+        $second_explode=explode(':',$explode_string[0]);
+        var_dump($second_explode[2]);
+            $elastic = function (ProductsRepository $repository)  {
+                if(isset($_SESSION['product_search'])){
+                    $explode_string=explode('|',$_SESSION['product_search']);
+                    $second_explode=explode(':',$explode_string[0]);
+                }
+
+                return $products = $repository->search((string) $second_explode[2]);
+            };
+$client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+$el=new ElasticsearchProductsRepository($client);
+echo"<pre>";
+        var_dump('elastic=>',$elastic($el));
+            echo"</pre>";
+        }
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
 

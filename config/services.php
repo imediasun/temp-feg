@@ -54,6 +54,10 @@ return [
 	    //'client_id' => '725712687473196',
 	    'client_secret' => '97af69633d9f00e4d3d2e9929574d9e9',
 	    'redirect' => 'http://sximobuilder.com/sximodemo/sximo5/user/facebook',
-	],		
+	],
+    'search' => [
+        'enabled' => env('SEARCH_ENABLED', false),
+        'hosts' => explode(',', env('SEARCH_HOSTS')),
+    ],
 
 ];
