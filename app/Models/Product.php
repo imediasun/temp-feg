@@ -291,7 +291,9 @@ FROM `products`
         var_dump('testimonial=>',$_SESSION['product_search']);
         $explode_string=explode('|',$_SESSION['product_search']);
         $second_explode=explode(':',$explode_string[0]);
+        echo "<pre>";
         var_dump($second_explode[2]);
+            echo "</pre>";
             $elastic = function (ProductsRepository $repository)  {
                 if(isset($_SESSION['product_search'])){
                     $explode_string=explode('|',$_SESSION['product_search']);

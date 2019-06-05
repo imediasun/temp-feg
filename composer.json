@@ -22,7 +22,7 @@
         "paragonie/random_compat": "^2.0",
         "google/apiclient": "^2.0",
         "guzzlehttp/guzzle": "^6.3",
-        "elasticsearch/elasticsearch": "^6.7"
+        "elasticsearch/elasticsearch": "^5.4"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

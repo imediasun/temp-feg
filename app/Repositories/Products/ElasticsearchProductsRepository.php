@@ -22,6 +22,10 @@ class ElasticsearchProductsRepository implements ProductsRepository
 
     private function searchOnElasticsearch($query)
     {
+
+        echo "<pre>";
+        var_dump($query);
+        echo "</pre>";
         $instance = new Product;
         $items = $this->search->search([
             'index' => $instance->getSearchIndex(),
@@ -29,28 +33,27 @@ class ElasticsearchProductsRepository implements ProductsRepository
 
             'body' => [
                 "query" => [
-                       "bool" => [
+                    "match_phrase" => [
+        "vendor_description" => 'Helect H1005 Standard Function Desktop Calculator_test1'
+        ]
+                    /*   "bool" => [
                            "should" => [
                             ["regexp" => [
-                               "tags" => [
+                               "vendor_description" => [
                                    "value" => ".{2,8}" . $query . ".*",
                             ]
                             ],
                                 ],
                             ["wildcard" => [
-                               "tags" => [
+                               "vendor_description" => [
                                    "value" => "*" . $query . "*",
                                    "boost" => 1.0,
                                    "rewrite" => "constant_score"
                                     ]
                                 ]
                             ]
-                        ]],
-                    ], "highlight" => [
-                    "fields" => [
-                        "tags" => ["type" => "plain"]
+                        ]],*/
                     ]
-                ]
           ]]);
 
         return $items;
@@ -77,7 +80,7 @@ class ElasticsearchProductsRepository implements ProductsRepository
         $sources = array_map(function ($source) {
             // The hydrate method will try to decode this
             // field but ES gives us an array already.
-            $source['tags'] = json_encode($source['tags']);
+            $source['vendor_description'] = json_encode($source['vendor_description']);
             return $source;
         }, $hits);
 

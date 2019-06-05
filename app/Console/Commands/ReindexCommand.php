@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Order;
+use App\Models\Product;
 use Elasticsearch\Client;
 use Illuminate\Console\Command;
 
@@ -23,7 +23,7 @@ class ReindexCommand extends Command
     {
         $this->info('Indexing all articles. Might take a while...');
 
-        foreach (Order::cursor() as $model)
+        foreach (Product::get() as $model)
         {
             $this->search->index([
                 'index' => $model->getSearchIndex(),
