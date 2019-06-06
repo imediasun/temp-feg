@@ -427,7 +427,7 @@ class ProductController extends Controller
         $this->data['module_id'] = $module_id;
         //var_dump($_GET['search']);
         if(isset($_GET['search'])){
-            $_SESSION['product_search']=$_GET['search'];
+            $_SESSION['product_search']=urldecode($_GET['search']);
         }
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');

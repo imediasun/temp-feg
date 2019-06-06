@@ -34,7 +34,7 @@ class ElasticsearchProductsRepository implements ProductsRepository
             'body' => [
                 "query" => [
                     "match_phrase" => [
-        "vendor_description" => 'Helect H1005 Standard Function Desktop Calculator_test1'
+        "vendor_description" => $query
         ]
                     /*   "bool" => [
                            "should" => [
