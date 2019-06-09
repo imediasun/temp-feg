@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Product;
 use Elasticsearch\Client;
 use Illuminate\Console\Command;
+use function print_r;
 
 class ReindexCommand extends Command
 {
@@ -23,11 +24,75 @@ class ReindexCommand extends Command
     {
         $this->info('Indexing all articles. Might take a while...');
 
-        foreach (Product::get() as $model)
-        {
+        //// CREATE INDEX FOR SEARCH
+        $setting = [
+            'analysis' => [
+                'analyzer' => [
+                    'ngram_analyzer_with_filter' => [
+                        'tokenizer' => 'ngram_tokenizer',
+                        'filter' => 'lowercase, snowball'
+                    ],
+                ],
+                'tokenizer' => [
+                    'ngram_tokenizer' => [
+                        'type' => 'nGram',
+                        'min_gram' => 3,
+                        'max_gram' => 3,
+                        'token_chars' => ['letter', 'digit', 'whitespace', 'punctuation', 'symbol']
+                    ],
+
+                ],
+            ]
+        ];
+
+        $param = [
+            'index' => 'elastic',
+            'body' => [
+                'settings' => $setting,
+            ]
+        ];
+
+
+        $mapping = [
+            'index' =>'elastic',
+            'type'=>'product',
+            'body'=>[
+                'properties'=>[
+                    'vendor_description' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    'sku' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    'item_description' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ]
+                ]
+            ]
+
+
+        ];
+
+
+        if ($this->search->indices()->exists(['index'=>'elastic'])) {
+            $this->search->indices()->delete(['index'=>'elastic']);
+        }
+
+        $this->search->indices()->create($param);
+        $this->search->indices()->putMapping($mapping);
+
+
+        //////////////////////////
+
+
+        foreach (Product::get() as $model) {
+
             $this->search->index([
-                'index' => $model->getSearchIndex(),
-                'type' => $model->getSearchType(),
+                'index' => 'elastic',
+                'type' => 'product',
                 'id' => $model->id,
                 'body' => $model->toSearchArray(),
             ]);

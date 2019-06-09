@@ -19,8 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
-        dump(555);
     }
 
     /**
@@ -30,7 +28,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        dump(444);
         $this->app->singleton(ProductsRepository::class, function($app) {
             // This is useful in case we want to turn-off our
             // search cluster or when deploying the search

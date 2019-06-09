@@ -288,13 +288,9 @@ FROM `products`
     {
         //session_start();
         if(isset($_SESSION['product_search'])){
-        var_dump('testimonial=>',$_SESSION['product_search']);
         $explode_string=explode('|',$_SESSION['product_search']);
         $second_explode=explode(':',$explode_string[0]);
-        echo "<pre>";
-        var_dump($second_explode[2]);
-            echo "</pre>";
-            $elastic = function (ProductsRepository $repository)  {
+           $elastic = function (ProductsRepository $repository)  {
                 if(isset($_SESSION['product_search'])){
                     $explode_string=explode('|',$_SESSION['product_search']);
                     $second_explode=explode(':',$explode_string[0]);
@@ -302,11 +298,11 @@ FROM `products`
 
                 return $products = $repository->search((string) $second_explode[2]);
             };
-$client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
-$el=new ElasticsearchProductsRepository($client);
-echo"<pre>";
+        $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+        $el=new ElasticsearchProductsRepository($client);
+/*        echo"<pre>";
         var_dump('elastic=>',$elastic($el));
-            echo"</pre>";
+        echo"</pre>";*/
         }
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
@@ -416,11 +412,6 @@ echo"<pre>";
             $total = count($total);
         }
         //$total = 1000;
-        if(isset($result)){
-            var_dump($result);
-
-        }
-
         return $results = array('rows'=> $result , 'total' => $total);
 
     }

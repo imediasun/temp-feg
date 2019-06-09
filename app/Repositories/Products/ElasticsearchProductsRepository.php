@@ -20,43 +20,34 @@ class ElasticsearchProductsRepository implements ProductsRepository
         return $this->buildCollection($items);
     }
 
-    private function searchOnElasticsearch($query)
-    {
-
-        echo "<pre>";
-        var_dump($query);
-        echo "</pre>";
+    public function searchOnElasticsearch($query){
         $instance = new Product;
         $items = $this->search->search([
-            'index' => $instance->getSearchIndex(),
-            'type' => $instance->getSearchType(),
+                'index' => 'elastic',
+                'type' => 'article',
+                'body'=>[
+                    'query'=>[
+                        "multi_match"=>[
+                            "fields"=>["title","body","tags"],
+                            "query"=>$query
+                        ]
+                    ],
+                    "highlight" => [
+                        "pre_tags"  => "<b>",
+                        "post_tags" => "</b>",
+                        "fields" => [
+                            "tags" => new \stdClass(),
+                            "title"=> new \stdClass(),
+                            "body" => new \stdClass()
 
-            'body' => [
-                "query" => [
-                    "match_phrase" => [
-        "vendor_description" => $query
-        ]
-                    /*   "bool" => [
-                           "should" => [
-                            ["regexp" => [
-                               "vendor_description" => [
-                                   "value" => ".{2,8}" . $query . ".*",
-                            ]
-                            ],
-                                ],
-                            ["wildcard" => [
-                               "vendor_description" => [
-                                   "value" => "*" . $query . "*",
-                                   "boost" => 1.0,
-                                   "rewrite" => "constant_score"
-                                    ]
-                                ]
-                            ]
-                        ]],*/
-                    ]
-          ]]);
+                        ]
+                    ]]]
+
+
+        );
 
         return $items;
+
     }
 
     private function buildCollection(array $items)
