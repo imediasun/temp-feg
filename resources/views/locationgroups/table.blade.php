@@ -45,6 +45,7 @@
                 @endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php foreach ($tableGrid as $t) :
+                    if(($t['label']!=='Excluded Products') && ($t['label']!=='Excluded Product Types') ){
 					if($t['view'] =='1'):
 						$limited = isset($t['limited']) ? $t['limited'] :'';
 						if(SiteHelpers::filterColumn($limited ))
@@ -70,10 +71,12 @@
                             echo $th;
                         }
 					endif;
+					}
 				endforeach; ?>
                 @if($setting['disablerowactions']=='false')
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
                 @endif
+
 			  </tr>
         </thead>
 
@@ -86,22 +89,30 @@
                 @endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
+
 					@if($t['view'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
+
+
 							@if($t['field'] == 'location_ids' || $t['field'] == 'excluded_product_ids' || $t['field'] == 'excluded_product_type_ids')
+
+
 								<td data-form="{{ $t['field'] }}" data-form-type="select">
+
 									<select customOption="1" name="{{$t['field']}}[]" class="custom-select2 sel-inline {{ $t['field'] }}" multiple="multiple">
 
 									</select>
 								</td>
+
 							@else
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
 							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
 						</td>
 								@endif
+							@endif
 						@endif
-					@endif
+
 				@endforeach
 				<td >
 					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
@@ -123,7 +134,9 @@
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('locationgroups/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
 					 <?php foreach ($tableGrid as $field) :
+
 					 	if($field['view'] =='1') :
+						if(($field['field']!=='excluded_product_ids') && ($field['field']!=='excluded_product_type_ids')){
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
 
 
@@ -132,10 +145,12 @@
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									{!! $value !!}
+									 {!! $value !!}
 								 </td>
 							@endif
+
                     <?php
+					 }
 						 endif;
 						endforeach;
 					  ?>
