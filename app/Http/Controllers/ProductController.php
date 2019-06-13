@@ -646,6 +646,7 @@ class ProductController extends Controller
         $this->data['setting'] = $this->info['setting'];
         $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $this->data['userBelongsToExemptedUsersList'] = Users::find(auth()->user()->id)->userBelongsToExemptedUsersList();
         return view('product.view', $this->data);
     }
 

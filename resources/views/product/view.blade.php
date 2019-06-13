@@ -121,6 +121,22 @@
                     <td>{{ $row->upc_barcode }} </td>
 
                 </tr>
+                @if($userBelongsToExemptedUsersList!==false)
+                    <tr>
+                        <td width='30%' class='label-view text-right'>
+                            {{ SiteHelpers::activeLang('Excluded Locations and Groups', (isset($fields['excluded_locations_and_groups']['language'])? $fields['excluded_locations_and_groups']['language'] : array())) }}
+                        </td>
+                        <td>{{ $row->excluded_locations_and_groups }} </td>
+
+                    </tr>
+                    <tr>
+                        <td width='30%' class='label-view text-right'>
+                            {{ SiteHelpers::activeLang('Excluded Location and Group for Product Type', (isset($fields['product_type_excluded_data']['language'])? $fields['product_type_excluded_data']['language'] : array())) }}
+                        </td>
+                        <td>{{ $row->product_type_excluded_data }} </td>
+
+                    </tr>
+                @endif
 
                 </tbody>
             </table>
