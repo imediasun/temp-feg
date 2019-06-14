@@ -295,8 +295,14 @@ FROM `products`
                     $explode_string=explode('|',$_SESSION['product_search']);
                     $second_explode=explode(':',$explode_string[0]);
                 }
-               $products = $repository->search((string) $second_explode[2]);
-                return $products;
+                if(empty($second_explode[2])){
+                    unset($_SESSION['product_search']);
+                }
+                else{
+                    $products = $repository->search((string) $second_explode[2]);
+                    return $products;
+                }
+               return false;
             };
         $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
         $el=new ElasticsearchProductsRepository($client);
@@ -396,12 +402,14 @@ FROM `products`
 
         Log::info("Query : ".$select . " {$params}  {$groupConditions} {$orderConditional}  {$limitConditional} ");
         if(isset($_SESSION['product_search'])){
+            var_dump($_SESSION['product_search']);
             $result=$products;
             unset($_SESSION['product_search']);
         }
         else{
         $result=\DB::select($select." {$params} {$groupConditions} {$orderConditional}  {$limitConditional} ");
     }
+
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
         $counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
         //total query becomes too huge
