@@ -24,11 +24,11 @@ class ElasticsearchProductsRepository implements ProductsRepository
         $instance = new Product;
         $items = $this->search->search([
                 'index' => 'elastic',
-                'type' => 'article',
+                'type' => 'product',
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["title","body","tags"],
+                            "fields"=>["vendor_description^5","item_description^4","ups_barcode^3","reserved_qty_reason^2"],
                             "query"=>$query
                         ]
                     ],
@@ -36,9 +36,10 @@ class ElasticsearchProductsRepository implements ProductsRepository
                         "pre_tags"  => "<b>",
                         "post_tags" => "</b>",
                         "fields" => [
-                            "tags" => new \stdClass(),
-                            "title"=> new \stdClass(),
-                            "body" => new \stdClass()
+                            "vendor_description" => new \stdClass(),
+                            "item_description"=> new \stdClass(),
+                            "ups_barcode" => new \stdClass(),
+                            "reserved_qty_reason" => new \stdClass()
 
                         ]
                     ]]]
@@ -66,12 +67,33 @@ class ElasticsearchProductsRepository implements ProductsRepository
          *
          * And we only care about the _source of the documents.
          */
+
+
+        foreach($items['hits']['hits'] as $k=>$value){
+            if(is_array($value)){
+                foreach($value as $key=>$val) {
+                    //dump('=>',$val['highlight']);
+                    if ($key == 'highlight') {
+            //dump($val);
+            foreach($val as $kr=>$vs){
+                $items['hits']['hits'][$k]['_source'][$kr]=$val[$kr][0];
+            }
+
+                    }
+                }
+            }
+
+        }
+
+        //dump('===',$items['hits']);
+
         $hits = array_pluck($items['hits']['hits'], '_source') ?: [];
 
         $sources = array_map(function ($source) {
             // The hydrate method will try to decode this
             // field but ES gives us an array already.
-            $source['vendor_description'] = json_encode($source['vendor_description']);
+
+            //$source['vendor_description'] = json_encode($source['vendor_description']);
             return $source;
         }, $hits);
 
