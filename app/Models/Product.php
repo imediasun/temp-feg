@@ -288,25 +288,52 @@ FROM `products`
     {
         //session_start();
         if(isset($_SESSION['product_search'])){
-        $explode_string=explode('|',$_SESSION['product_search']);
-        $second_explode=explode(':',$explode_string[0]);
-           $elastic = function (ProductsRepository $repository)  {
+            $explode_string=explode('|',$_SESSION['product_search']);
+            $second_explode=explode(':',$explode_string[0]);
+            $elastic = function (ProductsRepository $repository)  {
                 if(isset($_SESSION['product_search'])){
                     $explode_string=explode('|',$_SESSION['product_search']);
-                    $second_explode=explode(':',$explode_string[0]);
+                    //dump($explode_string);
+                    $result['vendor']=null;
+                    $result['prod_sub_type_id']=null;
+                    $result['prod_type_id']=null;
+                    foreach($explode_string as $k=>$param){
+                        $second_explode=explode(':',$param);
+                        switch($second_explode[0]){
+                            case 'search_all_fields':
+                                $main_search=$second_explode[2];
+                                break;
+                            case 'vendor_id':
+                                $result['vendor']=$second_explode[2];
+                                break;
+                            case 'prod_sub_type_id':
+                                $result['prod_sub_type_id']=$second_explode[2];
+                                break;
+                            case 'prod_type_id':
+                                $result['prod_type_id']=$second_explode[2];
+                                break;
+
+                        }
+                        //dump($second_explode);
+                    }
+                    //$second_explode=explode(':',$explode_string[0]);
+
                 }
-                if(empty($second_explode[2])){
+                if(empty($main_search)){
                     unset($_SESSION['product_search']);
                 }
                 else{
-                    $products = $repository->search((string) $second_explode[2]);
-                    return $products;
+                    $result['products'] = $repository->search((string) $main_search);
+                    return $result;
                 }
-               return false;
+                return false;
             };
-        $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
-        $el=new ElasticsearchProductsRepository($client);
-            $products=$elastic($el);
+            $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+            $el=new ElasticsearchProductsRepository($client);
+            $pre_products=$elastic($el);
+            $products=$pre_products['products']->where('vendor_id',intval($pre_products['vendor']))
+            ->where('prod_type_id',intval($pre_products['prod_type_id']));
+            $products=$products->all();
 
         }
         $table = with(new static)->table;

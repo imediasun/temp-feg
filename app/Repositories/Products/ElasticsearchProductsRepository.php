@@ -33,7 +33,7 @@ class ElasticsearchProductsRepository implements ProductsRepository
                         ]
                     ],
                     "highlight" => [
-                        "pre_tags"  => "<b>",
+                        "pre_tags"  => "<b style='color:#da4f49'>",
                         "post_tags" => "</b>",
                         "fields" => [
                             "vendor_description" => new \stdClass(),
