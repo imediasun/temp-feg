@@ -2,14 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Order;
+use App\Models\Product;
 use Elasticsearch\Client;
 use Illuminate\Console\Command;
 use function print_r;
 
-class ReindexOrderCommand extends Command
+class ReindexCommand extends Command
 {
-    protected $name = "search:reindex_order";
+    protected $name = "search:reindex";
     protected $description = "Indexes all articles to elasticsearch";
     private $search;
 
@@ -46,7 +46,7 @@ class ReindexOrderCommand extends Command
         ];
 
         $param = [
-            'index' => 'elastic_order',
+            'index' => 'elastic',
             'body' => [
                 'settings' => $setting,
             ]
@@ -54,37 +54,31 @@ class ReindexOrderCommand extends Command
 
 
         $mapping = [
-            'index' =>'elastic_order',
-            'type'=>'order',
+            'index' =>'elastic',
+            'type'=>'product',
             'body'=>[
                 'properties'=>[
-                  'po_number' => [
+                    'vendor_description' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
-                    'order_description' => [
+                    'sku' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
-                    'id' => [
-                        'type' => 'text',
-                        'analyzer' => "ngram_analyzer_with_filter",
-                    ],
-                    'notes' => [
-                        'type' => 'text',
-                        'analyzer' => "ngram_analyzer_with_filter",
-                    ],
-                    "location_name"=> [
+                    'item_description' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ]
                 ]
             ]
+
+
         ];
 
 
-        if ($this->search->indices()->exists(['index'=>'elastic_order'])) {
-            $this->search->indices()->delete(['index'=>'elastic_order']);
+        if ($this->search->indices()->exists(['index'=>'elastic'])) {
+            $this->search->indices()->delete(['index'=>'elastic']);
         }
 
         $this->search->indices()->create($param);
@@ -93,30 +87,14 @@ class ReindexOrderCommand extends Command
 
         //////////////////////////
 
-$orders=Order::get();
-    foreach ($orders as $model) {
-    if($model->date_received=='0000-00-00'){
-        $model->date_received='1978-01-01';
-    }
-            if($model->date_ordered=='0000-00-00'){
-                $model->date_ordered='1978-01-01';
-            }
 
-            $mas = $model->toSearchArray();
-            //dump(!null==($model->location));
-            if(!null==($model->location)){
-                dump($model->location->location_name);
-                $mas['location_name'] = $model->location->location_name;
-            }
-            else{
-                dump('F');
-            }
+        foreach (Product::get() as $model) {
 
             $this->search->index([
-                'index' => 'elastic_order',
-                'type' => 'order',
+                'index' => 'elastic',
+                'type' => 'product',
                 'id' => $model->id,
-                'body' => $mas,
+                'body' => $model->toSearchArray(),
             ]);
 
             // PHPUnit-style feedback

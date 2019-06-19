@@ -23,8 +23,9 @@ class ElasticsearchProductsRepository implements ProductsRepository
     public function searchOnElasticsearch($query){
         $instance = new Product;
         $items = $this->search->search([
-                'index' => 'elastic',
+                'index' => 'elastic_product',
                 'type' => 'product',
+                "size"=>200,
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[

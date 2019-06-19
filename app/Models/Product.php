@@ -286,56 +286,7 @@ FROM `products`
 
     public static function getRows( $args,$cond=null,$active=null,$sub_type=null, $is_api=false)
     {
-        //session_start();
-        if(isset($_SESSION['product_search'])){
-            $explode_string=explode('|',$_SESSION['product_search']);
-            $second_explode=explode(':',$explode_string[0]);
-            $elastic = function (ProductsRepository $repository)  {
-                if(isset($_SESSION['product_search'])){
-                    $explode_string=explode('|',$_SESSION['product_search']);
-                    //dump($explode_string);
-                    $result['vendor']=null;
-                    $result['prod_sub_type_id']=null;
-                    $result['prod_type_id']=null;
-                    foreach($explode_string as $k=>$param){
-                        $second_explode=explode(':',$param);
-                        switch($second_explode[0]){
-                            case 'search_all_fields':
-                                $main_search=$second_explode[2];
-                                break;
-                            case 'vendor_id':
-                                $result['vendor']=$second_explode[2];
-                                break;
-                            case 'prod_sub_type_id':
-                                $result['prod_sub_type_id']=$second_explode[2];
-                                break;
-                            case 'prod_type_id':
-                                $result['prod_type_id']=$second_explode[2];
-                                break;
 
-                        }
-                        //dump($second_explode);
-                    }
-                    //$second_explode=explode(':',$explode_string[0]);
-
-                }
-                if(empty($main_search)){
-                    unset($_SESSION['product_search']);
-                }
-                else{
-                    $result['products'] = $repository->search((string) $main_search);
-                    return $result;
-                }
-                return false;
-            };
-            $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
-            $el=new ElasticsearchProductsRepository($client);
-            $pre_products=$elastic($el);
-            $products=$pre_products['products']->where('vendor_id',intval($pre_products['vendor']))
-            ->where('prod_type_id',intval($pre_products['prod_type_id']));
-            $products=$products->all();
-
-        }
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
 
@@ -351,6 +302,115 @@ FROM `products`
             'sku'=>'',
             'vendor_description'=>'',
         ), $args ));
+        //session_start();
+        if(isset($_SESSION['product_search'])&& !empty($_SESSION['product_search'])){
+            $explode_string=explode('|',$_SESSION['product_search']);
+            dump($explode_string);
+            $second_explode=explode(':',$explode_string[0]);
+            $elastic = function (ProductsRepository $repository)  {
+                if(isset($_SESSION['product_search']) && !empty($_SESSION['product_search']) ){
+                    $explode_string=explode('|',$_SESSION['product_search']);
+                    //dump($explode_string);
+                    $result['vendor']=null;
+                    $result['prod_sub_type_id']=null;
+                    $result['prod_type_id']=null;
+                    $result['in_development']=null;
+                    $result['upc_barcode']=null;
+                    $result['inactive']=null;
+                    foreach($explode_string as $k=>$param){
+                        $second_explode=explode(':',$param);
+                        switch($second_explode[0]){
+                            case 'search_all_fields':
+                                $main_search=$second_explode[2];
+                                break;
+                            case 'vendor_id':
+                                $result['vendor']=$second_explode[2];
+                                break;
+                            case 'prod_sub_type_id':
+                                $result['prod_sub_type_id']=$second_explode[2];
+                                break;
+                            case 'prod_type_id':
+                                $result['prod_type_id']=$second_explode[2];
+                                break;
+                            case 'in_development':
+                                $result['in_development']=$second_explode[2];
+                                break;
+                            case 'upc_barcode':
+                            $result['upc_barcode']=$second_explode[2];
+                            break;
+                            case 'inactive':
+                                $result['inactive']=$second_explode[2];
+                                break;
+
+
+                        }
+                        //dump($second_explode);
+                    }
+                    //$second_explode=explode(':',$explode_string[0]);
+
+                }
+                if(empty($main_search)){
+                    unset($_SESSION['product_search']);
+                }
+                else{
+                    $result['products'] = $repository->search((string) $main_search);
+                    //dump('elastic',$result['products']);
+                    return $result;
+                }
+                return false;
+            };
+            $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+            $el=new ElasticsearchProductsRepository($client);
+            $pre_products=$elastic($el);
+
+            if($pre_products['products']!=null) {
+
+                if ($pre_products['vendor']) {
+
+                    $pre_products['products'] = $pre_products['products']->where('vendor_id', intval($pre_products['vendor']));
+                }
+                if ($pre_products['prod_type_id']) {
+                    $pre_products['products'] = $pre_products['products']->where('prod_type_id', intval($pre_products['prod_type_id']));
+                }
+                if ($pre_products['prod_sub_type_id']) {
+                    $pre_products['products'] = $pre_products['products']->where('prod_sub_type_id', intval($pre_products['prod_sub_type_id']));
+                }
+                if ($pre_products['in_development']) {
+                    $pre_products['products'] = $pre_products['products']->where('in_development', intval($pre_products['in_development']));
+                }
+                if ($pre_products['upc_barcode']) {
+                    $pre_products['products'] = $pre_products['products']->where('upc_barcode', $pre_products['upc_barcode']);
+                }
+                if ($pre_products['inactive']) {
+                    if($pre_products['inactive']==0 ||$pre_products['inactive']==1 ){
+                        $pre_products['products'] = $pre_products['products']->where('inactive', $pre_products['inactive']);
+                    }
+                    elseif($pre_products['inactive']==2){
+                        $pre_products['products'] = $pre_products['products']->where('status_id', 10);
+                    }
+
+                }
+
+
+                $products = $pre_products['products'];
+
+                //dump('products', $products);
+                $total = count($products/*$pre_products['orders']*/);
+                $search_total=$total;
+                //dump('total1=>',$total);
+                $offset = ($page - 1) * $limit;
+                if ($offset >= $total && $total != 0 && $limit != 0) {
+                    $page = ceil($total / $limit);
+                    $offset = ($page - 1) * $limit;
+                }
+                if ($total > 0) {
+                    $products = $products->chunk($limit);/*$pre_products['orders']*/
+                    $products = $products[$page - 1];
+                }
+
+            }
+        }
+
 
 
         if ($sort == 'prod_type_id' || $sort == 'prod_sub_type_id') {
@@ -428,7 +488,7 @@ FROM `products`
         }
 
         Log::info("Query : ".$select . " {$params}  {$groupConditions} {$orderConditional}  {$limitConditional} ");
-        if(isset($_SESSION['product_search'])){
+        if(isset($_SESSION['product_search'])&& !empty($_SESSION['product_search'])){
             var_dump($_SESSION['product_search']);
             $result=$products;
             unset($_SESSION['product_search']);
@@ -436,22 +496,30 @@ FROM `products`
         else{
         $result=\DB::select($select." {$params} {$groupConditions} {$orderConditional}  {$limitConditional} ");
     }
-
-        if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
+    if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
         $counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
         //total query becomes too huge
+
+        if(!isset($search_total)){
+            //dump('sesnon');
         if($table == "orders")
         {
             $total = 20000;
         }
         else
         {
+
             $total = \DB::select( $select. "
 				{$params} {$groupConditions} {$orderConditional}  ");
             $total = count($total);
         }
-        //$total = 1000;
+        }else{
+           // dump('here');
+            $total = $search_total;
+        }
 
+        //$total = 1000;
+        //dump('total2=>',$total);
         return $results = array('rows'=> $result , 'total' => $total);
 
     }

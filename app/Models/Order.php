@@ -175,12 +175,10 @@ class order extends Sximo
                     $pre_products['orders']=$pre_products['orders']->where('status_id',intval($pre_products['status_id']));
                 }
 
-                    $products=$pre_products['orders'];
-
-             /*   ->where('prod_type_id',intval($pre_products['prod_type_id']));*/
-
+            $products=$pre_products['orders'];
             $total=count($products/*$pre_products['orders']*/);
-            //dump('count=>',$total);
+            $search_total=$total;
+            //dump('total1=>',$total);
                 $offset = ($page - 1) * $limit;
                 if ($offset >= $total && $total != 0 && $limit != 0) {
                     $page = ceil($total/$limit);
@@ -198,24 +196,6 @@ class order extends Sximo
                 $products=$products[$page - 1];
             }
                 //dump('products',$products);
-
-
-
-   /*             foreach($products as $key=>$rs){
-                    $results = self::getProductInfo($rs->id);
-                    $info = '';
-                    foreach($results as $r){
-                        if(!isset($r->sku)){
-                            $sku = " (SKU: No Data) ";
-                        }else{
-                            $sku = " (SKU: ".$r->sku.")";
-                        }
-
-                        $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).$sku. ';';
-                    }
-                    $products[$key]->productInfo = $info;
-                }*/
-
 
         }
         }
@@ -321,10 +301,16 @@ class order extends Sximo
 
         Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $total= count($counter_select);
-        if($table=="img_uploads")
-        {
-            $total="";
+
+
+        if(!isset($search_total)) {
+            $total = count($counter_select);
+            if ($table == "img_uploads") {
+                $total = "";
+            }
+        }else{
+            //dump('here');
+            $total = $search_total;
         }
 
         $offset = ($page - 1) * $limit;
@@ -353,6 +339,8 @@ class order extends Sximo
         } else {
             $key = $table . "." . $key;
         }
+
+        //dump('total=>',$total);
         return $results = array('rows' => $result, 'total' => $total);
     }
 

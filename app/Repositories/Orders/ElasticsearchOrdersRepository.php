@@ -23,9 +23,9 @@ class ElasticsearchOrdersRepository implements OrdersRepository
     public function searchOnElasticsearch($query){
         $instance = new Order;
         $items = $this->search->search([
-                'index' => 'elastic',
+                'index' => 'elastic_order',
                 'type' => 'order',
-                "size"=>100,
+                "size"=>200,
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[

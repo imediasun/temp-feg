@@ -46,7 +46,7 @@ class ReindexCommand extends Command
         ];
 
         $param = [
-            'index' => 'elastic',
+            'index' => 'elastic_product',
             'body' => [
                 'settings' => $setting,
             ]
@@ -54,7 +54,7 @@ class ReindexCommand extends Command
 
 
         $mapping = [
-            'index' =>'elastic',
+            'index' =>'elastic_product',
             'type'=>'product',
             'body'=>[
                 'properties'=>[
@@ -77,8 +77,8 @@ class ReindexCommand extends Command
         ];
 
 
-        if ($this->search->indices()->exists(['index'=>'elastic'])) {
-            $this->search->indices()->delete(['index'=>'elastic']);
+        if ($this->search->indices()->exists(['index'=>'elastic_product'])) {
+            $this->search->indices()->delete(['index'=>'elastic_product']);
         }
 
         $this->search->indices()->create($param);
@@ -91,7 +91,7 @@ class ReindexCommand extends Command
         foreach (Product::get() as $model) {
 
             $this->search->index([
-                'index' => 'elastic',
+                'index' => 'elastic_product',
                 'type' => 'product',
                 'id' => $model->id,
                 'body' => $model->toSearchArray(),
