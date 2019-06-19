@@ -6,7 +6,7 @@ use App\Models\Order;
 use Elasticsearch\Client;
 use Illuminate\Database\Eloquent\Collection;
 
-class ElasticsearchOrdersRepository implements ProductsRepository
+class ElasticsearchOrdersRepository implements OrdersRepository
 {
     private $search;
 
@@ -17,44 +17,40 @@ class ElasticsearchOrdersRepository implements ProductsRepository
     public function search($query = "")
     {
         $items = $this->searchOnElasticsearch($query);
-
         return $this->buildCollection($items);
     }
 
-    private function searchOnElasticsearch($query)
-    {
+    public function searchOnElasticsearch($query){
         $instance = new Order;
         $items = $this->search->search([
-            'index' => $instance->getSearchIndex(),
-            'type' => $instance->getSearchType(),
+                'index' => 'elastic',
+                'type' => 'order',
+                "size"=>100,
+                'body'=>[
+                    'query'=>[
+                        "multi_match"=>[
+                            "fields"=>["po_number^5","location_name^4","id^3","notes^2"],
+                            "query"=>$query
+                        ]
+                    ],
+                    "highlight" => [
+                        "pre_tags"  => "<b style='color:#da4f49'>",
+                        "post_tags" => "</b>",
+                        "fields" => [
+                            "po_number" => new \stdClass(),
+                            "order_description"=> new \stdClass(),
+                            "id" => new \stdClass(),
+                            "notes" => new \stdClass(),
+                            "location_name" => new \stdClass()
 
-            'body' => [
-                "query" => [
-                       "bool" => [
-                           "should" => [
-                            ["regexp" => [
-                               "tags" => [
-                                   "value" => ".{2,8}" . $query . ".*",
-                            ]
-                            ],
-                                ],
-                            ["wildcard" => [
-                               "tags" => [
-                                   "value" => "*" . $query . "*",
-                                   "boost" => 1.0,
-                                   "rewrite" => "constant_score"
-                                    ]
-                                ]
-                            ]
-                        ]],
-                    ], "highlight" => [
-                    "fields" => [
-                        "tags" => ["type" => "plain"]
-                    ]
-                ]
-          ]]);
+                        ]
+                    ]]]
+
+
+        );
 
         return $items;
+
     }
 
     private function buildCollection(array $items)
@@ -73,12 +69,34 @@ class ElasticsearchOrdersRepository implements ProductsRepository
          *
          * And we only care about the _source of the documents.
          */
+
+
+        foreach($items['hits']['hits'] as $k=>$value){
+            if(is_array($value)){
+
+                foreach($value as $key=>$val) {
+                    //dump('=>',$val['highlight']);
+                    if ($key == 'highlight') {
+                        //dump($val);
+                        foreach($val as $kr=>$vs){
+                            $items['hits']['hits'][$k]['_source'][$kr]=$val[$kr][0];
+                        }
+
+                    }
+                }
+            }
+
+        }
+
+        //dump('===',$items['hits']);
+
         $hits = array_pluck($items['hits']['hits'], '_source') ?: [];
 
         $sources = array_map(function ($source) {
             // The hydrate method will try to decode this
             // field but ES gives us an array already.
-            $source['tags'] = json_encode($source['tags']);
+
+            //$source['vendor_description'] = json_encode($source['vendor_description']);
             return $source;
         }, $hits);
 

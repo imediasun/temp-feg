@@ -154,6 +154,7 @@ usort($tableGrid, "SiteHelpers::_sort");
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
 					 <?php  foreach ($tableGrid as $field) :
+                           // dump($field['field']);
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
                             if($row->$field['field'] == '0000-00-00')
@@ -169,6 +170,11 @@ usort($tableGrid, "SiteHelpers::_sort");
 						 	 $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                               <?
+                                     if($field['field']=='location_id' && isset($row->location_name)){
+                                         $value=$row->location_name;
+                                     }
+                               ?>
                                 @if($field['field']=='notes' && !empty($row->notes))
 							                <?php echo preg_replace('/^(<br\s*\/?>)*|(<br\s*\/?>)*$/i', '',$value); ?>
                                     @else

@@ -277,6 +277,10 @@ class OrderController extends Controller
         }
 
         session_start();
+        if(isset($_GET['search'])){
+            $_SESSION['order_search']=urldecode($_GET['search']);
+        }
+
         $_SESSION['searchParamsForOrder'] = \Session::get('searchParams');
         // echo \Session::get('searchParams');
         if (Input::has('config_id')) {
@@ -362,7 +366,6 @@ class OrderController extends Controller
         // \Session::put('filter_before_redirect',false);
         //\Session::put('params',$params);
         $results = $this->model->getRows($params, $order_selected);
-
         foreach ($results['rows'] as &$rs) {
             $result = $this->model->getProductInfo($rs->id);
             $info = '';
@@ -391,8 +394,9 @@ class OrderController extends Controller
             ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('order/data');
         $rows = $results['rows'];
+
         foreach ($rows as $index => $data) {
-            if ($data->date_ordered == '0000-00-00')
+            if ($data->date_ordered == '0000-00-00'||$data->date_ordered == '1978-01-01')
             {
                 $rows[$index]->date_ordered = $data->date_ordered;
             }else{
@@ -425,7 +429,7 @@ class OrderController extends Controller
         }
 
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
-
+        //dump('$rows=>',$rows);
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
         // Build Pagination
