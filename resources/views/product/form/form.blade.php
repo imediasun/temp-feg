@@ -649,11 +649,7 @@
                             </label>
 
                             <div class="col-md-6">
-                                <?php
-                                $fieldMeta = ['class' => 'form-control', 'placeholder' => '',
-                                    'readonly'=>true];
-                                ?>
-                                {!! Form::text('product_type_excluded_data', $row['product_type_excluded_data'],$fieldMeta) !!}
+                            <input type="text" readonly class="form-control" value="{{ $row['product_type_excluded_data'] }}" />
                             </div>
                             <div class="col-md-2">
 
