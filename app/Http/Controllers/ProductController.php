@@ -590,6 +590,8 @@ class ProductController extends Controller
         $variations = [];
         $row = $this->model->find($id);
         $_row = $this->model->getRow($id);
+        $row2=clone $_row;
+        $_row = $this->model->setGroupsAndLocations($row2,true,true);
         $row->excluded_locations_and_groups=$_row->excluded_locations_and_groups;
         $row->product_type_excluded_data=$_row->product_type_excluded_data;
         if ($row) {
