@@ -21,7 +21,9 @@
         "league/oauth2-google": "2.*",
         "paragonie/random_compat": "^2.0",
         "google/apiclient": "^2.0",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "doctrine/inflector": "1.1.0",
+        "elasticsearch/elasticsearch": "^5.4"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

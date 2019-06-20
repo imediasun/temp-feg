@@ -628,19 +628,37 @@
 
                 @if($userBelongsToExemptedUsersList)
                 <div class="form-group">
-                    <label for="Excluded Locations and Groups" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Excluded Locations and Groups', (isset($fields['excluded_locations_and_groups']['language'])?
-                        $fields['excluded_locations_and_groups']['language'] : array())) !!}
-                    </label>
+                            <label for="Excluded Locations and Groups" class=" control-label col-md-4 text-left">
+                                {!! SiteHelpers::activeLang('Excluded Locations and Groups', (isset($fields['excluded_locations_and_groups']['language'])?
+                                $fields['excluded_locations_and_groups']['language'] : array())) !!}
+                            </label>
 
-                    <div class="col-md-6">
-                        <select name='excluded_locations_and_groups[]' data-seprate='true'
-                                id='excluded_locations_and_groups' class='select2' multiple></select>
-                    </div>
-                    <div class="col-md-2">
+                            <div class="col-md-6">
+                                <select name='excluded_locations_and_groups[]' data-seprate='true'
+                                        id='excluded_locations_and_groups' class='select2' multiple></select>
+                            </div>
+                            <div class="col-md-2">
 
-                    </div>
-                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Excluded Locations and Groups" class=" control-label col-md-4 text-left">
+                                {!! SiteHelpers::activeLang('Excluded Location and Group for Product Type', (isset($fields['product_type_excluded_data']['language'])?
+                                $fields['product_type_excluded_data']['language'] : array())) !!}
+                            </label>
+
+                            <div class="col-md-6">
+                                <?php
+                                $fieldMeta = ['class' => 'form-control', 'placeholder' => '',
+                                    'readonly'=>true];
+                                ?>
+                                {!! Form::text('product_type_excluded_data', $row['product_type_excluded_data'],$fieldMeta) !!}
+                            </div>
+                            <div class="col-md-2">
+
+                            </div>
+                        </div>
                 @endif
 
                 <div class="form-group  ">
