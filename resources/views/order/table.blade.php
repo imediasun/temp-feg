@@ -174,6 +174,9 @@ usort($tableGrid, "SiteHelpers::_sort");
                                      if($field['field']=='location_id' && isset($row->location_name)){
                                          $value=$row->location_name;
                                      }
+                                     if($field['field']=='vendor_id' && isset($row->vendor_name)){
+                                         $value=$row->vendor_name;
+                                     }
                                ?>
                                 @if($field['field']=='notes' && !empty($row->notes))
 							                <?php echo preg_replace('/^(<br\s*\/?>)*|(<br\s*\/?>)*$/i', '',$value); ?>

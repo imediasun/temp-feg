@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Repositories\Orders;
+namespace App\Repositories\Shopfegrequeststore;
 
-use App\Models\Order;
+use App\Models\Shopfegrequeststore;
 use Elasticsearch\Client;
 use Illuminate\Database\Eloquent\Collection;
 
-class ElasticsearchOrdersRepository implements OrdersRepository
+class ElasticsearchShopfegrequeststoreRepository implements ShopfegrequeststoreRepository
 {
     private $search;
 
@@ -21,15 +21,15 @@ class ElasticsearchOrdersRepository implements OrdersRepository
     }
 
     public function searchOnElasticsearch($query){
-        $instance = new Order;
+        $instance = new Shopfegrequeststore;
         $items = $this->search->search([
-                'index' => 'elastic_order',
-                'type' => 'order',
+                'index' => 'elastic_shopfegrequeststore',
+                'type' => 'shopfegrequeststore',
                 "size"=>200,
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["po_number^5","location_name^4","vendor_name^3","id^2","notes^1"],
+                            "fields"=>["item_description^5","vendor_name^4","sku^3"],
                             "query"=>$query
                         ]
                     ],
@@ -37,11 +37,8 @@ class ElasticsearchOrdersRepository implements OrdersRepository
                         "pre_tags"  => "<b style='color:#da4f49'>",
                         "post_tags" => "</b>",
                         "fields" => [
-                            "po_number" => new \stdClass(),
-                            "order_description"=> new \stdClass(),
-                            "id" => new \stdClass(),
-                            "notes" => new \stdClass(),
-                            "location_name" => new \stdClass(),
+                            "item_description" => new \stdClass(),
+                            "sku"=> new \stdClass(),
                             "vendor_name" => new \stdClass()
 
                         ]
@@ -102,6 +99,6 @@ class ElasticsearchOrdersRepository implements OrdersRepository
         }, $hits);
 
         // We have to convert the results array into Eloquent Models.
-        return Order::hydrate($sources);
+        return Shopfegrequeststore::hydrate($sources);
     }
 }

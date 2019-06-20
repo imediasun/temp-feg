@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\ReindexCommand::class,
         \App\Console\Commands\ReindexOrderCommand::class,
+        \App\Console\Commands\ReindexShopfegrequeststoreCommand::class,
         \App\Console\Commands\Inspire::class,
         \App\Console\Commands\ReadComment::class,
         \App\Console\Commands\AutoCloseOrder::class,

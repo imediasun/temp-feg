@@ -2,14 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Product;
+use App\Models\Shopfegrequeststore;
 use Elasticsearch\Client;
 use Illuminate\Console\Command;
 use function print_r;
 
-class ReindexCommand extends Command
+class ReindexShopfegrequeststoreCommand extends Command
 {
-    protected $name = "search:reindex";
+    protected $name = "search:reindex_shopfegrequeststore";
     protected $description = "Indexes all articles to elasticsearch";
     private $search;
 
@@ -46,7 +46,7 @@ class ReindexCommand extends Command
         ];
 
         $param = [
-            'index' => 'elastic',
+            'index' => 'elastic_shopfegrequeststore',
             'body' => [
                 'settings' => $setting,
             ]
@@ -54,11 +54,11 @@ class ReindexCommand extends Command
 
 
         $mapping = [
-            'index' =>'elastic',
-            'type'=>'product',
+            'index' =>'elastic_shopfegrequeststore',
+            'type'=>'shopfegrequeststore',
             'body'=>[
                 'properties'=>[
-                    'vendor_description' => [
+                   'item_description' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
@@ -66,19 +66,17 @@ class ReindexCommand extends Command
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
-                    'item_description' => [
+                    "vendor_name"=> [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ]
                 ]
             ]
-
-
         ];
 
 
-        if ($this->search->indices()->exists(['index'=>'elastic'])) {
-            $this->search->indices()->delete(['index'=>'elastic']);
+        if ($this->search->indices()->exists(['index'=>'elastic_shopfegrequeststore'])) {
+            $this->search->indices()->delete(['index'=>'elastic_shopfegrequeststore']);
         }
 
         $this->search->indices()->create($param);
@@ -87,14 +85,30 @@ class ReindexCommand extends Command
 
         //////////////////////////
 
+$orders=Shopfegrequeststore::get();
+    foreach ($orders as $model) {
+/*    if($model->date_received=='0000-00-00'){
+        $model->date_received='1978-01-01';
+    }
+            if($model->date_ordered=='0000-00-00'){
+                $model->date_ordered='1978-01-01';
+            }*/
 
-        foreach (Product::get() as $model) {
+            $mas = $model->toSearchArray();
+            //dump(!null==($model->location));
+            if(!null==($model->vendor)){
+                //dump($model->vendor->vendor_name);
+                $mas['vendor_name'] = $model->vendor->vendor_name;
+            }
+            else{
+                dump('F');
+            }
 
             $this->search->index([
-                'index' => 'elastic',
-                'type' => 'product',
+                'index' => 'elastic_shopfegrequeststore',
+                'type' => 'shopfegrequeststore',
                 'id' => $model->id,
-                'body' => $model->toSearchArray(),
+                'body' => $mas,
             ]);
 
             // PHPUnit-style feedback

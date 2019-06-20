@@ -77,6 +77,10 @@ class ReindexOrderCommand extends Command
                     "location_name"=> [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    "vendor_name"=> [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
                     ]
                 ]
             ]
@@ -105,12 +109,13 @@ $orders=Order::get();
             $mas = $model->toSearchArray();
             //dump(!null==($model->location));
             if(!null==($model->location)){
-                dump($model->location->location_name);
+                //dump($model->location->location_name);
                 $mas['location_name'] = $model->location->location_name;
             }
-            else{
-                dump('F');
-            }
+        if(!null==($model->vendor)){
+            //dump($model->vendor->vendor_name);
+            $mas['vendor_name'] = $model->vendor->vendor_name;
+        }
 
             $this->search->index([
                 'index' => 'elastic_order',

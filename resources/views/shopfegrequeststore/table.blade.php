@@ -149,6 +149,13 @@
                             @else
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+
+                                <?
+                                if($field['field']=='vendor_id' && isset($row->vendor_name)){
+                                    $value=$row->vendor_name;
+                                }
+                                ?>
+
                                 @if($field['field']=='img')
                                     <?php
                                     echo SiteHelpers::showUploadedFile($value, '/uploads/products/', 50, false,0,true,$row->details);
