@@ -58,6 +58,10 @@ class ReindexCommand extends Command
             'type'=>'product',
             'body'=>[
                 'properties'=>[
+                    'item_description' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
                     'vendor_description' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
@@ -66,10 +70,7 @@ class ReindexCommand extends Command
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
-                    'item_description' => [
-                        'type' => 'text',
-                        'analyzer' => "ngram_analyzer_with_filter",
-                    ]
+
                 ]
             ]
 
