@@ -94,6 +94,9 @@ class ProductsubtypeController extends Controller
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'productsubtype')->pluck('module_id');
         $this->data['module_id'] = $module_id;
+        if(isset($_GET['search'])){
+            $_SESSION['productsubtype_search']=urldecode($_GET['search']);
+        }
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
         } elseif (\Session::has('config_id')) {

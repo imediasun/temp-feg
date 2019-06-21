@@ -147,6 +147,13 @@
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+
+                                <?
+                                if($field['field']=='request_type_id' && isset($row->order_type)){
+                                    $value=$row->order_type;
+                                }
+                                ?>
+
                                 {!! str_replace("\'", "'",$value) !!}
                             </td>
                         @endif
