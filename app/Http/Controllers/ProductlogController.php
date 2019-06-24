@@ -50,6 +50,9 @@ class ProductlogController extends Controller {
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'productlog')->pluck('module_id');
         $this->data['module_id'] = $module_id;
+        if(isset($_GET['search'])){
+            $_SESSION['productreservedqtylog_search']=urldecode($_GET['search']);
+        }
         if (Input::has('config_id')) {
         $config_id = Input::get('config_id');
         } elseif (\Session::has('config_id')) {

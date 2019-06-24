@@ -8,10 +8,12 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
 use Illuminate\Support\Facades\DB;
+
 use Log;
 
 class ReservedQtyLog extends Sximo
 {
+
     protected $table = 'reserved_qty_log';
     protected $primaryKey = 'id';
     const TYPE = 1;
@@ -41,4 +43,6 @@ class ReservedQtyLog extends Sximo
         $attributes['adjustment_type']="Positive";
         $this->insertRow($attributes, $id);
     }
+
+
 }
