@@ -58,6 +58,10 @@ class ReindexShopfegrequeststoreCommand extends Command
             'type'=>'shopfegrequeststore',
             'body'=>[
                 'properties'=>[
+                    'vendor_description' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
                    'item_description' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",

@@ -29,7 +29,7 @@ class ElasticsearchShopfegrequeststoreRepository implements ShopfegrequeststoreR
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["item_description^5","vendor_name^4","sku^3"],
+                            "fields"=>["vendor_description^6","item_description^5","vendor_name^4","sku^3"],
                             "query"=>$query
                         ]
                     ],
@@ -37,6 +37,7 @@ class ElasticsearchShopfegrequeststoreRepository implements ShopfegrequeststoreR
                         "pre_tags"  => "<b style='color:#da4f49'>",
                         "post_tags" => "</b>",
                         "fields" => [
+                            "vendor_description" => new \stdClass(),
                             "item_description" => new \stdClass(),
                             "sku"=> new \stdClass(),
                             "vendor_name" => new \stdClass()
