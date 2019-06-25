@@ -111,7 +111,7 @@ class managefegrequeststore extends Sximo
                         dump($self->product->id);
                         $vendor=\App\Models\Vendor::where('id',$self->product->vendor_id)->first();
                         dump($vendor);
-                        $result['managefegrequeststore'][$k]->vendor_id=$self->product->_vendor_id;
+                        $result['managefegrequeststore'][$k]->vendor_id=$self->product->vendor_id;
                         dump($result['managefegrequeststore'][$k]);
                     }
 

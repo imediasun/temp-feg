@@ -85,7 +85,7 @@ class ReindexManagefegrequeststoreCommand extends Command
 
         //////////////////////////
 
-$orders=Managefegrequeststore::get();
+$orders=Managefegrequeststore::with('product')->get();
     foreach ($orders as $model) {
 
         if($model->request_date=='0000-00-00'){
@@ -93,9 +93,14 @@ $orders=Managefegrequeststore::get();
         }
             $mas = $model->toSearchArray();
             //dump(!null==($model->location));
-            if(!null==($model->vendor_item)){
-                dump($model->vendor_item->vendor_name);
-                $mas['vendor_name'] = $model->vendor_item->vendor_name;
+        dump($model);
+        if($model->product){
+            $vendor=\App\Models\Vendor::where('id',$model->product->vendor_id)->first();
+        }
+
+            if(isset($vendor) && !null==($vendor)){
+                dump($vendor->vendor_name);
+                $mas['vendor_name'] = $vendor->vendor_name;
             }
         if(!null==($model->product)){
             //dump($model->product->vendor_description);
