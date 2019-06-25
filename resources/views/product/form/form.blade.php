@@ -649,7 +649,7 @@
                             </label>
 
                             <div class="col-md-6">
-                            <input type="text" readonly class="form-control" value="{{ $row['product_type_excluded_data'] }}" />
+                                <input type="text" readonly class="form-control" value="{{ (isset($row['product_type_excluded_data'])) ? $row['product_type_excluded_data'] : null }}" />
                             </div>
                             <div class="col-md-2">
 
