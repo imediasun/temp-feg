@@ -69,8 +69,6 @@ class managefegrequeststore extends Sximo
             'global' => 1
         ), $args));
 
-        //dump($args);
-
         if(isset($_SESSION['managefegrequeststore_search'])&& !empty($_SESSION['managefegrequeststore_search'])){
             $explode_string=explode('|',$_SESSION['managefegrequeststore_search']);
             $second_explode=explode(':',$explode_string[0]);
@@ -96,9 +94,7 @@ class managefegrequeststore extends Sximo
 
 
                         }
-                        //dump($second_explode);
                     }
-                    //$second_explode=explode(':',$explode_string[0]);
 
                 }
 
@@ -109,10 +105,8 @@ class managefegrequeststore extends Sximo
                     $result['managefegrequeststore'] = $repository->search((string) $main_search);
                     foreach($result['managefegrequeststore']as $k=>$v){
                         $self=self::where('id',$v->id)->with('product')->first();
-                        //dump($self->product->id);
                         $vendor=\App\Models\Vendor::where('id',$self->product->vendor_id)->first();
                         $result['managefegrequeststore'][$k]->vendor_id=$self->product->vendor_id;
-                        //dump($result['managefegrequeststore'][$k]);
                     }
 
 
@@ -128,18 +122,18 @@ class managefegrequeststore extends Sximo
             if($pre_products['managefegrequeststore']!=null){
 
                 if($pre_products['location']) {
-                    //dump('intvalinvoice_verified',intval($pre_products['invoice_verified']));
                     $pre_products['managefegrequeststore'] = $pre_products['managefegrequeststore']->where('location_id', intval($pre_products['location']));
                 }
                 if(!empty($pre_products['vendor'])){
                    // $pre_products['managefegrequeststore']=$pre_products['managefegrequeststore']->whereIn('vendor_id',$pre_products['vendor']);
 
-
                     $products=clone($pre_products['managefegrequeststore']);
                     $pre_products['managefegrequeststore']->map(function ($value, $key) use($pre_products,$products) {
                         if(in_array($value['vendor_id'],$pre_products['vendor'])){
-                            $products->$key= $value;
+                           $products[$key]= $value;
                         }
+                        else{unset($products[$key]);}
+
 
                     });
 
