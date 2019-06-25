@@ -591,9 +591,11 @@ class ProductController extends Controller
         $row = $this->model->find($id);
         $_row = $this->model->getRow($id);
         $row2=clone $_row;
-        $_row = $this->model->setGroupsAndLocations($row2,true,true);
-        $row->excluded_locations_and_groups=$_row->excluded_locations_and_groups;
-        $row->product_type_excluded_data=$_row->product_type_excluded_data;
+        $_row2 = $this->model->setGroupsAndLocations($_row,true,true);
+        if($_row2){
+            $row->excluded_locations_and_groups=$_row2->excluded_locations_and_groups;
+            $row->product_type_excluded_data=$_row2->product_type_excluded_data;
+        }
         if ($row) {
             $this->data['row'] = $row;
             $columns = ['id','prod_type_id','prod_sub_type_id','retail_price','ticket_value','expense_category','is_default_expense_category','exclude_export'];
