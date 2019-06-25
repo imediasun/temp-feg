@@ -117,7 +117,8 @@
                         @if($setting['view-method']=='expand') <td> </td> @endif
                         @foreach ($tableGrid as $t)
                             @if(isset($t['inline']) && $t['inline'] =='1')
-                        <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
+                        <?php
+                        $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
                         <td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
                             {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
@@ -159,7 +160,18 @@
             <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
                                     <td align="<?php echo $field['align']; ?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                       @if($field['field'] == 'price')
+                                        <?
+                                        if($field['field']=='description' && isset($row->item_name)){
+                                            $value=$row->item_name;
+                                        }
+                                        if($field['field']=='vendor_id' && isset($row->vendor_name)){
+                                            $value=$row->vendor_name;
+                                        }
+                                        ?>
+
+
+
+                                        @if($field['field'] == 'price')
                                             {!! CurrencyHelpers::formatPrice($value, App\Models\Order::ORDER_PERCISION ) !!}
                                         @else
                                             {!! $value !!}
