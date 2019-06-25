@@ -639,11 +639,8 @@ WHERE orders.is_api_visible = 1
         return $filteredProducts;
     }
 
-    public function setGroupsAndLocations($rows,$exportData = 0)
+    public function helperGroupsAndLocation($row,$exportData)
     {
-
-        $dataArray = [];
-        foreach ($rows as $row) {
             if(isset($row->id)) {
                 $locationGroup = $locations = '';
                 $selectedGroups = FEGDBRelationHelpers::getCustomRelationRecords($row->id, self::class, Locationgroups::class, 1, true, false)->pluck('locationgroups_id');
@@ -705,11 +702,27 @@ WHERE orders.is_api_visible = 1
                     }
                     $row->product_type_excluded_data = $productTypedata;
                 }
-                $dataArray[] = $row;
+
+
+            return $row;
             }
+    }
+
+
+    public function setGroupsAndLocations($rows,$exportData = 0, $single=false)
+    {
+        $dataArray = [];
+        if($single==false){
+            foreach ($rows as $row) {
+                $dataArray[] =$this->helperGroupsAndLocation($row,$exportData);
+            }
+        }
+        else{
+            $dataArray =$this->helperGroupsAndLocation($rows,$exportData);
         }
         return $dataArray;
     }
+
     public static function subQueriesSelect(){
        $productLabelNewDays = (object) \FEGHelp::getOption('product_label_new', '0', false, true, true);
         $productLabelBackinstockDays = (object) \FEGHelp::getOption('product_label_backinstock', '0', false, true, true);
