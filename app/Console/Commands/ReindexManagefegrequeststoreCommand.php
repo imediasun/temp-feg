@@ -93,7 +93,6 @@ $orders=Managefegrequeststore::with('product')->get();
         }
             $mas = $model->toSearchArray();
             //dump(!null==($model->location));
-        dump($model);
         if($model->product){
             $vendor=\App\Models\Vendor::where('id',$model->product->vendor_id)->first();
         }

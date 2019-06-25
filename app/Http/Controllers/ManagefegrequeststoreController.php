@@ -185,7 +185,6 @@ class ManagefegrequeststoreController extends Controller
 
             $module_id = \DB::table('tb_module')->where('module_name', '=', 'managefegrequeststore')->pluck('module_id');
             $this->data['module_id'] = $module_id;
-
             if(isset($_GET['search'])){
                 $_SESSION['managefegrequeststore_search']=urldecode($_GET['search']);
             }

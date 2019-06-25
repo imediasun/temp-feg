@@ -34,8 +34,6 @@ class managefegrequeststore extends Sximo
     }
 
     public function vendor_item(){
-       /* return $this->belongsTo('App\Models\Product', 'id', 'vendor_id','')
-            ->join('vendor', 'vendor.id', '=', 'products.vendor_id');*/
         return $this->hasManyThrough("App\Models\Product", "App\Models\Vendor",'id' , 'vendor_id','product_id');
     }
     public static function querySelect()
@@ -79,8 +77,9 @@ class managefegrequeststore extends Sximo
             $elastic = function (ManagefegrequeststoreRepository $repository)  {
                 if(isset($_SESSION['managefegrequeststore_search'])){
                     $explode_string=explode('|',$_SESSION['managefegrequeststore_search']);
-                    dump($explode_string);
+                    //dump($explode_string);
                     $result['vendor']=null;
+                    $result['location']=null;
                     foreach($explode_string as $k=>$param){
                         $second_explode=explode(':',$param);
                         switch($second_explode[0]){
@@ -89,8 +88,10 @@ class managefegrequeststore extends Sximo
                                 break;
                             case 'vendor_id':
                                 $sec_res_search_string=explode(',',$second_explode[2]);
-                                dump($sec_res_search_string);
-                                $result['vendor']=$sec_res_search_string;
+                                   $result['vendor']=$sec_res_search_string;
+                                break;
+                            case 'location_id':
+                                $result['location']=$second_explode[2];
                                 break;
 
 
@@ -108,11 +109,10 @@ class managefegrequeststore extends Sximo
                     $result['managefegrequeststore'] = $repository->search((string) $main_search);
                     foreach($result['managefegrequeststore']as $k=>$v){
                         $self=self::where('id',$v->id)->with('product')->first();
-                        dump($self->product->id);
+                        //dump($self->product->id);
                         $vendor=\App\Models\Vendor::where('id',$self->product->vendor_id)->first();
-                        dump($vendor);
                         $result['managefegrequeststore'][$k]->vendor_id=$self->product->vendor_id;
-                        dump($result['managefegrequeststore'][$k]);
+                        //dump($result['managefegrequeststore'][$k]);
                     }
 
 
@@ -126,6 +126,11 @@ class managefegrequeststore extends Sximo
             $pre_products=$elastic($el);
 
             if($pre_products['managefegrequeststore']!=null){
+
+                if($pre_products['location']) {
+                    //dump('intvalinvoice_verified',intval($pre_products['invoice_verified']));
+                    $pre_products['managefegrequeststore'] = $pre_products['managefegrequeststore']->where('location_id', intval($pre_products['location']));
+                }
                 if(!empty($pre_products['vendor'])){
                    // $pre_products['managefegrequeststore']=$pre_products['managefegrequeststore']->whereIn('vendor_id',$pre_products['vendor']);
 
@@ -138,7 +143,8 @@ class managefegrequeststore extends Sximo
 
                     });
 
-                }else{$products=$pre_products['managefegrequeststore'];}
+                }
+                else{$products=$pre_products['managefegrequeststore'];}
                 $total=count($products/*$pre_products['orders']*/);
                 $search_total=$total;
                 //dump('total1=>',$total);
@@ -158,7 +164,7 @@ class managefegrequeststore extends Sximo
                     $products = $products->chunk($limit);/*$pre_products['orders']*/
                     $products=$products[$page - 1];
                 }
-                dump('products1',$products);
+                //dump('products1',$products);
 
             }
         }
@@ -291,7 +297,6 @@ class managefegrequeststore extends Sximo
         if(isset($_SESSION['managefegrequeststore_search']) && !empty($_SESSION['managefegrequeststore_search'])){
             //var_dump('ses=>',$_SESSION['order_search']);
             if(isset($products)){
-                dump('products',$products);
                 $result=$products;}
             unset($_SESSION['managefegrequeststore_search']);
         }
@@ -743,7 +748,7 @@ class managefegrequeststore extends Sximo
             ON vendor.id = products.vendor_id
           LEFT JOIN location
             ON location.id = requests.location_id
-            WHERE `status_id` = 1
+            WHERE requests.status_id = 1
                 AND blocked_at IS NULL AND location.active = 1  '.$queryWhere.' 
             GROUP BY order_type,location_id,vendor_id
             ORDER BY order_type.order_type,requests.location_id,vendor.vendor_name ASC limit 1';
