@@ -1,4 +1,5 @@
-<?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<?php
+usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
 	<div class="sbox-title"> 
 		<h5> <i class="fa fa-table"></i> </h5>
@@ -98,8 +99,13 @@
 			  </tr>
 			  @endif
 			
-           		<?php foreach ($rowData as $row) : 
-           			  $id = $row->id;
+           		<?php foreach ($rowData as $row) :
+                if($row->created_at instanceof \Carbon\Carbon){
+                    //var_dump( $row->created_at->toDateString());
+                    $row->created_at=$row->created_at->toDateString();
+                    $row->updated_at=$row->created_at->toDateString();
+                }
+         			  $id = $row->id;
            		?>
             <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
                 @endif id="form-{{ $row->id }}"
@@ -115,40 +121,47 @@
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('vendor/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
 					 <?php foreach ($tableGrid as $field) :
-					 	if($field['view'] =='1') : 
+
+					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
+					 if($field['field']!='created_at' || $field['field']!='updated_at'){
+					     //dump($row->$field['field']);
+                         $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
+                     }
+
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
-						 	@if(SiteHelpers::filterColumn($limited ))
-								@if($field['field']=='status')
-									<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-										<input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif 	data-size="mini" data-animate="true"
-									   		data-on-text="Active" data-field="status" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
-									   		id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
-									</td>
-                                @elseif($field['field']=='is_export_product_in_development')
-                                    <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                        <input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif 	data-size="mini" data-animate="true"
-                                               data-on-text="Yes" data-field="is_export_product_in_development" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
-                                               id="is_export_product_in_development_toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
-                                    </td>
-								@elseif($field['field']=='hide')
-									<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-										<input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif 	data-size="mini" data-animate="true"
-											   data-on-text="Yes" data-field="hide" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
-											   id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
-									</td>
-                                @elseif($field['field']=='is_fedex_enabled')
-                                    <td>{{$value==1?'Yes':'No'}}</td>
-								@else
-									<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-										{!! $value !!}
-								 	</td>
-								@endif
-							@endif	
-						 <?php endif;					 
-						endforeach; 
+                        @if(SiteHelpers::filterColumn($limited ))
+
+                            @if($field['field']=='status')
+                                <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+
+                                    <input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif 	data-size="mini" data-animate="true"
+                                           data-on-text="Active" data-field="status" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+                                           id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+                                </td>
+                            @elseif($field['field']=='is_export_product_in_development')
+                                <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                    <input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif 	data-size="mini" data-animate="true"
+                                           data-on-text="Yes" data-field="is_export_product_in_development" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+                                           id="is_export_product_in_development_toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+                                </td>
+                            @elseif($field['field']=='hide')
+                                <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                    <input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif 	data-size="mini" data-animate="true"
+                                           data-on-text="Yes" data-field="hide" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+                                           id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+                                </td>
+                            @elseif($field['field']=='is_fedex_enabled')
+                                <td>{{$value==1?'Yes':'No'}}</td>
+                            @else
+                                <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                    {!! $value !!}
+                                </td>
+                            @endif
+                        @endif
+						 <?php endif;
+						endforeach;
 					  ?>
 
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
