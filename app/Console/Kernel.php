@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\RefreshOAuthToken::class,
         \App\Console\Commands\ResetEmailsToAllActiveUsers::class,
         \App\Console\Commands\EnableBlockedOrderItems::class,
-        \App\Console\Commands\RestorePONumber::class,
+        //\App\Console\Commands\RestorePONumber::class,
         \App\Console\Commands\CheckStuff::class,
         \App\Console\Commands\CheckNetSuiteApi::class,
         \App\Console\Commands\InjectFieldToModule::class,
@@ -58,7 +58,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('create:dummy_order')->cron('*/30 * * * *')->withoutOverlapping();;
         $schedule->command('elm5taskmanager')->everyMinute();
         $schedule->command('enable:blocked_order_items')->everyMinute();
-        $schedule->command('restore:po')->everyMinute();
+        //$schedule->command('restore:po')->everyMinute();
         $schedule->command('check:stuff')->daily();
 
         $schedule->command('cleanproductmeta')->hourly();
