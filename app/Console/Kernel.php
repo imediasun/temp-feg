@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\ReindexProductReservedQtyLogCommand::class,
         \App\Console\Commands\ReindexManagefegrequeststoreCommand::class,
         \App\Console\Commands\ReindexVendorCommand::class,
+        \App\Console\Commands\ReindexLocationCommand::class,
         \App\Console\Commands\Inspire::class,
         \App\Console\Commands\ReadComment::class,
         \App\Console\Commands\AutoCloseOrder::class,

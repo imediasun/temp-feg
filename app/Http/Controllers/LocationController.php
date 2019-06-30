@@ -100,6 +100,9 @@ class LocationController extends Controller
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'location')->pluck('module_id');
         $this->data['module_id'] = $module_id;
+        if(isset($_GET['search'])){
+            $_SESSION['location_search']=urldecode($_GET['search']);
+        }
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
           //  \Session::put('config_id',$config_id);
