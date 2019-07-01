@@ -290,13 +290,11 @@ class shopfegrequeststore extends Sximo  {
                 $products=$pre_products['shopfegrequeststore'];
                 $total=count($products/*$pre_products['orders']*/);
                 $search_total=$total;
-                //dump('total1=>',$total);
                 $offset = ($page - 1) * $limit;
                 if ($offset >= $total && $total != 0 && $limit != 0) {
                     $page = ceil($total/$limit);
                     $offset = ($page-1) * $limit ;
                 }
-
 
 
 
