@@ -89,7 +89,7 @@ class ReindexCommand extends Command
         //////////////////////////
 
 
-        foreach (Product::get() as $model) {
+        foreach (Product::withTrashed()->get() as $model) {
 
             $this->search->index([
                 'index' => 'elastic_product',

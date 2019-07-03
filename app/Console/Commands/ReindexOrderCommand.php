@@ -97,7 +97,7 @@ class ReindexOrderCommand extends Command
 
         //////////////////////////
 
-$orders=Order::get();
+$orders=Order::withTrashed()->get();
     foreach ($orders as $model) {
     if($model->date_received=='0000-00-00'){
         $model->date_received='1978-01-01';
