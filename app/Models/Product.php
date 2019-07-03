@@ -305,7 +305,7 @@ FROM `products`
         //session_start();
         if(isset($_SESSION['product_search'])&& !empty($_SESSION['product_search'])){
             $explode_string=explode('|',$_SESSION['product_search']);
-            dump($explode_string);
+            //dump($explode_string);
             $second_explode=explode(':',$explode_string[0]);
             $elastic = function (ProductsRepository $repository)  {
                 if(isset($_SESSION['product_search']) && !empty($_SESSION['product_search']) ){
@@ -493,7 +493,7 @@ FROM `products`
 
         Log::info("Query : ".$select . " {$params}  {$groupConditions} {$orderConditional}  {$limitConditional} ");
         if(isset($_SESSION['product_search'])&& !empty($_SESSION['product_search'])){
-            var_dump($_SESSION['product_search']);
+            //var_dump($_SESSION['product_search']);
             $result=$products;
             unset($_SESSION['product_search']);
         }

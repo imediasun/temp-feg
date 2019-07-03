@@ -134,7 +134,7 @@ class ProductController extends Controller
 
         $results = $this->model->getRows($params);
 
-        $_results['rows']=$results['rows']->toArray();
+        $_results['rows']=(is_array($results['rows'])) ? $results['rows'] : $results['rows']->toArray();
         foreach($_results['rows'] as $k=>$v){
             $object = new \stdClass();
             foreach($v as $key=>$value){
