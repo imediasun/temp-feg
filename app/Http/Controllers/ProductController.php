@@ -96,7 +96,10 @@ class ProductController extends Controller
             $exportSessionID = 'export-' . $exportId;
             \Session::put($exportSessionID, microtime(true));
         }
-
+        if(isset($_GET['search'])){
+            $_SESSION['product_search']=urldecode($_GET['search']);
+            $_SESSION['exportID']=urldecode($_GET['exportID']);
+        }
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
         if (method_exists($this, 'getSearchFilterQuery')) {
@@ -131,6 +134,18 @@ class ProductController extends Controller
 
         $results = $this->model->getRows($params);
 
+        $_results['rows']=$results['rows']->toArray();
+        foreach($_results['rows'] as $k=>$v){
+            $object = new \stdClass();
+            foreach($v as $key=>$value){
+
+
+                $object->$key=$value;
+                $__results['rows'][$k]=$object;
+
+            }
+        }
+        $results['rows']=$__results['rows'];
         $fields = $info['config']['grid'];
 
         $arrangeFields = [
@@ -174,17 +189,22 @@ class ProductController extends Controller
         $fields = $this->reArrangeFields($fields,$arrangeFields);
 
         $rows = $results['rows'];
-        $rows = $this->model->setGroupsAndLocations($rows,true);
-
+        //dump('=>',$rows);
+        //$rows = $this->model->setGroupsAndLocations($rows,true);
+//dump('==>',$rows);
         if(in_array($t ,[ 'excel','csv','print','pdf'])) {
             $results['rows'] = array_map(function ($row) {
-                // changing status only for excel correction
-                if ($row->inactive == 0) {
-                    $row->inactive = 1;
-                } else {
-                    $row->inactive = 0;
+                if($row){
+                    // changing status only for excel correction
+                    if (isset($row->inactive) && $row->inactive == 0) {
+                        $row->inactive = 1;
+                    } else {
+                        if(isset($row->inactive)){
+                            $row->inactive = 0;}
+                    }
+                    //dump($row);
+                    return $row;
                 }
-                return $row;
             }, $results['rows']);
         }
         $extra = array(
@@ -234,7 +254,7 @@ class ProductController extends Controller
 
                         )));
 
-        $rows = $this->updateDateInAllRows($rows);
+        $rows = $this->updateDateInAllRows($rows);//dump($rows);
         $rows = array_map(function ($element) {
             if (!empty($element->expense_category) && $element->expense_category > 0) {
                 $result = $this->getExpenseCategoryById($element->expense_category);
@@ -263,7 +283,7 @@ class ProductController extends Controller
             return view($this->data['pageTitle'] . '.pdf');
 
         } else if ($t == 'csv') {
-
+//dump($content);
             return view('sximo.module.utility.csv', $content);
 
         } else if ($t == 'print') {

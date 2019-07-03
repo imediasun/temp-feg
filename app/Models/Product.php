@@ -403,9 +403,13 @@ FROM `products`
                     $page = ceil($total / $limit);
                     $offset = ($page - 1) * $limit;
                 }
-                if ($total > 0) {
-                    $products = $products->chunk($limit);/*$pre_products['orders']*/
-                    $products = $products[$page - 1];
+                if(isset($_SESSION['exportID'])){
+                }
+                else{
+                    if ($total > 0) {
+                        $products = $products->chunk($limit);/*$pre_products['orders']*/
+                        $products = $products[$page - 1];
+                    }
                 }
 
             }

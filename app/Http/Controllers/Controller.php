@@ -1126,10 +1126,14 @@ abstract class Controller extends BaseController
     {
         foreach ($rows as $index => $row) {
             if (isset($row->created_at)) {
-                $rows[$index]->created_at = $this->changeDateFormat($row->created_at);
+                if(!($row->created_at instanceof Carbon)){
+                    $rows[$index]->created_at = $this->changeDateFormat($row->created_at);
+                }
+
             }
             if (isset($row->updated_at)) {
-                $rows[$index]->updated_at = $this->changeDateFormat($row->updated_at);
+                if(!($row->updated_at instanceof Carbon)){
+                    $rows[$index]->updated_at = $this->changeDateFormat($row->updated_at);}
             }
         }
         return $rows;
