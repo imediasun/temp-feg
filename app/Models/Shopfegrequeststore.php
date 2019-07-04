@@ -299,13 +299,19 @@ class shopfegrequeststore extends Sximo  {
 
 
                 //dump('offset',$offset);
-
+                foreach($products as $pr){
+                   $vendor= \App\Models\Vendor::where('id',$pr->vendor_id)->first();
+                   $pr->vendor_hide=$vendor->hide;
+                    $pr->vendor_status=$vendor->status;
+                }
 
                 if($total>0){
-                    $products = $products->chunk($limit);/*$pre_products['orders']*/
+                    $products = $products->chunk($limit);
                     $products=$products[$page - 1];
                 }
                 //dump('products',$products);
+
+
 
             }
         }

@@ -59,6 +59,11 @@ class product extends Sximo  {
         return $this->hasMany("App\Models\OrderedContent");
     }
 
+    public function vendor()
+    {
+        return $this->hasOne('App\Models\Vendor','id','vendor_id');
+    }
+
 	public static function querySelect(  ){
 
 	    $supQuries = self::subQueriesSelect();
