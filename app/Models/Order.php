@@ -111,7 +111,7 @@ class order extends Sximo
         ), $args));
 
         //dump($args);
-
+        $main_search=null;
         if(isset($_SESSION['order_search'])&& !empty($_SESSION['order_search'])){
             $explode_string=explode('|',$_SESSION['order_search']);
             $second_explode=explode(':',$explode_string[0]);
@@ -325,7 +325,7 @@ class order extends Sximo
         self::$getRowsQuery = $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
 
 
-        if(isset($_SESSION['order_search']) && !empty($_SESSION['order_search'])){
+        if((isset($_SESSION['order_search']) && !empty($_SESSION['order_search'])) &&  $main_search){
             //var_dump('ses=>',$_SESSION['order_search']);
             if(isset($products)){
             $result=$products;}
