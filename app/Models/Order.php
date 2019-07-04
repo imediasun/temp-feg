@@ -111,7 +111,7 @@ class order extends Sximo
         ), $args));
 
         //dump($args);
-        $main_search=null;
+        $pre_products['main_search']=null;
         if(isset($_SESSION['order_search'])&& !empty($_SESSION['order_search'])){
             $explode_string=explode('|',$_SESSION['order_search']);
             $second_explode=explode(':',$explode_string[0]);
@@ -126,7 +126,7 @@ class order extends Sximo
                         $second_explode=explode(':',$param);
                         switch($second_explode[0]){
                             case 'search_all_fields':
-                                $main_search=$second_explode[2];
+                                $result['main_search']=$second_explode[2];
                                 break;
                             case 'status_id':
                                 $result['status_id']=$second_explode[2];
@@ -145,11 +145,11 @@ class order extends Sximo
 
                 }
 
-                if(empty($main_search)){
+                if(empty($result['main_search'])){
                     unset($_SESSION['oredr_search']);
                 }
                 else{
-                    $result['orders'] = $repository->search((string) $main_search);
+                    $result['orders'] = $repository->search((string) $result['main_search']);
                    // dump('orders=>',$result['orders']);
                     return $result;
                 }
@@ -325,7 +325,7 @@ class order extends Sximo
         self::$getRowsQuery = $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
 
 
-        if((isset($_SESSION['order_search']) && !empty($_SESSION['order_search'])) &&  $main_search){
+        if((isset($_SESSION['order_search']) && !empty($_SESSION['order_search'])) &&  $pre_products['main_search']){
             //var_dump('ses=>',$_SESSION['order_search']);
             if(isset($products)){
             $result=$products;}
