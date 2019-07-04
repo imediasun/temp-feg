@@ -98,5 +98,17 @@ class Kernel extends ConsoleKernel
         $schedule->command('extract:googledrivefiles 13Weeks')->cron('0 7 * * *');
 
 
+        $schedule->command('search:reindex_vendor')->hourly();
+        $schedule->command('search:reindex_productreservedqtylog')->hourly();
+        $schedule->command('search:reindex_productsubtype')->hourly();
+        $schedule->command('search:reindex_shopfegrequeststore')->hourly();
+        $schedule->command('search:reindex_order')->hourly();
+        $schedule->command('search:reindex_manage_new_graphics_req')->hourly();
+        $schedule->command('search:reindex_managefegrequeststore')->hourly();
+        $schedule->command('search:reindex_location')->hourly();
+        $schedule->command('search:reindex_expensecategories')->hourly();
+        $schedule->command('search:reindex')->hourly();
+
+
     }
 }
