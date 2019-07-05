@@ -118,7 +118,7 @@ class order extends Sximo
             $elastic = function (OrdersRepository $repository)  {
                 if(isset($_SESSION['order_search'])){
                     $explode_string=explode('|',$_SESSION['order_search']);
-                    dump($explode_string);
+                    //dump($explode_string);
                     $result['status_id']=null;
                     $result['is_api_visible']=null;
                     $result['invoice_verified']=null;
