@@ -62,6 +62,11 @@ class ReindexOrderCommand extends Command
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
+                    'product_info' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+
                     'order_description' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
@@ -108,12 +113,28 @@ $orders=Order::withTrashed()->get();
 
             $mas = $model->toSearchArray();
             //dump(!null==($model->location));
+        if($model->getProductInfo($model->id)){
+            $results = $model::getProductInfo($model->id);
+            $info = '';
+            foreach($results as $r){
+                if(!isset($r->sku)){
+                    $sku = " (SKU: No Data) ";
+                }else{
+                    $sku = " (SKU: ".$r->sku.")";
+                }
+
+                $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).$sku. ';';
+            }
+            $mas['product_info'] = $info;
+            dump($mas['product_info']);
+        }
+
         if(!null==($model->receiveLocation)){
-            dump($model->receiveLocation->location_name);
+            //dump($model->receiveLocation->location_name);
             $mas['location_name'] = $model->receiveLocation->location_name;
         }
         if(!null==($model->receiveVendor)){
-            dump($model->receiveVendor->vendor_name);
+            //dump($model->receiveVendor->vendor_name);
             $mas['vendor_name'] = $model->receiveVendor->vendor_name;
         }
 

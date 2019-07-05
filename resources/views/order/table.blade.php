@@ -171,6 +171,10 @@ usort($tableGrid, "SiteHelpers::_sort");
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                <?
+
+                                     if($field['field']=='productInfo' && isset($row->product_info)){
+                                         $value=$row->product_info;
+                                     }
                                      if($field['field']=='location_id' && isset($row->location_name)){
                                          $value=$row->location_name;
                                      }
