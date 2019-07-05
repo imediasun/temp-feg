@@ -360,6 +360,14 @@ class order extends Sximo
         return $this->belongsTo(vendor::class);
     }
 
+    public function receiveLocation(){
+        return $this->hasOne('App\Models\Location','id','location_id');
+    }
+
+    public function receiveVendor(){
+        return $this->hasOne('App\Models\Vendor','id','vendor_id');
+    }
+
     public function restoreReservedProductQuantities(){
         if($this->is_freehand === 1){
             return ;

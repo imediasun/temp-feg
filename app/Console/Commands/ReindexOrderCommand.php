@@ -108,13 +108,13 @@ $orders=Order::withTrashed()->get();
 
             $mas = $model->toSearchArray();
             //dump(!null==($model->location));
-            if(!null==($model->location)){
-                //dump($model->location->location_name);
-                $mas['location_name'] = $model->location->location_name;
-            }
-        if(!null==($model->vendor)){
-            //dump($model->vendor->vendor_name);
-            $mas['vendor_name'] = $model->vendor->vendor_name;
+        if(!null==($model->receiveLocation)){
+            dump($model->receiveLocation->location_name);
+            $mas['location_name'] = $model->receiveLocation->location_name;
+        }
+        if(!null==($model->receiveVendor)){
+            dump($model->receiveVendor->vendor_name);
+            $mas['vendor_name'] = $model->receiveVendor->vendor_name;
         }
 
             $this->search->index([
