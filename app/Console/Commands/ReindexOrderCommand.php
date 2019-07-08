@@ -113,7 +113,7 @@ $orders=Order::withTrashed()->get();
 
             $mas = $model->toSearchArray();
             //dump(!null==($model->location));
-        if($model->getProductInfo($model->id)){
+        if($model::getProductInfo($model->id)){
             $results = $model::getProductInfo($model->id);
             $info = '';
             foreach($results as $r){
@@ -129,16 +129,14 @@ $orders=Order::withTrashed()->get();
             dump($mas['product_info']);
         }
 
-        if(!null==($model->receiveLocation)){
-            //dump($model->receiveLocation->location_name);
+        if(isset($model->receiveLocation) && null!=($model->receiveLocation) && isset($model->receiveLocation->location_name) && null!=$model->receiveLocation->location_name){
             $mas['location_name'] = $model->receiveLocation->location_name;
         }
-        if(!null==($model->receiveVendor)){
-            //dump($model->receiveVendor->vendor_name);
+        if(isset($model->receiveVendor) && null!=($model->receiveVendor)&& isset($model->receiveVendor->vendor_name) && null!=$model->receiveVendor->vendor_name){
             $mas['vendor_name'] = $model->receiveVendor->vendor_name;
         }
 
-            $this->search->index([
+        $this->search->index([
                 'index' => 'elastic_order',
                 'type' => 'order',
                 'id' => $model->id,
