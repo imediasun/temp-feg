@@ -9,9 +9,15 @@ use App\Models\ticketsetting;
 use App\Library\FEG\System\Formatter;
 use Illuminate\Support\Facades\Session;
 use Log;
+use App\Search\Searchable;
+use App\Repositories\Servicerequests\ServicerequestsRepository;
+use App\Repositories\Servicerequests\ElasticsearchServicerequestsRepository;
+use Elasticsearch\ClientBuilder;
+use Elasticsearch\Client;
 
 class Servicerequests extends Observerable  {
 
+    use Searchable;
     protected $table = 'sb_tickets';
     protected $primaryKey = 'TicketID';
     public $timestamps = false;
@@ -197,7 +203,151 @@ class Servicerequests extends Observerable  {
             'global' => 1,
             'ticket_type' => 'debit-card-related',
         ), $args));
+        $pre_products['main_search']=null;
+        if(isset($_SESSION['servicerequests_search'])&& !empty($_SESSION['servicerequests_search'])){
+            $explode_string=explode('|',$_SESSION['servicerequests_search']);
+            $second_explode=explode(':',$explode_string[0]);
+            $elastic = function (ServicerequestsRepository $repository)  {
+                if(isset($_SESSION['servicerequests_search'])){
+                    $explode_string=explode('|',$_SESSION['servicerequests_search']);
+                    //dump($explode_string);
+                    $result['debitType']=null; $result['issue_type']=null;
+                    $result['ticket_custom_type']=null;
+                    $result['Status']=null;
+                    $result['is_api_visible']=null;
+                    $result['invoice_verified']=null;
+                    foreach($explode_string as $k=>$param){
+                        $second_explode=explode(':',$param);
+                        switch($second_explode[0]){
+                            case 'search_all_fields':
+                                $result['main_search']=$second_explode[2];
+                                break;
+                            case 'showAll':
+                                $result['showAll']=$second_explode[2];
+                                break;
+                            case 'ticket_custom_type':
+                                list($result['debitType'], $result['issue_type']) = explode('-', $second_explode[2]);
+                                break;
+                            case 'Status':
+                                $result['Status']=$second_explode[2];
+                                break;
 
+                        }
+                        //dump($second_explode);
+                    }
+                    //$second_explode=explode(':',$explode_string[0]);
+
+                }
+
+                if(empty($result['main_search'])){
+                    unset($_SESSION['servicerequests_search']);
+                }
+                else{
+                    $result['servicerequests'] = $repository->search((string) $result['main_search']);
+                    // dump('orders=>',$result['orders']);
+                    return $result;
+                }
+                return false;
+            };
+            $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+            $el=new ElasticsearchServicerequestsRepository($client);
+            $pre_products=$elastic($el);
+
+            if($pre_products['servicerequests']!=null){
+                    if($pre_products['showAll']== "0"){
+                        $pre_products['servicerequests'] = $pre_products['servicerequests']->filter(function ($item)
+                        {
+                            return $item->Status != 'closed';
+                        });
+                    }
+                if(isset($_SESSION['ticket_type']) && $_SESSION['ticket_type']=='game-related' ) {
+                    $pre_products['servicerequests'] = $pre_products['servicerequests']->where('ticket_type', 'game-related');
+                }
+                elseif(isset($_SESSION['ticket_type']) && $_SESSION['ticket_type']=='debit-card-related'){
+                    $pre_products['servicerequests'] = $pre_products['servicerequests']->filter(function ($item)
+                    {
+                        return $item->ticket_type != 'game-related';
+                    });
+                }
+                if($pre_products['issue_type']){
+                    $pre_products['servicerequests'] = $pre_products['servicerequests']->filter(function ($item) use($pre_products)
+                    {
+                         if(strip_tags($item->issue_type) == $pre_products['issue_type']){
+                             return $item;
+                         }
+
+                    });
+                }
+
+                //sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType')
+
+                if($pre_products['debitType']){
+                    $locations=\App\Models\Location::select('id')->where('debit_type_id',$pre_products['debitType'])->get()->toArray();
+                    foreach($locations as $location){
+                        $location_list[]=$location['id'];
+                    }
+                    $pre_products['servicerequests'] = $pre_products['servicerequests']->filter(function($item) use ($location_list) {
+                        if(in_array($item->location_id, $location_list)){
+                            return $item;
+                        }
+
+                    });
+
+
+                }
+
+                if($pre_products['Status']) {
+                    $pre_products['servicerequests'] = $pre_products['servicerequests']->where('Status', $pre_products['Status']);
+                }
+
+
+                $products=$pre_products['servicerequests'];
+                $total=count($products/*$pre_products['orders']*/);
+                $search_total=$total;
+                //dump('total1=>',$total);
+                $offset = ($page - 1) * $limit;
+                if ($offset >= $total && $total != 0 && $limit != 0) {
+                    $page = ceil($total/$limit);
+                    $offset = ($page-1) * $limit ;
+                }
+
+
+
+
+                //dump('offset',$offset);
+
+
+                if($total>0){
+                    $products = $products->chunk($limit);/*$pre_products['orders']*/
+                    $products=$products[$page - 1];
+                }
+
+                //dump('products',$products);
+                $products=(is_array($products)) ? $products : $products->toArray();
+                if(count($products)>0){
+                foreach($products as $k=>$v){
+                    $object = new \stdClass();
+                    foreach($v as $key=>$value){
+
+
+                        $object->last_user='stanly marian';
+                        $object->last_updated_elapsed_days=39;
+                        $object->$key=$value;
+
+
+                        //$_products[$k]->debit_type=1;
+                    }
+                    $object->debit_type=1;
+                    $_products[$k]=$object;
+                }
+
+                $products=$_products;
+            }
+
+               // dump('products',$products);
+
+            }
+        }
 
         $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$sort} {$order} " : '';
         if (!empty($extraSorts)) {
@@ -305,6 +455,14 @@ class Servicerequests extends Observerable  {
         // echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
         Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         self::$getRowsQuery = $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
+
+        if((isset($_SESSION['servicerequests_search']) && !empty($_SESSION['servicerequests_search'])) &&  $pre_products['main_search']){
+            if(isset($products)){
+                $result=$products;}
+            unset($_SESSION['servicerequests_search']);
+            unset($_SESSION['ticket_type']);
+        }
+        else {
         global $result;
         $result = "";
         \DB::transaction(function ()use($select,$params,$orderConditional,$limitConditional) {
@@ -314,7 +472,7 @@ class Servicerequests extends Observerable  {
             $result = \DB::select(\DB::raw($sql));
 
             // $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
-        }, 5);
+        }, 5);}
         if ($key == '') {
             $key = '*';
         } else {

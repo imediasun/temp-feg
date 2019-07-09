@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\ReindexLocationCommand::class,
         \App\Console\Commands\ReindexManageNewGraphicsReqCommand::class,
         \App\Console\Commands\ReindexExpensecategoriesCommand::class,
+        \App\Console\Commands\ReindexServicerequestsCommand::class,
         \App\Console\Commands\Inspire::class,
         \App\Console\Commands\ReadComment::class,
         \App\Console\Commands\AutoCloseOrder::class,
@@ -108,6 +109,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('search:reindex_location')->hourly();
         $schedule->command('search:reindex_expensecategories')->hourly();
         $schedule->command('search:reindex')->hourly();
+        $schedule->command('search:reindex_servicerequests')->hourly();
 
 
     }

@@ -127,7 +127,6 @@
                         </tr>
                     @endif
                     <?php foreach ($rowData as $row) :
-
                     $id = $row->TicketID;
                     ?>
                     <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
@@ -159,7 +158,7 @@
                         @if(SiteHelpers::filterColumn($limited ))
                                 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                     data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                    @if($field['field']=='urgent')
+                                     @if($field['field']=='urgent')
                                         <?php
                                         $value = strtoupper($field['field']);
                                         ?>

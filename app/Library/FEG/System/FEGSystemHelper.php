@@ -1617,8 +1617,9 @@ $message" .
     public static function getLabelFromOptions($value, $options, $default = '')
     {
         $label = $default;
-        if (isset($options[$value])) {
-            $label = $options[$value];
+
+        if (isset($options[strip_tags($value)])) {
+            $label = $value;
         }
         return $label;
     }
