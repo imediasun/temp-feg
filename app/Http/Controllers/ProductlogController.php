@@ -47,7 +47,7 @@ class ProductlogController extends Controller {
 
 	public function postData( Request $request)
 	{
-
+		
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'productlog')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -83,15 +83,19 @@ class ProductlogController extends Controller {
 			'params'	=> $filter,
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
+		
 		// Get Query
 		$results = $this->model->getRows( $params );
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
+		
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'],
             (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] :
 				($results['total'] > 0 ? $results['total'] : '1')));
+				
 		$pagination->setPath('productlog/data');
+		
 		$this->data['param']		= $params;
         $this->data['topMessage']	= @$results['topMessage'];
 		$this->data['message']          = @$results['message'];
@@ -119,6 +123,7 @@ class ProductlogController extends Controller {
         $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
 // Render into template
+
 		return view('productlog.table',$this->data);
 
 	}

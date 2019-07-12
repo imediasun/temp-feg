@@ -524,28 +524,48 @@ class FEGSystemHelper
         $mail->subject($subject);
         $mail->setBody($message, 'text/html');
 
-        $toArray = explode(',', $to);
+        $_toArray = explode(',', $to);
+		  foreach($_toArray as $value){
+                if(!empty($value)){
+                    $toArray[]=$value;
+                }
+            }
+            if(isset($toArray)){
         if (count($toArray) == 1 && isset($toName)) {
             $mail->to($toArray[0], $toName);
         } else {
             $mail->to($toArray);
         }
+			} 
 
-        if (isset($cc) && !empty(trim($cc))) {
-            $ccArray = explode(',', $cc);
-            if (count($ccArray) == 1 && isset($ccName)) {
-                $mail->cc($ccArray[0], $ccName);
-            } else {
-                $mail->cc($ccArray);
+         if (isset($cc) && !empty(trim($cc))) {
+            $_ccArray = explode(',', $cc);
+            foreach($_ccArray as $value){
+                if(!empty($value)){
+                    $ccArray[]=$value;
+                }
+            }
+            if(isset($ccArray)){
+                if (count($ccArray) == 1 && isset($ccName)) {
+                    $mail->cc($ccArray[0], $ccName);
+                } else {
+                    $mail->cc($ccArray);
+                }
             }
         }
         if (isset($bcc) && !empty(trim($bcc))) {
-            $bccArray = explode(',', $bcc);
-            if (count($bccArray) == 1 && isset($bccName)) {
-                $mail->bcc($bccArray[0], $bccName);
-            } else {
-                $mail->bcc($bccArray);
+            $_bccArray = explode(',', $bcc);
+            foreach($_bccArray as $value){
+                if(!empty($value)){
+                    $bccArray[]=$value;
+                }
             }
+            if(isset($bccArray)){
+                if (count($bccArray) == 1 && isset($bccName)) {
+                    $mail->bcc($bccArray[0], $bccName);
+                } else {
+                    $mail->bcc($bccArray);
+                }}
         }
         if (isset($sender) && !empty(trim($sender))) {
             $senderArray = explode(',', $sender);
