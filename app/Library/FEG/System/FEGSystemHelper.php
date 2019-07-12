@@ -538,7 +538,7 @@ class FEGSystemHelper
         }
 			} 
 
-         if (isset($cc) && !empty(trim($cc))) {
+        if (isset($cc) && !empty(trim($cc))) {
             $_ccArray = explode(',', $cc);
             foreach($_ccArray as $value){
                 if(!empty($value)){
