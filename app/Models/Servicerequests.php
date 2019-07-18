@@ -563,6 +563,7 @@ $ids = [];
      */
     public  function sendExceptionMessage($ex, $messages = []){
         $typeOfException = gettype($ex);
+        Log::info("sendExceptionMessage: ".$ex.'----'.$messages);
         if($typeOfException == 'object'){
             $exceptionMessage = view("emails.notifications.dev-team.read-comments-system-exception", compact('ex'));
             FEGSystemHelper::sendNotificationToDevTeam('[Error]['.env('APP_ENV').'] '.ucfirst($ex->getMessage()).' From Console on '.date('l, F d Y'), $exceptionMessage);
