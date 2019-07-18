@@ -233,6 +233,7 @@ class ReadComment extends Command
             }
             catch (\Exception $ex)
             {
+                $L->log('Debug me--------------------'.$ex.'--------------------');
                 $this->serviceRequestObject->sendExceptionMessage($ex);
             }
         }
