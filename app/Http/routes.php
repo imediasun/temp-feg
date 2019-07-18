@@ -135,6 +135,10 @@ Route::get('/restric',function(){
 
 });
 
+Route::get('/phpinfo', function () {
+    return view('errors.info');
+});
+
 /**
  * single route for /manual/downloads/23 & /bulletins/downloads/23
  */

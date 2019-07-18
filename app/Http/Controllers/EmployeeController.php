@@ -20,7 +20,9 @@ class EmployeeController extends Controller
         $this->model = new Employee();
 
         $this->info = $this->model->makeInfo($this->module);
-        $this->access = $this->model->validAccess($this->info['id']);
+        if (!empty($this->info['id'])) {
+        	$this->access = $this->model->validAccess($this->info['id']);
+
 
         $this->data = array(
             'pageTitle' => $this->info['title'],
@@ -29,7 +31,7 @@ class EmployeeController extends Controller
             'pageUrl' => url('employee'),
             'return' => self::returnUrl()
         );
-
+	}
 
     }
 
