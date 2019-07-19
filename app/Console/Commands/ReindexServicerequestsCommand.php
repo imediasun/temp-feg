@@ -96,11 +96,12 @@ $orders=Servicerequests::get();
             }
 
             $mas = $model->toSearchArray();
-
+dump($mas);
+        dump($mas['TicketID']);
         $this->search->index([
                 'index' => 'elastic_servicerequests',
                 'type' => 'servicerequests',
-                'id' => $model->id,
+                'id' => $mas['TicketID'],
                 'body' => $mas,
             ]);
 

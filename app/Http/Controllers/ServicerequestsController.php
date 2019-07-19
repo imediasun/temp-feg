@@ -24,7 +24,11 @@ use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect;
 use App\Library\FEG\System\FEGSystemHelper;
-use App\Library\FEG\System\Formatter;  
+use App\Library\FEG\System\Formatter;
+use App\Repositories\Servicerequests\ServicerequestsRepository;
+use App\Repositories\Servicerequests\ElasticsearchServicerequestsRepository;
+use Elasticsearch\ClientBuilder;
+use Elasticsearch\Client;
 
 class servicerequestsController extends Controller
 {
@@ -36,6 +40,7 @@ class servicerequestsController extends Controller
     public $module_id = '';
     protected $sortMapping = [];
     protected $sortUnMapping = [];
+    private $search;
 
     public function __construct()
     {
@@ -996,6 +1001,19 @@ class servicerequestsController extends Controller
         }
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
+
+
+            $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+            $this->search = $client;
+
+            foreach($request->input('ids') as $service_request_id){
+                $this->search->delete([
+                    'index' => 'elastic_servicerequests',
+                    'type' => 'servicerequests',
+                    'id' => intval(strip_tags($service_request_id)),
+                ]);
+            }
+
             $this->model->destroy($request->input('ids'));
 
             return response()->json(array(

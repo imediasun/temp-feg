@@ -46,7 +46,6 @@ class ElasticsearchServicerequestsRepository implements ServicerequestsRepositor
 
 
         );
-
         return $items;
 
     }
