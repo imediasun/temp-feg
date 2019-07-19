@@ -616,7 +616,6 @@ class servicerequestsController extends Controller
 
     public function getShow(Request $request,$id = null)
     {
-
         $ticketType = $request->input('ticket_type','debit-card-related');
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')

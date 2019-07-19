@@ -171,13 +171,13 @@
                         <?php endif;
                         endforeach;
                         ?>
-                        <td data-values="action" data-key="<?php echo $row->TicketID;?>">
+                        <td data-values="action" data-key="<?php echo strip_tags($row->TicketID);?>">
                             <div class=" action dropup">
 
-                                <a href="{{ url('servicerequests/show/'.$row->TicketID."?ticket_type=".$ticketType) }}" onclick="ajaxViewDetail('#servicerequests',this.href); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="View"><i class="fa fa-search"></i></a>
+                                <a href="{{ url('servicerequests/show/'.strip_tags($row->TicketID)."?ticket_type=".$ticketType) }}" onclick="ajaxViewDetail('#servicerequests',this.href); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="View"><i class="fa fa-search"></i></a>
 
                                 @if($canEditDetail)
-                                <a href="{{ url('servicerequests/update/'.$row->TicketID."?ticket_type=".$ticketType) }}" onclick="ajaxViewDetail('#servicerequests',this.href); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Edit"><i class="fa  fa-edit"></i></a>
+                                <a href="{{ url('servicerequests/update/'.strip_tags($row->TicketID)."?ticket_type=".$ticketType) }}" onclick="ajaxViewDetail('#servicerequests',this.href); return false; " class="btn btn-xs btn-white tips" title="" data-original-title="Edit"><i class="fa  fa-edit"></i></a>
                                 @endif
                             </div>
 
