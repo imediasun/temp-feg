@@ -50,6 +50,16 @@ class ElasticsearchServicerequestsRepository implements ServicerequestsRepositor
 
     }
 
+    public function deleteFromIndexIds($ids){
+        foreach($ids as $service_request_id){
+            $this->search->delete([
+                'index' => 'elastic_servicerequests',
+                'type' => 'servicerequests',
+                'id' => intval(strip_tags($service_request_id)),
+            ]);
+        }
+    }
+
     private function buildCollection(array $items)
     {
         /**

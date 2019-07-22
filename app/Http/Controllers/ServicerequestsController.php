@@ -1002,19 +1002,16 @@ class servicerequestsController extends Controller
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
 
-
-            $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
-            $this->search = $client;
-
-            foreach($request->input('ids') as $service_request_id){
-                $this->search->delete([
-                    'index' => 'elastic_servicerequests',
-                    'type' => 'servicerequests',
-                    'id' => intval(strip_tags($service_request_id)),
-                ]);
+            foreach($request->input('ids') as $id){
+                $ids[]=intval(strip_tags($id));
             }
 
-            $this->model->destroy($request->input('ids'));
+            $this->model->destroy($ids);
+            $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+            $el=new ElasticsearchServicerequestsRepository($client);
+            $el->deleteFromIndexIds($request->input('ids'));
+
+
 
             return response()->json(array(
                 'status' => 'success',
