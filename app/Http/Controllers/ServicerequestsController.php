@@ -1003,15 +1003,18 @@ class servicerequestsController extends Controller
         if (count($request->input('ids')) >= 1) {
 
             foreach($request->input('ids') as $id){
-                $ids[]=intval(strip_tags($id));
+
+                $id=intval(strip_tags($id));
+                $ids[]=$id;
+                $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+                $el=new ElasticsearchServicerequestsRepository($client);
+                $el->deleteFromIndexIds($id);
             }
 
+
+
+
             $this->model->destroy($ids);
-            $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
-            $el=new ElasticsearchServicerequestsRepository($client);
-            $el->deleteFromIndexIds($request->input('ids'));
-
-
 
             return response()->json(array(
                 'status' => 'success',
