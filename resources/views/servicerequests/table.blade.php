@@ -110,7 +110,7 @@
                             @endif
                             @if($setting['view-method']=='expand') <td> </td> @endif
                             @foreach ($tableGrid as $t)
-                              @if ($canChangeStatus || !in_array($t['field'],['Status', 'closed']))                             
+                              @if ($canChangeStatus || !in_array($t['field'],['Status', 'closed']))
                                 @if(isset($t['inline']) && $t['inline'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
@@ -127,22 +127,22 @@
                         </tr>
                     @endif
                     <?php foreach ($rowData as $row) :
-                    $id = $row->TicketID;
+                    $id = strip_tags($row->TicketID);
                     ?>
                     <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
-                        @endif id="form-{{ $row->TicketID }}"
-                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->TicketID }}"
+                        @endif id="form-{{ strip_tags($row->TicketID) }}"
+                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ strip_tags($row->TicketID) }}"
                         @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this)" @endif @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
                             @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
-                                <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->TicketID;?>"/></td>
+                                <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo strip_tags($row->TicketID);?>"/></td>
                         @endif
 
                         @if($setting['view-method']=='expand')
                             <td>
-                                <a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->TicketID }}"
+                                <a href="javascript:void(0)" class="expandable" rel="#row-{{ strip_tags($row->TicketID) }}"
                                    data-url="{{ url('servicerequests/show/'.$id) }}"><i class="fa fa-plus "></i></a>
                             </td>
                         @endif
@@ -185,7 +185,7 @@
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
-                        <tr style="display:none" class="expanded" id="row-{{ $row->TicketID }}">
+                        <tr style="display:none" class="expanded" id="row-{{ strip_tags($row->TicketID) }}">
                             <td class="number"></td>
                             <td></td>
                             <td></td>
@@ -200,7 +200,7 @@
                 </table>
                 @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
                     @foreach ($rowData as $row)
-                        {!! AjaxHelpers::buttonActionInline($row->TicketID,'TicketID') !!}
+                        {!! AjaxHelpers::buttonActionInline(strip_tags($row->TicketID),'TicketID') !!}
                     @endforeach
                 @endif
             @else
