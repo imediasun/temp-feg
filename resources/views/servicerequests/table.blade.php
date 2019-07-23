@@ -156,8 +156,8 @@
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                                <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
-                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                <td align="<?php echo $field['align'];?>" data-values="{{strip_tags($row->$field['field']) }}"
+                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities(strip_tags($value)) }}">
                                      @if($field['field']=='urgent')
                                         <?php
                                         $value = strtoupper($field['field']);

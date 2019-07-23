@@ -68,6 +68,17 @@ function reloadData( id,url,callback, options,tabSwitch,clear)
         
 	});
 
+
+    if(id=='#servicerequests'){
+        var array = url.split("?");
+        var array2 = array[1].split("=");
+        array2[0]='simplesearch';
+        var final_url=array[0]+'?'+array2.join('=')
+        $.post( encodeURI(final_url) ,function( data ) {
+            $( id +'Grid' ).html( data );
+        })
+    }
+
 }
 
 
