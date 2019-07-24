@@ -29,6 +29,17 @@ class ElasticsearchProductsRepository implements ProductsRepository
 
     }
 
+    public function addToIndexIds($id){
+        $model=Product::where('id',$id)->first();
+        $this->search->index([
+            'index' => 'elastic_product',
+            'type' => 'product',
+            'id' => $id,
+            'body' => $model->toSearchArray(),
+        ]);
+
+    }
+
     public function searchOnElasticsearch($query){
         $instance = new Product;
         $items = $this->search->search([

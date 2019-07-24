@@ -1080,6 +1080,11 @@ class ProductController extends Controller
 
                     }
                     $this->model->insertRow($updates, $id);
+                    $id=intval(strip_tags($id));
+                    $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+                    $el=new ElasticsearchProductsRepository($client);
+                    $el->addToIndexIds($id);
+
                     $this->model->setFirstDefaultExpenseCategory($id);
 
                         $this->insertRelations($excludedLocationsAndGroups,$productTypeExcludedLocationsAndGroups,$id,$productTypeId);
@@ -1129,6 +1134,7 @@ class ProductController extends Controller
             $productData[0]['rowId'] = $request->input('rowId',0);
             $orderModel = new order();
             $productData[0]['isAllowedToCombineFreehandProductList'] = $orderModel->isAllowedToCombineFreehandProductList();
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success'),
@@ -1983,6 +1989,7 @@ if(!empty($removedItemIds)) {
             $productData[0]['rowId'] = $request->input('rowId',0);
             $orderModel = new order();
             $productData[0]['isAllowedToCombineFreehandProductList'] = $orderModel->isAllowedToCombineFreehandProductList();
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success'),
