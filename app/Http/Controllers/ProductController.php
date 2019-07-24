@@ -22,6 +22,10 @@ use phpDocumentor\Reflection\Types\Null_;
 use Validator, Input, Redirect,Image;
 use App\Models\ReservedQtyLog;
 use App\Models\Locationgroups;
+use App\Repositories\Products\ElasticsearchProductsRepository;
+use Elasticsearch\ClientBuilder;
+use Elasticsearch\Client;
+
 class ProductController extends Controller
 {
 
@@ -1209,6 +1213,7 @@ class ProductController extends Controller
             foreach ($ids as $id) {
                 if (!in_array($id, $deletedIds)) {
                     $productVariation = Product::find($id);
+                    if($productVariation){
                     $productVariations = $productVariation->getProductVariations();
                     $variations = new Collection();
                     foreach ($productVariations as $productVariation) {
@@ -1259,9 +1264,17 @@ class ProductController extends Controller
                             }
                         }
                     }
+                    }
                     if (!in_array($id, $errorId)) {
+
+                        $id=intval(strip_tags($id));
+                        $ids[]=$id;
+                        $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+                        $el=new ElasticsearchProductsRepository($client);
+                        $el->deleteFromIndexIds($id);
                         $this->model->destroy([$id]);
                     }
+
                 }
             }
 

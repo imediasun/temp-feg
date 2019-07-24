@@ -20,6 +20,15 @@ class ElasticsearchProductsRepository implements ProductsRepository
         return $this->buildCollection($items);
     }
 
+    public function deleteFromIndexIds($id){
+        $this->search->delete([
+            'index' => 'elastic_product',
+            'type' => 'product',
+            'id' => $id,
+        ]);
+
+    }
+
     public function searchOnElasticsearch($query){
         $instance = new Product;
         $items = $this->search->search([

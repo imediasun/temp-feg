@@ -1,6 +1,7 @@
 
 function reloadData( id,url,callback, options,tabSwitch,clear)
 {
+    console.log(id,url,callback, options,tabSwitch,clear)
     options = options || {};
     var isClearSearch = /data\?search\=$/.test(url),
         isBackground = options.isBackground || false,
@@ -69,14 +70,19 @@ function reloadData( id,url,callback, options,tabSwitch,clear)
 	});
 
 
-    if(id=='#servicerequests'){
+    if(id=='#servicerequests' || id=="#product"){
+        if(url){
+            console.log(url)
         var array = url.split("?");
+            if(array[1]){
         var array2 = array[1].split("=");
         array2[0]='simplesearch';
         var final_url=array[0]+'?'+array2.join('=')
         $.post( encodeURI(final_url) ,function( data ) {
             $( id +'Grid' ).html( data );
         })
+            }
+        }
     }
 
 }
