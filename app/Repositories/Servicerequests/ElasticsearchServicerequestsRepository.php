@@ -29,7 +29,7 @@ class ElasticsearchServicerequestsRepository implements ServicerequestsRepositor
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["TicketID^7","Description^6","issue_type^5"],
+                            "fields"=>["TicketID^7","Subject^6","Description^5","issue_type^4",'need_by_date_text^3','updated_by^2'],
                             "query"=>$query
                         ]
                     ],
@@ -39,7 +39,10 @@ class ElasticsearchServicerequestsRepository implements ServicerequestsRepositor
                         "fields" => [
                             "Description" => new \stdClass(),
                            "issue_type"=> new \stdClass(),
-                            "TicketID"=> new \stdClass()
+                            "TicketID"=> new \stdClass(),
+                            "Subject"=> new \stdClass(),
+                            "need_by_date_text"=> new \stdClass(),
+                            "updated_by"=> new \stdClass()
 
                         ]
                     ]]]

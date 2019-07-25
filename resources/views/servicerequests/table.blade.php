@@ -164,6 +164,13 @@
                                         ?>
                                         {!! $value !!}
                                     @else
+                                        <? if($field['field']=='last_user' && isset($row->updated_by)){
+                                            $value=$row->updated_by;
+                                        }
+                                        if($field['field']=='need_by_date' && isset($row->need_by_date_text)){
+                                            $value=$row->need_by_date_text;
+                                        }
+                                        ?>
                                         {!! $value !!}
                                     @endif
                                 </td>

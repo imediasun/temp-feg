@@ -58,6 +58,11 @@ class Servicerequests extends Observerable  {
 
     }
 
+    public function getFollowers(){
+        return $this->hasOne('App\Models\Ticketfollowers','ticket_id','TicketID');
+
+    }
+
     public static function querySelect(  ){
         $date = date("Y-m-d");
         $sql = "SELECT

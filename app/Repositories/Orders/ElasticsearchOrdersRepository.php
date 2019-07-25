@@ -29,7 +29,7 @@ class ElasticsearchOrdersRepository implements OrdersRepository
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["po_number^5","product_info^6","location_name^4","vendor_name^3","id^2","notes^1"],
+                            "fields"=>["po_number^7","product_info^6","location_name^5","vendor_name^4","id^3","po_notes^1"],
                             "query"=>$query
                         ]
                     ],
@@ -43,7 +43,8 @@ class ElasticsearchOrdersRepository implements OrdersRepository
                             "notes" => new \stdClass(),
                             "location_name" => new \stdClass(),
                             "vendor_name" => new \stdClass(),
-                            "product_info" => new \stdClass()
+                            "product_info" => new \stdClass(),
+                            "po_notes" => new \stdClass()
 
                         ]
                     ]]]

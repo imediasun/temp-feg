@@ -58,7 +58,7 @@ class ReindexServicerequestsCommand extends Command
             'type'=>'servicerequests',
             'body'=>[
                 'properties'=>[
-                  'Description' => [
+                    'Description' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
@@ -67,6 +67,14 @@ class ReindexServicerequestsCommand extends Command
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
                     'TicketID' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    'Subject' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    'need_by_date_text' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ]
@@ -86,19 +94,28 @@ class ReindexServicerequestsCommand extends Command
 
         //////////////////////////
 
-$orders=Servicerequests::get();
-    foreach ($orders as $model) {
-   if($model->need_by_date=='0000-00-00'){
-        $model->need_by_date='1978-01-01';
-    }
+        $orders=Servicerequests::with('getFollowers')->get();
+        foreach ($orders as $model) {
+            if($model->need_by_date=='0000-00-00'){
+                $model->need_by_date='1978-01-01';
+            }
             if($model->date_ordered=='0000-00-00'){
                 $model->date_ordered='1978-01-01';
             }
 
             $mas = $model->toSearchArray();
-dump($mas);
-        dump($mas['TicketID']);
-        $this->search->index([
+            if(isset($model->getFollowers) && $model->getFollowers!=null){
+                $user= \App\Models\Core\Users::where('id',$model->getFollowers->user_id)->first();
+                if($user){
+                    $mas['updated_by']=$user->first_name." ".$user->last_name;
+                    dump($mas['updated_by']);}
+
+                $need=explode('-',$mas['need_by_date']);
+                $mas['need_by_date_text']=$need[1].'/'.$need[2].'/'.$need[0];
+                dump($mas['need_by_date_text']);
+            }
+            //dump($mas['TicketID']);
+            $this->search->index([
                 'index' => 'elastic_servicerequests',
                 'type' => 'servicerequests',
                 'id' => $mas['TicketID'],
