@@ -102,7 +102,7 @@ class ReindexOrderCommand extends Command
 
         //////////////////////////
 
-$orders=Order::withTrashed()->get();
+$orders=Order::withTrashed()->with('receiveLocation')->with('receiveVendor')->get();
     foreach ($orders as $model) {
     if($model->date_received=='0000-00-00'){
         $model->date_received='1978-01-01';
