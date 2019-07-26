@@ -859,6 +859,11 @@ class servicerequestsController extends Controller
             unset($data['oldStatus']);
             $data['phone'] = $phone;
             $id = $this->model->insertRow($data, $id);
+            $id=intval(strip_tags($id));
+            $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+            $el=new ElasticsearchServicerequestsRepository($client);
+            $el->addToIndexIds($id);
+
                         
             $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
             if (!empty($files['file_path'])) {                

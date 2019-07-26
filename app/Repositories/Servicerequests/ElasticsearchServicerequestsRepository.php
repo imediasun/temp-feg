@@ -62,6 +62,17 @@ class ElasticsearchServicerequestsRepository implements ServicerequestsRepositor
 
     }
 
+    public function addToIndexIds($id){
+        $model=Servicerequests::where('TicketID',$id)->first();
+        $this->search->index([
+            'index' => 'elastic_servicerequests',
+            'type' => 'servicerequests',
+            'id' => $id,
+            'body' => $model->toSearchArray(),
+        ]);
+
+    }
+
     private function buildCollection(array $items)
     {
         /**
