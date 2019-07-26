@@ -274,6 +274,24 @@ class shopfegrequeststore extends Sximo  {
             if($pre_products['shopfegrequeststore']!=null){
 
 
+                if(isset($_SESSION['shopfegrequeststore_filter'])){
+                    //dump($_SESSION['shopfegrequeststore_filter']);
+                    switch($_SESSION['shopfegrequeststore_filter']){
+                        case 'hot' :
+                            $pre_products['shopfegrequeststore'] = $pre_products['shopfegrequeststore']->where('hot_item', 1);
+                            break;
+                        case 'new' :
+                            $new_tag_days=\App\Models\Feg\System\Options::where('option_name','product_label_new')->first()->option_value;
+                            $pre_products['shopfegrequeststore'] = $pre_products['shopfegrequeststore']->filter(function ($data) use($new_tag_days) {
+                                   $datetime = new \Carbon\Carbon($data->created_at);
+                                if($datetime >= \Carbon\Carbon::now()->subDays(intval($new_tag_days))){
+                                      return $data;
+                                }
+                            });
+                        break;
+                    }
+
+                }
                 if($pre_products['invoice_verified']) {
                     //dump('intvalinvoice_verified',intval($pre_products['invoice_verified']));
                     $pre_products['shopfegrequeststore'] = $pre_products['shopfegrequeststore']->where('invoice_verified', intval($pre_products['invoice_verified']));

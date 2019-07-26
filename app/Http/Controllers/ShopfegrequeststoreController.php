@@ -170,6 +170,9 @@ class ShopfegrequeststoreController extends Controller
 
         if(isset($_GET['search'])){
             $_SESSION['shopfegrequeststore_search']=urldecode($_GET['search']);
+            if(isset($_GET['filterBy'])){
+                $_SESSION['shopfegrequeststore_filter']=urldecode($_GET['filterBy']);
+            }
         }
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
