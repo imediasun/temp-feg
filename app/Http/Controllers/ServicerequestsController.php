@@ -1742,4 +1742,114 @@ class servicerequestsController extends Controller
             }
         }
     }
+
+    public function postSplitrequest(Request $request)
+    {
+
+        $totalTickets = $request->input('num_tickets', 0);
+        $ticketId = $request->input('ticket_id', 0);
+        $comments = $request->input('comment');
+        $commentID = $request->input('comment_id');
+        $attachments = $request->input('attachment');
+        $ticketIds = [];
+        $ticketAttachments = [];
+
+        if ($totalTickets > 0) {
+
+            for ($i = 0; $i < $totalTickets; $i++) {
+                $ticket = $this->model->select('sb_tickets.*')->where('TicketID', $ticketId)->get()->toArray()[0];
+                unset($ticket['TicketID']);
+                unset($ticket['updated']);
+                unset($ticket['file_path']);
+                unset($ticket['is_merged']);
+                unset($ticket['merged_by']);
+                unset($ticket['merge_id']);
+                unset($ticket['merged_at']);
+                $ticket = $this->model->excludeEmpty($ticket);
+                unset($ticket['first_name']);
+                unset($ticket['last_name']);
+                $ticket['entry_by'] = Session::get('uid');
+                $ticket['Created'] = date('Y-m-d H:i:s');
+                $ticket['Status'] = 'open';
+
+                $id = $this->model->insertRow($ticket, null);
+
+                $id=intval(strip_tags($id));
+                $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+                $el=new ElasticsearchServicerequestsRepository($client);
+                $el->addToIndexIds($id);
+                $ticketIds[] = $id;
+
+                if (is_array($attachments)) {
+                    foreach ($attachments as $key => $attachment) {
+                        if (!empty($request->input($key . 'attachment_ticket')[$i])) {
+                            // foreach ($request->input($i . 'attachment_ticket') as $ticketNumber) {
+                            if ($request->input($key . 'attachment_ticket')[$i]  == 1) {
+                                $ticketAttachments[$key][] = [
+                                    'ticket' => $ticketIds[$i],
+                                    'attachment' => $attachment,
+                                ];
+                            }
+                            //  }
+                        }
+                    }
+                }
+
+                if($ticketId > 0){
+                    $ticket = $this->model->where('TicketID',$ticketId)->first();
+                    $mergeFollowers = Ticketfollowers::getAllFollowers($ticketId, null, false, $ticket->ticket_type);
+                    foreach($mergeFollowers as $mergeFollower) {
+                        $isFollowerExists = Ticketfollowers::where(['ticket_id'=>$id, 'user_id' => $mergeFollower])->first();
+                        if(!$isFollowerExists) {
+                            $this->getSubscribe($request, $id, $mergeFollower);
+                        }
+                    }
+                }
+                sleep(2);
+            }
+
+            $commentData = [
+                'TicketID' => $ticketId,
+                'Comments' => 'This Service Request has been split into #'.implode(' , #',$ticketIds),
+                'Posted' => date('Y-m-d H:i:s'),
+                'created_at' => date('Y-m-d H:i:s'),
+                'UserID' => Session::get('uid'),
+                'USERNAME' => Session::get('fid'),
+            ];
+            $comment_model = new Ticketcomment();
+            $comment_model->insertRow($commentData,null);
+
+            $this->model->copyComments($request, $ticketIds, $comments, $commentID);
+            $this->model->copyFilesToSplited($ticketAttachments);
+            $this->model->copyPartRequest($ticketId, $ticketIds);
+            $this->model->copyTroubleShoot($ticketId, $ticketIds);
+
+            $this->model->where('TicketID', $ticketId)->update([
+//                'Status' => 'closed',
+                'is_split' => 1,
+                'split_by' => Session::get('uid'),
+                'split_ids' => implode(',',$ticketIds),
+                'split_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            $ticket = $this->model->select('sb_tickets.*')->where('TicketID', $ticketId)->first();
+            return response()->json(array(
+                'message' => 'Service Request has been split successfully',
+                'status' => 'success',
+                'reloadType' => $request->input('reload_type','grid'),
+                'view_id' => $ticketId,
+                'ticketType' =>$ticket->ticket_type
+            ));
+
+        } else {
+            return response()->json(array(
+                'message' => 'Number of Service Request should be greater than 0',
+                'status' => 'error',
+                'reloadType' => $request->input('reload_type','grid'),
+            ));
+        }
+
+    }
+
+
 }
