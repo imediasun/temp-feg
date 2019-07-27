@@ -19,7 +19,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->id }} </td>
+                    <td>{{ (isset($row->id)) ? $row->id : "" }} </td>
 
                 </tr>
 
@@ -27,7 +27,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Item Name', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->vendor_description }} </td>
+                    <td>{{ (isset($row->vendor_description)) ?  $row->vendor_description : ""}} </td>
 
                 </tr>
 
@@ -36,7 +36,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Is Reserved', (isset($fields['is_reserved']['language'])? $fields['is_reserved']['language'] : array())) }}
                     </td>
-                    <td>{!! $row->is_reserved == 0 ? 'No':'Yes' !!} </td>
+                    <td>{!! (isset($row->is_reserved)) && $row->is_reserved == 0 ? 'No':'Yes' !!} </td>
 
                 </tr>
 
@@ -44,7 +44,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Reserved Qty', (isset($fields['reserved_qty']['language'])? $fields['reserved_qty']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->reserved_qty }} </td>
+                    <td>{{ (isset($row->reserved_qty)) ? $row->reserved_qty : "" }} </td>
 
                 </tr>
 
@@ -52,7 +52,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Inactive', (isset($fields['inactive']['language'])? $fields['inactive']['language'] : array())) }}
                     </td>
-                    <td>{!! $row->inactive == 0 ? 'No':'Yes' !!} </td>
+                    <td>{!! (isset($row->inactive)) && $row->inactive == 0 ? 'No':'Yes' !!} </td>
 
                 </tr>
 
@@ -60,7 +60,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Updated At', (isset($fields['updated_at']['language'])? $fields['updated_at']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->updated_at }} </td>
+                    <td>{{ (isset( $row->updated_at)) ? $row->updated_at : "" }} </td>
 
                 </tr>
 
@@ -68,7 +68,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Allow Negative Reserved Qty', (isset($fields['allow_negative_reserve_qty']['language'])? $fields['allow_negative_reserve_qty']['language'] : array())) }}
                     </td>
-                    <td>{!! $row->allow_negative_reserve_qty == 0 ? 'No':'Yes' !!} </td>
+                    <td>{!! (isset($row->allow_negative_reserve_qty)) && $row->allow_negative_reserve_qty == 0 ? 'No':'Yes' !!} </td>
 
                 </tr>
 
@@ -92,11 +92,11 @@
                             Excel</a>
                     </div>
                 </div>
-            <div style="clear:both;"></div>
+                <div style="clear:both;"></div>
                 <br />
 
                 <?php
-                $logContents = $productLogContent['Contents'];
+                $logContents = (isset($productLogContent['Contents'])) ? $productLogContent['Contents'] : null;
                 ?>
                 <table class="table table-striped table-bordered" >
                     <tbody>
