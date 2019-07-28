@@ -181,6 +181,18 @@ usort($tableGrid, "SiteHelpers::_sort");
                                      if($field['field']=='vendor_id' && isset($row->vendor_name)){
                                          $value=$row->vendor_name;
                                      }
+
+                                     if($field['field']=='id' && isset($row->id)){
+                                         foreach($temp_id as $_key=>$_id){
+                                             if($_key==$row->id){
+                                                 $value=$_id;
+                                             }
+                                         }
+
+                                     }
+
+
+
                                ?>
                                 @if($field['field']=='notes' && !empty($row->notes))
 							                <?php echo preg_replace('/^(<br\s*\/?>)*|(<br\s*\/?>)*$/i', '',$value); ?>

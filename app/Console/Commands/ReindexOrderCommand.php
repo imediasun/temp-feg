@@ -90,6 +90,10 @@ class ReindexOrderCommand extends Command
                     "po_notes"=> [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    "office_notes"=> [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
                     ]
                 ]
             ]

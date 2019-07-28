@@ -367,7 +367,9 @@ class OrderController extends Controller
         //\Session::put('params',$params);
         $results = $this->model->getRows($params, $order_selected);
         foreach ($results['rows'] as &$rs) {
+
             $rsid=strip_tags($rs->id);
+            $temp_id[$rsid]=$rs->id;
             $rs->id=$rsid;
             $result = $this->model->getProductInfo($rs->id);
             $info = '';
@@ -381,6 +383,7 @@ class OrderController extends Controller
                 $info = $info . '(' . $r->qty . ') ' . $r->item_name . ' ' . \CurrencyHelpers::formatPrice($r->total, 2, true, ',', '.', true) . $sku . '; ';
             }
             $rs->productInfo = rtrim($info, '; ');
+            $rt_productInfo[$rs->id]=$rs->productInfo;
         }
 
         if (count($results['rows']) == 0 and $page != 1) {
@@ -433,6 +436,7 @@ class OrderController extends Controller
         $params['sort'] = !empty($this->sortUnMapping) && isset($this->sortUnMapping[$sort]) ? $this->sortUnMapping[$sort] : $sort;;
         //dump('$rows=>',$rows);
         $this->data['param'] = $params;
+        $this->data['temp_id']=$temp_id;
         $this->data['rowData'] = $rows;
         // Build Pagination
         $this->data['pagination'] = $pagination;
