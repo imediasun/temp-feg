@@ -70,7 +70,7 @@ function reloadData( id,url,callback, options,tabSwitch,clear)
 	});
 
 
-    if(id=='#servicerequests' || id=="#product"){
+    if((id=='#servicerequests' || id=="#product")&& !isClearSearch){
         if(url){
             console.log(url)
         var array = url.split("?");
