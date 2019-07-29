@@ -385,7 +385,6 @@ class OrderController extends Controller
             $rs->productInfo = rtrim($info, '; ');
             $rt_productInfo[$rs->id]=$rs->productInfo;
         }
-
         if (count($results['rows']) == 0 and $page != 1) {
             $params['limit'] = $this->info['setting']['perpage'];
             $results = $this->model->getRows($params, $order_selected);

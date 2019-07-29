@@ -91,7 +91,19 @@ class ReindexOrderCommand extends Command
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
-                    "office_notes"=> [
+                    "tracking_number"=> [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    "orderedBy"=> [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    "updated_at_string"=> [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    "api_created_at_string"=> [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ]
@@ -110,7 +122,7 @@ class ReindexOrderCommand extends Command
 
         //////////////////////////
 
-        $orders=Order::withTrashed()->with('receiveLocation')->with('receiveVendor')->get();
+        $orders=Order::withTrashed()->with('orderedBy')->with('receiveLocation')->with('receiveVendor')->get();
         foreach ($orders as $model) {
             if($model->date_received=='0000-00-00'){
                 $model->date_received='1978-01-01';
@@ -134,7 +146,7 @@ class ReindexOrderCommand extends Command
                     $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).$sku. ';';
                 }
                 $mas['product_info'] = $info;
-                dump($mas['product_info']);
+                //dump($mas['product_info']);
             }
 
             if(isset($model->receiveLocation) && null!=($model->receiveLocation) && isset($model->receiveLocation->location_name) && null!=$model->receiveLocation->location_name){
@@ -143,6 +155,25 @@ class ReindexOrderCommand extends Command
             if(isset($model->receiveVendor) && null!=($model->receiveVendor)&& isset($model->receiveVendor->vendor_name) && null!=$model->receiveVendor->vendor_name){
                 $mas['vendor_name'] = $model->receiveVendor->vendor_name;
             }
+            if(isset($model->orderedBy) && null!=($model->orderedBy)&& isset($model->orderedBy->first_name) && null!=$model->orderedBy->first_name){
+                $mas['orderedBy'] = $model->orderedBy->first_name.".".$model->orderedBy->last_name;
+                //dump($mas['orderedBy']);
+            }
+
+            $updated_at=explode(' ',$mas['updated_at']);
+            $need=explode('-',$updated_at[0]);
+            if(isset($need[1])){
+                $mas['updated_at_string']=$need[1].'/'.$need[2].'/'.$need[0];
+                dump($mas['updated_at_string']);
+            }
+
+            $api_created_at=explode(' ',$mas['api_created_at']);
+            $need_api_created_at=explode('-',$api_created_at[0]);
+            if(isset($need_api_created_at[1])){
+                $mas['api_created_at_string']=$need_api_created_at[1].'/'.$need_api_created_at[2].'/'.$need_api_created_at[0];
+                dump($mas['api_created_at_string']);
+            }
+
 
             $this->search->index([
                 'index' => 'elastic_order',

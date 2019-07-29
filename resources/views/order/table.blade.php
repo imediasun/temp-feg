@@ -171,8 +171,22 @@ usort($tableGrid, "SiteHelpers::_sort");
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                <?
+                                     if($field['field']=='api_created_at' && isset($row->api_created_at_string)){
+                                         $value=$row->api_created_at_string;
+                                     }
 
-                                     if($field['field']=='productInfo' && isset($row->product_info)){
+                                     if($field['field']=='updated_at' && isset($row->updated_at_string)){
+                                         $value=$row->updated_at_string;
+                                     }
+                                     if($field['field']=='user_id' && isset($row->orderedBy)){
+                                         $value=$row->orderedBy;
+                                     }
+
+                                     if($field['field']=='vendor_id' && isset($row->vendor_name)){
+                                         $value=$row->vendor_name;
+                                     }
+
+                                    if($field['field']=='productInfo' && isset($row->product_info)){
                                          $value=$row->product_info;
                                      }
                                      if($field['field']=='location_id' && isset($row->location_name)){
@@ -190,7 +204,6 @@ usort($tableGrid, "SiteHelpers::_sort");
                                          }
 
                                      }
-
 
 
                                ?>

@@ -367,6 +367,9 @@ class order extends Sximo
     public function receiveVendor(){
         return $this->hasOne('App\Models\Vendor','id','vendor_id');
     }
+    public function orderedBy(){
+        return $this->hasOne('App\Models\Core\Users','id','user_id')->select(['id','first_name','last_name']);
+    }
 
     public function restoreReservedProductQuantities(){
         if($this->is_freehand === 1){
