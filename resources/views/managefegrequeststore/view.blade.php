@@ -9,6 +9,10 @@
 
 	<div class="sbox-content">
 @endif
+
+		<?php if(is_array($row)){
+		    $row=(object)$row;
+		}?>
 		<div class="table-responsive">
 		<table class="table table-striped table-bordered" >
 			<tbody>
@@ -65,7 +69,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ Lang::get('core.fedex_number')}}
 						</td>
-                        <td>{!! $row->fedex_number !!} </td>
+                        <td>{!! (isset($row->fedex_number)) ? $row->fedex_number : "No Data" !!} </td>
 					</tr>
 
 					<tr>

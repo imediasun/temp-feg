@@ -75,6 +75,30 @@ class managefegrequeststore extends Sximo
             'params' => '',
             'global' => 1
         ), $args));
+//dump($params);
+$param_array=explode('(',$params);
+$request_location_id_string=explode(') )',$param_array[2]);
+$request_location_id_string=$request_location_id_string[0];
+$request_location_id_string=explode(',',$request_location_id_string);
+foreach($request_location_id_string as $string){
+    $request_location_id[]=intval(str_replace('\'', '', $string));
+}
+//dump($request_location_id);
+$product_id_not_in=explode(')',$param_array[3]);
+        $product_id_not_in=explode(',',$product_id_not_in[0]);
+        foreach($product_id_not_in as $string){
+            $product_id_not_in_final[]=intval(str_replace('\'', '', $string));
+        }
+        //dump($product_id_not_in_final);
+
+
+
+        $product_type_id_not_in=explode(')',$param_array[4]);
+        $product_type_id_not_in=explode(',',$product_type_id_not_in[0]);
+        foreach($product_type_id_not_in as $string){
+            $product_type_id_not_in_final[]=intval(str_replace('\'', '', $string));
+        }
+       // dump($product_type_id_not_in_final);
 
         if(isset($_SESSION['managefegrequeststore_search'])&& !empty($_SESSION['managefegrequeststore_search'])){
             $explode_string=explode('|',$_SESSION['managefegrequeststore_search']);
@@ -147,6 +171,13 @@ class managefegrequeststore extends Sximo
 
                 }
                 else{$products=$pre_products['managefegrequeststore'];}
+                $products=$products->filter(function ($item) use($request_location_id,$product_id_not_in_final,$product_type_id_not_in_final)
+                {
+                    if(in_array($item->location_id,$request_location_id)
+                        && (!in_array($item->product_id,$product_id_not_in_final)) && (!in_array($item->product['prod_type_id'],$product_type_id_not_in_final))){
+                        return $item;}
+                });
+
                 $total=count($products/*$pre_products['orders']*/);
                 $search_total=$total;
                 //dump('total1=>',$total);
@@ -167,6 +198,8 @@ class managefegrequeststore extends Sximo
                     $products=$products[$page - 1];
                 }
                 //dump('products1',$products);
+
+
 
             }
         }

@@ -162,8 +162,7 @@
 
                                     <td align="<?php echo $field['align']; ?>" data-values="{{strip_tags($row->$field['field']) }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities(strip_tags($value)) }}">
                                         <?
-                                            dump($field['field']);
-                                        if($field['field']=='description' && isset($row->item_name)){
+                                           if($field['field']=='description' && isset($row->item_name)){
                                             $value=$row->item_name;
                                         }
                                         if($field['field']=='vendor_id' && isset($row->vendor_name)){
@@ -199,15 +198,15 @@
                                 endif;
                             endforeach;
                             ?>
-                            <!--td>{{
+                            <td>{{
 
-                            \DateHelpers::formatZeroValue($row->vendor_name)
+                            \DateHelpers::formatZeroValue(strip_tags($row->vendor_name))
 
-                            }}</td-->
+                            }}</td>
                             <td>{{CurrencyHelpers::formatPrice($row->case_price)}} </td>
                             <td align="center">{{ \DateHelpers::formatZeroValue($row->reserved_difference) }}</td>
                             {{--<td> {{ \DateHelpers::formatZeroValue($row->order_type) }}</td>--}}
-                            <td data-values="action" data-key="<?php echo $row->id; ?>">
+                            <td data-values="action" data-key="<?php echo strip_tags($row->id); ?>">
                                 {!! AjaxHelpers::buttonAction('managefegrequeststore',$access,$id ,$setting) !!}
                                @if($view == "manage" && $access['is_edit'] == 1 )
                                 <a href="#"  class="tips btn btn-xs btn-white" data-id="{{ strip_tags($row->id) }}" title="Deny Request" onclick="denyRequest(this);"><i class="fa fa-ban" aria-hidden="true"></i></a>

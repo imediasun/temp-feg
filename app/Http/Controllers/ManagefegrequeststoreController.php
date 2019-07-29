@@ -396,12 +396,12 @@ class ManagefegrequeststoreController extends Controller
 
     public function getShow($id = null)
     {
-
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $row = $this->model->getRow($id);
+
         if ($row) {
             $fedex_number = "No Data";
             $location = location::find($row->location_id);
@@ -413,7 +413,6 @@ class ManagefegrequeststoreController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('requests');
         }
-
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
