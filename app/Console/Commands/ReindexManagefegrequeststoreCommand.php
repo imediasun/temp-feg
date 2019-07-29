@@ -97,6 +97,11 @@ $orders=Managefegrequeststore::with('product')->get();
             $vendor=\App\Models\Vendor::where('id',$model->product->vendor_id)->first();
         }
 
+        if($model->product){
+            $mas['sku'] =$model->product->sku;
+            dump( $mas['sku']);
+        }
+
             if(isset($vendor) && !null==($vendor)){
                 dump($vendor->vendor_name);
                 $mas['vendor_name'] = $vendor->vendor_name;
@@ -105,6 +110,7 @@ $orders=Managefegrequeststore::with('product')->get();
             //dump($model->product->vendor_description);
             $mas['item_name'] = $model->product->vendor_description;
         }
+
 
 
             $this->search->index([

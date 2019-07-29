@@ -32,7 +32,6 @@ class managefegrequeststore extends Sximo
     public function product(){
         return $this->hasOne('App\Models\Product','id','product_id');
     }
-
     public function vendor_item(){
         return $this->hasManyThrough("App\Models\Product", "App\Models\Vendor",'id' , 'vendor_id','product_id');
     }
