@@ -32,6 +32,14 @@ class managefegrequeststore extends Sximo
     public function product(){
         return $this->hasOne('App\Models\Product','id','product_id');
     }
+    public function receiveLocation(){
+        return $this->hasOne('App\Models\Location','id','location_id');
+    }
+
+    public function orderedBy(){
+        return $this->hasOne('App\Models\Core\Users','id','request_user_id')->select(['id','first_name','last_name']);
+    }
+
     public function vendor_item(){
         return $this->hasManyThrough("App\Models\Product", "App\Models\Vendor",'id' , 'vendor_id','product_id');
     }
@@ -104,8 +112,9 @@ class managefegrequeststore extends Sximo
                     $result['managefegrequeststore'] = $repository->search((string) $main_search);
                     foreach($result['managefegrequeststore']as $k=>$v){
                         $self=self::where('id',$v->id)->with('product')->first();
+                        if(isset($self->product->vendor_id)){
                         $vendor=\App\Models\Vendor::where('id',$self->product->vendor_id)->first();
-                        $result['managefegrequeststore'][$k]->vendor_id=$self->product->vendor_id;
+                        $result['managefegrequeststore'][$k]->vendor_id=$self->product->vendor_id;}
                     }
 
 

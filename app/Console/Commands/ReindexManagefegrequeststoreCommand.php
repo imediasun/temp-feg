@@ -69,7 +69,23 @@ class ReindexManagefegrequeststoreCommand extends Command
                     "vendor_name"=> [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
-                    ]
+                    ],
+                    "notes"=> [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    "location_name"=> [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    'id' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    'user' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
                 ]
             ]
         ];
@@ -85,7 +101,7 @@ class ReindexManagefegrequeststoreCommand extends Command
 
         //////////////////////////
 
-$orders=Managefegrequeststore::with('product')->get();
+$orders=Managefegrequeststore::with('product')->with('receiveLocation')->with('orderedBy')->get();
     foreach ($orders as $model) {
 
         if($model->request_date=='0000-00-00'){
@@ -99,11 +115,17 @@ $orders=Managefegrequeststore::with('product')->get();
 
         if($model->product){
             $mas['sku'] =$model->product->sku;
-            dump( $mas['sku']);
+            $mas['product_type'] =\App\Models\OrderType::where('id',$model->product->prod_type_id)->first()->order_type;
+            $product_subtype=\App\Models\ProductType::where('id',$model->product->prod_sub_type_id)->first();
+            if($product_subtype){
+            $mas['product_subtype'] =$product_subtype->type_description;
+            //dump( $mas['product_subtype']);
+            }
+           //dump( $mas['product_type']);
         }
 
             if(isset($vendor) && !null==($vendor)){
-                dump($vendor->vendor_name);
+                //dump($vendor->vendor_name);
                 $mas['vendor_name'] = $vendor->vendor_name;
             }
         if(!null==($model->product)){
@@ -112,7 +134,15 @@ $orders=Managefegrequeststore::with('product')->get();
         }
 
 
+        if(/*isset($model->receiveLocation) && null!=($model->receiveLocation) &&*/ isset($model->receiveLocation->location_name) && null!=$model->receiveLocation->location_name){
+            $mas['location_name'] = $model->receiveLocation->location_name;
+            //dump($mas['location_name']);
+        }
 
+        if( isset($model->orderedBy->first_name) && null!=$model->orderedBy->first_name){
+            $mas['user'] = $model->orderedBy->first_name.".".$model->orderedBy->last_name;
+            dump($mas['user']);
+        }
             $this->search->index([
                 'index' => 'elastic_managefegrequeststore',
                 'type' => 'managefegrequeststore',

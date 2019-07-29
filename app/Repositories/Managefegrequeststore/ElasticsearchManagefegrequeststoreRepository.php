@@ -29,7 +29,7 @@ class ElasticsearchManagefegrequeststoreRepository implements Managefegrequestst
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["item_name^6","sku^5","vendor_name^4"],
+                            "fields"=>["item_name","sku^6","vendor_name","notes","location_name","id^7","product_type","product_subtype","user^7"],
                             "query"=>$query
                         ]
                     ],
@@ -39,7 +39,13 @@ class ElasticsearchManagefegrequeststoreRepository implements Managefegrequestst
                         "fields" => [
                             "item_name" => new \stdClass(),
                             "sku"=> new \stdClass(),
-                            "vendor_name" => new \stdClass()
+                            "vendor_name" => new \stdClass(),
+                            "notes" => new \stdClass(),
+                            "location_name" => new \stdClass(),
+                            "id" => new \stdClass(),
+                            "product_type" => new \stdClass(),
+                            "product_subtype" => new \stdClass(),
+                            "user" => new \stdClass()
 
                         ]
                     ]]]

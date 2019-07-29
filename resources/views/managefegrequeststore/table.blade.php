@@ -134,20 +134,20 @@
 
                     <?php
                     foreach ($rowData as $row) :
-                        $id = $row->id;
+                        $id = strip_tags($row->id);
                         ?>
                     <tr @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
-                        @endif id="form-{{ $row->id }}"
-                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}"
+                        @endif id="form-{{ strip_tags($row->id) }}"
+                        @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ strip_tags($row->id)}}"
                         @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this)" @endif @endif>
                             @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                                 <td class="number"> <?php echo ++$i;?>  </td>
                             @endif
                                 @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
-                                <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+                                <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo strip_tags($row->id) ;?>" />  </td>
                             @endif
                             @if($setting['view-method']=='expand')
-                            <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('managefegrequeststore/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
+                            <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ strip_tags($row->id) }}" data-url="{{ url('managefegrequeststore/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
                             @endif
                             <?php
                             foreach ($tableGrid as $field) :
@@ -159,21 +159,36 @@
                                     ?>
             <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
-                                    <td align="<?php echo $field['align']; ?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+
+                                    <td align="<?php echo $field['align']; ?>" data-values="{{strip_tags($row->$field['field']) }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities(strip_tags($value)) }}">
                                         <?
+                                            dump($field['field']);
                                         if($field['field']=='description' && isset($row->item_name)){
                                             $value=$row->item_name;
                                         }
                                         if($field['field']=='vendor_id' && isset($row->vendor_name)){
                                             $value=$row->vendor_name;
                                         }
-                                        ?>
+                                        if($field['field']=='location_id' && isset($row->location_name)){
+                                            $value=$row->location_name;
+                                        }
+                                        if($field['field']=='prod_type_id' && isset($row->product_type)){
+                                            $value=$row->product_type;
+                                        }
+                                        if($field['field']=='prod_sub_type_id' && isset($row->product_subtype)){
+                                            $value=$row->product_subtype;
+                                        }
+                                        if($field['field']=='request_user_id' && isset($row->user)){
+                                            $value=$row->user;
+                                        }
+                                       ?>
 
 
 
                                         @if($field['field'] == 'price')
                                             {!! CurrencyHelpers::formatPrice($value, App\Models\Order::ORDER_PERCISION ) !!}
                                         @else
+
                                             {!! $value !!}
 
                                         @endif
@@ -184,19 +199,23 @@
                                 endif;
                             endforeach;
                             ?>
-                            <td>{{ \DateHelpers::formatZeroValue($row->vendor_name) }}</td>
+                            <!--td>{{
+
+                            \DateHelpers::formatZeroValue($row->vendor_name)
+
+                            }}</td-->
                             <td>{{CurrencyHelpers::formatPrice($row->case_price)}} </td>
                             <td align="center">{{ \DateHelpers::formatZeroValue($row->reserved_difference) }}</td>
                             {{--<td> {{ \DateHelpers::formatZeroValue($row->order_type) }}</td>--}}
                             <td data-values="action" data-key="<?php echo $row->id; ?>">
                                 {!! AjaxHelpers::buttonAction('managefegrequeststore',$access,$id ,$setting) !!}
                                @if($view == "manage" && $access['is_edit'] == 1 )
-                                <a href="#"  class="tips btn btn-xs btn-white" data-id="{{ $row->id }}" title="Deny Request" onclick="denyRequest(this);"><i class="fa fa-ban" aria-hidden="true"></i></a>
+                                <a href="#"  class="tips btn btn-xs btn-white" data-id="{{ strip_tags($row->id) }}" title="Deny Request" onclick="denyRequest(this);"><i class="fa fa-ban" aria-hidden="true"></i></a>
                             @endif
                             </td>
                         </tr>
                         @if($setting['view-method']=='expand')
-                        <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
+                        <tr style="display:none" class="expanded" id="row-{{ strip_tags($row->id) }}">
                             <td class="number"></td>
                             <td></td>
                             <td></td>
@@ -211,7 +230,7 @@
             </table>
                 @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
                     @foreach ($rowData as $row)
-                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                        {!! AjaxHelpers::buttonActionInline(strip_tags($row->id),'id') !!}
                     @endforeach
                 @endif
             @else
