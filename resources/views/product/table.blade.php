@@ -164,6 +164,16 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
+
+                            <?php
+                            if($field['field']=='vendor_id' && isset($row->vendor_name)){
+                                $value=$row->vendor_name;
+                            }
+                            if($field['field']=='updated_at' && isset($row->updated_at_string)){
+                                $value=$row->updated_at_string;
+                            }
+                            ?>
+
                             @if($field['field']=='img')
 
                                 @endif
@@ -197,6 +207,8 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                                   {{--@if($row->is_backinstock > 0)  <span class="label label-default">Back in Stock</span> @endif--}}
                                        {{--@if($row->hot_item == 1 || strtolower($row->hot_item) == 'yes' || $row->is_new > 0 || $row->is_backinstock > 0)   <br /> @endif--}}
                                    -->
+
+
                                     {!! $value !!}
 
                                 @elseif($field['field']=='is_default_expense_category')

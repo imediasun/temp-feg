@@ -49,7 +49,7 @@ class ElasticsearchProductsRepository implements ProductsRepository
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["vendor_description^4","item_description^5","ups_barcode^3","reserved_qty_reason^2"],
+                            "fields"=>["vendor_description^4","item_description^5","ups_barcode^3","reserved_qty_reason^2","vendor_name^6","sku^6","updated_at_string^15"],
                             "query"=>$query
                         ]
                     ],
@@ -60,7 +60,10 @@ class ElasticsearchProductsRepository implements ProductsRepository
                             "item_description"=> new \stdClass(),
                             "vendor_description" => new \stdClass(),
                             "ups_barcode" => new \stdClass(),
-                            "reserved_qty_reason" => new \stdClass()
+                            "reserved_qty_reason" => new \stdClass(),
+                            "vendor_name" => new \stdClass(),
+                            "updated_at_string" => new \stdClass(),
+                            "sku" => new \stdClass()
 
                         ]
                     ]]]

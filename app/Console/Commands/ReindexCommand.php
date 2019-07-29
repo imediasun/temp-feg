@@ -70,6 +70,14 @@ class ReindexCommand extends Command
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
+                    "vendor_name"=> [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    "updated_at_string"=> [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ]
 
                 ]
             ]
@@ -91,11 +99,24 @@ class ReindexCommand extends Command
 
         foreach (Product::get() as $model) {
 
+        $mas=$model->toSearchArray();
+            if(/*isset($model->receiveVendor) && null!=($model->receiveVendor)&& isset($model->receiveVendor->vendor_name) && */null!=$model->receiveVendor->vendor_name){
+                $mas['vendor_name'] = $model->receiveVendor->vendor_name;
+                dump($mas['vendor_name']);
+            }
+
+            $updated_at=explode(' ',$mas['updated_at']);
+            $need=explode('-',$updated_at[0]);
+            if(isset($need[1])){
+                $mas['updated_at_string']=$need[1].'/'.$need[2].'/'.$need[0];
+                dump($mas['updated_at_string']);
+            }
+
             $this->search->index([
                 'index' => 'elastic_product',
                 'type' => 'product',
                 'id' => $model->id,
-                'body' => $model->toSearchArray(),
+                'body' => $mas,
             ]);
 
             // PHPUnit-style feedback

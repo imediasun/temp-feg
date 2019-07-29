@@ -64,6 +64,8 @@ class product extends Sximo  {
         return $this->hasOne('App\Models\Vendor','id','vendor_id');
     }
 
+
+
 	public static function querySelect(  ){
 
 	    $supQuries = self::subQueriesSelect();
@@ -1068,6 +1070,10 @@ WHERE orders.is_api_visible = 1
             $ReservedQtyLog->insertRow($reservedLogData, 0);
 
         }
+    }
+
+    public function receiveVendor(){
+        return $this->hasOne('App\Models\Vendor','id','vendor_id');
     }
 
 }
