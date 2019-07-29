@@ -36,7 +36,7 @@ class ReindexProductsubtypeCommand extends Command
                 'tokenizer' => [
                     'ngram_tokenizer' => [
                         'type' => 'nGram',
-                        'min_gram' => 3,
+                        'min_gram' => 1,
                         'max_gram' => 3,
                         'token_chars' => ['letter', 'digit', 'whitespace', 'punctuation', 'symbol']
                     ],
@@ -96,6 +96,8 @@ $orders=Productsubtype::get();
             else{
                 dump('F');
             }
+        $mas['id_column']=strval($mas['id']);
+            dump($mas['id_column']);
 
             $this->search->index([
                 'index' => 'elastic_productsubtype',

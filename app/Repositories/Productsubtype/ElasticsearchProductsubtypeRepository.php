@@ -29,7 +29,7 @@ class ElasticsearchProductsubtypeRepository implements ProductsubtypeRepository
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["product_type^5","order_type^4","id^3"],
+                            "fields"=>["product_type^5","order_type^4","id^6"],
                             "query"=>$query
                         ]
                     ],

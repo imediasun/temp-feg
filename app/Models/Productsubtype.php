@@ -74,7 +74,7 @@ class Productsubtype extends Sximo  {
             $elastic = function (ProductsubtypeRepository $repository)  {
                 if(isset($_SESSION['productsubtype_search'])){
                     $explode_string=explode('|',$_SESSION['productsubtype_search']);
-                    //dump($explode_string);
+                   //dump($explode_string);
                     $result['status_id']=null;
                     $result['is_api_visible']=null;
                     $result['invoice_verified']=null;
@@ -114,7 +114,6 @@ class Productsubtype extends Sximo  {
             $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
             $el=new ElasticsearchProductsubtypeRepository($client);
             $pre_products=$elastic($el);
-
             if($pre_products['productsubtype']!=null){
 
 

@@ -129,7 +129,7 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                     $vendor_description= "";
                     $product_id = "";
                     foreach ($rowData as $row) :
-                    $id = $row->id;
+                    $id = strip_tags($row->id);
                     if($vendor_description !=$row->vendor_description){
                         $product_id="product-".$id;
                         $vendor_description =$row->vendor_description;
@@ -138,20 +138,20 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                     {{--commented calculateUnitPrice() function call to allow user to edit unit price--}}
                     <tr variation-id="{{ $row->variation_id }}" @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
                         @endif product-id="{!! $product_id !!}"
-                        onkeyup="//calculateUnitPrice({{ $row->id }})" id="form-{{ $row->id }}" product-type-id="{{ $row->prod_type_id }}"
-                        data-id="{{ $row->id }}"
+                        onkeyup="//calculateUnitPrice({{ strip_tags($row->id) }})" id="form-{{ strip_tags($row->id)}}" product-type-id="{{ $row->prod_type_id }}"
+                        data-id="{{ strip_tags($row->id) }}"
                         @if($setting['inline']!='false' && $setting['disablerowactions']=='false') @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this); editedProduct('{!! $product_id !!}',this); productExcludedLocationDropDown(this);" @endif @endif>
                         <input type="hidden" name="numberOfItems" value="{{$row->num_items}}"/>
-                        <input id="sku-{{ $row->id }}" type="hidden" name="old-sku" value="{{$row->sku}}"/>
-                        <input id="vd-{{ $row->id }}" type="hidden" name="old-vd" value="{{$row->vendor_description}}"/>
+                        <input id="sku-{{ strip_tags($row->id) }}" type="hidden" name="old-sku" value="{{strip_tags($row->sku)}}"/>
+                        <input id="vd-{{ strip_tags($row->id) }}" type="hidden" name="old-vd" value="{{strip_tags($row->vendor_description)}}"/>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
                         @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
-                            <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>"/></td>
+                            <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo strip_tags($row->id);?>"/></td>
                         @endif
                         @if($setting['view-method']=='expand')
-                            <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}"
+                            <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ strip_tags($row->id) }}"
                                    data-url="{{ url('product/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
                         @endif
                         <?php foreach ($tableGrid as $field) :
@@ -177,8 +177,8 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
                             @if($field['field']=='img')
 
                                 @endif
-                            <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
-                                data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                            <td align="<?php echo $field['align'];?>" data-values="{{strip_tags($row->$field['field']) }}"
+                                data-field="{{ $field['field'] }}" data-format="{{ htmlentities(strip_tags($value)) }}">
 
                                 @if($field['field']=='img')
                                     <?php
@@ -216,17 +216,17 @@ $ExpenseCategories = array_map(function ($ExpenseCategories) {
 										 <input type='checkbox' name="mycheckbox" @if($value == 'Yes') checked
 												@endif data-field="is_default_expense_category" data-size="mini"
 												data-animate="true" data-on-text="Yes" data-off-text="No"
-												data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
-												id="is_default_expense_{{$row->id}}" onSwitchChange="trigger()"/>
+												data-handle-width="50px" class="toggle" data-id="{{strip_tags($row->id)}}"
+												id="is_default_expense_{{strip_tags($row->id)}}" onSwitchChange="trigger()"/>
                                      @elseif($field['field']=='inactive')
                                          <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked @endif data-field="inactive" data-size="mini" data-animate="true"
 												data-on-text="Inactive" data-name="{{ $value }}" data-off-text="Active"
-												data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
-												id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+												data-handle-width="50px" class="toggle" data-id="{{strip_tags($row->id)}}"
+												id="toggle_trigger_{{strip_tags($row->id)}}" onSwitchChange="trigger()" />
 									 @elseif($field['field']=='exclude_export')
-										 <input type='checkbox' name="mycheckbox" @if(strtolower($value) == 'yes') checked  @endif data-field="exclude_export"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}" id="exclude_export_{{$row->id}}" onSwitchChange="trigger()" />
+										 <input type='checkbox' name="mycheckbox" @if(strtolower($value) == 'yes') checked  @endif data-field="exclude_export"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{strip_tags($row->id)}}" id="exclude_export_{{strip_tags($row->id)}}" onSwitchChange="trigger()" />
                                 @elseif($field['field']=='hot_item')
-										 <input type='checkbox' name="mycheckbox" @if(strtolower($value) == 'yes' || $value == 'YES' || $value == 'Yes') checked  @endif data-field="hot_item"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}" id="hot_item_{{$row->id}}" onSwitchChange="trigger()" />
+										 <input type='checkbox' name="mycheckbox" @if(strtolower($value) == 'yes' || $value == 'YES' || $value == 'Yes') checked  @endif data-field="hot_item"	data-size="mini" data-animate="true" data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{strip_tags($row->id)}}" id="hot_item_{{strip_tags($row->id)}}" onSwitchChange="trigger()" />
                                 @elseif($field['field']=='reserved_qty_cases')
                                     @if($value > 0)
                                         {!! CurrencyHelpers::formatPrice($value,5,false) !!}

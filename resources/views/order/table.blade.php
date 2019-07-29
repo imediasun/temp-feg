@@ -133,13 +133,13 @@ usort($tableGrid, "SiteHelpers::_sort");
 			  @endif
 
            		<?php foreach ($rowData as $row) :
-                    $id = $row->id;
+                    $id = strip_tags($row->id);
                     $eid = \SiteHelpers::encryptID($id);
            		?>
 
 
             <tr @if(empty($row->deleted_at)) @if($access['is_edit']=='1' && $setting['inline']=='true' )class="editable"
-                @endif @endif data-id="{{ $row->id }}" id="form-{{ $row->id }}"
+                @endif @endif data-id="{{ strip_tags($row->id) }}" id="form-{{ strip_tags($row->id) }}"
                 @if(($setting['inline']!='false' && $setting['disablerowactions']=='false') || empty($row->deleted_at)) @if($access['is_edit']=='1' && $setting['inline']=='true' )ondblclick="showFloatingCancelSave(this)" @endif @endif>
 
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
@@ -151,7 +151,7 @@ usort($tableGrid, "SiteHelpers::_sort");
 
 
 					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ strip_tags($row->id) }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
 					 <?php  foreach ($tableGrid as $field) :
                            // dump($field['field']);
@@ -169,7 +169,7 @@ usort($tableGrid, "SiteHelpers::_sort");
 
 						 	 $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
-								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+								 <td align="<?php echo $field['align'];?>" data-values="{{strip_tags($row->$field['field']) }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities(strip_tags($value)) }}">
                                <?
                                      if($field['field']=='api_created_at' && isset($row->api_created_at_string)){
                                          $value=$row->api_created_at_string;

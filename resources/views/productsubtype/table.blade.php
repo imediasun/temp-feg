@@ -122,18 +122,18 @@
                     @endif
 
                     <?php foreach ($rowData as $row) :
-                    $id = $row->id;
+                    $id = strip_tags($row->id);
                     ?>
-                    <tr class="editable" id="form-{{ $row->id }}" data-id="{{ $row->id }}" id="form-{{ $row->id}}"
+                    <tr class="editable" id="form-{{strip_tags($row->id) }}" data-id="{{ strip_tags($row->id) }}" id="form-{{ strip_tags($row->id)}}"
                         @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
                         @if($setting['disableactioncheckbox']=='false')
-                            <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>"/></td>
+                            <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo strip_tags($row->id);?>"/></td>
                         @endif
                         @if($setting['view-method']=='expand')
-                            <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}"
+                            <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ strip_tags($row->id) }}"
                                    data-url="{{ url('productsubtype/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
                         @endif
                         <?php foreach ($tableGrid as $field) :
@@ -145,8 +145,8 @@
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                            <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
-                                data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                            <td align="<?php echo $field['align'];?>" data-values="{{strip_tags($row->$field['field']) }}"
+                                data-field="{{ $field['field'] }}" data-format="{{ htmlentities(strip_tags($value)) }}">
 
                                 <?
                                 if($field['field']=='request_type_id' && isset($row->order_type)){

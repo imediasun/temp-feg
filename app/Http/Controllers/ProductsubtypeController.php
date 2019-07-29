@@ -91,7 +91,6 @@ class ProductsubtypeController extends Controller
 
     public function postData(Request $request)
     {
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'productsubtype')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if(isset($_GET['search'])){
