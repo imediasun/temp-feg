@@ -25,6 +25,14 @@ class managenewgraphicrequests extends Sximo
         return $this->hasOne('App\Models\Location','id','location_id');
     }
 
+    public function status(){
+        return $this->hasOne('App\Models\Newgraphicrequestsstatus','id','status_id');
+    }
+
+    public function receiveUser(){
+        return $this->hasOne('App\Models\Core\Users','id','request_user_id')->select(['id','first_name','last_name']);
+    }
+
     public static function getRows($args, $cond = null) {
 
         $table = with(new static)->table;

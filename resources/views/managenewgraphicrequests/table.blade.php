@@ -128,6 +128,23 @@
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                      <?
+									 //dump($field['field']);
+
+                                     if($field['field']=='request_user_id' && isset($row->request_user)){
+                                         $value=$row->request_user;
+                                     }
+                                     if($field['field']=='approve_date' && isset($row->approve_date_text)){
+                                         $value=$row->approve_date_text;
+                                     }
+                                     if($field['field']=='need_by_date' && isset($row->need_by_date_text)){
+                                         $value=$row->need_by_date_text;
+                                     }
+                                     if($field['field']=='request_date' && isset($row->request_date_text)){
+                                         $value=$row->request_date_text;
+                                     }
+                                     if($field['field']=='status_id' && isset($row->status)){
+                                         $value=$row->status;
+                                     }
                                      if($field['field']=='location_id' && isset($row->location_name)){
                                          $value=$row->location_name;
                                      }

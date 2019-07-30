@@ -29,7 +29,7 @@ class ElasticsearchManagenewgraphicrequestsRepository implements Managenewgraphi
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["description^6","media_type^5","location_name^4"],
+                            "fields"=>["description","media_type","request_user","location_name","status","need_by_date_text^6","request_date_text^5","approve_date_text^4"],
                             "query"=>$query
                         ]
                     ],
@@ -40,6 +40,11 @@ class ElasticsearchManagenewgraphicrequestsRepository implements Managenewgraphi
                             "description" => new \stdClass(),
                             "media_type" => new \stdClass(),
                             "location_name" => new \stdClass(),
+                            "status" => new \stdClass(),
+                            "need_by_date_text" => new \stdClass(),
+                            "request_date_text" => new \stdClass(),
+                            "approve_date_text" => new \stdClass(),
+                            "request_user" => new \stdClass(),
                         ]
                     ]]]
 

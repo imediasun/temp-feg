@@ -69,6 +69,18 @@ class ReindexManageNewGraphicsReqCommand extends Command
                     'location_name' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    'status' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    'need_by_date_text' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    'request_user' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
                     ]
                 ]
             ]
@@ -85,18 +97,40 @@ class ReindexManageNewGraphicsReqCommand extends Command
 
         //////////////////////////
 
-$orders=Managenewgraphicrequests::get();
+$orders=Managenewgraphicrequests::with('status')->with('receiveUser')->get();
     foreach ($orders as $model) {
             $mas = $model->toSearchArray();
 
         if(!null==($model->location)){
-        dump($model->location->location_name);
+        //dump($model->location->location_name);
             $mas['location_name'] = $model->location->location_name;
         }
         else{
             dump('F');
         }
 
+        if(!null==($model->status)){
+            //dump($model->status->status);
+            $mas['status'] = $model->status->status;
+        }
+
+        if(isset($model->receiveUser) && $model->receiveUser!=null) {
+                $mas['request_user'] = $model->receiveUser->first_name . "." . $model->receiveUser->last_name;
+                dump($mas['request_user']);
+
+        }
+
+            $need=explode('-',$mas['need_by_date']);
+        $mas['need_by_date_text']=$need[1].'/'.$need[2].'/'.$need[0];
+       // dump($mas['need_by_date_text']);
+
+        $request_date=explode('-',$mas['request_date']);
+        $mas['request_date_text']=$request_date[1].'/'.$request_date[2].'/'.$request_date[0];
+        //dump($mas['request_date_text']);
+
+        $approve_date=explode('-',$mas['approve_date']);
+        $mas['approve_date_text']=$approve_date[1].'/'.$approve_date[2].'/'.$approve_date[0];
+        //dump($mas['approve_date_text']);
 
             $this->search->index([
                 'index' => 'elastic_manage_new_graphics_req',
