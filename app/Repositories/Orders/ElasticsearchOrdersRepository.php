@@ -21,10 +21,12 @@ class ElasticsearchOrdersRepository implements OrdersRepository
     }
 
     public function addToIndexIds($id){
-        $model=Order::where('id',$id)->with('orderedBy')->with('receiveLocation')->with('receiveVendor')->first();
+        $order=Order::where('id',$id)->with('orderedBy')->with('receiveLocation')->with('receiveVendor')->get();
+
+        foreach($order as $model){
         $mas = $model->toSearchArray();
-        if($model::getProductInfo($id)){
-            $results = $model::getProductInfo($model->id);
+        if($model::getProductInfo(strip_tags($model->id))){
+            $results = $model::getProductInfo(strip_tags($model->id));
             $info = '';
             foreach($results as $r){
                 if(!isset($r->sku)){
@@ -73,6 +75,7 @@ class ElasticsearchOrdersRepository implements OrdersRepository
             'id' => $id,
             'body' => $mas,
         ]);
+        }
 
     }
 

@@ -519,12 +519,10 @@ class order extends Sximo
     }
 
     public static function getProductInfo($id){
-
         $select ="SELECT IF(order_contents.sku IS null OR order_contents.sku = '', products.sku,order_contents.sku) as sku, order_contents.qty,order_contents.item_name,order_contents.total FROM order_contents
         LEFT OUTER JOIN products ON products.id=order_contents.product_id
         WHERE order_id = ".$id;
         $result = \DB::select($select );
-        //dump($result);
         return $result;
     }
 
