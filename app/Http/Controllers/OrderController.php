@@ -44,6 +44,9 @@ use Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use App\Models\Ordersetting;
+use App\Repositories\Orders\ElasticsearchOrdersRepository;
+use Elasticsearch\ClientBuilder;
+use Elasticsearch\Client;
 /**
  * Test comment 8
  * Class OrderController
@@ -980,6 +983,10 @@ class OrderController extends Controller
                     'po_notes_additionaltext' => $po_notes_additionaltext,
                 );
                 $this->model->insertRow($orderData, $order_id);
+                $order_id=intval(strip_tags($order_id));
+                $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+                $el=new ElasticsearchOrdersRepository($client);
+                $el->addToIndexIds($order_id);
                 $last_insert_id = $order_id;
                 //$productIdArray
 
@@ -1060,7 +1067,12 @@ class OrderController extends Controller
                     Sximo::insertLog('Order', 'Clone', 'OrderController', 'An order with po : ' . $po . ' is cloned', json_encode($orderData));
                 }
                 $this->model->insertRow($orderData, $id);
+
                 $order_id = \DB::getPdo()->lastInsertId();
+                $order_id=intval(strip_tags($order_id));
+                $client = ClientBuilder::create()->setHosts(config('services.search.hosts'))->build();
+                $el=new ElasticsearchOrdersRepository($client);
+                $el->addToIndexIds($order_id);
             }
             //// UPDATE STATUS TO APPROVED AND PROCESSED
             //don't put this code in loop below

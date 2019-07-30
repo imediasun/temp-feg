@@ -20,6 +20,62 @@ class ElasticsearchOrdersRepository implements OrdersRepository
         return $this->buildCollection($items);
     }
 
+    public function addToIndexIds($id){
+        $model=Order::where('id',$id)->with('orderedBy')->with('receiveLocation')->with('receiveVendor')->first();
+        $mas = $model->toSearchArray();
+        if($model::getProductInfo($id)){
+            $results = $model::getProductInfo($model->id);
+            $info = '';
+            foreach($results as $r){
+                if(!isset($r->sku)){
+                    $sku = " (SKU: No Data) ";
+                }else{
+                    $sku = " (SKU: ".$r->sku.")";
+                }
+
+                $info = $info .'('.$r->qty.') '.$r->item_name.' '.\CurrencyHelpers::formatPrice($r->total).$sku. ';';
+            }
+            $mas['product_info'] = $info;
+            //var_dump($mas['product_info']);
+        }
+        else{
+            //var_dump('not_product_info');
+        }
+
+        if(isset($model->receiveLocation) && null!=($model->receiveLocation) && isset($model->receiveLocation->location_name) && null!=$model->receiveLocation->location_name){
+            $mas['location_name'] = $model->receiveLocation->location_name;
+        }
+        if(isset($model->receiveVendor) && null!=($model->receiveVendor)&& isset($model->receiveVendor->vendor_name) && null!=$model->receiveVendor->vendor_name){
+            $mas['vendor_name'] = $model->receiveVendor->vendor_name;
+        }
+        if(isset($model->orderedBy) && null!=($model->orderedBy)&& isset($model->orderedBy->first_name) && null!=$model->orderedBy->first_name){
+            $mas['orderedBy'] = $model->orderedBy->first_name.".".$model->orderedBy->last_name;
+            //dump($mas['orderedBy']);
+        }
+
+        $updated_at=explode(' ',$mas['updated_at']);
+        $need=explode('-',$updated_at[0]);
+        if(isset($need[1])){
+            $mas['updated_at_string']=$need[1].'/'.$need[2].'/'.$need[0];
+            //dump($mas['updated_at_string']);
+        }
+
+        $api_created_at=explode(' ',$mas['api_created_at']);
+        $need_api_created_at=explode('-',$api_created_at[0]);
+        if(isset($need_api_created_at[1])){
+            $mas['api_created_at_string']=$need_api_created_at[1].'/'.$need_api_created_at[2].'/'.$need_api_created_at[0];
+            //dump($mas['api_created_at_string']);
+        }
+
+        $this->search->index([
+            'index' => 'elastic_order',
+            'type' => 'order',
+            'id' => $id,
+            'body' => $mas,
+        ]);
+
+    }
+
     public function searchOnElasticsearch($query){
         $instance = new Order;
         $items = $this->search->search([
@@ -29,7 +85,7 @@ class ElasticsearchOrdersRepository implements OrdersRepository
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["po_number","id","product_info","location_name^6","vendor_name","po_notes","notes","tracking_number","orderedBy","updated_at_string^15","api_created_at_string^14"],
+                            "fields"=>["po_number^20","id","product_info","location_name^6","vendor_name","po_notes^18","notes","tracking_number","orderedBy","updated_at_string^15","api_created_at_string^14"],
                             "query"=>$query
                         ]
                     ],
