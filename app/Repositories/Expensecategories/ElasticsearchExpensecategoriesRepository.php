@@ -29,7 +29,7 @@ class ElasticsearchExpensecategoriesRepository implements ExpensecategoriesRepos
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["order_type_name^6"],
+                            "fields"=>["order_type_name^6","mapped_expense_category"],
                             "query"=>$query
                         ]
                     ],
@@ -38,6 +38,7 @@ class ElasticsearchExpensecategoriesRepository implements ExpensecategoriesRepos
                         "post_tags" => "</b>",
                         "fields" => [
                             "order_type_name" => new \stdClass(),
+                            "mapped_expense_category" => new \stdClass(),
                         ]
                     ]]]
 

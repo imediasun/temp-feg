@@ -97,9 +97,12 @@ FROM vendor
                     $result['invoice_verified']=null;
                     foreach($explode_string as $k=>$param){
                         $second_explode=explode(':',$param);
+                        dump($second_explode);
                         switch($second_explode[0]){
                             case 'search_all_fields':
+                          if(isset($second_explode[3])){$second_explode[2]=$second_explode[3];}
                                 $main_search=$second_explode[2];
+                                dump($main_search);
                                 break;
                             case 'status':
                                 $result['status']=$second_explode[2];

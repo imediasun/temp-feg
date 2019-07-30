@@ -62,6 +62,10 @@ class ReindexExpensecategoriesCommand extends Command
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
+                    'mapped_expense_category' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
                 ]
             ]
 

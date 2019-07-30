@@ -66,7 +66,7 @@ class ReindexVendorCommand extends Command
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
-                    'game_contact_name' => [
+                    'games_contact_name' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
@@ -75,6 +75,14 @@ class ReindexVendorCommand extends Command
                         'analyzer' => "ngram_analyzer_with_filter",
                     ],
                     "email"=> [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    'games_contact_email' => [
+                        'type' => 'text',
+                        'analyzer' => "ngram_analyzer_with_filter",
+                    ],
+                    "website"=> [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
                     ]
@@ -107,7 +115,20 @@ $orders=Vendor::get();
            /* if(!null==($model->vendor)){
                 $mas['vendor_name'] = $model->vendor->vendor_name;
             }*/
+            if(isset($mas['website'])){
+                if (strpos($mas['website'], 'http://') !== false) {
+                $mas_expl=explode('http://',$mas['website']);
+                }
+                elseif(strpos($mas['website'], 'https://') !== false){
+                    $mas_expl=explode('https://',$mas['website']);
+                }
+                if(isset($mas_expl[1])){
+                    $mas['website']=$mas_expl[1];
+                    dump($mas['website']);
+                }
 
+
+            }
 
             $this->search->index([
                 'index' => 'elastic_vendor',

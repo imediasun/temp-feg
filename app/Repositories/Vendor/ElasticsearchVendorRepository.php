@@ -29,7 +29,7 @@ class ElasticsearchVendorRepository implements VendorRepository
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
-                            "fields"=>["vendor_name^6","contact^5","game_contact_name^4","vendor_ap_contact_name^3","email^2"],
+                            "fields"=>["vendor_name","contact","games_contact_name","games_contact_email","vendor_ap_contact_name","email","website"],
                             "query"=>$query
                         ]
                     ],
@@ -39,9 +39,11 @@ class ElasticsearchVendorRepository implements VendorRepository
                         "fields" => [
                             "vendor_name" => new \stdClass(),
                             "contact" => new \stdClass(),
-                            "game_contact_name"=> new \stdClass(),
+                            "games_contact_name"=> new \stdClass(),
+                            "games_contact_email"=> new \stdClass(),
                             "vendor_ap_contact_name" => new \stdClass(),
-                            "email" => new \stdClass()
+                            "email" => new \stdClass(),
+                            "website" => new \stdClass()
 
                         ]
                     ]]]
