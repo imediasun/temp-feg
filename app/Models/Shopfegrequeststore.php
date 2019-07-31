@@ -274,14 +274,28 @@ class shopfegrequeststore extends Sximo  {
             if($pre_products['shopfegrequeststore']!=null){
 
 
-                if(isset($_SESSION['shopfegrequeststore_filter'])){
-                    //dump($_SESSION['shopfegrequeststore_filter']);
-                    switch($_SESSION['shopfegrequeststore_filter']){
+                if(isset($_SESSION['shopfegrequeststore_order_type']) && !empty($_SESSION['shopfegrequeststore_order_type'])){
+                    //dump($_SESSION['shopfegrequeststore_order_type']);
+                    $pre_products['shopfegrequeststore'] = $pre_products['shopfegrequeststore']->where('prod_type_id', intval($_SESSION['shopfegrequeststore_order_type']));
+
+                }
+
+                if(isset($_SESSION['shopfegrequeststore_product_type']) && !empty($_SESSION['shopfegrequeststore_product_type'])){
+                    //dump($_SESSION['shopfegrequeststore_product_type']);
+                    $pre_products['shopfegrequeststore'] = $pre_products['shopfegrequeststore']->where('prod_sub_type_id', intval($_SESSION['shopfegrequeststore_product_type']));
+
+                }
+
+                if(isset($_SESSION['shopfegrequeststore_filterBy']) && !empty($_SESSION['shopfegrequeststore_filterBy'])){
+                    //var_dump($_SESSION['shopfegrequeststore_filterBy']);
+                    switch($_SESSION['shopfegrequeststore_filterBy']){
                         case 'hot' :
                             $pre_products['shopfegrequeststore'] = $pre_products['shopfegrequeststore']->where('hot_item', 1);
                             break;
                         case 'new' :
+
                             $new_tag_days=\App\Models\Feg\System\Options::where('option_name','product_label_new')->first()->option_value;
+                            var_dump($new_tag_days);
                             $pre_products['shopfegrequeststore'] = $pre_products['shopfegrequeststore']->filter(function ($data) use($new_tag_days) {
                                    $datetime = new \Carbon\Carbon($data->created_at);
                                 if($datetime >= \Carbon\Carbon::now()->subDays(intval($new_tag_days))){
