@@ -1406,7 +1406,7 @@ function getProductSubTypes(productTypeId, productSubTypeSelectorArray, selectBo
 
         if( subTypeSelectBox.length > 0 ){
 
-            console.log(subTypeSelectBox);
+            //console.log(subTypeSelectBox);
 
             subTypeSelectBox.attr('disabled', 'disabled')
 

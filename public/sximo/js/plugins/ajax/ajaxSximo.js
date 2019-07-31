@@ -72,7 +72,7 @@ function reloadData( id,url,callback, options,tabSwitch,clear)
 
     if((id=='#servicerequests' || id=="#product")&& !isClearSearch){
         if(url){
-            console.log(url)
+            //console.log(url)
         var array = url.split("?");
             if(array[1]){
         var array2 = array[1].split("=");
