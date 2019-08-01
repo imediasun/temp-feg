@@ -30,14 +30,14 @@ class ReindexManageNewGraphicsReqCommand extends Command
                 'analyzer' => [
                     'ngram_analyzer_with_filter' => [
                         'tokenizer' => 'ngram_tokenizer',
-                        'filter' => 'lowercase, snowball'
+                        'filter' => 'lowercase'
                     ],
                 ],
                 'tokenizer' => [
                     'ngram_tokenizer' => [
                         'type' => 'nGram',
-                        'min_gram' => 3,
-                        'max_gram' => 3,
+                        'min_gram' => 4,
+                        'max_gram' => 4,
                         'token_chars' => ['letter', 'digit', 'whitespace', 'punctuation', 'symbol']
                     ],
 
@@ -61,6 +61,7 @@ class ReindexManageNewGraphicsReqCommand extends Command
                     'description' => [
                         'type' => 'text',
                         'analyzer' => "ngram_analyzer_with_filter",
+                        "fielddata"=> true
                     ],
                     'media_type' => [
                         'type' => 'text',

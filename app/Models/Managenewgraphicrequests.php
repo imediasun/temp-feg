@@ -122,13 +122,50 @@ class managenewgraphicrequests extends Sximo
 
 
                 //dump('offset',$offset);
+     /*           foreach($products as $pr){
+                    $string=$pr->description;
+                    //dump($pr->description);
 
+                    if($string != strip_tags($string)) {
+
+                        $tmp=
+                        $num_simbols_before_html_tags=strlen(explode('<b style=\'color:#da4f49\'>',$string)[0]);
+                        $pr->index_description=$num_simbols_before_html_tags;
+                        dump($pr->index_description);
+                    }
+                    else{
+                        $pr->index_description=1000;
+                    }
+
+
+
+
+                    $string_request_user=$pr->request_user;
+
+
+                    if($string_request_user != strip_tags($string_request_user)) {
+
+                        $tmp=
+                        $num_simbols_before_html_tags_request_user=strlen(explode('<b style=\'color:#da4f49\'>',$string_request_user)[0]);
+                        $pr->index_request_user=$num_simbols_before_html_tags_request_user;
+                        dump($pr->index_request_user);
+                    }
+                    else{
+                        $pr->index_description=1000;
+                    }
+
+
+
+                }
+
+                $products=$products->sortBy('index')->sortBy('index_request_user');*/
 
                 if($total>0){
                     $products = $products->chunk($limit);/*$pre_products['orders']*/
                     $products=$products[$page - 1];
                 }
-                //dump('products',$products);
+                dump('products',$products);
+
 
             }
         }

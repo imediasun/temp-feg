@@ -25,7 +25,7 @@ class ElasticsearchManagenewgraphicrequestsRepository implements Managenewgraphi
         $items = $this->search->search([
                 'index' => 'elastic_manage_new_graphics_req',
                 'type' => 'manage_new_graphics_req',
-                "size"=>200,
+                "size"=>2000,
                 'body'=>[
                     'query'=>[
                         "multi_match"=>[
@@ -46,7 +46,23 @@ class ElasticsearchManagenewgraphicrequestsRepository implements Managenewgraphi
                             "approve_date_text" => new \stdClass(),
                             "request_user" => new \stdClass(),
                         ]
-                    ]]]
+                    ],
+                     "sort" => [
+            "_script" => [
+                "type" => "number",
+            "script" => [
+                 "lang"=> "expression",
+                "source"=> "doc['description'].value.length() * params.factor",
+                "params" => [
+                        "factor" => 1.1
+                ]
+            ],
+
+            "order" => "desc"
+        ]
+    ]
+
+                ]]
 
 
         );
